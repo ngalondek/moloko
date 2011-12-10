@@ -35,10 +35,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
 import dev.drsoran.moloko.loaders.AbstractLoader;
@@ -53,6 +56,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    {
       public final static String LOADER_RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
    }
+   
+   private IEditFragmentListener editFragmentListener;
    
    private IOnSettingsChangedListener onSettingsChangedListener;
    
@@ -93,6 +98,11 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       
       if ( settingsMask != 0 )
       {
+         if ( activity instanceof IEditFragmentListener )
+            editFragmentListener = (IEditFragmentListener) activity;
+         else
+            editFragmentListener = null;
+         
          onSettingsChangedListener = new IOnSettingsChangedListener()
          {
             @Override
@@ -121,6 +131,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    public void onDetach()
    {
       super.onDetach();
+      
+      editFragmentListener = null;
       
       if ( onSettingsChangedListener != null )
       {
@@ -387,6 +399,16 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    {
       if ( getListAdapter() instanceof BaseAdapter )
          ( (BaseAdapter) getListAdapter() ).notifyDataSetChanged();
+   }
+   
+   
+   
+   protected void applyModifications( ContentProviderActionItemList actionItemList,
+                                      ApplyChangesInfo applyChangesInfo )
+   {
+      if ( editFragmentListener != null )
+         editFragmentListener.applyModifications( actionItemList,
+                                                  applyChangesInfo );
    }
    
    

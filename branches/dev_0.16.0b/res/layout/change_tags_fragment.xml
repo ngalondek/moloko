@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <!--
+<!--
       Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
       Moloko is free software: you can redistribute it and/or modify it
       under the terms of the GNU General Public License as published by
@@ -12,84 +12,59 @@
       License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
-   -->
-<LinearLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   android:layout_height="fill_parent"
-   android:layout_width="fill_parent">
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-   <LinearLayout
-      android:layout_height="fill_parent"
-      android:layout_width="fill_parent"
-      android:orientation="vertical">
+    <RelativeLayout
+        android:id="@android:id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-      <ImageView
-         android:id="@+id/titleDivider"
-         android:layout_width="fill_parent"
-         android:layout_height="1dip"
-         android:visibility="visible"
-         android:scaleType="fitXY"
-         android:gravity="fill_horizontal"
-         android:src="@android:drawable/divider_horizontal_dark" />
-
-      <RelativeLayout
-         android:id="@android:id/content"
-         android:layout_height="wrap_content"
-         android:layout_width="fill_parent"
-         android:orientation="vertical">
-
-         <dev.drsoran.moloko.widgets.ClearableMultiAutoCompleteTextView
+        <dev.drsoran.moloko.widgets.ClearableMultiAutoCompleteTextView
             android:id="@+id/change_tags_fragment_edit"
-            android:layout_height="wrap_content"
             android:layout_width="fill_parent"
-            android:layout_marginTop="3dip"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="5dip"
             android:layout_marginRight="5dip"
+            android:layout_marginTop="3dip"
+            android:completionThreshold="1"
             android:hint="@string/change_tags_edit_hint"
-            android:inputType="textNoSuggestions"
             android:imeOptions="actionDone"
-            android:completionThreshold="1" />
+            android:inputType="textNoSuggestions" />
 
-         <ListView
+        <ListView
             android:id="@android:id/list"
+            style="@style/ForceWhiteListViewStyle"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_alignLeft="@id/change_tags_fragment_edit"
             android:layout_alignRight="@id/change_tags_fragment_edit"
             android:layout_below="@id/change_tags_fragment_edit"
-            android:layout_above="@+id/btn_bar" />
+            android:layout_marginBottom="5dip" />
 
-         <TextView
+        <TextView
             android:id="@android:id/empty"
             style="@style/No_List_Elements_Text"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_above="@+id/btn_bar"
             android:layout_alignLeft="@id/change_tags_fragment_edit"
             android:layout_alignRight="@id/change_tags_fragment_edit"
             android:layout_below="@id/change_tags_fragment_edit"
-            android:layout_above="@+id/btn_bar"
             android:gravity="center_horizontal"
             android:text="@string/change_tags_empty"
             android:visibility="gone" />
+    </RelativeLayout>
 
-         <dev.drsoran.moloko.layouts.BottomButtonBarLayout
-            android:id="@+id/btn_bar"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="5dip"
-            android:paddingTop="5dip"
-            moloko:button1Text="@string/btn_ok"
-            moloko:button2Text="@string/btn_cancel" />
-      </RelativeLayout>
+    <include
+        android:id="@+id/loading_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/app_loading_spinner"
+        android:visibility="gone" />
 
-      <include
-         android:id="@+id/loading_spinner"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
-         layout="@layout/app_loading_spinner"
-         android:visibility="gone" />
-
-   </LinearLayout>
 </LinearLayout>

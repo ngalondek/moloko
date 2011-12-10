@@ -22,39 +22,34 @@
 
 package dev.drsoran.moloko.fragments.dialogs;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.net.Uri;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.CreationsProviderPart;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmListsProviderPart.NewRtmListId;
 import dev.drsoran.moloko.fragments.base.MolokoEditDialogFragment;
-import dev.drsoran.moloko.util.AsyncInsertEntity;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
@@ -64,10 +59,6 @@ import dev.drsoran.rtm.RtmSmartFilter;
 public class AddRenameListDialogFragment extends
          MolokoEditDialogFragment< AddRenameListDialogFragment >
 {
-   private final static String TAG = "Moloko."
-      + AddRenameListDialogFragment.class.getSimpleName();
-   
-   
    public static class Config
    {
       public final static String LIST = "list";
@@ -80,7 +71,7 @@ public class AddRenameListDialogFragment extends
    private TextView filterEdit;
    
    
-
+   
    public final static AddRenameListDialogFragment newInstance( Bundle config )
    {
       final AddRenameListDialogFragment fragment = new AddRenameListDialogFragment();
@@ -90,40 +81,14 @@ public class AddRenameListDialogFragment extends
       return fragment;
    }
    
-
-
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      setStyle( STYLE_NORMAL, STYLE_NORMAL );
-   }
    
-
-
-   @Override
-   public View onCreateView( LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState )
-   {
-      final View fragmentView = inflater.inflate( R.layout.add_rename_list_dialog,
-                                                  container,
-                                                  false );
-      return fragmentView;
-   }
    
-
-
    @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
+   protected ViewGroup createContent( LayoutInflater inflater )
    {
-      super.onViewCreated( view, savedInstanceState );
+      final View view = inflater.inflate( R.layout.add_rename_list_dialog, null );
       
       final boolean isRenameMode = isRenameMode();
-      
-      getDialog().setTitle( !isRenameMode ? R.string.dlg_add_list_title
-                                         : R.string.dlg_rename_list_title );
       
       listNameEdit = ( (TextView) view.findViewById( R.id.add_rename_list_list_name ) );
       filterEdit = ( (TextView) view.findViewById( R.id.add_rename_list_smart_filter ) );
@@ -138,11 +103,42 @@ public class AddRenameListDialogFragment extends
       }
       
       registerCommitInputListener( isRenameMode ? listNameEdit : filterEdit );
-      registerButtonListeners( view );
+      
+      return (ViewGroup) view;
    }
    
-
-
+   
+   
+   @Override
+   protected Dialog createDialog( View fragmentView )
+   {
+      final Activity activity = getFragmentActivity();
+      
+      final boolean isRenameMode = isRenameMode();
+      final String title = isRenameMode
+                                       ? getString( R.string.dlg_rename_list_title )
+                                       : getString( R.string.dlg_add_list_title );
+      
+      return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_list )
+                                                .setTitle( title )
+                                                .setView( fragmentView )
+                                                .setPositiveButton( R.string.btn_ok,
+                                                                    new DialogInterface.OnClickListener()
+                                                                    {
+                                                                       @Override
+                                                                       public void onClick( DialogInterface dialog,
+                                                                                            int which )
+                                                                       {
+                                                                          AddRenameListDialogFragment.this.onFinishEditing();
+                                                                       }
+                                                                    } )
+                                                .setNegativeButton( R.string.btn_cancel,
+                                                                    null )
+                                                .create();
+   }
+   
+   
+   
    private void configureAsRenameListDialog()
    {
       listNameEdit.setText( getConfiguredList().getName() );
@@ -153,8 +149,8 @@ public class AddRenameListDialogFragment extends
       filterEdit.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    private void configureAsNewListDialog()
    {
       final IFilter filter = getConfiguredFilter();
@@ -163,8 +159,8 @@ public class AddRenameListDialogFragment extends
          filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
    }
    
-
-
+   
+   
    private void registerCommitInputListener( TextView textView )
    {
       textView.setOnEditorActionListener( new OnEditorActionListener()
@@ -182,32 +178,8 @@ public class AddRenameListDialogFragment extends
       } );
    }
    
-
-
-   private void registerButtonListeners( View view )
-   {
-      view.findViewById( android.R.id.button1 )
-          .setOnClickListener( new OnClickListener()
-          {
-             @Override
-             public void onClick( View v )
-             {
-                onFinishEditing();
-             }
-          } );
-      view.findViewById( android.R.id.button2 )
-          .setOnClickListener( new OnClickListener()
-          {
-             @Override
-             public void onClick( View v )
-             {
-                onCancelEditing();
-             }
-          } );
-   }
    
-
-
+   
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
@@ -221,29 +193,29 @@ public class AddRenameListDialogFragment extends
                                       config.getParcelable( Config.FILTER ) );
    }
    
-
-
+   
+   
    private boolean isRenameMode()
    {
       return getConfiguredList() != null;
    }
    
-
-
+   
+   
    private RtmList getConfiguredList()
    {
       return configuration.getParcelable( Config.LIST );
    }
    
-
-
+   
+   
    private IFilter getConfiguredFilter()
    {
       return configuration.getParcelable( Config.FILTER );
    }
    
-
-
+   
+   
    @Override
    public boolean hasChanges()
    {
@@ -257,8 +229,8 @@ public class AddRenameListDialogFragment extends
             || !TextUtils.isEmpty( UIUtils.getTrimmedText( filterEdit ) );
    }
    
-
-
+   
+   
    @Override
    protected boolean saveChanges()
    {
@@ -270,8 +242,8 @@ public class AddRenameListDialogFragment extends
          return renameList( list );
    }
    
-
-
+   
+   
    @Override
    protected boolean validateInput()
    {
@@ -283,8 +255,8 @@ public class AddRenameListDialogFragment extends
       return ok;
    }
    
-
-
+   
+   
    private boolean validateListName()
    {
       final String text = UIUtils.getTrimmedText( listNameEdit );
@@ -316,8 +288,8 @@ public class AddRenameListDialogFragment extends
       return true;
    }
    
-
-
+   
+   
    private boolean validateSmartFilter()
    {
       final String text = UIUtils.getTrimmedText( filterEdit );
@@ -339,109 +311,52 @@ public class AddRenameListDialogFragment extends
       return true;
    }
    
-
-
+   
+   
    private boolean createNewList()
    {
       boolean ok = true;
       
-      try
-      {
-         final Date createdDate = new Date();
-         
-         final RtmList newList = new RtmList( null,
-                                              UIUtils.getTrimmedText( listNameEdit ),
-                                              createdDate,
-                                              createdDate,
-                                              null,
-                                              0,
-                                              0,
-                                              0,
-                                              getEnteredSmartFilter() );
-         
-         final Uri newUri = new AsyncInsertEntity< RtmList >( getFragmentActivity() )
-         {
-            @Override
-            protected int getProgressMessageId()
-            {
-               return R.string.toast_insert_list;
-            }
-            
-
-
-            @Override
-            protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
-                                                                            RtmList entity )
-            {
-               final ContentProviderClient client = contentResolver.acquireContentProviderClient( Lists.CONTENT_URI );
-               
-               if ( client != null )
-               {
-                  final RtmListsProviderPart.NewRtmListId newId = new NewRtmListId();
-                  final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >( 2 );
-                  
-                  operations.add( RtmListsProviderPart.insertLocalCreatedList( client,
-                                                                               entity,
-                                                                               newId ) );
-                  client.release();
-                  
-                  operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                               newId.rtmListId ),
-                                                                     entity.getCreatedDate()
-                                                                           .getTime() ) );
-                  return operations;
-               }
-               
-               return null;
-            }
-            
-
-
-            @Override
-            protected Uri getContentUri()
-            {
-               return Lists.CONTENT_URI;
-            }
-            
-
-
-            @Override
-            protected String getPath()
-            {
-               return Lists.PATH;
-            }
-         }.execute( newList ).get();
-         
-         UIUtils.reportStatus( getFragmentActivity(),
-                               R.string.toast_insert_list_ok,
-                               R.string.toast_insert_list_fail,
-                               newUri != null );
-      }
-      catch ( InterruptedException e )
-      {
-         Log.e( TAG, "Failed to insert new list", e );
-         ok = false;
-      }
-      catch ( ExecutionException e )
-      {
-         Log.e( TAG, "Failed to insert new list", e );
-         ok = false;
-      }
+      final NewRtmListId newListId = createNewListId();
+      final Date createdDate = new Date();
+      
+      final RtmList newList = new RtmList( newListId.rtmListId,
+                                           UIUtils.getTrimmedText( listNameEdit ),
+                                           createdDate,
+                                           createdDate,
+                                           null,
+                                           0,
+                                           0,
+                                           0,
+                                           getEnteredSmartFilter() );
+      
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.insertList( getFragmentActivity(),
+                                                                                                                 newList );
+      ok = applyModifications( modifications );
       
       return ok;
    }
    
-
-
-   private boolean renameList( RtmList list )
+   
+   
+   private NewRtmListId createNewListId()
    {
-      return RtmListEditUtils.setListName( getFragmentActivity(),
-                                           list.getId(),
-                                           UIUtils.getTrimmedText( listNameEdit ) );
+      return RtmListsProviderPart.createNewListId( getFragmentActivity().getContentResolver()
+                                                                        .acquireContentProviderClient( Lists.CONTENT_URI ) );
    }
    
-
-
+   
+   
+   private boolean renameList( RtmList list )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.setListName( getFragmentActivity(),
+                                                                                                                  list.getId(),
+                                                                                                                  UIUtils.getTrimmedText( listNameEdit ) );
+      return applyModifications( modifications );
+   }
+   
+   
+   
    private final RtmSmartFilter getEnteredSmartFilter()
    {
       RtmSmartFilter filter = null;
@@ -457,8 +372,8 @@ public class AddRenameListDialogFragment extends
       return filter;
    }
    
-
-
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

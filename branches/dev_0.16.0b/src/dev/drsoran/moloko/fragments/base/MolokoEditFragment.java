@@ -23,14 +23,43 @@
 package dev.drsoran.moloko.fragments.base;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Pair;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
 import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoEditFragment< T extends Fragment > extends
          MolokoFragment implements IEditFragment< T >
 {
+   private IEditFragmentListener listener;
+   
+   
+   
+   @Override
+   public void onAttach( FragmentActivity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof IEditFragmentListener )
+         listener = (IEditFragmentListener) activity;
+      else
+         listener = null;
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      listener = null;
+   }
+   
+   
    
    @Override
    public void onDestroyView()
@@ -40,8 +69,8 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
       super.onDestroyView();
    }
    
-
-
+   
+   
    @Override
    public final boolean onFinishEditing()
    {
@@ -49,42 +78,37 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
       
       if ( hasChanges() )
       {
-         if ( !hasWritableDatabaseAccess() )
-         {
-            showOnlyReadableDatabaseAccessDialog();
-            ok = false;
-         }
-         else
-         {
-            ok = saveChanges();
-         }
+         ok = saveChanges();
       }
       
       return ok;
    }
    
-
-
+   
+   
    @Override
    public void onCancelEditing()
    {
    }
    
-
-
-   private boolean hasWritableDatabaseAccess()
+   
+   
+   protected boolean applyModifications( ContentProviderActionItemList actionItemList,
+                                         ApplyChangesInfo applyChangesInfo )
    {
-      return AccountUtils.isWriteableAccess( getFragmentActivity() );
+      boolean ok = listener != null;
+      return ok
+         && listener.applyModifications( actionItemList, applyChangesInfo );
    }
    
-
-
-   protected void showOnlyReadableDatabaseAccessDialog()
+   
+   
+   protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
    {
-      UIUtils.showReadOnlyAccessDialog( getFragmentActivity() );
+      return applyModifications( modifications.first, modifications.second );
    }
    
-
-
+   
+   
    protected abstract boolean saveChanges();
 }

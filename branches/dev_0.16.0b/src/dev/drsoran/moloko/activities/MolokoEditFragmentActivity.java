@@ -23,9 +23,12 @@
 package dev.drsoran.moloko.activities;
 
 import android.app.Dialog;
+import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.util.Pair;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
@@ -38,7 +41,7 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
 {
    
    @Override
-   public void onAlertDialogFragmentClick( int dialogId, int which )
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
    {
       switch ( dialogId )
       {
@@ -47,75 +50,101 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
             break;
          
          case R.id.dlg_apply_changes:
-            handleApplyChangesDialogClick( which );
+            handleApplyChangesDialogClick( tag, which );
             break;
          
          case R.id.dlg_cancel_with_changes:
-            handleCancelWithChangesDialogClick( which );
+            if ( !canceledByFragmentTag( which, tag ) )
+               handleCancelWithChangesDialogClick( tag, which );
             break;
          
          case R.id.dlg_delete_element:
-            handleDeleteElementDialogClick( which );
+            handleDeleteElementDialogClick( tag, which );
             break;
          
          default :
-            super.onAlertDialogFragmentClick( dialogId, which );
+            super.onAlertDialogFragmentClick( dialogId, tag, which );
             break;
       }
    }
    
-
-
+   
+   
    @Override
-   public void applyModifications( ModificationSet modificationSet,
-                                   ApplyChangesInfo applyInfo )
+   public void requestCancelEditing( String fragmentTag )
    {
+      UIUtils.showCancelWithChangesDialog( this, fragmentTag );
+   }
+   
+   
+   
+   @Override
+   public boolean applyModifications( ContentProviderActionItemList actionItemList,
+                                      ApplyChangesInfo applyInfo )
+   {
+      boolean ok = true;
+      
       if ( !hasWritableDatabaseAccess() )
       {
+         ok = false;
          showOnlyReadableDatabaseAccessDialog();
       }
       else
       {
-         final boolean ok = Queries.applyModifications( this,
-                                                        modificationSet,
-                                                        applyInfo.getProgressMessage() );
-         applyInfo.showApplyResultToast( this, ok );
+         if ( actionItemList == null )
+         {
+            ok = false;
+            showApplyChangesInfoAsToast( applyInfo, false );
+         }
+         else if ( actionItemList.size() > 0 )
+         {
+            final String progressMessage = applyInfo != null
+                                                            ? applyInfo.getProgressMessage()
+                                                            : null;
+            ok = Queries.applyActionItemList( this,
+                                              actionItemList,
+                                              progressMessage );
+            showApplyChangesInfoAsToast( applyInfo, ok );
+         }
       }
+      
+      return ok;
    }
    
-
-
-   protected void performDatabaseModification( Runnable action )
+   
+   
+   public boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
    {
-      if ( action != null )
+      return applyModifications( modifications.first, modifications.second );
+   }
+   
+   
+   
+   private void showApplyChangesInfoAsToast( ApplyChangesInfo applyChangesInfo,
+                                             boolean success )
+   {
+      if ( applyChangesInfo != null )
       {
-         if ( !hasWritableDatabaseAccess() )
-         {
-            showOnlyReadableDatabaseAccessDialog();
-         }
-         else
-         {
-            action.run();
-         }
+         applyChangesInfo.showApplyResultToast( this, success );
       }
    }
    
-
-
+   
+   
    private boolean hasWritableDatabaseAccess()
    {
       return AccountUtils.isWriteableAccess( this );
    }
    
-
-
+   
+   
    protected void showOnlyReadableDatabaseAccessDialog()
    {
       UIUtils.showReadOnlyAccessDialog( this );
    }
    
-
-
+   
+   
    private void handleReadOnlyAccessDialogClick( int which )
    {
       if ( which == Dialog.BUTTON_POSITIVE )
@@ -124,21 +153,38 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
       }
    }
    
-
-
-   protected void handleApplyChangesDialogClick( int which )
+   
+   
+   protected void handleApplyChangesDialogClick( String tag, int which )
    {
    }
    
-
-
-   protected void handleCancelWithChangesDialogClick( int which )
+   
+   
+   protected void handleCancelWithChangesDialogClick( String tag, int which )
    {
    }
    
-
-
-   protected void handleDeleteElementDialogClick( int which )
+   
+   
+   protected void handleDeleteElementDialogClick( String tag, int which )
    {
+   }
+   
+   
+   
+   private boolean canceledByFragmentTag( int which, String tag )
+   {
+      if ( which == Dialog.BUTTON_POSITIVE )
+      {
+         final Fragment frag = findAddedFragmentByTag( tag );
+         if ( frag != null )
+            removeFragmentByTag( tag,
+                                 FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+         
+         return frag != null;
+      }
+      
+      return false;
    }
 }

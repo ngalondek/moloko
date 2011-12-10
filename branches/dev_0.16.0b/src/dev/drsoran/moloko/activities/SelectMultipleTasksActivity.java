@@ -24,23 +24,23 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Pair;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.rtm.Task;
 
 
 public class SelectMultipleTasksActivity extends AbstractTasksListActivity
          implements ISelectableTasksListFragmentListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + SelectMultipleTasksActivity.class.getSimpleName();
-   
-   
-   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -82,12 +82,143 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
    
    @Override
+   public void onCompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_complete,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_complete ).setMessage( message )
+                                                                              .setPositiveButton( R.string.btn_complete )
+                                                                              .setNegativeButton( R.string.btn_cancel )
+                                                                              .show( this );
+   }
+   
+   
+   
+   @Override
+   public void onIncompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_incomplete,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_incomplete ).setMessage( message )
+                                                                                .setPositiveButton( R.string.btn_uncomplete )
+                                                                                .setNegativeButton( R.string.btn_cancel )
+                                                                                .show( this );
+   }
+   
+   
+   
+   @Override
+   public void onPostponeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_postpone,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_postpone ).setMessage( message )
+                                                                              .setPositiveButton( R.string.btn_postpone )
+                                                                              .setNegativeButton( R.string.btn_cancel )
+                                                                              .show( this );
+   }
+   
+   
+   
+   @Override
+   public void onDeleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_delete,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_delete ).setMessage( message )
+                                                                            .setPositiveButton( R.string.btn_delete )
+                                                                            .setNegativeButton( R.string.btn_cancel )
+                                                                            .show( this );
+   }
+   
+   
+   
+   @Override
    protected SelectableTasksListsFragment getTasksListFragment()
    {
       if ( super.getTasksListFragment() instanceof SelectableTasksListsFragment )
          return (SelectableTasksListsFragment) super.getTasksListFragment();
       else
          return null;
+   }
+   
+   
+   
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   {
+      switch ( dialogId )
+      {
+         case R.id.dlg_selectmultipletasks_complete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               completeSelectedTasks( getTasksListFragment().getListAdapter()
+                                                            .getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_incomplete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               incompleteSelectedTasks( getTasksListFragment().getListAdapter()
+                                                              .getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_postpone:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               postponeSelectedTasks( getTasksListFragment().getListAdapter()
+                                                            .getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_delete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               deleteSelectedTasks( getTasksListFragment().getListAdapter()
+                                                          .getSelectedTasks() );
+            break;
+         
+         default :
+            super.onAlertDialogFragmentClick( dialogId, tag, which );
+            break;
+      }
+   }
+   
+   
+   
+   private void completeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                                                      tasks,
+                                                                                                                      true );
+      applyModifications( modifications );
+   }
+   
+   
+   
+   private void incompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                                                      tasks,
+                                                                                                                      false );
+      applyModifications( modifications );
+   }
+   
+   
+   
+   private void postponeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTasks( this,
+                                                                                                                 tasks );
+      applyModifications( modifications );
+   }
+   
+   
+   
+   private void deleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTasks( this,
+                                                                                                               tasks );
+      applyModifications( modifications );
    }
    
    

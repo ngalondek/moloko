@@ -206,7 +206,7 @@
    <string name="dlg_add_list_title">Neue Liste</string>
    <string name="dlg_rename_list_title">Liste umbenennen</string>
    <string name="dlg_add_rename_list_list_name_hint">Name der Liste</string>
-   <string name="dlg_add_rename_list_smart_filter_hint">SmartList-Filter</string>
+   <string name="dlg_add_rename_list_smart_filter_hint">Smart List Filter</string>
       <!-- Toasts -->
       <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste darf nicht leer sein</string>
       <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste darf nicht \'Inbox\' oder \'Sent\' sein</string>
@@ -274,7 +274,7 @@
    <string name="edit_multiple_tasks_different_urls">Unterschiedliche URLs</string>
       
    <!-- Change Tags Activity -->
-   <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>
+   <string name="change_tags_edit_hint">Komma getrennte Tags</string>
    <string name="change_tags_empty">Diese Aufgabe hat keine Tags</string>
 		
    <!-- TaskLists activity -->
@@ -329,6 +329,7 @@
    <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
    <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
      <!-- Menus -->
+     <string name="tasksearchresult_menu_add_smart_list">Neue Smart List</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Der Suchverlauf wurde gelöscht</string>

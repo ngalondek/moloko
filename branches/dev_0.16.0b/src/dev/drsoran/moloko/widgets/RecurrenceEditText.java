@@ -268,8 +268,11 @@ public class RecurrenceEditText extends ClearableEditText
    
    private void checkFreeTextInput()
    {
-      final Locale resLocale = MolokoApp.get( getContext() )
-                                        .getActiveResourcesLocale();
-      isSupportingFreeTextInput = RecurrenceParserFactory.existsDateParserWithMatchingLocale( resLocale );
+      if ( !isInEditMode() )
+      {
+         final Locale resLocale = MolokoApp.get( getContext() )
+                                           .getActiveResourcesLocale();
+         isSupportingFreeTextInput = RecurrenceParserFactory.existsDateParserWithMatchingLocale( resLocale );
+      }
    }
 }

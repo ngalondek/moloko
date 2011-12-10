@@ -30,14 +30,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItem;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ContactsListAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
@@ -48,11 +48,6 @@ import dev.drsoran.rtm.Contact;
 
 public class ContactsListFragment extends MolokoListFragment< List< Contact > >
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + ContactsListFragment.class.getSimpleName();
-   
-   
    private static class CtxtMenu
    {
       public final static int SHOW_PHONEBOOK_CONTACT = R.id.ctx_menu_show_phonebook_contact;
@@ -63,7 +58,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    private IContactsListFragmentListener listener;
    
    
-
+   
    public final static ContactsListFragment newInstance( Bundle config )
    {
       final ContactsListFragment fragment = new ContactsListFragment();
@@ -73,8 +68,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -86,8 +81,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -96,8 +91,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       registerForContextMenu( getListView() );
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -105,8 +100,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -119,8 +114,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -143,8 +138,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
@@ -165,8 +160,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       }
    }
    
-
-
+   
+   
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
@@ -178,8 +173,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       }
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
@@ -188,8 +183,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
                                       Collections.< Contact > emptyList() );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapterForResult( List< Contact > result )
    {
@@ -198,32 +193,32 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
                                       result );
    }
    
-
-
+   
+   
    @Override
    protected Loader< List< Contact >> newLoaderInstance( int id, Bundle config )
    {
       return new ContactsLoader( getFragmentActivity() );
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_contacts );
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
       return CONTACTS_LOADER_ID;
    }
    
-
-
+   
+   
    @Override
    public ContactsListAdapter getListAdapter()
    {

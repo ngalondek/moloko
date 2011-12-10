@@ -26,10 +26,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.text.Spanned;
 import android.util.AttributeSet;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.TextView;
 import dev.drsoran.moloko.R;
 
 
@@ -41,8 +39,8 @@ public class AboutPreference extends InfoTextPreference
       super( context, attrs );
    }
    
-
-
+   
+   
    @Override
    protected void onClick()
    {
@@ -50,25 +48,18 @@ public class AboutPreference extends InfoTextPreference
       
       final Context context = getContext();
       
-      final TextView content = new TextView( context );
-      content.setLayoutParams( new LayoutParams( LayoutParams.FILL_PARENT,
-                                                 LayoutParams.FILL_PARENT ) );
-      content.setPadding( 10, 10, 10, 10 );
-      content.setTextSize( 16.0f );
-      
       try
       {
-         content.setText( Html.fromHtml( context.getString( R.string.moloko_about_info,
-                                                            context.getPackageManager()
-                                                                   .getPackageInfo( context.getPackageName(),
-                                                                                    0 ).versionName ) ) );
-         content.setMovementMethod( LinkMovementMethod.getInstance() );
+         Spanned message = Html.fromHtml( context.getString( R.string.moloko_about_info,
+                                                             context.getPackageManager()
+                                                                    .getPackageInfo( context.getPackageName(),
+                                                                                     0 ).versionName ) );
          
-         new AlertDialog.Builder( context ).setTitle( context.getString( R.string.moloko_about_text ) )
-                                           .setIcon( R.drawable.ic_prefs_info )
+         new AlertDialog.Builder( context ).setIcon( R.drawable.ic_prefs_info )
+                                           .setTitle( R.string.moloko_about_text )
+                                           .setMessage( message )
                                            .setPositiveButton( context.getString( R.string.phr_ok ),
                                                                null )
-                                           .setView( content )
                                            .show();
       }
       catch ( NameNotFoundException e )

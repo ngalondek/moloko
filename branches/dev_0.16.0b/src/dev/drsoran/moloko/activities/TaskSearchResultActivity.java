@@ -46,11 +46,6 @@ public class TaskSearchResultActivity extends
          AbstractFullDetailedTasksListActivity implements
          ITasksSearchResultListFragmentListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TaskSearchResultActivity.class.getSimpleName();
-   
-   
    private static class OptionsMenu
    {
       public final static int ADD_LIST = R.id.menu_add_list;
@@ -61,7 +56,7 @@ public class TaskSearchResultActivity extends
    private boolean lastQuerySucceeded = true;
    
    
-
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -70,7 +65,7 @@ public class TaskSearchResultActivity extends
       UIUtils.addOptionalMenuItem( this,
                                    menu,
                                    OptionsMenu.ADD_LIST,
-                                   getString( R.string.tasklists_menu_add_list ),
+                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
                                    MenuCategory.CONTAINER,
                                    Menu.NONE,
                                    R.drawable.ic_menu_add_list,
@@ -90,8 +85,8 @@ public class TaskSearchResultActivity extends
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -114,8 +109,8 @@ public class TaskSearchResultActivity extends
       }
    }
    
-
-
+   
+   
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
@@ -126,8 +121,8 @@ public class TaskSearchResultActivity extends
                                   config.getString( SearchManager.QUERY ) );
    }
    
-
-
+   
+   
    @Override
    public void onQuerySucceeded( String queryString )
    {
@@ -137,8 +132,8 @@ public class TaskSearchResultActivity extends
       invalidateOptionsMenu();
    }
    
-
-
+   
+   
    @Override
    public void onQueryFailed( String queryString )
    {
@@ -146,16 +141,16 @@ public class TaskSearchResultActivity extends
       invalidateOptionsMenu();
    }
    
-
-
+   
+   
    @Override
    public void onOpenList( int pos, String listId )
    {
       startActivity( Intents.createOpenListIntentById( this, listId, null ) );
    }
    
-
-
+   
+   
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
@@ -163,8 +158,8 @@ public class TaskSearchResultActivity extends
                                                              getTask( pos ).getLocationName() ) );
    }
    
-
-
+   
+   
    @Override
    protected void onOpenChoosenTags( List< String > tags,
                                      String logicalOperation )
@@ -172,8 +167,8 @@ public class TaskSearchResultActivity extends
       startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
    }
    
-
-
+   
+   
    private void showAddListDialog()
    {
       final Bundle config = new Bundle();
@@ -187,8 +182,8 @@ public class TaskSearchResultActivity extends
                            String.valueOf( R.id.frag_add_rename_list ) );
    }
    
-
-
+   
+   
    private final SearchRecentSuggestions getRecentSuggestions()
    {
       return new SearchRecentSuggestions( this,

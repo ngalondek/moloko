@@ -25,23 +25,23 @@ package dev.drsoran.moloko.fragments.listeners;
 import java.util.List;
 
 
-public interface ITaskEditFragmentListener extends IEditFragmentListener
+public interface ITaskEditFragmentListener
 {
    void onChangeTags( List< String > tags );
    
-
-
+   
+   
    void onEditDueByPicker();
    
-
-
+   
+   
    void onEditRecurrenceByPicker();
    
-
-
+   
+   
    void onEditEstimateByPicker();
    
-
-
+   
+   
    boolean onFinishTaskEditingByInputMethod();
 }

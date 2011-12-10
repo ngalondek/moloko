@@ -25,15 +25,19 @@ package dev.drsoran.moloko.fragments.listeners;
 import android.content.Intent;
 
 
-public interface ITaskListsFragmentListener extends IEditFragmentListener
+public interface ITaskListsFragmentListener
 {
    void openList( int pos );
    
-
-
+   
+   
    void openChild( Intent intent );
    
-
-
+   
+   
+   void deleteList( int pos );
+   
+   
+   
    void renameList( int pos );
 }

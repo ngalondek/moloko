@@ -22,20 +22,13 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.format.Time;
-import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,15 +37,15 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.CreationsProviderPart;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
 import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
-import dev.drsoran.moloko.util.AsyncInsertEntity;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
@@ -60,10 +53,6 @@ import dev.drsoran.provider.Rtm.Notes;
 
 public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
 {
-   private final static String TAG = "Moloko."
-      + NoteAddFragment.class.getSimpleName();
-   
-   
    public static class Config
    {
       public final static String TASKSERIES_ID = Notes.TASKSERIES_ID;
@@ -82,7 +71,7 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    private final Time created = MolokoDateUtils.newTime();
    
    
-
+   
    public final static NoteAddFragment newInstance( Bundle config )
    {
       final NoteAddFragment fragment = new NoteAddFragment();
@@ -92,8 +81,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -105,8 +94,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       return fragmentView;
    }
    
-
-
+   
+   
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
                                    Bundle savedInstanceState )
@@ -126,8 +115,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -150,8 +139,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       title.requestFocus();
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -171,29 +160,29 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
                                   config.getString( Config.NEW_NOTE_TEXT ) );
    }
    
-
-
+   
+   
    public String getConfiguredTaskSeriesId()
    {
       return configuration.getString( Config.TASKSERIES_ID );
    }
    
-
-
+   
+   
    public String getConfiguredNewNoteId()
    {
       return configuration.getString( Config.NEW_NOTE_ID );
    }
    
-
-
+   
+   
    private void setConfiguredNewNoteId( String newNoteId )
    {
       configuration.putString( Config.NEW_NOTE_ID, newNoteId );
    }
    
-
-
+   
+   
    @Override
    public boolean hasChanges()
    {
@@ -204,8 +193,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
          return false;
    }
    
-
-
+   
+   
    @Override
    protected boolean saveChanges()
    {
@@ -213,91 +202,38 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       
       if ( getView() != null )
       {
-         Uri newNoteUri = null;
+         final NewNoteId newNoteId = createNewNoteId();
+         final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
+                                                      getConfiguredTaskSeriesId(),
+                                                      new Date( created.toMillis( true ) ),
+                                                      new Date( created.toMillis( true ) ),
+                                                      null,
+                                                      Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
+                                                      Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
          
-         try
-         {
-            final RtmTaskNote newNote = new RtmTaskNote( null,
-                                                         getConfiguredTaskSeriesId(),
-                                                         new Date( created.toMillis( true ) ),
-                                                         new Date( created.toMillis( true ) ),
-                                                         null,
-                                                         Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
-                                                         Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
-            
-            newNoteUri = new AsyncInsertEntity< RtmTaskNote >( getFragmentActivity() )
-            {
-               @Override
-               protected int getProgressMessageId()
-               {
-                  return R.string.toast_insert_note;
-               }
-               
-
-
-               @Override
-               protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
-                                                                               RtmTaskNote entity )
-               {
-                  final ContentProviderClient client = contentResolver.acquireContentProviderClient( Notes.CONTENT_URI );
-                  
-                  if ( client != null )
-                  {
-                     final NewNoteId newId = new NewNoteId();
-                     final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >( 2 );
-                     
-                     operations.add( RtmNotesProviderPart.insertLocalCreatedNote( client,
-                                                                                  entity,
-                                                                                  newId ) );
-                     client.release();
-                     
-                     operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                                                  newId.noteId ),
-                                                                        entity.getCreatedDate()
-                                                                              .getTime() ) );
-                     return operations;
-                  }
-                  
-                  return null;
-               }
-               
-
-
-               @Override
-               protected Uri getContentUri()
-               {
-                  return Notes.CONTENT_URI;
-               }
-               
-
-
-               @Override
-               protected String getPath()
-               {
-                  return Notes.PATH;
-               }
-            }.execute( newNote ).get();
-         }
-         catch ( InterruptedException e )
-         {
-            Log.e( TAG, "Failed to insert new note", e );
-         }
-         catch ( ExecutionException e )
-         {
-            Log.e( TAG, "Failed to insert new note", e );
-         }
-         
-         ok = newNoteUri != null;
+         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.insertNote( getFragmentActivity(),
+                                                                                                                 newNote );
+         ok = applyModifications( modifications );
          
          if ( ok )
-            setConfiguredNewNoteId( newNoteUri.getLastPathSegment() );
+         {
+            setConfiguredNewNoteId( newNote.getId() );
+         }
       }
       
       return ok;
    }
    
-
-
+   
+   
+   private NewNoteId createNewNoteId()
+   {
+      return RtmNotesProviderPart.createNewNoteId( getFragmentActivity().getContentResolver()
+                                                                        .acquireContentProviderClient( Notes.CONTENT_URI ) );
+   }
+   
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

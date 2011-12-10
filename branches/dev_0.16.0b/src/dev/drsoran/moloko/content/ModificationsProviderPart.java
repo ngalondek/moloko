@@ -32,6 +32,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -43,7 +44,6 @@ import android.util.Log;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Modifications;
 
 
@@ -266,132 +266,145 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    
    
    
+   public final static boolean applyModificationsTransactional( RtmProvider rtmProvider,
+                                                                Collection< Modification > modifications )
+   {
+      boolean ok = true;
+      
+      final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
+      
+      if ( transactionalAccess == null )
+      {
+         Log.e( TAG, "Failed to create transactions." );
+         ok = false;
+      }
+      
+      if ( ok )
+      {
+         try
+         {
+            transactionalAccess.beginTransaction();
+            
+            ok = applyModifications( rtmProvider.getContext()
+                                                .getContentResolver(),
+                                     modifications );
+            if ( ok )
+               transactionalAccess.setTransactionSuccessful();
+         }
+         catch ( Throwable e )
+         {
+            Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+            ok = false;
+         }
+         finally
+         {
+            transactionalAccess.endTransaction();
+         }
+      }
+      
+      return ok;
+   }
+   
+   
+   
    public final static boolean applyModifications( ContentResolver contentResolver,
                                                    Collection< Modification > modifications )
    {
       boolean ok = true;
       
+      final ContentProviderClient client = contentResolver.acquireContentProviderClient( Modifications.CONTENT_URI );
+      ok = client != null;
+      
       if ( ok )
       {
-         final ContentProviderClient client = contentResolver.acquireContentProviderClient( Modifications.CONTENT_URI );
-         ok = client != null;
+         final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
          
-         if ( ok )
+         for ( Modification modification : modifications )
          {
-            RtmProvider rtmProvider = null;
-            TransactionalAccess transactionalAccess = null;
-            
-            if ( client.getLocalContentProvider() instanceof RtmProvider )
+            // Check id the modification should be stored or simply modify
+            // the entity.
+            if ( modification.isPersistent() )
             {
-               rtmProvider = (RtmProvider) client.getLocalContentProvider();
-               transactionalAccess = rtmProvider.newTransactionalAccess();
-            }
-            else
-            {
-               Log.e( TAG, "This method needs a RtmProvider instance to work." );
-               ok = false;
-            }
-            
-            if ( ok && transactionalAccess == null )
-            {
-               Log.e( TAG, "Failed to create transactions." );
-               ok = false;
+               // Check if modification already exists
+               final Modification existingMod = getModification( client,
+                                                                 modification.getEntityUri(),
+                                                                 modification.getColName() );
+               if ( existingMod != null )
+               {
+                  // Check if the new value equals the synced value from the existing modification, if so the
+                  // user has reverted his change and we delete the modification.
+                  if ( !SyncUtils.hasChanged( existingMod.getSyncedValue(),
+                                              modification.getNewValue() ) )
+                     operations.add( ContentProviderOperation.newDelete( Queries.contentUriWithId( Modifications.CONTENT_URI,
+                                                                                                   existingMod.getId() ) )
+                                                             .build() );
+                  else
+                     // Update the modification with the new value.
+                     operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Modifications.CONTENT_URI,
+                                                                                                   existingMod.getId() ) )
+                                                             .withValue( Modifications.NEW_VALUE,
+                                                                         modification.getNewValue() )
+                                                             .build() );
+               }
+               else
+               {
+                  // Query the synced value and check if the new value is really different.
+                  try
+                  {
+                     final String syncedValue = getSyncedValue( contentResolver,
+                                                                modification.getEntityUri(),
+                                                                modification.getColName() );
+                     
+                     if ( SyncUtils.hasChanged( syncedValue,
+                                                modification.getNewValue() ) )
+                        // Insert a new modification.
+                        operations.add( ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
+                                                                .withValues( getContentValues( contentResolver,
+                                                                                               modification,
+                                                                                               true ) )
+                                                                .build() );
+                  }
+                  catch ( RemoteException e )
+                  {
+                     ok = false;
+                  }
+               }
             }
             
             if ( ok )
-            {
-               final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
-               
-               try
-               {
-                  transactionalAccess.beginTransaction();
-                  
-                  for ( Modification modification : modifications )
-                  {
-                     // Check id the modification should be stored or simply modify
-                     // the entity.
-                     if ( modification.isPersistent() )
-                     {
-                        // Check if modification already exists
-                        final Modification existingMod = getModification( client,
-                                                                          modification.getEntityUri(),
-                                                                          modification.getColName() );
-                        if ( existingMod != null )
-                        {
-                           // Check if the new value equals the synced value from the existing modification, if so the
-                           // user has reverted his change and we delete the modification.
-                           if ( !SyncUtils.hasChanged( existingMod.getSyncedValue(),
-                                                       modification.getNewValue() ) )
-                              operations.add( ContentProviderOperation.newDelete( Queries.contentUriWithId( Modifications.CONTENT_URI,
-                                                                                                            existingMod.getId() ) )
-                                                                      .build() );
-                           else
-                              // Update the modification with the new value.
-                              operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Modifications.CONTENT_URI,
-                                                                                                            existingMod.getId() ) )
-                                                                      .withValue( Modifications.NEW_VALUE,
-                                                                                  modification.getNewValue() )
-                                                                      .build() );
-                        }
-                        else
-                        {
-                           // Query the synced value and check if the new value is really different.
-                           try
-                           {
-                              final String syncedValue = getSyncedValue( contentResolver,
-                                                                         modification.getEntityUri(),
-                                                                         modification.getColName() );
-                              
-                              if ( SyncUtils.hasChanged( syncedValue,
-                                                         modification.getNewValue() ) )
-                                 // Insert a new modification.
-                                 operations.add( ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
-                                                                         .withValues( getContentValues( contentResolver,
-                                                                                                        modification,
-                                                                                                        true ) )
-                                                                         .build() );
-                           }
-                           catch ( RemoteException e )
-                           {
-                              ok = false;
-                           }
-                        }
-                     }
-                     
-                     if ( ok )
-                        // Update the entity itself
-                        operations.add( ContentProviderOperation.newUpdate( modification.getEntityUri() )
-                                                                .withValue( modification.getColName(),
-                                                                            modification.getNewValue() )
-                                                                .build() );
-                  }
-                  
-                  // Apply the collected operations in a bulk.
-                  if ( ok && operations.size() > 0 )
-                     contentResolver.applyBatch( Rtm.AUTHORITY, operations );
-                  
-                  if ( ok )
-                     transactionalAccess.setTransactionSuccessful();
-               }
-               catch ( Exception e )
-               {
-                  Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
-                  ok = false;
-               }
-               finally
-               {
-                  transactionalAccess.endTransaction();
-               }
-            }
-         }
-         else
-         {
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+               // Update the entity itself
+               operations.add( ContentProviderOperation.newUpdate( modification.getEntityUri() )
+                                                       .withValue( modification.getColName(),
+                                                                   modification.getNewValue() )
+                                                       .build() );
          }
          
-         if ( client != null )
-            client.release();
+         // Apply the collected operations in a bulk.
+         if ( ok && operations.size() > 0 )
+         {
+            try
+            {
+               client.applyBatch( operations );
+            }
+            catch ( RemoteException e )
+            {
+               Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+               ok = false;
+            }
+            catch ( OperationApplicationException e )
+            {
+               Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+               ok = false;
+            }
+         }
       }
+      else
+      {
+         Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+      }
+      
+      if ( client != null )
+         client.release();
       
       return ok;
    }

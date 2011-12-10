@@ -35,18 +35,13 @@ import dev.drsoran.provider.Rtm.Lists;
 
 public class TasksListActivity extends AbstractFullDetailedTasksListActivity
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TasksListActivity.class.getSimpleName();
-   
-   
    private static class OptionsMenu
    {
       public final static int DELETE_LIST = R.id.menu_delete_list;
    }
    
    
-
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -66,8 +61,8 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -83,10 +78,10 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       }
    }
    
-
-
+   
+   
    @Override
-   protected void handleDeleteElementDialogClick( int which )
+   protected void handleDeleteElementDialogClick( String tag, int which )
    {
       if ( which == Dialog.BUTTON_POSITIVE )
       {

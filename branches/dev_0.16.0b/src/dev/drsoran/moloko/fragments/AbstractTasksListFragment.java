@@ -61,11 +61,6 @@ import dev.drsoran.rtm.Task;
 public abstract class AbstractTasksListFragment< T extends Task > extends
          MolokoListFragment< List< T > > implements IRtmAccessLevelAware
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + AbstractTasksListFragment.class.getSimpleName();
-   
-   
    public static class Config
    {
       public final static String FILTER = "filter";
@@ -73,7 +68,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       public final static String TASK_SORT_ORDER = "task_sort_order";
    }
    
-
+   
    protected static class OptionsMenu
    {
       public final static int SORT = R.id.menu_sort;
@@ -87,7 +82,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       public final static int SETTINGS = R.id.menu_settings;
    }
    
-
+   
    protected static class OptionsMenuGroup
    {
       public final static int SORT = R.id.menu_group_sort;
@@ -100,7 +95,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    private ITasksListFragmentListener listener;
    
    
-
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -112,8 +107,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          listener = new NullTasksListFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -121,8 +116,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -131,15 +126,15 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       setHasOptionsMenu( true );
    }
    
-
-
+   
+   
    protected CharSequence getEmptyListText()
    {
       return getString( R.string.abstaskslist_no_tasks );
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -153,8 +148,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                                            configuration.getInt( Config.TASK_SORT_ORDER ) ) );
    }
    
-
-
+   
+   
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -165,8 +160,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       bundle.putInt( Config.TASK_SORT_ORDER, getDefaultTaskSort() );
    }
    
-
-
+   
+   
    @Override
    public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
@@ -174,8 +169,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          getFragmentActivity().invalidateOptionsMenu();
    }
    
-
-
+   
+   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -189,8 +184,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    @Override
    public final void onPrepareOptionsMenu( Menu menu )
    {
@@ -203,8 +198,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -230,8 +225,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    protected SubMenu createTasksSortSubMenu( Menu menu )
    {
       SubMenu subMenu = null;
@@ -269,8 +264,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       return subMenu;
    }
    
-
-
+   
+   
    protected void initializeTasksSortSubMenu( SubMenu subMenu,
                                               int currentTaskSort )
    {
@@ -296,31 +291,31 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
       listener.onOpenTask( position );
    }
    
-
-
+   
+   
    protected void resortTasks( int newTaskSort )
    {
       if ( shouldResortTasks( newTaskSort ) )
          listener.onTaskSortChanged( newTaskSort );
    }
    
-
-
+   
+   
    public IFilter getFilter()
    {
       return configuration.getParcelable( Config.FILTER );
    }
    
-
-
+   
+   
    public RtmSmartFilter getRtmSmartFilter()
    {
       final IFilter filter = getFilter();
@@ -329,44 +324,44 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                                                  : null;
    }
    
-
-
+   
+   
    public boolean hasTasks()
    {
       return getListAdapter() != null && getListAdapter().getCount() > 0;
    }
    
-
-
+   
+   
    public boolean hasMultipleTasks()
    {
       return getListAdapter() != null && getListAdapter().getCount() > 1;
    }
    
-
-
+   
+   
    @SuppressWarnings( "unchecked" )
    public T getTask( int pos )
    {
       return (T) getListAdapter().getItem( pos );
    }
    
-
-
+   
+   
    public int getTaskPos( View view )
    {
       return getListView().getPositionForView( view );
    }
    
-
-
+   
+   
    public T getTask( View view )
    {
       return getTask( getTaskPos( view ) );
    }
    
-
-
+   
+   
    public void reload()
    {
       getLoaderManager().restartLoader( TASKS_LOADER_ID,
@@ -374,29 +369,29 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                                         this );
    }
    
-
-
+   
+   
    public int getTaskSortConfiguration()
    {
       return configuration.getInt( Config.TASK_SORT_ORDER );
    }
    
-
-
+   
+   
    public boolean shouldResortTasks( int taskSort )
    {
       return getTaskSortConfiguration() != taskSort;
    }
    
-
-
+   
+   
    protected String resolveTaskSortToSqlite( int taskSort )
    {
       return Queries.resolveTaskSortToSqlite( taskSort );
    }
    
-
-
+   
+   
    public void showError( CharSequence errorMessage )
    {
       final TextView errorTextView = prepareErrorViewAndGetMessageView();
@@ -406,8 +401,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       getLoaderManager().destroyLoader( TASKS_LOADER_ID );
    }
    
-
-
+   
+   
    public void showError( Spanned errorMessage )
    {
       final TextView errorTextView = prepareErrorViewAndGetMessageView();
@@ -417,8 +412,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       getLoaderManager().destroyLoader( TASKS_LOADER_ID );
    }
    
-
-
+   
+   
    @Override
    public void onLoadFinished( Loader< List< T >> loader, List< T > data )
    {
@@ -427,8 +422,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       invalidateOptionsMenu();
    }
    
-
-
+   
+   
    @Override
    public void onLoaderReset( Loader< List< T >> loader )
    {
@@ -437,16 +432,16 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       invalidateOptionsMenu();
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
       return TASKS_LOADER_ID;
    }
    
-
-
+   
+   
    @Override
    public int getSettingsMask()
    {
@@ -454,24 +449,24 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          | IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_task );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapterForResult( List< T > result )
    {
       return createListAdapterForResult( result, getFilter() );
    }
    
-
-
+   
+   
    private TitleWithTextLayout getErrorView()
    {
       View errorView = null;
@@ -482,8 +477,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       return (TitleWithTextLayout) errorView;
    }
    
-
-
+   
+   
    private void showErrorView( boolean show )
    {
       final View errorView = getErrorView();
@@ -491,8 +486,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          errorView.setVisibility( show ? View.VISIBLE : View.GONE );
    }
    
-
-
+   
+   
    private TextView prepareErrorViewAndGetMessageView()
    {
       TextView errorTextView = null;
@@ -511,16 +506,16 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       return errorTextView;
    }
    
-
-
+   
+   
    public abstract Intent newDefaultIntent();
    
-
-
+   
+   
    protected abstract int getDefaultTaskSort();
    
-
-
+   
+   
    protected abstract ListAdapter createListAdapterForResult( List< T > result,
                                                               IFilter filter );
 }

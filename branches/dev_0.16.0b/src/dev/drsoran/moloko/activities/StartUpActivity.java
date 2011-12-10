@@ -25,9 +25,7 @@ package dev.drsoran.moloko.activities;
 import android.accounts.Account;
 import android.app.Dialog;
 import android.content.ContentProviderClient;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -66,7 +64,7 @@ public class StartUpActivity extends MolokoFragmentActivity
    private int stateIndex = 0;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -81,8 +79,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       reEvaluateCurrentState();
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -91,8 +89,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       super.onDestroy();
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -101,8 +99,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       outState.putInt( STATE_INDEX_KEY, stateIndex );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle savedInstanceState )
    {
@@ -113,19 +111,33 @@ public class StartUpActivity extends MolokoFragmentActivity
       reEvaluateCurrentState();
    }
    
-
-
+   
+   
    @Override
-   public void onAlertDialogFragmentClick( int dialogId, int which )
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
    {
       if ( dialogId == R.id.dlg_no_account && which == Dialog.BUTTON_NEGATIVE )
+      {
          switchToNextState();
+      }
+      else if ( dialogId == R.id.dlg_startup_default_list_not_exists
+         && which == Dialog.BUTTON_POSITIVE )
+      {
+         final Settings settings = MolokoApp.getSettings();
+         
+         settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
+         settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+         
+         switchToNextState();
+      }
       else
-         super.onAlertDialogFragmentClick( dialogId, which );
+      {
+         super.onAlertDialogFragmentClick( dialogId, tag, which );
+      }
    }
    
-
-
+   
+   
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -135,8 +147,8 @@ public class StartUpActivity extends MolokoFragmentActivity
          super.onActivityResult( requestCode, resultCode, data );
    }
    
-
-
+   
+   
    private void checkAccount()
    {
       boolean switchToNextState = true;
@@ -152,8 +164,8 @@ public class StartUpActivity extends MolokoFragmentActivity
          switchToNextState();
    }
    
-
-
+   
+   
    private void determineStartupView()
    {
       final Settings settings = MolokoApp.getSettings();
@@ -171,25 +183,11 @@ public class StartUpActivity extends MolokoFragmentActivity
             {
                if ( !existsList( defaultListId ) )
                {
-                  new AlertDialogFragment.Builder().setTitle( getString( R.string.dlg_missing_def_list_title ) )
-                                                   .setIcon( R.drawable.ic_prefs_info )
-                                                   .setMessage( getString( R.string.dlg_missing_def_list_text ) )
-                                                   .setNeutralButton( R.string.btn_continue,
-                                                                      new OnClickListener()
-                                                                      {
-                                                                         @Override
-                                                                         public void onClick( DialogInterface dialog,
-                                                                                              int which )
-                                                                         {
-                                                                            final Settings settings = MolokoApp.getSettings();
-                                                                            
-                                                                            settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-                                                                            settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
-                                                                            
-                                                                            switchToNextState();
-                                                                         }
-                                                                      } )
-                                                   .show( this );
+                  new AlertDialogFragment.Builder( R.id.dlg_startup_default_list_not_exists ).setTitle( getString( R.string.dlg_missing_def_list_title ) )
+                                                                                             .setIcon( R.drawable.ic_prefs_info )
+                                                                                             .setMessage( getString( R.string.dlg_missing_def_list_text ) )
+                                                                                             .setNeutralButton( R.string.btn_continue )
+                                                                                             .show( this );
                }
             }
             catch ( RemoteException e )
@@ -208,8 +206,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       }
    }
    
-
-
+   
+   
    private void onStartUpCompleted()
    {
       final int startUpView = MolokoApp.getSettings().getStartupView();
@@ -240,8 +238,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       finish();
    }
    
-
-
+   
+   
    private void switchToNextState()
    {
       if ( stateIndex + 1 < STATE_SEQUENCE.length )
@@ -255,15 +253,15 @@ public class StartUpActivity extends MolokoFragmentActivity
       }
    }
    
-
-
+   
+   
    private void reEvaluateCurrentState()
    {
       handler.sendEmptyMessage( MSG_STATE_CHANGED );
    }
    
-
-
+   
+   
    private boolean existsList( String id ) throws RemoteException
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
@@ -271,8 +269,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       return client != null && Queries.exists( client, Lists.CONTENT_URI, id );
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {

@@ -80,7 +80,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( RtmList list,
                                                        boolean withId )
    {
@@ -126,8 +126,8 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static RtmList getList( ContentProviderClient client, String id )
    {
       RtmList list = null;
@@ -157,8 +157,8 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       return list;
    }
    
-
-
+   
+   
    public final static RtmList getListByName( ContentProviderClient client,
                                               String name )
    {
@@ -189,8 +189,8 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       return list;
    }
    
-
-
+   
+   
    public final static RtmLists getAllLists( ContentProviderClient client,
                                              String selection )
    {
@@ -239,8 +239,8 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       return lists;
    }
    
-
-
+   
+   
    public final static List< RtmList > getLocalCreatedLists( ContentProviderClient client )
    {
       List< RtmList > lists = null;
@@ -302,8 +302,8 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       return lists;
    }
    
-
-
+   
+   
    public final static int getDeletedListsCount( ContentProviderClient client )
    {
       int cnt = -1;
@@ -333,54 +333,37 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       return cnt;
    }
    
-
-
-   public final static ContentProviderOperation insertLocalCreatedList( ContentProviderClient client,
-                                                                        RtmList list,
-                                                                        NewRtmListId outNewId )
+   
+   
+   public final static NewRtmListId createNewListId( ContentProviderClient client )
    {
-      ContentProviderOperation operation = null;
+      final NewRtmListId newId = new NewRtmListId();
+      newId.rtmListId = Queries.getNextId( client, Lists.CONTENT_URI );
       
-      boolean ok = client != null;
-      NewRtmListId newId = null;
-      
-      if ( ok )
-      {
-         newId = new NewRtmListId();
-         newId.rtmListId = Queries.getNextId( client, Lists.CONTENT_URI );
-         ok = newId.rtmListId != null;
-      }
-      
-      if ( ok )
-      {
-         operation = ContentProviderOperation.newInsert( Lists.CONTENT_URI )
-                                             .withValues( getContentValues( new RtmList( newId.rtmListId,
-                                                                                         list.getName(),
-                                                                                         list.getCreatedDate(),
-                                                                                         list.getModifiedDate(),
-                                                                                         list.getDeletedDate(),
-                                                                                         list.getLocked(),
-                                                                                         list.getArchived(),
-                                                                                         list.getPosition(),
-                                                                                         list.getSmartFilter() ),
-                                                                            true ) )
-                                             .build();
-         if ( outNewId != null )
-            outNewId.rtmListId = newId.rtmListId;
-      }
-      
-      return operation;
+      if ( newId.rtmListId != null )
+         return newId;
+      else
+         return null;
    }
    
-
-
+   
+   
+   public final static ContentProviderOperation insertLocalCreatedList( RtmList list )
+   {
+      return ContentProviderOperation.newInsert( Lists.CONTENT_URI )
+                                     .withValues( getContentValues( list, true ) )
+                                     .build();
+   }
+   
+   
+   
    public RtmListsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Lists.PATH );
    }
    
-
-
+   
+   
    @Override
    public Object getElement( Uri uri )
    {
@@ -390,8 +373,9 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       return null;
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Lists._ID
@@ -437,65 +421,68 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
        * " BEGIN SELECT RAISE ( ABORT, 'A locked list must always exist' ) WHERE EXISTS ( SELECT 1 FROM " + path +
        * " WHERE old." + Lists.LOCKED + " != 0 ); END;" );
        */
-
+      
       createModificationsTrigger( db );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Lists.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Lists.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Lists.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Lists.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-
-
+   
+   
    private static RtmList createList( Cursor c )
    {
       RtmSmartFilter filter = null;

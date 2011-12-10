@@ -36,21 +36,20 @@ import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
-import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
@@ -65,13 +64,8 @@ import dev.drsoran.rtm.Task;
 
 
 public class FullDetailedTasksListFragment extends
-         AbstractTasksListFragment< Task > implements View.OnClickListener,
-         IOnSettingsChangedListener
+         AbstractTasksListFragment< Task > implements View.OnClickListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + FullDetailedTasksListFragment.class.getSimpleName();
-   
    private final static IntentFilter INTENT_FILTER;
    
    static
@@ -95,7 +89,7 @@ public class FullDetailedTasksListFragment extends
       public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
    }
    
-
+   
    private final static class CtxtMenu
    {
       public final static int OPEN_TASK = R.id.ctx_menu_open_task;
@@ -120,7 +114,7 @@ public class FullDetailedTasksListFragment extends
    private IFullDetailedTasksListFragmentListener listener;
    
    
-
+   
    public static FullDetailedTasksListFragment newInstance( Bundle configuration )
    {
       final FullDetailedTasksListFragment fragment = new FullDetailedTasksListFragment();
@@ -130,23 +124,23 @@ public class FullDetailedTasksListFragment extends
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -158,8 +152,8 @@ public class FullDetailedTasksListFragment extends
          listener = new NullTasksListFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -167,8 +161,8 @@ public class FullDetailedTasksListFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -177,8 +171,8 @@ public class FullDetailedTasksListFragment extends
       registerForContextMenu( getListView() );
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -187,8 +181,8 @@ public class FullDetailedTasksListFragment extends
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-
-
+   
+   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -210,8 +204,8 @@ public class FullDetailedTasksListFragment extends
                                MenuItem.SHOW_AS_ACTION_NEVER );
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -226,8 +220,8 @@ public class FullDetailedTasksListFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -315,8 +309,8 @@ public class FullDetailedTasksListFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
@@ -364,8 +358,8 @@ public class FullDetailedTasksListFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    public void onClick( View view )
    {
@@ -391,47 +385,47 @@ public class FullDetailedTasksListFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings().getTaskSort();
    }
    
-
-
+   
+   
    private void onCompleteTask( int pos )
    {
       final Task task = getTask( pos );
-      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( getFragmentActivity(),
-                                                                                                       task,
-                                                                                                       task.getCompleted() == null );
-      listener.applyModifications( modifications.first, modifications.second );
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( getFragmentActivity(),
+                                                                                                                     task,
+                                                                                                                     task.getCompleted() == null );
+      applyModifications( modifications.first, modifications.second );
    }
    
-
-
+   
+   
    private void onPostponeTask( int pos )
    {
       final Task task = getTask( pos );
-      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( getFragmentActivity(),
-                                                                                                  task );
-      listener.applyModifications( modifications.first, modifications.second );
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( getFragmentActivity(),
+                                                                                                                task );
+      applyModifications( modifications.first, modifications.second );
    }
    
-
-
+   
+   
    private void onDeleteTask( int pos )
    {
       final Task task = getTask( pos );
-      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( getFragmentActivity(),
-                                                                                                task );
-      listener.applyModifications( modifications.first, modifications.second );
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( getFragmentActivity(),
+                                                                                                              task );
+      applyModifications( modifications.first, modifications.second );
    }
    
-
-
+   
+   
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
@@ -447,8 +441,8 @@ public class FullDetailedTasksListFragment extends
       return loader;
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
@@ -456,8 +450,8 @@ public class FullDetailedTasksListFragment extends
                                                        R.layout.fulldetailed_taskslist_listitem );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapterForResult( List< Task > result,
                                                      IFilter filter )
@@ -471,8 +465,8 @@ public class FullDetailedTasksListFragment extends
                                                        this );
    }
    
-
-
+   
+   
    @Override
    public FullDetailedTasksListFragmentAdapter getListAdapter()
    {

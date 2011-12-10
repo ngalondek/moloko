@@ -46,7 +46,7 @@ public class DueEditText extends ClearableEditText
    
    public final static String EDIT_DUE_TEXT = "edit_due_text";
    
-   private MolokoCalendar dueCalendar = MolokoCalendar.getDatelessAndTimelessInstance();
+   private MolokoCalendar dueCalendar = getDatelessAndTimelessInstance();
    
    private boolean isSupportingFreeTextInput;
    
@@ -231,7 +231,7 @@ public class DueEditText extends ClearableEditText
       }
       else
       {
-         cal = MolokoCalendar.getDatelessAndTimelessInstance();
+         cal = getDatelessAndTimelessInstance();
       }
       
       return cal;
@@ -303,5 +303,15 @@ public class DueEditText extends ClearableEditText
                                            .getActiveResourcesLocale();
          isSupportingFreeTextInput = DateParserFactory.existsDateParserWithMatchingLocale( resLocale );
       }
+   }
+   
+   
+   
+   private MolokoCalendar getDatelessAndTimelessInstance()
+   {
+      if ( !isInEditMode() )
+         return MolokoCalendar.getDatelessAndTimelessInstance();
+      else
+         return null;
    }
 }

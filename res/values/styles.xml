@@ -15,6 +15,9 @@
 	<!-- *********** -->
 	<!-- Application -->
 	
+   <style name="WindowTitleStyle" parent="@android:style/TextAppearance.WindowTitle">
+   </style>
+   
 	<style name="WindowTitleBackgroundStyle">
       <item name="android:background">@color/app_default_title_bgnd</item>
       <item name="android:paddingLeft">5dip</item>
@@ -48,60 +51,29 @@
    <style name="No_List_Elements_Text" parent="@android:style/TextAppearance.Medium">
       <item name="android:textColor">@color/priority_2</item>
       <item name="android:textStyle">italic|bold</item>
-   </style>
-   
-   <!-- TitleBar -->
-   
-	<style name="TitleBarStyle">
-		<item name="android:background">@drawable/app_actionbar_bgnd</item>
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">@dimen/app_actionbar_height</item>
-		<item name="android:minHeight">@dimen/app_actionbar_height</item>
-	</style>
-
-   <style name="TitleBarTextStyle">
-      <item name="android:textSize">@dimen/app_actionbar_text_size</item>
-      <item name="android:textColor">@color/app_actionbar_text_color</item>
-   </style>
-
-	<style name="TitleBarSeparatorStyle">
-		<item name="android:background">@color/app_titlebar_separator</item>
-      <item name="android:layout_width">1dip</item>
-      <item name="android:layout_height">fill_parent</item>
-	</style>
-
-	<style name="TitleBarButtonStyle">
-		<item name="android:background">@drawable/app_titlebar_btn_bgnd</item>
-      <item name="android:layout_height">fill_parent</item>
-      <item name="android:layout_width">@dimen/app_titlebar_btn_width</item>
-      <item name="android:scaleType">centerInside</item>
-	</style>
+   </style>      
    
    <!-- ListStyle -->
-      
-   <style name="ListViewStyle" parent="@android:style/Widget.ListView">
-      <item name="android:background">@color/app_default_listView_bgnd</item>
-      <item name="android:cacheColorHint">@color/app_default_listView_bgnd</item>
-   </style>
    
+   <style name="ForceWhiteListViewStyle" parent="@android:style/Widget.ListView">
+      <item name="android:background">@android:color/white</item>
+      <item name="android:cacheColorHint">@android:color/white</item>
+   </style>
+      
    <style name="ExpandableListViewStyle" parent="@android:style/Widget.ExpandableListView">
-      <item name="android:background">@color/app_default_listView_bgnd</item>
-      <item name="android:cacheColorHint">@color/app_default_listView_bgnd</item>
       <item name="android:childDivider">@android:drawable/divider_horizontal_bright</item>
       <item name="android:groupIndicator">@null</item>
-   </style>
-
-
-   <!-- GridViewStyle -->
+   </style>   
    
-   <style name="GridViewStyle" parent="@android:style/Widget.GridView">
-      <item name="android:background">@color/app_default_listView_bgnd</item>
-      <item name="android:cacheColorHint">@color/app_default_listView_bgnd</item>
-   </style>
-
    <!-- TextViewStyle -->
    
    <style name="TextViewStyle" parent="@android:style/Widget.TextView">
+      <item name="android:textColor">?android:attr/textColorPrimary</item>
+   </style>
+   
+   <!-- AutocompleteTextViewStyle -->
+   
+   <style name="AutoCompleteTextViewStyle" parent="@android:style/Widget.AutoCompleteTextView">
       <item name="android:textColor">?android:attr/textColorPrimary</item>
    </style>
       

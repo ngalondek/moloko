@@ -28,9 +28,7 @@ import android.app.Dialog;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
+import android.text.Spanned;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
@@ -47,46 +45,31 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
       return fragment;
    }
    
-
-
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      setStyle( STYLE_NORMAL, android.R.style.Theme_Dialog );
-   }
    
-
-
+   
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
       final Activity context = getFragmentActivity();
       
-      final View content = LayoutInflater.from( context )
-                                         .inflate( R.layout.about_moloko_dialog_fragment,
-                                                   null );
-      final TextView aboutText = (TextView) content.findViewById( android.R.id.content );
+      Spanned message = null;
       
       try
       {
-         aboutText.setText( Html.fromHtml( context.getString( R.string.moloko_about_info,
-                                                              context.getPackageManager()
-                                                                     .getPackageInfo( context.getPackageName(),
-                                                                                      0 ).versionName ) ) );
-         aboutText.setTextAppearance( context,
-                                      android.R.style.TextAppearance_Small );
+         message = Html.fromHtml( context.getString( R.string.moloko_about_info,
+                                                     context.getPackageManager()
+                                                            .getPackageInfo( context.getPackageName(),
+                                                                             0 ).versionName ) );
       }
       catch ( NameNotFoundException e )
       {
       }
       
-      return new AlertDialog.Builder( context ).setTitle( context.getString( R.string.moloko_about_text ) )
-                                               .setIcon( R.drawable.ic_prefs_info )
-                                               .setPositiveButton( context.getString( R.string.phr_ok ),
-                                                                   null )
-                                               .setView( content )
+      return new AlertDialog.Builder( context ).setIcon( R.drawable.ic_launcher )
+                                               .setTitle( context.getString( R.string.moloko_about_text ) )
+                                               .setMessage( message )
+                                               .setNeutralButton( context.getString( R.string.phr_ok ),
+                                                                  null )
                                                .create();
    }
 }

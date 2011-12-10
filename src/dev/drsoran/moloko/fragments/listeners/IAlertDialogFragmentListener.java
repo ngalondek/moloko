@@ -24,5 +24,5 @@ package dev.drsoran.moloko.fragments.listeners;
 
 public interface IAlertDialogFragmentListener
 {
-   void onAlertDialogFragmentClick( int dialogId, int which );
+   void onAlertDialogFragmentClick( int dialogId, String tag, int which );
 }

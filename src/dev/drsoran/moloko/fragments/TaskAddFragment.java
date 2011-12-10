@@ -27,10 +27,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
@@ -38,26 +35,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.CreationsProviderPart;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
-import dev.drsoran.moloko.util.AsyncInsertEntity;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ParcelableDate;
@@ -118,7 +112,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    }
    
    
-
+   
    public final static TaskAddFragment newInstance( Bundle config )
    {
       final TaskAddFragment fragment = new TaskAddFragment();
@@ -128,15 +122,15 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    protected Bundle getInitialValues()
    {
@@ -184,8 +178,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return initialValues;
    }
    
-
-
+   
+   
    @Override
    protected void initializeHeadSection()
    {
@@ -201,8 +195,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                                  getString( R.string.app_name ) ) );
    }
    
-
-
+   
+   
    @Override
    protected void registerInputListeners()
    {
@@ -219,8 +213,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                       } );
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -272,8 +266,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                                   config.getString( Config.NEW_TASK_URI ) );
    }
    
-
-
+   
+   
    @Override
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -283,8 +277,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                             ParcelableDate.newInstanceIfNotNull( new Date() ) );
    }
    
-
-
+   
+   
    private ParcelableDate getConfiguredCreatedDateAssertNotNull()
    {
       final ParcelableDate date = configuration.getParcelable( Config.CREATED_DATE );
@@ -295,22 +289,22 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return date;
    }
    
-
-
+   
+   
    private Uri getConfiguredNewTaskUri()
    {
       return configuration.getParcelable( Config.NEW_TASK_URI );
    }
    
-
-
+   
+   
    private void configuredNewTaskUri( Uri newTaskUri )
    {
       configuration.putParcelable( Config.NEW_TASK_URI, newTaskUri );
    }
    
-
-
+   
+   
    private String getConfiguredListId()
    {
       if ( configuration.containsKey( Tasks.LIST_ID ) )
@@ -322,8 +316,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
          return null;
    }
    
-
-
+   
+   
    private String getConfiguredLocationId()
    {
       if ( configuration.containsKey( Tasks.LOCATION_ID ) )
@@ -335,16 +329,16 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
          return null;
    }
    
-
-
+   
+   
    private List< String > getConfiguredTags()
    {
       return new ArrayList< String >( Arrays.asList( TextUtils.split( Strings.emptyIfNull( configuration.getString( Tasks.TAGS ) ),
                                                                       Tasks.TAGS_SEPARATOR ) ) );
    }
    
-
-
+   
+   
    /**
     * @return the list ID of the last removed list name
     */
@@ -366,8 +360,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return listId;
    }
    
-
-
+   
+   
    private String getIdByName( List< Pair< String, String >> idsToNames,
                                String name )
    {
@@ -384,8 +378,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return res;
    }
    
-
-
+   
+   
    @Override
    protected boolean saveChanges()
    {
@@ -393,95 +387,30 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       
       if ( ok )
       {
-         // Apply the modifications to the DB.
-         // set the taskseries modification time to now
-         Uri newTaskUri = null;
+         final Task newTask = newTask();
          
-         try
-         {
-            final Task newTask = newTask();
-            newTaskUri = new AsyncInsertEntity< Task >( getFragmentActivity() )
-            {
-               @Override
-               protected int getProgressMessageId()
-               {
-                  return R.string.toast_insert_task;
-               }
-               
-
-
-               @Override
-               protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
-                                                                               Task entity )
-               {
-                  final NewTaskIds newIds = new NewTaskIds( null, null );
-                  final List< ContentProviderOperation > operations = TasksProviderPart.insertLocalCreatedTask( contentResolver,
-                                                                                                                entity,
-                                                                                                                newIds );
-                  
-                  operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                               newIds.taskSeriesId ),
-                                                                     entity.getCreated()
-                                                                           .getTime() ) );
-                  operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                               newIds.rawTaskId ),
-                                                                     entity.getCreated()
-                                                                           .getTime() ) );
-                  return operations;
-               }
-               
-
-
-               @Override
-               protected Uri getContentUri()
-               {
-                  return Tasks.CONTENT_URI;
-               }
-               
-
-
-               @Override
-               protected String getPath()
-               {
-                  return RawTasks.PATH;
-               }
-            }.execute( newTask ).get();
-         }
-         catch ( InterruptedException e )
-         {
-            Log.e( LogUtils.toTag( TaskAddFragment.class ),
-                   "Failed to insert new task",
-                   e );
-            ok = false;
-         }
-         catch ( ExecutionException e )
-         {
-            Log.e( LogUtils.toTag( TaskAddFragment.class ),
-                   "Failed to insert new task",
-                   e );
-            ok = false;
-         }
+         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.insertTask( getFragmentActivity(),
+                                                                                                                 newTask );
+         ok = applyModifications( modifications );
          
          if ( ok )
-            configuredNewTaskUri( newTaskUri );
-         else
-            Toast.makeText( getFragmentActivity(),
-                            R.string.toast_insert_task_fail,
-                            Toast.LENGTH_LONG ).show();
+            configuredNewTaskUri( Queries.contentUriWithId( Tasks.CONTENT_URI,
+                                                            newTask.getId() ) );
       }
       
       return ok;
    }
    
-
-
+   
+   
    private final Task newTask()
    {
+      final NewTaskIds newTaskIds = createNewTaskIds();
       final Date created = getConfiguredCreatedDateAssertNotNull().getDate();
       final long dueDate = getCurrentValue( Tasks.DUE_DATE, Long.class );
       
-      return new Task( (String) null,
-                       (String) null,
+      return new Task( newTaskIds.rawTaskId,
+                       newTaskIds.taskSeriesId,
                        (String) null,
                        false,
                        created,
@@ -514,8 +443,16 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                        Strings.EMPTY_STRING );
    }
    
-
-
+   
+   
+   private NewTaskIds createNewTaskIds()
+   {
+      return TasksProviderPart.createNewTaskIds( getFragmentActivity().getContentResolver()
+                                                                      .acquireContentProviderClient( Tasks.CONTENT_URI ) );
+   }
+   
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
@@ -537,8 +474,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       }
    }
    
-
-
+   
+   
    @Override
    protected TextView getCommitTextView()
    {

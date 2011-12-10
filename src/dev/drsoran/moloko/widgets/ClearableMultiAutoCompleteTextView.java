@@ -35,24 +35,22 @@ public class ClearableMultiAutoCompleteTextView extends
    private PressCompoundDrawable clearButton;
    
    
-
+   
    public ClearableMultiAutoCompleteTextView( Context context )
    {
-      super( context );
-      init();
+      this( context, null, android.R.attr.autoCompleteTextViewStyle );
    }
    
-
-
+   
+   
    public ClearableMultiAutoCompleteTextView( Context context,
       AttributeSet attrs )
    {
-      super( context, attrs, android.R.attr.autoCompleteTextViewStyle );
-      init();
+      this( context, attrs, android.R.attr.autoCompleteTextViewStyle );
    }
    
-
-
+   
+   
    public ClearableMultiAutoCompleteTextView( Context context,
       AttributeSet attrs, int defStyle )
    {
@@ -60,15 +58,15 @@ public class ClearableMultiAutoCompleteTextView extends
       init();
    }
    
-
-
+   
+   
    public String getTextTrimmed()
    {
       return super.getText().toString().trim();
    }
    
-
-
+   
+   
    @Override
    public boolean onTouchEvent( MotionEvent event )
    {
@@ -78,8 +76,8 @@ public class ClearableMultiAutoCompleteTextView extends
          return false;
    }
    
-
-
+   
+   
    @Override
    protected int[] onCreateDrawableState( int extraSpace )
    {
@@ -101,8 +99,8 @@ public class ClearableMultiAutoCompleteTextView extends
       return super.onCreateDrawableState( extraSpace );
    }
    
-
-
+   
+   
    private void init()
    {
       clearButton = new PressCompoundDrawable( this );

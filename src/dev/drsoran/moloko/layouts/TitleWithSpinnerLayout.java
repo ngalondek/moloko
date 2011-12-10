@@ -258,28 +258,26 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
                                                                R.styleable.TitleWithSpinner,
                                                                R.attr.titleWithSpinnerStyle,
                                                                0 );
-      if ( !isInEditMode() )
+      
+      final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
+                                                 -1 );
+      
+      if ( entriesId != -1 )
       {
-         final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
-                                                    -1 );
+         final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
+                                                                                       entriesId,
+                                                                                       android.R.layout.simple_spinner_item );
+         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
          
-         if ( entriesId != -1 )
-         {
-            final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
-                                                                                          entriesId,
-                                                                                          android.R.layout.simple_spinner_item );
-            adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-            
-            setAdapter( adapter );
-         }
-         
-         final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
-                                                   -1 );
-         
-         if ( valuesId != -1 )
-         {
-            values = context.getResources().getStringArray( valuesId );
-         }
+         setAdapter( adapter );
+      }
+      
+      final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
+                                                -1 );
+      
+      if ( valuesId != -1 )
+      {
+         values = context.getResources().getStringArray( valuesId );
       }
       
       array.recycle();

@@ -22,30 +22,72 @@
 
 package dev.drsoran.moloko.fragments.base;
 
+import android.app.Dialog;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
 
 
 public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          MolokoDialogFragment implements IEditFragment< T >
 {
+   private IEditFragmentListener listener;
    
-   public final ViewGroup getContentView()
+   private ViewGroup dialogView;
+   
+   
+   
+   @Override
+   public void onAttach( FragmentActivity activity )
    {
-      final View root = getView();
+      super.onAttach( activity );
       
-      if ( root != null )
-         return (ViewGroup) root.findViewById( android.R.id.content );
+      if ( activity instanceof IEditFragmentListener )
+         listener = (IEditFragmentListener) activity;
       else
-         return null;
+         listener = null;
    }
    
-
-
+   
+   
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      listener = null;
+   }
+   
+   
+   
+   @Override
+   public final Dialog onCreateDialog( Bundle savedInstanceState )
+   {
+      if ( savedInstanceState != null )
+         configure( savedInstanceState );
+      
+      dialogView = createContent( LayoutInflater.from( getFragmentActivity() ) );
+      final Dialog dialog = createDialog( dialogView );
+      
+      return dialog;
+   }
+   
+   
+   
+   public View getDialogView()
+   {
+      return dialogView;
+   }
+   
+   
+   
    @Override
    public final boolean onFinishEditing()
    {
@@ -53,15 +95,7 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       
       if ( ok && hasChanges() )
       {
-         if ( !hasWritableDatabaseAccess() )
-         {
-            showOnlyReadableDatabaseAccessDialog();
-            ok = false;
-         }
-         else
-         {
-            ok = saveChanges();
-         }
+         ok = saveChanges();
       }
       
       if ( ok )
@@ -70,23 +104,14 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       return ok;
    }
    
-
-
+   
+   
    @Override
    public final void onCancelEditing()
    {
       if ( hasChanges() )
       {
-         UIUtils.showCancelWithChangesDialog( getFragmentActivity(),
-                                              new Runnable()
-                                              {
-                                                 @Override
-                                                 public void run()
-                                                 {
-                                                    getDialog().cancel();
-                                                 }
-                                              },
-                                              null );
+         requestCancelEditing();
       }
       else
       {
@@ -94,28 +119,47 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       }
    }
    
-
-
+   
+   
    protected boolean validateInput()
    {
       return true;
    }
    
-
-
-   private boolean hasWritableDatabaseAccess()
+   
+   
+   protected boolean applyModifications( ContentProviderActionItemList actionItemList,
+                                         ApplyChangesInfo applyChangesInfo )
    {
-      return AccountUtils.isWriteableAccess( getFragmentActivity() );
+      boolean ok = listener != null;
+      return ok
+         && listener.applyModifications( actionItemList, applyChangesInfo );
    }
    
-
-
-   protected void showOnlyReadableDatabaseAccessDialog()
+   
+   
+   protected void requestCancelEditing()
    {
-      UIUtils.showReadOnlyAccessDialog( getFragmentActivity() );
+      if ( listener != null )
+         listener.requestCancelEditing( getTag() );
    }
    
-
-
+   
+   
+   protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
+   {
+      return applyModifications( modifications.first, modifications.second );
+   }
+   
+   
+   
+   abstract protected ViewGroup createContent( LayoutInflater inflater );
+   
+   
+   
+   abstract protected Dialog createDialog( View fragmentView );
+   
+   
+   
    protected abstract boolean saveChanges();
 }

@@ -82,6 +82,24 @@
    <item
       type="id"
       name="dlg_delete_element" />
+   <item
+      type="id"
+      name="dlg_taskactivity_request_remove_note" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_complete" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_incomplete" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_postpone" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_delete" />
+   <item
+      type="id"
+      name="dlg_startup_default_list_not_exists" />
 
    <!-- Menu group IDs -->
    <item

@@ -385,6 +385,7 @@
    <string name="tasksearchresult_titlebar_error">Wrong syntax</string>
    <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the search syntax.</string>
      <!-- Menus -->
+     <string name="tasksearchresult_menu_add_smart_list">Add smart list</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Clear search history</string>
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Search history has been cleared</string>

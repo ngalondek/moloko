@@ -51,20 +51,6 @@
       <attr name="spinnerEntries" format="reference" />
       <attr name="spinnerValues" format="reference" />
    </declare-styleable>
-   
-	<declare-styleable name="TitleBar">
-      <attr name="titleBarStyle" format="reference" />
-      <attr name="titleBarTextStyle" format="reference" />
-      <attr name="titleBarSeperatorStyle" format="reference" />
-      <attr name="titleBarButtonStyle" format="reference" />
-      <attr name="titleBarText" format="reference|string" />      
-		<attr name="showButton">
-			<flag name="none" value="0" />
-			<flag name="search" value="1" />
-			<flag name="home" value="2" />         
-         <flag name="add_list" value="4" />
-		</attr>
-	</declare-styleable>
 
 	<declare-styleable name="SyncableListPreference">
 		<attr name="syncWithRtmKey" format="reference|string" />

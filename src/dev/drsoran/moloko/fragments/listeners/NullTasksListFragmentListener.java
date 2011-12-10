@@ -24,8 +24,6 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.rtm.Task;
 
 
@@ -40,67 +38,87 @@ public class NullTasksListFragmentListener implements
    {
    }
    
-
-
+   
+   
    @Override
    public void onShowTasksWithTags( List< String > tags )
    {
    }
    
-
-
+   
+   
    @Override
    public void onEditTask( int pos )
    {
    }
    
-
-
+   
+   
    @Override
    public void onOpenList( int pos, String listId )
    {
    }
    
-
-
+   
+   
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
    }
    
-
-
+   
+   
    @Override
    public void onSelectTasks()
    {
    }
    
-
-
+   
+   
    @Override
    public void onOpenTask( int pos )
    {
    }
    
-
-
+   
+   
    @Override
    public void onTaskSortChanged( int newTaskSort )
    {
    }
    
-
-
+   
+   
    @Override
    public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
    }
    
-
-
+   
+   
    @Override
-   public void applyModifications( ModificationSet modificationSet,
-                                   ApplyChangesInfo applyChangesInfo )
+   public void onCompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onIncompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onPostponeSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
    }
 }

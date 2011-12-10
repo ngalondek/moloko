@@ -23,11 +23,15 @@
 package dev.drsoran.moloko.fragments.listeners;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 
 
 public interface IEditFragmentListener
 {
-   void applyModifications( ModificationSet modificationSet,
-                            ApplyChangesInfo applyInfo );
+   boolean applyModifications( ContentProviderActionItemList actionItemList,
+                               ApplyChangesInfo applyInfo );
+   
+   
+   
+   void requestCancelEditing( String fragmentTag );
 }

@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -50,7 +51,7 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
    {
    }
    
-
+   
    private static class OptionsMenu
    {
       public final static int SAVE = R.id.menu_save;
@@ -58,14 +59,14 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       public final static int ABORT = R.id.menu_abort_edit;
    }
    
-
+   
    private enum FinishEditMode
    {
       SAVE, CANCELED
    }
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -84,8 +85,8 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
          createTaskEditMultipleFragment( getIntent().getExtras() );
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -114,8 +115,8 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -138,8 +139,8 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       }
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
@@ -147,36 +148,36 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
          super.onBackPressed();
    }
    
-
-
+   
+   
    @Override
    public void onChangeTags( List< String > tags )
    {
    }
    
-
-
+   
+   
    @Override
    public void onEditDueByPicker()
    {
    }
    
-
-
+   
+   
    @Override
    public void onEditRecurrenceByPicker()
    {
    }
    
-
-
+   
+   
    @Override
    public void onEditEstimateByPicker()
    {
    }
    
-
-
+   
+   
    @Override
    public boolean onFinishTaskEditingByInputMethod()
    {
@@ -189,8 +190,8 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       return false;
    }
    
-
-
+   
+   
    private boolean finishEditing( FinishEditMode how )
    {
       boolean finished = true;
@@ -212,24 +213,24 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       return finished;
    }
    
-
-
+   
+   
    @Override
    protected boolean onFinishActivityByHome()
    {
       return finishEditing( FinishEditMode.CANCELED );
    }
    
-
-
+   
+   
    private boolean saveChanges()
    {
       final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
       return taskEditMultipleFragment.onFinishEditing();
    }
    
-
-
+   
+   
    private boolean cancelChanges()
    {
       final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
@@ -238,16 +239,7 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       if ( taskEditMultipleFragment.hasChanges() )
       {
          finish = false;
-         
-         UIUtils.showCancelWithChangesDialog( this, new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               taskEditMultipleFragment.onCancelEditing();
-               finish();
-            }
-         }, null );
+         UIUtils.showCancelWithChangesDialog( this );
       }
       else
       {
@@ -257,8 +249,22 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       return finish;
    }
    
-
-
+   
+   
+   @Override
+   protected void handleApplyChangesDialogClick( String tag, int which )
+   {
+      if ( which == Dialog.BUTTON_POSITIVE )
+      {
+         final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
+         taskEditMultipleFragment.onCancelEditing();
+         
+         finish();
+      }
+   }
+   
+   
+   
    private void createTaskEditMultipleFragment( Bundle fragmentConfig )
    {
       final Fragment fragment = TaskEditMultipleFragment.newInstance( fragmentConfig );
@@ -269,15 +275,15 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       transaction.commit();
    }
    
-
-
+   
+   
    private TaskEditMultipleFragment getTaskEditMultipleFragment()
    {
       return (TaskEditMultipleFragment) getSupportFragmentManager().findFragmentById( R.id.frag_task_edit_multiple );
    }
    
-
-
+   
+   
    private List< Task > getConfiguredTasksFromIntentConfigAssertNotNull()
    {
       final List< Task > tasks = getIntent().getExtras()
@@ -288,8 +294,8 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       return tasks;
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {

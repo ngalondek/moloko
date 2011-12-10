@@ -35,28 +35,28 @@ public class RtmSmartAddTextView extends ClearableMultiAutoCompleteTextView
    private Tokenizer tokenizer;
    
    
-
+   
    public RtmSmartAddTextView( Context context )
    {
       super( context );
    }
    
-
-
+   
+   
    public RtmSmartAddTextView( Context context, AttributeSet attrs )
    {
       super( context, attrs );
    }
    
-
-
+   
+   
    public RtmSmartAddTextView( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
    }
    
-
-
+   
+   
    @Override
    public void setTokenizer( Tokenizer t )
    {
@@ -64,8 +64,8 @@ public class RtmSmartAddTextView extends ClearableMultiAutoCompleteTextView
       tokenizer = t;
    }
    
-
-
+   
+   
    @Override
    protected void replaceText( CharSequence text )
    {

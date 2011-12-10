@@ -326,6 +326,7 @@
    <string name="tasksearchresult_titlebar_error">Requête invalide</string>
    <string name="tasksearchresult_wrong_syntax_html">La recherche de :&lt;b>\'%1$s\'&lt;/b> ne peut pas être réalisée. Vérifier la requête.</string>
      <!-- Menus -->
+     <string name="tasksearchresult_menu_add_smart_list">Add smart list</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Effacer l\'historique de recherche</string>
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Historique de recherche effacé</string>

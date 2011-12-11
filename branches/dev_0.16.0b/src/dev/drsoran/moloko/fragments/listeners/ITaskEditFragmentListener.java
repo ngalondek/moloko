@@ -40,8 +40,4 @@ public interface ITaskEditFragmentListener
    
    
    void onEditEstimateByPicker();
-   
-   
-   
-   boolean onFinishTaskEditingByInputMethod();
 }

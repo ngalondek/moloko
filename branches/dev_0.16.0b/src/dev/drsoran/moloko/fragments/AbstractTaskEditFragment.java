@@ -34,7 +34,6 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,7 +43,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
@@ -523,31 +521,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          {
          }
       } );
-      
-      final TextView commitTextView = getCommitTextView();
-      if ( commitTextView != null )
-      {
-         commitTextView.setOnEditorActionListener( new OnEditorActionListener()
-         {
-            @Override
-            public boolean onEditorAction( TextView v,
-                                           int actionId,
-                                           KeyEvent event )
-            {
-               if ( UIUtils.hasInputCommitted( actionId ) )
-               {
-                  final boolean finished = listener.onFinishTaskEditingByInputMethod();
-                  
-                  if ( finished )
-                     UIUtils.hideSoftInput( commitTextView );
-                  
-                  return finished;
-               }
-               
-               return false;
-            }
-         } );
-      }
    }
    
    
@@ -1238,13 +1211,13 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected void applyModifications( ModificationSet modificationSet )
+   protected boolean applyModifications( ModificationSet modificationSet )
    {
       final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( getString( R.string.toast_save_task ),
                                                                       getString( R.string.toast_save_task_ok ),
                                                                       getString( R.string.toast_save_task_failed ) );
-      applyModifications( modificationSet.toContentProviderActionItemList(),
-                          applyChangesInfo );
+      return applyModifications( modificationSet.toContentProviderActionItemList(),
+                                 applyChangesInfo );
    }
    
    
@@ -1275,8 +1248,4 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    abstract protected Bundle getInitialValues();
-   
-   
-   
-   abstract protected TextView getCommitTextView();
 }

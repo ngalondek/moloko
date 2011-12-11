@@ -327,7 +327,7 @@
             android:layout_alignLeft="@id/task_edit_desc"
             android:layout_below="@id/task_edit_location"
             android:layout_marginTop="10dip"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionPrevious"
             android:inputType="textUri"
             android:selectAllOnFocus="true"
             moloko:titlePaddingTop="8dip"

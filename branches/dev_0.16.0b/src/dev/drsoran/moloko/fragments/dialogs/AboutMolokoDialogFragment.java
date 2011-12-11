@@ -28,7 +28,6 @@ import android.app.Dialog;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spanned;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
@@ -52,7 +51,7 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
    {
       final Activity context = getFragmentActivity();
       
-      Spanned message = null;
+      CharSequence message = null;
       
       try
       {
@@ -65,11 +64,12 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
       {
       }
       
-      return new AlertDialog.Builder( context ).setIcon( R.drawable.ic_launcher )
-                                               .setTitle( context.getString( R.string.moloko_about_text ) )
-                                               .setMessage( message )
-                                               .setNeutralButton( context.getString( R.string.phr_ok ),
-                                                                  null )
-                                               .create();
+      final Dialog dialog = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_launcher )
+                                                              .setTitle( context.getString( R.string.moloko_about_text ) )
+                                                              .setMessage( message )
+                                                              .setNeutralButton( context.getString( R.string.phr_ok ),
+                                                                                 null )
+                                                              .create();
+      return dialog;
    }
 }

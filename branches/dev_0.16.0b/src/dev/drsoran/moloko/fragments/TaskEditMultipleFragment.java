@@ -37,7 +37,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -61,7 +60,7 @@ public class TaskEditMultipleFragment extends
    private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
    
    
-
+   
    public final static TaskEditMultipleFragment newInstance( Bundle config )
    {
       final TaskEditMultipleFragment fragment = new TaskEditMultipleFragment();
@@ -85,7 +84,7 @@ public class TaskEditMultipleFragment extends
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
    
    
-
+   
    @Override
    protected Bundle getInitialValues()
    {
@@ -107,12 +106,14 @@ public class TaskEditMultipleFragment extends
                                getInitialValue( Tasks.PRIORITY,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.TAGS, getInitialValue( Tasks.TAGS,
-                                                            TAGS_MULTI_VALUE,
-                                                            String.class ) );
-      initialValues.putLong( Tasks.DUE_DATE, getInitialValue( Tasks.DUE_DATE,
-                                                              LONG_MULTI_VALUE,
-                                                              Long.class ) );
+      initialValues.putString( Tasks.TAGS,
+                               getInitialValue( Tasks.TAGS,
+                                                TAGS_MULTI_VALUE,
+                                                String.class ) );
+      initialValues.putLong( Tasks.DUE_DATE,
+                             getInitialValue( Tasks.DUE_DATE,
+                                              LONG_MULTI_VALUE,
+                                              Long.class ) );
       initialValues.putBoolean( Tasks.HAS_DUE_TIME,
                                 getInitialValue( Tasks.HAS_DUE_TIME,
                                                  Boolean.FALSE,
@@ -137,14 +138,15 @@ public class TaskEditMultipleFragment extends
                                getInitialValue( Tasks.LOCATION_ID,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.URL, getInitialValue( Tasks.URL,
-                                                           URL_MULTI_VALUE,
-                                                           String.class ) );
+      initialValues.putString( Tasks.URL,
+                               getInitialValue( Tasks.URL,
+                                                URL_MULTI_VALUE,
+                                                String.class ) );
       return initialValues;
    }
    
-
-
+   
+   
    private void joinAttributes( List< Task > tasks )
    {
       attributeCount.put( Tasks.TASKSERIES_NAME,
@@ -185,8 +187,8 @@ public class TaskEditMultipleFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected void initContent( ViewGroup content )
    {
@@ -224,8 +226,8 @@ public class TaskEditMultipleFragment extends
       recurrContainer.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    @Override
    protected void initializeHeadSection()
    {
@@ -247,8 +249,8 @@ public class TaskEditMultipleFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected void initializeListSpinner()
    {
@@ -276,8 +278,8 @@ public class TaskEditMultipleFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected void initializeLocationSpinner()
    {
@@ -309,8 +311,8 @@ public class TaskEditMultipleFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected void initializePrioritySpinner()
    {
@@ -335,8 +337,8 @@ public class TaskEditMultipleFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -347,8 +349,8 @@ public class TaskEditMultipleFragment extends
                                                config.getParcelableArrayList( Config.TASKS ) );
    }
    
-
-
+   
+   
    public List< Task > getConfiguredTasksAssertNotNull()
    {
       final List< Task > tasks = configuration.getParcelableArrayList( Config.TASKS );
@@ -359,8 +361,8 @@ public class TaskEditMultipleFragment extends
       return tasks;
    }
    
-
-
+   
+   
    @Override
    protected boolean validateName()
    {
@@ -370,8 +372,8 @@ public class TaskEditMultipleFragment extends
          return true;
    }
    
-
-
+   
+   
    @Override
    protected boolean saveChanges()
    {
@@ -390,24 +392,16 @@ public class TaskEditMultipleFragment extends
       return ok;
    }
    
-
-
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
       return null;
    }
    
-
-
-   @Override
-   protected TextView getCommitTextView()
-   {
-      return urlEditText.getView();
-   }
    
-
-
+   
    private final static void inc( Map< Object, Integer > map, Object value )
    {
       final Integer cnt = map.get( value );
@@ -418,8 +412,8 @@ public class TaskEditMultipleFragment extends
          map.put( value, Integer.valueOf( 1 ) );
    }
    
-
-
+   
+   
    private final < V > V getInitialValue( String key,
                                           V multiVal,
                                           Class< V > type )
@@ -432,8 +426,8 @@ public class TaskEditMultipleFragment extends
          return multiVal;
    }
    
-
-
+   
+   
    private final void appendQuantifierToEntries( String attributeKey,
                                                  List< String > entries,
                                                  List< String > values )
@@ -443,14 +437,15 @@ public class TaskEditMultipleFragment extends
       
       for ( int i = 0, cnt = entries.size(); i < cnt; i++ )
       {
-         entries.set( i, getEntryWithCountString( attributeKey,
-                                                  values.get( i ),
-                                                  entries.get( i ) ) );
+         entries.set( i,
+                      getEntryWithCountString( attributeKey,
+                                               values.get( i ),
+                                               entries.get( i ) ) );
       }
    }
    
-
-
+   
+   
    private final String getEntryWithCountString( String key,
                                                  Object value,
                                                  String entry )
@@ -460,8 +455,8 @@ public class TaskEditMultipleFragment extends
                                        getAttribValueCnt( key, value ) );
    }
    
-
-
+   
+   
    private final int getAttribValueCnt( String key, Object value )
    {
       final Integer cnt = attributeCount.get( key ).get( value );
@@ -469,15 +464,15 @@ public class TaskEditMultipleFragment extends
       return cnt == null ? 0 : cnt.intValue();
    }
    
-
-
+   
+   
    private final boolean isCommonAttrib( String key )
    {
       return attributeCount.get( key ).size() == 1;
    }
    
-
-
+   
+   
    private final boolean isMultiTask()
    {
       return getConfiguredTasksAssertNotNull().size() > 1;

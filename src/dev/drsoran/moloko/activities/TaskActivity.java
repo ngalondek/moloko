@@ -584,23 +584,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   @Override
-   public boolean onFinishTaskEditingByInputMethod()
-   {
-      boolean finished = true;
-      final Fragment fragment = findAddedFragmentById( R.id.frag_task );
-      
-      if ( fragment instanceof IEditFragment< ? > )
-      {
-         final IEditFragment< ? > editFragment = (IEditFragment< ? >) fragment;
-         finished = editFragment.onFinishEditing();
-      }
-      
-      return finished;
-   }
-   
-   
-   
    public void onAddNote( View addNoteButton )
    {
       setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( getTaskAssertNotNull().getTaskSeriesId() ) ) );

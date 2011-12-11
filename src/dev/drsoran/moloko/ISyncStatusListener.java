@@ -20,36 +20,15 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko;
 
-import java.util.List;
-
-
-public class NullTaskEditFragmentListener implements ITaskEditFragmentListener
+public interface ISyncStatusListener
 {
-   @Override
-   public void onChangeTags( List< String > tags )
-   {
-   }
+   public final static int STARTED = 1;
+   
+   public final static int FINISHED = 2;
    
    
    
-   @Override
-   public void onEditDueByPicker()
-   {
-   }
-   
-   
-   
-   @Override
-   public void onEditRecurrenceByPicker()
-   {
-   }
-   
-   
-   
-   @Override
-   public void onEditEstimateByPicker()
-   {
-   }
+   void onSyncStatusChanged( int status );
 }

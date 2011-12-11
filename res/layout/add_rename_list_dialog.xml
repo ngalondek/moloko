@@ -25,6 +25,6 @@
       android:layout_below="@+id/add_rename_list_list_name"
       android:hint="@string/dlg_add_rename_list_smart_filter_hint"
       android:inputType="textNoSuggestions"
-      android:imeOptions="actionDone"
+      android:imeOptions="actionPrevious"
       android:selectAllOnFocus="true" />
 </LinearLayout>

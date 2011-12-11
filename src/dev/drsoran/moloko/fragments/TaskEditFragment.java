@@ -32,7 +32,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -70,7 +69,7 @@ public class TaskEditFragment extends
    }
    
    
-
+   
    public final static TaskEditFragment newInstance( Bundle config )
    {
       final TaskEditFragment fragment = new TaskEditFragment();
@@ -80,15 +79,15 @@ public class TaskEditFragment extends
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    protected Bundle getInitialValues()
    {
@@ -118,8 +117,8 @@ public class TaskEditFragment extends
       return initialValues;
    }
    
-
-
+   
+   
    @Override
    protected void initializeHeadSection()
    {
@@ -128,8 +127,8 @@ public class TaskEditFragment extends
       defaultInitializeHeadSectionImpl( task );
    }
    
-
-
+   
+   
    @Override
    protected void registerInputListeners()
    {
@@ -146,8 +145,8 @@ public class TaskEditFragment extends
                       } );
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -158,8 +157,8 @@ public class TaskEditFragment extends
                                       config.getParcelable( Config.TASK ) );
    }
    
-
-
+   
+   
    public Task getConfiguredTaskAssertNotNull()
    {
       final Task task = configuration.getParcelable( Config.TASK );
@@ -170,8 +169,8 @@ public class TaskEditFragment extends
       return task;
    }
    
-
-
+   
+   
    @Override
    protected boolean saveChanges()
    {
@@ -183,15 +182,15 @@ public class TaskEditFragment extends
          
          if ( modifications != null && modifications.size() > 0 )
          {
-            applyModifications( modifications );
+            ok = applyModifications( modifications );
          }
       }
       
       return ok;
    }
    
-
-
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
@@ -202,13 +201,5 @@ public class TaskEditFragment extends
       
       final TaskFragment fragment = TaskFragment.newInstance( config );
       return fragment;
-   }
-   
-
-
-   @Override
-   protected TextView getCommitTextView()
-   {
-      return urlEditText.getView();
    }
 }

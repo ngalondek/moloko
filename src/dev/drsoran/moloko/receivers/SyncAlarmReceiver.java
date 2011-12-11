@@ -37,7 +37,7 @@ public class SyncAlarmReceiver extends BroadcastReceiver
       + SyncAlarmReceiver.class.getSimpleName();
    
    
-
+   
    @Override
    public void onReceive( Context context, Intent intent )
    {
@@ -50,7 +50,7 @@ public class SyncAlarmReceiver extends BroadcastReceiver
       }
       else
       {
-         MolokoApp.stopPeriodicSync();
+         MolokoApp.get( context.getApplicationContext() ).stopPeriodicSync();
       }
    }
    

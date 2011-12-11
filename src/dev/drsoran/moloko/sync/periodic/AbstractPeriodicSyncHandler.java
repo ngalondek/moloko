@@ -49,7 +49,7 @@ public abstract class AbstractPeriodicSyncHandler implements
    protected final Context context;
    
    
-
+   
    protected AbstractPeriodicSyncHandler( Context context )
    {
       this.context = context;
@@ -67,8 +67,9 @@ public abstract class AbstractPeriodicSyncHandler implements
       }
    }
    
-
-
+   
+   
+   @Override
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {
@@ -86,13 +87,15 @@ public abstract class AbstractPeriodicSyncHandler implements
                SyncUtils.schedulePeriodicSync( context.getApplicationContext(),
                                                syncInterval );
             else
-               MolokoApp.stopPeriodicSync();
+               MolokoApp.get( context.getApplicationContext() )
+                        .stopPeriodicSync();
          }
       }
    }
    
-
-
+   
+   
+   @Override
    public void onAccountsUpdated( Account[] accounts )
    {
       boolean foundAccount = false;
@@ -110,13 +113,14 @@ public abstract class AbstractPeriodicSyncHandler implements
       }
       else if ( !foundAccount && hasAccount )
       {
-         MolokoApp.stopPeriodicSync();
+         MolokoApp.get( context.getApplicationContext() ).stopPeriodicSync();
          hasAccount = false;
       }
    }
    
-
-
+   
+   
+   @Override
    public void shutdown()
    {
       resetPeriodicSync();

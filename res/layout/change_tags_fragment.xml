@@ -33,7 +33,7 @@
             android:layout_marginTop="3dip"
             android:completionThreshold="1"
             android:hint="@string/change_tags_edit_hint"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNone"
             android:inputType="textNoSuggestions" />
 
         <ListView

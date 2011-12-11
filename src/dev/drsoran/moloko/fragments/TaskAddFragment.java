@@ -38,7 +38,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -472,13 +471,5 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       {
          return null;
       }
-   }
-   
-   
-   
-   @Override
-   protected TextView getCommitTextView()
-   {
-      return urlEditText.getView();
    }
 }

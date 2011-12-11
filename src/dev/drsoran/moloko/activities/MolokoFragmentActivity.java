@@ -25,6 +25,7 @@ package dev.drsoran.moloko.activities;
 import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,19 +34,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItem;
+import android.support.v4.view.Window;
+import android.util.AttributeSet;
+import android.view.View;
 
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.ISyncStatusListener;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.IAlertDialogFragmentListener;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 
 
 public abstract class MolokoFragmentActivity extends FragmentActivity implements
-         IConfigurable, IAlertDialogFragmentListener, OnAccountsUpdateListener
+         IConfigurable, IAlertDialogFragmentListener, ISyncStatusListener,
+         OnAccountsUpdateListener
 {
    public final static class StartActivityRequestCode
    {
@@ -65,12 +73,26 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    {
       super.onCreate( savedInstanceState );
       
+      requestWindowFeature( Window.FEATURE_INDETERMINATE_PROGRESS );
+      
       configureByIntent( getIntent() );
       
       if ( savedInstanceState != null )
          configureBySavedInstanceState( savedInstanceState );
       
       AccountUtils.registerAccountListener( this, handler, this );
+      
+      MolokoApp.get( this ).registerSyncStatusChangedListener( this );
+   }
+   
+   
+   
+   @Override
+   public View onCreateView( String name, Context context, AttributeSet attrs )
+   {
+      initializeSyncingProgressIndicator();
+      
+      return super.onCreateView( name, context, attrs );
    }
    
    
@@ -116,6 +138,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       super.onDestroy();
       
       AccountUtils.unregisterAccountListener( this, this );
+      
+      MolokoApp.get( this ).unregisterSyncStatusChangedListener( this );
    }
    
    
@@ -306,6 +330,26 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
    
    
+   @Override
+   public void onSyncStatusChanged( int status )
+   {
+      switch ( status )
+      {
+         case ISyncStatusListener.STARTED:
+            setProgressBarIndeterminateVisibility( Boolean.TRUE );
+            break;
+         
+         case ISyncStatusListener.FINISHED:
+            setProgressBarIndeterminateVisibility( Boolean.FALSE );
+            break;
+         
+         default :
+            break;
+      }
+   }
+   
+   
+   
    protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
       invalidateOptionsMenu();
@@ -377,6 +421,13 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          fragment = null;
       
       return fragment;
+   }
+   
+   
+   
+   private void initializeSyncingProgressIndicator()
+   {
+      setProgressBarIndeterminateVisibility( SyncUtils.isSyncing( this ) );
    }
    
    

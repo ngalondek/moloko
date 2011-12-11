@@ -178,20 +178,6 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
    
    
    
-   @Override
-   public boolean onFinishTaskEditingByInputMethod()
-   {
-      if ( finishEditing( FinishEditMode.SAVE ) )
-      {
-         finish();
-         return true;
-      }
-      
-      return false;
-   }
-   
-   
-   
    private boolean finishEditing( FinishEditMode how )
    {
       boolean finished = true;

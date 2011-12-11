@@ -33,8 +33,8 @@ import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -78,7 +78,7 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       public final static String ADDRESS = "address";
    }
    
-
+   
    private final static class Adapter extends
             ArrayAdapter< Pair< Intent, ResolveInfo > >
    {
@@ -87,7 +87,7 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       private final int resourceId;
       
       
-
+      
       public Adapter( Context context, int resourceId,
          List< Pair< Intent, ResolveInfo >> objects )
       {
@@ -97,8 +97,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
          this.resourceId = resourceId;
       }
       
-
-
+      
+      
       @Override
       public View getView( int position, View convertView, ViewGroup parent )
       {
@@ -133,7 +133,7 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
    private List< Pair< Intent, ResolveInfo > > resolvedIntents;
    
    
-
+   
    public final static void show( FragmentActivity activity, Task task )
    {
       show( activity,
@@ -143,8 +143,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
             task.getLocationAddress() );
    }
    
-
-
+   
+   
    public final static void show( FragmentActivity activity,
                                   RtmLocation location )
    {
@@ -155,15 +155,15 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
             location.address );
    }
    
-
-
+   
+   
    public final static void show( FragmentActivity activity,
                                   float lon,
                                   float lat,
                                   int zoom,
                                   String address )
    {
-      final Bundle config = new Bundle( 2 );
+      final Bundle config = new Bundle( 4 );
       config.putFloat( Config.LONGITUDE, lon );
       config.putFloat( Config.LATITUDE, lat );
       config.putInt( Config.ZOOM, zoom );
@@ -172,8 +172,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       show( activity, config );
    }
    
-
-
+   
+   
    public final static void show( FragmentActivity activity, Bundle config )
    {
       final LocationChooserDialogFragment frag = newInstance( config );
@@ -182,8 +182,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
                                   LocationChooserDialogFragment.class.getName() );
    }
    
-
-
+   
+   
    public final static LocationChooserDialogFragment newInstance( Bundle config )
    {
       final LocationChooserDialogFragment frag = new LocationChooserDialogFragment();
@@ -193,15 +193,15 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       return frag;
    }
    
-
-
+   
+   
    public boolean hasIntents()
    {
       return resolvedIntents.size() > 0;
    }
    
-
-
+   
+   
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
@@ -214,25 +214,28 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       return dialog;
    }
    
-
-
+   
+   
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
       super.takeConfigurationFrom( config );
       
       if ( config.containsKey( Config.LONGITUDE ) )
-         config.putFloat( Config.LONGITUDE, config.getFloat( Config.LONGITUDE ) );
+         configuration.putFloat( Config.LONGITUDE,
+                                 config.getFloat( Config.LONGITUDE ) );
       if ( config.containsKey( Config.LATITUDE ) )
-         config.putFloat( Config.LATITUDE, config.getFloat( Config.LATITUDE ) );
+         configuration.putFloat( Config.LATITUDE,
+                                 config.getFloat( Config.LATITUDE ) );
       if ( config.containsKey( Config.ZOOM ) )
-         config.putInt( Config.ZOOM, config.getInt( Config.ZOOM ) );
+         configuration.putInt( Config.ZOOM, config.getInt( Config.ZOOM ) );
       if ( config.containsKey( Config.ADDRESS ) )
-         config.putString( Config.ADDRESS, config.getString( Config.ADDRESS ) );
+         configuration.putString( Config.ADDRESS,
+                                  config.getString( Config.ADDRESS ) );
    }
    
-
-
+   
+   
    private Dialog createDialogImpl()
    {
       final Activity activity = getFragmentActivity();
@@ -243,6 +246,7 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
                                        R.layout.location_chooser_listitem,
                                        resolvedIntents ), new OnClickListener()
       {
+         @Override
          public void onClick( DialogInterface dialog, int which )
          {
             final Pair< Intent, ResolveInfo > chosen = resolvedIntents.get( which );
@@ -259,8 +263,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       return builder.create();
    }
    
-
-
+   
+   
    private Intent[] createIntentsByConfiguration()
    {
       final float lon = configuration.getFloat( Config.LONGITUDE );
@@ -271,8 +275,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       return createIntents( lon, lat, zoom, address );
    }
    
-
-
+   
+   
    private void resolveLocationIntentsByConfiguation()
    {
       resolvedIntents = new ArrayList< Pair< Intent, ResolveInfo > >();
@@ -313,8 +317,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       }
    }
    
-
-
+   
+   
    public static void showChooser( FragmentActivity context, String locationName )
    {
       boolean ok = true;
@@ -353,15 +357,15 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       }
    }
    
-
-
+   
+   
    public static boolean hasIntentHandler( Context context, String address )
    {
       return canResolveIntents( context, createIntents( 1.0f, 1.0f, 1, address ) );
    }
    
-
-
+   
+   
    private static boolean canResolveIntents( Context context, Intent[] intents )
    {
       final PackageManager pm = context.getPackageManager();
@@ -383,8 +387,8 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       return atLeastOneResolved;
    }
    
-
-
+   
+   
    private static Intent[] createIntents( float lon,
                                           float lat,
                                           int zoom,

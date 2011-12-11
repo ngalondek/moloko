@@ -31,9 +31,11 @@ import org.acra.annotation.ReportsCrashes;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SyncStatusObserver;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Message;
@@ -42,8 +44,10 @@ import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.notification.MolokoNotificationManager;
 import dev.drsoran.moloko.receivers.TimeTickReceiver;
+import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
 import dev.drsoran.moloko.sync.periodic.PeriodicSyncHandlerFactory;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.Strings;
@@ -52,18 +56,18 @@ import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 @ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
-public class MolokoApp extends Application
+public class MolokoApp extends Application implements SyncStatusObserver
 {
    private final static String TAG = "Moloko."
       + MolokoApp.class.getSimpleName();
    
    private static Settings SETTINGS;
    
-   private static MolokoNotificationManager MOLOKO_NOTIFICATION_MANAGER;
+   private MolokoNotificationManager molokoNotificationManager;
    
-   private static TimeTickReceiver TIME_TICK_RECEIVER;
+   private TimeTickReceiver timeTickReceiver;
    
-   private static IPeriodicSyncHandler PERIODIC_SNYC_HANDLER;
+   private IPeriodicSyncHandler periodicSyncHandler;
    
    private ListenerList< IOnTimeChangedListener > timeChangedListeners;
    
@@ -73,7 +77,13 @@ public class MolokoApp extends Application
    
    private ListenerList< IOnNetworkStatusChangedListener > networkStatusListeners;
    
+   private ListenerList< ISyncStatusListener > syncStatusListeners;
+   
    private IDateFormatContext dateFormatContext;
+   
+   private Object syncStatusObserverHandle;
+   
+   private int lastSyncStatus = ISyncStatusListener.FINISHED;
    
    
    
@@ -95,6 +105,8 @@ public class MolokoApp extends Application
                                                                                             "onBootCompleted" ) );
          networkStatusListeners = new ListenerList< IOnNetworkStatusChangedListener >( findMethod( IOnNetworkStatusChangedListener.class,
                                                                                                    "onNetworkStatusChanged" ) );
+         syncStatusListeners = new ListenerList< ISyncStatusListener >( findMethod( ISyncStatusListener.class,
+                                                                                    "onSyncStatusChanged" ) );
       }
       catch ( SecurityException e )
       {
@@ -109,13 +121,15 @@ public class MolokoApp extends Application
       
       SETTINGS = Settings.getInstance( getApplicationContext() );
       
-      MOLOKO_NOTIFICATION_MANAGER = new MolokoNotificationManager( this );
+      molokoNotificationManager = new MolokoNotificationManager( this );
       
-      TIME_TICK_RECEIVER = new TimeTickReceiver();
-      registerReceiver( TIME_TICK_RECEIVER,
+      timeTickReceiver = new TimeTickReceiver();
+      registerReceiver( timeTickReceiver,
                         new IntentFilter( Intent.ACTION_TIME_TICK ) );
       
-      PERIODIC_SNYC_HANDLER = PeriodicSyncHandlerFactory.createPeriodicSyncHandler( getApplicationContext() );
+      periodicSyncHandler = PeriodicSyncHandlerFactory.createPeriodicSyncHandler( getApplicationContext() );
+      
+      registerAsSyncStatusObserver();
       
       initParserLanguages();
       initDateFormatContext();
@@ -130,13 +144,51 @@ public class MolokoApp extends Application
       
       SETTINGS.release();
       
-      MOLOKO_NOTIFICATION_MANAGER.shutdown();
+      molokoNotificationManager.shutdown();
       
-      PERIODIC_SNYC_HANDLER.shutdown();
+      periodicSyncHandler.shutdown();
       
-      unregisterReceiver( TIME_TICK_RECEIVER );
+      unregisterReceiver( timeTickReceiver );
+      
+      unregisterAsSyncStatusObserver();
       
       deleteDateFormatContext();
+   }
+   
+   
+   
+   // Callback from SyncStatusObserver
+   @Override
+   public void onStatusChanged( int which )
+   {
+      if ( which == Constants.SYNC_OBSERVER_TYPE_STATUS )
+      {
+         final boolean isSyncActive = SyncUtils.isSyncing( getApplicationContext() );
+         
+         if ( isSyncActive && ( lastSyncStatus == ISyncStatusListener.FINISHED ) )
+         {
+            sendSyncStatusChangedMessage( ISyncStatusListener.STARTED );
+         }
+         else if ( !isSyncActive
+            && ( lastSyncStatus == ISyncStatusListener.STARTED ) )
+         {
+            sendSyncStatusChangedMessage( ISyncStatusListener.FINISHED );
+         }
+      }
+   }
+   
+   
+   
+   private void sendSyncStatusChangedMessage( int syncStatus )
+   {
+      lastSyncStatus = syncStatus;
+      
+      final Message msg = new Message();
+      msg.obj = new ListenerList.MessgageObject< ISyncStatusListener >( ISyncStatusListener.class,
+                                                                        null );
+      msg.what = lastSyncStatus;
+      
+      getHandler().sendMessage( msg );
    }
    
    
@@ -152,6 +204,25 @@ public class MolokoApp extends Application
    
    
    
+   private void registerAsSyncStatusObserver()
+   {
+      syncStatusObserverHandle = ContentResolver.addStatusChangeListener( Constants.SYNC_OBSERVER_TYPE_STATUS,
+                                                                          this );
+   }
+   
+   
+   
+   private void unregisterAsSyncStatusObserver()
+   {
+      if ( syncStatusObserverHandle != null )
+      {
+         ContentResolver.removeStatusChangeListener( syncStatusObserverHandle );
+         syncStatusObserverHandle = null;
+      }
+   }
+   
+   
+   
    private void initParserLanguages()
    {
       RecurrenceParsing.initPatternLanguage( getResources() );
@@ -161,7 +232,7 @@ public class MolokoApp extends Application
    
    private void recreateNotifications()
    {
-      MOLOKO_NOTIFICATION_MANAGER.onSystemLanguageChanged();
+      molokoNotificationManager.onSystemLanguageChanged();
    }
    
    
@@ -323,6 +394,26 @@ public class MolokoApp extends Application
    
    
    
+   public void registerSyncStatusChangedListener( ISyncStatusListener listener )
+   {
+      if ( listener != null )
+      {
+         syncStatusListeners.registerListener( Integer.MAX_VALUE, listener );
+      }
+   }
+   
+   
+   
+   public void unregisterSyncStatusChangedListener( ISyncStatusListener listener )
+   {
+      if ( listener != null )
+      {
+         syncStatusListeners.removeListener( listener );
+      }
+   }
+   
+   
+   
    public final static Settings getSettings()
    {
       return SETTINGS;
@@ -344,30 +435,30 @@ public class MolokoApp extends Application
    
    
    
-   public final static void schedulePeriodicSync( long startUtc, long intervalMs )
+   public final void schedulePeriodicSync( long startUtc, long intervalMs )
    {
-      PERIODIC_SNYC_HANDLER.setPeriodicSync( startUtc, intervalMs );
+      periodicSyncHandler.setPeriodicSync( startUtc, intervalMs );
    }
    
    
    
-   public final static IPeriodicSyncHandler getPeriodicSyncHander()
+   public final IPeriodicSyncHandler getPeriodicSyncHander()
    {
-      return PERIODIC_SNYC_HANDLER;
+      return periodicSyncHandler;
    }
    
    
    
-   public final static void stopPeriodicSync()
+   public final void stopPeriodicSync()
    {
-      PERIODIC_SNYC_HANDLER.resetPeriodicSync();
+      periodicSyncHandler.resetPeriodicSync();
    }
    
    
    
-   public final static MolokoNotificationManager getMolokoNotificationManager()
+   public final MolokoNotificationManager getMolokoNotificationManager()
    {
-      return MOLOKO_NOTIFICATION_MANAGER;
+      return molokoNotificationManager;
    }
    
    
@@ -422,6 +513,11 @@ public class MolokoApp extends Application
                                  .equals( IOnNetworkStatusChangedListener.class.getName() ) )
             {
                networkStatusListeners.notifyListeners( msg.what, msgObj.value );
+            }
+            else if ( msgObj.type.getName()
+                                 .equals( ISyncStatusListener.class.getName() ) )
+            {
+               syncStatusListeners.notifyListeners( msg.what );
             }
             else
                handled = false;

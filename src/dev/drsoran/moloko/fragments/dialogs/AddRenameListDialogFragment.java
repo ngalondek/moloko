@@ -32,12 +32,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
@@ -102,8 +100,6 @@ public class AddRenameListDialogFragment extends
          configureAsNewListDialog();
       }
       
-      registerCommitInputListener( isRenameMode ? listNameEdit : filterEdit );
-      
       return (ViewGroup) view;
    }
    
@@ -157,25 +153,6 @@ public class AddRenameListDialogFragment extends
       
       if ( filter instanceof RtmSmartFilter )
          filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
-   }
-   
-   
-   
-   private void registerCommitInputListener( TextView textView )
-   {
-      textView.setOnEditorActionListener( new OnEditorActionListener()
-      {
-         @Override
-         public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
-         {
-            if ( UIUtils.hasInputCommitted( actionId ) )
-            {
-               return onFinishEditing();
-            }
-            
-            return false;
-         }
-      } );
    }
    
    

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -31,32 +31,31 @@ import org.acra.annotation.ReportsCrashes;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SyncStatusObserver;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.notification.MolokoNotificationManager;
+import dev.drsoran.moloko.receivers.SyncStatusReceiver;
 import dev.drsoran.moloko.receivers.TimeTickReceiver;
-import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
 import dev.drsoran.moloko.sync.periodic.PeriodicSyncHandlerFactory;
-import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 @ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
-public class MolokoApp extends Application implements SyncStatusObserver
+public class MolokoApp extends Application
 {
    private final static String TAG = "Moloko."
       + MolokoApp.class.getSimpleName();
@@ -66,6 +65,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
    private MolokoNotificationManager molokoNotificationManager;
    
    private TimeTickReceiver timeTickReceiver;
+   
+   private SyncStatusReceiver syncStatusReceiver;
    
    private IPeriodicSyncHandler periodicSyncHandler;
    
@@ -81,12 +82,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
    
    private IDateFormatContext dateFormatContext;
    
-   private Object syncStatusObserverHandle;
    
-   private int lastSyncStatus = ISyncStatusListener.FINISHED;
-   
-   
-   
+
    @Override
    public void onCreate()
    {
@@ -129,14 +126,16 @@ public class MolokoApp extends Application implements SyncStatusObserver
       
       periodicSyncHandler = PeriodicSyncHandlerFactory.createPeriodicSyncHandler( getApplicationContext() );
       
-      registerAsSyncStatusObserver();
+      syncStatusReceiver = new SyncStatusReceiver();
+      registerReceiver( syncStatusReceiver,
+                        new IntentFilter( Intents.Action.SYNC_STATUS_UPDATE ) );
       
       initParserLanguages();
       initDateFormatContext();
    }
    
-   
-   
+
+
    @Override
    public void onTerminate()
    {
@@ -150,49 +149,13 @@ public class MolokoApp extends Application implements SyncStatusObserver
       
       unregisterReceiver( timeTickReceiver );
       
-      unregisterAsSyncStatusObserver();
+      unregisterReceiver( syncStatusReceiver );
       
       deleteDateFormatContext();
    }
    
-   
-   
-   // Callback from SyncStatusObserver
-   @Override
-   public void onStatusChanged( int which )
-   {
-      if ( which == Constants.SYNC_OBSERVER_TYPE_STATUS )
-      {
-         final boolean isSyncActive = SyncUtils.isSyncing( getApplicationContext() );
-         
-         if ( isSyncActive && ( lastSyncStatus == ISyncStatusListener.FINISHED ) )
-         {
-            sendSyncStatusChangedMessage( ISyncStatusListener.STARTED );
-         }
-         else if ( !isSyncActive
-            && ( lastSyncStatus == ISyncStatusListener.STARTED ) )
-         {
-            sendSyncStatusChangedMessage( ISyncStatusListener.FINISHED );
-         }
-      }
-   }
-   
-   
-   
-   private void sendSyncStatusChangedMessage( int syncStatus )
-   {
-      lastSyncStatus = syncStatus;
-      
-      final Message msg = new Message();
-      msg.obj = new ListenerList.MessgageObject< ISyncStatusListener >( ISyncStatusListener.class,
-                                                                        null );
-      msg.what = lastSyncStatus;
-      
-      getHandler().sendMessage( msg );
-   }
-   
-   
-   
+
+
    @Override
    public void onConfigurationChanged( Configuration newConfig )
    {
@@ -202,57 +165,38 @@ public class MolokoApp extends Application implements SyncStatusObserver
       recreateNotifications();
    }
    
-   
-   
-   private void registerAsSyncStatusObserver()
-   {
-      syncStatusObserverHandle = ContentResolver.addStatusChangeListener( Constants.SYNC_OBSERVER_TYPE_STATUS,
-                                                                          this );
-   }
-   
-   
-   
-   private void unregisterAsSyncStatusObserver()
-   {
-      if ( syncStatusObserverHandle != null )
-      {
-         ContentResolver.removeStatusChangeListener( syncStatusObserverHandle );
-         syncStatusObserverHandle = null;
-      }
-   }
-   
-   
-   
+
+
    private void initParserLanguages()
    {
       RecurrenceParsing.initPatternLanguage( getResources() );
    }
    
-   
-   
+
+
    private void recreateNotifications()
    {
       molokoNotificationManager.onSystemLanguageChanged();
    }
    
-   
-   
+
+
    private void initDateFormatContext()
    {
       dateFormatContext = new AndroidDateFormatContext( getApplicationContext() );
       RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
    }
    
-   
-   
+
+
    private void deleteDateFormatContext()
    {
       dateFormatContext = null;
       RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
    }
    
-   
-   
+
+
    public static MolokoApp get( Context context )
    {
       MolokoApp app = null;
@@ -265,8 +209,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       return app;
    }
    
-   
-   
+
+
    public static Handler getHandler( Context context )
    {
       final MolokoApp app = MolokoApp.get( context );
@@ -276,29 +220,29 @@ public class MolokoApp extends Application implements SyncStatusObserver
          return null;
    }
    
-   
-   
+
+
    public Handler getHandler()
    {
       return handler;
    }
    
-   
-   
+
+
    public static IDateFormatContext getDateFormatContext( Context context )
    {
       return MolokoApp.get( context ).getDateFormatContext();
    }
    
-   
-   
+
+
    public IDateFormatContext getDateFormatContext()
    {
       return dateFormatContext;
    }
    
-   
-   
+
+
    public Locale getActiveResourcesLocale()
    {
       final String resourcesLangString = getString( R.string.res_language );
@@ -310,8 +254,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
          return new Locale( resourcesLangString, resourcesCountryString );
    }
    
-   
-   
+
+
    public void registerOnSettingsChangedListener( int which,
                                                   IOnSettingsChangedListener listener )
    {
@@ -321,8 +265,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void unregisterOnSettingsChangedListener( IOnSettingsChangedListener listener )
    {
       if ( listener != null )
@@ -331,8 +275,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void registerOnTimeChangedListener( int which,
                                               IOnTimeChangedListener listener )
    {
@@ -342,8 +286,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void unregisterOnTimeChangedListener( IOnTimeChangedListener listener )
    {
       if ( listener != null )
@@ -352,8 +296,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void registerOnBootCompletedListener( IOnBootCompletedListener listener )
    {
       if ( listener != null )
@@ -362,8 +306,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void unregisterOnBootCompletedListener( IOnBootCompletedListener listener )
    {
       if ( listener != null )
@@ -372,8 +316,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void registerOnNetworkStatusChangedListener( IOnNetworkStatusChangedListener listener )
    {
       if ( listener != null )
@@ -382,8 +326,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void unregisterOnNetworkStatusChangedListener( IOnNetworkStatusChangedListener listener )
    {
       if ( listener != null )
@@ -392,8 +336,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void registerSyncStatusChangedListener( ISyncStatusListener listener )
    {
       if ( listener != null )
@@ -402,8 +346,8 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public void unregisterSyncStatusChangedListener( ISyncStatusListener listener )
    {
       if ( listener != null )
@@ -412,57 +356,64 @@ public class MolokoApp extends Application implements SyncStatusObserver
       }
    }
    
-   
-   
+
+
    public final static Settings getSettings()
    {
       return SETTINGS;
    }
    
+
+
+   public final static boolean IsApiLevelSupported( int apiLevel )
+   {
+      return Build.VERSION.SDK_INT >= apiLevel;
+   }
    
-   
+
+
    public final static String getRtmApiKey( Context context )
    {
       return context.getString( R.string.app_rtm_api_key );
    }
    
-   
-   
+
+
    public final static String getRtmSharedSecret( Context context )
    {
       return context.getString( R.string.app_rtm_shared_secret );
    }
    
-   
-   
+
+
    public final void schedulePeriodicSync( long startUtc, long intervalMs )
    {
       periodicSyncHandler.setPeriodicSync( startUtc, intervalMs );
    }
    
-   
-   
+
+
    public final IPeriodicSyncHandler getPeriodicSyncHander()
    {
       return periodicSyncHandler;
    }
    
-   
-   
+
+
    public final void stopPeriodicSync()
    {
       periodicSyncHandler.resetPeriodicSync();
    }
    
-   
-   
+
+
    public final MolokoNotificationManager getMolokoNotificationManager()
    {
       return molokoNotificationManager;
    }
    
-   
-   
+
+
    private final static < T > Method findMethod( Class< T > cls, String name ) throws NoSuchMethodException
    {
       Method method = null;

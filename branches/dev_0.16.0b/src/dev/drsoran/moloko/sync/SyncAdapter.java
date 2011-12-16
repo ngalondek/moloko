@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -69,6 +69,7 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Sync;
@@ -86,7 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    private final Context context;
    
    
-   
+
    public SyncAdapter( Context context, boolean autoInitialize )
    {
       super( context, autoInitialize );
@@ -94,8 +95,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       this.context = context;
    }
    
-   
-   
+
+
    @Override
    public void onPerformSync( Account account,
                               Bundle extras,
@@ -114,8 +115,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          Log.i( TAG, "Precessing sync with extras " + extras );
          
-         String authToken = null;
+         context.sendBroadcast( Intents.createSyncStartedIntent() );
          
+         String authToken = null;
          final AccountManager accountManager = AccountManager.get( context );
          
          if ( accountManager != null )
@@ -289,6 +291,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          {
             Log.e( TAG, "No AccountManager" );
          }
+         
+         context.sendBroadcast( Intents.createSyncFinishedIntent() );
       }
       else
       {
@@ -296,8 +300,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-   
-   
+
+
    private void applyLocalOperations( ContentProviderClient provider,
                                       List< ? extends IContentProviderSyncOperation > operations,
                                       SyncResult syncResult ) throws RemoteException,
@@ -316,8 +320,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       provider.applyBatch( contentProviderOperationsBatch );
    }
    
-   
-   
+
+
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            TimeLineFactory timeLineFactory,
@@ -385,8 +389,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return ok;
    }
    
-   
-   
+
+
    private final Pair< Long, Long > getSyncTime()
    {
       Pair< Long, Long > result = null;
@@ -419,8 +423,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-   
-   
+
+
    public final static ModificationSet getAllModifications( Context context )
    {
       ModificationSet modifications = null;
@@ -445,8 +449,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-   
-   
+
+
    public final static ModificationSet getModificationsFor( Context context,
                                                             Uri... entityUris )
    {
@@ -475,8 +479,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-   
-   
+
+
    private final void updateSyncTime()
    {
       final ContentProviderClient client = context.getContentResolver()
@@ -491,8 +495,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-   
-   
+
+
    private final static boolean logSyncStep( String step, boolean result )
    {
       if ( result )
@@ -503,8 +507,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-   
-   
+
+
    private final static void clearSyncResult( SyncResult syncResult )
    {
       syncResult.stats.numInserts = 0;
@@ -512,8 +516,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       syncResult.stats.numDeletes = 0;
    }
    
-   
-   
+
+
    private final boolean shouldProcessRequest( Bundle bundle )
    {
       return ( bundle != null && ( bundle.containsKey( ContentResolver.SYNC_EXTRAS_INITIALIZE )

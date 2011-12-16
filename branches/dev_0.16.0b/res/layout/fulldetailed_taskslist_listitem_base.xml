@@ -50,7 +50,7 @@
       android:layout_marginRight="?android:attr/scrollbarSize"
       android:layout_marginBottom="3dip">
 
-      <Button
+      <TextView
          android:id="@+id/taskslist_listitem_btn_list_name"
          android:tag="list_name"
          style="@style/TasksList_ListItem_ListName"

@@ -47,7 +47,7 @@
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
    <string name="app_save">Änderungen übernehmen</string>
-   <string name="app_startup">Starte Moloko ...</string>
+   <string name="app_startup">Starte Moloko &#8230;</string>
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>
@@ -127,7 +127,7 @@
    <string name="phr_off">Aus</string>
    <string name="phr_manuell">Manuell</string>
    <string name="phr_password_set">gesetzt</string>
-   <string name="phr_loading">Lädt gerade...</string>
+   <string name="phr_loading">Lädt gerade&#8230;</string>
    <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
 
@@ -171,33 +171,33 @@
       
    <!-- Global Toasts -->
       <!-- Task -->   
-      <string name="toast_insert_task">Füge neue Aufgabe hinzu...</string>
+      <string name="toast_insert_task">Füge neue Aufgabe hinzu&#8230;</string>
       <string name="toast_insert_task_ok">Neue Aufgabe hinzugefügt</string>
       <string name="toast_insert_task_fail">Neue Aufgabe konnte nicht hinzugefügt werden</string>
-      <string name="toast_save_task">Speiche Änderungen an der Aufgabe...</string>
+      <string name="toast_save_task">Speiche Änderungen an der Aufgabe&#8230;</string>
       <string name="toast_save_task_ok">Änderungen an der Aufgabe gespeichert</string>
       <string name="toast_save_task_failed">Änderungen an der Aufgabe konnten nicht gespeichert werden</string>
-      <string name="toast_delete_task">Lösche Aufgabe...</string>
+      <string name="toast_delete_task">Lösche Aufgabe&#8230;</string>
       <string name="toast_delete_task_ok">Aufgabe gelöscht</string>
       <string name="toast_delete_task_failed">Aufgabe konnte nicht gelöscht werden</string>
       <!-- Note -->
-      <string name="toast_insert_note">Füge neue Notiz hinzu...</string>
+      <string name="toast_insert_note">Füge neue Notiz hinzu&#8230;</string>
       <string name="toast_insert_note_ok">Neue Notiz hinzugefügt</string>
       <string name="toast_insert_note_fail">Neue Notiz konnte nicht hinzugefügt werden</string>
-      <string name="toast_save_note">Speiche Änderungen an der Notiz...</string>
+      <string name="toast_save_note">Speiche Änderungen an der Notiz&#8230;</string>
       <string name="toast_save_note_ok">Änderungen an der Notiz gespeichert</string>
       <string name="toast_save_note_failed">Änderungen an der Notiz konnten nicht gespeichert werden</string>
-      <string name="toast_delete_note">Lösche Notiz...</string>
+      <string name="toast_delete_note">Lösche Notiz&#8230;</string>
       <string name="toast_delete_note_ok">Notiz gelöscht</string>
       <string name="toast_delete_note_failed">Notiz konnte nicht gelöscht werden</string>
       <!-- List -->
-      <string name="toast_insert_list">Füge neue Liste hinzu...</string>
+      <string name="toast_insert_list">Füge neue Liste hinzu&#8230;</string>
       <string name="toast_insert_list_ok">Neue Liste hinzugefügt</string>
       <string name="toast_insert_list_fail">Neue Liste konnte nicht hinzugefügt werden</string>
-      <string name="toast_save_list">Speiche Änderungen an der Liste...</string>
+      <string name="toast_save_list">Speiche Änderungen an der Liste&#8230;</string>
       <string name="toast_save_list_ok">Änderungen an der Liste gespeichert</string>
       <string name="toast_save_list_failed">Änderungen an der Liste konnten nicht gespeichert werden</string>
-      <string name="toast_delete_list">Lösche Liste...</string>
+      <string name="toast_delete_list">Lösche Liste&#8230;</string>
       <string name="toast_delete_list_ok">Liste gelöscht</string>
       <string name="toast_delete_list_failed">Liste konnte nicht gelöscht werden</string>
       <string name="toast_delete_locked_list">Die Liste \'%1$s\' ist gesperrt and kann nicht gelöscht werden</string>
@@ -241,7 +241,7 @@
    <string name="task_participants">Freigegeben für</string>
    <string name="task_location">Ort</string>
       <!-- Dialogs -->
-      <string name="task_dlg_choose_location_app">Öffne Ort mit...</string>
+      <string name="task_dlg_choose_location_app">Öffne Ort mit&#8230;</string>
       <string name="task_dlg_removing_editing_note">Die Notiz in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt. Wenn Sie die Bearbeitung fortsetzen, wird eine neue Notiz mit Ihren Änderungen eingefügt.</string>         
       <!-- Toasts -->
      <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>     
@@ -315,7 +315,7 @@
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
-     <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
+     <string name="abstaskslist_dlg_sort_title">Sortieren nach&#8230;</string>
      
    <!-- TasksList activity -->
    <string name="taskslist_titlebar_due_today">%1$s - heute</string>
@@ -414,7 +414,7 @@
    <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
    <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
    <string name="moloko_prefs_startup_view_title">Startansicht</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen...</string>
+   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen&#8230;</string>
    <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
    <string name="moloko_prefs_def_sort_title">Sortierung der Aufgaben</string>
    <string name="moloko_prefs_def_sort_summary">nach %s</string>
@@ -443,7 +443,7 @@
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
       <string name="moloko_prefs_clear_db_dlg_title">Datenbank säubern</string>
       <string name="moloko_prefs_clear_db_dlg_text">Wirklich alle Daten der Datenbank unwiederruflich löschen?</string>
-      <string name="moloko_prefs_clear_db_dlg_clearing">Säubere Datenbank...</string>
+      <string name="moloko_prefs_clear_db_dlg_clearing">Säubere Datenbank&#8230;</string>
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Datenbank gesäubert</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Säubern der Datenbank fehlgeschlagen</string>
@@ -458,7 +458,7 @@
    <string name="acra_crash_comment_prompt">Möglicherweise möchten Sie ein Kommentar hinterlassen:</string>
    <string name="acra_crash_dialog_ok_toast">Ihr Fehlerbericht wurde gesendet. Vielen Dank!</string>
    <string name="send_log_dialog_text">Es wird die Log-Datei für Moloko erstellt. Die gesammelten Informationen werden mit einer Applikation Ihrer Wahl versendet. Sie erhalten die Möglichkeit das Log vor dem Senden zu sehen und zu bearbeiten.</string>
-   <string name="send_log_aquiring_text">Sammle Moloko relevante Log-Informationen...</string>
+   <string name="send_log_aquiring_text">Sammle Moloko relevante Log-Informationen&#8230;</string>
    <string name="send_log_chooser_title">Bitte wählen Sie eine Anwendung zum Senden der Log-Informationen</string>
    <string name="send_log_failed">Das Sammeln der Log-Informationen für Moloko schlug fehl</string>
    

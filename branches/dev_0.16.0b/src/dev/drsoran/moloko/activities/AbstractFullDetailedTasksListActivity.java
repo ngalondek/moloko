@@ -42,11 +42,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
          AbstractTasksListActivity implements
          IFullDetailedTasksListFragmentListener, IShowTasksWithTagsListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + AbstractFullDetailedTasksListActivity.class.getSimpleName();
-   
-   
    private static class OptionsMenu
    {
       public final static int QUICK_ADD_TASK = R.id.menu_quick_add_task;
@@ -129,7 +124,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       switch ( item.getItemId() )
       {
          case OptionsMenu.QUICK_ADD_TASK:
-            showQuickAddTaskFragment( !isQuickAddTaskFragmentOpen() );
+            showQuickAddTaskInput();
             return true;
             
          default :
@@ -222,6 +217,13 @@ public abstract class AbstractFullDetailedTasksListActivity extends
          reloadTasksListWithConfiguration( Intents.Extras.createOpenTagsExtras( this,
                                                                                 tags,
                                                                                 logicalOperation ) );
+   }
+   
+
+
+   private void showQuickAddTaskInput()
+   {
+      showQuickAddTaskActionBarFragment( !isQuickAddTaskFragmentOpen() );
    }
    
 

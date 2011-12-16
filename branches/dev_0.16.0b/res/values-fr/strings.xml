@@ -48,7 +48,7 @@
    <string name="app_sort_prio">Priorité</string>
    <string name="app_sort_due_date">Échéance</string>
    <string name="app_save">Enregistrer les modifications</string>
-   <string name="app_startup">Démarrage de Moloko ...</string>
+   <string name="app_startup">Démarrage de Moloko &#8230;</string>
 
    <string name="svc_sync">Synchronisation RTM</string>
    <string name="svc_auth">Authentification RTM</string>
@@ -121,7 +121,7 @@
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manuel</string>
    <string name="phr_password_set">entré</string>
-   <string name="phr_loading">Chargement...</string>
+   <string name="phr_loading">Chargement&#8230;</string>
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
 
@@ -165,33 +165,33 @@
 
    <!-- Global Toasts -->
       <!-- Task -->
-      <string name="toast_insert_task">Ajout d\'une nouvelle tâche...</string>
+      <string name="toast_insert_task">Ajout d\'une nouvelle tâche&#8230;</string>
       <string name="toast_insert_task_ok">Nouvelle tâche ajoutée</string>
       <string name="toast_insert_task_fail">Echec d\'ajout de la nouvelle tâche</string>
-      <string name="toast_save_task">Enregistrement des modifications de la tâche...</string>
+      <string name="toast_save_task">Enregistrement des modifications de la tâche&#8230;</string>
       <string name="toast_save_task_ok">Modifications de la tâche enregistrées</string>
       <string name="toast_save_task_failed">Echec d\'enregistrement des modifications de la tâche</string>
-      <string name="toast_delete_task">Suppression d\'une tâche...</string>
+      <string name="toast_delete_task">Suppression d\'une tâche&#8230;</string>
       <string name="toast_delete_task_ok">Tâche supprimée</string>
       <string name="toast_delete_task_failed">Echec de supression de la tâche</string>
       <!-- Note -->
-      <string name="toast_insert_note">Ajout d\'une nouvelle note...</string>
+      <string name="toast_insert_note">Ajout d\'une nouvelle note&#8230;</string>
       <string name="toast_insert_note_ok">Nouvelle tâche ajoutée</string>
       <string name="toast_insert_note_fail">Echec d\'ajout d\'une nouvelle tâche</string>
-      <string name="toast_save_note">Enregistement des modifications de la note...</string>
+      <string name="toast_save_note">Enregistement des modifications de la note&#8230;</string>
       <string name="toast_save_note_ok">Modifications de la note enregistrées</string>
       <string name="toast_save_note_failed">Echec d\'enregistrement des modifications de la note</string>
-      <string name="toast_delete_note">Suppression de la note...</string>
+      <string name="toast_delete_note">Suppression de la note&#8230;</string>
       <string name="toast_delete_note_ok">Note supprimmée</string>
       <string name="toast_delete_note_failed">Echec de suppression de la note</string>
       <!-- List -->
-      <string name="toast_insert_list">Ajout d\'une nouvelle liste...</string>
+      <string name="toast_insert_list">Ajout d\'une nouvelle liste&#8230;</string>
       <string name="toast_insert_list_ok">Nouvelle liste ajoutée</string>
       <string name="toast_insert_list_fail">Echec d\'ajout d\'une nouvelle liste</string>
-      <string name="toast_save_list">Enregistement des modifications de la liste...</string>
+      <string name="toast_save_list">Enregistement des modifications de la liste&#8230;</string>
       <string name="toast_save_list_ok">Modifications de la liste enregistrées</string>
       <string name="toast_save_list_failed">Echec d\'enregistrement des modifications de la liste</string>
-      <string name="toast_delete_list">Suppression de la liste...</string>
+      <string name="toast_delete_list">Suppression de la liste&#8230;</string>
       <string name="toast_delete_list_ok">Liste supprimée</string>
       <string name="toast_delete_list_failed">Echec de suppression de la liste</string>
       <string name="toast_delete_locked_list">La liste \'%1$s\' est verrouillée et ne peut pas être supprimée</string>
@@ -237,7 +237,7 @@
    <string name="task_location">Lieu</string>
    <string name="task_participants">Partagée avec</string>
       <!-- Dialogs -->
-      <string name="task_dlg_choose_location_app">Afficher le lieu avec...</string>
+      <string name="task_dlg_choose_location_app">Afficher le lieu avec&#8230;</string>
       <string name="task_dlg_removing_editing_note">La note que vous modifiez a été supprimée par une mise à jour en tâche de fond. Si vous continuez l\'édition, une nouvelle note sera créée avec vos modifications.</string>
       <!-- Toasts -->
       <string name="task_toast_no_google_maps">Le lieu ne peut pas être affiché parce que Google Maps App est absent</string>
@@ -312,7 +312,7 @@
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">et</string>
      <string name="abstaskslist_dlg_show_tags_or">ou</string>
-     <string name="abstaskslist_dlg_sort_title">Trier par...</string>
+     <string name="abstaskslist_dlg_sort_title">Trier par&#8230;</string>
 
    <!-- TasksList activity -->
    <string name="taskslist_titlebar_due_today">%1$s - aujourd\'hui</string>
@@ -404,7 +404,7 @@
    <string name="moloko_prefs_rtm_defaultlist_title">Liste par défaut</string>
    <string name="moloko_prefs_rtm_language_title">Langue</string>
    <string name="moloko_prefs_startup_view_title">Start View</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Choisir la liste par défaut...</string>
+   <string name="moloko_prefs_startup_view_def_list_choose">Choisir la liste par défaut&#8230;</string>
    <string name="moloko_prefs_startup_view_def_list_name">Liste par défaut (%1$s)</string>
    <string name="moloko_prefs_def_sort_title">Trier les tâches</string>
    <string name="moloko_prefs_def_sort_summary">par %s</string>
@@ -434,7 +434,7 @@
       <string name="moloko_prefs_rtm_sync_dlg_message">Les paramètres ont été récupérés du serveur RTM</string>
       <string name="moloko_prefs_clear_db_dlg_title">Effacer la base de données</string>
       <string name="moloko_prefs_clear_db_dlg_text">Supprimer toutes les données de la base de données ?</string>
-      <string name="moloko_prefs_clear_db_dlg_clearing">Effacement de la base de données...</string>
+      <string name="moloko_prefs_clear_db_dlg_clearing">Effacement de la base de données&#8230;</string>
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Base de données effacée</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Echec de l\'effacement de la base de données</string>
@@ -449,7 +449,7 @@
    <string name="acra_crash_comment_prompt">Vous pouvez ajouter vos commentaires ci-dessous:</string>
    <string name="acra_crash_dialog_ok_toast">Votre rapport d\'erreur a été envoyé. Merci!</string>
    <string name="send_log_dialog_text">Création du rapport d\'erreur pour Moloko. Les infomrations collectées seront envoyées par l\'application de votre choix. Vous pourrez voir et modifier les données envoyées avant l\'envoi.</string>
-   <string name="send_log_aquiring_text">Récupération des informations concernant Moloko...</string>
+   <string name="send_log_aquiring_text">Récupération des informations concernant Moloko&#8230;</string>
    <string name="send_log_chooser_title">Veuillez sélectionner une appliocation pour l\'envoi du rapport d\'erreur</string>
    <string name="send_log_failed">Echec de l\'envoi du rapport d\'erreur</string>
    <!-- Suggestions -->

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -47,6 +47,7 @@ import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
+import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
@@ -67,11 +68,28 @@ public final class Intents
    public final static class Action
    {
       public final static String TASKS_LISTS_MIN_DETAILED = "dev.drsoran.moloko.util.Intents.Action.TASKS_LISTS_MIN_DETAILED";
+      
+      public final static String SYNC_STATUS_UPDATE = "dev.drsoran.moloko.util.Intents.Action.SYNC_STATUS_UPDATE";
    }
    
 
    public final static class Extras
    {
+      public final static String KEY_SYNC_STATUS = "sync_status";
+      
+      
+
+      public final static Bundle createSyncStatusExtras( int status )
+      {
+         final Bundle bundle = new Bundle( 1 );
+         
+         bundle.putInt( KEY_SYNC_STATUS, status );
+         
+         return bundle;
+      }
+      
+
+
       public final static Bundle createEditTaskExtras( Task task )
       {
          final Bundle bundle = new Bundle( 1 );
@@ -290,6 +308,26 @@ public final class Intents
                                          0,
                                          intent,
                                          PendingIntent.FLAG_UPDATE_CURRENT );
+   }
+   
+
+
+   public final static Intent createSyncStartedIntent()
+   {
+      final Intent intent = new Intent( Intents.Action.SYNC_STATUS_UPDATE );
+      intent.putExtras( Extras.createSyncStatusExtras( Constants.SYNC_STATUS_STARTED ) );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createSyncFinishedIntent()
+   {
+      final Intent intent = new Intent( Intents.Action.SYNC_STATUS_UPDATE );
+      intent.putExtras( Extras.createSyncStatusExtras( Constants.SYNC_STATUS_FINISHED ) );
+      
+      return intent;
    }
    
 

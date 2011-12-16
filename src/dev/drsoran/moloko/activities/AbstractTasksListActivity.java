@@ -37,12 +37,13 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.widget.SpinnerAdapter;
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.QuickAddTaskActionBarSwitcher;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
-import dev.drsoran.moloko.fragments.QuickAddTaskFragment;
+import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
-import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskActionBarFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
@@ -53,13 +54,9 @@ import dev.drsoran.rtm.Task;
 
 abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          implements ITasksListFragmentListener, OnNavigationListener,
-         IQuickAddTaskFragmentListener,
+         IQuickAddTaskActionBarFragmentListener,
          LoaderCallbacks< List< RtmListWithTaskCount > >
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + AbstractTasksListActivity.class.getSimpleName();
-   
    private final static int[] FRAGMENT_IDS =
    { R.id.frag_quick_add_task, R.id.frag_taskslist };
    
@@ -73,6 +70,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private final static int LISTS_LOADER_ID = 1;
    
+   private QuickAddTaskActionBarSwitcher quickAddTaskActionBarSwitcher;
+   
    private SpinnerAdapter actionBarNavigationAdapter;
    
    
@@ -84,7 +83,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       
       setContentView( R.layout.taskslist_activity );
       
-      setTitleAndNavigationMode();
+      quickAddTaskActionBarSwitcher = new QuickAddTaskActionBarSwitcher( this,
+                                                                         savedInstanceState );
+      initializeActionBar();
       
       if ( savedInstanceState == null )
          initTasksListWithConfiguration( getIntent(), configuration );
@@ -93,10 +94,35 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
 
 
    @Override
+   protected void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      quickAddTaskActionBarSwitcher.saveInstanceState( outState );
+   }
+   
+
+
+   @Override
+   protected void onRestoreInstanceState( Bundle state )
+   {
+      super.onRestoreInstanceState( state );
+      quickAddTaskActionBarSwitcher.restoreInstanceState( state );
+   }
+   
+
+
+   @Override
    protected void onNewIntent( Intent intent )
    {
       super.onNewIntent( intent );
-      
+      setTitleAndNavigationMode();
+   }
+   
+
+
+   private void initializeActionBar()
+   {
+      quickAddTaskActionBarSwitcher.showInLastState();
       setTitleAndNavigationMode();
    }
    
@@ -105,7 +131,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private void setTitleAndNavigationMode()
    {
       getSupportActionBar().setTitle( getConfiguredTitle() );
-      
       setActionBarNavigationMode();
    }
    
@@ -115,7 +140,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public void onBackPressed()
    {
       if ( isQuickAddTaskFragmentOpen() )
-         showQuickAddTaskFragment( false );
+         showQuickAddTaskActionBarFragment( false );
       else
          super.onBackPressed();
    }
@@ -357,53 +382,40 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
 
 
-   protected void showQuickAddTaskFragment( boolean show )
+   protected void showQuickAddTaskActionBarFragment( boolean show )
    {
-      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-      transaction.setCustomAnimations( R.anim.slide_in_top,
-                                       R.anim.slide_out_top );
-      
       if ( show )
       {
-         final Bundle config = createQuickAddTaskFragmentConfiguration();
-         QuickAddTaskFragment quickAddTaskFragment = (QuickAddTaskFragment) getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task );
-         
-         if ( quickAddTaskFragment == null )
-         {
-            quickAddTaskFragment = QuickAddTaskFragment.newInstance( config );
-            quickAddTaskFragment.setRetainInstance( true );
-            
-            transaction.add( R.id.frag_quick_add_task, quickAddTaskFragment );
-         }
-         else
-         {
-            quickAddTaskFragment.configure( config );
-            transaction.show( quickAddTaskFragment );
-         }
+         quickAddTaskActionBarSwitcher.showSwitched( createQuickAddTaskActionBarFragmentConfiguration() );
       }
       else
       {
-         transaction.hide( getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task ) );
+         quickAddTaskActionBarSwitcher.showUnswitched();
       }
-      
-      transaction.commit();
+   }
+   
+
+
+   @Override
+   public void onCloseQuickAddTaskFragment()
+   {
+      showQuickAddTaskActionBarFragment( false );
    }
    
 
 
    protected boolean isQuickAddTaskFragmentOpen()
    {
-      final Fragment quickAddTaskFragment = getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task );
-      return quickAddTaskFragment != null && !quickAddTaskFragment.isHidden();
+      return quickAddTaskActionBarSwitcher.isSwitched();
    }
    
 
 
-   protected Bundle createQuickAddTaskFragmentConfiguration()
+   protected Bundle createQuickAddTaskActionBarFragmentConfiguration()
    {
       final Bundle config = new Bundle();
       
-      config.putParcelable( QuickAddTaskFragment.Config.FILTER,
+      config.putParcelable( QuickAddTaskActionBarFragment.Config.FILTER,
                             getConfiguredFilter() );
       return config;
    }
@@ -414,7 +426,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public void onAddNewTask( Bundle parsedValues )
    {
       startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
-      showQuickAddTaskFragment( false );
+      showQuickAddTaskActionBarFragment( false );
    }
    
 

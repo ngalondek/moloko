@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+      Copyright (c) 2011 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+-->
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Quick_Add_Task_Action_View"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/app_actionbar_height" >
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="@dimen/app_actionbar_actionItem_width"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:background="?selectableItemBackground"
+        android:scaleType="fitCenter"
+        android:src="?homeAsUpIndicator" />
+
+    <dev.drsoran.moloko.widgets.RtmSmartAddTextView
+        android:id="@+id/quick_add_task_edit"
+        style="@style/Quick_Add_Task_Action_View_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"        
+        android:layout_marginTop="4dip"
+        android:layout_toLeftOf="@+id/quick_add_task_btn_add"
+        android:layout_toRightOf="@id/back"
+        android:layout_alignParentBottom="true"
+        android:hint="@string/quick_add_task_hint"
+        android:imeOptions="actionDone"
+        android:inputType="text|textAutoComplete|textCapSentences" />
+
+    <ImageButton
+        android:id="@+id/quick_add_task_btn_add"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5dip"
+        android:layout_marginTop="4dip"
+        android:layout_marginBottom="4dip"
+        android:layout_marginRight="5dip"
+        android:background="?selectableItemBackground"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_title_add" />
+
+</RelativeLayout>

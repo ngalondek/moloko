@@ -19,6 +19,38 @@
    <uses-sdk
       android:minSdkVersion="8"
       android:targetSdkVersion="13" />
+   
+   <uses-permission
+      android:name="android.permission.ACCESS_NETWORK_STATE" />
+   <uses-permission
+      android:name="android.permission.INTERNET" />
+   <uses-permission
+      android:name="android.permission.GET_ACCOUNTS" />
+   <uses-permission
+      android:name="android.permission.USE_CREDENTIALS" />
+   <uses-permission
+      android:name="android.permission.MANAGE_ACCOUNTS" />
+   <uses-permission
+      android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+   <uses-permission
+      android:name="android.permission.WRITE_SETTINGS" />
+   <uses-permission
+      android:name="android.permission.READ_LOGS" />
+   <uses-permission
+      android:name="android.permission.READ_SYNC_STATS" />
+   <uses-permission
+      android:name="android.permission.READ_SYNC_SETTINGS" />
+   <uses-permission
+      android:name="android.permission.WRITE_SYNC_SETTINGS" />
+   <uses-permission
+      android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+   <uses-permission
+      android:name="android.permission.VIBRATE" />
+   <uses-permission
+      android:name="android.permission.READ_CONTACTS" />
+   <uses-permission
+      android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+   
 
    <application
       android:name=".MolokoApp"
@@ -278,8 +310,7 @@
 
       <service
          android:name=".auth.AuthenticationService"
-         android:label="@string/svc_auth"
-         android:exported="true">
+         android:label="@string/svc_auth">
          <intent-filter>
             <action
                android:name="android.accounts.AccountAuthenticator" />
@@ -291,8 +322,7 @@
 
       <service
          android:name=".sync.SyncService"
-         android:label="@string/svc_sync"
-         android:exported="true">
+         android:label="@string/svc_sync">
          <intent-filter>
             <action
                android:name="android.content.SyncAdapter" />
@@ -350,34 +380,4 @@
       </receiver>
    </application>
 
-   <uses-permission
-      android:name="android.permission.ACCESS_NETWORK_STATE" />
-   <uses-permission
-      android:name="android.permission.INTERNET" />
-   <uses-permission
-      android:name="android.permission.GET_ACCOUNTS" />
-   <uses-permission
-      android:name="android.permission.USE_CREDENTIALS" />
-   <uses-permission
-      android:name="android.permission.MANAGE_ACCOUNTS" />
-   <uses-permission
-      android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-   <uses-permission
-      android:name="android.permission.WRITE_SETTINGS" />
-   <uses-permission
-      android:name="android.permission.READ_LOGS" />
-   <uses-permission
-      android:name="android.permission.READ_SYNC_STATS" />
-   <uses-permission
-      android:name="android.permission.READ_SYNC_SETTINGS" />
-   <uses-permission
-      android:name="android.permission.WRITE_SYNC_SETTINGS" />
-   <uses-permission
-      android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-   <uses-permission
-      android:name="android.permission.VIBRATE" />
-   <uses-permission
-      android:name="android.permission.READ_CONTACTS" />
-   <uses-permission
-      android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest> 

@@ -50,7 +50,7 @@
    <string name="app_sort_prio">Priority</string>
    <string name="app_sort_due_date">Due Date</string>
    <string name="app_save">Save changes</string>
-   <string name="app_startup">Launching Moloko ...</string>
+   <string name="app_startup">Launching Moloko &#8230;</string>
 
    <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
    <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>
@@ -166,7 +166,7 @@
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manual</string>
    <string name="phr_password_set">set</string>
-   <string name="phr_loading">Loading...</string>
+   <string name="phr_loading">Loading&#8230;</string>
    <string name="phr_edit_dlg_done">Applying changes?</string>
    <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
 
@@ -212,33 +212,33 @@
 
    <!-- Global Toasts -->
       <!-- Task -->
-      <string name="toast_insert_task">Adding new task...</string>
+      <string name="toast_insert_task">Adding new task&#8230;</string>
       <string name="toast_insert_task_ok">New task added</string>
       <string name="toast_insert_task_fail">Failed to add new task</string>
-      <string name="toast_save_task">Saving task changes...</string>
+      <string name="toast_save_task">Saving task changes&#8230;</string>
       <string name="toast_save_task_ok">Changes to the task have been saved</string>
       <string name="toast_save_task_failed">Failed to save task changes</string>      
-      <string name="toast_delete_task">Deleting task...</string>
+      <string name="toast_delete_task">Deleting task&#8230;</string>
       <string name="toast_delete_task_ok">Task has been deleted</string>
       <string name="toast_delete_task_failed">Failed to delete the task</string>
       <!-- Note -->
-      <string name="toast_insert_note">Adding new note...</string>
+      <string name="toast_insert_note">Adding new note&#8230;</string>
       <string name="toast_insert_note_ok">New task added</string>
       <string name="toast_insert_note_fail">Failed to add new task</string>
-      <string name="toast_save_note">Saving note changes...</string>
+      <string name="toast_save_note">Saving note changes&#8230;</string>
       <string name="toast_save_note_ok">Changes to the note have been saved</string>
       <string name="toast_save_note_failed">Failed to save note changes</string>
-      <string name="toast_delete_note">Deleting note...</string>
+      <string name="toast_delete_note">Deleting note&#8230;</string>
       <string name="toast_delete_note_ok">Note has been deleted</string>
       <string name="toast_delete_note_failed">Failed to delete the note</string>
       <!-- List -->
-      <string name="toast_insert_list">Adding new list...</string>
+      <string name="toast_insert_list">Adding new list&#8230;</string>
       <string name="toast_insert_list_ok">New list added</string>
       <string name="toast_insert_list_fail">Failed to add new list</string>
-      <string name="toast_save_list">Saving list changes...</string>
+      <string name="toast_save_list">Saving list changes&#8230;</string>
       <string name="toast_save_list_ok">Changes to the list have been saved</string>
       <string name="toast_save_list_failed">Failed to save list changes</string>
-      <string name="toast_delete_list">Deleting list...</string>
+      <string name="toast_delete_list">Deleting list&#8230;</string>
       <string name="toast_delete_list_ok">List has been deleted</string>
       <string name="toast_delete_list_failed">Failed to delete the list</string>
       <string name="toast_delete_locked_list">The list \'%1$s\' is locked and cannot be deleted</string>
@@ -288,7 +288,7 @@
    <string name="task_participants">Shared with</string>
    <string name="task_url">URL</string>
       <!-- Dialogs -->
-      <string name="task_dlg_choose_location_app">Open location with...</string>
+      <string name="task_dlg_choose_location_app">Open location with&#8230;</string>
       <string name="task_dlg_removing_editing_note">The note you are editing is removed by processing a background sync. If you continue editing, a new note is inserted with your changes.</string>
       <!-- Toasts -->
       <string name="task_toast_no_google_maps">Location could not be displayed due to missing Google Maps App.</string>
@@ -368,7 +368,7 @@
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">and</string>
      <string name="abstaskslist_dlg_show_tags_or">or</string>
-     <string name="abstaskslist_dlg_sort_title">Sort by...</string>
+     <string name="abstaskslist_dlg_sort_title">Sort by&#8230;</string>
 
    <!-- TasksList activity -->
    <string name="taskslist_titlebar">%1$s</string>
@@ -479,7 +479,7 @@
    <string name="moloko_prefs_rtm_defaultlist_title">Default List</string>
    <string name="moloko_prefs_rtm_language_title">Localization</string>
    <string name="moloko_prefs_startup_view_title">Start View</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Choose default list...</string>
+   <string name="moloko_prefs_startup_view_def_list_choose">Choose default list&#8230;</string>
    <string name="moloko_prefs_startup_view_def_list_name">Default list (%1$s)</string>
    <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
    <string name="moloko_prefs_startup_view_home">@string/app_home</string>
@@ -513,7 +513,7 @@
       <string name="moloko_prefs_rtm_sync_dlg_message">Settings are retrieved from the RTM Server</string>
       <string name="moloko_prefs_clear_db_dlg_title">Swipe database</string>
       <string name="moloko_prefs_clear_db_dlg_text">Delete all data irreversible from the database?</string>
-      <string name="moloko_prefs_clear_db_dlg_clearing">Clearing database...</string>
+      <string name="moloko_prefs_clear_db_dlg_clearing">Clearing database&#8230;</string>
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Database cleared</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Clearing the database failed</string>
@@ -528,7 +528,7 @@
    <string name="acra_crash_comment_prompt">You might add your comments about the issue below:</string>
    <string name="acra_crash_dialog_ok_toast">Your crash report has been sent. Thank you!</string>
    <string name="send_log_dialog_text">Creating the log file for Moloko. The collected information will be sent using an application of your choice. You also will have an opportunity to see and modify the data being sent.</string>
-   <string name="send_log_aquiring_text">Collecting Moloko dependent log information...</string>
+   <string name="send_log_aquiring_text">Collecting Moloko dependent log information&#8230;</string>
    <string name="send_log_chooser_title">Please select an application to send the log</string>
    <string name="send_log_failed">Failed to collect the log data for Moloko</string>
    <string name="send_log_address">ronny.roehricht@gmail.com</string>

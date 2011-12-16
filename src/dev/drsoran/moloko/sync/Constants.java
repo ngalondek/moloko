@@ -51,4 +51,8 @@ public final class Constants
    public final static int SYNC_OBSERVER_TYPE_ALL = 0x7fffffff;
    
    public final static long SYNC_INTERVAL_MANUAL = -1;
+   
+   public final static int SYNC_STATUS_STARTED = 1;
+   
+   public final static int SYNC_STATUS_FINISHED = 2;
 }

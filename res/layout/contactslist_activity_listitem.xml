@@ -18,6 +18,7 @@
    android:id="@+id/contactslist_listitem"
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
+   android:baselineAligned="false"
    android:orientation="horizontal">
 
    <RelativeLayout

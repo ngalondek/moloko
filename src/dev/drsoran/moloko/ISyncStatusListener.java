@@ -24,11 +24,5 @@ package dev.drsoran.moloko;
 
 public interface ISyncStatusListener
 {
-   public final static int STARTED = 1;
-   
-   public final static int FINISHED = 2;
-   
-   
-   
    void onSyncStatusChanged( int status );
 }

@@ -28,7 +28,6 @@ import java.util.List;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
@@ -373,7 +372,7 @@ public class OutSyncTask extends SyncTaskBase implements
             operation.add( timeline.tasks_setURL( taskSeries.getListId(),
                                                   taskSeries.getId(),
                                                   task.getId(),
-                                                  taskSeries.getURL() ),
+                                                  Strings.emptyIfNull( taskSeries.getURL() ) ),
                            properties.getModification( TaskSeries.URL ) );
          }
       }
@@ -462,9 +461,7 @@ public class OutSyncTask extends SyncTaskBase implements
             operation.add( timeline.tasks_setEstimate( taskSeries.getListId(),
                                                        taskSeries.getId(),
                                                        task.getId(),
-                                                       TextUtils.isEmpty( task.getEstimate() )
-                                                                                              ? Strings.EMPTY_STRING
-                                                                                              : task.getEstimate() ),
+                                                       Strings.emptyIfNull( task.getEstimate() ) ),
                            properties.getModification( RawTasks.ESTIMATE ) );
          }
          

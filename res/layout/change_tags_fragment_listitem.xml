@@ -6,7 +6,7 @@
    android:layout_height="?android:attr/listPreferredItemHeight">
 
    <!-- NOTE: Cannot be replaced by a CompoundDrawable since the TextView 
-      has a different background -->
+              has a different background -->
    <ImageView
       android:id="@+id/change_tags_activity_listitem_icon"
       android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
       android:layout_marginLeft="10dip"
       android:layout_marginRight="10dip"
       android:layout_gravity="center_vertical"
-      android:text="tag"
+      android:text="@string/app_tagcloud"
       android:background="@drawable/app_tag_bgnd"
       android:textSize="16dip" />
 </LinearLayout>

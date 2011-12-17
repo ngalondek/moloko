@@ -36,8 +36,7 @@ public class ClearableEditText extends EditText
    
    public ClearableEditText( Context context )
    {
-      super( context );
-      init();
+      this( context, null, android.R.attr.editTextStyle );
    }
    
    
@@ -71,6 +70,27 @@ public class ClearableEditText extends EditText
          return clearButton.onTouchEvent( event ) || super.onTouchEvent( event );
       else
          return false;
+   }
+   
+   
+   
+   @Override
+   protected void onTextChanged( CharSequence text,
+                                 int start,
+                                 int lengthBefore,
+                                 int lengthAfter )
+   {
+      super.onTextChanged( text, start, lengthBefore, lengthAfter );
+      
+      if ( clearButton != null )
+      {
+         final boolean clearButtonIsShown = clearButton.isShown();
+         
+         if ( clearButtonIsShown && text.length() == 0 )
+            clearButton.hide();
+         else if ( !clearButtonIsShown && text.length() > 0 )
+            clearButton.show();
+      }
    }
    
    

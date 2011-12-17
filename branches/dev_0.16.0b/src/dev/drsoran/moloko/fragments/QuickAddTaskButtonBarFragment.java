@@ -26,20 +26,20 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
    private IQuickAddTaskButtonBarFragmentListener listener;
    
    
-
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
-      if ( listener instanceof IQuickAddTaskButtonBarFragmentListener )
+      if ( activity instanceof IQuickAddTaskButtonBarFragmentListener )
          listener = (IQuickAddTaskButtonBarFragmentListener) activity;
       else
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -47,8 +47,8 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -60,8 +60,8 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
       return view;
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -81,8 +81,8 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
           .setOnClickListener( this );
    }
    
-
-
+   
+   
    @Override
    public void onClick( View view )
    {
@@ -117,8 +117,8 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
       }
    }
    
-
-
+   
+   
    private void notifyInsertOperator( char operator )
    {
       if ( listener != null )

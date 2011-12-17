@@ -16,7 +16,8 @@
 
     <!-- ************** -->
     <!-- Quick add task -->
-    <style name="Quick_Add_Task_Action_View_Text">
+    
+    <style name="Quick_Add_Task_Action_Bar_Fragment_Text">
         <item name="android:textColor">@color/app_actionbar_text_color</item>
         <item name="android:textColorHint">@color/app_light_gray</item>
     </style>

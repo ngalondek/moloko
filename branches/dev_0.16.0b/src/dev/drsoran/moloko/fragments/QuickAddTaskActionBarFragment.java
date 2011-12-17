@@ -58,10 +58,10 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    
    private ImageButton btnAdd;
    
-   private RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
+   private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
    
    
-
+   
    public final static QuickAddTaskActionBarFragment newInstance( Bundle config )
    {
       final QuickAddTaskActionBarFragment fragment = new QuickAddTaskActionBarFragment();
@@ -71,8 +71,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -84,8 +84,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -93,8 +93,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -106,8 +106,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       return view;
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -140,8 +140,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       showSoftInput();
    }
    
-
-
+   
+   
    @Override
    public void onDestroyView()
    {
@@ -151,8 +151,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       clearEditText();
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -165,8 +165,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       getArguments().putAll( configuration );
    }
    
-
-
+   
+   
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -176,15 +176,23 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
                             new RtmSmartFilter( Strings.EMPTY_STRING ) );
    }
    
-
-
+   
+   
+   public void insertOperatorAtCursor( char operator )
+   {
+      final int pos = Selection.getSelectionStart( addTaskEdit.getText() );
+      insertOperatorAtPosition( operator, pos );
+   }
+   
+   
+   
    public void clearEditText()
    {
       addTaskEdit.getEditableText().clear();
    }
    
-
-
+   
+   
    @Override
    public void onClick( View view )
    {
@@ -204,22 +212,22 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       }
    }
    
-
-
+   
+   
    private void showSoftInput()
    {
       UIUtils.showSoftInput( addTaskEdit );
    }
    
-
-
+   
+   
    private void hideSoftInput()
    {
       UIUtils.hideSoftInput( addTaskEdit );
    }
    
-
-
+   
+   
    private void connectToCommitInput()
    {
       addTaskEdit.setOnEditorActionListener( new OnEditorActionListener()
@@ -238,8 +246,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       } );
    }
    
-
-
+   
+   
    private RtmSmartFilter getConfiguredRtmSmartFilter()
    {
       final IFilter filter = configuration.getParcelable( Config.FILTER );
@@ -249,8 +257,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
          return null;
    }
    
-
-
+   
+   
    private final int preselectByFilter( RtmSmartFilter filter )
    {
       int numPreselected = 0;
@@ -273,9 +281,9 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       return numPreselected;
    }
    
-
-
-   private final Editable insertOperator( char operator, int pos )
+   
+   
+   private final Editable insertOperatorAtPosition( char operator, int pos )
    {
       final Editable text = addTaskEdit.getEditableText();
       
@@ -290,8 +298,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       return text;
    }
    
-
-
+   
+   
    private final Editable insertOperatorAndValue( char operator,
                                                   String value,
                                                   int pos )
@@ -309,8 +317,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       return text;
    }
    
-
-
+   
+   
    @SuppressWarnings( "unchecked" )
    public final void addNewTask()
    {
@@ -457,7 +465,7 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
             }
          }
          
-         listener.onAddNewTask( config );
+         listener.onQuickAddAddNewTask( config );
       }
    }
 }

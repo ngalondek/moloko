@@ -85,10 +85,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          MolokoLoaderEditFragment< T, AbstractTaskEditFragment.TaskEditDatabaseData >
          implements IChangesTarget
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + AbstractTaskEditFragment.class.getSimpleName();
-   
    protected final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
    
@@ -285,8 +281,15 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       final View fragmentView = inflater.inflate( R.layout.task_edit_fragment,
                                                   container,
                                                   false );
-      
-      final View content = fragmentView.findViewById( android.R.id.content );
+      return fragmentView;
+   }
+   
+   
+   
+   @Override
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      final View content = view.findViewById( android.R.id.content );
       addedDate = (TextView) content.findViewById( R.id.task_edit_added_date );
       completedDate = (TextView) content.findViewById( R.id.task_edit_completed_date );
       source = (TextView) content.findViewById( R.id.task_edit_src );
@@ -307,7 +310,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       locationSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_location );
       urlEditText = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
       
-      return fragmentView;
+      super.onViewCreated( view, savedInstanceState );
    }
    
    
@@ -316,6 +319,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected void initContent( ViewGroup content )
    {
       initialValues = getInitialValues();
+      putInitialChanges();
       
       if ( initialValues != null )
       {
@@ -341,6 +345,12 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          
          putExtaInitialValues();
       }
+   }
+   
+   
+   
+   protected void putInitialChanges()
+   {
    }
    
    

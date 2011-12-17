@@ -16,63 +16,70 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Quick_Add_Task_Action_View"
+    style="@style/Quick_Add_Task_Button_Bar_Fragment"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/app_actionbar_height"
+    android:padding="5dip"
     android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_due_date"
-        android:layout_width="40dip"
+        android:layout_width="0dip"
         android:layout_height="40dip"
-        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center"
         android:background="?selectableItemBackground"
-        android:src="@drawable/ic_button_task_time"
+        android:src="@drawable/ic_button_task_quick_add_time"
         android:text="^" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_prio"
-        android:layout_width="40dip"
+        android:layout_width="0dip"
         android:layout_height="40dip"
-        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center"
         android:background="?selectableItemBackground"
-        android:src="@drawable/ic_button_task_priority"
+        android:src="@drawable/ic_button_task_quick_add_priority"
         android:text="!" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_list_tags"
-        android:layout_width="40dip"
+        android:layout_width="0dip"
         android:layout_height="40dip"
-        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center"
         android:background="?selectableItemBackground"
-        android:src="@drawable/ic_button_task_smart_add_list_or_tag"
+        android:src="@drawable/ic_button_task_quick_add_smart_add_list_or_tag"
         android:text="#" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_location"
-        android:layout_width="40dip"
+        android:layout_width="0dip"
         android:layout_height="40dip"
-        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center"
         android:background="?selectableItemBackground"
-        android:src="@drawable/ic_button_task_location"
+        android:src="@drawable/ic_button_task_quick_add_location"
         android:text=" @" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_repeat"
-        android:layout_width="40dip"
+        android:layout_width="0dip"
         android:layout_height="40dip"
-        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center"
         android:background="?selectableItemBackground"
-        android:src="@drawable/ic_button_task_recurrent"
+        android:src="@drawable/ic_button_task_quick_add_recurrent"
         android:text="*" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_estimate"
-        android:layout_width="40dip"
+        android:layout_width="0dip"
         android:layout_height="40dip"
-        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center"
         android:background="?selectableItemBackground"
-        android:src="@drawable/ic_button_task_thumb"
+        android:src="@drawable/ic_button_task_quick_add_thumb"
         android:text="=" />
 
 </LinearLayout>

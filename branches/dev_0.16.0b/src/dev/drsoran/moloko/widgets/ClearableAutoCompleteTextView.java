@@ -33,23 +33,21 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
    private PressCompoundDrawable clearButton;
    
    
-
+   
    public ClearableAutoCompleteTextView( Context context )
    {
-      super( context );
-      init();
+      this( context, null, android.R.attr.autoCompleteTextViewStyle );
    }
    
-
-
+   
+   
    public ClearableAutoCompleteTextView( Context context, AttributeSet attrs )
    {
-      super( context, attrs, android.R.attr.autoCompleteTextViewStyle );
-      init();
+      this( context, attrs, android.R.attr.autoCompleteTextViewStyle );
    }
    
-
-
+   
+   
    public ClearableAutoCompleteTextView( Context context, AttributeSet attrs,
       int defStyle )
    {
@@ -57,15 +55,15 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
       init();
    }
    
-
-
+   
+   
    public String getTextTrimmed()
    {
       return super.getText().toString().trim();
    }
    
-
-
+   
+   
    @Override
    public boolean onTouchEvent( MotionEvent event )
    {
@@ -75,8 +73,29 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
          return false;
    }
    
-
-
+   
+   
+   @Override
+   protected void onTextChanged( CharSequence text,
+                                 int start,
+                                 int lengthBefore,
+                                 int lengthAfter )
+   {
+      super.onTextChanged( text, start, lengthBefore, lengthAfter );
+      
+      if ( clearButton != null )
+      {
+         final boolean clearButtonIsShown = clearButton.isShown();
+         
+         if ( clearButtonIsShown && text.length() == 0 )
+            clearButton.hide();
+         else if ( !clearButtonIsShown && text.length() > 0 )
+            clearButton.show();
+      }
+   }
+   
+   
+   
    @Override
    protected int[] onCreateDrawableState( int extraSpace )
    {
@@ -98,8 +117,8 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
       return super.onCreateDrawableState( extraSpace );
    }
    
-
-
+   
+   
    private void init()
    {
       clearButton = new PressCompoundDrawable( this );

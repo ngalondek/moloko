@@ -29,6 +29,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
+import dev.drsoran.moloko.fragments.QuickAddTaskButtonBarFragment;
 
 
 public class QuickAddTaskActionBarSwitcher
@@ -36,6 +37,10 @@ public class QuickAddTaskActionBarSwitcher
    private final static String IS_SWITCHED_KEY = "quick_add_task_is_switched";
    
    private final static String FRAGMENT_CONFIG = "quick_add_task_frag_config";
+   
+   private final boolean isSwitchingSupported;
+   
+   private final boolean showButtonBarFragment;
    
    private final FragmentActivity activity;
    
@@ -48,25 +53,28 @@ public class QuickAddTaskActionBarSwitcher
    private Bundle fragmentConfig;
    
    
-
+   
    public QuickAddTaskActionBarSwitcher( FragmentActivity activity )
    {
       this( activity, null );
    }
    
-
-
+   
+   
    public QuickAddTaskActionBarSwitcher( FragmentActivity activity,
       Bundle savedInstanceState )
    {
       this.activity = activity;
       actionBar = activity.getSupportActionBar();
       
+      isSwitchingSupported = hasActionBarFragmentContainer();
+      showButtonBarFragment = hasButtonBarFragmentContainer();
+      
       restoreInstanceState( savedInstanceState );
    }
    
-
-
+   
+   
    public void saveInstanceState( Bundle bundle )
    {
       if ( bundle != null )
@@ -76,8 +84,8 @@ public class QuickAddTaskActionBarSwitcher
       }
    }
    
-
-
+   
+   
    public void restoreInstanceState( Bundle bundle )
    {
       if ( bundle != null )
@@ -87,49 +95,175 @@ public class QuickAddTaskActionBarSwitcher
       }
    }
    
-
-
-   public void showInLastState()
+   
+   
+   public void insertOperator( char operator )
    {
-      if ( isSwitched )
-         hideActionBarAndShowFragments();
-      else
-         showActionBarAndHideFragments();
+      final QuickAddTaskActionBarFragment fragment = (QuickAddTaskActionBarFragment) getFragment( R.id.frag_quick_add_task_action_bar );
+      if ( fragment != null )
+      {
+         fragment.insertOperatorAtCursor( operator );
+      }
    }
    
-
-
+   
+   
+   public void showInLastState()
+   {
+      if ( isSwitchingSupported )
+      {
+         if ( isSwitched )
+            hideActionBarAndAddFragments();
+         else
+            showActionBarAndRemoveFragments();
+      }
+   }
+   
+   
+   
    public boolean isSwitched()
    {
       return isSwitched;
    }
    
-
-
+   
+   
    public void showUnswitched()
    {
       if ( isSwitched )
       {
-         showActionBarAndHideFragments();
+         showActionBarAndRemoveFragments();
          isSwitched = false;
       }
    }
    
-
-
+   
+   
    public void showSwitched( Bundle fragmentConfig )
    {
-      if ( !isSwitched )
+      if ( isSwitchingSupported && !isSwitched )
       {
          this.fragmentConfig = fragmentConfig;
-         hideActionBarAndShowFragments();
+         hideActionBarAndAddFragments();
          isSwitched = true;
       }
    }
    
-
-
-   private void hideActionBarAndShowFragments()
+   
+   
+   private void hideActionBarAndAddFragments()
+   {
+      hideActionBar();
+      
+      final FragmentTransaction transaction = activity.getSupportFragmentManager()
+                                                      .beginTransaction();
+      
+      addActionBarFragment( transaction );
+      
+      if ( showButtonBarFragment )
+         addButtonBarFragment( transaction );
+      
+      transaction.commit();
+   }
+   
+   
+   
+   private void showActionBarAndRemoveFragments()
+   {
+      final FragmentTransaction transaction = activity.getSupportFragmentManager()
+                                                      .beginTransaction();
+      
+      removeActionBarFragment( transaction );
+      removeButtonBarFragment( transaction );
+      
+      transaction.commit();
+      
+      showActionBar();
+   }
+   
+   
+   
+   private void addActionBarFragment( FragmentTransaction transaction )
+   {
+      final int fragId = R.id.frag_quick_add_task_action_bar;
+      Fragment fragment = getFragment( fragId );
+      
+      if ( fragment == null )
+      {
+         fragment = QuickAddTaskActionBarFragment.newInstance( fragmentConfig );
+         addFragment( transaction, fragment, fragId );
+      }
+   }
+   
+   
+   
+   private void removeActionBarFragment( FragmentTransaction transaction )
+   {
+      final Fragment fragment = getFragment( R.id.frag_quick_add_task_action_bar );
+      
+      if ( fragment != null )
+      {
+         removeFragment( transaction, fragment );
+      }
+   }
+   
+   
+   
+   private void addButtonBarFragment( FragmentTransaction transaction )
+   {
+      final int fragId = R.id.frag_quick_add_task_button_bar;
+      
+      Fragment fragment = getFragment( fragId );
+      
+      if ( fragment == null )
+      {
+         fragment = QuickAddTaskButtonBarFragment.newInstance( fragmentConfig );
+         addFragment( transaction, fragment, fragId );
+      }
+   }
+   
+   
+   
+   private void removeButtonBarFragment( FragmentTransaction transaction )
+   {
+      final Fragment fragment = getFragment( R.id.frag_quick_add_task_button_bar );
+      if ( fragment != null )
+      {
+         removeFragment( transaction, fragment );
+      }
+   }
+   
+   
+   
+   private Fragment getFragment( int id )
+   {
+      final Fragment fragment = activity.getSupportFragmentManager()
+                                        .findFragmentById( id );
+      return fragment;
+   }
+   
+   
+   
+   private void addFragment( FragmentTransaction transaction,
+                             Fragment fragment,
+                             int id )
+   {
+      transaction.setTransitionStyle( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+      transaction.add( id, fragment );
+   }
+   
+   
+   
+   private void removeFragment( FragmentTransaction transaction,
+                                Fragment fragment )
+   {
+      transaction.setTransitionStyle( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+      transaction.remove( fragment );
+   }
+   
+   
+   
+   private void hideActionBar()
    {
       handler.post( new Runnable()
       {
@@ -139,36 +273,12 @@ public class QuickAddTaskActionBarSwitcher
             actionBar.hide();
          }
       } );
-      
-      Fragment fragment = activity.getSupportFragmentManager()
-                                  .findFragmentById( R.id.frag_quick_add_task );
-      if ( fragment == null )
-      {
-         fragment = QuickAddTaskActionBarFragment.newInstance( fragmentConfig );
-         
-         final FragmentTransaction transaction = activity.getSupportFragmentManager()
-                                                         .beginTransaction();
-         transaction.setTransitionStyle( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
-         transaction.add( R.id.frag_quick_add_task, fragment );
-         transaction.commit();
-      }
    }
    
-
-
-   private void showActionBarAndHideFragments()
+   
+   
+   private void showActionBar()
    {
-      final Fragment fragment = activity.getSupportFragmentManager()
-                                        .findFragmentById( R.id.frag_quick_add_task );
-      if ( fragment != null )
-      {
-         final FragmentTransaction transaction = activity.getSupportFragmentManager()
-                                                         .beginTransaction();
-         transaction.setTransitionStyle( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
-         transaction.remove( fragment );
-         transaction.commit();
-      }
-      
       handler.post( new Runnable()
       {
          @Override
@@ -177,5 +287,19 @@ public class QuickAddTaskActionBarSwitcher
             actionBar.show();
          }
       } );
+   }
+   
+   
+   
+   private boolean hasActionBarFragmentContainer()
+   {
+      return activity.findViewById( R.id.frag_quick_add_task_action_bar ) != null;
+   }
+   
+   
+   
+   private boolean hasButtonBarFragmentContainer()
+   {
+      return activity.findViewById( R.id.frag_quick_add_task_button_bar ) != null;
    }
 }

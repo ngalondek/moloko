@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
@@ -133,6 +134,32 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    @Override
    protected Bundle getInitialValues()
    {
+      final Bundle initialValues = new Bundle();
+      
+      initialValues.putString( Tasks.TASKSERIES_NAME, null );
+      initialValues.putString( Tasks.LIST_ID, null );
+      initialValues.putString( Tasks.PRIORITY,
+                               RtmTask.convertPriority( Priority.None ) );
+      initialValues.putString( Tasks.TAGS, null );
+      initialValues.putLong( Tasks.DUE_DATE, -1 );
+      initialValues.putBoolean( Tasks.HAS_DUE_TIME, false );
+      initialValues.putString( Tasks.RECURRENCE, null );
+      initialValues.putBoolean( Tasks.RECURRENCE_EVERY, false );
+      initialValues.putString( Tasks.ESTIMATE, null );
+      initialValues.putLong( Tasks.ESTIMATE_MILLIS, -1 );
+      initialValues.putString( Tasks.LOCATION_ID, null );
+      initialValues.putString( Tasks.URL, null );
+      
+      return initialValues;
+   }
+   
+   
+   
+   @Override
+   protected void putInitialChanges()
+   {
+      super.putInitialChanges();
+      
       final List< String > tags = getConfiguredTags();
       final String locationId = getConfiguredLocationId();
       
@@ -148,33 +175,36 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
             listId = lastRemovedListId;
       }
       
-      final Bundle initialValues = new Bundle();
-      
-      initialValues.putString( Tasks.TASKSERIES_NAME,
-                               configuration.getString( Config.TASK_NAME ) );
-      initialValues.putString( Tasks.LIST_ID, listId );
-      initialValues.putString( Tasks.PRIORITY,
-                               configuration.getString( Config.PRIORITY ) );
-      initialValues.putString( Tasks.TAGS,
-                               TextUtils.join( Tasks.TAGS_SEPARATOR, tags ) );
-      initialValues.putLong( Tasks.DUE_DATE,
-                             configuration.getLong( Config.DUE_DATE,
-                                                    Long.valueOf( -1 ) ) );
-      initialValues.putBoolean( Tasks.HAS_DUE_TIME,
-                                configuration.getBoolean( Config.HAS_DUE_TIME ) );
-      initialValues.putString( Tasks.RECURRENCE,
-                               configuration.getString( Config.RECURRENCE ) );
-      initialValues.putBoolean( Tasks.RECURRENCE_EVERY,
-                                configuration.getBoolean( Config.RECURRENCE_EVERY ) );
-      initialValues.putString( Tasks.ESTIMATE,
-                               configuration.getString( Config.ESTIMATE ) );
-      initialValues.putLong( Tasks.ESTIMATE_MILLIS,
-                             configuration.getLong( Config.ESTIMATE_MILLIS,
-                                                    Long.valueOf( -1 ) ) );
-      initialValues.putString( Tasks.LOCATION_ID, locationId );
-      initialValues.putString( Tasks.URL, null );
-      
-      return initialValues;
+      putChange( Tasks.TASKSERIES_NAME,
+                 configuration.getString( Config.TASK_NAME ),
+                 String.class );
+      putChange( Tasks.LIST_ID, listId, String.class );
+      putChange( Tasks.PRIORITY,
+                 configuration.getString( Config.PRIORITY ),
+                 String.class );
+      putChange( Tasks.TAGS,
+                 TextUtils.join( Tasks.TAGS_SEPARATOR, tags ),
+                 String.class );
+      putChange( Tasks.DUE_DATE,
+                 configuration.getLong( Config.DUE_DATE, Long.valueOf( -1 ) ),
+                 Long.class );
+      putChange( Tasks.HAS_DUE_TIME,
+                 configuration.getBoolean( Config.HAS_DUE_TIME ),
+                 Boolean.class );
+      putChange( Tasks.RECURRENCE,
+                 configuration.getString( Config.RECURRENCE ),
+                 String.class );
+      putChange( Tasks.RECURRENCE_EVERY,
+                 configuration.getBoolean( Config.RECURRENCE_EVERY ),
+                 Boolean.class );
+      putChange( Tasks.ESTIMATE,
+                 configuration.getString( Config.ESTIMATE ),
+                 String.class );
+      putChange( Tasks.ESTIMATE_MILLIS,
+                 configuration.getLong( Config.ESTIMATE_MILLIS,
+                                        Long.valueOf( -1 ) ),
+                 Long.class );
+      putChange( Tasks.LOCATION_ID, locationId, String.class );
    }
    
    

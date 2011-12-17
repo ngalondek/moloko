@@ -79,6 +79,27 @@ public class ClearableMultiAutoCompleteTextView extends
    
    
    @Override
+   protected void onTextChanged( CharSequence text,
+                                 int start,
+                                 int lengthBefore,
+                                 int lengthAfter )
+   {
+      super.onTextChanged( text, start, lengthBefore, lengthAfter );
+      
+      if ( clearButton != null )
+      {
+         final boolean clearButtonIsShown = clearButton.isShown();
+         
+         if ( clearButtonIsShown && text.length() == 0 )
+            clearButton.hide();
+         else if ( !clearButtonIsShown && text.length() > 0 )
+            clearButton.show();
+      }
+   }
+   
+   
+   
+   @Override
    protected int[] onCreateDrawableState( int extraSpace )
    {
       if ( clearButton != null )

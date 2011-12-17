@@ -29,7 +29,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class PressCompoundDrawable
+public final class PressCompoundDrawable
 {
    private boolean clearBtnDown = false;
    
@@ -37,22 +37,51 @@ public class PressCompoundDrawable
    
    private Runnable unsetPressed;
    
+   private boolean isShown;
    
-
+   
+   
    public PressCompoundDrawable( TextView textView )
    {
       if ( textView == null )
          throw new NullPointerException( "textView is null" );
       
       this.textView = textView;
-      this.textView.setCompoundDrawablesWithIntrinsicBounds( 0,
-                                                             0,
-                                                             R.drawable.app_edittext_clear,
-                                                             0 );
+      
+      if ( textView.length() > 0 )
+         show();
+      else
+         hide();
    }
    
-
-
+   
+   
+   public final void show()
+   {
+      textView.setCompoundDrawablesWithIntrinsicBounds( 0,
+                                                        0,
+                                                        R.drawable.app_edittext_clear,
+                                                        0 );
+      isShown = true;
+   }
+   
+   
+   
+   public final void hide()
+   {
+      textView.setCompoundDrawablesWithIntrinsicBounds( 0, 0, 0, 0 );
+      isShown = false;
+   }
+   
+   
+   
+   public final boolean isShown()
+   {
+      return isShown;
+   }
+   
+   
+   
    public boolean onTouchEvent( MotionEvent event )
    {
       final Drawable clearDrawable = textView.getCompoundDrawables()[ 2 ];
@@ -85,20 +114,23 @@ public class PressCompoundDrawable
       return false;
    }
    
-
-
+   
+   
    public int[] onCreateDrawableState()
    {
       if ( clearBtnDown )
       {
          if ( unsetPressed == null )
+         {
             unsetPressed = new Runnable()
             {
+               @Override
                public void run()
                {
                   textView.setPressed( false );
                }
             };
+         }
          
          if ( textView.getHandler() != null )
             textView.getHandler().post( unsetPressed );

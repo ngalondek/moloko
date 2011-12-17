@@ -24,6 +24,7 @@
         <item name="actionSpinnerItemStyle">@style/ActionBarSpinnerItemStyle</item>
         <item name="abDisplayOptions">showHome|showTitle</item>
         <item name="abIcon">@drawable/ic_title_home</item>
+        <item name="homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_dark</item>
 
         <!-- Widgets -->
         <item name="android:expandableListViewStyle">@style/ExpandableListViewStyle</item>

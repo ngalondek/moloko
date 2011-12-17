@@ -28,9 +28,9 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -44,6 +44,7 @@ import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskActionBarFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
@@ -55,10 +56,12 @@ import dev.drsoran.rtm.Task;
 abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          implements ITasksListFragmentListener, OnNavigationListener,
          IQuickAddTaskActionBarFragmentListener,
+         IQuickAddTaskButtonBarFragmentListener,
          LoaderCallbacks< List< RtmListWithTaskCount > >
 {
    private final static int[] FRAGMENT_IDS =
-   { R.id.frag_quick_add_task, R.id.frag_taskslist };
+   { R.id.frag_quick_add_task_action_bar, R.id.frag_taskslist,
+    R.id.frag_quick_add_task_button_bar };
    
    
    public static class Config
@@ -75,7 +78,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private SpinnerAdapter actionBarNavigationAdapter;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -91,8 +94,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          initTasksListWithConfiguration( getIntent(), configuration );
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -100,8 +103,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       quickAddTaskActionBarSwitcher.saveInstanceState( outState );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
@@ -109,8 +112,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       quickAddTaskActionBarSwitcher.restoreInstanceState( state );
    }
    
-
-
+   
+   
    @Override
    protected void onNewIntent( Intent intent )
    {
@@ -118,24 +121,24 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       setTitleAndNavigationMode();
    }
    
-
-
+   
+   
    private void initializeActionBar()
    {
       quickAddTaskActionBarSwitcher.showInLastState();
       setTitleAndNavigationMode();
    }
    
-
-
+   
+   
    private void setTitleAndNavigationMode()
    {
       getSupportActionBar().setTitle( getConfiguredTitle() );
       setActionBarNavigationMode();
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
@@ -145,8 +148,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          super.onBackPressed();
    }
    
-
-
+   
+   
    protected void setActionBarNavigationMode()
    {
       // If we are opened for a list, then we show the other lists as navigation
@@ -163,8 +166,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
    }
    
-
-
+   
+   
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
@@ -177,8 +180,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                                   config.getString( Config.LIST_NAME ) );
    }
    
-
-
+   
+   
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -187,22 +190,22 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       bundle.putString( Config.TITLE, getString( R.string.app_name ) );
    }
    
-
-
+   
+   
    private Bundle getCurrentTasksListFragmentConfiguration()
    {
       return getFragmentConfigurations( R.id.frag_taskslist );
    }
    
-
-
+   
+   
    private Bundle getCurrentActivityAndFragmentsConfiguration()
    {
       return getActivityAndFragmentsConfiguration( R.id.frag_taskslist );
    }
    
-
-
+   
+   
    @Override
    public void onTaskSortChanged( int newTaskSort )
    {
@@ -213,50 +216,50 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
    }
    
-
-
+   
+   
    protected final Task getTask( int pos )
    {
       return getTasksListFragment().getTask( pos );
    }
    
-
-
+   
+   
    protected int getTaskSort()
    {
       return getTasksListFragment().getTaskSortConfiguration();
    }
    
-
-
+   
+   
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
       return getTasksListFragment().getTaskSortConfiguration() == sortOrder;
    }
    
-
-
+   
+   
    protected IFilter getConfiguredFilter()
    {
       return getTasksListFragment().getFilter();
    }
    
-
-
+   
+   
    protected String getConfiguredListName()
    {
       return configuration.getString( Config.LIST_NAME );
    }
    
-
-
+   
+   
    protected void configuredTitle( String title )
    {
       configuration.putString( Config.TITLE, title );
    }
    
-
-
+   
+   
    protected String getConfiguredTitle()
    {
       final String title = configuration.getString( Config.TITLE );
@@ -264,23 +267,23 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                                         : getString( R.string.app_name );
    }
    
-
-
+   
+   
    protected boolean isConfiguredWithListName()
    {
       return !TextUtils.isEmpty( getConfiguredListName() );
    }
    
-
-
+   
+   
    protected boolean isInDropDownNavigationMode()
    {
       return getSupportActionBar() != null
          && getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
    }
    
-
-
+   
+   
    protected void setDropDownNavigationMode( SpinnerAdapter spinnerAdapter )
    {
       if ( getSupportActionBar() != null )
@@ -298,8 +301,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
    }
    
-
-
+   
+   
    protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
    {
       final List< Pair< Integer, String > > items = new ArrayList< Pair< Integer, String > >( lists.size() );
@@ -311,8 +314,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       return actionBarNavigationAdapter;
    }
    
-
-
+   
+   
    @Override
    public Loader< List< RtmListWithTaskCount >> onCreateLoader( int id,
                                                                 Bundle args )
@@ -320,8 +323,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       return new RtmListWithTaskCountLoader( this );
    }
    
-
-
+   
+   
    @Override
    public void onLoadFinished( Loader< List< RtmListWithTaskCount >> loader,
                                List< RtmListWithTaskCount > data )
@@ -348,16 +351,16 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
    }
    
-
-
+   
+   
    @Override
    public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
    {
       setDropDownNavigationMode( null );
    }
    
-
-
+   
+   
    @Override
    public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
@@ -380,8 +383,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       return handled;
    }
    
-
-
+   
+   
    protected void showQuickAddTaskActionBarFragment( boolean show )
    {
       if ( show )
@@ -394,23 +397,23 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
    }
    
-
-
+   
+   
    @Override
    public void onCloseQuickAddTaskFragment()
    {
       showQuickAddTaskActionBarFragment( false );
    }
    
-
-
+   
+   
    protected boolean isQuickAddTaskFragmentOpen()
    {
       return quickAddTaskActionBarSwitcher.isSwitched();
    }
    
-
-
+   
+   
    protected Bundle createQuickAddTaskActionBarFragmentConfiguration()
    {
       final Bundle config = new Bundle();
@@ -420,25 +423,33 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       return config;
    }
    
-
-
+   
+   
    @Override
-   public void onAddNewTask( Bundle parsedValues )
+   public void onQuickAddAddNewTask( Bundle parsedValues )
    {
-      startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
       showQuickAddTaskActionBarFragment( false );
+      startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
    }
    
-
-
+   
+   
+   @Override
+   public void onQuickAddTaskOperatorSelected( char operator )
+   {
+      quickAddTaskActionBarSwitcher.insertOperator( operator );
+   }
+   
+   
+   
    @SuppressWarnings( "unchecked" )
    protected AbstractTasksListFragment< ? extends Task > getTasksListFragment()
    {
       return (AbstractTasksListFragment< ? extends Task >) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
    }
    
-
-
+   
+   
    private void initTasksListWithConfiguration( Intent intent, Bundle config )
    {
       final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
@@ -452,8 +463,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
    }
    
-
-
+   
+   
    protected void reloadTasksListWithConfiguration( Bundle config )
    {
       final Intent newIntent = getNewConfiguredIntent( config );
@@ -462,8 +473,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       newTasksListFragmentbyIntent( newIntent );
    }
    
-
-
+   
+   
    protected void newTasksListFragmentbyIntent( Intent intent )
    {
       final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
@@ -478,15 +489,15 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
    }
    
-
-
+   
+   
    protected Fragment getNewTasksListFragmentInstance( Intent intent )
    {
       return TasksListFragmentFactory.newFragment( this, intent );
    }
    
-
-
+   
+   
    private Intent getNewConfiguredIntent( Bundle config )
    {
       final Intent newIntent = getTasksListFragment().newDefaultIntent();
@@ -495,8 +506,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       return newIntent;
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {

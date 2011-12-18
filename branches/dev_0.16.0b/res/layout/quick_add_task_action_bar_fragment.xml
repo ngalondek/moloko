@@ -11,50 +11,50 @@
       details. You should have received a copy of the GNU General Public
       License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
+      implementation
 -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Quick_Add_Task_Action_Bar_Fragment"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/app_actionbar_height" >
 
-    <ImageButton
-        android:id="@+id/back"
-        android:layout_width="@dimen/app_actionbar_actionItem_width"
+    <LinearLayout
+        android:id="@+id/back"        
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
+        android:layout_margin="2dip"
         android:background="?selectableItemBackground"
-        android:scaleType="fitCenter"
-        android:src="?homeAsUpIndicator" />    
+        android:focusable="true"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center"
+            android:src="?homeAsUpIndicator" />
+
+        <ImageView
+            android:layout_width="@dimen/app_actionbar_actionItem_width"
+            android:layout_height="@dimen/app_actionbar_actionItem_heigth"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:paddingRight="4dip"
+            android:src="@drawable/ic_title_add_task" />
+    </LinearLayout>
 
     <dev.drsoran.moloko.widgets.RtmSmartAddTextView
         android:id="@+id/quick_add_task_edit"
         style="@style/Quick_Add_Task_Action_Bar_Fragment_Text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"        
+        android:layout_height="fill_parent"        
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="4dip"
         android:layout_marginTop="4dip"
-        android:layout_toLeftOf="@+id/quick_add_task_btn_add"
         android:layout_toRightOf="@id/back"
-        android:layout_alignParentBottom="true"
         android:hint="@string/quick_add_task_hint"
         android:imeOptions="actionDone"
         android:inputType="text|textAutoComplete|textCapSentences" />
-
-    <ImageButton
-        android:id="@+id/quick_add_task_btn_add"
-        android:layout_width="32dip"
-        android:layout_height="32dip"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dip"
-        android:layout_marginTop="4dip"
-        android:layout_marginBottom="4dip"
-        android:layout_marginRight="5dip"
-        android:background="?selectableItemBackground"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_title_add" />
 
 </RelativeLayout>

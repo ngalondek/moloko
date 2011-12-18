@@ -55,8 +55,9 @@
    <application
       android:name=".MolokoApp"
       android:icon="@drawable/ic_launcher"
-      android:label="@string/app_name"
+      android:label="@string/app_name"      
       android:theme="@style/Theme.Moloko"
+      android:hardwareAccelerated="true"
       android:debuggable="true">
 
       <!-- Declare the default searchable Activity for the whole app -->
@@ -96,6 +97,8 @@
       <activity
          android:label="@string/app_name"
          android:name=".activities.TasksListActivity"
+         android:theme="@style/Theme.Moloko.TasksList"
+         android:windowSoftInputMode="adjustResize"
          android:launchMode="singleTop">
          <intent-filter>
             <!-- Show a list of tasks -->

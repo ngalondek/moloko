@@ -157,6 +157,8 @@ public class QuickAddTaskActionBarSwitcher
       
       final FragmentTransaction transaction = activity.getSupportFragmentManager()
                                                       .beginTransaction();
+      transaction.setCustomAnimations( R.anim.slide_in_right,
+                                       R.anim.slide_out_right );
       
       addActionBarFragment( transaction );
       
@@ -170,15 +172,14 @@ public class QuickAddTaskActionBarSwitcher
    
    private void showActionBarAndRemoveFragments()
    {
+      showActionBar();
+      
       final FragmentTransaction transaction = activity.getSupportFragmentManager()
                                                       .beginTransaction();
-      
       removeActionBarFragment( transaction );
       removeButtonBarFragment( transaction );
       
       transaction.commit();
-      
-      showActionBar();
    }
    
    
@@ -248,7 +249,6 @@ public class QuickAddTaskActionBarSwitcher
                              Fragment fragment,
                              int id )
    {
-      transaction.setTransitionStyle( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
       transaction.add( id, fragment );
    }
    
@@ -257,7 +257,6 @@ public class QuickAddTaskActionBarSwitcher
    private void removeFragment( FragmentTransaction transaction,
                                 Fragment fragment )
    {
-      transaction.setTransitionStyle( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
       transaction.remove( fragment );
    }
    

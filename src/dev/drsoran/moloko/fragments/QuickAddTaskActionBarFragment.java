@@ -16,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -55,8 +54,6 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    private IQuickAddTaskActionBarFragmentListener listener;
    
    private RtmSmartAddTextView addTaskEdit;
-   
-   private ImageButton btnAdd;
    
    private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
    
@@ -131,9 +128,6 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
          Selection.setSelection( addTaskEdit.getText(), 0 );
       }
       
-      btnAdd = (ImageButton) view.findViewById( R.id.quick_add_task_btn_add );
-      btnAdd.setOnClickListener( this );
-      
       view.findViewById( R.id.back ).setOnClickListener( this );
       
       connectToCommitInput();
@@ -198,10 +192,6 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    {
       switch ( view.getId() )
       {
-         case R.id.quick_add_task_btn_add:
-            addNewTask();
-            break;
-         
          case R.id.back:
             if ( listener != null )
                listener.onCloseQuickAddTaskFragment();

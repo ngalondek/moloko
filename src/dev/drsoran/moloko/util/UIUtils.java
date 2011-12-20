@@ -64,7 +64,6 @@ import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
@@ -688,10 +687,16 @@ public final class UIUtils
    {
       if ( MolokoApp.IsApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) == false )
       {
-         final ActionBarMenuItemView actionBarMenuItemView = new ActionBarMenuItemView( context );
-         actionBarMenuItemView.setIcon( item.getIcon() );
+         // final ActionBarMenuItemView actionBarMenuItemView = new ActionBarMenuItemView( context );
+         // actionBarMenuItemView.setIcon( item.getIcon() );
          
-         item.setActionView( actionBarMenuItemView );
+         // final ActionMenuItemView actionMenuItemView = (ActionMenuItemView) LayoutInflater.from( context )
+         // .inflate( R.layout.abs__action_menu_item_layout,
+         // null );
+         // actionMenuItemView.initialize( (MenuItemImpl) item, 0 );
+         // actionMenuItemView.setIcon( item.getIcon() );
+         //
+         // item.setActionView( actionMenuItemView );
       }
    }
    

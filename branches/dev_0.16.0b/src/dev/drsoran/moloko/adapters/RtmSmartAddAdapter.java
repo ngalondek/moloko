@@ -112,7 +112,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       if ( convertView == null )
          view = LayoutInflater.from( context )
-                              .inflate( R.layout.dropdown_with_icon_1line,
+                              .inflate( android.R.layout.simple_dropdown_item_1line,
                                         parent,
                                         false );
       else

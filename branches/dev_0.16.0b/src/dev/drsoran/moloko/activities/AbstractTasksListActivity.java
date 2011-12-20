@@ -34,7 +34,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.widget.SpinnerAdapter;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.QuickAddTaskActionBarSwitcher;
@@ -319,10 +318,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
    {
-      final List< Pair< Integer, String > > items = new ArrayList< Pair< Integer, String > >( lists.size() );
+      final List< String > items = new ArrayList< String >( lists.size() );
       for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
-         items.add( Pair.create( R.drawable.ic_button_task_list,
-                                 rtmListWithTaskCount.getName() ) );
+         items.add( rtmListWithTaskCount.getName() );
       
       actionBarNavigationAdapter = new ActionBarNavigationAdapter( this, items );
       return actionBarNavigationAdapter;
@@ -380,14 +378,13 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    {
       boolean handled = false;
       
-      @SuppressWarnings( "unchecked" )
-      final Pair< Integer, String > item = (Pair< Integer, String >) actionBarNavigationAdapter.getItem( itemPosition );
+      final String item = (String) actionBarNavigationAdapter.getItem( itemPosition );
       
-      if ( !item.second.equalsIgnoreCase( getConfiguredListName() ) )
+      if ( !item.equalsIgnoreCase( getConfiguredListName() ) )
       {
          final Bundle newConfig = getCurrentActivityAndFragmentsConfiguration();
          newConfig.putAll( Intents.Extras.createOpenListExtrasByName( this,
-                                                                      item.second,
+                                                                      item,
                                                                       null ) );
          reloadTasksListWithConfiguration( newConfig );
          

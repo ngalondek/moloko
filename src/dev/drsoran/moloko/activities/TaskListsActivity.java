@@ -151,7 +151,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
                                            Tasks.CONTENT_URI );
          
          intent.putExtra( TasksListActivity.Config.TITLE,
-                          getString( R.string.taskslist_titlebar, listName ) );
+                          getString( R.string.taskslist_actionbar, listName ) );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
          

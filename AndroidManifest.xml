@@ -138,6 +138,7 @@
       <activity
          android:label="@string/app_name"
          android:name=".activities.TaskSearchResultActivity"
+         android:theme="@style/Theme.Moloko.TasksList"
          android:launchMode="singleTop"> <!-- SingleTop due to searchable -->
          <intent-filter>
             <!-- Handle search queries -->

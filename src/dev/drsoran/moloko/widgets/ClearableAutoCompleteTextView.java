@@ -30,7 +30,7 @@ import android.widget.AutoCompleteTextView;
 
 public class ClearableAutoCompleteTextView extends AutoCompleteTextView
 {
-   private PressCompoundDrawable clearButton;
+   private ClearButtonCompoundDrawable clearButton;
    
    
    
@@ -52,7 +52,7 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
       int defStyle )
    {
       super( context, attrs, defStyle );
-      init();
+      init( attrs );
    }
    
    
@@ -119,8 +119,8 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
    
    
    
-   private void init()
+   private void init( AttributeSet attrs )
    {
-      clearButton = new PressCompoundDrawable( this );
+      clearButton = new ClearButtonCompoundDrawable( this, attrs );
    }
 }

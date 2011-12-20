@@ -371,11 +371,11 @@
      <string name="abstaskslist_dlg_sort_title">Sort by&#8230;</string>
 
    <!-- TasksList activity -->
-   <string name="taskslist_titlebar">%1$s</string>
-   <string name="taskslist_titlebar_due_today">%1$s - today</string>
-   <string name="taskslist_titlebar_due_tomorrow">%1$s - tomorrow</string>
-   <string name="taskslist_titlebar_overdue">%1$s - overdue</string>
-   <string name="taskslist_titlebar_completed">%1$s - completed</string>
+   <string name="taskslist_actionbar">%1$s</string>
+   <string name="taskslist_actionbar_subtitle_due_today">Due today</string>
+   <string name="taskslist_actionbar_subtitle_due_tomorrow">Due tomorrow</string>
+   <string name="taskslist_actionbar_subtitle_overdue">Overdue</string>
+   <string name="taskslist_actionbar_subtitle_completed">Completed</string>
      <!-- Menus -->
      <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
      <string name="taskslist_menu_opt_delete_list">Delete list</string>

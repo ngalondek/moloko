@@ -149,8 +149,6 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    public Intent getChildIntent( int groupPosition, int childPosition )
    {
       final RtmListWithTaskCount list = lists.get( groupPosition );
-      final String listName = list.getName();
-      
       Intent intent = null;
       
       switch ( childPosition + 1 )
@@ -160,11 +158,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            
-            intent.removeExtra( TasksListActivity.Config.TITLE );
-            intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.taskslist_titlebar_due_today,
-                                                listName ) );
+            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+                             context.getString( R.string.taskslist_actionbar_subtitle_due_today ) );
             break;
          
          case DUE_TOMORROW_TASK_COUNT:
@@ -172,10 +167,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TOMORROW ] );
-            intent.removeExtra( TasksListActivity.Config.TITLE );
-            intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.taskslist_titlebar_due_tomorrow,
-                                                listName ) );
+            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+                             context.getString( R.string.taskslist_actionbar_subtitle_due_tomorrow ) );
             break;
          
          case OVER_DUE_TASK_COUNT:
@@ -183,10 +176,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            intent.removeExtra( TasksListActivity.Config.TITLE );
-            intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.taskslist_titlebar_overdue,
-                                                listName ) );
+            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+                             context.getString( R.string.taskslist_actionbar_subtitle_overdue ) );
             break;
          
          case COMPLETED_TASK_COUNT:
@@ -194,10 +185,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_STATUS_LIT
                                                       + RtmSmartFilterLexer.COMPLETED_LIT );
-            intent.removeExtra( TasksListActivity.Config.TITLE );
-            intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.taskslist_titlebar_completed,
-                                                listName ) );
+            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+                             context.getString( R.string.taskslist_actionbar_subtitle_completed ) );
             break;
          
          default :

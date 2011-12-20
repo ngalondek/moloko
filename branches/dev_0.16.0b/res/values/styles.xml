@@ -29,6 +29,12 @@
         <item name="android:textColor">@color/app_actionbar_text_color</item>
         <item name="android:textStyle">bold</item>
     </style>
+    
+    <style name="ActionBarSubtitleTextStyle">
+        <item name="android:textSize">@dimen/app_actionbar_subtitle_size</item>
+        <item name="android:textColor">@color/app_actionbar_subtitle_color</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
     <style name="ActionBarSpinnerItemStyle" parent="Widget.Sherlock.TextView.SpinnerItem.ActionBar">
         <item name="android:textSize">@dimen/app_actionbar_text_size</item>
@@ -109,6 +115,18 @@
     <style name="WrappingLayoutStyle">
         <item name="horizontal_spacing">2dip</item>
         <item name="vertical_spacing">3dip</item>
+    </style>
+    
+    <!-- ClearButtonStyle -->
+    
+    <style name="ClearButtonStyle">
+        <item name="drawablePressed">@drawable/ic_button_edittext_pressed_delete</item>
+        <item name="drawableUnpressed">@drawable/ic_button_edittext_delete</item>
+    </style>
+    
+    <style name="ClearButtonStyle.Inverted">
+        <item name="drawableUnpressed">@drawable/ic_button_edittext_pressed_delete</item>
+        <item name="drawablePressed">@drawable/ic_button_edittext_delete</item>
     </style>
 
     <!-- ********* -->

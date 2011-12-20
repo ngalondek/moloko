@@ -30,7 +30,7 @@ import android.widget.EditText;
 
 public class ClearableEditText extends EditText
 {
-   private PressCompoundDrawable clearButton;
+   private ClearButtonCompoundDrawable clearButton;
    
    
    
@@ -51,7 +51,7 @@ public class ClearableEditText extends EditText
    public ClearableEditText( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
-      init();
+      init( attrs );
    }
    
    
@@ -118,8 +118,8 @@ public class ClearableEditText extends EditText
    
    
    
-   private void init()
+   private void init( AttributeSet attrs )
    {
-      clearButton = new PressCompoundDrawable( this );
+      clearButton = new ClearButtonCompoundDrawable( this, attrs );
    }
 }

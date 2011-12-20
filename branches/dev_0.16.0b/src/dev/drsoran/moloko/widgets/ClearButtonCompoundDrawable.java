@@ -22,31 +22,52 @@
 
 package dev.drsoran.moloko.widgets;
 
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public final class PressCompoundDrawable
+public final class ClearButtonCompoundDrawable
 {
-   private boolean clearBtnDown = false;
    
    private final TextView textView;
    
+   private Drawable clearButtonDrawable;
+   
    private Runnable unsetPressed;
+   
+   private boolean clearBtnDown = false;
    
    private boolean isShown;
    
    
    
-   public PressCompoundDrawable( TextView textView )
+   public ClearButtonCompoundDrawable( TextView textView )
    {
-      if ( textView == null )
-         throw new NullPointerException( "textView is null" );
-      
+      this( textView, null, R.attr.clearButtonStyle );
+   }
+   
+   
+   
+   public ClearButtonCompoundDrawable( TextView textView, AttributeSet attrs )
+   {
+      this( textView, attrs, R.attr.clearButtonStyle );
+   }
+   
+   
+   
+   public ClearButtonCompoundDrawable( TextView textView, AttributeSet attrs,
+      int defStyle )
+   {
       this.textView = textView;
+      
+      initClearButtonDrawable( attrs, defStyle );
       
       if ( textView.length() > 0 )
          show();
@@ -56,12 +77,36 @@ public final class PressCompoundDrawable
    
    
    
+   private void initClearButtonDrawable( AttributeSet attrs, int defStyle )
+   {
+      final Context context = textView.getContext();
+      final TypedArray styleArray = context.obtainStyledAttributes( attrs,
+                                                                    R.styleable.ClearButtonCompoundDrawable,
+                                                                    defStyle,
+                                                                    0 );
+      
+      final Drawable drawablePressed = styleArray.getDrawable( R.styleable.ClearButtonCompoundDrawable_drawablePressed );
+      final Drawable drawableUnPressed = styleArray.getDrawable( R.styleable.ClearButtonCompoundDrawable_drawableUnpressed );
+      
+      final StateListDrawable selector = new StateListDrawable();
+      selector.addState( new int[]
+      { android.R.attr.state_checked }, drawablePressed );
+      selector.addState( new int[]
+      { -android.R.attr.state_checked }, drawableUnPressed );
+      
+      clearButtonDrawable = selector;
+      
+      styleArray.recycle();
+   }
+   
+   
+   
    public final void show()
    {
-      textView.setCompoundDrawablesWithIntrinsicBounds( 0,
-                                                        0,
-                                                        R.drawable.app_edittext_clear,
-                                                        0 );
+      textView.setCompoundDrawablesWithIntrinsicBounds( null,
+                                                        null,
+                                                        clearButtonDrawable,
+                                                        null );
       isShown = true;
    }
    
@@ -69,7 +114,7 @@ public final class PressCompoundDrawable
    
    public final void hide()
    {
-      textView.setCompoundDrawablesWithIntrinsicBounds( 0, 0, 0, 0 );
+      textView.setCompoundDrawablesWithIntrinsicBounds( null, null, null, null );
       isShown = false;
    }
    

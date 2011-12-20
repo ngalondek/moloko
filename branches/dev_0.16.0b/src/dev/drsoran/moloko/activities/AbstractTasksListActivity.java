@@ -48,6 +48,7 @@ import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentList
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
@@ -67,6 +68,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public static class Config
    {
       public final static String TITLE = "title";
+      
+      public final static String SUB_TITLE = "sub_title";
       
       public final static String LIST_NAME = Lists.LIST_NAME;
    }
@@ -134,6 +137,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private void setTitleAndNavigationMode()
    {
       getSupportActionBar().setTitle( getConfiguredTitle() );
+      getSupportActionBar().setSubtitle( getConfiguredSubTitle() );
       setActionBarNavigationMode();
    }
    
@@ -175,6 +179,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       
       if ( config.containsKey( Config.TITLE ) )
          configuration.putString( Config.TITLE, config.getString( Config.TITLE ) );
+      if ( config.containsKey( Config.SUB_TITLE ) )
+         configuration.putString( Config.SUB_TITLE,
+                                  config.getString( Config.SUB_TITLE ) );
       if ( config.containsKey( Config.LIST_NAME ) )
          configuration.putString( Config.LIST_NAME,
                                   config.getString( Config.LIST_NAME ) );
@@ -265,6 +272,13 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       final String title = configuration.getString( Config.TITLE );
       return !TextUtils.isEmpty( title ) ? title
                                         : getString( R.string.app_name );
+   }
+   
+   
+   
+   protected String getConfiguredSubTitle()
+   {
+      return Strings.nullIfEmpty( configuration.getString( Config.SUB_TITLE ) );
    }
    
    

@@ -21,6 +21,7 @@
         <item name="abBackground">@drawable/app_actionbar_bgnd</item>
         <item name="actionBarSize">@dimen/app_actionbar_height</item>
         <item name="abTitleTextStyle">@style/ActionBarTextStyle</item>
+        <item name="abSubtitleTextStyle">@style/ActionBarSubtitleTextStyle</item>
         <item name="actionSpinnerItemStyle">@style/ActionBarSpinnerItemStyle</item>
         <item name="abDisplayOptions">showHome|showTitle</item>
         <item name="abIcon">@drawable/ic_title_home</item>
@@ -35,6 +36,7 @@
         <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text</item>
         <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner</item>
         <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>
+        <item name="clearButtonStyle">@style/ClearButtonStyle</item>
 
         <!-- ButtonBar -->
         <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>
@@ -60,6 +62,9 @@
     </style>
     
     <style name="Theme.Moloko.TasksList">
+        
+        <!-- Widgets -->
+        <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>
     </style>
 
     <style name="Theme.Moloko.SelectMultipleTasks">

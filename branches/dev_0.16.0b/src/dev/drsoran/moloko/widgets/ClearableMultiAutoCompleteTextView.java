@@ -32,7 +32,7 @@ public class ClearableMultiAutoCompleteTextView extends
          MultiAutoCompleteTextView
 {
    
-   private PressCompoundDrawable clearButton;
+   private ClearButtonCompoundDrawable clearButton;
    
    
    
@@ -55,7 +55,7 @@ public class ClearableMultiAutoCompleteTextView extends
       AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
-      init();
+      init( attrs );
    }
    
    
@@ -122,8 +122,8 @@ public class ClearableMultiAutoCompleteTextView extends
    
    
    
-   private void init()
+   private void init( AttributeSet attrs )
    {
-      clearButton = new PressCompoundDrawable( this );
+      clearButton = new ClearButtonCompoundDrawable( this, attrs );
    }
 }

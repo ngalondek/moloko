@@ -25,7 +25,6 @@ package dev.drsoran.moloko.adapters;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -34,33 +33,31 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class ActionBarNavigationAdapter extends
-         ArrayAdapter< Pair< Integer, String > >
+public class ActionBarNavigationAdapter extends ArrayAdapter< String >
 {
    
-   public ActionBarNavigationAdapter( Context context,
-      List< Pair< Integer, String > > list )
+   public ActionBarNavigationAdapter( Context context, List< String > list )
    {
       super( context, 0, list );
    }
    
-
-
+   
+   
    @Override
    public View getDropDownView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
          convertView = View.inflate( getContext(),
-                                     R.layout.dropdown_with_icon_1line,
+                                     android.R.layout.simple_dropdown_item_1line,
                                      null );
       
-      final Pair< Integer, String > item = getItem( position );
+      final String item = getItem( position );
       
-      return UIUtils.setDropDownItemIconAndText( convertView, item );
+      return UIUtils.setDropDownItemIconAndText( convertView, -1, item );
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -69,9 +66,9 @@ public class ActionBarNavigationAdapter extends
                                      R.layout.abs__simple_spinner_item,
                                      null );
       
-      final Pair< Integer, String > item = getItem( position );
+      final String item = getItem( position );
       final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text1 );
-      itemTextView.setText( item.second );
+      itemTextView.setText( item );
       
       return convertView;
    }

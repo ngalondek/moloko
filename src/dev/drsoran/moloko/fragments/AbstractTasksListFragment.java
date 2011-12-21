@@ -243,6 +243,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          subMenu.getItem()
                 .setIcon( getResources().getDrawable( R.drawable.ic_menu_sort ) );
          UIUtils.addCompatibilityActionView( getFragmentActivity(),
+                                             menu,
                                              subMenu.getItem() );
          
          subMenu.add( OptionsMenuGroup.SORT,

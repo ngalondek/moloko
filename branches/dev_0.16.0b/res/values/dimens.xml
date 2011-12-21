@@ -23,7 +23,7 @@
    <dimen
       name="app_actionbar_subtitle_size">12sp</dimen>
    <dimen
-      name="app_actionbar_actionItem_width">30dip</dimen>
+      name="app_actionbar_actionItem_width">24dip</dimen>
    <dimen
       name="app_actionbar_actionItem_heigth">@dimen/app_actionbar_actionItem_width</dimen>
    <dimen

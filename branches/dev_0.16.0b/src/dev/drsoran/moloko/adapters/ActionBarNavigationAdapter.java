@@ -25,10 +25,12 @@ package dev.drsoran.moloko.adapters;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
@@ -47,9 +49,7 @@ public class ActionBarNavigationAdapter extends ArrayAdapter< String >
    public View getDropDownView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
-         convertView = View.inflate( getContext(),
-                                     android.R.layout.simple_dropdown_item_1line,
-                                     null );
+         convertView = inflateDropDownView();
       
       final String item = getItem( position );
       
@@ -71,5 +71,23 @@ public class ActionBarNavigationAdapter extends ArrayAdapter< String >
       itemTextView.setText( item );
       
       return convertView;
+   }
+   
+   
+   
+   private View inflateDropDownView()
+   {
+      if ( MolokoApp.IsApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
+      {
+         return View.inflate( getContext(),
+                              R.layout.simple_dropdown_item_1line,
+                              null );
+      }
+      else
+      {
+         return View.inflate( getContext(),
+                              android.R.layout.simple_dropdown_item_1line,
+                              null );
+      }
    }
 }

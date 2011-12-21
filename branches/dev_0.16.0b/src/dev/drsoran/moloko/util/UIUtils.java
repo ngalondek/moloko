@@ -58,11 +58,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
+
+import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
+
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.layouts.ActionBarMenuItemView;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
@@ -670,7 +674,7 @@ public final class UIUtils
          
          if ( showAsActionFlags != MenuItem.SHOW_AS_ACTION_NEVER )
          {
-            addCompatibilityActionView( context, item );
+            addCompatibilityActionView( context, menu, item );
          }
       }
       else
@@ -683,20 +687,20 @@ public final class UIUtils
    
    
    
-   public static void addCompatibilityActionView( Context context, MenuItem item )
+   public static void addCompatibilityActionView( Context context,
+                                                  Menu menu,
+                                                  MenuItem item )
    {
       if ( MolokoApp.IsApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) == false )
       {
-         // final ActionBarMenuItemView actionBarMenuItemView = new ActionBarMenuItemView( context );
-         // actionBarMenuItemView.setIcon( item.getIcon() );
          
-         // final ActionMenuItemView actionMenuItemView = (ActionMenuItemView) LayoutInflater.from( context )
-         // .inflate( R.layout.abs__action_menu_item_layout,
-         // null );
-         // actionMenuItemView.initialize( (MenuItemImpl) item, 0 );
-         // actionMenuItemView.setIcon( item.getIcon() );
-         //
-         // item.setActionView( actionMenuItemView );
+         final ActionBarMenuItemView actionBarMenuItemView = (ActionBarMenuItemView) LayoutInflater.from( context )
+                                                                                                   .inflate( R.layout.app_action_bar_item_view,
+                                                                                                             null );
+         actionBarMenuItemView.initialize( (MenuItemImpl) item, 0 );
+         actionBarMenuItemView.setInvokeTarget( menu, item.getItemId() );
+         
+         item.setActionView( actionBarMenuItemView );
       }
    }
    

@@ -319,8 +319,11 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
    {
       final List< String > items = new ArrayList< String >( lists.size() );
+      
       for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
+      {
          items.add( rtmListWithTaskCount.getName() );
+      }
       
       actionBarNavigationAdapter = new ActionBarNavigationAdapter( this, items );
       return actionBarNavigationAdapter;
@@ -345,11 +348,13 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       {
          setDropDownNavigationMode( createActionBarNavigationAdapterForResult( data ) );
          
+         final String configuredListName = Strings.emptyIfNull( getConfiguredListName() );
+         
          int pos = -1;
          for ( int i = 0, cnt = data.size(); i < cnt && pos == -1; i++ )
          {
             final RtmListWithTaskCount list = data.get( i );
-            if ( list.getName().equalsIgnoreCase( getConfiguredListName() ) )
+            if ( list.getName().equalsIgnoreCase( configuredListName ) )
                pos = i;
          }
          

@@ -26,11 +26,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.MultiAutoCompleteTextView;
+import dev.drsoran.moloko.EditTextFocusHandler;
 
 
 public class ClearableMultiAutoCompleteTextView extends
          MultiAutoCompleteTextView
 {
+   @SuppressWarnings( "unused" )
+   private final EditTextFocusHandler editTextFocusHandler;
    
    private ClearButtonCompoundDrawable clearButton;
    
@@ -56,6 +59,8 @@ public class ClearableMultiAutoCompleteTextView extends
    {
       super( context, attrs, defStyle );
       init( attrs );
+      
+      editTextFocusHandler = new EditTextFocusHandler( this );
    }
    
    

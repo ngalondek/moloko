@@ -26,10 +26,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.EditText;
+import dev.drsoran.moloko.EditTextFocusHandler;
 
 
 public class ClearableEditText extends EditText
 {
+   @SuppressWarnings( "unused" )
+   private final EditTextFocusHandler editTextFocusHandler;
+   
    private ClearButtonCompoundDrawable clearButton;
    
    
@@ -52,6 +56,8 @@ public class ClearableEditText extends EditText
    {
       super( context, attrs, defStyle );
       init( attrs );
+      
+      editTextFocusHandler = new EditTextFocusHandler( this );
    }
    
    

@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
@@ -146,7 +147,7 @@ public final class UIUtils
                                                                  .getSystemService( Context.INPUT_METHOD_SERVICE );
          if ( imm != null )
          {
-            imm.showSoftInput( view, InputMethodManager.SHOW_FORCED );
+            imm.showSoftInput( view, InputMethodManager.SHOW_IMPLICIT );
          }
       }
    }
@@ -166,11 +167,20 @@ public final class UIUtils
    {
       if ( view != null )
       {
-         final InputMethodManager imm = (InputMethodManager) view.getContext()
-                                                                 .getSystemService( Context.INPUT_METHOD_SERVICE );
+         hideSoftInput( view.getContext(), view.getWindowToken() );
+      }
+   }
+   
+   
+   
+   public final static void hideSoftInput( Context context, IBinder windowToken )
+   {
+      if ( windowToken != null )
+      {
+         final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
          if ( imm != null )
          {
-            imm.hideSoftInputFromWindow( view.getWindowToken(), 0 );
+            imm.hideSoftInputFromWindow( windowToken, 0 );
          }
       }
    }

@@ -22,22 +22,45 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.List;
+
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TasksListActivity extends AbstractFullDetailedTasksListActivity
 {
    private static class OptionsMenu
    {
+      public final static int ADD_LIST = R.id.menu_add_list;
+      
       public final static int DELETE_LIST = R.id.menu_delete_list;
+   }
+   
+   private Boolean showAddSmartListMenu;
+   
+   
+   
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      super.onNewIntent( intent );
+      
+      // if we receive a new intent then we have to re-evaluate the
+      // condition.
+      showAddSmartListMenu = null;
    }
    
    
@@ -46,6 +69,20 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    public boolean onCreateOptionsMenu( Menu menu )
    {
       super.onCreateOptionsMenu( menu );
+      
+      if ( showAddSmartListMenu == null )
+         evaluateAddSmartListMenuVisibility();
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ADD_LIST,
+                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
+                                   MenuCategory.CONTAINER,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_add_list,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   showAddSmartListMenu.booleanValue()
+                                      && AccountUtils.isWriteableAccess( this ) );
       
       UIUtils.addOptionalMenuItem( this,
                                    menu,
@@ -73,6 +110,10 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
             UIUtils.showDeleteElementDialog( this, listName );
             return true;
             
+         case OptionsMenu.ADD_LIST:
+            showAddListDialog();
+            return true;
+            
          default :
             return super.onOptionsItemSelected( item );
       }
@@ -92,4 +133,24 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       }
    }
    
+   
+   
+   private void evaluateAddSmartListMenuVisibility()
+   {
+      final IFilter filter = getConfiguredFilter();
+      boolean show = filter instanceof RtmSmartFilter;
+      
+      // if we are configured with a list name then we already are in a list
+      // and do not need to add a new one.
+      show = show && !isConfiguredWithListName();
+      
+      if ( show )
+      {
+         final RtmSmartFilter rtmSmartFilter = (RtmSmartFilter) filter;
+         final List< RtmSmartFilterToken > unAmbigiousTokens = RtmSmartFilterParsing.removeAmbiguousTokens( rtmSmartFilter.getTokens() );
+         show = unAmbigiousTokens.size() > 0;
+      }
+      
+      showAddSmartListMenu = Boolean.valueOf( show );
+   }
 }

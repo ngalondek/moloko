@@ -52,7 +52,7 @@ public final class RtmSmartFilterParsing
       public final boolean hasCompletedOperator;
       
       
-
+      
       public RtmSmartFilterReturn( String result, boolean hasCompletedOperator )
       {
          this.result = result;
@@ -61,15 +61,15 @@ public final class RtmSmartFilterParsing
    }
    
    
-
+   
    public synchronized final static RtmSmartFilterReturn evaluateRtmSmartFilter( RtmSmartFilter filter,
                                                                                  ArrayList< RtmSmartFilterToken > tokens )
    {
       return evaluateRtmSmartFilter( filter.getFilterString(), tokens );
    }
    
-
-
+   
+   
    public synchronized final static RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString,
                                                                                  ArrayList< RtmSmartFilterToken > tokens )
    {
@@ -90,8 +90,8 @@ public final class RtmSmartFilterParsing
       }
    }
    
-
-
+   
+   
    public final static boolean hasOperator( List< RtmSmartFilterToken > tokens,
                                             int operator,
                                             boolean negated )
@@ -105,8 +105,8 @@ public final class RtmSmartFilterParsing
       return false;
    }
    
-
-
+   
+   
    public final static boolean hasOperatorAndValue( List< RtmSmartFilterToken > tokens,
                                                     int operator,
                                                     String value,
@@ -123,8 +123,8 @@ public final class RtmSmartFilterParsing
       return false;
    }
    
-
-
+   
+   
    public final static boolean hasCompletedOperator( List< RtmSmartFilterToken > tokens )
    {
       for ( RtmSmartFilterToken token : tokens )
@@ -141,14 +141,21 @@ public final class RtmSmartFilterParsing
       return false;
    }
    
-
-
+   
+   
+   /**
+    * Ambiguous is determined by the number a token exists in the list of given tokens. This is the simplest approach to
+    * avoid situation with complex logical expressions where a token is entered negated and not negated.
+    * 
+    * TODO: Use more sophisticated approach like BDDs
+    */
    public final static List< RtmSmartFilterToken > removeAmbiguousTokens( List< RtmSmartFilterToken > tokens )
    {
       final List< RtmSmartFilterToken > filterTokens = new LinkedList< RtmSmartFilterToken >( tokens );
       
       Collections.sort( filterTokens, new Comparator< RtmSmartFilterToken >()
       {
+         @Override
          public int compare( RtmSmartFilterToken object1,
                              RtmSmartFilterToken object2 )
          {
@@ -181,8 +188,10 @@ public final class RtmSmartFilterParsing
       }
       
       for ( Iterator< RtmSmartFilterToken > i = filterTokens.iterator(); i.hasNext(); )
+      {
          if ( i.next() == null )
             i.remove();
+      }
       
       return filterTokens;
    }

@@ -131,7 +131,6 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       view.findViewById( R.id.back ).setOnClickListener( this );
       
       connectToCommitInput();
-      showSoftInput();
    }
    
    
@@ -200,13 +199,6 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
          default :
             break;
       }
-   }
-   
-   
-   
-   private void showSoftInput()
-   {
-      UIUtils.showSoftInput( addTaskEdit );
    }
    
    

@@ -23,7 +23,10 @@
 package dev.drsoran.moloko.fragments.base;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Pair;
@@ -34,14 +37,19 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          MolokoDialogFragment implements IEditFragment< T >
 {
+   private final Handler handler = new Handler();
+   
    private IEditFragmentListener listener;
    
    private ViewGroup dialogView;
+   
+   private IBinder windowToken;
    
    
    
@@ -68,12 +76,36 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    
    
    @Override
+   public void onDestroyView()
+   {
+      if ( windowToken != null )
+      {
+         handler.post( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               final Context context = getFragmentActivity();
+               if ( context != null )
+                  UIUtils.hideSoftInput( context, windowToken );
+            }
+         } );
+      }
+      
+      super.onDestroyView();
+   }
+   
+   
+   
+   @Override
    public final Dialog onCreateDialog( Bundle savedInstanceState )
    {
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
       dialogView = createContent( LayoutInflater.from( getFragmentActivity() ) );
+      windowToken = dialogView.getWindowToken();
+      
       final Dialog dialog = createDialog( dialogView );
       
       return dialog;
@@ -117,6 +149,20 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       {
          getDialog().cancel();
       }
+   }
+   
+   
+   
+   public void showShoftInput( final View view )
+   {
+      handler.post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            UIUtils.showSoftInput( view );
+         }
+      } );
    }
    
    

@@ -135,6 +135,15 @@ public class AddRenameListDialogFragment extends
    
    
    
+   @Override
+   public void onStart()
+   {
+      super.onStart();
+      listNameEdit.requestFocus();
+   }
+   
+   
+   
    private void configureAsRenameListDialog()
    {
       listNameEdit.setText( getConfiguredList().getName() );

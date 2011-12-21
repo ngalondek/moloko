@@ -111,9 +111,20 @@ public class AddRenameListDialogFragment extends
       final Activity activity = getFragmentActivity();
       
       final boolean isRenameMode = isRenameMode();
-      final String title = isRenameMode
-                                       ? getString( R.string.dlg_rename_list_title )
-                                       : getString( R.string.dlg_add_list_title );
+      final String title;
+      
+      if ( isRenameMode )
+      {
+         title = getString( R.string.dlg_rename_list_title );
+      }
+      else if ( getConfiguredFilter() != null )
+      {
+         title = getString( R.string.dlg_add_smart_list_title );
+      }
+      else
+      {
+         title = getString( R.string.dlg_add_list_title );
+      }
       
       return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_list )
                                                 .setTitle( title )

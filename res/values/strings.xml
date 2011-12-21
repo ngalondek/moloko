@@ -245,7 +245,8 @@
 
    <!-- Add/Rename list dialog -->
    <string name="dlg_add_list_title">New list</string>
-   <string name="dlg_rename_list_title">Rename list</string>
+   <string name="dlg_add_smart_list_title">New Smart List</string>
+   <string name="dlg_rename_list_title">Rename list</string>   
    <string name="dlg_add_rename_list_list_name_hint">List name</string>
    <string name="dlg_add_rename_list_smart_filter_hint">SmartList filter</string>
       <!-- Toasts -->

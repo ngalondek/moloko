@@ -25,9 +25,12 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
@@ -57,7 +60,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private boolean newTasksListFragmentbyIntent = false;
    
    
-
+   
    @Override
    protected void onNewIntent( Intent intent )
    {
@@ -66,8 +69,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       newTasksListFragmentbyIntent = true;
    }
    
-
-
+   
+   
    @Override
    protected void onResume()
    {
@@ -80,8 +83,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -116,8 +119,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -132,16 +135,16 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       }
    }
    
-
-
+   
+   
    @Override
    public void onOpenTask( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-
-
+   
+   
    @Override
    public void onSelectTasks()
    {
@@ -150,16 +153,16 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                               getTaskSort() ) );
    }
    
-
-
+   
+   
    @Override
    public void onEditTask( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ) ) );
    }
    
-
-
+   
+   
    @Override
    public void onOpenList( int pos, String listId )
    {
@@ -168,8 +171,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                  null ) );
    }
    
-
-
+   
+   
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
@@ -177,8 +180,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                  getTask( pos ).getLocationName() ) );
    }
    
-
-
+   
+   
    @Override
    public final void onShowTasksWithTags( List< String > tags )
    {
@@ -192,8 +195,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       }
    }
    
-
-
+   
+   
    /*
     * Callback from ChooseTagsDialogFragment after choosing tags and a logical operation on them.
     */
@@ -205,8 +208,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       onOpenChoosenTags( tags, logOpString );
    }
    
-
-
+   
+   
    protected void onOpenChoosenTags( List< String > tags,
                                      String logicalOperation )
    {
@@ -219,15 +222,15 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                 logicalOperation ) );
    }
    
-
-
+   
+   
    private void showQuickAddTaskInput()
    {
       showQuickAddTaskActionBarFragment( !isQuickAddTaskFragmentOpen() );
    }
    
-
-
+   
+   
    private static String determineLogicalOperantionString( LogicalOperation operation )
    {
       final String logOpString;
@@ -249,8 +252,22 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       return logOpString;
    }
    
-
-
+   
+   
+   protected void showAddListDialog()
+   {
+      final Bundle config = new Bundle();
+      config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
+                            getConfiguredFilter() );
+      
+      final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
+      UIUtils.showDialogFragment( this,
+                                  dialogFragment,
+                                  String.valueOf( R.id.frag_add_rename_list ) );
+   }
+   
+   
+   
    private void showChooseTagsDialog( List< String > tags )
    {
       ChooseTagsDialogFragment.show( this, tags );

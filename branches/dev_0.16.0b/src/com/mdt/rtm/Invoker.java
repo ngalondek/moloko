@@ -19,7 +19,6 @@
  */
 package com.mdt.rtm;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -30,39 +29,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
-import javax.net.ssl.SSLException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.entity.HttpEntityWrapper;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import android.text.format.DateUtils;
 import android.util.Log;
+import dev.drsoran.moloko.connection.IRtmConnection;
 
 
 /**
@@ -96,15 +73,11 @@ public class Invoker
    
    public static final String REST_SERVICE_URL_POSTFIX = "/services/rest/";
    
-   public static final String ENCODING = "UTF-8";
-   
    public static String API_SIG_PARAM = "api_sig";
    
    public static final long INVOCATION_INTERVAL = 2000;
    
-   private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
-   
-   private static final String ENCODING_GZIP = "gzip";
+   private static final String ENCODING = "UTF-8";
    
    private long lastInvocation;
    
@@ -112,111 +85,17 @@ public class Invoker
    
    private final MessageDigest digest;
    
-   private final String hostname;
-   
-   private final int port;
-   
    private final String serviceRelativeUri;
    
-   private final HttpHost host;
-   
-   private final DefaultHttpClient client;
-   
-   private final BasicHttpParams httpParams;
+   private final IRtmConnection rtmConnection;
    
    
-   /**
-    * Simple {@link HttpEntityWrapper} that inflates the wrapped {@link HttpEntity} by passing it through
-    * {@link GZIPInputStream}.
-    * 
-    * Taken from iosched - Google I/O Schedule App for Android
-    * http://code.google.com/p/iosched/source/browse/trunk/src/com/google/android/apps/iosched/service/SyncService.java
-    */
-   private static class InflatingEntity extends HttpEntityWrapper
-   {
-      public InflatingEntity( HttpEntity wrapped )
-      {
-         super( wrapped );
-      }
-      
-
-
-      @Override
-      public InputStream getContent() throws IOException
-      {
-         return new GZIPInputStream( wrappedEntity.getContent() );
-      }
-      
-
-
-      @Override
-      public long getContentLength()
-      {
-         return -1;
-      }
-   }
    
-   
-
-   public Invoker( String serverHostName, int serverPortNumber,
-      String serviceRelativeUri, ProxySettings proxySettings, boolean useHttp,
+   public Invoker( IRtmConnection rtmConnection, String serviceRelativeUri,
       ApplicationInfo applicationInfo ) throws ServiceInternalException
    {
-      this.hostname = serverHostName;
-      this.port = serverPortNumber;
+      this.rtmConnection = rtmConnection;
       this.serviceRelativeUri = serviceRelativeUri;
-      
-      httpParams = new BasicHttpParams();
-      HttpConnectionParams.setConnectionTimeout( httpParams,
-                                                 20 * (int) DateUtils.SECOND_IN_MILLIS );
-      HttpConnectionParams.setSoTimeout( httpParams,
-                                         20 * (int) DateUtils.SECOND_IN_MILLIS );
-      HttpConnectionParams.setSocketBufferSize( httpParams, 8192 );
-      HttpProtocolParams.setVersion( httpParams, HttpVersion.HTTP_1_1 );
-      HttpProtocolParams.setContentCharset( httpParams, ENCODING );
-      HttpProtocolParams.setUserAgent( httpParams, "Jakarta-HttpComponents/4.0" );
-      HttpProtocolParams.setUseExpectContinue( httpParams, true );
-      
-      host = new HttpHost( hostname, port, ( useHttp ? "http" : "https" ) );
-      
-      client = new DefaultHttpClient( httpParams );
-      
-      if ( proxySettings != null )
-      {
-         final String proxyHostName = proxySettings.getProxyHostName();
-         
-         if ( proxySettings.getProxyHostName() != null )
-         {
-            final int proxyPort = proxySettings.getProxyPortNumber();
-            final HttpHost proxy = new HttpHost( proxyHostName, proxyPort );
-            
-            UsernamePasswordCredentials credentials = null;
-            
-            if ( proxySettings.getProxyLogin() != null )
-               credentials = new UsernamePasswordCredentials( proxySettings.getProxyLogin(),
-                                                              proxySettings.getProxyPassword() );
-            
-            // Sets an HTTP proxy and the credentials for authentication
-            client.getCredentialsProvider()
-                  .setCredentials( new AuthScope( proxyHostName, proxyPort ),
-                                   credentials );
-            client.getParams().setParameter( ConnRoutePNames.DEFAULT_PROXY,
-                                             proxy );
-         }
-      }
-      
-      client.addRequestInterceptor( new HttpRequestInterceptor()
-      {
-         @Override
-         public void process( HttpRequest request, HttpContext context )
-         {
-            // Add header to accept gzip content
-            if ( !request.containsHeader( HEADER_ACCEPT_ENCODING ) )
-            {
-               request.addHeader( HEADER_ACCEPT_ENCODING, ENCODING_GZIP );
-            }
-         }
-      } );
       
       lastInvocation = System.currentTimeMillis();
       this.applicationInfo = applicationInfo;
@@ -232,15 +111,25 @@ public class Invoker
       }
    }
    
-
-
-   private StringBuffer computeRequestUri( Param... params ) throws ServiceInternalException
+   
+   
+   public void shutdown()
    {
-      final StringBuffer requestUri = new StringBuffer( serviceRelativeUri );
+      if ( rtmConnection != null )
+         rtmConnection.close();
+   }
+   
+   
+   
+   private String computeRequestUri( Param... params ) throws ServiceInternalException
+   {
+      final StringBuilder requestUri = new StringBuilder( serviceRelativeUri );
+      
       if ( params.length > 0 )
       {
          requestUri.append( "?" );
       }
+      
       for ( Param param : params )
       {
          if ( param != null )
@@ -255,6 +144,7 @@ public class Invoker
             catch ( Exception exception )
             {
                final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
+               
                Log.e( TAG, message.toString(), exception );
                throw new ServiceInternalException( message.toString() );
             }
@@ -263,95 +153,42 @@ public class Invoker
       requestUri.append( API_SIG_PARAM )
                 .append( "=" )
                 .append( calcApiSig( params ) );
-      return requestUri;
+      
+      return requestUri.toString();
    }
    
-
-
+   
+   
    public Element invoke( Param... params ) throws ServiceException
    {
-      final long timeSinceLastInvocation = System.currentTimeMillis()
-         - lastInvocation;
-      
-      if ( timeSinceLastInvocation < INVOCATION_INTERVAL )
-      {
-         // In order not to invoke the RTM service too often
-         try
-         {
-            Thread.sleep( INVOCATION_INTERVAL - timeSinceLastInvocation );
-         }
-         catch ( InterruptedException e )
-         {
-            throw new ServiceInternalException( "Unexpected interruption while attempting to pause for some time before invoking the RTM service back",
-                                                e );
-         }
-      }
+      obeyRtmRequestLimit();
       
       Log.d( TAG, "Invoker running at " + new Date() );
       
-      // We compute the URI
-      final StringBuffer requestUri = computeRequestUri( params );
-      final HttpGet request = new HttpGet( requestUri.toString() );
+      final String requestUri = computeRequestUri( params );
       
       // FIX: This line caused RTM to return HTTP code 400 - Bad request
       // request.setHeader( new BasicHeader( HTTP.CHARSET_PARAM, ENCODING ) );
       
       Element result;
       
+      InputStream response = null;
+      
       try
       {
-         final String methodUri = request.getRequestLine().getUri();
-         Log.i( TAG, "Executing the method:" + methodUri );
+         response = rtmConnection.execute( requestUri );
          
-         final HttpResponse response = client.execute( host, request );
-         
-         final int statusCode = response.getStatusLine().getStatusCode();
-         
-         if ( statusCode != HttpStatus.SC_OK )
-         {
-            Log.e( TAG, "Method failed: " + response.getStatusLine() );
-            throw new ServiceInternalException( "method failed: "
-               + response.getStatusLine() );
-         }
-         
-         // Inflate any responses compressed with gzip
-         final HttpEntity entity = response.getEntity();
-         final Header encoding = entity.getContentEncoding();
-         
-         if ( encoding != null )
-         {
-            for ( HeaderElement element : encoding.getElements() )
-            {
-               if ( element.getName().equalsIgnoreCase( ENCODING_GZIP ) )
-               {
-                  response.setEntity( new InflatingEntity( response.getEntity() ) );
-                  break;
-               }
-            }
-         }
-         
-         // THINK: this method is depreciated, but the only way to get the body
-         // as a string, without consuming
-         // the body input stream: the HttpMethodBase issues a warning but does
-         // not let you call the
-         // "setResponseStream()" method!
-         final String responseBodyAsString = EntityUtils.toString( response.getEntity() );
-         Log.i( TAG, "  Invocation response:\r\n" + responseBodyAsString );
-         
-         response.getEntity().consumeContent();
-         
-         final InputStream respContentStream = new ByteArrayInputStream( responseBodyAsString.getBytes() );
-         final Document responseDoc = builder.parse( respContentStream );
+         final Document responseDoc = builder.parse( response );
          final Element wrapperElt = responseDoc.getDocumentElement();
          
          if ( !wrapperElt.getNodeName().equals( "rsp" ) )
          {
             throw new ServiceInternalException( "unexpected response returned by RTM service: "
-               + responseBodyAsString );
+               + responseDoc.getTextContent() );
          }
          else
          {
-            String stat = wrapperElt.getAttribute( "stat" );
+            final String stat = wrapperElt.getAttribute( "stat" );
             
             if ( stat.equals( "fail" ) )
             {
@@ -365,7 +202,7 @@ public class Invoker
                if ( errElt == null )
                {
                   throw new ServiceInternalException( "unexpected response returned by RTM service: "
-                     + responseBodyAsString );
+                     + responseDoc.getTextContent() );
                }
                else
                {
@@ -401,7 +238,7 @@ public class Invoker
                if ( dataElt == null )
                {
                   throw new ServiceInternalException( "unexpected response returned by RTM service: "
-                     + responseBodyAsString );
+                     + responseDoc.getTextContent() );
                }
                else
                {
@@ -409,10 +246,6 @@ public class Invoker
                }
             }
          }
-      }
-      catch ( SSLException e )
-      {
-         throw new ServiceInternalException( e.getLocalizedMessage(), e );
       }
       catch ( IOException e )
       {
@@ -424,14 +257,44 @@ public class Invoker
       }
       finally
       {
+         if ( response != null )
+         {
+            try
+            {
+               response.close();
+            }
+            catch ( IOException e )
+            {
+            }
+         }
       }
       
       lastInvocation = System.currentTimeMillis();
       return result;
    }
    
-
-
+   
+   
+   private void obeyRtmRequestLimit()
+   {
+      final long timeSinceLastInvocation = System.currentTimeMillis()
+         - lastInvocation;
+      
+      if ( timeSinceLastInvocation < INVOCATION_INTERVAL )
+      {
+         // In order not to invoke the RTM service too often
+         try
+         {
+            Thread.sleep( INVOCATION_INTERVAL - timeSinceLastInvocation );
+         }
+         catch ( InterruptedException e )
+         {
+         }
+      }
+   }
+   
+   
+   
    final String calcApiSig( Param... params ) throws ServiceInternalException
    {
       try
@@ -454,8 +317,8 @@ public class Invoker
       }
    }
    
-
-
+   
+   
    private static String convertToHex( byte[] data )
    {
       StringBuffer buf = new StringBuffer();
@@ -475,5 +338,4 @@ public class Invoker
       }
       return buf.toString();
    }
-   
 }

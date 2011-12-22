@@ -20,16 +20,16 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.connection;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 
-public final class Connection
+public final class ConnectionUtil
 {
-   private Connection()
+   private ConnectionUtil()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }

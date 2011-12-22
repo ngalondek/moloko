@@ -42,6 +42,7 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
+import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
@@ -49,7 +50,6 @@ import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm;
@@ -173,7 +173,7 @@ public final class SyncUtils
    public final static Account isReadyToSync( Context context )
    {
       // Check if we are connected.
-      boolean sync = Connection.isConnected( context );
+      boolean sync = ConnectionUtil.isConnected( context );
       
       Account account = null;
       

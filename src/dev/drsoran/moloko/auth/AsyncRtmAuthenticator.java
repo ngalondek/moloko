@@ -69,6 +69,9 @@ public class AsyncRtmAuthenticator
       {
          AsyncRtmAuthenticator.this.runningTask = null;
          super.onPostExecute( result );
+         
+         if ( service != null )
+            service.shutdown();
       }
    }
    

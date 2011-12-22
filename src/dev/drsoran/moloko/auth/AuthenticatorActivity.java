@@ -47,7 +47,7 @@ import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.Connection;
+import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.provider.Rtm;
 
 
@@ -156,7 +156,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    {
       messageText.setText( null );
       
-      if ( Connection.isConnected( this ) )
+      if ( ConnectionUtil.isConnected( this ) )
       {
          authenticator.beginAuthentication( this, getSelectedPermission() );
       }

@@ -87,7 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    private final Context context;
    
    
-
+   
    public SyncAdapter( Context context, boolean autoInitialize )
    {
       super( context, autoInitialize );
@@ -95,8 +95,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       this.context = context;
    }
    
-
-
+   
+   
    @Override
    public void onPerformSync( Account account,
                               Bundle extras,
@@ -122,6 +122,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          if ( accountManager != null )
          {
+            Service service = null;
             try
             {
                // use the account manager to request the credentials
@@ -145,11 +146,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                   }
                   else
                   {
-                     final Service service = ServiceImpl.getInstance( context,
-                                                                      new ApplicationInfo( apiKey,
-                                                                                           sharedSecret,
-                                                                                           context.getString( R.string.app_name ),
-                                                                                           authToken ) );
+                     service = ServiceImpl.getInstance( context,
+                                                        new ApplicationInfo( apiKey,
+                                                                             sharedSecret,
+                                                                             context.getString( R.string.app_name ),
+                                                                             authToken ) );
                      
                      final RtmAuth.Perms permission = AccountUtils.getAccessLevel( getContext() );
                      Log.i( TAG, "Sync with permission " + permission );
@@ -280,6 +281,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             }
             finally
             {
+               if ( service != null )
+                  service.shutdown();
+               
                if ( syncResult.stats.numIoExceptions > 0 )
                   MolokoApp.get( context.getApplicationContext() )
                            .getPeriodicSyncHander()
@@ -300,8 +304,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-
-
+   
+   
    private void applyLocalOperations( ContentProviderClient provider,
                                       List< ? extends IContentProviderSyncOperation > operations,
                                       SyncResult syncResult ) throws RemoteException,
@@ -320,8 +324,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       provider.applyBatch( contentProviderOperationsBatch );
    }
    
-
-
+   
+   
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            TimeLineFactory timeLineFactory,
@@ -389,8 +393,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return ok;
    }
    
-
-
+   
+   
    private final Pair< Long, Long > getSyncTime()
    {
       Pair< Long, Long > result = null;
@@ -423,8 +427,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-
-
+   
+   
    public final static ModificationSet getAllModifications( Context context )
    {
       ModificationSet modifications = null;
@@ -449,8 +453,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-
-
+   
+   
    public final static ModificationSet getModificationsFor( Context context,
                                                             Uri... entityUris )
    {
@@ -479,8 +483,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-
-
+   
+   
    private final void updateSyncTime()
    {
       final ContentProviderClient client = context.getContentResolver()
@@ -495,8 +499,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-
-
+   
+   
    private final static boolean logSyncStep( String step, boolean result )
    {
       if ( result )
@@ -507,8 +511,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-
-
+   
+   
    private final static void clearSyncResult( SyncResult syncResult )
    {
       syncResult.stats.numInserts = 0;
@@ -516,8 +520,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       syncResult.stats.numDeletes = 0;
    }
    
-
-
+   
+   
    private final boolean shouldProcessRequest( Bundle bundle )
    {
       return ( bundle != null && ( bundle.containsKey( ContentResolver.SYNC_EXTRAS_INITIALIZE )

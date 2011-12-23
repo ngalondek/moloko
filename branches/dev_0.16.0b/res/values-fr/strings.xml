@@ -387,10 +387,6 @@
    <string name="acc_pref_perm_has_not">Aucune permission</string>
    <string name="acc_pref_conn_cat_title">Connexion</string>
    <string name="acc_pref_conn_use_https">Utiliser HTTPS (recommendé)</string>
-   <string name="acc_pref_conn_use_proxy">Utiliser un Proxy</string>
-   <string name="acc_pref_conn_proxy_host">Nom de la machine</string>
-   <string name="acc_pref_conn_proxy_user">Nom d\'utilisateur</string>
-   <string name="acc_pref_conn_proxy_pass">Mot de passe</string>
 
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">Paramètres RTM</string>

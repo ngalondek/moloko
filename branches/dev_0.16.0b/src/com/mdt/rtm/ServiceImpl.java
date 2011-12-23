@@ -66,7 +66,6 @@ import dev.drsoran.rtm.RtmSettings;
  */
 public class ServiceImpl implements Service
 {
-   
    private final static String TAG = "Moloko.*"
       + ServiceImpl.class.getSimpleName();
    
@@ -104,19 +103,7 @@ public class ServiceImpl implements Service
          || prefs.getBoolean( context.getString( R.string.key_conn_use_https ),
                               true );
       
-      final boolean useProxy = prefs != null
-         && prefs.getBoolean( context.getString( R.string.key_conn_use_proxy ),
-                              false );
-      
-      ProxySettings proxySettings = null;
-      
-      if ( useProxy )
-      {
-         proxySettings = ProxySettings.loadFromPreferences( context, prefs );
-      }
-      
       final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
-                                                       proxySettings,
                                                        !useHttps );
       
       return serviceImpl;
@@ -124,8 +111,7 @@ public class ServiceImpl implements Service
    
    
    
-   protected ServiceImpl( ApplicationInfo applicationInfo,
-      ProxySettings proxySettings, boolean useHttp )
+   protected ServiceImpl( ApplicationInfo applicationInfo, boolean useHttp )
       throws ServiceInternalException
    {
       final String scheme = useHttp ? "http" : "https";

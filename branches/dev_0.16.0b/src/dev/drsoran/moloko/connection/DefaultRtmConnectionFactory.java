@@ -22,6 +22,10 @@
 
 package dev.drsoran.moloko.connection;
 
+import android.os.Build;
+import dev.drsoran.moloko.MolokoApp;
+
+
 public class DefaultRtmConnectionFactory implements IRtmConnectionFactory
 {
    @Override
@@ -29,6 +33,9 @@ public class DefaultRtmConnectionFactory implements IRtmConnectionFactory
                                               String hostname,
                                               int port )
    {
-      return new ApacheHttpClientRtmConnection( scheme, hostname, port );
+      if ( MolokoApp.IsApiLevelSupported( Build.VERSION_CODES.GINGERBREAD ) )
+         return new HttpUrlRtmConnection( scheme, hostname, port );
+      else
+         return new ApacheHttpClientRtmConnection( scheme, hostname, port );
    }
 }

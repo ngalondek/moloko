@@ -102,12 +102,7 @@
    <string name="key_notify_permanent">notify_permanent</string>
    <string name="key_notify_permanent_overdue">notify_permanent_overdue</string>
    <string name="key_conn_use_https">conn_use_https</string>
-   <string name="key_conn_use_proxy">conn_use_proxy</string>
-   <string name="key_conn_proxy_host">conn_proxy_host</string>
-   <string name="key_conn_proxy_port">conn_proxy_port</string>
-   <string name="key_conn_proxy_user">conn_proxy_user</string>
-   <string name="key_conn_proxy_pass">conn_proxy_pass</string>
-
+   
    <!-- Time phrases -->
    <string name="time_interval_15min">Every 15 min.</string>
    <string name="time_interval_30min">Every 30 min.</string>
@@ -459,12 +454,7 @@
    <string name="acc_pref_perm_has_not">No permission</string>
    <string name="acc_pref_conn_cat_title">Connection</string>
    <string name="acc_pref_conn_use_https">Use HTTPS (recommended)</string>
-   <string name="acc_pref_conn_use_proxy">Use Proxy</string>
-   <string name="acc_pref_conn_proxy_host">Hostname</string>
-   <string name="acc_pref_conn_proxy_port">Port</string>
-   <string name="acc_pref_conn_proxy_user">Username</string>
-   <string name="acc_pref_conn_proxy_pass">Password</string>
-
+   
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Settings</string>
    <string name="moloko_prefs_rtm_summary">Time and date format, default list etc.</string>

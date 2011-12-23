@@ -22,10 +22,11 @@
 
 package dev.drsoran.moloko.connection;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -57,7 +58,7 @@ class ApacheHttpClientRtmConnection implements IRtmConnection
    
    
    @Override
-   public InputStream execute( String requestUri ) throws IOException
+   public Reader execute( String requestUri ) throws IOException
    {
       final HttpGet request = new HttpGet( requestUri );
       
@@ -68,11 +69,12 @@ class ApacheHttpClientRtmConnection implements IRtmConnection
       
       checkStatusCode( response );
       
-      // logResponse( response );
+      final InputStream inputStream = new BufferedInputStream( AndroidHttpClient.getUngzippedContent( response.getEntity() ),
+                                                               4096 );
+      final Reader reader = new LoggingReader( new InputStreamReader( inputStream ),
+                                               TAG );
       
-      final InputStream inputStream = AndroidHttpClient.getUngzippedContent( response.getEntity() );
-      
-      return inputStream;
+      return reader;
    }
    
    
@@ -117,36 +119,5 @@ class ApacheHttpClientRtmConnection implements IRtmConnection
    {
       final String methodUri = request.getRequestLine().getUri();
       Log.i( TAG, "Executing the method:" + methodUri );
-   }
-   
-   
-   
-   private void logResponse( HttpResponse response ) throws IOException
-   {
-      InputStream inputStream = null;
-      BufferedReader bufferedReader = null;
-      
-      try
-      {
-         inputStream = AndroidHttpClient.getUngzippedContent( response.getEntity() );
-         bufferedReader = new BufferedReader( new InputStreamReader( inputStream ) );
-         
-         Log.i( TAG, "  Invocation response:\r\n" );
-         
-         String line = null;
-         
-         while ( ( line = bufferedReader.readLine() ) != null )
-         {
-            Log.i( TAG, line + "\n" );
-         }
-      }
-      finally
-      {
-         if ( bufferedReader != null )
-            bufferedReader.close();
-         
-         if ( inputStream != null )
-            inputStream.close();
-      }
    }
 }

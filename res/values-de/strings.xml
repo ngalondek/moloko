@@ -394,11 +394,6 @@
    <string name="acc_pref_perm_has_not">Keine Zugangsberechtigung</string>
    <string name="acc_pref_conn_cat_title">Verbindung</string>
    <string name="acc_pref_conn_use_https">HTTPS verwenden (empfohlen)</string>
-   <string name="acc_pref_conn_use_proxy">Proxy verwenden</string>
-   <string name="acc_pref_conn_proxy_host">Hostname</string>
-   <string name="acc_pref_conn_proxy_port">Port</string>
-   <string name="acc_pref_conn_proxy_user">Benutzername</string>
-   <string name="acc_pref_conn_proxy_pass">Password</string>
    
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>

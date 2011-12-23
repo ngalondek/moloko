@@ -23,12 +23,12 @@
 package dev.drsoran.moloko.connection;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 
 
 public interface IRtmConnection
 {
-   InputStream execute( String requestUri ) throws IOException;
+   Reader execute( String requestUri ) throws IOException;
    
    
    

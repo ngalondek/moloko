@@ -20,7 +20,7 @@
 package com.mdt.rtm;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
@@ -36,6 +36,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import android.util.Log;
@@ -172,13 +173,13 @@ public class Invoker
       
       Element result;
       
-      InputStream response = null;
+      Reader responseReader = null;
       
       try
       {
-         response = rtmConnection.execute( requestUri );
+         responseReader = rtmConnection.execute( requestUri );
          
-         final Document responseDoc = builder.parse( response );
+         final Document responseDoc = builder.parse( new InputSource( responseReader ) );
          final Element wrapperElt = responseDoc.getDocumentElement();
          
          if ( !wrapperElt.getNodeName().equals( "rsp" ) )
@@ -257,11 +258,11 @@ public class Invoker
       }
       finally
       {
-         if ( response != null )
+         if ( responseReader != null )
          {
             try
             {
-               response.close();
+               responseReader.close();
             }
             catch ( IOException e )
             {

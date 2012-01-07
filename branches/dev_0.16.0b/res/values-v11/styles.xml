@@ -20,5 +20,10 @@
     <style name="Quick_Add_Task_Action_Bar_Fragment_Text">        
         <item name="android:textColorHint">@color/app_darker_gray</item>
     </style>
+    
+    <!-- Take preferences from RTM checkbox style -->
+    
+    <style name="TakePrefsFromRtmCheckboxStyle" parent="TextViewStyle">        
+    </style>
 
 </resources>

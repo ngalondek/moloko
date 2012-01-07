@@ -69,8 +69,8 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
-   public final static String SELECTION_EXCLUDE_DELETED = Lists.LIST_DELETED
-      + " IS NULL";
+   public final static String SELECTION_EXCLUDE_DELETED_AND_ARCHIVED = Lists.LIST_DELETED
+      + " IS NULL AND " + Lists.ARCHIVED + "=0";
    
    static
    {

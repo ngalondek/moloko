@@ -75,6 +75,9 @@
       name="dlg_no_account" />
    <item
       type="id"
+      name="dlg_not_connected" />
+   <item
+      type="id"
       name="dlg_read_only_access" />
    <item
       type="id"

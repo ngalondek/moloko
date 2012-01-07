@@ -365,7 +365,7 @@ public class MolokoApp extends Application
    
 
 
-   public final static boolean IsApiLevelSupported( int apiLevel )
+   public final static boolean isApiLevelSupported( int apiLevel )
    {
       return Build.VERSION.SDK_INT >= apiLevel;
    }

@@ -31,6 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import android.util.Pair;
+
 import com.mdt.rtm.data.RtmTaskNote;
 
 
@@ -46,6 +48,7 @@ public class SyncRtmTaskNotesList
    {
       AS_IS
       {
+         @Override
          public < T > void perform( List< T > list, Comparator< ? super T > cmp )
          {
             
@@ -53,6 +56,7 @@ public class SyncRtmTaskNotesList
       },
       SORTED
       {
+         @Override
          public < T > void perform( List< T > list, Comparator< ? super T > cmp )
          {
             Collections.sort( list, cmp );
@@ -63,6 +67,7 @@ public class SyncRtmTaskNotesList
    
    private static final Comparator< SyncNote > LESS_ID = new Comparator< SyncNote >()
    {
+      @Override
       public int compare( SyncNote object1, SyncNote object2 )
       {
          return object1.getId().compareTo( object2.getId() );
@@ -71,6 +76,7 @@ public class SyncRtmTaskNotesList
    
    private static final Comparator< RtmTaskNote > LESS_TASKSERIES_ID = new Comparator< RtmTaskNote >()
    {
+      @Override
       public int compare( RtmTaskNote object1, RtmTaskNote object2 )
       {
          return object1.getTaskSeriesId().compareTo( object2.getTaskSeriesId() );
@@ -78,7 +84,7 @@ public class SyncRtmTaskNotesList
    };
    
    // Sync notes grouped by their taskseries ID
-   private final Map< String, List< SyncNote > > notes;
+   private Map< String, List< SyncNote > > notes;
    
    
    
@@ -166,61 +172,94 @@ public class SyncRtmTaskNotesList
    
    
    
-   public void intersect( List< RtmTaskNote > notes )
+   public void intersect( List< RtmTaskNote > notesToIntersectWith )
    {
-      final List< RtmTaskNote > rtmTaskNotes = new ArrayList< RtmTaskNote >( notes );
-      Collections.sort( rtmTaskNotes, LESS_TASKSERIES_ID );
+      final Map< String, List< SyncNote >> intersectedMap = new HashMap< String, List< SyncNote > >();
       
-      for ( Iterator< String > iterTaskSerieses = this.notes.keySet()
-                                                            .iterator(); iterTaskSerieses.hasNext(); )
+      final List< RtmTaskNote > sortedRtmTaskNotes = new ArrayList< RtmTaskNote >( notesToIntersectWith );
+      Collections.sort( sortedRtmTaskNotes, LESS_TASKSERIES_ID );
+      
+      Pair< Integer, Integer > slice = getNextSlice( sortedRtmTaskNotes, null );
+      
+      if ( slice.first.intValue() > -1 )
       {
-         final String taskSeriesId = iterTaskSerieses.next();
-         
-         boolean foundTaskSeriesId = false;
-         for ( Iterator< RtmTaskNote > iterRtmTaskNotes = notes.iterator(); iterRtmTaskNotes.hasNext()
-            && !foundTaskSeriesId; )
+         do
          {
-            RtmTaskNote rtmTaskNote = iterRtmTaskNotes.next();
+            final int sliceStartIndex = slice.first.intValue();
+            final int sliceEndIndex = slice.second.intValue();
+            final String sliceStartTaskSeriesId = sortedRtmTaskNotes.get( sliceStartIndex )
+                                                                    .getTaskSeriesId();
             
-            if ( rtmTaskNote.getTaskSeriesId().equals( taskSeriesId ) )
+            final List< SyncNote > allSyncNotes = notes.get( sliceStartTaskSeriesId );
+            
+            if ( allSyncNotes != null )
             {
-               foundTaskSeriesId = true;
+               final List< SyncNote > intersectedSyncNotes = new LinkedList< SyncNote >();
                
-               // Create a sub list with all RtmTaskNotes with the same taskSeriesId
-               final List< RtmTaskNote > rtmTaskNotesSubList = new LinkedList< RtmTaskNote >();
-               
-               do
+               for ( int i = sliceStartIndex; i < sliceEndIndex; ++i )
                {
-                  rtmTaskNotesSubList.add( rtmTaskNote );
-               }
-               while ( iterRtmTaskNotes.hasNext()
-                  && rtmTaskNote.getTaskSeriesId().equals( taskSeriesId ) );
-               
-               final List< SyncNote > syncNotes = this.notes.get( taskSeriesId );
-               
-               boolean foundSyncNote = false;
-               for ( Iterator< SyncNote > iterSyncNotes = syncNotes.iterator(); iterSyncNotes.hasNext()
-                  && !foundSyncNote; )
-               {
-                  final SyncNote syncNote = iterSyncNotes.next();
+                  final String noteId = sortedRtmTaskNotes.get( i ).getId();
                   
-                  for ( Iterator< RtmTaskNote > iterSubList = rtmTaskNotesSubList.iterator(); iterSubList.hasNext()
-                     && !foundSyncNote; )
+                  boolean found = false;
+                  for ( Iterator< SyncNote > iterAllSyncNotes = allSyncNotes.iterator(); !found
+                     && iterAllSyncNotes.hasNext(); )
                   {
-                     foundSyncNote = iterSubList.next()
-                                                .getId()
-                                                .equals( syncNote.getId() );
+                     final SyncNote syncNote = iterAllSyncNotes.next();
+                     found = syncNote.getId().equals( noteId );
+                     if ( found )
+                     {
+                        intersectedSyncNotes.add( syncNote );
+                     }
                   }
-                  
-                  if ( !foundSyncNote )
-                     iterSyncNotes.remove();
                }
+               
+               intersectedMap.put( sliceStartTaskSeriesId, intersectedSyncNotes );
             }
+            
+            slice = getNextSlice( sortedRtmTaskNotes, slice.second );
          }
-         
-         if ( !foundTaskSeriesId )
-            iterTaskSerieses.remove();
+         while ( slice.first.intValue() > -1 );
       }
+      
+      notes = intersectedMap;
+   }
+   
+   
+   
+   private Pair< Integer, Integer > getNextSlice( List< RtmTaskNote > allSortedNotes,
+                                                  Integer formerSliceEndIndex )
+   {
+      final int notesCnt = allSortedNotes.size();
+      
+      int sliceBeginIndex = -1;
+      int sliceEndIndex = -1;
+      
+      if ( formerSliceEndIndex != null )
+      {
+         if ( formerSliceEndIndex.intValue() < notesCnt )
+         {
+            sliceBeginIndex = formerSliceEndIndex.intValue();
+         }
+      }
+      else if ( notesCnt > 0 )
+      {
+         sliceBeginIndex = 0;
+      }
+      
+      if ( sliceBeginIndex != -1 )
+      {
+         final String sliceBeginNoteTaskseriesId = allSortedNotes.get( sliceBeginIndex )
+                                                                 .getTaskSeriesId();
+         
+         for ( sliceEndIndex = sliceBeginIndex + 1; sliceEndIndex < notesCnt
+            && sliceBeginNoteTaskseriesId.equals( allSortedNotes.get( sliceEndIndex )
+                                                                .getTaskSeriesId() ); ++sliceEndIndex )
+         {
+         }
+      }
+      
+      return Pair.create( Integer.valueOf( sliceBeginIndex ),
+                          Integer.valueOf( sliceEndIndex ) );
    }
    
    

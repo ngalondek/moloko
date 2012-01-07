@@ -78,8 +78,10 @@ class HttpUrlRtmConnection implements IRtmConnection
       final InputStream inputStream = new BufferedInputStream( urlConnection.getInputStream(),
                                                                4096 );
       
-      final Reader reader = new HttpUrlConnectionReader( new LoggingReader( new InputStreamReader( inputStream ),
-                                                                            TAG ),
+      final Reader decoratedReader = new LoggingReader( new InputStreamReader( inputStream ),
+                                                        TAG );
+      
+      final Reader reader = new HttpUrlConnectionReader( decoratedReader,
                                                          urlConnection );
       return reader;
    }

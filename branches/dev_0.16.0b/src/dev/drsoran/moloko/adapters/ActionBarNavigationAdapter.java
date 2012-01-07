@@ -77,7 +77,7 @@ public class ActionBarNavigationAdapter extends ArrayAdapter< String >
    
    private View inflateDropDownView()
    {
-      if ( MolokoApp.IsApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
       {
          return View.inflate( getContext(),
                               R.layout.simple_dropdown_item_1line,

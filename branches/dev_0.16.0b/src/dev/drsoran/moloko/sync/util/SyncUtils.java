@@ -96,7 +96,23 @@ public final class SyncUtils
    
    public final static void requestManualSync( FragmentActivity activity )
    {
-      SyncUtils.requestManualSync( activity, SyncUtils.isReadyToSync( activity ) );
+      if ( ConnectionUtil.isConnected( activity ) )
+      {
+         final Account account = AccountUtils.getRtmAccount( activity );
+         
+         if ( account != null )
+         {
+            SyncUtils.requestManualSync( activity, account );
+         }
+         else
+         {
+            UIUtils.showNoAccountDialog( activity );
+         }
+      }
+      else
+      {
+         UIUtils.showNotConnectedDialog( activity );
+      }
    }
    
    
@@ -104,19 +120,12 @@ public final class SyncUtils
    public final static void requestManualSync( FragmentActivity activity,
                                                Account account )
    {
-      if ( account != null )
-      {
-         final Bundle bundle = new Bundle();
-         
-         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
-         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
-         
-         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
-      }
-      else
-      {
-         UIUtils.showNoAccountDialog( activity );
-      }
+      final Bundle bundle = new Bundle();
+      
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
+      
+      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
    }
    
    
@@ -147,15 +156,12 @@ public final class SyncUtils
    public final static void requestScheduledSync( Context context,
                                                   Account account )
    {
-      if ( account != null )
-      {
-         final Bundle bundle = new Bundle();
-         
-         bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
-         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
-         
-         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
-      }
+      final Bundle bundle = new Bundle();
+      
+      bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
+      
+      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
    }
    
    
@@ -170,16 +176,14 @@ public final class SyncUtils
    
    
    
-   public final static Account isReadyToSync( Context context )
+   public final static boolean isReadyToSync( Context context )
    {
       // Check if we are connected.
       boolean sync = ConnectionUtil.isConnected( context );
       
-      Account account = null;
-      
       if ( sync )
       {
-         account = AccountUtils.getRtmAccount( context );
+         final Account account = AccountUtils.getRtmAccount( context );
          
          // Check if we have an account and the sync has not been disabled
          // in between.
@@ -187,7 +191,7 @@ public final class SyncUtils
             && ContentResolver.getSyncAutomatically( account, Rtm.AUTHORITY );
       }
       
-      return account;
+      return sync;
    }
    
    

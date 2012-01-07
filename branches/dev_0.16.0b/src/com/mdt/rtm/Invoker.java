@@ -114,52 +114,6 @@ public class Invoker
    
    
    
-   public void shutdown()
-   {
-      if ( rtmConnection != null )
-         rtmConnection.close();
-   }
-   
-   
-   
-   private String computeRequestUri( Param... params ) throws ServiceInternalException
-   {
-      final StringBuilder requestUri = new StringBuilder( serviceRelativeUri );
-      
-      if ( params.length > 0 )
-      {
-         requestUri.append( "?" );
-      }
-      
-      for ( Param param : params )
-      {
-         if ( param != null )
-         {
-            try
-            {
-               requestUri.append( param.getName() )
-                         .append( "=" )
-                         .append( URLEncoder.encode( param.getValue(), ENCODING ) )
-                         .append( "&" );
-            }
-            catch ( Exception exception )
-            {
-               final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
-               
-               Log.e( TAG, message.toString(), exception );
-               throw new ServiceInternalException( message.toString() );
-            }
-         }
-      }
-      requestUri.append( API_SIG_PARAM )
-                .append( "=" )
-                .append( calcApiSig( params ) );
-      
-      return requestUri.toString();
-   }
-   
-   
-   
    public Element invoke( Param... params ) throws ServiceException
    {
       obeyRtmRequestLimit();
@@ -167,9 +121,6 @@ public class Invoker
       Log.d( TAG, "Invoker running at " + new Date() );
       
       final String requestUri = computeRequestUri( params );
-      
-      // FIX: This line caused RTM to return HTTP code 400 - Bad request
-      // request.setHeader( new BasicHeader( HTTP.CHARSET_PARAM, ENCODING ) );
       
       Element result;
       
@@ -272,6 +223,52 @@ public class Invoker
       
       lastInvocation = System.currentTimeMillis();
       return result;
+   }
+   
+   
+   
+   public void shutdown()
+   {
+      if ( rtmConnection != null )
+         rtmConnection.close();
+   }
+   
+   
+   
+   private String computeRequestUri( Param... params ) throws ServiceInternalException
+   {
+      final StringBuilder requestUri = new StringBuilder( serviceRelativeUri );
+      
+      if ( params.length > 0 )
+      {
+         requestUri.append( "?" );
+      }
+      
+      for ( Param param : params )
+      {
+         if ( param != null )
+         {
+            try
+            {
+               requestUri.append( param.getName() )
+                         .append( "=" )
+                         .append( URLEncoder.encode( param.getValue(), ENCODING ) )
+                         .append( "&" );
+            }
+            catch ( Exception exception )
+            {
+               final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
+               
+               Log.e( TAG, message.toString(), exception );
+               throw new ServiceInternalException( message.toString() );
+            }
+         }
+      }
+      requestUri.append( API_SIG_PARAM )
+                .append( "=" )
+                .append( calcApiSig( params ) );
+      
+      return requestUri.toString();
    }
    
    

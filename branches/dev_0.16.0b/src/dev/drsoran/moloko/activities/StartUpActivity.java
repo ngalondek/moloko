@@ -30,13 +30,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+
+import com.mdt.rtm.data.RtmList;
+
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
@@ -266,7 +269,20 @@ public class StartUpActivity extends MolokoFragmentActivity
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
       
-      return client != null && Queries.exists( client, Lists.CONTENT_URI, id );
+      boolean exists = client != null;
+      
+      if ( exists )
+      {
+         final RtmList list = RtmListsProviderPart.getList( client, id );
+         exists = list != null;
+         exists &= list.getArchived() == 0;
+         exists &= list.getDeletedDate() == null;
+      }
+      
+      if ( client != null )
+         client.release();
+      
+      return exists;
    }
    
    

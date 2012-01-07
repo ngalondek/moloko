@@ -1,0 +1,31 @@
+= Introduction =
+
+This page shows some screens taken from Moloko 0.16.0b.
+
+|| *Home view*                                                  || *Lists*<br>Every list can be expanded to show more details of the list. ||
+|| [http://moloko.googlecode.com/svn/wiki/screenshots/home.png] || [http://moloko.googlecode.com/svn/wiki/screenshots/lists.png] ||
+
+<br>
+<br>
+|| *Support for tag cloud*<br>Moloko can create a tag cloud showing all tags, lists, locations with at least one<br> uncompleted task || *Tasks* ||
+|| [http://moloko.googlecode.com/svn/wiki/screenshots/tags.png] || [http://moloko.googlecode.com/svn/wiki/screenshots/tasks.png] || 
+
+<br>
+<br>
+|| *Details of a task*<br>When opened, Moloko shows additional details like<br><ul><li>notes</li><li>participants</li><li>recurrence</li><li>estimated duration</li></ul> || *Directly go to a task*<br>Moloko is connected to all registered location based apps<br> like Google Maps, Navigation or others, if available.<br> So by clicking a location in task details or by long clicking<br> a location in the tag cloud ones can directly go to a task by an<br> appropriate  app.||
+|| [http://moloko.googlecode.com/svn/wiki/screenshots/task_open.png] || [http://moloko.googlecode.com/files/task_goto.png] ||
+
+<br>
+<br>
+|| *Edit a single task...*                                           || *...or edit a bunch of tasks at once* ||
+|| [http://moloko.googlecode.com/svn/wiki/screenshots/task_edit.png] || [http://moloko.googlecode.com/svn/wiki/screenshots/task_edit_multiple.png] ||
+
+<br>
+<br>
+|| *Add new notes...* || *... or comfortable edit time related task details* by picker or by text input ||
+|| [http://moloko.googlecode.com/svn/wiki/screenshots/task_edit_note.png] || [http://moloko.googlecode.com/svn/wiki/screenshots/task_edit_due.png] ||
+
+<br>
+<br>
+|| *Quick add tasks*<br>Moloko provides support for [https://www.rememberthemilk.com/services/smartadd/ RTM Smart Add] and <br>auto suggests best fitting task details like the list name || *RTM contacts*<br>Show all your contacts from RTM and link them to your phonebook.<br>So call or email them right out of Moloko. For a how to see [http://code.google.com/p/moloko/wiki/RTMContactLinking RTMContactLinking]||
+|| [http://moloko.googlecode.com/svn/wiki/screenshots/task_quick_add.png] || [http://moloko.googlecode.com/svn/wiki/screenshots/contacts.png] ||

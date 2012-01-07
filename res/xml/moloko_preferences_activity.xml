@@ -68,7 +68,7 @@
             android:ringtoneType="all"
             android:key="@string/key_notify_due_tasks_ringtone"
             android:dependency="@string/key_notify_due_tasks" />
-         <CheckBoxPreference
+         <dev.drsoran.moloko.prefs.VibratePreference
             android:title="@string/moloko_prefs_notification_tasks_w_due_vibrate_title"
             android:summaryOn="@string/phr_on"
             android:summaryOff="@string/phr_off"

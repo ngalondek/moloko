@@ -240,8 +240,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          
          subMenu.setIcon( R.drawable.ic_menu_sort );
          subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
-         subMenu.getItem()
-                .setIcon( getResources().getDrawable( R.drawable.ic_menu_sort ) );
+         
          UIUtils.addCompatibilityActionView( getFragmentActivity(),
                                              menu,
                                              subMenu.getItem() );

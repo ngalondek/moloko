@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -59,7 +59,7 @@ public class DueTaskNotification
    private Notification notification;
    
    
-
+   
    public DueTaskNotification( Context context, Task task,
       long remindBeforeMillis, boolean vibrate, boolean led, Uri sound )
    {
@@ -76,16 +76,16 @@ public class DueTaskNotification
          createNotification();
    }
    
-
-
+   
+   
    public void updateMinuteTick()
    {
       if ( notification == null && isTimeToNotify() )
          createNotification();
    }
    
-
-
+   
+   
    public void update( long remindBeforeMillis )
    {
       if ( notification == null )
@@ -99,8 +99,8 @@ public class DueTaskNotification
       }
    }
    
-
-
+   
+   
    public void update( boolean vibrate, boolean led, Uri sound )
    {
       if ( notification == null )
@@ -111,8 +111,8 @@ public class DueTaskNotification
       }
    }
    
-
-
+   
+   
    public void onTimeFormatChanged()
    {
       if ( notification != null )
@@ -122,37 +122,37 @@ public class DueTaskNotification
       }
    }
    
-
-
+   
+   
    public String getTaskId()
    {
       return taskId;
    }
    
-
-
+   
+   
    public long getDueTime()
    {
       return dueTimeMillis;
    }
    
-
-
+   
+   
    public void cancel()
    {
       if ( notification != null )
          getNotificationManager().cancel( taskId.hashCode() );
    }
    
-
-
+   
+   
    private NotificationManager getNotificationManager()
    {
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );
    }
    
-
-
+   
+   
    private void createNotification()
    {
       notification = new Notification( R.drawable.ic_notify_logo_red,
@@ -168,13 +168,16 @@ public class DueTaskNotification
       notification.defaults = 0;
       
       if ( vibrate )
+      {
          notification.defaults |= Notification.DEFAULT_VIBRATE;
+      }
+      
       if ( led )
       {
          notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-         notification.ledARGB = Color.GREEN;
+         notification.ledARGB = Color.BLUE;
          notification.ledOffMS = 400;
-         notification.ledOnMS = 300;
+         notification.ledOnMS = 500;
       }
       
       notification.sound = sound;
@@ -182,8 +185,8 @@ public class DueTaskNotification
       getNotificationManager().notify( taskId.hashCode(), notification );
    }
    
-
-
+   
+   
    private void setLatestEventInfo()
    {
       notification.setLatestEventInfo( context,
@@ -194,8 +197,8 @@ public class DueTaskNotification
                                                                                                        taskId ) ) );
    }
    
-
-
+   
+   
    private String getDueTimeText()
    {
       return context.getString( R.string.notification_due,
@@ -203,15 +206,15 @@ public class DueTaskNotification
                                                             dueTimeMillis ) );
    }
    
-
-
+   
+   
    private boolean isTimeToNotify()
    {
       return System.currentTimeMillis() >= ( dueTimeMillis - remindBeforeMillis );
    }
    
-
-
+   
+   
    private CharSequence getRelativeTimeString()
    {
       final long now = System.currentTimeMillis();
@@ -230,8 +233,8 @@ public class DueTaskNotification
       }
    }
    
-
-
+   
+   
    @Override
    public boolean equals( Object o )
    {

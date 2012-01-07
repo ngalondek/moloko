@@ -13,7 +13,7 @@ This page shows some screens taken from Moloko 0.16.0b.
 <br>
 <br>
 || *Details of a task*<br>When opened, Moloko shows additional details like<br><ul><li>notes</li><li>participants</li><li>recurrence</li><li>estimated duration</li></ul> || *Directly go to a task*<br>Moloko is connected to all registered location based apps<br> like Google Maps, Navigation or others, if available.<br> So by clicking a location in task details or by long clicking<br> a location in the tag cloud ones can directly go to a task by an<br> appropriate  app.||
-|| [http://moloko.googlecode.com/svn/wiki/screenshots/task_open.png] || [http://moloko.googlecode.com/files/task_goto.png] ||
+|| [http://moloko.googlecode.com/svn/wiki/screenshots/task_open.png] || [http://moloko.googlecode.com/svn/wiki/screenshots/task_goto.png] ||
 
 <br>
 <br>

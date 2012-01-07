@@ -128,6 +128,12 @@
         <item name="drawableUnpressed">@drawable/ic_button_edittext_pressed_delete</item>
         <item name="drawablePressed">@drawable/ic_button_edittext_delete</item>
     </style>
+    
+    <!-- Take preferences from RTM checkbox style -->
+    
+    <style name="TakePrefsFromRtmCheckboxStyle" parent="TextViewStyle">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+    </style>
 
     <!-- ********* -->
     <!-- TasksList -->
@@ -160,7 +166,7 @@
     </style>
 
     <!-- ********* -->
-    <!-- TaskList -->
+    <!-- TaskList  -->
 
     <style name="TaskLists_Group_ListName" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/tasklists_group_listname</item>
@@ -204,7 +210,7 @@
     </style>    
         
     <!-- ************ -->
-    <!-- Dialogs -->
+    <!-- Dialogs      -->
 
     <style name="Dlg_DuePicker_Value" parent="@android:style/TextAppearance.Large">
         <item name="android:textColor">@color/app_dlg_due_picker_value</item>
@@ -218,7 +224,7 @@
     </style>
 
     <!-- ********* -->
-    <!-- Home -->
+    <!-- Home      -->
 
     <style name="Home_Widget_Text">
         <item name="android:textSize">18sp</item>
@@ -232,7 +238,7 @@
     </style>
 
     <!-- ********* -->
-    <!-- Task -->
+    <!-- Task      -->
 
     <style name="Task_Section">
         <item name="android:background">@drawable/task_overview_bgnd</item>
@@ -271,7 +277,7 @@
     </style>
 
     <!-- ********* -->
-    <!-- Note -->
+    <!-- Note      -->
 
     <style name="Note_Created_Date_Text" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">@color/app_note_created_date_text</item>
@@ -282,7 +288,7 @@
     <style name="Note_TitleWithText" parent="@style/TitleWithViewStyle.Text.NoLine"></style>
 
     <!-- ********* -->
-    <!-- Error -->
+    <!-- Error     -->
 
     <style name="Error">
         <item name="android:background">@color/error_bgnd</item>

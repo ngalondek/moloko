@@ -701,7 +701,7 @@ public final class UIUtils
                                                   Menu menu,
                                                   MenuItem item )
    {
-      if ( MolokoApp.IsApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) == false )
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) == false )
       {
          
          final ActionBarMenuItemView actionBarMenuItemView = (ActionBarMenuItemView) LayoutInflater.from( context )
@@ -904,6 +904,17 @@ public final class UIUtils
                                                             .setPositiveButton( R.string.btn_new_account )
                                                             .setNegativeButton( R.string.btn_cancel )
                                                             .show( fragmentActivity );
+   }
+   
+   
+   
+   public final static void showNotConnectedDialog( FragmentActivity fragmentActivity )
+   {
+      new AlertDialogFragment.Builder( R.id.dlg_not_connected ).setTitle( fragmentActivity.getString( R.string.err_not_connected ) )
+                                                               .setIcon( android.R.drawable.ic_dialog_alert )
+                                                               .setMessage( fragmentActivity.getString( R.string.phr_establish_connection ) )
+                                                               .setNeutralButton( R.string.btn_ok )
+                                                               .show( fragmentActivity );
    }
    
    

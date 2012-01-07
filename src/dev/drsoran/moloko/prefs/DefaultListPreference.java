@@ -77,7 +77,7 @@ public class DefaultListPreference extends SyncableListPreference
       if ( client != null )
       {
          final RtmLists lists = RtmListsProviderPart.getAllLists( client,
-                                                                  RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
+                                                                  RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
          client.release();
          
          if ( lists != null )

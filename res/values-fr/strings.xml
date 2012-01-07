@@ -23,7 +23,7 @@
 
 <resources>
    <string name="res_language">fr</string>
-    
+
    <string name="app_home">Accueil</string>
    <string name="app_preferences">Paramètres</string>
    <string name="app_account_preferences">Paramètres du compte</string>
@@ -84,18 +84,18 @@
    <string name="time_12h">12 heures</string>
    <string name="time_24h">1 jour</string>
    <!-- Date/Time format -->
-      <string name="numeric_date_format">d/M</string>
+      <string name="numeric_date_format">dd/MM</string>
       <string name="numeric_date_format_year">dd/MM/yyyy</string>
       <!-- %1 - month pattern, MMM or MMMM -->
-      <string name="date_with_text_month">%1$s d</string>
-      <string name="date_with_text_month_year">%1$s d yyyy</string>
+      <string name="date_with_text_month">dd %1$s</string>
+      <string name="date_with_text_month_year">dd %1$s yyyy</string>
       <!--  %1 - weekday pattern, EEE or EEEE
             %2 - month pattern, MMM or MMMM -->
-      <string name="date_with_weekday_text_month">%2$s dd %1$s</string>
-      <string name="date_with_weekday_text_month_year">%2$s d %1$s yyyy</string>
+      <string name="date_with_weekday_text_month">%1$s dd %2$s</string>
+      <string name="date_with_weekday_text_month_year">%1$s dd %2$s yyyy</string>
       <!-- %1 - time, %2 - date
            Example: 12:00am, 12/25/2000 -->
-      <string name="date_with_time_pattern">%1$s le %2$s</string>
+      <string name="date_with_time_pattern">le %2$s à %1$s</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Patientez</string>
@@ -198,7 +198,7 @@
 
    <!-- Add/Rename list dialog -->
    <string name="dlg_add_list_title">Nouvelle Liste</string>
-   <string name="dlg_add_smart_list_title">New Smart List</string>
+   <string name="dlg_add_smart_list_title">Nouvelle Liste Intelligente</string>
    <string name="dlg_rename_list_title">Renommer une liste</string>
    <string name="dlg_add_rename_list_list_name_hint">Nom de la liste</string>
    <string name="dlg_add_rename_list_smart_filter_hint">Sélection pour liste intelligente</string>
@@ -327,7 +327,7 @@
    <string name="tasksearchresult_titlebar_error">Requête invalide</string>
    <string name="tasksearchresult_wrong_syntax_html">La recherche de :&lt;b>\'%1$s\'&lt;/b> ne peut pas être réalisée. Vérifier la requête.</string>
      <!-- Menus -->
-     <string name="tasksearchresult_menu_add_smart_list">Add smart list</string>
+     <string name="tasksearchresult_menu_add_smart_list">Ajouter une liste intelligente</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Effacer l\'historique de recherche</string>
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Historique de recherche effacé</string>

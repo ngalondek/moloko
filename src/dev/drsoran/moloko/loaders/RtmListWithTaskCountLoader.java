@@ -43,7 +43,7 @@ public class RtmListWithTaskCountLoader extends
 
    public RtmListWithTaskCountLoader( Context context )
    {
-      this( context, RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
+      this( context, RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
    }
    
 

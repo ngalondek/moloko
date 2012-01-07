@@ -265,7 +265,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                                                                                         .acquireContentProviderClient( Lists.CONTENT_URI ),
                                                                                  Lists.IS_SMART_LIST
                                                                                     + "=0 AND "
-                                                                                    + RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
+                                                                                    + RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
                         if ( lists != null )
                         {
                            lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();

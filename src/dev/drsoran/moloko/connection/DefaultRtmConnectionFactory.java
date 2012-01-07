@@ -33,7 +33,7 @@ public class DefaultRtmConnectionFactory implements IRtmConnectionFactory
                                               String hostname,
                                               int port )
    {
-      if ( MolokoApp.IsApiLevelSupported( Build.VERSION_CODES.GINGERBREAD ) )
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.GINGERBREAD ) )
          return new HttpUrlRtmConnection( scheme, hostname, port );
       else
          return new ApacheHttpClientRtmConnection( scheme, hostname, port );

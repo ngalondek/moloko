@@ -298,7 +298,7 @@ public class RtmTaskSeriesProviderPart extends
       
       // Query all lists, including smart lists. So we get empty RtmTaskList instances too.
       final RtmLists lists = RtmListsProviderPart.getAllLists( client,
-                                                               RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
+                                                               RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
       
       if ( lists != null )
       {

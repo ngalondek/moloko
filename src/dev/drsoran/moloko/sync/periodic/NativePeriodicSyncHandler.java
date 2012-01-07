@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
@@ -44,11 +43,12 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       super( context );
    }
    
-
-
+   
+   
+   @Override
    public void setPeriodicSync( long startUtc, long intervalMs )
    {
-      final Account account = SyncUtils.isReadyToSync( context );
+      final Account account = AccountUtils.getRtmAccount( context );
       
       if ( account != null )
       {
@@ -63,15 +63,17 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       }
    }
    
-
-
+   
+   
+   @Override
    public void delayNextSync( SyncResult syncResult, long seconds )
    {
       syncResult.delayUntil = seconds;
    }
    
-
-
+   
+   
+   @Override
    public void resetPeriodicSync()
    {
       final Account account = AccountUtils.getRtmAccount( context );
@@ -87,8 +89,8 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       }
    }
    
-
-
+   
+   
    private final static Bundle getExtras()
    {
       final Bundle bundle = new Bundle();
@@ -99,8 +101,8 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       return bundle;
    }
    
-
-
+   
+   
    @Override
    public void shutdown()
    {

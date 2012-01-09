@@ -88,18 +88,14 @@ public class DueEditText extends ClearableEditText
    
    public void setDue( String dueString )
    {
-      if ( isSupportingFreeTextInput )
-      {
-         setDueCalendarByParseString( dueString );
-         updateEditDueText();
-      }
+      commitInput( dueString );
    }
    
    
    
    public void putInitialValue( Bundle initialValues )
    {
-      initialValues.putString( EDIT_DUE_TEXT, getText().toString() );
+      initialValues.putString( EDIT_DUE_TEXT, getTextTrimmed() );
    }
    
    
@@ -122,7 +118,7 @@ public class DueEditText extends ClearableEditText
    {
       if ( isSupportingFreeTextInput )
       {
-         final MolokoCalendar cal = parseDue( getText().toString() );
+         final MolokoCalendar cal = parseDue( getTextTrimmed() );
          return validateCalendar( cal );
       }
       else
@@ -135,6 +131,7 @@ public class DueEditText extends ClearableEditText
    
    public MolokoCalendar getDueCalendar()
    {
+      commitInput( getTextTrimmed() );
       return dueCalendar;
    }
    
@@ -147,7 +144,7 @@ public class DueEditText extends ClearableEditText
       
       if ( UIUtils.hasInputCommitted( actionCode ) )
       {
-         setDueCalendarByParseString( getText().toString() );
+         setDueCalendarByParseString( getTextTrimmed() );
          
          final boolean inputValid = validateCalendar( dueCalendar );
          stayInEditText = !inputValid;
@@ -275,7 +272,7 @@ public class DueEditText extends ClearableEditText
       {
          Toast.makeText( getContext(),
                          getContext().getString( R.string.task_edit_validate_due,
-                                                 getText() ),
+                                                 getTextTrimmed() ),
                          Toast.LENGTH_LONG )
               .show();
          
@@ -290,7 +287,7 @@ public class DueEditText extends ClearableEditText
    private void putTextChange()
    {
       if ( changes != null )
-         changes.putChange( EDIT_DUE_TEXT, getText().toString(), String.class );
+         changes.putChange( EDIT_DUE_TEXT, getTextTrimmed(), String.class );
    }
    
    
@@ -302,6 +299,17 @@ public class DueEditText extends ClearableEditText
          final Locale resLocale = MolokoApp.get( getContext() )
                                            .getActiveResourcesLocale();
          isSupportingFreeTextInput = DateParserFactory.existsDateParserWithMatchingLocale( resLocale );
+      }
+   }
+   
+   
+   
+   private void commitInput( String input )
+   {
+      if ( isSupportingFreeTextInput )
+      {
+         setDueCalendarByParseString( input );
+         updateEditDueText();
       }
    }
    

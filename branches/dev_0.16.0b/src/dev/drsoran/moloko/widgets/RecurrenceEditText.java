@@ -86,18 +86,14 @@ public class RecurrenceEditText extends ClearableEditText
    
    public void setRecurrence( String recurrenceSentence )
    {
-      if ( isSupportingFreeTextInput )
-      {
-         setRecurrenceBySentence( recurrenceSentence );
-         updateEditText();
-      }
+      commitInput( recurrenceSentence );
    }
    
    
    
    public void putInitialValue( Bundle initialValues )
    {
-      initialValues.putString( EDIT_RECURRENCE_TEXT, getText().toString() );
+      initialValues.putString( EDIT_RECURRENCE_TEXT, getTextTrimmed() );
    }
    
    
@@ -113,7 +109,7 @@ public class RecurrenceEditText extends ClearableEditText
    {
       if ( isSupportingFreeTextInput )
       {
-         final Pair< String, Boolean > res = parseRecurrenceSentence( getText().toString() );
+         final Pair< String, Boolean > res = parseRecurrenceSentence( getTextTrimmed() );
          return validateRecurrence( res );
       }
       else
@@ -126,6 +122,7 @@ public class RecurrenceEditText extends ClearableEditText
    
    public Pair< String, Boolean > getRecurrencePattern()
    {
+      commitInput( getTextTrimmed() );
       return recurrencePattern;
    }
    
@@ -138,7 +135,7 @@ public class RecurrenceEditText extends ClearableEditText
       
       if ( UIUtils.hasInputCommitted( actionCode ) )
       {
-         setRecurrenceBySentence( getText().toString() );
+         setRecurrenceBySentence( getTextTrimmed() );
          
          final boolean inputValid = validateRecurrence( recurrencePattern );
          stayInEditText = !inputValid;
@@ -244,7 +241,7 @@ public class RecurrenceEditText extends ClearableEditText
       {
          Toast.makeText( getContext(),
                          getContext().getString( R.string.task_edit_validate_recurrence,
-                                                 getText().toString() ),
+                                                 getTextTrimmed() ),
                          Toast.LENGTH_LONG )
               .show();
          
@@ -260,7 +257,7 @@ public class RecurrenceEditText extends ClearableEditText
    {
       if ( changes != null )
          changes.putChange( EDIT_RECURRENCE_TEXT,
-                            getText().toString(),
+                            getTextTrimmed(),
                             String.class );
    }
    
@@ -273,6 +270,17 @@ public class RecurrenceEditText extends ClearableEditText
          final Locale resLocale = MolokoApp.get( getContext() )
                                            .getActiveResourcesLocale();
          isSupportingFreeTextInput = RecurrenceParserFactory.existsDateParserWithMatchingLocale( resLocale );
+      }
+   }
+   
+   
+   
+   private void commitInput( String input )
+   {
+      if ( isSupportingFreeTextInput )
+      {
+         setRecurrenceBySentence( input );
+         updateEditText();
       }
    }
 }

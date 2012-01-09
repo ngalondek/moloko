@@ -84,18 +84,14 @@ public class EstimateEditText extends ClearableEditText
    
    public void setEstimate( String estimate )
    {
-      if ( isSupportingFreeTextInput )
-      {
-         setEstimateByString( estimate );
-         updateEditText();
-      }
+      commitInput( estimate );
    }
    
    
    
    public void putInitialValue( Bundle initialValues )
    {
-      initialValues.putString( EDIT_ESTIMATE_TEXT, getText().toString() );
+      initialValues.putString( EDIT_ESTIMATE_TEXT, getTextTrimmed() );
    }
    
    
@@ -111,7 +107,7 @@ public class EstimateEditText extends ClearableEditText
    {
       if ( isSupportingFreeTextInput )
       {
-         final Long res = parseEstimate( getText().toString() );
+         final Long res = parseEstimate( getTextTrimmed() );
          return validateEstimate( res );
       }
       else
@@ -124,6 +120,7 @@ public class EstimateEditText extends ClearableEditText
    
    public Long getEstimateMillis()
    {
+      commitInput( getTextTrimmed() );
       return estimateMillis;
    }
    
@@ -136,7 +133,7 @@ public class EstimateEditText extends ClearableEditText
       
       if ( UIUtils.hasInputCommitted( actionCode ) )
       {
-         setEstimateByString( getText().toString() );
+         setEstimateByString( getTextTrimmed() );
          
          final boolean inputValid = validateEstimate( estimateMillis );
          stayInEditText = !inputValid;
@@ -236,7 +233,7 @@ public class EstimateEditText extends ClearableEditText
       {
          Toast.makeText( getContext(),
                          getContext().getString( R.string.task_edit_validate_estimate,
-                                                 getText().toString() ),
+                                                 getTextTrimmed() ),
                          Toast.LENGTH_LONG )
               .show();
          
@@ -251,9 +248,7 @@ public class EstimateEditText extends ClearableEditText
    private void putTextChange()
    {
       if ( changes != null )
-         changes.putChange( EDIT_ESTIMATE_TEXT,
-                            getText().toString(),
-                            String.class );
+         changes.putChange( EDIT_ESTIMATE_TEXT, getTextTrimmed(), String.class );
    }
    
    
@@ -265,6 +260,17 @@ public class EstimateEditText extends ClearableEditText
          final Locale resLocale = MolokoApp.get( getContext() )
                                            .getActiveResourcesLocale();
          isSupportingFreeTextInput = DateParserFactory.existsDateParserWithMatchingLocale( resLocale );
+      }
+   }
+   
+   
+   
+   private void commitInput( String input )
+   {
+      if ( isSupportingFreeTextInput )
+      {
+         setEstimateByString( input );
+         updateEditText();
       }
    }
 }

@@ -149,22 +149,28 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
    @init
    {
       startParsingTime( cal );
-      
-      cal.set( Calendar.HOUR_OF_DAY, 0 );
-      cal.set( Calendar.MINUTE,      0 );
-      cal.set( Calendar.SECOND,      0 );
-      cal.set( Calendar.MILLISECOND, 0 );
    }
    @after
    {
       result = finishedParsingTime( cal );
    }
-   : (AT | COMMA)? (   time_separatorspec[$cal]
-                     | ( time_naturalspec[$cal]
-                       ( time_naturalspec[$cal]
-                         time_naturalspec[$cal]?)?)
-                   )
-     am_pm[$cal]? COMMA?
+   : (AT | COMMA)?
+   (
+      (
+         {
+            clearTime( cal );
+         }
+         time_separatorspec[$cal]
+      )
+      | 
+      (
+         {
+            clearTime( cal );
+         } 
+         time_naturalspec[$cal] ( time_naturalspec[$cal] time_naturalspec[$cal]?)?
+      )
+   )
+   am_pm[$cal]? COMMA?
    {
       if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );      

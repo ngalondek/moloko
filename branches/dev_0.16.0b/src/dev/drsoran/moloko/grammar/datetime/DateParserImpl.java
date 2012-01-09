@@ -42,15 +42,15 @@ public class DateParserImpl implements IDateParser
    public final static Locale LOCALE = Locale.ENGLISH;
    
    
-
+   
    @Override
    public void setDateFormatContext( IDateFormatContext context )
    {
       parser.setDateFormatContext( context );
    }
    
-
-
+   
+   
    @Override
    public ParseDateReturn parseDate( String date,
                                      MolokoCalendar cal,
@@ -61,8 +61,8 @@ public class DateParserImpl implements IDateParser
       return parser.parseDate( cal, clearTime );
    }
    
-
-
+   
+   
    @Override
    public ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws RecognitionException
    {
@@ -74,24 +74,24 @@ public class DateParserImpl implements IDateParser
                                                       res.epochEnd ) : null;
    }
    
-
-
+   
+   
    @Override
    public Locale getLocale()
    {
       return LOCALE;
    }
    
-
-
+   
+   
    @Override
    public MolokoCalendar getCalendar()
    {
       return MolokoCalendar.getInstance();
    }
    
-
-
+   
+   
    private void prepareLexerAndParser( String date )
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( date );

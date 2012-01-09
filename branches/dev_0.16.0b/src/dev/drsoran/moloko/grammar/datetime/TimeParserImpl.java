@@ -40,7 +40,7 @@ public class TimeParserImpl implements ITimeParser
    public final static Locale LOCALE = Locale.ENGLISH;
    
    
-
+   
    public ParseTimeReturn parseTime( String time,
                                      MolokoCalendar cal,
                                      boolean adjustDay ) throws RecognitionException
@@ -50,8 +50,8 @@ public class TimeParserImpl implements ITimeParser
       return parser.parseTime( cal, adjustDay );
    }
    
-
-
+   
+   
    public ParseTimeReturn parseTimeSpec( String timeSpec,
                                          MolokoCalendar cal,
                                          boolean adjustDay ) throws RecognitionException
@@ -61,8 +61,8 @@ public class TimeParserImpl implements ITimeParser
       return parser.parseTimeSpec( cal, adjustDay );
    }
    
-
-
+   
+   
    public long parseTimeEstimate( String timeEstimate ) throws RecognitionException
    {
       prepareLexerAndParser( timeEstimate );
@@ -70,22 +70,22 @@ public class TimeParserImpl implements ITimeParser
       return parser.parseTimeEstimate();
    }
    
-
-
+   
+   
    public Locale getLocale()
    {
       return LOCALE;
    }
    
-
-
+   
+   
    public MolokoCalendar getCalendar()
    {
       return MolokoCalendar.getInstance();
    }
    
-
-
+   
+   
    private void prepareLexerAndParser( String time )
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( time );

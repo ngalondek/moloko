@@ -497,7 +497,7 @@
    <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
    <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
    <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
-   <string name="moloko_prefs_send_db_text">Send Moloko database to delvelopers</string>
+   <string name="moloko_prefs_send_db_text">Send Moloko database to developers</string>
    <string name="moloko_prefs_clear_db_text">Clear the database and swipe all data</string>
    <string name="moloko_about_text">About Moloko</string>
    <!-- Dialogs -->

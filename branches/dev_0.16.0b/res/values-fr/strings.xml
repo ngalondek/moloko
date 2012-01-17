@@ -104,7 +104,7 @@
    <string name="phr_today_with_date">Aujourd\'hui le %1$s</string>
    <string name="phr_tomorrow">Demain</string>
    <string name="phr_tomorrow_with_date">Demain le %1$s</string>
-   <string name="phr_establish_connection">Connexion à Internet pour continuer.</string>
+   <string name="phr_establish_connection">Connectez-vous à internet pour continuer.</string>
    <string name="phr_open_with_name">Ouvrir \'%1$s\'</string>
    <string name="phr_edit_with_name">Modifier \'%1$s\'</string>
    <string name="phr_delete_with_name">Supprimer \'%1$s\'</string>
@@ -121,7 +121,7 @@
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manuel</string>
    <string name="phr_password_set">entré</string>
-   <string name="phr_loading">Chargement&#8230;</string>
+   <string name="phr_loading">Chargement &#8230;</string>
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
 
@@ -136,7 +136,7 @@
    <string name="err_db_typed">Erreur d\'accès à la base de données de %1$s.</string>
    <string name="err_entity_not_found">Le %1$s n\'a pas pu être récupéré dans la base de données.\n\nVeuillez vérifier si l\'élément existe.</string>
    <string name="err_unsupported_intent_action">L\'action %1$s n\'est pas supportée.</string>
-   <string name="err_modify_access_level_read">Moloko accède vos données en \'Lecture seule\'.\n\nLes données que vous avez modifié jusqu\'à présent restent inchangées. Cependant, elles ne seront pas envoyées au serveur RTM et seront remplacées par les modifications plus récentes faites directement sur le serveur.\n\nVous pouvez changer cela en supprimant votre compte RTM local (celui de Moloko) et en le recréant avec les permissions \'Lecture, Ecriture, Suppression\'.</string>
+   <string name="err_modify_access_level_read">Moloko accède vos données en \'Lecture seule\'.\n\nLes données que vous avez modifiées jusqu\'à présent restent inchangées. Cependant, elles ne seront pas envoyées au serveur RTM et seront remplacées par les modifications plus récentes faites directement sur le serveur.\n\nVous pouvez changer cela en supprimant votre compte RTM local (celui de Moloko) et en le recréant avec les permissions \'Lecture, Ecriture, Suppression\'.</string>
 
    <!-- Global buttons -->
    <string name="btn_continue">Continuer</string>
@@ -209,7 +209,7 @@
 
    <!-- No account dialog -->
    <string name="dlg_no_account_title">Nouveau compte Remember The Milk</string>
-   <string name="dlg_no_account_text">Il n\'y a pas d\'accréditations enregistrées pour Remember The Milk (RTM). Les accréditations RTM sont nécessaires pour permettre la synchronisation avec le serveur RTM. \n\nVous pouvez enregistrer vos accréditations maintenant et ainsi bénéficier de la synchronisation en tâche de fond.</string>
+   <string name="dlg_no_account_text">Il n\'y a pas de compte enregistré pour Remember The Milk (RTM). Un compte RTM est nécessaire pour permettre la synchronisation avec le serveur RTM. \n\nVous pouvez créer votre compte maintenant et ainsi bénéficier de la synchronisation en tâche de fond.</string>
 
    <!-- Missing default list dialog -->
    <string name="dlg_missing_def_list_title">Liste par défaut manquante</string>
@@ -241,7 +241,7 @@
       <string name="task_dlg_choose_location_app">Afficher le lieu avec&#8230;</string>
       <string name="task_dlg_removing_editing_note">La note que vous modifiez a été supprimée par une mise à jour en tâche de fond. Si vous continuez l\'édition, une nouvelle note sera créée avec vos modifications.</string>
       <!-- Toasts -->
-      <string name="task_toast_no_google_maps">Le lieu ne peut pas être affiché parce que Google Maps App est absent</string>
+      <string name="task_toast_no_google_maps">Le lieu ne peut pas être affiché parce que l\'application Google Maps est absente</string>
 
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Nom de la tâche</string>
@@ -265,11 +265,11 @@
    <string name="task_edit_validate_recurrence">\'%1$s\' n\'est pas une répétition valide</string>
 
    <!-- EditMultipleTasks fragment -->
-   <string name="edit_multiple_tasks_different_task_names">Different names</string>
-   <string name="edit_multiple_tasks_different_lists">Different lists</string>
-   <string name="edit_multiple_tasks_different_priorities">Different priorities</string>
-   <string name="edit_multiple_tasks_different_locations">Different locations</string>
-   <string name="edit_multiple_tasks_different_urls">Different URLs</string>
+   <string name="edit_multiple_tasks_different_task_names">Noms différents</string>
+   <string name="edit_multiple_tasks_different_lists">Listes différentes</string>
+   <string name="edit_multiple_tasks_different_priorities">Priorités différentes</string>
+   <string name="edit_multiple_tasks_different_locations">Lieux différents</string>
+   <string name="edit_multiple_tasks_different_urls">URLs différentes</string>
 
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Mots Clés séparés par des virgules</string>
@@ -367,9 +367,7 @@
    <string name="auth_perm_delete">Lecture, Ecriture et Suppression</string>
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Récupération du jeton d\'authentification pour le niveau d\'accréditation \'%1$s\'</string>
-      <string name="auth_dlg_permisson_info">En choisissant les permissions, vous pouvez restreindre les droits d\'accès de Moloko à votre compte RTM.\n\n
-                                             En choisissant \'Lecture\', vous ne pourrez pas ajouter, modifier ou supprimer des tâches, listes ou notes dans Moloko. \'Lecture\' offre seulement la consultation de vos données RTM.
-                                             En choisissant \'Lecture, Ecriture et Suppression\', vous pouvez faire dans Moloko presque tout ce que vous faites sur le site web de RTM, et en particulier ajouter, modifier ou supprimer des tâches, listes ou notes.\n\nLa synchronisatin en arrière plan se fera dans les deux cas. Dans le cadre de la permission \'Lecture\', les données seront seulement reçues du serveur RTM, rien ne sera envoyé.\n\nVous pouvez changer les droits d\'accès n\'importe quand en supprimant votre compte RTM de votre téléphone et en vous reconnectant à celui ci. A ce moment là, vous pourrez à nouveau choisir vos droits d\'accès.</string>
+      <string name="auth_dlg_permisson_info">Choisir les permissions, vous permet de restreindre les droits d\'accès de Moloko à votre compte RTM.\n\nEn choisissant \'Lecture\', vous ne pourrez pas ajouter, modifier ou supprimer des tâches, listes ou notes dans Moloko. \'Lecture\' offre seulement la consultation de vos données RTM.\n\nEn choisissant \'Lecture, Ecriture et Suppression\', vous pouvez faire dans Moloko presque tout ce que vous faites sur le site web de RTM, et en particulier ajouter, modifier ou supprimer des tâches, listes ou notes.\n\nLa synchronisatin en arrière plan se fera dans les deux cas. Dans le cadre de la permission \'Lecture\', les données seront seulement reçues du serveur RTM, rien ne sera envoyé.\n\nVous pouvez changer les droits d\'accès n\'importe quand en supprimant votre compte RTM de votre téléphone et en vous reconnectant à celui ci. A ce moment là, vous pourrez à nouveau choisir vos droits d\'accès.</string>
       <!-- Toasts -->
       <string name="auth_toast_err_weblogin">Une erreur est survenue lors de l\'ouverture de la page de connexion au site de RTM. Essayez à nouveau.</string>
       <!-- Errors -->
@@ -391,7 +389,7 @@
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">Paramètres RTM</string>
    <string name="moloko_prefs_rtm_summary">Format d\'heure et de date, liste par défaut etc.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupéré du serveur pour la dernière fois le %1$s</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupérés du serveur pour la dernière fois le %1$s</string>
    <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur</string>
    <string name="moloko_prefs_rtm_timezone_title">Fuseau horaire</string>
    <string name="moloko_prefs_rtm_dateformat_title">Format de la date</string>
@@ -421,12 +419,12 @@
    <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Rappeler les tâches en retard</string>
    <string name="moloko_prefs_cat_help_dev_title">Aider le développement</string>
    <string name="moloko_prefs_acra_title">Activer les rapports d\'erreurs</string>
-   <string name="moloko_prefs_acra_summary_on">Merci d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
-   <string name="moloko_prefs_acra_summary_off">S\'il vous plait, veuillez envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
-   <string name="moloko_prefs_send_log_text">Envoyer le rapports d\'erreur de Moloko à l\'équipe de développement</string>
-   <string name="moloko_prefs_send_db_text">Send Moloko database to delvelopers</string>
+   <string name="moloko_prefs_acra_summary_on">Nous vous remercions d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
+   <string name="moloko_prefs_acra_summary_off">S\'il vous plait, veuillez activer l\'envoi de rapports d\'erreurs à l\'équipe de développement</string>
+   <string name="moloko_prefs_send_log_text">Envoyer le rapport d\'erreurs de Moloko à l\'équipe de développement</string>
+   <string name="moloko_prefs_send_db_text">Envoyer la base de données à l\'équipe de développement</string>
    <string name="moloko_prefs_clear_db_text">Effacer la base de données et supprimer toutes les données</string>
-   <string name="moloko_about_text">A propos de Moloko</string>
+   <string name="moloko_about_text">À propos de Moloko</string>
    <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Les paramètres ont été récupérés du serveur RTM</string>
       <string name="moloko_prefs_clear_db_dlg_title">Effacer la base de données</string>
@@ -435,7 +433,7 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Base de données effacée</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Echec de l\'effacement de la base de données</string>
-      <string name="moloko_prefs_send_db_toast_failed">Could not access the database</string>
+      <string name="moloko_prefs_send_db_toast_failed">Impossible d\'accéder à la base de données</string>
 
    <!-- Error reporting -->
    <string name="acra_crash_notif_ticker_text">Moloko est ou a été dans un état inattendu. Veuillez envoyer un rapport d\'erreur.</string>
@@ -445,9 +443,9 @@
    <string name="acra_crash_dialog_text">Nous nous excusons du désagrément. Veuillez envoyer un rapport d\'erreur pour nous aider à ce que cela ne se reproduise plus.</string>
    <string name="acra_crash_comment_prompt">Vous pouvez ajouter vos commentaires ci-dessous:</string>
    <string name="acra_crash_dialog_ok_toast">Votre rapport d\'erreur a été envoyé. Merci!</string>
-   <string name="send_log_dialog_text">Création du rapport d\'erreur pour Moloko. Les infomrations collectées seront envoyées par l\'application de votre choix. Vous pourrez voir et modifier les données envoyées avant l\'envoi.</string>
+   <string name="send_log_dialog_text">Création du rapport d\'erreur pour Moloko. Les informations collectées seront envoyées par l\'application de votre choix. Vous pourrez voir et modifier les données envoyées avant l\'envoi.</string>
    <string name="send_log_aquiring_text">Récupération des informations concernant Moloko&#8230;</string>
-   <string name="send_log_chooser_title">Veuillez sélectionner une appliocation pour l\'envoi du rapport d\'erreur</string>
+   <string name="send_log_chooser_title">Veuillez sélectionner une application pour l\'envoi du rapport d\'erreur</string>
    <string name="send_log_failed">Echec de l\'envoi du rapport d\'erreur</string>
    <!-- Suggestions -->
    <string name="app_quick_add_task_recurr_sugg_every_day">tous les jours</string>

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -44,12 +44,6 @@ import dev.drsoran.rtm.Task;
 
 public final class TaskEditUtils
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TaskEditUtils.class.getSimpleName();
-   
-   
-   
    private TaskEditUtils()
    {
       throw new AssertionError();

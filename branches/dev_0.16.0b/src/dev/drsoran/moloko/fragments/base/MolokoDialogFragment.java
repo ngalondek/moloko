@@ -53,7 +53,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    protected Bundle configuration;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -65,8 +65,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
          configure( savedInstanceState );
    }
    
-
-
+   
+   
    @Override
    public final void onAttach( SupportActivity activity )
    {
@@ -75,8 +75,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       onAttach( (FragmentActivity) activity );
    }
    
-
-
+   
+   
    public void onAttach( FragmentActivity activity )
    {
       final int settingsMask = getSettingsMask();
@@ -100,8 +100,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -116,8 +116,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       }
    }
    
-
-
+   
+   
    @Override
    public void setArguments( Bundle args )
    {
@@ -126,8 +126,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       configure( args );
    }
    
-
-
+   
+   
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -136,8 +136,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       outState.putAll( getConfiguration() );
    }
    
-
-
+   
+   
    @Override
    public final void configure( Bundle config )
    {
@@ -148,8 +148,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
          takeConfigurationFrom( config );
    }
    
-
-
+   
+   
    @Override
    public void clearConfiguration()
    {
@@ -157,8 +157,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
          configuration.clear();
    }
    
-
-
+   
+   
    @Override
    public final Bundle createDefaultConfiguration()
    {
@@ -169,55 +169,55 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       return bundle;
    }
    
-
-
+   
+   
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-
-
+   
+   
    protected void takeConfigurationFrom( Bundle config )
    {
    }
    
-
-
+   
+   
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
    }
    
-
-
+   
+   
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
    }
    
-
-
+   
+   
    public int getSettingsMask()
    {
       return 0;
    }
    
-
-
+   
+   
    public FragmentActivity getFragmentActivity()
    {
       return (FragmentActivity) getSupportActivity();
    }
    
-
-
+   
+   
    protected void onButtonClicked( int which )
    {
    }
    
-
-
+   
+   
    protected OnClickListener getGenericOnClickListener()
    {
       return genericListener;

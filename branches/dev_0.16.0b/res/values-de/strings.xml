@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (c) 2011 Ronny Röhricht   
+  Copyright (c) 2012 Ronny Röhricht   
   
   This file is part of Moloko.
   
@@ -28,7 +28,6 @@
 	<string name="app_account_preferences">Kontoeinstellungen</string>
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
-   <string name="app_task_edit">Aufgabe Bearbeiten</string>
    <string name="app_task_edit_multiple">%1$d %2$s bearbeiten</string>
    <string name="app_task_add">Neue Aufgabe</string>
    <string name="app_task_select_multiple">Aufgaben wählen (%1$d)</string>
@@ -38,9 +37,6 @@
    <string name="app_task_postpone">Aufgabe aufschieben</string>
    <string name="app_change_tags">Tags bearbeiten</string>
 	<string name="app_note">Notiz</string>
-   <string name="app_note_multiple">Notiz (%1$d/%2$d)</string>
-   <string name="app_note_edit">Notiz bearbeiten</string>
-   <string name="app_note_add">Neue Notiz</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Kontakte</string>
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
@@ -87,24 +83,26 @@
    <!-- Date/Time format -->
       <!-- Example: 12.25 -->
       <string name="numeric_date_pattern">%1$s.%2$s.</string>
-      <string name="numeric_date_format">d.M.</string>
       <!-- Example: 12.25.2000 -->
       <string name="numeric_date_pattern_year">%1$s.%2$s.%3$s</string>
-      <string name="numeric_date_format_year">d.M.yyyy</string>
+      <!-- Components of the numeric date format -->      
+      <string name="numeric_date_format_day">dd</string>
+      <string name="numeric_date_format_month">MM</string>
+      <string name="numeric_date_format_year">yyyy</string>
       <!-- %1 - month pattern,  MMM or MMMM -->
       <string name="date_with_text_month">d. %1$s</string>
       <string name="date_with_text_month_year">d. %1$s yyyy</string>
-      <!--  %1 - weekday pattern, EEE or EEEE
-            %2 - month pattern, MMM or MMMM -->
+      <!-- %1 - weekday pattern, EEE or EEEE
+           %2 - month pattern, MMM or MMMM -->
       <string name="date_with_weekday_text_month">%1$s, d. %2$s</string>
       <string name="date_with_weekday_text_month_year">%1$s, d. %2$s yyyy</string>
-      <!-- %1 - time, %2 - date
+      <!-- %1 - time
+           %2 - date
            Example: 12/25/2000, 12:00 -->
       <string name="date_with_time_pattern">%2$s, %1$s</string>
       <string name="time_pattern_12">h:mm a</string>
       
    <!-- Global phrases -->
-   <string name="phr_please_wait">Bitte warten</string>
    <string name="phr_now">Jetzt</string>
    <string name="phr_today">Heute</string>
    <string name="phr_today_with_date">Heute, der %1$s</string>
@@ -114,13 +112,9 @@
    <string name="phr_open_with_name">Öffne \'%1$s\'</string>
    <string name="phr_edit_with_name">Bearbeite \'%1$s\'</string>
    <string name="phr_delete_with_name">Lösche \'%1$s\'</string>
-   <string name="phr_close">Schliessen</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
-   <string name="phr_none_m">keiner</string>
-   <string name="phr_none_mainly">keines</string>
    <string name="phr_nothing">nichts</string>
-   <string name="phr_sync">Synchronisierung</string>
    <string name="phr_do_sync">Synchronisieren</string>   
    <string name="phr_cancel_sync">Synchronisierung abbrechen</string>
    <string name="phr_on">An</string>
@@ -133,15 +127,11 @@
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
-   <string name="err_success">Erfolg</string>
-   <string name="err_canceled">Abgebrochen</string>   
-   <string name="err_saving_preferences">Fehler beim Speichern der Einstellungen</string>
    <string name="err_not_connected">Keine Verbindung</string>
    <string name="err_add_account_canceled">Das Hinzufügen eines neuen Kontos wurde abgebrochen</string>
    <string name="err_unexpected">Wenn Sie dies lesen LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
    <string name="err_db_typed">Datenbank-Zugriffsfehler beim Zugriff auf %1$s.</string>
    <string name="err_entity_not_found">%1$s konnte nicht aus der Datenbank geladen werden.\n\nBitte überprüfen Sie ob das Element existiert.</string>
-   <string name="err_unsupported_intent_action">Die Aktion %1$s wird von dieser Activity nicht unterstützt.</string>
    <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten.\n\nDaten, die Sie mit Moloko bis jetzt geändert haben, bleiben erhalten. Dennoch werden die Änderungen nicht mit dem RTM Server synchronisiert und ggf. durch eine neuere Serverversion ersetzt.\n\nSie können dies ändern, indem Sie Ihr aktuelles, lokales RTM Konto vom Gerät entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.</string>
    
 	<!-- Global buttons -->
@@ -150,18 +140,12 @@
 	<string name="btn_new_account">Neues Konto</string>
    <string name="btn_account_settings">Konto</string>
    <string name="btn_edit">Bearbeiten</string>
-   <string name="btn_done">Fertig</string>
    <string name="btn_complete">Erledigt</string>
    <string name="btn_uncomplete">Unerledigt</string>
    <string name="btn_postpone">Aufschieben</string>
    <string name="btn_delete">Löschen</string>
-   <string name="btn_add">Neu</string>
    <string name="btn_back">Zurück</string>
-   <string name="btn_discard">Verwerfen</string>
-	
-	<!-- Global menu items -->
-	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
-   
+
    <!-- Global Dialogs -->   
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
@@ -178,7 +162,6 @@
       <string name="toast_save_task_ok">Änderungen an der Aufgabe gespeichert</string>
       <string name="toast_save_task_failed">Änderungen an der Aufgabe konnten nicht gespeichert werden</string>
       <string name="toast_delete_task">Lösche Aufgabe&#8230;</string>
-      <string name="toast_delete_task_ok">Aufgabe gelöscht</string>
       <string name="toast_delete_task_failed">Aufgabe konnte nicht gelöscht werden</string>
       <!-- Note -->
       <string name="toast_insert_note">Füge neue Notiz hinzu&#8230;</string>
@@ -227,10 +210,6 @@
 	<!-- Home activity -->
 	<string name="home_label_overdue">Überfällig</string>
 	
-	<!-- StartUp activity -->	
-	  <!-- Toasts -->
-	  <string name="startup_toast_no_settings">Einstellungen konnten nicht geladen werden. Starte mit Standarseinstellungen.</string>	  
-	
 	<!-- Task activity -->
 	<string name="task_source">von %1$s</string>
 	<string name="task_datetime_title_due">Wann</string>
@@ -244,8 +223,6 @@
       <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Öffne Ort mit&#8230;</string>
       <string name="task_dlg_removing_editing_note">Die Notiz in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt. Wenn Sie die Bearbeitung fortsetzen, wird eine neue Notiz mit Ihren Änderungen eingefügt.</string>         
-      <!-- Toasts -->
-     <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>     
         
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
@@ -303,7 +280,6 @@
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
-   <string name="abstaskslist_query_error">Es ist ein Fehler bei der Abfrage der Aufgaben aufgetreten. Bitte senden Sie das Moloko-Log, unter Einstellungen, an die Entwickler.</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
@@ -312,11 +288,9 @@
      <string name="abstaskslist_listitem_ctx_postpone_task">Schiebe \'%1$s\' auf</string>
 	  <string name="abstaskslist_listitem_ctx_open_list">Liste \'%1$s\' öffnen</string>
      <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort \'%1$s\'</string>
-     <string name="abstaskslist_listitem_ctx_open_location">Ort \'%1$s\' öffnen</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
-     <string name="abstaskslist_dlg_sort_title">Sortieren nach&#8230;</string>
      
    <!-- TasksList activity -->
    <string name="taskslist_actionbar_subtitle_due_today">Heute fällig</string>
@@ -327,7 +301,6 @@
      <string name="taskslist_menu_opt_delete_list">Liste löschen</string>
 	
    <!-- TaskSearchResultActivity -->
-   <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
    <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Neue Smart List</string>
@@ -365,7 +338,6 @@
    <string name="auth_info_text">Nach dem Fortfahren werden Sie auf die Remember The Milk Website geleitet, wo Sie durch die Eingabe Ihrer Zugangsdaten die Zugriffsberechtigung auf die RTM Daten bestätigen.\n\nIhr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>
    <string name="auth_missing_credential">Wichtige Kontoangaben fehlen. Bitte ergänzen.</string>
    <string name="auth_expired_auth_token">Die Zugriffsberechtigung wurde von Remember The Milk für %1$s nicht bestätigt. Bitte neu beantragen.</string>
-   <string name="auth_perm_no">Keine</string>
    <string name="auth_perm_read">Lesen</string>  
    <string name="auth_perm_delete">Lesen, Schreiben und Löschen</string>
       <!-- Dialogs -->
@@ -389,6 +361,7 @@
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">Allgemeine Einstellungen</string>
    <string name="acc_pref_account_summary">Synchronisierung, HTTP(S) Einstellungen</string>
+   <string name="acc_pref_sync_interval_title">Synchronisierung</string>
    <string name="acc_pref_perm_title">Zugriffsebene</string>
    <string name="acc_pref_perm_value">%1$s - zum Ändern klicken</string>    
    <string name="acc_pref_perm_has_not">Keine Zugangsberechtigung</string>
@@ -420,7 +393,6 @@
    <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigen</string>
    <string name="moloko_prefs_notification_tasks_w_due_before_title">Erinnerung</string>
    <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Benachrichtigungston</string>
-   <string name="moloko_prefs_notification_tasks_w_due_ringtone_summary">Benachrichtigungston für fällige Aufgaben</string>
    <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrieren</string>
    <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
    <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
@@ -438,7 +410,6 @@
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
       <string name="moloko_prefs_clear_db_dlg_title">Datenbank säubern</string>
-      <string name="moloko_prefs_clear_db_dlg_text">Wirklich alle Daten der Datenbank unwiederruflich löschen?</string>
       <string name="moloko_prefs_clear_db_dlg_clearing">Säubere Datenbank&#8230;</string>
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Datenbank gesäubert</string>

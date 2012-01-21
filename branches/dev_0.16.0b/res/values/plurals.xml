@@ -39,10 +39,6 @@
       <item quantity="one">minute</item>
       <item quantity="other">minutes</item>
    </plurals>
-   <plurals name="g_second">
-      <item quantity="one">second</item>
-      <item quantity="other">seconds</item>
-   </plurals>   
    <plurals name="g_task">
       <item quantity="one">task</item>
       <item quantity="other">tasks</item>
@@ -106,10 +102,6 @@
 
 	<!-- TasksList activity -->
    	<!-- Menus -->
-   	<plurals name="taskslist_listitem_ctx_notes">
-   		<item quantity="one">Open note</item>
-   		<item quantity="other">Open notes</item>
-   	</plurals>
    	<plurals name="taskslist_listitem_ctx_tags">
    		<item quantity="one">Show tasks with \'%1$s\'</item>
    		<item quantity="other">Show tasks tagged with...</item>

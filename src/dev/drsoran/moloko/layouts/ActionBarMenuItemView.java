@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -83,6 +83,7 @@ public class ActionBarMenuItemView extends LinearLayout implements
       icon.setOnClickListener( this );
       icon.setOnLongClickListener( this );
       
+      setOnClickListener( this );
       setOnLongClickListener( this );
       
       setIcon( itemData.getIcon() );

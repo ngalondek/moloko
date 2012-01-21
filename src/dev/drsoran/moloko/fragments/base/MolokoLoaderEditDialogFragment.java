@@ -91,9 +91,9 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    
    
    @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
+   public void onContentCreated( ViewGroup dialogView )
    {
-      super.onViewCreated( view, savedInstanceState );
+      super.onContentCreated( dialogView );
       
       if ( loaderNotDataFound )
          showElementNotFoundError();
@@ -193,7 +193,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
          @Override
          public void run()
          {
-            showContent();
+            if ( isAdded() )
+               showContent();
          }
       } );
    }

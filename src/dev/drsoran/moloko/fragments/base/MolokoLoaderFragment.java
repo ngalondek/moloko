@@ -219,7 +219,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          @Override
          public void run()
          {
-            showContent();
+            if ( isAdded() )
+               showContent();
          }
       } );
    }

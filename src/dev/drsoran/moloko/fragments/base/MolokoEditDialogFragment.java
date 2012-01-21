@@ -106,6 +106,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       dialogView = createContent( LayoutInflater.from( getFragmentActivity() ) );
       windowToken = dialogView.getWindowToken();
       
+      onContentCreated( dialogView );
+      
       final Dialog dialog = createDialog( dialogView );
       
       return dialog;
@@ -160,7 +162,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          @Override
          public void run()
          {
-            UIUtils.showSoftInput( view );
+            if ( isAdded() )
+               UIUtils.showSoftInput( view );
          }
       } );
    }
@@ -195,6 +198,12 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
    {
       return applyModifications( modifications.first, modifications.second );
+   }
+   
+   
+   
+   protected void onContentCreated( ViewGroup dialogView )
+   {
    }
    
    

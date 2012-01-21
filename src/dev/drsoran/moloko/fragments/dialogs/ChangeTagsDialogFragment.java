@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -38,6 +39,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,9 +111,9 @@ public class ChangeTagsDialogFragment extends
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      super.onCreate( savedInstanceState );
-      
       setStyle( STYLE_NORMAL, R.style.Theme_ChangeTagsDialog );
+      
+      super.onCreate( savedInstanceState );
       
       setChosenTagsFromConfiguration();
    }
@@ -187,6 +189,7 @@ public class ChangeTagsDialogFragment extends
       } );
       
       editView.setText( TextUtils.join( ", ", chosenTags ) );
+      editView.requestFocus();
    }
    
    
@@ -195,23 +198,25 @@ public class ChangeTagsDialogFragment extends
    protected Dialog createDialog( View view )
    {
       final Activity activity = getFragmentActivity();
+      final Context context = new ContextThemeWrapper( activity,
+                                                       R.style.Theme_ChangeTagsDialog );
       
-      return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_tag )
-                                                .setTitle( getString( R.string.app_change_tags ) )
-                                                .setView( view )
-                                                .setPositiveButton( R.string.btn_ok,
-                                                                    new DialogInterface.OnClickListener()
-                                                                    {
-                                                                       @Override
-                                                                       public void onClick( DialogInterface dialog,
-                                                                                            int which )
-                                                                       {
-                                                                          ChangeTagsDialogFragment.this.onFinishEditing();
-                                                                       }
-                                                                    } )
-                                                .setNegativeButton( R.string.btn_cancel,
-                                                                    null )
-                                                .create();
+      return new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_tag )
+                                               .setTitle( getString( R.string.app_change_tags ) )
+                                               .setView( view )
+                                               .setPositiveButton( R.string.btn_ok,
+                                                                   new DialogInterface.OnClickListener()
+                                                                   {
+                                                                      @Override
+                                                                      public void onClick( DialogInterface dialog,
+                                                                                           int which )
+                                                                      {
+                                                                         ChangeTagsDialogFragment.this.onFinishEditing();
+                                                                      }
+                                                                   } )
+                                               .setNegativeButton( R.string.btn_cancel,
+                                                                   null )
+                                               .create();
    }
    
    

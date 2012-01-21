@@ -103,7 +103,10 @@
     </style>
 
     <style name="Theme.ChangeTagsDialog" parent="android:style/Theme.Dialog">
-
+        
+        <!-- Window attributes -->
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        
         <!-- Widgets -->
         <item name="android:listPreferredItemHeight">50dip</item>
     </style>

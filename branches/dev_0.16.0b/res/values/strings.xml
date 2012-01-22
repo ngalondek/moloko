@@ -311,7 +311,7 @@
      <string name="abstaskslist_listitem_ctx_uncomplete_task">Incomplete \'%1$s\'</string>
      <string name="abstaskslist_listitem_ctx_postpone_task">Postpone \'%1$s\'</string>
      <string name="abstaskslist_listitem_ctx_open_list">Open list \'%1$s\'</string>
-     
+     <string name="abstaskslist_listitem_ctx_tasks_at_location">Tasks at \'%1$s\'</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">and</string>
      <string name="abstaskslist_dlg_show_tags_or">or</string>

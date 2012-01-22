@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 	<!--
-		Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko
+		Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko
 		is free software: you can redistribute it and/or modify it under the
 		terms of the GNU General Public License as published by the Free
 		Software Foundation, either version 3 of the License, or (at your
@@ -39,24 +39,72 @@
       <item quantity="one">Minute</item>
       <item quantity="other">Minuten</item>
    </plurals>
-   <plurals name="g_second">
-      <item quantity="one">Sekunde</item>
-      <item quantity="other">Sekunden</item>
-   </plurals>   
    <plurals name="g_task">
       <item quantity="one">Aufgabe</item>
       <item quantity="other">Aufgaben</item>
    </plurals>
+   
+   <!-- Global Toasts -->
+      <!-- Task -->
+      <plurals name="toast_completed_task">
+         <item quantity="one">Aufgabe erledigt</item>
+         <item quantity="other">%1$d Aufgaben erledigt</item>
+      </plurals>
+      <plurals name="toast_incompleted_task">
+         <item quantity="one">Aufgabe ist zu erledigen</item>
+         <item quantity="other">%1$d Aufgaben sind zu erledigen</item>
+      </plurals>
+      <plurals name="toast_postponed_task">
+         <item quantity="one">Aufgabe wurde aufgeschoben</item>
+         <item quantity="other">%1$d Aufgaben wurden aufgeschoben</item>
+      </plurals>
+      <plurals name="toast_deleted_task">
+         <item quantity="one">Aufgabe wurde gelöscht</item>
+         <item quantity="other">%1$d Aufgaben wurden gelöscht</item>
+      </plurals>
+   
+   <!-- TaskLists fragment -->
+   <plurals name="tasklists_child_due_today">
+      <item quantity="one">1 heute fällig</item>
+      <item quantity="other">%1$d heute fällig</item>
+   </plurals>
+   <plurals name="tasklists_child_due_tomorrow">
+      <item quantity="one">1 morgen fällig</item>
+      <item quantity="other">%1$d morgen fällig</item>
+   </plurals>
+   <plurals name="tasklists_child_overdue">
+      <item quantity="one">1 überfällig</item>
+      <item quantity="other">%1$d überfällig</item>
+   </plurals>
+   <plurals name="tasklists_child_completed">
+      <item quantity="one">1 erledigt</item>
+      <item quantity="other">%1$d erledigt</item>
+   </plurals>
+   
+   <!-- SelectMultipleTasks fragment -->
+      <!-- Dialogs -->
+      <plurals name="select_multiple_tasks_dlg_complete">
+         <item quantity="one">1 Aufgabe erledigt?</item>
+         <item quantity="other">%1$d Aufgaben erledigt?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_incomplete">
+         <item quantity="one">1 Aufgabe unerledigt?</item>
+         <item quantity="other">%1$d Aufgaben unerledigt?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_postpone">
+         <item quantity="one">1 Aufgabe aufschieben?</item>
+         <item quantity="other">%1$d Aufgaben aufschieben?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_delete">
+         <item quantity="one">1 Aufgabe löschen?</item>
+         <item quantity="other">%1$d Aufgaben löschen?</item>
+      </plurals>
 
 	<!-- TasksList activity -->
-	<!-- Menus -->
-	<plurals name="taskslist_listitem_ctx_notes">
-		<item quantity="one">Öffne Notiz</item>
-		<item quantity="other">Öffne Notizen</item>
-	</plurals>
-	<plurals name="taskslist_listitem_ctx_tags">
-		<item quantity="one">Zeige Aufgaben mit \'%1$s\'</item>
-		<item quantity="other">Zeige Aufgaben mit Tags...</item>
-	</plurals>
-   
+   	<!-- Menus -->
+   	<plurals name="taskslist_listitem_ctx_tags">
+   		<item quantity="one">Zeige Aufgaben mit \'%1$s\'</item>
+   		<item quantity="other">Zeige Aufgaben mit Tags...</item>
+   	</plurals>
+
 </resources>

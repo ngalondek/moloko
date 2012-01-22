@@ -390,39 +390,24 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
-   public final static ContentProviderOperation insertLocalCreatedNote( ContentProviderClient client,
-                                                                        RtmTaskNote note,
-                                                                        NewNoteId outNewId )
+   public final static NewNoteId createNewNoteId( ContentProviderClient client )
    {
-      ContentProviderOperation operation = null;
+      final NewNoteId newId = new NewNoteId();
+      newId.noteId = Queries.getNextId( client, Notes.CONTENT_URI );
       
-      boolean ok = client != null;
-      NewNoteId newId = null;
-      
-      if ( ok )
-      {
-         newId = new NewNoteId();
-         newId.noteId = Queries.getNextId( client, Notes.CONTENT_URI );
-         ok = newId.noteId != null;
-      }
-      
-      if ( ok )
-      {
-         operation = ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                             .withValues( getContentValues( new RtmTaskNote( newId.noteId,
-                                                                                             note.getTaskSeriesId(),
-                                                                                             note.getCreatedDate(),
-                                                                                             note.getModifiedDate(),
-                                                                                             note.getDeletedDate(),
-                                                                                             note.getTitle(),
-                                                                                             note.getText() ),
-                                                                            true ) )
-                                             .build();
-         if ( outNewId != null )
-            outNewId.noteId = newId.noteId;
-      }
-      
-      return operation;
+      if ( newId.noteId != null )
+         return newId;
+      else
+         return null;
+   }
+   
+   
+   
+   public final static ContentProviderOperation insertLocalCreatedNote( RtmTaskNote note )
+   {
+      return ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                     .withValues( getContentValues( note, true ) )
+                                     .build();
    }
    
    
@@ -434,6 +419,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Notes._ID
@@ -497,6 +483,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
@@ -504,6 +491,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
@@ -511,6 +499,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

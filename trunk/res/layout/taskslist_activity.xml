@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+<!--
+      Copyright (c) 2011 Ronny Röhricht This file is part of Moloko.
       Moloko is free software: you can redistribute it and/or modify it
       under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
@@ -12,52 +12,33 @@
       License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
-   -->
+-->
 
 <LinearLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical" >
 
-   <dev.drsoran.moloko.layouts.TitleBarLayout
-      xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-      style="@style/App_TitleBar"
-      moloko:titleText="@string/app_name"
-      moloko:showButton="add_task|home|search" />
+    <FrameLayout
+        android:id="@id/frag_quick_add_task_action_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </FrameLayout>
 
-   <!--
-      The frame layout is here since we will be showing either the empty
-      view or the list view.
-   -->
-   <FrameLayout
-      android:layout_width="fill_parent"
-      android:layout_height="0dip"
-      android:layout_weight="1">
+    <FrameLayout
+        android:id="@+id/frag_taskslist"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+    </FrameLayout>
 
-      <ListView
-         android:id="@+id/android:list"
-         style="@style/TasksList_TaskList"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent" />
-
-      <TextView
-         android:id="@+id/taskslist_activity_no_elements"
-         style="@style/App_No_List_Elements_Text"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
-         android:text="@string/abstaskslist_no_tasks"
-         android:visibility="gone" />
-
-      <dev.drsoran.moloko.layouts.TitleWithTextLayout
-         android:id="@+id/taskslist_activity_error"
-         style="@style/Error"
-         android:visibility="gone" />
-
-      <include
-         android:id="@id/android:empty"
-         layout="@layout/app_loading_spinner" />
-
-   </FrameLayout>
+    <FrameLayout
+        android:id="@id/frag_quick_add_task_button_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" >
+    </FrameLayout>
 
 </LinearLayout>

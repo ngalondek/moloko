@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.mdt.rtm.ApplicationInfo;
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 
@@ -44,15 +45,15 @@ public class Authenticator extends AbstractAccountAuthenticator
    private final Context context;
    
    
-
+   
    public Authenticator( Context context )
    {
       super( context );
       this.context = context;
    }
    
-
-
+   
+   
    @Override
    public Bundle addAccount( AccountAuthenticatorResponse response,
                              String accountType,
@@ -76,8 +77,8 @@ public class Authenticator extends AbstractAccountAuthenticator
       return bundle;
    }
    
-
-
+   
+   
    @Override
    public Bundle confirmCredentials( AccountAuthenticatorResponse response,
                                      Account account,
@@ -86,8 +87,8 @@ public class Authenticator extends AbstractAccountAuthenticator
       throw new UnsupportedOperationException();
    }
    
-
-
+   
+   
    @Override
    public Bundle updateCredentials( AccountAuthenticatorResponse response,
                                     Account account,
@@ -121,8 +122,8 @@ public class Authenticator extends AbstractAccountAuthenticator
        */
    }
    
-
-
+   
+   
    @Override
    public Bundle editProperties( AccountAuthenticatorResponse response,
                                  String accountType )
@@ -130,8 +131,8 @@ public class Authenticator extends AbstractAccountAuthenticator
       throw new UnsupportedOperationException();
    }
    
-
-
+   
+   
    @Override
    public Bundle getAuthToken( AccountAuthenticatorResponse response,
                                Account account,
@@ -158,13 +159,14 @@ public class Authenticator extends AbstractAccountAuthenticator
          
          if ( !missingCredential && !authTokenExpired )
          {
+            Service service = null;
             try
             {
-               ServiceImpl.getInstance( context,
-                                        new ApplicationInfo( apiKey,
-                                                             sharedSecret,
-                                                             null ) )
-                          .auth_checkToken( authToken );
+               service = ServiceImpl.getInstance( context,
+                                                  new ApplicationInfo( apiKey,
+                                                                       sharedSecret,
+                                                                       null ) );
+               service.auth_checkToken( authToken );
                
                if ( !authTokenExpired )
                {
@@ -175,7 +177,7 @@ public class Authenticator extends AbstractAccountAuthenticator
                   result.putString( AccountManager.KEY_AUTHTOKEN, authToken );
                }
             }
-            catch ( Exception e )
+            catch ( Throwable e )
             {
                if ( e instanceof ServiceException )
                {
@@ -207,6 +209,11 @@ public class Authenticator extends AbstractAccountAuthenticator
                   
                   return result;
                }
+            }
+            finally
+            {
+               if ( service != null )
+                  service.shutdown();
             }
          }
          
@@ -240,8 +247,8 @@ public class Authenticator extends AbstractAccountAuthenticator
       return result;
    }
    
-
-
+   
+   
    @Override
    public String getAuthTokenLabel( String authTokenType )
    {
@@ -253,8 +260,8 @@ public class Authenticator extends AbstractAccountAuthenticator
       return null;
    }
    
-
-
+   
+   
    @Override
    public Bundle hasFeatures( AccountAuthenticatorResponse response,
                               Account account,
@@ -279,8 +286,8 @@ public class Authenticator extends AbstractAccountAuthenticator
       return result;
    }
    
-
-
+   
+   
    private final static void configureIntent( Context context,
                                               Intent intent,
                                               Account account )

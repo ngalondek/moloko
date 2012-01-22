@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,42 +22,45 @@
 
 package dev.drsoran.moloko.activities;
 
-import android.app.Activity;
+import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.HomeAdapter;
+import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
+import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
 
 
-public class HomeActivity extends Activity implements OnItemClickListener
+public class HomeActivity extends MolokoFragmentActivity implements
+         OnItemClickListener
 {
-   protected static class OptionsMenu
+   private static class OptionsMenu
    {
-      protected final static int START_IDX = 0;
-      
-      private final static int MENU_ORDER_STATIC = 10000;
-      
-      public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
+      public final static int ADD_TASK = R.id.menu_quick_add_task;
    }
    
-   protected final Handler handler = new Handler();
+   private final Handler handler = new Handler();
+   
+   private IMolokoHomeWidget addAccountWidget;
    
    
 
    @Override
-   protected void onCreate( Bundle savedInstanceState )
+   public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.home_activity );
-      
-      UIUtils.setTitle( this,
-                        getString( R.string.app_home ),
-                        R.drawable.ic_title_home );
       
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setOnItemClickListener( this );
@@ -72,13 +75,13 @@ public class HomeActivity extends Activity implements OnItemClickListener
    {
       super.onResume();
       
-      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
-      final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
+      final HomeAdapter homeAdapter = getHomeAdapter();
       
       if ( homeAdapter != null )
       {
          homeAdapter.startWidgets();
          onContentChanged();
+         showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
       }
    }
    
@@ -89,13 +92,87 @@ public class HomeActivity extends Activity implements OnItemClickListener
    {
       super.onStop();
       
+      final HomeAdapter homeAdapter = getHomeAdapter();
+      
+      if ( homeAdapter != null )
+         homeAdapter.stopWidgets();
+   }
+   
+
+
+   @Override
+   public boolean onCreateOptionsMenu( Menu menu )
+   {
+      super.onCreateOptionsMenu( menu );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ADD_TASK,
+                                   getString( R.string.app_task_add ),
+                                   MenuCategory.CONTAINER,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_add_task,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   AccountUtils.isWriteableAccess( this ) );
+      
+      UIUtils.addSearchMenuItem( this,
+                                 menu,
+                                 MenuCategory.ALTERNATIVE,
+                                 MenuItem.SHOW_AS_ACTION_ALWAYS );
+      
+      UIUtils.addSyncMenuItem( this,
+                               menu,
+                               MenuCategory.ALTERNATIVE,
+                               MenuItem.SHOW_AS_ACTION_ALWAYS );
+      
+      return true;
+   }
+   
+
+
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case android.R.id.home:
+            UIUtils.showAboutMolokoDialog( this );
+            return true;
+            
+         case OptionsMenu.ADD_TASK:
+            onAddTask();
+            return true;
+            
+         default :
+            return super.onOptionsItemSelected( item );
+      }
+   }
+   
+
+
+   private void onAddTask()
+   {
+      startActivity( Intents.createAddTaskIntent( this, null ) );
+   }
+   
+
+
+   @Override
+   public void onAccountsUpdated( Account[] accounts )
+   {
+      super.onAccountsUpdated( accounts );
+      
+      showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
+   }
+   
+
+
+   private HomeAdapter getHomeAdapter()
+   {
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
       
-      if ( homeAdapter != null )
-      {
-         homeAdapter.stopWidgets();
-      }
+      return homeAdapter;
    }
    
 
@@ -110,6 +187,7 @@ public class HomeActivity extends Activity implements OnItemClickListener
    
 
 
+   @Override
    public void onItemClick( AdapterView< ? > adapterView,
                             View view,
                             int pos,
@@ -127,6 +205,40 @@ public class HomeActivity extends Activity implements OnItemClickListener
          
          if ( runnable != null )
             handler.post( runnable );
+      }
+   }
+   
+
+
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return null;
+   }
+   
+
+
+   private void showAddAccountWidget( boolean show )
+   {
+      if ( show )
+      {
+         if ( addAccountWidget == null )
+         {
+            addAccountWidget = new SimpleHomeWidgetLayout( this,
+                                                           null,
+                                                           R.string.btn_new_account,
+                                                           R.drawable.ic_home_add,
+                                                           Intents.createNewAccountIntent() );
+            getHomeAdapter().addWidget( addAccountWidget );
+         }
+      }
+      else
+      {
+         if ( addAccountWidget != null )
+         {
+            getHomeAdapter().removeWidget( addAccountWidget );
+            addAccountWidget = null;
+         }
       }
    }
 }

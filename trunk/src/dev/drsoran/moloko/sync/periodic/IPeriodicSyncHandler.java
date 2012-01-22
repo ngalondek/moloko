@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.sync.periodic;
 
+import android.content.SyncResult;
 
 
 public interface IPeriodicSyncHandler
@@ -31,6 +32,10 @@ public interface IPeriodicSyncHandler
 
 
    void resetPeriodicSync();
+   
+
+
+   void delayNextSync( SyncResult syncResult, long seconds );
    
 
 

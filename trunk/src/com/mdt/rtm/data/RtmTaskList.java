@@ -46,6 +46,7 @@ public class RtmTaskList extends RtmData
    public static final Parcelable.Creator< RtmTaskList > CREATOR = new Parcelable.Creator< RtmTaskList >()
    {
       
+      @Override
       public RtmTaskList createFromParcel( Parcel source )
       {
          return new RtmTaskList( source );
@@ -53,6 +54,7 @@ public class RtmTaskList extends RtmData
       
       
       
+      @Override
       public RtmTaskList[] newArray( int size )
       {
          return new RtmTaskList[ size ];
@@ -89,7 +91,7 @@ public class RtmTaskList extends RtmData
       id = source.readString();
       series = source.createTypedArrayList( RtmTaskSeries.CREATOR );
       seriesesWithDeletedTasks = source.createTypedArrayList( RtmTaskSeries.CREATOR );
-      current = source.readParcelable( null );
+      current = ParcelableDate.fromParcel( source );
    }
    
    
@@ -250,6 +252,7 @@ public class RtmTaskList extends RtmData
    
    
    
+   @Override
    public int describeContents()
    {
       return 0;
@@ -257,6 +260,7 @@ public class RtmTaskList extends RtmData
    
    
    
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );

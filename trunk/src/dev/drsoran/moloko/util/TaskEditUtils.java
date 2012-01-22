@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,19 +22,21 @@
 
 package dev.drsoran.moloko.util;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
-import android.content.ContentProviderOperation;
-import android.content.Context;
+import android.support.v4.app.FragmentActivity;
+import android.util.Pair;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentProviderAction;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Task;
@@ -42,82 +44,70 @@ import dev.drsoran.rtm.Task;
 
 public final class TaskEditUtils
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TaskEditUtils.class.getSimpleName();
-   
-   
-
    private TaskEditUtils()
    {
       throw new AssertionError();
    }
    
-
-
-   public final static boolean setTaskCompletion( Activity activity,
-                                                  Task task,
-                                                  boolean complete )
+   
+   
+   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > setTaskCompletion( FragmentActivity activity,
+                                                                                                  Task task,
+                                                                                                  boolean complete )
    {
       return setTasksCompletion( activity,
                                  Collections.singletonList( task ),
                                  complete );
    }
    
-
-
-   public final static boolean setTasksCompletion( Context context,
-                                                   List< ? extends Task > tasks,
-                                                   boolean complete )
+   
+   
+   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > setTasksCompletion( FragmentActivity activity,
+                                                                                                   List< ? extends Task > tasks,
+                                                                                                   boolean complete )
    {
-      boolean ok = true;
+      final ModificationSet modifications = new ModificationSet();
       
-      if ( !tasks.isEmpty() )
+      for ( Task task : tasks )
       {
-         final ModificationSet modifications = new ModificationSet();
+         final Date complDate = task.getCompleted();
          
-         for ( Task task : tasks )
+         if ( complDate == null && complete || complDate != null && !complete )
          {
-            final Date complDate = task.getCompleted();
+            modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
+                                                             task.getId(),
+                                                             RawTasks.COMPLETED_DATE,
+                                                             complete
+                                                                     ? System.currentTimeMillis()
+                                                                     : null ) );
             
-            if ( complDate == null && complete || complDate != null
-               && !complete )
-            {
-               modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                                task.getId(),
-                                                                RawTasks.COMPLETED_DATE,
-                                                                complete
-                                                                        ? System.currentTimeMillis()
-                                                                        : null ) );
-               
-               modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-            }
+            modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
          }
-         
-         ok = Queries.applyModifications( context,
-                                          modifications,
-                                          R.string.toast_save_task );
-         
-         UIUtils.reportStatus( context,
-                               R.string.toast_save_task_ok,
-                               R.string.toast_save_task_failed,
-                               ok );
       }
       
-      return ok;
+      return Pair.create( modifications.toContentProviderActionItemList(),
+                          new ApplyChangesInfo( activity.getString( R.string.toast_save_task ),
+                                                activity.getResources()
+                                                        .getQuantityString( complete
+                                                                                    ? R.plurals.toast_completed_task
+                                                                                    : R.plurals.toast_incompleted_task,
+                                                                            tasks.size(),
+                                                                            tasks.size() ),
+                                                activity.getString( R.string.toast_save_task_failed ) ) );
    }
    
-
-
-   public final static boolean postponeTask( Context context, Task task )
+   
+   
+   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > postponeTask( FragmentActivity activity,
+                                                                                             Task task )
    {
-      return postponeTasks( context, Collections.singletonList( task ) );
+      return postponeTasks( activity, Collections.singletonList( task ) );
    }
    
-
-
-   public final static boolean postponeTasks( Context context,
-                                              List< ? extends Task > tasks )
+   
+   
+   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > postponeTasks( FragmentActivity activity,
+                                                                                              List< ? extends Task > tasks )
    {
       /**
        * NOTE: RTM has no API to set the postponed count. One can only postpone a task and the count is the number of
@@ -129,11 +119,10 @@ public final class TaskEditUtils
        * synced out.
        **/
       
-      boolean ok = true;
+      final ModificationSet modifications = new ModificationSet();
       
       if ( !tasks.isEmpty() )
       {
-         final ModificationSet modifications = new ModificationSet();
          final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
          
          for ( Task task : tasks )
@@ -186,38 +175,67 @@ public final class TaskEditUtils
             
             modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
          }
-         
-         ok = Queries.applyModifications( context,
-                                          modifications,
-                                          R.string.toast_save_task );
-         
-         UIUtils.reportStatus( context,
-                               R.string.toast_save_task_ok,
-                               R.string.toast_save_task_failed,
-                               ok );
       }
       
-      return ok;
+      return Pair.create( modifications.toContentProviderActionItemList(),
+                          new ApplyChangesInfo( activity.getString( R.string.toast_save_task ),
+                                                activity.getResources()
+                                                        .getQuantityString( R.plurals.toast_postponed_task,
+                                                                            tasks.size(),
+                                                                            tasks.size() ),
+                                                activity.getString( R.string.toast_save_task_failed ) ) );
    }
    
-
-
-   public final static boolean deleteTask( Activity activity, Task task )
+   
+   
+   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > insertTask( FragmentActivity activity,
+                                                                                           Task task )
+   {
+      ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
+      
+      boolean ok = actionItemList.addAll( ContentProviderAction.Type.INSERT,
+                                          TasksProviderPart.insertLocalCreatedTask( task ) );
+      ok = ok
+         && actionItemList.add( ContentProviderAction.Type.INSERT,
+                                CreationsProviderPart.newCreation( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                             task.getTaskSeriesId() ),
+                                                                   task.getCreated()
+                                                                       .getTime() ) );
+      ok = ok
+         && actionItemList.add( ContentProviderAction.Type.INSERT,
+                                CreationsProviderPart.newCreation( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                             task.getId() ),
+                                                                   task.getCreated()
+                                                                       .getTime() ) );
+      
+      if ( !ok )
+         actionItemList = null;
+      
+      return Pair.create( actionItemList,
+                          new ApplyChangesInfo( activity.getString( R.string.toast_insert_task ),
+                                                activity.getString( R.string.toast_insert_task_ok ),
+                                                activity.getString( R.string.toast_insert_task_fail ) ) );
+   }
+   
+   
+   
+   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteTask( FragmentActivity activity,
+                                                                                           Task task )
    {
       return deleteTasks( activity, Collections.singletonList( task ) );
    }
    
-
-
-   public final static boolean deleteTasks( Context context,
-                                            List< ? extends Task > tasks )
+   
+   
+   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteTasks( FragmentActivity activity,
+                                                                                            List< ? extends Task > tasks )
    {
       boolean ok = true;
+      ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
       if ( !tasks.isEmpty() )
       {
          final ModificationSet modifications = new ModificationSet();
-         final ArrayList< ContentProviderOperation > removeCreatedOperations = new ArrayList< ContentProviderOperation >();
          
          for ( Task task : tasks )
          {
@@ -228,27 +246,27 @@ public final class TaskEditUtils
             
             modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
             
-            removeCreatedOperations.add( CreationsProviderPart.deleteCreation( TaskSeries.CONTENT_URI,
-                                                                               task.getTaskSeriesId() ) );
-            removeCreatedOperations.add( CreationsProviderPart.deleteCreation( RawTasks.CONTENT_URI,
-                                                                               task.getId() ) );
+            ok = actionItemList.add( ContentProviderAction.Type.DELETE,
+                                     CreationsProviderPart.deleteCreation( TaskSeries.CONTENT_URI,
+                                                                           task.getTaskSeriesId() ) );
+            ok = ok
+               && actionItemList.add( ContentProviderAction.Type.DELETE,
+                                      CreationsProviderPart.deleteCreation( RawTasks.CONTENT_URI,
+                                                                            task.getId() ) );
          }
          
-         ok = Queries.applyModifications( context,
-                                          modifications,
-                                          R.string.toast_delete_task );
-         
-         ok = ok
-            && Queries.transactionalApplyOperations( context,
-                                                     removeCreatedOperations,
-                                                     R.string.toast_delete_task );
-         
-         UIUtils.reportStatus( context,
-                               R.string.toast_delete_task_ok,
-                               R.string.toast_delete_task_failed,
-                               ok );
+         actionItemList.add( 0, modifications );
       }
       
-      return ok;
+      if ( !ok )
+         actionItemList = null;
+      
+      return Pair.create( actionItemList,
+                          new ApplyChangesInfo( activity.getString( R.string.toast_delete_task ),
+                                                activity.getResources()
+                                                        .getQuantityString( R.plurals.toast_deleted_task,
+                                                                            tasks.size(),
+                                                                            tasks.size() ),
+                                                activity.getString( R.string.toast_delete_task_failed ) ) );
    }
 }

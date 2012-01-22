@@ -32,40 +32,80 @@ import android.view.View;
  */
 public class RtmAuth extends RtmData
 {
-   public interface ISetVisible
+   private static interface ISetVisible
    {
       public void setVisible( View view );
+      
+      
+      
+      public boolean allowsEditing();
    }
    
-
+   
    public enum Perms implements ISetVisible
    {
       nothing
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.GONE );
+            if ( view != null )
+               view.setVisibility( View.GONE );
+         }
+         
+         
+         
+         @Override
+         public boolean allowsEditing()
+         {
+            return false;
          }
       },
       read
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.GONE );
+            if ( view != null )
+               view.setVisibility( View.GONE );
+         }
+         
+         
+         
+         @Override
+         public boolean allowsEditing()
+         {
+            return false;
          }
       },
       write
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.VISIBLE );
+            if ( view != null )
+               view.setVisibility( View.VISIBLE );
+         }
+         
+         
+         
+         @Override
+         public boolean allowsEditing()
+         {
+            return true;
          }
       },
       delete
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.VISIBLE );
+            if ( view != null )
+               view.setVisibility( View.VISIBLE );
+         }
+         
+         
+         
+         @Override
+         public boolean allowsEditing()
+         {
+            return true;
          }
       };
    }
@@ -78,8 +118,8 @@ public class RtmAuth extends RtmData
          return new RtmAuth( source );
       }
       
-
-
+      
+      
       public RtmAuth[] newArray( int size )
       {
          return new RtmAuth[ size ];
@@ -94,7 +134,7 @@ public class RtmAuth extends RtmData
    private final RtmUser user;
    
    
-
+   
    public RtmAuth( String token, Perms perms, RtmUser user )
    {
       this.token = token;
@@ -102,8 +142,8 @@ public class RtmAuth extends RtmData
       this.user = user;
    }
    
-
-
+   
+   
    public RtmAuth( Element elt )
    {
       if ( !elt.getNodeName().equals( "auth" ) )
@@ -117,8 +157,8 @@ public class RtmAuth extends RtmData
       this.user = new RtmUser( child( elt, "user" ) );
    }
    
-
-
+   
+   
    public RtmAuth( Parcel source )
    {
       token = source.readString();
@@ -126,36 +166,36 @@ public class RtmAuth extends RtmData
       user = new RtmUser( source );
    }
    
-
-
+   
+   
    public String getToken()
    {
       return token;
    }
    
-
-
+   
+   
    public Perms getPerms()
    {
       return perms;
    }
    
-
-
+   
+   
    public RtmUser getUser()
    {
       return user;
    }
    
-
-
+   
+   
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( token );

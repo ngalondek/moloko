@@ -28,15 +28,34 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tags;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
-public class Task
+public class Task implements Parcelable
 {
+   public static final Parcelable.Creator< Task > CREATOR = new Parcelable.Creator< Task >()
+   {
+      public Task createFromParcel( Parcel source )
+      {
+         return new Task( source );
+      }
+      
+
+
+      public Task[] newArray( int size )
+      {
+         return new Task[ size ];
+      }
+   };
+   
    private final String id;
    
    private final String taskSeriesId;
@@ -45,9 +64,9 @@ public class Task
    
    private final boolean isSmartList;
    
-   private final Date created;
+   private final ParcelableDate created;
    
-   private final Date modified;
+   private final ParcelableDate modified;
    
    private final String name;
    
@@ -63,15 +82,15 @@ public class Task
    
    private final String listId;
    
-   private final Date due;
+   private final ParcelableDate due;
    
    private final boolean hasDueTime;
    
-   private final Date added;
+   private final ParcelableDate added;
    
-   private final Date completed;
+   private final ParcelableDate completed;
    
-   private final Date deleted;
+   private final ParcelableDate deleted;
    
    private final Priority priority;
    
@@ -97,7 +116,7 @@ public class Task
    
    private final ParticipantList participants;
    
-   private final int numNotes;
+   private final List< String > noteIds;
    
    
 
@@ -108,14 +127,14 @@ public class Task
       Date added, Date completed, Date deleted, Priority priority,
       int posponed, String estimate, long estimateMillis, String locationName,
       float longitude, float latitude, String address, boolean isViewable,
-      int zoom, String tags, ParticipantList participants, int numNotes )
+      int zoom, String tags, ParticipantList participants, String noteIds )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
       this.listName = listName;
       this.isSmartList = isSmartList;
-      this.created = created;
-      this.modified = modified;
+      this.created = ParcelableDate.newInstanceIfNotNull( created );
+      this.modified = ParcelableDate.newInstanceIfNotNull( modified );
       this.name = name;
       this.source = source;
       this.url = url;
@@ -123,11 +142,11 @@ public class Task
       this.isEveryRecurrence = isEveryRecurrence;
       this.locationId = locationId;
       this.listId = listId;
-      this.due = due;
+      this.due = ParcelableDate.newInstanceIfNotNull( due );
       this.hasDueTime = hasDueTime;
-      this.added = added;
-      this.completed = completed;
-      this.deleted = deleted;
+      this.added = ParcelableDate.newInstanceIfNotNull( added );
+      this.completed = ParcelableDate.newInstanceIfNotNull( completed );
+      this.deleted = ParcelableDate.newInstanceIfNotNull( deleted );
       this.priority = priority;
       this.posponed = posponed;
       this.estimate = estimate;
@@ -140,16 +159,18 @@ public class Task
       this.zoom = zoom;
       
       if ( !TextUtils.isEmpty( tags ) )
-      {
          this.tags = Arrays.asList( TextUtils.split( tags, Tags.TAGS_SEPARATOR ) );
-      }
       else
-      {
-         this.tags = null;
-      }
+         this.tags = new ArrayList< String >( 0 );
       
-      this.participants = participants;
-      this.numNotes = numNotes;
+      this.participants = participants != null
+                                              ? participants
+                                              : new ParticipantList( taskSeriesId );
+      if ( !TextUtils.isEmpty( noteIds ) )
+         this.noteIds = Arrays.asList( TextUtils.split( noteIds,
+                                                        Tasks.NOTE_IDS_DELIMITER ) );
+      else
+         this.noteIds = new ArrayList< String >( 0 );
    }
    
 
@@ -161,14 +182,15 @@ public class Task
       Date added, Date completed, Date deleted, Priority priority,
       int posponed, String estimate, long estimateMillis, String locationName,
       float longitude, float latitude, String address, boolean isViewable,
-      int zoom, List< String > tags, ParticipantList participants, int numNotes )
+      int zoom, List< String > tags, ParticipantList participants,
+      List< String > noteIds )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
       this.listName = listName;
       this.isSmartList = isSmartList;
-      this.created = created;
-      this.modified = modified;
+      this.created = ParcelableDate.newInstanceIfNotNull( created );
+      this.modified = ParcelableDate.newInstanceIfNotNull( modified );
       this.name = name;
       this.source = source;
       this.url = url;
@@ -176,11 +198,11 @@ public class Task
       this.isEveryRecurrence = isEveryRecurrence;
       this.locationId = locationId;
       this.listId = listId;
-      this.due = due;
+      this.due = ParcelableDate.newInstanceIfNotNull( due );
       this.hasDueTime = hasDueTime;
-      this.added = added;
-      this.completed = completed;
-      this.deleted = deleted;
+      this.added = ParcelableDate.newInstanceIfNotNull( added );
+      this.completed = ParcelableDate.newInstanceIfNotNull( completed );
+      this.deleted = ParcelableDate.newInstanceIfNotNull( deleted );
       this.priority = priority;
       this.posponed = posponed;
       this.estimate = estimate;
@@ -192,17 +214,56 @@ public class Task
       this.isViewable = isViewable;
       this.zoom = zoom;
       
-      if ( tags != null && tags.size() > 0 )
-      {
+      if ( tags != null )
          this.tags = new ArrayList< String >( tags );
-      }
       else
-      {
-         this.tags = null;
-      }
+         this.tags = new ArrayList< String >( 0 );
       
-      this.participants = participants;
-      this.numNotes = numNotes;
+      this.participants = participants != null
+                                              ? participants
+                                              : new ParticipantList( taskSeriesId );
+      if ( noteIds != null )
+         this.noteIds = new ArrayList< String >( noteIds );
+      else
+         this.noteIds = new ArrayList< String >( 0 );
+   }
+   
+
+
+   public Task( Parcel source )
+   {
+      this.id = source.readString();
+      this.taskSeriesId = source.readString();
+      this.listName = source.readString();
+      this.isSmartList = source.readInt() != 0;
+      this.created = ParcelableDate.fromParcel( source );
+      this.modified = ParcelableDate.fromParcel( source );
+      this.name = source.readString();
+      this.source = source.readString();
+      this.url = source.readString();
+      this.recurrence = source.readString();
+      this.isEveryRecurrence = source.readInt() != 0;
+      this.locationId = source.readString();
+      this.listId = source.readString();
+      this.due = ParcelableDate.fromParcel( source );
+      this.hasDueTime = source.readInt() != 0;
+      this.added = ParcelableDate.fromParcel( source );
+      this.completed = ParcelableDate.fromParcel( source );
+      this.deleted = ParcelableDate.fromParcel( source );
+      this.priority = Priority.valueOf( source.readString() );
+      this.posponed = source.readInt();
+      this.estimate = source.readString();
+      this.estimateMillis = source.readLong();
+      this.locationName = source.readString();
+      this.longitude = source.readFloat();
+      this.latitude = source.readFloat();
+      this.address = source.readString();
+      this.isViewable = source.readInt() != 0;
+      this.zoom = source.readInt();
+      
+      this.tags = source.createStringArrayList();
+      this.participants = source.readParcelable( ParticipantList.class.getClassLoader() );
+      this.noteIds = source.createStringArrayList();
    }
    
 
@@ -237,14 +298,14 @@ public class Task
 
    public Date getCreated()
    {
-      return created;
+      return MolokoDateUtils.getDate( created );
    }
    
 
 
    public Date getModified()
    {
-      return modified;
+      return MolokoDateUtils.getDate( modified );
    }
    
 
@@ -300,7 +361,7 @@ public class Task
 
    public Date getDue()
    {
-      return due;
+      return MolokoDateUtils.getDate( due );
    }
    
 
@@ -314,21 +375,21 @@ public class Task
 
    public Date getAdded()
    {
-      return added;
+      return MolokoDateUtils.getDate( added );
    }
    
 
 
    public Date getCompleted()
    {
-      return completed;
+      return MolokoDateUtils.getDate( completed );
    }
    
 
 
    public Date getDeleted()
    {
-      return deleted;
+      return MolokoDateUtils.getDate( deleted );
    }
    
 
@@ -382,14 +443,14 @@ public class Task
    
 
 
-   public String getAddress()
+   public String getLocationAddress()
    {
       return address;
    }
    
 
 
-   public boolean isViewable()
+   public boolean isLocationViewable()
    {
       return isViewable;
    }
@@ -405,26 +466,71 @@ public class Task
 
    public List< String > getTags()
    {
-      if ( tags != null )
-         return Collections.unmodifiableList( tags );
-      else
-         return Collections.emptyList();
+      return Collections.unmodifiableList( tags );
    }
    
 
 
    public ParticipantList getParticipants()
    {
-      if ( participants == null )
-         return new ParticipantList( taskSeriesId );
-      else
-         return participants;
+      return participants;
    }
    
 
 
    public int getNumberOfNotes()
    {
-      return numNotes;
+      return noteIds.size();
+   }
+   
+
+
+   public List< String > getNoteIds()
+   {
+      return Collections.unmodifiableList( noteIds );
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+      dest.writeString( taskSeriesId );
+      dest.writeString( listName );
+      dest.writeInt( isSmartList ? 1 : 0 );
+      dest.writeParcelable( created, flags );
+      dest.writeParcelable( modified, flags );
+      dest.writeString( name );
+      dest.writeString( source );
+      dest.writeString( url );
+      dest.writeString( recurrence );
+      dest.writeInt( isEveryRecurrence ? 1 : 0 );
+      dest.writeString( locationId );
+      dest.writeString( listId );
+      dest.writeParcelable( due, flags );
+      dest.writeInt( hasDueTime ? 1 : 0 );
+      dest.writeParcelable( added, flags );
+      dest.writeParcelable( completed, flags );
+      dest.writeParcelable( deleted, flags );
+      dest.writeString( priority.toString() );
+      dest.writeInt( posponed );
+      dest.writeString( estimate );
+      dest.writeLong( estimateMillis );
+      dest.writeString( locationName );
+      dest.writeFloat( longitude );
+      dest.writeFloat( latitude );
+      dest.writeString( address );
+      dest.writeInt( isViewable ? 1 : 0 );
+      dest.writeInt( zoom );
+      dest.writeStringList( tags );
+      dest.writeParcelable( participants, flags );
+      dest.writeStringList( noteIds );
    }
 }

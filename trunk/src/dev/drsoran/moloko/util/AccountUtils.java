@@ -24,8 +24,10 @@ package dev.drsoran.moloko.util;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -41,6 +43,29 @@ public final class AccountUtils
    private AccountUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
+   public final static void registerAccountListener( Context context,
+                                                     Handler handler,
+                                                     OnAccountsUpdateListener listener )
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      
+      if ( accountManager != null )
+         accountManager.addOnAccountsUpdatedListener( listener, handler, true );
+   }
+   
+
+
+   public final static void unregisterAccountListener( Context context,
+                                                       OnAccountsUpdateListener listener )
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      
+      if ( accountManager != null )
+         accountManager.removeOnAccountsUpdatedListener( listener );
    }
    
 
@@ -114,6 +139,10 @@ public final class AccountUtils
                permission = RtmAuth.Perms.valueOf( permStr );
             }
          }
+         else
+         {
+            permission = Perms.nothing;
+         }
       }
       
       return permission;
@@ -124,6 +153,27 @@ public final class AccountUtils
    public final static boolean isReadOnlyAccess( Context context )
    {
       final Perms level = getAccessLevel( context );
+      return isReadOnlyAccess( level );
+   }
+   
+
+
+   public final static boolean isReadOnlyAccess( RtmAuth.Perms level )
+   {
       return level == Perms.nothing || level == Perms.read;
+   }
+   
+
+
+   public final static boolean isWriteableAccess( Context context )
+   {
+      return !isReadOnlyAccess( context );
+   }
+   
+
+
+   public final static boolean isWriteableAccess( RtmAuth.Perms level )
+   {
+      return !isReadOnlyAccess( level );
    }
 }

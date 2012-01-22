@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,47 +22,34 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.io.IOException;
-
 import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentProviderClient;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.Toast;
+
+import com.mdt.rtm.data.RtmList;
+
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 
 
-public class StartUpActivity extends Activity implements
-         AccountManagerCallback< Bundle >
+public class StartUpActivity extends MolokoFragmentActivity
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + StartUpActivity.class.getSimpleName();
-   
-   public final static String ONLY_CHECK_ACCOUNT = "only_check_account";
    
    private final static String STATE_INDEX_KEY = "state_index";
    
@@ -77,25 +64,17 @@ public class StartUpActivity extends Activity implements
    private final static int[] STATE_SEQUENCE =
    { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW, STATE_COMPLETED };
    
-   private ViewGroup widgetContainer;
-   
-   private ViewGroup buttonBar;
-   
-   private AccountManagerFuture< Bundle > addAccountHandle;
-   
    private int stateIndex = 0;
    
    
-
+   
    @Override
-   protected void onCreate( Bundle savedInstanceState )
+   public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.startup_activity );
-      
-      widgetContainer = (ViewGroup) findViewById( android.R.id.widget_frame );
-      buttonBar = (ViewGroup) findViewById( R.id.btn_bar );
+      setTitle( R.string.app_startup );
       
       if ( savedInstanceState != null )
          stateIndex = savedInstanceState.getInt( STATE_INDEX_KEY, 0 );
@@ -103,8 +82,18 @@ public class StartUpActivity extends Activity implements
       reEvaluateCurrentState();
    }
    
-
-
+   
+   
+   @Override
+   protected void onDestroy()
+   {
+      handler.removeMessages( MSG_STATE_CHANGED );
+      
+      super.onDestroy();
+   }
+   
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -113,8 +102,8 @@ public class StartUpActivity extends Activity implements
       outState.putInt( STATE_INDEX_KEY, stateIndex );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle savedInstanceState )
    {
@@ -125,50 +114,61 @@ public class StartUpActivity extends Activity implements
       reEvaluateCurrentState();
    }
    
-
-
-   private boolean checkAccount()
+   
+   
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
    {
+      if ( dialogId == R.id.dlg_no_account && which == Dialog.BUTTON_NEGATIVE )
+      {
+         switchToNextState();
+      }
+      else if ( dialogId == R.id.dlg_startup_default_list_not_exists
+         && which == Dialog.BUTTON_POSITIVE )
+      {
+         final Settings settings = MolokoApp.getSettings();
+         
+         settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
+         settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+         
+         switchToNextState();
+      }
+      else
+      {
+         super.onAlertDialogFragmentClick( dialogId, tag, which );
+      }
+   }
+   
+   
+   
+   @Override
+   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   {
+      if ( requestCode == StartActivityRequestCode.ADD_ACCOUNT )
+         switchToNextState();
+      else
+         super.onActivityResult( requestCode, resultCode, data );
+   }
+   
+   
+   
+   private void checkAccount()
+   {
+      boolean switchToNextState = true;
       final Account account = AccountUtils.getRtmAccount( this );
       
       if ( account == null )
       {
-         widgetContainer.removeAllViews();
-         
-         LayoutInflater.from( this )
-                       .inflate( R.layout.startup_activity_no_account_widget,
-                                 widgetContainer,
-                                 true );
-         
-         final Button btnCenter = getButton( R.id.btn_center );
-         btnCenter.setVisibility( View.VISIBLE );
-         btnCenter.setText( R.string.btn_new_account );
-         btnCenter.setOnClickListener( new OnClickListener()
-         {
-            public void onClick( View v )
-            {
-               onAddNewAccount();
-            }
-         } );
-         setButtonIcon( btnCenter, R.drawable.ic_button_add );
-         
-         buttonBar.setVisibility( View.VISIBLE );
-         
+         UIUtils.showNoAccountDialog( this );
+         switchToNextState = false;
       }
       
-      return account != null;
-   }
-   
-
-
-   private void createAccountOrSwitchToNext()
-   {
-      if ( checkAccount() )
+      if ( switchToNextState )
          switchToNextState();
    }
    
-
-
+   
+   
    private void determineStartupView()
    {
       final Settings settings = MolokoApp.getSettings();
@@ -186,47 +186,22 @@ public class StartUpActivity extends Activity implements
             {
                if ( !existsList( defaultListId ) )
                {
-                  widgetContainer.removeAllViews();
-                  
-                  LayoutInflater.from( this )
-                                .inflate( R.layout.startup_activity_no_def_list_widget,
-                                          widgetContainer,
-                                          true );
-                  
-                  final Button btnCenter = getButton( R.id.btn_center );
-                  btnCenter.setVisibility( View.VISIBLE );
-                  btnCenter.setText( R.string.btn_continue );
-                  btnCenter.setOnClickListener( new OnClickListener()
-                  {
-                     public void onClick( View v )
-                     {
-                        settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-                        settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
-                        switchToNextState();
-                     }
-                  } );
-                  
-                  buttonBar.setVisibility( View.VISIBLE );
-               }
-               else
-               {
-                  // STARTUP_VIEW_DEFAULT_LIST
-                  switchToNextState();
+                  new AlertDialogFragment.Builder( R.id.dlg_startup_default_list_not_exists ).setTitle( getString( R.string.dlg_missing_def_list_title ) )
+                                                                                             .setIcon( R.drawable.ic_prefs_info )
+                                                                                             .setMessage( getString( R.string.dlg_missing_def_list_text ) )
+                                                                                             .setNeutralButton( R.string.btn_continue )
+                                                                                             .show( this );
                }
             }
             catch ( RemoteException e )
             {
-               // We simply ignore the exception and start with lists view.
+               // We simply ignore the exception and start with default view.
                // Perhaps next time it works again.
                settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-               switchToNextState();
             }
          }
-         else
-         {
-            // STARTUP_VIEW_LISTS
-            switchToNextState();
-         }
+         
+         switchToNextState();
       }
       else
       {
@@ -234,8 +209,8 @@ public class StartUpActivity extends Activity implements
       }
    }
    
-
-
+   
+   
    private void onStartUpCompleted()
    {
       final int startUpView = MolokoApp.getSettings().getStartupView();
@@ -243,10 +218,10 @@ public class StartUpActivity extends Activity implements
       switch ( startUpView )
       {
          case Settings.STARTUP_VIEW_DEFAULT_LIST:
-            startActivity( Intents.createOpenListIntent( this,
-                                                         MolokoApp.getSettings()
-                                                                  .getDefaultListId(),
-                                                         null ) );
+            startActivity( Intents.createOpenListIntentById( this,
+                                                             MolokoApp.getSettings()
+                                                                      .getDefaultListId(),
+                                                             null ) );
             break;
          
          case Settings.STARTUP_VIEW_LISTS:
@@ -266,62 +241,8 @@ public class StartUpActivity extends Activity implements
       finish();
    }
    
-
-
-   private void onAddNewAccount()
-   {
-      if ( addAccountHandle != null )
-      {
-         addAccountHandle.cancel( true );
-         addAccountHandle = null;
-      }
-      
-      final AccountManager accountManager = AccountManager.get( this );
-      
-      addAccountHandle = accountManager.addAccount( Constants.ACCOUNT_TYPE,
-                                                    Constants.AUTH_TOKEN_TYPE,
-                                                    null,
-                                                    new Bundle(),
-                                                    this,
-                                                    this,
-                                                    handler );
-   }
    
-
-
-   public void run( AccountManagerFuture< Bundle > result )
-   {
-      addAccountHandle = null;
-      
-      if ( result.isDone() )
-      {
-         try
-         {
-            result.getResult();
-            switchToNextState();
-         }
-         catch ( OperationCanceledException e )
-         {
-            Toast.makeText( this,
-                            R.string.err_add_account_canceled,
-                            Toast.LENGTH_SHORT );
-         }
-         catch ( AuthenticatorException e )
-         {
-            // According to the doc this can only happen
-            // if there is no authenticator registered for the
-            // account type. This should not happen.
-            Toast.makeText( this, R.string.err_unexpected, Toast.LENGTH_LONG );
-         }
-         catch ( IOException e )
-         {
-            // Will be notified in the AuthenticatorActivity
-         }
-      }
-   }
    
-
-
    private void switchToNextState()
    {
       if ( stateIndex + 1 < STATE_SEQUENCE.length )
@@ -335,44 +256,41 @@ public class StartUpActivity extends Activity implements
       }
    }
    
-
-
+   
+   
    private void reEvaluateCurrentState()
    {
-      if ( getIntent().hasExtra( ONLY_CHECK_ACCOUNT ) )
-      {
-         if ( checkAccount() )
-            finish();
-      }
-      else
-         handler.sendEmptyMessage( MSG_STATE_CHANGED );
+      handler.sendEmptyMessage( MSG_STATE_CHANGED );
    }
    
-
-
-   private Button getButton( int id )
-   {
-      return (Button) buttonBar.findViewById( id );
-   }
    
-
-
-   private void setButtonIcon( Button button, int id )
-   {
-      final BitmapDrawable icon = new BitmapDrawable( getResources().openRawResource( id ) );
-      
-      icon.setBounds( 0, 0, 30, 30 );
-      
-      button.setCompoundDrawables( icon, null, null, null );
-   }
    
-
-
    private boolean existsList( String id ) throws RemoteException
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
       
-      return client != null && Queries.exists( client, Lists.CONTENT_URI, id );
+      boolean exists = client != null;
+      
+      if ( exists )
+      {
+         final RtmList list = RtmListsProviderPart.getList( client, id );
+         exists = list != null;
+         exists &= list.getArchived() == 0;
+         exists &= list.getDeletedDate() == null;
+      }
+      
+      if ( client != null )
+         client.release();
+      
+      return exists;
+   }
+   
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return null;
    }
    
    private final Handler handler = new Handler()
@@ -386,7 +304,7 @@ public class StartUpActivity extends Activity implements
                switch ( stateIndex )
                {
                   case STATE_CHECK_ACCOUNT:
-                     createAccountOrSwitchToNext();
+                     checkAccount();
                      break;
                   
                   case STATE_DETERMINE_STARTUP_VIEW:
@@ -408,5 +326,4 @@ public class StartUpActivity extends Activity implements
          }
       }
    };
-   
 }

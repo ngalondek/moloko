@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -33,6 +33,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.Pair;
 
@@ -41,6 +42,7 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
+import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
@@ -48,8 +50,8 @@ import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -60,14 +62,14 @@ public final class SyncUtils
       + SyncUtils.class.getSimpleName();
    
    
-
+   
    private SyncUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   
    public final static void handleServiceInternalException( ServiceInternalException exception,
                                                             String tag,
                                                             SyncResult syncResult )
@@ -90,48 +92,80 @@ public final class SyncUtils
       }
    }
    
-
-
-   public final static void requestManualSync( Context context )
+   
+   
+   public final static void requestManualSync( FragmentActivity activity )
    {
-      SyncUtils.requestManualSync( context, SyncUtils.isReadyToSync( context ) );
+      if ( ConnectionUtil.isConnected( activity ) )
+      {
+         final Account account = AccountUtils.getRtmAccount( activity );
+         
+         if ( account != null )
+         {
+            SyncUtils.requestManualSync( activity, account );
+         }
+         else
+         {
+            UIUtils.showNoAccountDialog( activity );
+         }
+      }
+      else
+      {
+         UIUtils.showNotConnectedDialog( activity );
+      }
    }
    
-
-
-   public final static void requestManualSync( Context context, Account account )
+   
+   
+   public final static void requestManualSync( FragmentActivity activity,
+                                               Account account )
+   {
+      final Bundle bundle = new Bundle();
+      
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
+      
+      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+   }
+   
+   
+   
+   public final static void requestSettingsOnlySync( Context context,
+                                                     Account account )
    {
       if ( account != null )
       {
          final Bundle bundle = new Bundle();
          
          bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+         bundle.putBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
+                            true );
+         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, false );
          
          ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
       }
       else
       {
-         context.startActivity( Intents.createNewAccountIntent( context ) );
+         // TODO: Show NoAccountDialogFragment if we use PreferenceFragment
+         context.startActivity( Intents.createNewAccountIntent() );
       }
    }
    
-
-
+   
+   
    public final static void requestScheduledSync( Context context,
                                                   Account account )
    {
-      if ( account != null )
-      {
-         final Bundle bundle = new Bundle();
-         
-         bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
-         
-         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
-      }
+      final Bundle bundle = new Bundle();
+      
+      bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
+      
+      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
    }
    
-
-
+   
+   
    public final static void cancelSync( Context context )
    {
       final Account account = AccountUtils.getRtmAccount( context );
@@ -140,18 +174,16 @@ public final class SyncUtils
          ContentResolver.cancelSync( account, Rtm.AUTHORITY );
    }
    
-
-
-   public final static Account isReadyToSync( Context context )
+   
+   
+   public final static boolean isReadyToSync( Context context )
    {
       // Check if we are connected.
-      boolean sync = Connection.isConnected( context );
-      
-      Account account = null;
+      boolean sync = ConnectionUtil.isConnected( context );
       
       if ( sync )
       {
-         account = AccountUtils.getRtmAccount( context );
+         final Account account = AccountUtils.getRtmAccount( context );
          
          // Check if we have an account and the sync has not been disabled
          // in between.
@@ -159,11 +191,11 @@ public final class SyncUtils
             && ContentResolver.getSyncAutomatically( account, Rtm.AUTHORITY );
       }
       
-      return account;
+      return sync;
    }
    
-
-
+   
+   
    public final static boolean isSyncing( Context context )
    {
       final Account account = AccountUtils.getRtmAccount( context );
@@ -173,8 +205,8 @@ public final class SyncUtils
          && ContentResolver.isSyncActive( account, Rtm.AUTHORITY );
    }
    
-
-
+   
+   
    /**
     * Loads the start time from the Sync database table and the interval from the settings.
     */
@@ -186,8 +218,8 @@ public final class SyncUtils
          SyncUtils.schedulePeriodicSync( context, interval );
    }
    
-
-
+   
+   
    /**
     * Loads the start time from the Sync database table.
     */
@@ -220,11 +252,11 @@ public final class SyncUtils
          }
       }
       
-      MolokoApp.schedulePeriodicSync( startUtc, interval );
+      MolokoApp.get( context ).schedulePeriodicSync( startUtc, interval );
    }
    
-
-
+   
+   
    public final static < V > boolean hasChanged( V oldVal, V newVal )
    {
       return ( oldVal == null && newVal != null )
@@ -238,7 +270,7 @@ public final class SyncUtils
    }
    
    
-
+   
    public final static < V > SyncResultDirection getSyncDirection( SyncProperties properties,
                                                                    String columnName,
                                                                    V serverValue,
@@ -295,8 +327,8 @@ public final class SyncUtils
       return syncDir;
    }
    
-
-
+   
+   
    public final static < T > void applyServerOperations( RtmProvider rtmProvider,
                                                          List< ? extends IServerSyncOperation< T > > serverOps,
                                                          List< T > sortedServerElements,

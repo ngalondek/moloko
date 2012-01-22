@@ -165,7 +165,7 @@ public class RtmSettings extends RtmData implements
 
    public RtmSettings( Parcel source )
    {
-      this.syncTimeStamp = source.readParcelable( null );
+      this.syncTimeStamp = ParcelableDate.fromParcel( source );
       this.timezone = source.readString();
       this.dateFormat = source.readInt();
       this.timeFormat = source.readInt();

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
-      free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software
-      Foundation, either version 3 of the License, or (at your option) any later
-      version. Moloko is distributed in the hope that it will be useful, but
-      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-      for more details. You should have received a copy of the GNU General
-      Public License along with Moloko. If not, see
+      Copyright (c) 2011 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
    -->
@@ -29,28 +30,6 @@
             android:action="dev.drsoran.moloko.auth.prefs.account.MAIN">
          </intent>
       </PreferenceScreen>
-
-      <dev.drsoran.moloko.prefs.TimezonePreference
-         android:title="@string/moloko_prefs_rtm_timezone_title"
-         android:summary="%s"
-         android:key="@string/key_timezone_local"
-         moloko:syncWithRtmKey="@string/key_timezone_sync_with_rtm" />
-
-      <dev.drsoran.moloko.prefs.SyncableListPreference
-         android:title="@string/moloko_prefs_rtm_dateformat_title"
-         android:summary="%s"
-         android:entries="@array/moloko_prefs_rtm_dateformat"
-         android:entryValues="@array/moloko_prefs_rtm_dateformat_values"
-         android:key="@string/key_dateformat_local"
-         moloko:syncWithRtmKey="@string/key_dateformat_sync_with_rtm" />
-
-      <dev.drsoran.moloko.prefs.SyncableListPreference
-         android:title="@string/moloko_prefs_rtm_timeformat_title"
-         android:summary="%s"
-         android:entries="@array/moloko_prefs_rtm_timeformat"
-         android:entryValues="@array/moloko_prefs_rtm_timeformat_values"
-         android:key="@string/key_timeformat_local"
-         moloko:syncWithRtmKey="@string/key_timeformat_sync_with_rtm" />
 
       <dev.drsoran.moloko.prefs.DefaultListPreference
          android:title="@string/moloko_prefs_rtm_defaultlist_title"
@@ -89,7 +68,7 @@
             android:ringtoneType="all"
             android:key="@string/key_notify_due_tasks_ringtone"
             android:dependency="@string/key_notify_due_tasks" />
-         <CheckBoxPreference
+         <dev.drsoran.moloko.prefs.VibratePreference
             android:title="@string/moloko_prefs_notification_tasks_w_due_vibrate_title"
             android:summaryOn="@string/phr_on"
             android:summaryOff="@string/phr_off"
@@ -115,6 +94,12 @@
             android:entryValues="@array/moloko_prefs_notification_permanent_values"
             android:key="@string/key_notify_permanent"
             android:defaultValue="2" />
+         <CheckBoxPreference
+            android:title="@string/moloko_prefs_notification_permanent_show_overdue_tasks_title"
+            android:summaryOn="@string/phr_on"
+            android:summaryOff="@string/phr_off"
+            android:key="@string/key_notify_permanent_overdue"            
+            android:defaultValue="false" />
       </PreferenceCategory>
 
    </PreferenceScreen>
@@ -142,6 +127,10 @@
 
       <dev.drsoran.moloko.prefs.SendLogPreference
          moloko:infoText="@string/moloko_prefs_send_log_text"
+         moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
+
+      <dev.drsoran.moloko.prefs.SendDbPreference
+         moloko:infoText="@string/moloko_prefs_send_db_text"
          moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
          
       <dev.drsoran.moloko.prefs.ClearDbPreference

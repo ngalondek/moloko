@@ -32,123 +32,140 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.net.Uri;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Modifications;
 
 
-public class ModificationSet implements Set< Modification >
+public class ModificationSet implements Set< Modification >,
+         IContentProviderActionItem
 {
    private final Set< Modification > impl;
    
    public final static ModificationSet EMPTY_MODIFICATION_SET = new ModificationSet();
-
+   
+   
+   
    public ModificationSet()
    {
       impl = new TreeSet< Modification >();
    }
    
-
-
+   
+   
    public ModificationSet( Collection< ? extends Modification > collection )
    {
       impl = new TreeSet< Modification >( collection );
    }
    
-
-
+   
+   
+   @Override
    public boolean add( Modification object )
    {
       return impl.add( object );
    }
    
-
-
+   
+   
+   @Override
    public boolean addAll( Collection< ? extends Modification > arg0 )
    {
       return impl.addAll( arg0 );
    }
    
-
-
+   
+   
+   @Override
    public void clear()
    {
       impl.clear();
    }
    
-
-
+   
+   
+   @Override
    public boolean contains( Object object )
    {
       return impl.contains( object );
    }
    
-
-
+   
+   
+   @Override
    public boolean containsAll( Collection< ? > arg0 )
    {
       return impl.containsAll( arg0 );
    }
    
-
-
+   
+   
+   @Override
    public boolean isEmpty()
    {
       return impl.isEmpty();
    }
    
-
-
+   
+   
+   @Override
    public Iterator< Modification > iterator()
    {
       return impl.iterator();
    }
    
-
-
+   
+   
+   @Override
    public boolean remove( Object object )
    {
       return impl.remove( object );
    }
    
-
-
+   
+   
+   @Override
    public boolean removeAll( Collection< ? > arg0 )
    {
       return impl.removeAll( arg0 );
    }
    
-
-
+   
+   
+   @Override
    public boolean retainAll( Collection< ? > arg0 )
    {
       return impl.retainAll( arg0 );
    }
    
-
-
+   
+   
+   @Override
    public int size()
    {
       return impl.size();
    }
    
-
-
+   
+   
+   @Override
    public Object[] toArray()
    {
       return impl.toArray();
    }
    
-
-
+   
+   
+   @Override
    public < T > T[] toArray( T[] array )
    {
       return impl.toArray( array );
    }
    
-
-
+   
+   
    /**
     * Checks if the new and the synced value of the {@link Modification} are equal. If they are equal, the new
     * {@link Modification} will not be added and any existing {@link Modification} objects which are refer the same
@@ -166,8 +183,8 @@ public class ModificationSet implements Set< Modification >
          add( modification );
    }
    
-
-
+   
+   
    public boolean remove( Uri entityUri, String columnName )
    {
       boolean found = false;
@@ -186,8 +203,8 @@ public class ModificationSet implements Set< Modification >
       return found;
    }
    
-
-
+   
+   
    public boolean removeAll( Uri entityUri )
    {
       boolean found = false;
@@ -205,8 +222,8 @@ public class ModificationSet implements Set< Modification >
       return found;
    }
    
-
-
+   
+   
    public Modification find( Uri entityUri, String columnName )
    {
       for ( Modification modification : impl )
@@ -219,8 +236,8 @@ public class ModificationSet implements Set< Modification >
       return null;
    }
    
-
-
+   
+   
    public boolean hasModifications( Uri uri )
    {
       for ( Modification modification : impl )
@@ -234,8 +251,8 @@ public class ModificationSet implements Set< Modification >
       return false;
    }
    
-
-
+   
+   
    public boolean hasModification( Uri entityUri )
    {
       for ( Modification modification : impl )
@@ -247,8 +264,8 @@ public class ModificationSet implements Set< Modification >
       return false;
    }
    
-
-
+   
+   
    public boolean hasModification( Uri entityUri, String columnName )
    {
       for ( Modification modification : impl )
@@ -261,8 +278,8 @@ public class ModificationSet implements Set< Modification >
       return false;
    }
    
-
-
+   
+   
    public List< Modification > getModifications( Uri entityUri )
    {
       List< Modification > result = new LinkedList< Modification >();
@@ -276,8 +293,8 @@ public class ModificationSet implements Set< Modification >
       return Collections.unmodifiableList( result );
    }
    
-
-
+   
+   
    public List< ContentProviderOperation > getRevertAllOperations( Uri entityUri )
    {
       final List< Modification > mods = getModifications( entityUri );
@@ -298,5 +315,34 @@ public class ModificationSet implements Set< Modification >
       }
       
       return operations;
+   }
+   
+   
+   
+   @Override
+   public boolean applyTransactional( RtmProvider rtmProvider )
+   {
+      return ModificationsProviderPart.applyModificationsTransactional( rtmProvider,
+                                                                        this );
+   }
+   
+   
+   
+   @Override
+   public boolean apply( ContentResolver contentResolver )
+   {
+      return ModificationsProviderPart.applyModifications( contentResolver,
+                                                           this );
+   }
+   
+   
+   
+   public ContentProviderActionItemList toContentProviderActionItemList()
+   {
+      final ContentProviderActionItemList list = new ContentProviderActionItemList( 1 );
+      
+      list.add( this );
+      
+      return list;
    }
 }

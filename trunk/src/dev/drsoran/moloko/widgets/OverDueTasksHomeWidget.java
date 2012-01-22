@@ -37,8 +37,8 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -133,8 +133,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       
       return Intents.createSqlSelectionFilterIntent( getContext(),
                                                      filter,
-                                                     label.getText().toString(),
-                                                     -1 );
+                                                     label.getText().toString() );
    }
    
 

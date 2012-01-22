@@ -106,7 +106,7 @@ public class WheelView extends View
    private final List< OnWheelClickedListener > clickingListeners = new LinkedList< OnWheelClickedListener >();
    
    
-
+   
    /**
     * Constructor
     */
@@ -116,8 +116,8 @@ public class WheelView extends View
       initData( context );
    }
    
-
-
+   
+   
    /**
     * Constructor
     */
@@ -127,8 +127,8 @@ public class WheelView extends View
       initData( context );
    }
    
-
-
+   
+   
    /**
     * Constructor
     */
@@ -138,8 +138,8 @@ public class WheelView extends View
       initData( context );
    }
    
-
-
+   
+   
    /**
     * Initializes class data
     * 
@@ -148,7 +148,8 @@ public class WheelView extends View
     */
    private void initData( Context context )
    {
-      scroller = new WheelScroller( getContext(), scrollingListener );
+      if ( !isInEditMode() )
+         scroller = new WheelScroller( getContext(), scrollingListener );
    }
    
    // Scrolling listener
@@ -160,8 +161,8 @@ public class WheelView extends View
          notifyScrollingListenersAboutStart();
       }
       
-
-
+      
+      
       public void onScroll( int distance )
       {
          doScroll( distance );
@@ -179,8 +180,8 @@ public class WheelView extends View
          }
       }
       
-
-
+      
+      
       public void onFinished()
       {
          if ( isScrollingPerformed )
@@ -193,8 +194,8 @@ public class WheelView extends View
          invalidate();
       }
       
-
-
+      
+      
       public void onJustify()
       {
          if ( Math.abs( scrollingOffset ) > WheelScroller.MIN_DELTA_FOR_SCROLLING )
@@ -205,7 +206,7 @@ public class WheelView extends View
    };
    
    
-
+   
    /**
     * Set the the specified scrolling interpolator
     * 
@@ -217,8 +218,8 @@ public class WheelView extends View
       scroller.setInterpolator( interpolator );
    }
    
-
-
+   
+   
    /**
     * Gets count of visible items
     * 
@@ -229,8 +230,8 @@ public class WheelView extends View
       return visibleItems;
    }
    
-
-
+   
+   
    /**
     * Sets the desired count of visible items. Actual amount of visible items depends on wheel layout parameters. To
     * apply changes and rebuild view call measure().
@@ -243,8 +244,8 @@ public class WheelView extends View
       visibleItems = count;
    }
    
-
-
+   
+   
    /**
     * Gets view adapter
     * 
@@ -264,8 +265,8 @@ public class WheelView extends View
          invalidateWheel( false );
       }
       
-
-
+      
+      
       @Override
       public void onInvalidated()
       {
@@ -274,7 +275,7 @@ public class WheelView extends View
    };
    
    
-
+   
    /**
     * Sets view adapter. Usually new adapters contain different views, so it needs to rebuild view by calling measure().
     * 
@@ -296,8 +297,8 @@ public class WheelView extends View
       invalidateWheel( true );
    }
    
-
-
+   
+   
    /**
     * Adds wheel changing listener
     * 
@@ -309,8 +310,8 @@ public class WheelView extends View
       changingListeners.add( listener );
    }
    
-
-
+   
+   
    /**
     * Removes wheel changing listener
     * 
@@ -322,8 +323,8 @@ public class WheelView extends View
       changingListeners.remove( listener );
    }
    
-
-
+   
+   
    /**
     * Notifies changing listeners
     * 
@@ -340,8 +341,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Adds wheel scrolling listener
     * 
@@ -353,8 +354,8 @@ public class WheelView extends View
       scrollingListeners.add( listener );
    }
    
-
-
+   
+   
    /**
     * Removes wheel scrolling listener
     * 
@@ -366,8 +367,8 @@ public class WheelView extends View
       scrollingListeners.remove( listener );
    }
    
-
-
+   
+   
    /**
     * Notifies listeners about starting scrolling
     */
@@ -379,8 +380,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Notifies listeners about ending scrolling
     */
@@ -392,8 +393,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Adds wheel clicking listener
     * 
@@ -405,8 +406,8 @@ public class WheelView extends View
       clickingListeners.add( listener );
    }
    
-
-
+   
+   
    /**
     * Removes wheel clicking listener
     * 
@@ -418,8 +419,8 @@ public class WheelView extends View
       clickingListeners.remove( listener );
    }
    
-
-
+   
+   
    /**
     * Notifies listeners about clicking
     */
@@ -431,8 +432,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Gets current value
     * 
@@ -443,8 +444,8 @@ public class WheelView extends View
       return currentItem;
    }
    
-
-
+   
+   
    /**
     * Sets the current item. Does nothing when index is wrong.
     * 
@@ -506,8 +507,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Sets the current item w/o animation. Does nothing when index is wrong.
     * 
@@ -519,8 +520,8 @@ public class WheelView extends View
       setCurrentItem( index, false );
    }
    
-
-
+   
+   
    /**
     * Tests if wheel is cyclic. That means before the 1st item there is shown the last one
     * 
@@ -531,8 +532,8 @@ public class WheelView extends View
       return isCyclic;
    }
    
-
-
+   
+   
    /**
     * Set wheel cyclic flag
     * 
@@ -545,8 +546,8 @@ public class WheelView extends View
       invalidateWheel( false );
    }
    
-
-
+   
+   
    /**
     * Invalidates wheel
     * 
@@ -573,29 +574,29 @@ public class WheelView extends View
       invalidate();
    }
    
-
-
+   
+   
    protected int getCenterDrawableResId()
    {
       return R.drawable.wheel_val;
    }
    
-
-
+   
+   
    protected int getBackgroundResId()
    {
       return R.drawable.wheel_bg;
    }
    
-
-
+   
+   
    protected Drawable getCenterDrawable()
    {
       return centerDrawable;
    }
    
-
-
+   
+   
    /**
     * Initializes resources
     */
@@ -622,8 +623,8 @@ public class WheelView extends View
       setBackgroundResource( getBackgroundResId() );
    }
    
-
-
+   
+   
    /**
     * Calculates desired height for layout
     * 
@@ -644,8 +645,8 @@ public class WheelView extends View
       return Math.max( desired, getSuggestedMinimumHeight() );
    }
    
-
-
+   
+   
    /**
     * Returns height of wheel item
     * 
@@ -667,8 +668,8 @@ public class WheelView extends View
       return getHeight() / visibleItems;
    }
    
-
-
+   
+   
    /**
     * Calculates control width and creates text layouts
     * 
@@ -716,8 +717,8 @@ public class WheelView extends View
       return width;
    }
    
-
-
+   
+   
    @Override
    protected void onMeasure( int widthMeasureSpec, int heightMeasureSpec )
    {
@@ -748,16 +749,16 @@ public class WheelView extends View
       setMeasuredDimension( width, height );
    }
    
-
-
+   
+   
    @Override
    protected void onLayout( boolean changed, int l, int t, int r, int b )
    {
       layout( r - l, b - t );
    }
    
-
-
+   
+   
    /**
     * Sets layouts width and height
     * 
@@ -773,8 +774,8 @@ public class WheelView extends View
       itemsLayout.layout( 0, 0, itemsWidth, height );
    }
    
-
-
+   
+   
    @Override
    protected void onDraw( Canvas canvas )
    {
@@ -791,8 +792,8 @@ public class WheelView extends View
       drawShadows( canvas );
    }
    
-
-
+   
+   
    /**
     * Draws shadows on top and bottom of control
     * 
@@ -809,8 +810,8 @@ public class WheelView extends View
       bottomShadow.draw( canvas );
    }
    
-
-
+   
+   
    /**
     * Draws items
     * 
@@ -830,8 +831,8 @@ public class WheelView extends View
       canvas.restore();
    }
    
-
-
+   
+   
    /**
     * Draws rect for current value
     * 
@@ -846,8 +847,8 @@ public class WheelView extends View
       centerDrawable.draw( canvas );
    }
    
-
-
+   
+   
    @Override
    public boolean onTouchEvent( MotionEvent event )
    {
@@ -889,8 +890,8 @@ public class WheelView extends View
       return scroller.onTouchEvent( event );
    }
    
-
-
+   
+   
    /**
     * Scrolls the wheel
     * 
@@ -974,8 +975,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Scroll the wheel
     * 
@@ -990,8 +991,8 @@ public class WheelView extends View
       scroller.scroll( distance, time );
    }
    
-
-
+   
+   
    /**
     * Calculates range for wheel items
     * 
@@ -1029,8 +1030,8 @@ public class WheelView extends View
       return new ItemsRange( first, count );
    }
    
-
-
+   
+   
    /**
     * Rebuilds wheel items if necessary. Caches all unused items.
     * 
@@ -1088,8 +1089,8 @@ public class WheelView extends View
       return updated;
    }
    
-
-
+   
+   
    /**
     * Updates view. Rebuilds items and label if necessary, recalculate items sizes.
     */
@@ -1102,8 +1103,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Creates item layouts if necessary
     */
@@ -1116,8 +1117,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Builds view for measuring
     */
@@ -1144,8 +1145,8 @@ public class WheelView extends View
       }
    }
    
-
-
+   
+   
    /**
     * Adds view for item to items layout
     * 
@@ -1175,8 +1176,8 @@ public class WheelView extends View
       return false;
    }
    
-
-
+   
+   
    /**
     * Checks whether intem index is valid
     * 
@@ -1190,8 +1191,8 @@ public class WheelView extends View
          && ( isCyclic || index >= 0 && index < viewAdapter.getItemsCount() );
    }
    
-
-
+   
+   
    /**
     * Returns view for specified item
     * 
@@ -1222,8 +1223,8 @@ public class WheelView extends View
       return viewAdapter.getItem( index, recycle.getItem(), itemsLayout );
    }
    
-
-
+   
+   
    /**
     * Stops scrolling
     */

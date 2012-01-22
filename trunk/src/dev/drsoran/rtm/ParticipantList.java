@@ -40,6 +40,7 @@ import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 
@@ -53,6 +54,7 @@ public class ParticipantList implements
    public static final Parcelable.Creator< ParticipantList > CREATOR = new Parcelable.Creator< ParticipantList >()
    {
       
+      @Override
       public ParticipantList createFromParcel( Parcel source )
       {
          return new ParticipantList( source );
@@ -60,6 +62,7 @@ public class ParticipantList implements
       
 
 
+      @Override
       public ParticipantList[] newArray( int size )
       {
          return new ParticipantList[ size ];
@@ -154,6 +157,7 @@ public class ParticipantList implements
    
 
 
+   @Override
    public int describeContents()
    {
       return 0;
@@ -161,6 +165,7 @@ public class ParticipantList implements
    
 
 
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( taskSeriesId );
@@ -169,6 +174,7 @@ public class ParticipantList implements
    
 
 
+   @Override
    public Date getDeletedDate()
    {
       return null;
@@ -176,6 +182,7 @@ public class ParticipantList implements
    
 
 
+   @Override
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ParticipantsProviderPart.insertParticipants( this ) )
@@ -184,6 +191,7 @@ public class ParticipantList implements
    
 
 
+   @Override
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newDelete();
@@ -198,14 +206,20 @@ public class ParticipantList implements
    
 
 
+   @Override
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( ParticipantList update )
    {
       final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
-                                                                                                                  Participant.LESS_ID );
-      return ContentProviderSyncOperation.newUpdate()
-                                         .add( SyncDiffer.inDiff( update.participants,
-                                                                  syncList,
-                                                                  true /* always full sync */) )
-                                         .build();
+                                                                                                                  Participant.LESS_CONTACT_ID );
+      final List< IContentProviderSyncOperation > operations = SyncDiffer.inDiff( update.participants,
+                                                                                  syncList,
+                                                                                  true /* always full sync */);
+      
+      if ( operations.size() > 0 )
+         return ContentProviderSyncOperation.newUpdate()
+                                            .add( operations )
+                                            .build();
+      else
+         return NoopContentProviderSyncOperation.INSTANCE;
    }
 }

@@ -14,30 +14,14 @@
       implementation
    -->
 
-<RelativeLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+<merge
+   xmlns:android="http://schemas.android.com/apk/res/android">
 
-   <dev.drsoran.moloko.layouts.TitleBarLayout      
-      style="@style/App_TitleBar"
-      android:layout_width="fill_parent"
-      moloko:showButton="add_task|home|search" />
-
-   <FrameLayout
+   <fragment
+      android:id="@id/frag_tag_cloud"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:layout_marginRight="?android:attr/scrollbarSize"
-      android:layout_below="@id/app_title_bar">
-
-      <dev.drsoran.moloko.layouts.WrappingLayout
-         android:id="@+id/tagcloud_container"
-         android:layout_height="fill_parent"
-         android:layout_width="fill_parent" />
-
-      <include
-         android:id="@android:id/empty"
-         layout="@layout/app_loading_spinner" />
-   </FrameLayout>
-</RelativeLayout>
+      android:name="dev.drsoran.moloko.fragments.TagCloudFragment" >
+       <!-- Preview: layout=@layout/tagcloud_fragment -->
+   </fragment>
+</merge>

@@ -22,11 +22,14 @@
 
    <TextView
       android:id="@+id/content"
-      style="@style/App_Counter_Bubble"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:background="@drawable/counter_bubble"
+      android:textColor="@color/app_counter_bubble_text"
+      android:textSize="12sp"
+      android:textStyle="bold"
       android:gravity="center"
-      android:text="cnt" />
+      android:text=" ?" />
 
    <ProgressBar
       android:id="@+id/loading"

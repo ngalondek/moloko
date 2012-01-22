@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -33,10 +33,8 @@ import android.accounts.OnAccountsUpdateListener;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SyncStatusObserver;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,21 +42,21 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import dev.drsoran.moloko.ISyncStatusListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.sync.Constants;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.provider.Rtm;
 import dev.drsoran.rtm.RtmSettings;
 
 
 public class RtmSyncStatePreference extends InfoTextPreference implements
-         SyncStatusObserver, OnCancelListener, OnAccountsUpdateListener,
+         ISyncStatusListener, OnCancelListener, OnAccountsUpdateListener,
          AccountManagerCallback< Bundle >
 {
-   private Object syncStatusHandle;
-   
    private ProgressDialog dialog;
    
    private Account account;
@@ -84,6 +82,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
+   @Override
    public void run( AccountManagerFuture< Bundle > future )
    {
       addAccountHandle = null;
@@ -119,6 +118,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
+   @Override
    public void onAccountsUpdated( Account[] accounts )
    {
       final AccountManager accountManager = AccountManager.get( getContext() );
@@ -146,7 +146,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
          addAccountHandle = null;
       }
       
-      onSyncFinished();
+      unregisterSyncStatusChangedListener();
    }
    
 
@@ -166,7 +166,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
          }
          else
          {
-            final String date = MolokoDateUtils.formatDate( settings.getSyncTimeStamp()
+            final String date = MolokoDateUtils.formatDate( getContext(),
+                                                            settings.getSyncTimeStamp()
                                                                     .getTime(),
                                                             MolokoDateUtils.FORMAT_NUMERIC
                                                                | MolokoDateUtils.FORMAT_WITH_YEAR );
@@ -193,41 +194,14 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    {
       if ( account != null )
       {
-         if ( syncStatusHandle == null )
-         {
-            syncStatusHandle = ContentResolver.addStatusChangeListener( dev.drsoran.moloko.sync.Constants.SYNC_OBSERVER_TYPE_STATUS,
-                                                                        this );
-            
-            if ( syncStatusHandle != null )
-            {
-               final Bundle bundle = new Bundle();
-               bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
-               bundle.putBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
-                                  true );
-               
-               ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
-               
-               showDialog();
-            }
-         }
+         registerSyncStatusChangedListener();
+         SyncUtils.requestSettingsOnlySync( getContext(), account );
+         
+         showDialog();
       }
       else
       {
-         if ( addAccountHandle == null )
-         {
-            final AccountManager accountManager = AccountManager.get( getContext() );
-            
-            if ( accountManager != null )
-            {
-               addAccountHandle = accountManager.addAccount( Constants.ACCOUNT_TYPE,
-                                                             Constants.AUTH_TOKEN_TYPE,
-                                                             null,
-                                                             new Bundle(),
-                                                             (Activity) getContext(),
-                                                             this,
-                                                             handler );
-            }
-         }
+         ( (Activity) getContext() ).startActivity( Intents.createNewAccountIntent() );
       }
    }
    
@@ -245,14 +219,16 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
-   public void onStatusChanged( int which )
+   @Override
+   public void onSyncStatusChanged( int status )
    {
-      if ( !ContentResolver.isSyncActive( account, Rtm.AUTHORITY ) )
+      if ( status == Constants.SYNC_STATUS_FINISHED )
       {
-         onSyncFinished();
+         unregisterSyncStatusChangedListener();
          
          handler.post( new Runnable()
          {
+            @Override
             public void run()
             {
                notifyChanged();
@@ -269,21 +245,24 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
+   @Override
    public void onCancel( DialogInterface dialog )
    {
-      onSyncFinished();
+      unregisterSyncStatusChangedListener();
       dialog = null;
    }
    
 
 
-   private void onSyncFinished()
+   private void registerSyncStatusChangedListener()
    {
-      if ( syncStatusHandle != null )
-      {
-         ContentResolver.removeStatusChangeListener( syncStatusHandle );
-         syncStatusHandle = null;
-      }
+      MolokoApp.get( getContext() ).registerSyncStatusChangedListener( this );
    }
    
+
+
+   private void unregisterSyncStatusChangedListener()
+   {
+      MolokoApp.get( getContext() ).unregisterSyncStatusChangedListener( this );
+   }
 }

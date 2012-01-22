@@ -46,7 +46,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
       + Participant.class.getSimpleName();
    
    
-   private static final class LessIdComperator implements
+   private static final class LessContactIdComperator implements
             Comparator< Participant >
    {
       public int compare( Participant object1, Participant object2 )
@@ -73,7 +73,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
       
    };
    
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
+   public final static LessContactIdComperator LESS_CONTACT_ID = new LessContactIdComperator();
    
    private final String id;
    

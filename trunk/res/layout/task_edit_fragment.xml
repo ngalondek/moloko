@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+-->
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:id="@android:id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dip"
+        android:paddingLeft="10dip"
+        android:paddingRight="?android:attr/scrollbarSize"
+        android:paddingTop="10dip" >
+
+        <TextView
+            android:id="@+id/task_edit_added_date"
+            style="@style/Task_Date_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dip" />
+
+        <TextView
+            android:id="@+id/task_edit_completed_date"
+            style="@style/Task_Date_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/task_edit_added_date"
+            android:layout_marginTop="3dip"
+            android:drawableLeft="@drawable/ic_small_green_check"
+            android:drawablePadding="2dip" />
+
+        <RelativeLayout
+            android:id="@+id/task_edit_status_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@id/task_edit_completed_date"
+            android:layout_marginTop="3dip" >
+
+            <TextView
+                android:id="@+id/task_edit_postponed"
+                style="@style/Task_Source_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:layout_toLeftOf="@+id/task_edit_src"
+                android:drawableLeft="@drawable/ic_small_black_postponed"
+                android:drawablePadding="2dip"
+                android:text="@string/task_postponed" />
+
+            <TextView
+                android:id="@+id/task_edit_src"
+                style="@style/Task_Source_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="@string/task_source" />
+        </RelativeLayout>
+
+        <dev.drsoran.moloko.widgets.ClearableEditText
+            android:id="@+id/task_edit_desc"
+            style="@style/Task_Overview_DescriptionText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@id/task_edit_status_container"
+            android:layout_marginTop="3dip"
+            android:hint="@string/task_edit_desc_hint"
+            android:imeOptions="actionNext"
+            android:inputType="textCapSentences"
+            android:selectAllOnFocus="false" />
+
+        <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
+            android:id="@+id/task_edit_list"
+            style="?titleWithSpinnerStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_desc"
+            android:layout_marginTop="3dip"
+            moloko:titlePaddingTop="8dip"
+            moloko:titleText="@string/task_edit_list" />
+
+        <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
+            android:id="@+id/task_edit_priority"
+            style="?titleWithSpinnerStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_list"
+            android:layout_marginTop="3dip"
+            moloko:titlePaddingTop="8dip"
+            moloko:titleText="@string/task_edit_priority" />
+
+        <!-- Tags -->
+
+        <LinearLayout
+            android:id="@+id/task_edit_tags_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_priority"
+            android:layout_marginTop="3dip"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/task_edit_tags_title"
+                style="@style/Task_Edit_Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/task_edit_tags" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dip" >
+
+                <dev.drsoran.moloko.layouts.WrappingLayout
+                    android:id="@+id/task_edit_tags_container"
+                    style="?wrappingLayoutStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="3dip" />
+
+                <ImageButton
+                    android:id="@+id/task_edit_tags_btn_change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="3dip"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_button_task_tag_change" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Due -->
+
+        <RelativeLayout
+            android:id="@+id/task_edit_due_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_tags_layout"
+            android:layout_marginTop="10dip" >
+
+            <View
+                android:id="@+id/task_edit_due_top_line"
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="@drawable/app_simple_line" />
+
+            <TextView
+                android:id="@+id/task_edit_due_title"
+                style="@style/Task_Edit_Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_edit_due_top_line"
+                android:layout_marginTop="10dip"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/task_edit_due" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_edit_due_title"
+                android:layout_marginTop="3dip"
+                android:orientation="horizontal" >
+
+                <dev.drsoran.moloko.widgets.DueEditText
+                    android:id="@+id/task_edit_due_text"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/task_edit_due_never"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/task_edit_due_btn_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_button_task_time" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Recurrence -->
+
+        <RelativeLayout
+            android:id="@+id/task_edit_recurrence_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_due_layout"
+            android:layout_marginTop="10dip" >
+
+            <TextView
+                android:id="@+id/task_edit_recurrence_title"
+                style="@style/Task_Edit_Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/task_edit_recurrence" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_edit_recurrence_title"
+                android:layout_marginTop="3dip"
+                android:orientation="horizontal" >
+
+                <dev.drsoran.moloko.widgets.RecurrenceEditText
+                    android:id="@+id/task_edit_recurrence_text"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/task_edit_recurrence_no"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="false" />
+
+                <ImageButton
+                    android:id="@+id/task_edit_recurrence_btn_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_button_task_recurrent" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Estimate -->
+
+        <RelativeLayout
+            android:id="@+id/task_edit_estimate_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_recurrence_layout"
+            android:layout_marginTop="10dip" >
+
+            <TextView
+                android:id="@+id/task_edit_estimate_title"
+                style="@style/Task_Edit_Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/task_edit_estimate" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_edit_estimate_title"
+                android:layout_marginTop="3dip"
+                android:orientation="horizontal" >
+
+                <dev.drsoran.moloko.widgets.EstimateEditText
+                    android:id="@+id/task_edit_estim_text"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/task_edit_estimate_nothing"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/task_edit_estim_btn_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_button_task_thumb" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
+            android:id="@+id/task_edit_location"
+            style="?titleWithSpinnerStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_estimate_layout"
+            android:layout_marginTop="10dip"
+            moloko:titlePaddingTop="8dip"
+            moloko:titleText="@string/task_location" />
+
+        <dev.drsoran.moloko.layouts.TitleWithEditTextLayout
+            android:id="@+id/task_edit_url"
+            style="?titleWithTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/task_edit_desc"
+            android:layout_below="@id/task_edit_location"
+            android:layout_marginTop="10dip"
+            android:imeOptions="actionPrevious"
+            android:inputType="textUri"
+            android:selectAllOnFocus="true"
+            moloko:titlePaddingTop="8dip"
+            moloko:titleText="@string/task_url" />
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/loading_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/app_loading_spinner"
+        android:visibility="gone" />
+
+</FrameLayout>

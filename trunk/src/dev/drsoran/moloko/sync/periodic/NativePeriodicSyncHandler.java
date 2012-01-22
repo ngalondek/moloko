@@ -25,11 +25,11 @@ package dev.drsoran.moloko.sync.periodic;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncResult;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
@@ -43,11 +43,12 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       super( context );
    }
    
-
-
+   
+   
+   @Override
    public void setPeriodicSync( long startUtc, long intervalMs )
    {
-      final Account account = SyncUtils.isReadyToSync( context );
+      final Account account = AccountUtils.getRtmAccount( context );
       
       if ( account != null )
       {
@@ -62,8 +63,17 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       }
    }
    
-
-
+   
+   
+   @Override
+   public void delayNextSync( SyncResult syncResult, long seconds )
+   {
+      syncResult.delayUntil = seconds;
+   }
+   
+   
+   
+   @Override
    public void resetPeriodicSync()
    {
       final Account account = AccountUtils.getRtmAccount( context );
@@ -79,19 +89,20 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       }
    }
    
-
-
+   
+   
    private final static Bundle getExtras()
    {
       final Bundle bundle = new Bundle();
       
       bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, Boolean.TRUE );
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, Boolean.TRUE );
       
       return bundle;
    }
    
-
-
+   
+   
    @Override
    public void shutdown()
    {

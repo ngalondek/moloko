@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -44,6 +44,7 @@ import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
 
@@ -55,6 +56,7 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.content.Modification;
@@ -67,6 +69,7 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Sync;
@@ -84,7 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    private final Context context;
    
    
-
+   
    public SyncAdapter( Context context, boolean autoInitialize )
    {
       super( context, autoInitialize );
@@ -92,8 +95,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       this.context = context;
    }
    
-
-
+   
+   
    @Override
    public void onPerformSync( Account account,
                               Bundle extras,
@@ -112,12 +115,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          Log.i( TAG, "Precessing sync with extras " + extras );
          
-         String authToken = null;
+         context.sendBroadcast( Intents.createSyncStartedIntent() );
          
+         String authToken = null;
          final AccountManager accountManager = AccountManager.get( context );
          
          if ( accountManager != null )
          {
+            Service service = null;
             try
             {
                // use the account manager to request the credentials
@@ -141,11 +146,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                   }
                   else
                   {
-                     final Service service = ServiceImpl.getInstance( context,
-                                                                      new ApplicationInfo( apiKey,
-                                                                                           sharedSecret,
-                                                                                           context.getString( R.string.app_name ),
-                                                                                           authToken ) );
+                     service = ServiceImpl.getInstance( context,
+                                                        new ApplicationInfo( apiKey,
+                                                                             sharedSecret,
+                                                                             context.getString( R.string.app_name ),
+                                                                             authToken ) );
                      
                      final RtmAuth.Perms permission = AccountUtils.getAccessLevel( getContext() );
                      Log.i( TAG, "Sync with permission " + permission );
@@ -244,8 +249,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             }
             catch ( IOException e )
             {
-               Log.e( TAG, "IOException", e );
                syncResult.stats.numIoExceptions++;
+               Log.e( TAG, "IOException", e );
             }
             catch ( ParseException e )
             {
@@ -271,16 +276,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             }
             catch ( OperationApplicationException e )
             {
-               syncResult.stats.numIoExceptions++;
                syncResult.databaseError = true;
                Log.e( TAG, "OperationApplicationException", e );
+            }
+            finally
+            {
+               if ( service != null )
+                  service.shutdown();
+               
+               if ( syncResult.stats.numIoExceptions > 0 )
+                  MolokoApp.get( context.getApplicationContext() )
+                           .getPeriodicSyncHander()
+                           .delayNextSync( syncResult,
+                                           ( 5 * DateUtils.MINUTE_IN_MILLIS ) / 1000 );
             }
          }
          else
          {
-            syncResult.stats.numIoExceptions++;
             Log.e( TAG, "No AccountManager" );
          }
+         
+         context.sendBroadcast( Intents.createSyncFinishedIntent() );
       }
       else
       {
@@ -288,8 +304,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-
-
+   
+   
    private void applyLocalOperations( ContentProviderClient provider,
                                       List< ? extends IContentProviderSyncOperation > operations,
                                       SyncResult syncResult ) throws RemoteException,
@@ -308,8 +324,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       provider.applyBatch( contentProviderOperationsBatch );
    }
    
-
-
+   
+   
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            TimeLineFactory timeLineFactory,
@@ -377,8 +393,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return ok;
    }
    
-
-
+   
+   
    private final Pair< Long, Long > getSyncTime()
    {
       Pair< Long, Long > result = null;
@@ -411,8 +427,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-
-
+   
+   
    public final static ModificationSet getAllModifications( Context context )
    {
       ModificationSet modifications = null;
@@ -437,8 +453,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-
-
+   
+   
    public final static ModificationSet getModificationsFor( Context context,
                                                             Uri... entityUris )
    {
@@ -467,8 +483,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-
-
+   
+   
    private final void updateSyncTime()
    {
       final ContentProviderClient client = context.getContentResolver()
@@ -483,8 +499,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-
-
+   
+   
    private final static boolean logSyncStep( String step, boolean result )
    {
       if ( result )
@@ -495,8 +511,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-
-
+   
+   
    private final static void clearSyncResult( SyncResult syncResult )
    {
       syncResult.stats.numInserts = 0;
@@ -504,8 +520,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       syncResult.stats.numDeletes = 0;
    }
    
-
-
+   
+   
    private final boolean shouldProcessRequest( Bundle bundle )
    {
       return ( bundle != null && ( bundle.containsKey( ContentResolver.SYNC_EXTRAS_INITIALIZE )

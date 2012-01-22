@@ -115,9 +115,9 @@ public class RtmTaskNote extends RtmData
    {
       id = source.readString();
       taskSeriesId = source.readString();
-      created = source.readParcelable( null );
-      modified = source.readParcelable( null );
-      deleted = source.readParcelable( null );
+      created = ParcelableDate.fromParcel( source );
+      modified = ParcelableDate.fromParcel( source );
+      deleted = ParcelableDate.fromParcel( source );
       title = source.readString();
       text = source.readString();
    }

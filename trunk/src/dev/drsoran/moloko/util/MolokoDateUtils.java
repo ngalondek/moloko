@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,9 +22,6 @@
 
 package dev.drsoran.moloko.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -38,29 +35,24 @@ import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
 import dev.drsoran.rtm.ParcelableDate;
 
 
 public class MolokoDateUtils
 {
-   public final static int FORMAT_WITH_YEAR = 1 << 0;
+   public final static int FORMAT_WITH_YEAR = DateUtils.FORMAT_SHOW_YEAR;
    
-   public final static int FORMAT_NUMERIC = 1 << 1;
+   public final static int FORMAT_NUMERIC = DateUtils.FORMAT_NUMERIC_DATE;
    
-   public final static int FORMAT_SHOW_WEEKDAY = 1 << 2;
+   public final static int FORMAT_SHOW_WEEKDAY = DateUtils.FORMAT_SHOW_WEEKDAY;
    
-   public final static int FORMAT_PARSER = FORMAT_WITH_YEAR | FORMAT_NUMERIC
-      | ( 1 << 3 );
+   public final static int FORMAT_ABR_WEEKDAY = DateUtils.FORMAT_ABBREV_WEEKDAY;
    
-   public final static int FORMAT_ABR_WEEKDAY = 1 << 4;
+   public final static int FORMAT_ABR_MONTH = DateUtils.FORMAT_ABBREV_MONTH;
    
-   public final static int FORMAT_ABR_MONTH = 1 << 5;
+   public final static int FORMAT_ABR_ALL = DateUtils.FORMAT_ABBREV_ALL;
    
-   public final static int FORMAT_ONLY_WEEKDAY = 1 << 6;
-   
-   public final static int FORMAT_ABR_ALL = FORMAT_ABR_WEEKDAY
-      | FORMAT_ABR_MONTH;
+   public final static int FORMAT_PARSER = FORMAT_NUMERIC;
    
    
    public final static class EstimateStruct
@@ -72,7 +64,7 @@ public class MolokoDateUtils
       public final int minutes;
       
       
-
+      
       public EstimateStruct( int days, int hours, int minutes )
       {
          this.days = days;
@@ -82,14 +74,14 @@ public class MolokoDateUtils
    }
    
    
-
+   
    private MolokoDateUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   
    public final static MolokoCalendar newCalendar( long millis )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -97,8 +89,8 @@ public class MolokoDateUtils
       return cal;
    }
    
-
-
+   
+   
    public final static MolokoCalendar newCalendarUTC( long millis )
    {
       final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
@@ -106,8 +98,8 @@ public class MolokoDateUtils
       return cal;
    }
    
-
-
+   
+   
    public final static Time newTime()
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
@@ -115,8 +107,8 @@ public class MolokoDateUtils
       return t;
    }
    
-
-
+   
+   
    public final static Time newTime( long millis )
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
@@ -124,29 +116,29 @@ public class MolokoDateUtils
       return t;
    }
    
-
-
+   
+   
    public static boolean isToday( long when )
    {
       return ( getTimespanInDays( System.currentTimeMillis(), when ) == 0 );
    }
    
-
-
+   
+   
    public static boolean isBefore( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) > 0 );
    }
    
-
-
+   
+   
    public static boolean isAfter( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) < 0 );
    }
    
-
-
+   
+   
    public static int getTimespanInDays( long start, long end )
    {
       final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
@@ -159,8 +151,8 @@ public class MolokoDateUtils
       return span;
    }
    
-
-
+   
+   
    public static long getFittingDateUtilsResolution( long time, long now )
    {
       final int diff = (int) ( ( ( time >= now ) ? time - now : now - time ) / 1000 );
@@ -187,8 +179,8 @@ public class MolokoDateUtils
       }
    }
    
-
-
+   
+   
    public final static Date parseRtmDate( String rtmDateStr )
    {
       try
@@ -201,91 +193,147 @@ public class MolokoDateUtils
       }
    }
    
-
-
-   public final static String formatDate( long millis, int dateStyle )
+   
+   
+   public final static String getDayOfWeekString( int calendarDayOfWeek,
+                                                  boolean abbrev )
    {
-      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
-      final Calendar cal = Calendar.getInstance( timeZone );
-      
-      cal.setTimeInMillis( millis );
-      
-      return DateFormat.format( buildPattern( true, false, dateStyle ), cal )
-                       .toString();
+      return DateUtils.getDayOfWeekString( calendarDayOfWeek,
+                                           abbrev ? DateUtils.LENGTH_SHORT
+                                                 : DateUtils.LENGTH_LONG );
    }
    
-
-
-   public final static String formatDate( String pattern,
-                                          String value,
+   
+   
+   public final static String getNumericDateFormatPattern( Context context,
+                                                           boolean withYear )
+   {
+      return getNumericDatePatternForSettings( context,
+                                               withYear ? FORMAT_WITH_YEAR : 0 );
+   }
+   
+   
+   
+   public final static char[] getDateFormatOrder( Context context )
+   {
+      return DateFormat.getDateFormatOrder( context );
+   }
+   
+   
+   
+   public final static String formatDate( Context context,
+                                          long millis,
                                           int dateStyle )
    {
-      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
-      final SimpleDateFormat sdf = new SimpleDateFormat( pattern );
-      
-      sdf.setTimeZone( timeZone );
-      
-      try
-      {
-         sdf.parse( value );
-         return DateFormat.format( buildPattern( true, false, dateStyle ),
-                                   sdf.getCalendar() ).toString();
-      }
-      catch ( ParseException e )
-      {
-         return null;
-      }
-   }
-   
-
-
-   public final static String formatDateTime( long millis, int dateStyle )
-   {
-      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
-      final Calendar cal = Calendar.getInstance( timeZone );
-      
-      cal.setTimeInMillis( millis );
-      
-      return DateFormat.format( buildPattern( true, true, dateStyle ), cal )
+      return DateFormat.format( buildPattern( context, true, false, dateStyle ),
+                                millis )
                        .toString();
    }
    
-
-
-   public final static String formatTime( long millis )
+   
+   
+   public static String formatDateNumeric( Context context,
+                                           String part1,
+                                           String part2 )
    {
-      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
-      final Calendar cal = Calendar.getInstance( timeZone );
-      
-      cal.setTimeInMillis( millis );
-      
-      return DateFormat.format( buildPattern( false, true, 0 ), cal )
+      return formatDateNumeric( context, part1, part2, null );
+   }
+   
+   
+   
+   public static String formatDateNumeric( Context context,
+                                           String part1,
+                                           String part2,
+                                           String part3 )
+   {
+      if ( part3 == null )
+         return context.getString( R.string.numeric_date_pattern, part1, part2 );
+      else
+         return context.getString( R.string.numeric_date_pattern_year,
+                                   part1,
+                                   part2,
+                                   part3 );
+   }
+   
+   
+   
+   public final static String formatDateTime( Context context,
+                                              long millis,
+                                              int dateStyle )
+   {
+      return DateFormat.format( buildPattern( context, true, true, dateStyle ),
+                                millis ).toString();
+   }
+   
+   
+   
+   public final static String formatTime( Context context, long millis )
+   {
+      return DateFormat.format( buildPattern( context, false, true, 0 ), millis )
                        .toString();
    }
    
-
-
+   
+   
    public final static Date getDate( ParcelableDate parcelableDate )
    {
-      return parcelableDate != null ? parcelableDate.getDate() : null;
+      return getDate( parcelableDate, null );
    }
    
-
-
+   
+   
+   public final static Date getDate( ParcelableDate parcelableDate,
+                                     Date defaultValue )
+   {
+      Date ret = defaultValue;
+      
+      if ( parcelableDate != null )
+         ret = parcelableDate.getDate();
+      
+      return ret;
+   }
+   
+   
+   
    public final static Long getTime( ParcelableDate parcelableDate )
    {
-      return parcelableDate != null ? parcelableDate.getTime() : null;
+      return getTime( parcelableDate, null );
    }
    
-
-
+   
+   
+   public final static Long getTime( ParcelableDate parcelableDate,
+                                     Long defaultValue )
+   {
+      Long ret = defaultValue;
+      
+      if ( parcelableDate != null )
+         ret = Long.valueOf( parcelableDate.getTime() );
+      
+      return ret;
+   }
+   
+   
+   
    public final static Long getTime( Date date )
    {
-      return date != null ? date.getTime() : null;
+      return getTime( date, null );
    }
    
-
-
+   
+   
+   public final static Long getTime( Date date, Long defaultValue )
+   {
+      Long ret = defaultValue;
+      
+      if ( date != null )
+         ret = Long.valueOf( date.getTime() );
+      
+      return ret;
+   }
+   
+   
+   
    public final static EstimateStruct parseEstimated( long millis )
    {
       int days = 0;
@@ -322,8 +370,8 @@ public class MolokoDateUtils
       return new EstimateStruct( days, hours, minutes );
    }
    
-
-
+   
+   
    public final static String formatEstimated( Context context, long millis )
    {
       final Resources res = context.getResources();
@@ -376,71 +424,49 @@ public class MolokoDateUtils
       }
    }
    
-
-
-   private final static String buildPattern( boolean date,
-                                             boolean time,
-                                             int flags )
+   
+   
+   public final static String buildPattern( Context context,
+                                            boolean date,
+                                            boolean time,
+                                            int flags )
    {
-      StringBuilder pattern = new StringBuilder();
-      
-      final Settings settings = MolokoApp.getSettings();
+      String template = Strings.EMPTY_STRING;
       
       // Date
       if ( date )
       {
-         if ( ( flags & FORMAT_ONLY_WEEKDAY ) != 0 )
-            pattern.append( ( ( flags & FORMAT_ABR_WEEKDAY ) != 0 ) ? "E"
-                                                                   : "EEEE" );
+         if ( ( flags & FORMAT_NUMERIC ) != 0 )
+         {
+            template = getNumericDatePatternForSettings( context, flags );
+         }
          else
          {
+            final String monthPattern = ( ( flags & FORMAT_ABR_MONTH ) != 0 )
+                                                                             ? "MMM"
+                                                                             : "MMMM";
             if ( ( flags & FORMAT_SHOW_WEEKDAY ) != 0 )
-               pattern.append( ( ( flags & FORMAT_ABR_WEEKDAY ) != 0 )
-                                                                      ? "E, "
-                                                                      : "EEEE, " );
-            
-            // Date EU
-            if ( settings.getDateformat() == Settings.DATEFORMAT_EU )
             {
-               if ( ( flags & FORMAT_NUMERIC ) != 0 )
-                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                     pattern.append( "d.M.yyyy" );
-                  else
-                     pattern.append( "d.M." );
+               final String weekDayPattern = ( ( flags & FORMAT_ABR_WEEKDAY ) != 0 )
+                                                                                    ? "EEE"
+                                                                                    : "EEEE";
+               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                  template = context.getString( R.string.date_with_weekday_text_month_year,
+                                                weekDayPattern,
+                                                monthPattern );
                else
-               {
-                  if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
-                     pattern.append( "d. MMM" );
-                  else
-                     pattern.append( "d. MMMM" );
-                  
-                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                     pattern.append( " yyyy" );
-               }
+                  template = context.getString( R.string.date_with_weekday_text_month,
+                                                weekDayPattern,
+                                                monthPattern );
             }
-            
-            // Date US
             else
             {
-               if ( ( flags & FORMAT_NUMERIC ) != 0 )
-                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                     // the parser needs the EU format. (day first)
-                     if ( ( flags & FORMAT_PARSER ) == FORMAT_PARSER )
-                        pattern.append( "d/M/yyyy" );
-                     else
-                        pattern.append( "M/d/yyyy" );
-                  else
-                     pattern.append( "M/d" );
+               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                  template = context.getString( R.string.date_with_text_month_year,
+                                                monthPattern );
                else
-               {
-                  if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
-                     pattern.append( "MMM d" );
-                  else
-                     pattern.append( "MMMM d" );
-                  
-                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                     pattern.append( ", yyyy" );
-               }
+                  template = context.getString( R.string.date_with_text_month,
+                                                monthPattern );
             }
          }
       }
@@ -448,25 +474,90 @@ public class MolokoDateUtils
       // Time
       if ( time )
       {
-         // Time 12
-         if ( settings.getTimeformat() == Settings.TIMEFORMAT_12 )
-         {
-            if ( date )
-               pattern.append( ", h:mm a" );
-            else
-               pattern.append( "h:mm a" );
-         }
+         final String timePattern = ( MolokoApp.getSettings().Is24hTimeformat() )
+                                                                                 ? context.getString( R.string.time_pattern_24 )
+                                                                                 : context.getString( R.string.time_pattern_12 );
          
-         // Time 24
+         if ( date )
+         {
+            final String dateTemplate = template;
+            template = context.getString( R.string.date_with_time_pattern,
+                                          timePattern,
+                                          dateTemplate );
+         }
          else
          {
-            if ( date )
-               pattern.append( ", k:mm" );
-            else
-               pattern.append( "k:mm" );
+            template = timePattern;
          }
       }
       
-      return pattern.toString();
+      return template;
+   }
+   
+   
+   
+   private static String getNumericDatePatternForSettings( Context context,
+                                                           int flags )
+   {
+      final String numericDatePattern;
+      
+      final boolean isWithYear = ( ( flags & FORMAT_WITH_YEAR ) != 0 );
+      final char[] dateFormatOrder = DateFormat.getDateFormatOrder( context );
+      
+      final String[] expandedDateFormatOrder = expandDateFormatOrder( context,
+                                                                      dateFormatOrder,
+                                                                      isWithYear );
+      
+      if ( isWithYear )
+      {
+         numericDatePattern = context.getString( R.string.numeric_date_pattern_year,
+                                                 expandedDateFormatOrder[ 0 ],
+                                                 expandedDateFormatOrder[ 1 ],
+                                                 expandedDateFormatOrder[ 2 ] );
+      }
+      else
+      {
+         numericDatePattern = context.getString( R.string.numeric_date_pattern,
+                                                 expandedDateFormatOrder[ 0 ],
+                                                 expandedDateFormatOrder[ 1 ] );
+      }
+      
+      return numericDatePattern;
+   }
+   
+   
+   
+   private final static String[] expandDateFormatOrder( Context context,
+                                                        char[] dateFormatOrder,
+                                                        boolean withYear )
+   {
+      final String[] expanded = new String[ withYear ? 3 : 2 ];
+      final Resources resources = context.getResources();
+      
+      int expandedIndex = 0;
+      for ( int i = 0; i < dateFormatOrder.length; i++ )
+      {
+         final char dateFormatItem = dateFormatOrder[ i ];
+         
+         switch ( dateFormatItem )
+         {
+            case DateFormat.DATE:
+               expanded[ expandedIndex++ ] = resources.getString( R.string.numeric_date_format_day );
+               break;
+            case DateFormat.MONTH:
+               expanded[ expandedIndex++ ] = resources.getString( R.string.numeric_date_format_month );
+               break;
+            case DateFormat.YEAR:
+               if ( withYear )
+               {
+                  expanded[ expandedIndex++ ] = resources.getString( R.string.numeric_date_format_year );
+               }
+               break;
+            default :
+               break;
+         }
+      }
+      
+      return expanded;
    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,84 +22,84 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collections;
 import java.util.List;
 
-import android.content.ContentProviderClient;
-import android.content.ContentResolver;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ListAdapter;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.RtmListEditUtils;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
-import dev.drsoran.rtm.Task;
 
 
-public class TasksListActivity extends AbstractTasksListActivity implements
-         DialogInterface.OnClickListener
+public class TasksListActivity extends AbstractFullDetailedTasksListActivity
 {
-   private final static String TAG = "Moloko."
-      + TasksListActivity.class.getSimpleName();
-   
-   
-   protected static class OptionsMenu
+   private static class OptionsMenu
    {
-      protected final static int START_IDX = AbstractTasksListActivity.OptionsMenu.START_IDX + 1000;
+      public final static int ADD_LIST = R.id.menu_add_list;
       
-      public final static int MENU_ORDER = AbstractTasksListActivity.OptionsMenu.MENU_ORDER - 1000;
+      public final static int DELETE_LIST = R.id.menu_delete_list;
+   }
+   
+   private Boolean showAddSmartListMenu;
+   
+   
+   
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      super.onNewIntent( intent );
       
-      public final static int SHOW_LISTS = START_IDX + 0;
-      
-      public final static int DELETE_LIST = START_IDX + 1;
+      // if we receive a new intent then we have to re-evaluate the
+      // condition.
+      showAddSmartListMenu = null;
    }
    
    
-
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      boolean ok = super.onCreateOptionsMenu( menu );
+      super.onCreateOptionsMenu( menu );
       
-      if ( ok )
-      {
-         menu.add( Menu.NONE,
-                   OptionsMenu.SHOW_LISTS,
-                   OptionsMenu.MENU_ORDER,
-                   R.string.taskslist_menu_opt_lists )
-             .setIcon( R.drawable.ic_menu_list );
-         
-         if ( getIntent().hasExtra( Lists.LIST_NAME )
-            && !AccountUtils.isReadOnlyAccess( this ) )
-         {
-            menu.add( Menu.NONE,
-                      OptionsMenu.DELETE_LIST,
-                      OptionsMenu.MENU_ORDER,
-                      R.string.taskslist_menu_opt_delete_list )
-                .setIcon( R.drawable.ic_menu_trash );
-         }
-      }
+      if ( showAddSmartListMenu == null )
+         evaluateAddSmartListMenuVisibility();
       
-      return ok && addOptionsMenuIntents( menu );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ADD_LIST,
+                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
+                                   MenuCategory.CONTAINER,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_add_list,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   showAddSmartListMenu.booleanValue()
+                                      && AccountUtils.isWriteableAccess( this ) );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.DELETE_LIST,
+                                   getString( R.string.taskslist_menu_opt_delete_list ),
+                                   MenuCategory.ALTERNATIVE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_trash,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   isConfiguredWithListName()
+                                      && !AccountUtils.isReadOnlyAccess( this ) );
+      
+      return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -107,146 +107,50 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       {
          case OptionsMenu.DELETE_LIST:
             final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-            UIUtils.newDeleteElementDialog( this, listName, new Runnable()
-            {
-               public void run()
-               {
-                  RtmListEditUtils.deleteListByName( TasksListActivity.this,
-                                                     listName );
-                  finish();
-               }
-            },
-                                            null ).show();
+            UIUtils.showDeleteElementDialog( this, listName );
             return true;
+            
+         case OptionsMenu.ADD_LIST:
+            showAddListDialog();
+            return true;
+            
          default :
             return super.onOptionsItemSelected( item );
       }
    }
    
-
-
-   @Override
-   protected void beforeQueryTasksAsync( Bundle configuration )
-   {
-      super.beforeQueryTasksAsync( configuration );
-      
-      final String title = configuration.getString( TITLE );
-      
-      final int titleIconId = configuration.getInt( TITLE_ICON, -1 );
-      
-      if ( title != null )
-      {
-         UIUtils.setTitle( this, title, titleIconId );
-      }
-      else
-      {
-         UIUtils.setTitle( this,
-                           getString( R.string.taskslist_titlebar,
-                                      getString( R.string.app_name ) ) );
-      }
-   }
    
-
-
+   
    @Override
-   protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
-                                                  Bundle configuration )
+   protected void handleDeleteElementDialogClick( String tag, int which )
    {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
-      
-      String selectionSql = null;
-      
-      if ( client != null )
+      if ( which == Dialog.BUTTON_POSITIVE )
       {
-         final IFilter filter = configuration.getParcelable( FILTER );
+         final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
          
-         if ( filter != null )
-         {
-            selectionSql = filter.getSqlSelection();
-            
-            if ( selectionSql == null )
-            {
-               Log.e( TAG, "Error evaluating the filter" );
-               // RETURN: evaluation failed
-               return null;
-            }
-         }
-         else
-         {
-            Log.e( TAG, "Expecting filter in configuration" );
-            // RETURN: no filter
-            return null;
-         }
-         
-         // Don't call getTaskSort() cause this runs not in the UI thread.
-         final int taskSort = configuration.getInt( TASK_SORT_ORDER,
-                                                    Settings.TASK_SORT_DEFAULT );
-         
-         final List< Task > tasks = TasksProviderPart.getTasks( client,
-                                                                selectionSql,
-                                                                Settings.resolveTaskSortToSqlite( taskSort ) );
-         client.release();
-         
-         return new AsyncFillListResult( ListTask.fromTaskList( tasks ),
-                                         filter,
-                                         configuration );
+         RtmListEditUtils.deleteListByName( TasksListActivity.this, listName );
+         finish();
       }
-      else
+   }
+   
+   
+   
+   private void evaluateAddSmartListMenuVisibility()
+   {
+      final IFilter filter = getConfiguredFilter();
+      boolean show = filter instanceof RtmSmartFilter;
+      
+      // if we are configured with a list name then we already are in a list
+      // and do not need to add a new one.
+      show = show && !isConfiguredWithListName();
+      
+      if ( show )
       {
-         LogUtils.logDBError( this, TAG, "Tasks" );
-         return null;
-      }
-   }
-   
-
-
-   @Override
-   protected void setTasksResult( AsyncFillListResult result )
-   {
-      switchEmptyView( emptyListView );
-      setListAdapter( createListAdapter( result ) );
-   }
-   
-
-
-   @Override
-   protected ListAdapter createListAdapter( AsyncFillListResult result )
-   {
-      return new TasksListAdapter( this,
-                                   R.layout.taskslist_activity_listitem,
-                                   result != null
-                                                 ? result.tasks
-                                                 : Collections.< ListTask > emptyList(),
-                                   result != null
-                                                 ? result.filter
-                                                 : new RtmSmartFilter( Strings.EMPTY_STRING ) );
-   }
-   
-
-
-   @Override
-   protected void handleIntent( Intent intent )
-   {
-      fillListAsync();
-   }
-   
-
-
-   private boolean addOptionsMenuIntents( Menu menu )
-   {
-      boolean ok = true;
-      
-      final MenuItem item = menu.findItem( OptionsMenu.SHOW_LISTS );
-      
-      ok = item != null;
-      
-      if ( ok )
-      {
-         item.setIntent( new Intent( Intent.ACTION_VIEW,
-                                     ListOverviews.CONTENT_URI ) );
+         final RtmSmartFilter rtmSmartFilter = (RtmSmartFilter) filter;
+         final List< RtmSmartFilterToken > unAmbigiousTokens = RtmSmartFilterParsing.removeAmbiguousTokens( rtmSmartFilter.getTokens() );
+         show = unAmbigiousTokens.size() > 0;
       }
       
-      return ok;
+      showAddSmartListMenu = Boolean.valueOf( show );
    }
-   
 }

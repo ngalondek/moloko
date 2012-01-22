@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"   
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+
+   <WebView
+       android:id="@+id/webview"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:layout_above="@+id/btn_bar"
+       android:layout_alignParentTop="true" />
+
+   <dev.drsoran.moloko.layouts.BottomButtonBarLayout
+      android:id="@+id/btn_bar"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"  
+      moloko:button1Text="@string/btn_back"
+      moloko:button1OnClick="onBack"
+      moloko:stretchSingleButton="false"/>
+</RelativeLayout>

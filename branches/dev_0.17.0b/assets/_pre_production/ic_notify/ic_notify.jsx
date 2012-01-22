@@ -1,0 +1,1 @@
+resizeImagePx( 24 );

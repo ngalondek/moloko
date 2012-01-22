@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) 2012 Ronny Röhricht
+
+  This file is part of Moloko.
+
+  Moloko is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moloko is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+
+  Contributors:
+   Ronny Röhricht - implementation
+-->
+
+<resources>
+   <string name="key_sync_inverval">sync_interval</string>
+   <string name="key_def_list_local">def_list_local</string>
+   <string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
+   <string name="key_startup_view">startup_view</string>
+   <string name="key_task_sort">task_sort</string>
+   <string name="key_notify_due_tasks">notify_due_tasks</string>
+   <string name="key_notify_due_tasks_before">notify_due_tasks_before</string>
+   <string name="key_notify_due_tasks_ringtone">notify_due_tasks_ringtone</string>
+   <string name="key_notify_due_tasks_vibrate">notify_due_tasks_vibrate</string>
+   <string name="key_notify_due_tasks_led">notify_due_tasks_led</string>
+   <string name="key_notify_permanent">notify_permanent</string>
+   <string name="key_notify_permanent_overdue">notify_permanent_overdue</string>
+   <string name="key_conn_use_https">conn_use_https</string>
+</resources>

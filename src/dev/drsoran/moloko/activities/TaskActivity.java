@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,715 +22,1555 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
-import android.content.ContentProviderClient;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.SpannableString;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
-import android.text.style.ClickableSpan;
-import android.util.Log;
-import android.view.InflateException;
-import android.view.LayoutInflater;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmAuth.Perms;
 import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmTaskNotes;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IEditFragment;
+import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.dialogs.LocationChooser;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
+import dev.drsoran.moloko.fragments.NoteAddFragment;
+import dev.drsoran.moloko.fragments.NoteEditFragment;
+import dev.drsoran.moloko.fragments.NoteFragment;
+import dev.drsoran.moloko.fragments.TaskEditFragment;
+import dev.drsoran.moloko.fragments.TaskFragment;
+import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.DuePickerDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.EstimatePickerDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.RecurrPickerDialogFragment;
+import dev.drsoran.moloko.fragments.factories.TaskFragmentFactory;
+import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
+import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.NoteEditUtils;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
-import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.Participant;
-import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskActivity extends Activity
+public class TaskActivity extends MolokoEditFragmentActivity implements
+         ITaskFragmentListener, ITaskEditFragmentListener,
+         ILoaderFragmentListener, IChangeTagsFragmentListener,
+         IPickerDialogListener
 {
-   private final static String TAG = "Moloko."
-      + TaskActivity.class.getSimpleName();
-   
-   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
-   
-   private Task task;
-   
-   private ViewGroup taskContainer;
-   
-   private View priorityBar;
-   
-   private TextView addedDate;
-   
-   private TextView completedDate;
-   
-   private TextView source;
-   
-   private TextView postponed;
-   
-   private TextView description;
-   
-   private TextView listName;
-   
-   private ViewGroup tagsLayout;
-   
-   private View dateTimeSection;
-   
-   private View locationSection;
-   
-   private ViewGroup participantsSection;
-   
-   private View urlSection;
-   
-   private View taskButtons;
-   
-   private ImageButton completeTaskBtn;
-   
-   private RtmAuth.Perms permission;
-   
-   private List< RtmTaskNote > rtmNotes;
+   public static class Config
+   {
+      public final static String TASK = "task";
+      
+      private final static String EDIT_MODE_FRAG_ID = "editModeFragmentId";
+      
+      private final static String NOTE_FRAGMENT_CONTAINERS = "note_fragment_containers";
+      
+      private final static String NOTE_ID_TO_DELETE = "note_id_to_delete";
+   }
    
    
-
+   protected static class OptionsMenu
+   {
+      public final static int POSTPONE_TASK = R.id.menu_postpone_selected_tasks;
+      
+      public final static int COMPLETE_TASK = R.id.menu_complete_selected_tasks;
+      
+      public final static int UNCOMPLETE_TASK = R.id.menu_uncomplete_selected_tasks;
+      
+      public final static int DELETE_TASK = R.id.menu_delete_selected_tasks;
+      
+      public final static int SAVE = R.id.menu_save;
+      
+      public final static int ABORT = R.id.menu_abort_edit;
+   }
+   
+   
+   private enum FinishEditMode
+   {
+      SAVE, CANCELED, FORCE_CANCELED
+   }
+   
+   
+   private final static class NoteFragmentContainerState implements Parcelable
+   {
+      @SuppressWarnings( "unused" )
+      public static final Parcelable.Creator< NoteFragmentContainerState > CREATOR = new Parcelable.Creator< NoteFragmentContainerState >()
+      {
+         
+         @Override
+         public NoteFragmentContainerState createFromParcel( Parcel source )
+         {
+            return new NoteFragmentContainerState( source );
+         }
+         
+         
+         
+         @Override
+         public NoteFragmentContainerState[] newArray( int size )
+         {
+            return new NoteFragmentContainerState[ size ];
+         }
+         
+      };
+      
+      public final String noteId;
+      
+      public final int noteFragmentContainerId;
+      
+      
+      
+      public NoteFragmentContainerState( String noteId,
+         int noteFragmentContainerId )
+      {
+         this.noteId = noteId;
+         this.noteFragmentContainerId = noteFragmentContainerId;
+      }
+      
+      
+      
+      public NoteFragmentContainerState( Parcel source )
+      {
+         noteId = source.readString();
+         noteFragmentContainerId = source.readInt();
+      }
+      
+      
+      
+      @Override
+      public void writeToParcel( Parcel dest, int flags )
+      {
+         dest.writeString( noteId );
+         dest.writeInt( noteFragmentContainerId );
+      }
+      
+      
+      
+      @Override
+      public int describeContents()
+      {
+         return 0;
+      }
+   }
+   
+   private final static String TASK_NOTE_LAYOUT_TAG_STUB = "frag_layout_";
+   
+   private final static int NEW_NOTE_TEMPORARY_CONTAINER_ID = 1;
+   
+   private final static String NEW_NOTE_TEMPORARY_ID = Integer.toString( NEW_NOTE_TEMPORARY_CONTAINER_ID );
+   
+   private final static String DELETE_TASK_DIALOG_TAG = "del_task?";
+   
+   private final static String DELETE_NOTE_DIALOG_TAG = "del_note?";
+   
+   private final static String FINISH_EDIT_W_CHANGES_END_EDITING = "finish_w_changes_end_edit";
+   
+   private final static String FINISH_EDIT_W_CHANGES_FINISH_ACTIVITY = "finish_w_changes_finish_activity";
+   
+   
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
-      final Intent intent = getIntent();
+      setContentView( R.layout.task_activity );
       
-      if ( intent.getAction().equals( Intent.ACTION_VIEW ) )
+      createTaskFragment();
+      restoreNoteFragmentContainers();
+      
+      onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
+      
+      setActivityInEditMode( getConfiguredEditModeFragmentId() );
+   }
+   
+   
+   
+   @Override
+   protected void onSaveInstanceState( Bundle outState )
+   {
+      saveNoteFragmentContainers();
+      
+      super.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   private void saveNoteFragmentContainers()
+   {
+      final Task task = getTask();
+      
+      if ( task != null )
       {
-         final Uri taskUri = intent.getData();
-         String taskId = null;
+         final List< NoteFragmentContainerState > noteFragmentContainers = new ArrayList< NoteFragmentContainerState >( task.getNumberOfNotes() );
          
-         if ( taskUri != null )
+         if ( task.getNumberOfNotes() > 0 )
          {
-            final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+            final ViewGroup fragmentContainer = getFragmentContainer();
+            final List< String > noteIds = task.getNoteIds();
             
-            if ( client != null )
+            for ( int i = 0, cnt = noteIds.size(); i < cnt; ++i )
             {
-               taskId = taskUri.getLastPathSegment();
-               task = TasksProviderPart.getTask( client, taskId );
+               final String noteId = noteIds.get( i );
+               final View noteFragmentContainer = fragmentContainer.findViewWithTag( noteId );
                
-               client.release();
-            }
-            else
-            {
-               LogUtils.logDBError( this, TAG, "Task" );
+               if ( noteFragmentContainer != null )
+                  noteFragmentContainers.add( new NoteFragmentContainerState( noteId,
+                                                                              noteFragmentContainer.getId() ) );
             }
          }
          
-         if ( task != null )
+         if ( IsActivityInAddingNewNoteMode() )
+            noteFragmentContainers.add( new NoteFragmentContainerState( NEW_NOTE_TEMPORARY_ID,
+                                                                        NEW_NOTE_TEMPORARY_CONTAINER_ID ) );
+         
+         setConfiguredNoteFragmentContainers( noteFragmentContainers );
+      }
+   }
+   
+   
+   
+   private void restoreNoteFragmentContainers()
+   {
+      final List< NoteFragmentContainerState > noteFragmentContainers = getConfiguredNoteFragmentContainers();
+      
+      if ( noteFragmentContainers != null )
+      {
+         final ViewGroup fragmentContainer = getFragmentContainer();
+         
+         for ( NoteFragmentContainerState noteFragmentContainer : noteFragmentContainers )
          {
-            setContentView( R.layout.task_activity );
-            
-            try
-            {
-               taskContainer = (ViewGroup) findViewById( R.id.task_container );
-               priorityBar = taskContainer.findViewById( R.id.task_overview_priority_bar );
-               addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
-               completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
-               source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
-               postponed = (TextView) taskContainer.findViewById( R.id.task_overview_postponed );
-               description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
-               listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
-               tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
-               dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
-               locationSection = taskContainer.findViewById( R.id.task_location );
-               participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
-               taskButtons = taskContainer.findViewById( R.id.task_buttons );
-               urlSection = taskContainer.findViewById( R.id.task_url );
-               completeTaskBtn = (ImageButton) taskContainer.findViewById( R.id.task_buttons_complete );
-            }
-            catch ( final ClassCastException e )
-            {
-               Log.e( TAG, "Invalid layout spec.", e );
-               throw e;
-            }
+            createAndAddNoteFragmentContainer( fragmentContainer,
+                                               noteFragmentContainer.noteFragmentContainerId,
+                                               noteFragmentContainer.noteId );
          }
-         else
+      }
+      
+      setConfiguredNoteFragmentContainers( null );
+   }
+   
+   
+   
+   @Override
+   protected void takeConfigurationFrom( Bundle config )
+   {
+      super.takeConfigurationFrom( config );
+      
+      if ( config.containsKey( Config.EDIT_MODE_FRAG_ID ) )
+         configuration.putInt( Config.EDIT_MODE_FRAG_ID,
+                               config.getInt( Config.EDIT_MODE_FRAG_ID ) );
+      
+      if ( config.containsKey( Config.NOTE_FRAGMENT_CONTAINERS ) )
+         configuration.putParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS,
+                                               config.getParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS ) );
+      
+      if ( config.containsKey( Config.NOTE_ID_TO_DELETE ) )
+         configuration.putString( Config.NOTE_ID_TO_DELETE,
+                                  config.getString( Config.NOTE_ID_TO_DELETE ) );
+   }
+   
+   
+   
+   public int getConfiguredEditModeFragmentId()
+   {
+      return configuration.getInt( Config.EDIT_MODE_FRAG_ID, 0 );
+   }
+   
+   
+   
+   public void setConfiguredEditModeFragmentId( int fragmentId )
+   {
+      configuration.putInt( Config.EDIT_MODE_FRAG_ID, fragmentId );
+   }
+   
+   
+   
+   public List< NoteFragmentContainerState > getConfiguredNoteFragmentContainers()
+   {
+      return configuration.getParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS );
+   }
+   
+   
+   
+   public void setConfiguredNoteFragmentContainers( List< NoteFragmentContainerState > noteFragmentContainers )
+   {
+      if ( noteFragmentContainers != null )
+         configuration.putParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS,
+                                               new ArrayList< NoteFragmentContainerState >( noteFragmentContainers ) );
+      else
+         configuration.remove( Config.NOTE_FRAGMENT_CONTAINERS );
+   }
+   
+   
+   
+   private String getConfiguredNoteIdToDelete()
+   {
+      return configuration.getString( Config.NOTE_ID_TO_DELETE );
+   }
+   
+   
+   
+   private void setConfiguredNoteIdToDelete( String noteIdToDelete )
+   {
+      if ( noteIdToDelete == null )
+         configuration.remove( Config.NOTE_ID_TO_DELETE );
+      else
+         configuration.putString( Config.NOTE_ID_TO_DELETE, noteIdToDelete );
+   }
+   
+   
+   
+   public String getTaskIdFromIntent()
+   {
+      String taskId = null;
+      
+      final Uri taskUri = getIntent().getData();
+      
+      if ( taskUri != null )
+         taskId = taskUri.getLastPathSegment();
+      
+      return taskId;
+   }
+   
+   
+   
+   public Task getTask()
+   {
+      Task task = null;
+      
+      final Fragment fragment = findAddedFragmentById( R.id.frag_task );
+      
+      if ( fragment instanceof TaskEditFragment )
+      {
+         task = ( (TaskEditFragment) fragment ).getConfiguredTaskAssertNotNull();
+      }
+      else if ( fragment instanceof TaskFragment )
+      {
+         task = ( (TaskFragment) fragment ).getLoaderData();
+      }
+      
+      return task;
+   }
+   
+   
+   
+   public Task getTaskAssertNotNull()
+   {
+      final Task task = getTask();
+      
+      if ( task == null )
+         throw new IllegalStateException( "task must not be null" );
+      
+      return task;
+   }
+   
+   
+   
+   public RtmTaskNote getNoteOfNoteFragment( String fragmentTag )
+   {
+      RtmTaskNote note = null;
+      
+      final Fragment fragment = findAddedFragmentByTag( fragmentTag );
+      
+      if ( fragment instanceof NoteEditFragment )
+      {
+         note = ( (NoteEditFragment) fragment ).getConfiguredNoteAssertNotNull();
+      }
+      else if ( fragment instanceof NoteFragment )
+      {
+         note = ( (NoteFragment) fragment ).getNote();
+      }
+      
+      return note;
+   }
+   
+   
+   
+   @Override
+   public boolean onCreateOptionsMenu( Menu menu )
+   {
+      super.onCreateOptionsMenu( menu );
+      
+      final Task task = getTask();
+      
+      final boolean hasRtmWriteAccess = AccountUtils.isWriteableAccess( this );
+      final boolean isInEditMode = IsActivityInEditMode();
+      final boolean taskCanBeEdited = task != null
+         && canEditFragment( R.id.frag_task );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.COMPLETE_TASK,
+                                   getString( R.string.app_task_complete ),
+                                   MenuCategory.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_complete,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   !isInEditMode && taskCanBeEdited
+                                      && task.getCompleted() == null );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.UNCOMPLETE_TASK,
+                                   getString( R.string.app_task_uncomplete ),
+                                   MenuCategory.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_incomplete,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   !isInEditMode && taskCanBeEdited
+                                      && task.getCompleted() != null );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.POSTPONE_TASK,
+                                   getString( R.string.app_task_postpone ),
+                                   MenuCategory.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_postponed,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   !isInEditMode && taskCanBeEdited );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.DELETE_TASK,
+                                   getString( R.string.app_task_delete ),
+                                   MenuCategory.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_trash,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   !isInEditMode && taskCanBeEdited );
+      
+      // Do not check for task != null here cause this is also needed
+      // when adding a new task. In this case the task is always null
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SAVE,
+                                   getString( R.string.app_save ),
+                                   MenuCategory.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_disc,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   isInEditMode && hasRtmWriteAccess );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ABORT,
+                                   getString( R.string.phr_cancel_sync ),
+                                   MenuCategory.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_cancel,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   isInEditMode && hasRtmWriteAccess );
+      return true;
+   }
+   
+   
+   
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case OptionsMenu.COMPLETE_TASK:
          {
-            UIUtils.initializeErrorWithIcon( this,
-                                             R.string.err_entity_not_found,
-                                             getResources().getQuantityString( R.plurals.g_task,
-                                                                               1 ) );
+            final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                                                                           getTaskAssertNotNull(),
+                                                                                                                           true );
+            applyModifications( modifications );
+         }
+            return true;
+            
+         case OptionsMenu.UNCOMPLETE_TASK:
+         {
+            final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                                                                           getTaskAssertNotNull(),
+                                                                                                                           false );
+            applyModifications( modifications );
+         }
+            return true;
+            
+         case OptionsMenu.POSTPONE_TASK:
+         {
+            final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( this,
+                                                                                                                      getTaskAssertNotNull() );
+            applyModifications( modifications );
+         }
+            return true;
+            
+         case OptionsMenu.DELETE_TASK:
+            onDeleteTask( getTaskAssertNotNull().getId() );
+            return true;
+            
+         case OptionsMenu.SAVE:
+            finishEditing( FinishEditMode.SAVE );
+            return true;
+            
+         case OptionsMenu.ABORT:
+            finishEditing( FinishEditMode.CANCELED );
+            return true;
+            
+         default :
+            return super.onOptionsItemSelected( item );
+      }
+   }
+   
+   
+   
+   public void onEditTask( View taskEditButton )
+   {
+      setActivityInEditMode( R.id.frag_task );
+      createTaskEditFragment();
+   }
+   
+   
+   
+   @Override
+   public void onChangeTags( List< String > tags )
+   {
+      showChangeTagsDialog( createTaskEditChangeTagsConfiguration( tags ) );
+   }
+   
+   
+   
+   @Override
+   public void onEditDueByPicker()
+   {
+      MolokoCalendar due = getTaskEditFragment().getDue();
+      
+      if ( due == null || !due.hasDate() )
+      {
+         due = MolokoCalendar.getInstance();
+         due.setHasTime( false );
+      }
+      
+      DuePickerDialogFragment.show( this, due.getTimeInMillis(), due.hasTime() );
+   }
+   
+   
+   
+   @Override
+   public void onEditRecurrenceByPicker()
+   {
+      Pair< String, Boolean > recurrencePattern = getTaskEditFragment().getRecurrencePattern();
+      
+      if ( recurrencePattern == null )
+         recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
+      
+      RecurrPickerDialogFragment.show( this,
+                                       recurrencePattern.first,
+                                       recurrencePattern.second );
+   }
+   
+   
+   
+   @Override
+   public void onEditEstimateByPicker()
+   {
+      final long estimateMillis = getTaskEditFragment().getEstimateMillis();
+      
+      EstimatePickerDialogFragment.show( this, estimateMillis );
+   }
+   
+   
+   
+   public void onAddNote( View addNoteButton )
+   {
+      setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( getTaskAssertNotNull().getTaskSeriesId() ) ) );
+   }
+   
+   
+   
+   public void onEditNote( View noteEditButton )
+   {
+      final Fragment fragment = findAddedFragmentByTag( (String) noteEditButton.getTag() );
+      
+      if ( setFragmentInEditMode( fragment ) )
+         setActivityInEditMode( fragment.getId() );
+   }
+   
+   
+   
+   public void onDeleteNote( View noteDeleteButton )
+   {
+      setConfiguredNoteIdToDelete( (String) noteDeleteButton.getTag() );
+      UIUtils.showDeleteElementDialog( this,
+                                       getString( R.string.app_note ),
+                                       DELETE_NOTE_DIALOG_TAG );
+   }
+   
+   
+   
+   @Override
+   protected void onReEvaluateRtmAccessLevel( Perms currentAccessLevel )
+   {
+      super.onReEvaluateRtmAccessLevel( currentAccessLevel );
+      
+      if ( !IsActivityInEditMode() )
+      {
+         showEditButtons( currentAccessLevel.allowsEditing() );
+         invalidateOptionsMenu();
+      }
+   }
+   
+   
+   
+   @Override
+   public void onBackPressed()
+   {
+      if ( IsActivityInEditMode() )
+         finishEditing( FinishEditMode.CANCELED );
+      else
+         super.onBackPressed();
+   }
+   
+   
+   
+   @Override
+   protected boolean onFinishActivityByHome()
+   {
+      boolean finish = super.onFinishActivityByHome();
+      
+      if ( finish && IsActivityInEditMode() )
+         finish = finishEditingAndFinishActivity( FinishEditMode.CANCELED );
+      
+      return finish;
+   }
+   
+   
+   
+   public void onDeleteTask( String taskId )
+   {
+      final Task task = getTaskAssertNotNull();
+      UIUtils.showDeleteElementDialog( this,
+                                       task.getName(),
+                                       DELETE_TASK_DIALOG_TAG );
+   }
+   
+   
+   
+   @Override
+   public void onOpenLocation( String locationId )
+   {
+      final Task task = getTaskAssertNotNull();
+      LocationChooserDialogFragment.show( this, task );
+   }
+   
+   
+   
+   @Override
+   public void onOpenContact( String fullname, String username )
+   {
+      final Intent intent = Intents.createOpenContactIntent( this,
+                                                             fullname,
+                                                             username );
+      
+      // It is possible that we came here from the ContactsListActivity
+      // by clicking a contact, clicking a task, clicking the contact again.
+      // So we reorder the former contact's tasks list to front.
+      intent.addFlags( Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
+      
+      startActivity( intent );
+   }
+   
+   
+   
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   {
+      if ( dialogId == R.id.dlg_taskactivity_request_remove_note )
+      {
+         if ( which == Dialog.BUTTON_NEGATIVE )
+         {
+            finishAddingNewNote( FinishEditMode.FORCE_CANCELED );
+            setActivityInEditMode( 0 );
          }
       }
       else
       {
-         UIUtils.initializeErrorWithIcon( this,
-                                          R.string.err_unsupported_intent_action,
-                                          intent.getAction() );
+         super.onAlertDialogFragmentClick( dialogId, tag, which );
       }
    }
    
-
-
-   @Override
-   protected void onResume()
-   {
-      super.onResume();
-      
-      permission = AccountUtils.getAccessLevel( this );
-      loadTask();
-   }
    
-
-
-   public void onEditTask( View v )
-   {
-      if ( task != null )
-         startActivityForResult( Intents.createEditTaskIntent( this,
-                                                               task.getId() ),
-                                 TaskEditActivity.REQ_EDIT_TASK );
-   }
    
-
-
    @Override
-   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   protected void handleCancelWithChangesDialogClick( String tag, int which )
    {
-      boolean reloadTask = false;
-      
-      if ( task != null )
+      if ( which == Dialog.BUTTON_POSITIVE )
       {
-         switch ( requestCode )
-         {
-            case TaskEditActivity.REQ_EDIT_TASK:
-               switch ( resultCode )
-               {
-                  case TaskEditActivity.RESULT_EDIT_TASK_CHANGED:
-                     reloadTask = true;
-                     break;
-                  
-                  default :
-                     break;
-               }
-               break;
-            
-            case NoteEditActivity.REQ_EDIT_NOTE:
-               switch ( resultCode )
-               {
-                  case NoteEditActivity.RESULT_EDIT_NOTE_CHANGED:
-                     reloadTask = true;
-                     break;
-                  
-                  default :
-                     break;
-               }
-               break;
-            
-            case AddNoteActivity.REQ_INSERT_NOTE:
-               switch ( resultCode )
-               {
-                  case AddNoteActivity.RESULT_INSERT_NOTE_OK:
-                     reloadTask = true;
-                     break;
-                  
-                  default :
-                     break;
-               }
-               break;
-            
-            default :
-               break;
-         }
-      }
-      
-      if ( reloadTask )
-      {
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+         finishFragmentEditing( getConfiguredEditModeFragmentId(),
+                                FinishEditMode.CANCELED );
          
-         if ( client != null )
+         if ( tag.equals( FINISH_EDIT_W_CHANGES_END_EDITING ) )
          {
-            final Task oldTask = task;
-            task = TasksProviderPart.getTask( client, task.getId() );
-            client.release();
-            
-            if ( task == null )
-               task = oldTask;
+            setActivityInEditMode( 0 );
          }
+         else if ( tag.equals( FINISH_EDIT_W_CHANGES_FINISH_ACTIVITY ) )
+         {
+            finish();
+         }
+      }
+   }
+   
+   
+   
+   @Override
+   protected void handleDeleteElementDialogClick( String tag, int which )
+   {
+      if ( tag.equals( DELETE_NOTE_DIALOG_TAG ) )
+      {
+         if ( which == Dialog.BUTTON_POSITIVE )
+         {
+            deleteNoteImpl( getConfiguredNoteIdToDelete() );
+         }
+         
+         setConfiguredNoteIdToDelete( null );
+      }
+      else if ( tag.equals( DELETE_TASK_DIALOG_TAG ) )
+      {
+         if ( which == Dialog.BUTTON_POSITIVE )
+         {
+            deleteTaskImpl();
+         }
+      }
+   }
+   
+   
+   
+   @Override
+   public void onPickerDialogClosed( AbstractPickerDialogFragment dialog,
+                                     CloseReason reason )
+   {
+      if ( reason == CloseReason.OK )
+      {
+         if ( dialog instanceof DuePickerDialogFragment )
+         {
+            final DuePickerDialogFragment frag = (DuePickerDialogFragment) dialog;
+            getTaskEditFragment().setDue( frag.getCalendar() );
+         }
+         else if ( dialog instanceof RecurrPickerDialogFragment )
+         {
+            final RecurrPickerDialogFragment frag = (RecurrPickerDialogFragment) dialog;
+            getTaskEditFragment().setRecurrencePattern( frag.getPattern() );
+         }
+         else if ( dialog instanceof EstimatePickerDialogFragment )
+         {
+            final EstimatePickerDialogFragment frag = (EstimatePickerDialogFragment) dialog;
+            getTaskEditFragment().setEstimateMillis( frag.getMillis() );
+         }
+      }
+   }
+   
+   
+   
+   private void deleteTaskImpl()
+   {
+      final Task task = getTaskAssertNotNull();
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( TaskActivity.this,
+                                                                                                              task );
+      if ( applyModifications( modifications ) )
+      {
+         finish();
+      }
+   }
+   
+   
+   
+   private void deleteNoteImpl( String noteId )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.deleteNote( this,
+                                                                                                              noteId );
+      if ( applyModifications( modifications ) )
+      {
+         removeNoteFragmentByNoteId( noteId,
+                                     FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+      }
+   }
+   
+   
+   
+   private void setActivityInEditMode( int editFragmentId )
+   {
+      setConfiguredEditModeFragmentId( editFragmentId );
+      
+      showEditButtons( editFragmentId != 0 ? false : true );
+      invalidateOptionsMenu();
+   }
+   
+   
+   
+   private boolean IsActivityInEditMode()
+   {
+      return getConfiguredEditModeFragmentId() != 0;
+   }
+   
+   
+   
+   private boolean IsActivityInAddingNewNoteMode()
+   {
+      return getConfiguredEditModeFragmentId() == NEW_NOTE_TEMPORARY_CONTAINER_ID;
+   }
+   
+   
+   
+   private boolean finishEditing( FinishEditMode how )
+   {
+      if ( !IsActivityInEditMode() )
+         throw new IllegalStateException( "expected to be in edit mode" );
+      
+      if ( how == FinishEditMode.CANCELED
+         && isEditFragmentModified( getConfiguredEditModeFragmentId() ) )
+      {
+         finishEditingShowCancelDialog( FINISH_EDIT_W_CHANGES_END_EDITING );
+         return false;
+      }
+      else
+      {
+         if ( finishFragmentEditing( getConfiguredEditModeFragmentId(), how ) )
+            setActivityInEditMode( 0 );
+         
+         return true;
+      }
+   }
+   
+   
+   
+   private boolean finishEditingAndFinishActivity( FinishEditMode how )
+   {
+      if ( !IsActivityInEditMode() )
+         throw new IllegalStateException( "expected to be in edit mode" );
+      
+      if ( how == FinishEditMode.CANCELED
+         && isEditFragmentModified( getConfiguredEditModeFragmentId() ) )
+      {
+         finishEditingShowCancelDialog( FINISH_EDIT_W_CHANGES_FINISH_ACTIVITY );
+         return false;
+      }
+      else
+      {
+         // Do not call finish() here since the caller will finish if we return
+         // true
+         return finishFragmentEditing( getConfiguredEditModeFragmentId(), how );
+      }
+   }
+   
+   
+   
+   private void finishEditingShowCancelDialog( String how )
+   {
+      requestCancelEditing( how );
+   }
+   
+   
+   
+   private boolean setFragmentInEditMode( Fragment fragment )
+   {
+      if ( fragment instanceof IEditableFragment< ? > )
+      {
+         final IEditableFragment< ? > editableFragment = (IEditableFragment< ? >) fragment;
+         
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         
+         transaction.replace( fragment.getId(),
+                              (Fragment) editableFragment.createEditFragmentInstance(),
+                              fragment.getTag() );
+         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+         
+         transaction.commit();
+         
+         return true;
+      }
+      
+      return false;
+   }
+   
+   
+   
+   private boolean isEditFragmentModified( int fragmentId )
+   {
+      boolean hasChanges = false;
+      
+      final Fragment fragment = findAddedFragmentById( fragmentId );
+      
+      if ( fragment instanceof IEditFragment< ? > )
+      {
+         final IEditFragment< ? > editFragment = (IEditFragment< ? >) fragment;
+         hasChanges = editFragment.hasChanges();
+      }
+      
+      return hasChanges;
+   }
+   
+   
+   
+   private boolean finishFragmentEditing( int fragmentContainerId,
+                                          FinishEditMode how )
+   {
+      if ( IsActivityInAddingNewNoteMode() )
+         return finishAddingNewNote( how );
+      else
+         return finishFragmentEditingImpl( fragmentContainerId, how );
+   }
+   
+   
+   
+   private boolean finishFragmentEditingImpl( int fragmentContainerId,
+                                              FinishEditMode how )
+   {
+      boolean finished = true;
+      
+      final Fragment fragment = findAddedFragmentById( fragmentContainerId );
+      
+      if ( fragment instanceof IEditFragment< ? > )
+      {
+         final IEditFragment< ? > editFragment = (IEditFragment< ? >) fragment;
+         
+         if ( how == FinishEditMode.SAVE )
+            finished = editFragment.onFinishEditing();
          else
+            editFragment.onCancelEditing();
+         
+         if ( finished )
          {
-            LogUtils.logDBError( this, TAG, "Task" );
-         }
-      }
-   }
-   
-
-
-   public void onCompleteTask( View v )
-   {
-      if ( task != null )
-      {
-         TaskEditUtils.setTaskCompletion( this,
-                                          task,
-                                          task.getCompleted() == null );
-      }
-      
-      finish();
-   }
-   
-
-
-   public void onPostponeTask( View v )
-   {
-      if ( task != null )
-         TaskEditUtils.postponeTask( this, task );
-      
-      finish();
-   }
-   
-
-
-   public void onDeleteTask( View v )
-   {
-      if ( task != null )
-      {
-         UIUtils.newDeleteElementDialog( this, task.getName(), new Runnable()
-         {
-            public void run()
+            final Fragment editableFragment = (Fragment) editFragment.createEditableFragmentInstance();
+            
+            if ( editableFragment != null )
             {
-               TaskEditUtils.deleteTask( TaskActivity.this, task );
+               final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+               
+               transaction.replace( fragment.getId(),
+                                    editableFragment,
+                                    fragment.getTag() );
+               transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+               
+               transaction.commit();
+            }
+            else
+            {
                finish();
             }
-         }, null ).show();
+         }
       }
-   }
-   
-
-
-   public void onEditNote( View v )
-   {
-      startActivityForResult( Intents.createEditNoteIntent( this,
-                                                            (String) v.getTag(),
-                                                            true ),
-                              NoteEditActivity.REQ_EDIT_NOTE );
-   }
-   
-
-
-   public void onAddNote( View v )
-   {
-      if ( task != null )
-      {
-         startActivityForResult( Intents.createAddNoteIntent( this,
-                                                              task.getTaskSeriesId() ),
-                                 AddNoteActivity.REQ_INSERT_NOTE );
-      }
-   }
-   
-
-
-   public void onDeleteNote( View v )
-   {
-      if ( task != null )
-      {
-         final String noteId = (String) v.getTag();
-         
-         UIUtils.newDeleteElementDialog( this,
-                                         getString( R.string.app_note ),
-                                         new Runnable()
-                                         {
-                                            public void run()
-                                            {
-                                               NoteEditUtils.deleteNote( TaskActivity.this,
-                                                                         noteId );
-                                               loadAndInflateNotes( taskContainer,
-                                                                    task );
-                                            }
-                                         },
-                                         null )
-                .show();
-      }
-   }
-   
-
-
-   public void onBack( View v )
-   {
-      finish();
-   }
-   
-
-
-   private void loadTask()
-   {
-      if ( task != null )
-      {
-         UIUtils.setPriorityColor( priorityBar, task );
-         
-         addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
-                                                                .getTime(),
-                                                            FULL_DATE_FLAGS ) );
-         
-         if ( task.getCompleted() != null )
-         {
-            completedDate.setVisibility( View.VISIBLE );
-            completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
-                                                                       .getTime(),
-                                                                   FULL_DATE_FLAGS ) );
-            completeTaskBtn.setImageResource( R.drawable.ic_button_task_unchecked_check );
-         }
-         else
-         {
-            completedDate.setVisibility( View.GONE );
-            completeTaskBtn.setImageResource( R.drawable.ic_button_task_checked_check );
-         }
-         
-         if ( task.getPosponed() > 0 )
-         {
-            postponed.setText( getString( R.string.task_postponed,
-                                          task.getPosponed() ) );
-            postponed.setVisibility( View.VISIBLE );
-         }
-         else
-            postponed.setVisibility( View.GONE );
-         
-         if ( !TextUtils.isEmpty( task.getSource() ) )
-         {
-            String sourceStr = task.getSource();
-            if ( sourceStr.equalsIgnoreCase( "js" ) )
-               sourceStr = "web";
-            
-            source.setText( getString( R.string.task_source, sourceStr ) );
-         }
-         else
-            source.setText( "?" );
-         
-         UIUtils.setTaskDescription( description, task, null );
-         
-         listName.setText( task.getListName() );
-         
-         UIUtils.inflateTags( this, tagsLayout, task.getTags(), null, null );
-         
-         setDateTimeSection( dateTimeSection, task );
-         
-         setLocationSection( locationSection, task );
-         
-         setParticipantsSection( participantsSection, task );
-         
-         if ( !TextUtils.isEmpty( task.getUrl() ) )
-         {
-            urlSection.setVisibility( View.VISIBLE );
-            ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
-         }
-         else
-         {
-            urlSection.setVisibility( View.GONE );
-         }
-         
-         loadAndInflateNotes( taskContainer, task );
-         
-         permission.setVisible( taskButtons );
-      }
-   }
-   
-
-
-   private void setDateTimeSection( View view, Task task )
-   {
-      final boolean hasDue = task.getDue() != null;
-      final boolean hasEstimate = !TextUtils.isEmpty( task.getEstimate() );
-      final boolean isRecurrent = !TextUtils.isEmpty( task.getRecurrence() );
       
-      // Check if we need this section
-      if ( !hasEstimate && !hasDue && !isRecurrent )
+      return finished;
+   }
+   
+   
+   
+   private void removeNoteFragmentByNoteId( String noteId, int transit )
+   {
+      if ( removeFragmentByTag( noteId, transit ) )
       {
-         view.setVisibility( View.GONE );
+         final ViewGroup fragmentContainer = getFragmentContainer();
+         final View taskNoteLayout = fragmentContainer.findViewWithTag( createTaskNoteLayoutTag( noteId ) );
+         
+         if ( taskNoteLayout != null )
+            fragmentContainer.removeView( taskNoteLayout );
       }
-      else
+   }
+   
+   
+   
+   private void showEditButtons( boolean show )
+   {
+      showTaskEditButtons( show );
+      
+      final ViewGroup fragmentContainer = getFragmentContainer();
+      
+      for ( int i = 0, cnt = fragmentContainer.getChildCount(); i < cnt; ++i )
       {
-         view.setVisibility( View.VISIBLE );
+         final View view = fragmentContainer.getChildAt( i );
+         final Object tag = view.getTag();
          
-         final StringBuilder textBuffer = new StringBuilder();
-         
-         if ( hasDue )
+         if ( tag instanceof String
+            && ( (String) tag ).startsWith( TASK_NOTE_LAYOUT_TAG_STUB ) )
          {
-            if ( task.hasDueTime() )
-               UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( task.getDue()
-                                                                            .getTime(),
-                                                                        MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                           | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
-            else
-               UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( task.getDue()
-                                                                        .getTime(),
-                                                                    MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                       | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
-            
+            showNoteEditButtonsOfNoteFragment( (String) tag, show );
          }
-         
-         if ( isRecurrent )
+      }
+   }
+   
+   
+   
+   private void showTaskEditButtons( boolean show )
+   {
+      show = show && canEditFragment( R.id.frag_task );
+      findViewById( R.id.task_buttons ).setVisibility( show ? View.VISIBLE
+                                                           : View.GONE );
+   }
+   
+   
+   
+   private void showNoteEditButtonsOfNoteFragment( String taskNoteLayoutTag,
+                                                   boolean show )
+   {
+      show = show
+         && canEditFragment( getNoteIdFromTaskNoteLayoutTag( taskNoteLayoutTag ) );
+      
+      final View taskNoteLayout = getFragmentContainer().findViewWithTag( taskNoteLayoutTag );
+      
+      if ( taskNoteLayout != null )
+      {
+         final View buttonsContainer = taskNoteLayout.findViewById( R.id.note_buttons );
+         if ( buttonsContainer != null )
          {
-            final String sentence = RecurrenceParsing.parseRecurrencePattern( task.getRecurrence(),
-                                                                              task.isEveryRecurrence() );
+            buttonsContainer.setVisibility( show ? View.VISIBLE : View.GONE );
+         }
+      }
+   }
+   
+   
+   
+   private void createTaskFragment()
+   {
+      final Fragment taskFragment = findAddedFragmentById( R.id.frag_task );
+      
+      if ( taskFragment == null )
+         createInitialTaskFragmentByIntent( getIntent() );
+      else if ( R.id.frag_task != getConfiguredEditModeFragmentId() )
+         updateTaskFragment();
+   }
+   
+   
+   
+   private void createInitialTaskFragmentByIntent( Intent intent )
+   {
+      final Fragment fragment = TaskFragmentFactory.newFragment( this,
+                                                                 getIntent(),
+                                                                 createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
+      if ( fragment != null )
+      {
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         
+         transaction.add( R.id.frag_task, fragment, createTaskFragmentTag() );
+         
+         transaction.commit();
+         
+         if ( fragment instanceof IEditFragment< ? > )
+            setConfiguredEditModeFragmentId( R.id.frag_task );
+      }
+   }
+   
+   
+   
+   private void updateTaskFragment()
+   {
+      final Fragment fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      transaction.replace( R.id.frag_task, fragment, createTaskFragmentTag() );
+      
+      transaction.commit();
+   }
+   
+   
+   
+   private void createTaskEditFragment()
+   {
+      final Fragment fragment = TaskEditFragment.newInstance( createTaskEditFragmentConfiguration( getTaskAssertNotNull() ) );
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      transaction.replace( R.id.frag_task, fragment, createTaskFragmentTag() );
+      
+      transaction.commit();
+   }
+   
+   
+   
+   private Bundle createTaskFragmentConfiguration( String taskId )
+   {
+      final Bundle config = getFragmentConfigurations( R.id.frag_task );
+      
+      config.putString( TaskFragment.Config.TASK_ID, taskId );
+      
+      return config;
+   }
+   
+   
+   
+   private Bundle createTaskEditFragmentConfiguration( Task task )
+   {
+      final Bundle config = getFragmentConfigurations( R.id.frag_task );
+      
+      config.putParcelable( TaskEditFragment.Config.TASK, task );
+      
+      return config;
+   }
+   
+   
+   
+   private String createTaskFragmentTag()
+   {
+      return String.valueOf( R.id.frag_task );
+   }
+   
+   
+   
+   private Bundle createTaskEditChangeTagsConfiguration( List< String > tags )
+   {
+      final Bundle config = new Bundle( 2 );
+      
+      config.putStringArrayList( ChangeTagsDialogFragment.Config.TAGS,
+                                 new ArrayList< String >( tags ) );
+      
+      return config;
+   }
+   
+   
+   
+   private void showNoteFragmentsOfTask( Task task )
+   {
+      removeDeletedNoteFragmentsOfTask( task );
+      
+      if ( task.getNumberOfNotes() > 0 )
+      {
+         final ViewGroup fragmentContainer = getFragmentContainer();
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         
+         final List< String > noteIds = task.getNoteIds();
+         
+         for ( int i = 0, cnt = noteIds.size(); i < cnt; ++i )
+         {
+            final String noteId = noteIds.get( i );
+            final Fragment noteFragment = findAddedFragmentByTag( noteId );
+            final int noteFragmentContainerId = createNoteFragmentContainerId( noteId );
             
-            // In this case we add the 'repeat' to the beginning of the pattern, otherwise
-            // the 'repeat' will be the header of the section.
-            if ( hasDue || hasEstimate )
+            if ( noteFragment == null )
             {
-               UIUtils.appendAtNewLine( textBuffer,
-                                        getString( R.string.task_datetime_recurr_inline,
-                                                   ( sentence != null
-                                                                     ? sentence
-                                                                     : getString( R.string.task_datetime_err_recurr ) ) ) );
+               createNoteFragmentAndContainerFromId( fragmentContainer,
+                                                     noteFragmentContainerId,
+                                                     noteId,
+                                                     transaction );
             }
-            else
+            else if ( noteFragment.getId() != getConfiguredEditModeFragmentId() )
             {
-               UIUtils.appendAtNewLine( textBuffer,
-                                        ( sentence != null
-                                                          ? sentence
-                                                          : getString( R.string.task_datetime_err_recurr ) ) );
+               updateNoteFragment( noteFragment, transaction );
             }
-            
          }
          
-         if ( hasEstimate )
-         {
-            UIUtils.appendAtNewLine( textBuffer,
-                                     getString( R.string.task_datetime_estimate_inline,
-                                                MolokoDateUtils.formatEstimated( this,
-                                                                                 task.getEstimateMillis() ) ) );
-         }
-         
-         // Determine the section title
-         int titleId;
-         
-         if ( hasDue )
-            titleId = R.string.task_datetime_title_due;
-         else if ( hasEstimate )
-            titleId = R.string.task_datetime_title_estimate;
-         else
-            titleId = R.string.task_datetime_title_recurr;
-         
-         if ( !UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( titleId ),
-                                                      textBuffer.toString() ) )
-            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+         transaction.commit();
       }
    }
    
-
-
-   private void setLocationSection( View view, final Task task )
+   
+   
+   private void createNoteFragmentAndContainerFromId( ViewGroup fragmentContainer,
+                                                      int fragmentContainerId,
+                                                      String noteId,
+                                                      FragmentTransaction transaction )
    {
-      String locationName = null;
+      createAndAddNoteFragmentContainer( fragmentContainer,
+                                         fragmentContainerId,
+                                         noteId );
       
-      boolean showSection = !TextUtils.isEmpty( task.getLocationId() );
+      final NoteFragment noteFragment = createNoteFragment( noteId );
       
-      if ( showSection )
+      transaction.add( fragmentContainerId, noteFragment, noteId );
+   }
+   
+   
+   
+   private NoteFragment createNoteFragment( String noteId )
+   {
+      final NoteFragment noteFragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
+      
+      // If the Task changes, it will update the notes. This prevents "Note not found errors" for deleted
+      // notes if the NoteFragment updates itself.
+      noteFragment.setRespectContentChanges( false );
+      
+      return noteFragment;
+   }
+   
+   
+   
+   private void updateNoteFragment( Fragment oldFragment,
+                                    FragmentTransaction transaction )
+   {
+      final NoteFragment noteFragment = createNoteFragment( oldFragment.getTag() );
+      transaction.replace( oldFragment.getId(),
+                           noteFragment,
+                           oldFragment.getTag() );
+   }
+   
+   
+   
+   private void removeDeletedNoteFragmentsOfTask( Task task )
+   {
+      final List< String > noteIds = task.getNoteIds();
+      final ViewGroup fragmentContainer = getFragmentContainer();
+      
+      // getChildCount() has to be evaluated in every iteration cause we may delete views here.
+      for ( int i = 0; i < fragmentContainer.getChildCount(); ++i )
       {
-         // Tasks which are received by sharing from someone else may also have
-         // a location ID set. But this ID is from the other ones DB. We identify
-         // these tasks not by looking for the ID in our DB. These tasks do not
-         // have a name and a location of 0.0, 0.0.
-         //
-         // @see: Issue 12: http://code.google.com/p/moloko/issues/detail?id=12
-         locationName = task.getLocationName();
+         final View view = fragmentContainer.getChildAt( i );
+         final Object tag = view.getTag();
          
-         showSection = !TextUtils.isEmpty( locationName )
-            || Float.compare( task.getLongitude(), 0.0f ) != 0
-            || Float.compare( task.getLatitude(), 0.0f ) != 0;
-      }
-      
-      if ( !showSection )
-      {
-         view.setVisibility( View.GONE );
-      }
-      else
-      {
-         view.setVisibility( View.VISIBLE );
-         
-         if ( TextUtils.isEmpty( locationName ) )
+         if ( tag instanceof String
+            && ( (String) tag ).startsWith( TASK_NOTE_LAYOUT_TAG_STUB ) )
          {
-            locationName = "Lon: " + task.getLongitude() + ", Lat: "
-               + task.getLatitude();
-         }
-         
-         boolean locationIsClickable = task.isViewable();
-         
-         if ( locationIsClickable )
-         {
-            final LocationChooser locationChooser = new LocationChooser( this,
-                                                                         task );
+            final ViewGroup taskNoteLayout = (ViewGroup) view;
             
-            // Check if we can click the location
-            if ( locationChooser.hasIntents() )
+            boolean found = false;
+            for ( int j = 0, cntTaskNoteChilds = taskNoteLayout.getChildCount(); j < cntTaskNoteChilds
+               && !found; ++j )
             {
-               final SpannableString clickableLocation = new SpannableString( locationName );
-               clickableLocation.setSpan( new ClickableSpan()
+               final View taskNoteChild = taskNoteLayout.getChildAt( j );
+               final Object taskNoteChildTag = taskNoteChild.getTag();
+               
+               if ( taskNoteChildTag instanceof String )
                {
-                  @Override
-                  public void onClick( View widget )
+                  found = true;
+                  
+                  final String addedNoteId = (String) taskNoteChildTag;
+                  final int noteFragmentContainerId = taskNoteChild.getId();
+                  
+                  if ( noteFragmentContainerId != NEW_NOTE_TEMPORARY_CONTAINER_ID
+                     && !noteIds.contains( addedNoteId ) )
                   {
-                     locationChooser.showChooser();
+                     if ( noteFragmentContainerId == getConfiguredEditModeFragmentId() )
+                     {
+                        requestRemovingEditNoteFragment( addedNoteId );
+                     }
+                     else
+                     {
+                        removeNoteFragmentByNoteId( addedNoteId,
+                                                    FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+                     }
                   }
-               }, 0, clickableLocation.length(), 0 );
-               
-               UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( R.string.task_location ),
-                                                      clickableLocation );
+               }
             }
-            else
-            {
-               locationIsClickable = false;
-            }
-         }
-         
-         if ( !locationIsClickable )
-         {
-            if ( !UIUtils.initializeTitleWithTextLayout( view,
-                                                         getString( R.string.task_location ),
-                                                         locationName ) )
-               throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
          }
       }
    }
    
-
-
-   private void setParticipantsSection( ViewGroup view, Task task )
+   
+   
+   private int createAddNewNoteFragment( Bundle fragmentConfig )
    {
-      view.removeAllViews();
+      final int noteFragmentContainerId = createAddNewNoteFragmentContainer();
       
-      final ParticipantList participants = task.getParticipants();
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      final Fragment fragment = NoteAddFragment.newInstance( fragmentConfig );
       
-      if ( participants != null && participants.getCount() > 0 )
-      {
-         view.setVisibility( View.VISIBLE );
-         
-         for ( final Participant participant : participants.getParticipants() )
-         {
-            final SpannableString clickableContact = new SpannableString( participant.getFullname() );
-            
-            clickableContact.setSpan( new ClickableSpan()
-            {
-               @Override
-               public void onClick( View widget )
-               {
-                  final Intent intent = Intents.createOpenContactIntent( TaskActivity.this,
-                                                                         participant.getFullname(),
-                                                                         participant.getUsername() );
-                  
-                  // It is possible that we came here from the ContactsListActivity
-                  // by clicking a contact, clicking a task, clicking the contact again.
-                  // So we reorder the former contact's tasks list to front.
-                  intent.addFlags( Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
-                  
-                  startActivity( intent );
-               }
-            },
-                                      0,
-                                      clickableContact.length(),
-                                      0 );
-            
-            final TextView textView = new TextView( this );
-            UIUtils.applySpannable( textView, clickableContact );
-            
-            view.addView( textView );
-         }
-      }
+      transaction.add( noteFragmentContainerId, fragment, NEW_NOTE_TEMPORARY_ID );
+      transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+      
+      transaction.commit();
+      
+      return noteFragmentContainerId;
+   }
+   
+   
+   
+   private void replaceEditNoteFragmentWithAddNoteFragment( String noteId )
+   {
+      final Task task = getTaskAssertNotNull();
+      
+      final NoteEditFragment noteEditFragment = (NoteEditFragment) findAddedFragmentByTag( noteId );
+      final String currentTitle = noteEditFragment.getNoteTitle();
+      final String currentText = noteEditFragment.getNoteText();
+      
+      removeNoteFragmentByNoteId( noteId, FragmentTransaction.TRANSIT_NONE );
+      
+      setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( task.getTaskSeriesId(),
+                                                                                              currentTitle,
+                                                                                              currentText ) ) );
+   }
+   
+   
+   
+   private int createAddNewNoteFragmentContainer()
+   {
+      final ViewGroup fragmentContainer = getFragmentContainer();
+      
+      createAndAddNoteFragmentContainer( fragmentContainer,
+                                         NEW_NOTE_TEMPORARY_CONTAINER_ID,
+                                         NEW_NOTE_TEMPORARY_ID );
+      
+      return NEW_NOTE_TEMPORARY_CONTAINER_ID;
+   }
+   
+   
+   
+   private Bundle createAddNewNoteFragmentConfiguration( String taskSeriesId )
+   {
+      final Bundle config = new Bundle();
+      
+      config.putString( NoteAddFragment.Config.TASKSERIES_ID, taskSeriesId );
+      
+      return config;
+   }
+   
+   
+   
+   private Bundle createAddNewNoteFragmentConfiguration( String taskSeriesId,
+                                                         String noteTitle,
+                                                         String noteText )
+   {
+      final Bundle config = createAddNewNoteFragmentConfiguration( taskSeriesId );
+      
+      if ( !TextUtils.isEmpty( noteTitle ) )
+         config.putString( NoteAddFragment.Config.NEW_NOTE_TITLE, noteTitle );
+      if ( !TextUtils.isEmpty( noteText ) )
+         config.putString( NoteAddFragment.Config.NEW_NOTE_TEXT, noteText );
+      
+      return config;
+   }
+   
+   
+   
+   private boolean finishAddingNewNote( FinishEditMode how )
+   {
+      final IEditFragment< ? > addNewNoteFragment = (IEditFragment< ? >) findAddedFragmentByTag( NEW_NOTE_TEMPORARY_ID );
+      
+      boolean ok = true;
+      
+      if ( how == FinishEditMode.SAVE )
+         ok = addNewNoteFragment.onFinishEditing();
       else
-      {
-         view.setVisibility( View.GONE );
-      }
+         addNewNoteFragment.onCancelEditing();
+      
+      if ( ok )
+         removeNoteFragmentByNoteId( NEW_NOTE_TEMPORARY_ID,
+                                     FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+      
+      return ok;
    }
    
-
-
-   private void loadAndInflateNotes( ViewGroup taskContainer, Task task )
+   
+   
+   private View createAndAddNoteFragmentContainer( ViewGroup fragmentContainer,
+                                                   int fragmentContainerId,
+                                                   String noteId )
    {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+      final View taskNoteLayout = getLayoutInflater().inflate( R.layout.task_note,
+                                                               fragmentContainer,
+                                                               false );
+      taskNoteLayout.setTag( createTaskNoteLayoutTag( noteId ) );
       
-      if ( client != null )
-      {
-         final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
-                                                                      task.getTaskSeriesId() );
-         client.release();
-         
-         if ( rtmNotes != null )
-            this.rtmNotes = rtmNotes.getNotes();
-         else
-            LogUtils.logDBError( this, TAG, "Notes" );
-         
-         inflateNotes( taskContainer, task );
-      }
+      final View noteFragContainer = taskNoteLayout.findViewById( R.id.note_fragment_container );
+      noteFragContainer.setId( fragmentContainerId );
+      noteFragContainer.setTag( noteId );
+      
+      final RtmAuth.Perms accessLevel = AccountUtils.getAccessLevel( this );
+      
+      final boolean showNoteButtons = accessLevel.allowsEditing()
+         && !IsActivityInEditMode();
+      
+      taskNoteLayout.findViewById( R.id.note_buttons )
+                    .setVisibility( showNoteButtons ? View.VISIBLE : View.GONE );
+      
+      final View editNoteButton = taskNoteLayout.findViewById( R.id.note_buttons_edit );
+      editNoteButton.setTag( noteId );
+      
+      final View deleteNoteButton = taskNoteLayout.findViewById( R.id.note_buttons_delete );
+      deleteNoteButton.setTag( noteId );
+      
+      fragmentContainer.addView( taskNoteLayout );
+      
+      return noteFragContainer;
    }
    
-
-
-   private void inflateNotes( ViewGroup taskContainer, Task task )
+   
+   
+   private void requestRemovingEditNoteFragment( final String noteId )
    {
-      UIUtils.removeTaggedViews( taskContainer, "note" );
+      replaceEditNoteFragmentWithAddNoteFragment( noteId );
       
-      if ( rtmNotes != null && rtmNotes.size() > 0 )
+      new AlertDialogFragment.Builder( R.id.dlg_taskactivity_request_remove_note ).setMessage( getString( R.string.task_dlg_removing_editing_note ) )
+                                                                                  .setPositiveButton( R.string.btn_edit )
+                                                                                  .setNegativeButton( R.string.btn_delete )
+                                                                                  .show( this );
+   }
+   
+   
+   
+   private String createTaskNoteLayoutTag( String fragmentTag )
+   {
+      return TASK_NOTE_LAYOUT_TAG_STUB + fragmentTag;
+   }
+   
+   
+   
+   private String getNoteIdFromTaskNoteLayoutTag( String taskNoteLayoutTag )
+   {
+      return taskNoteLayoutTag.substring( TASK_NOTE_LAYOUT_TAG_STUB.length() );
+   }
+   
+   
+   
+   private int createNoteFragmentContainerId( String noteId )
+   {
+      return Integer.parseInt( noteId );
+   }
+   
+   
+   
+   private Bundle createNoteFragmentConfiguration( String noteId )
+   {
+      final Bundle config = new Bundle();
+      
+      config.putString( NoteFragment.Config.NOTE_ID, noteId );
+      
+      return config;
+   }
+   
+   
+   
+   private void showChangeTagsDialog( Bundle config )
+   {
+      final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+      final DialogFragment newFragment = ChangeTagsDialogFragment.newInstance( config );
+      
+      newFragment.show( fragmentTransaction,
+                        String.valueOf( R.id.frag_change_tags ) );
+   }
+   
+   
+   
+   @Override
+   public void onTagsChanged( List< String > tags )
+   {
+      final AbstractTaskEditFragment< ? > taskEditFragment = getTaskEditFragment();
+      taskEditFragment.setTags( tags );
+   }
+   
+   
+   
+   private void setPriorityBarVisibility()
+   {
+      final View taskFragmentContainer = findViewById( R.id.frag_task );
+      final View priorityBar = taskFragmentContainer.findViewById( R.id.task_overview_priority_bar );
+      final Task task = getTask();
+      
+      final boolean prioBarVisible = task != null
+         && R.id.frag_task != getConfiguredEditModeFragmentId();
+      
+      priorityBar.setVisibility( prioBarVisible ? View.VISIBLE : View.GONE );
+      
+      if ( prioBarVisible )
+         UIUtils.setPriorityColor( priorityBar, task );
+   }
+   
+   
+   
+   private ViewGroup getFragmentContainer()
+   {
+      return (ViewGroup) findViewById( R.id.fragment_container );
+   }
+   
+   
+   
+   private boolean canEditFragment( int fragId )
+   {
+      boolean canEdit = false;
+      
+      final Fragment fragment = findAddedFragmentById( fragId );
+      canEdit = ( fragment instanceof IEditableFragment< ? > )
+         && ( (IEditableFragment< ? >) fragment ).canBeEdited();
+      
+      return canEdit;
+   }
+   
+   
+   
+   private boolean canEditFragment( String fragmentTag )
+   {
+      boolean canEdit = false;
+      
+      final Fragment fragment = findAddedFragmentByTag( fragmentTag );
+      canEdit = ( fragment instanceof IEditableFragment< ? > )
+         && ( (IEditableFragment< ? >) fragment ).canBeEdited();
+      
+      return canEdit;
+   }
+   
+   
+   
+   private AbstractTaskEditFragment< ? > getTaskEditFragment() throws AssertionError
+   {
+      if ( getConfiguredEditModeFragmentId() != R.id.frag_task )
+         throw new AssertionError( "expected to be in task editing mode" );
+      
+      final AbstractTaskEditFragment< ? > taskEditFragment = (AbstractTaskEditFragment< ? >) findAddedFragmentById( R.id.frag_task );
+      return taskEditFragment;
+   }
+   
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return null;
+   }
+   
+   
+   
+   @Override
+   public void onFragmentLoadStarted( int fragmentId, String fragmentTag )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onFragmentLoadFinished( final int fragmentId,
+                                       final String fragmentTag,
+                                       final boolean success )
+   {
+      if ( fragmentId == R.id.frag_task )
       {
-         try
+         handler.postAtFrontOfQueue( new Runnable()
          {
-            for ( final RtmTaskNote note : rtmNotes )
+            @Override
+            public void run()
             {
-               final ViewGroup noteViewLayout = (ViewGroup) LayoutInflater.from( this )
-                                                                          .inflate( R.layout.task_note,
-                                                                                    taskContainer,
-                                                                                    false );
-               try
-               {
-                  final TextView createdDate = (TextView) noteViewLayout.findViewById( R.id.note_created_date );
-                  createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
-                                                                           .getTime(),
-                                                                       FULL_DATE_FLAGS ) );
-                  
-               }
-               catch ( final ClassCastException e )
-               {
-                  Log.e( TAG, "Invalid layout spec.", e );
-                  throw e;
-               }
+               final Task task = getTask();
                
-               if ( UIUtils.initializeTitleWithTextLayout( noteViewLayout,
-                                                           note.getTitle(),
-                                                           note.getText() ) )
-               {
-                  final View noteButtons = noteViewLayout.findViewById( R.id.note_buttons );
-                  permission.setVisible( noteButtons );
-                  
-                  noteButtons.findViewById( R.id.note_buttons_edit )
-                             .setTag( note.getId() );
-                  noteButtons.findViewById( R.id.note_buttons_delete )
-                             .setTag( note.getId() );
-                  
-                  taskContainer.addView( noteViewLayout );
-               }
-               else
-               {
-                  throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
-               }
+               if ( task != null )
+                  showNoteFragmentsOfTask( task );
+               
+               setPriorityBarVisibility();
+               showTaskEditButtons( !IsActivityInEditMode() && task != null );
+               invalidateOptionsMenu();
             }
-         }
-         catch ( final InflateException e )
+         } );
+      }
+      else if ( fragmentId != NEW_NOTE_TEMPORARY_CONTAINER_ID )
+      {
+         handler.postAtFrontOfQueue( new Runnable()
          {
-            Log.e( TAG, "Invalid layout spec.", e );
-            throw e;
-         }
+            @Override
+            public void run()
+            {
+               showNoteEditButtonsOfNoteFragment( createTaskNoteLayoutTag( fragmentTag ),
+                                                  !IsActivityInEditMode()
+                                                     && success );
+            }
+         } );
       }
    }
 }

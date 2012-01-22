@@ -134,13 +134,13 @@ public class RtmList extends RtmData
    {
       this.id = source.readString();
       this.name = source.readString();
-      this.created = source.readParcelable( null );
-      this.modified = source.readParcelable( null );
-      this.deleted = source.readParcelable( null );
+      this.created = ParcelableDate.fromParcel( source );
+      this.modified = ParcelableDate.fromParcel( source );
+      this.deleted = ParcelableDate.fromParcel( source );
       this.locked = source.readInt();
       this.archived = source.readInt();
       this.position = source.readInt();
-      this.smartFilter = source.readParcelable( null );
+      this.smartFilter = source.readParcelable( RtmSmartFilter.class.getClassLoader() );
    }
    
 

@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,16 +35,18 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.RecurrenceLexer;
-import dev.drsoran.moloko.grammar.RecurrenceParser;
-import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
-import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
+import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
+import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserFactory;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternLexer;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
 
 public final class RecurrenceParsing
@@ -58,12 +61,10 @@ public final class RecurrenceParsing
    
    private static RecurrPatternLanguage lang;
    
-   private static RecurrenceLexer recurrenceLexer;
-   
-   private static RecurrenceParser recurrenceParser;
+   private static IRecurrenceParser recurrenceParser;
    
    
-
+   
    public final static void initPatternLanguage( Resources resources )
    {
       try
@@ -78,16 +79,25 @@ public final class RecurrenceParsing
       }
    }
    
-
-
+   
+   
    public synchronized final static RecurrPatternLanguage getPatternLanguage()
    {
       return new RecurrPatternLanguage( lang );
    }
    
-
-
+   
+   
    public synchronized final static String parseRecurrencePattern( String pattern,
+                                                                   boolean isEvery )
+   {
+      return parseRecurrencePattern( null, pattern, isEvery );
+   }
+   
+   
+   
+   public synchronized final static String parseRecurrencePattern( Context context,
+                                                                   String pattern,
                                                                    boolean isEvery )
    {
       String result = null;
@@ -102,7 +112,13 @@ public final class RecurrenceParsing
          
          patternLexer.setCharStream( new ANTLRStringStream( pattern ) );
          final CommonTokenStream antlrTokens = new CommonTokenStream( patternLexer );
+         
          patternParser.setTokenStream( antlrTokens );
+         
+         if ( context != null )
+            patternParser.setDateFormatContext( new AndroidDateFormatContext( context ) );
+         else
+            patternParser.setDateFormatContext( null );
          
          try
          {
@@ -121,8 +137,8 @@ public final class RecurrenceParsing
       return result;
    }
    
-
-
+   
+   
    /**
     * @return Map< Token type, values >
     */
@@ -153,49 +169,81 @@ public final class RecurrenceParsing
       }
    }
    
-
-
+   
+   
    public final static String ensureRecurrencePatternOrder( String recurrencePattern )
    {
       final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
-      Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
+      Arrays.sort( operators, RecurrencePatternParser.CMP_OPERATORS );
       
       return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
    }
    
-
-
+   
+   
    public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence )
+   {
+      Pair< String, Boolean > result = null;
+      
+      // If we have a parser, try the current parser first
+      if ( recurrenceParser != null )
+         result = parseRecurrence( recurrence, recurrenceParser.getLocale() );
+      
+      if ( result == null )
+      {
+         Locale currentParserLocale = null;
+         if ( recurrenceParser != null )
+            currentParserLocale = recurrenceParser.getLocale();
+         
+         final List< IRecurrenceParser > parsers = RecurrenceParserFactory.getAvailableRecurrenceParsers();
+         
+         for ( IRecurrenceParser iRecurrenceParser : parsers )
+         {
+            // Parsing with the current parser failed, so we can spare trying the parser again.
+            if ( currentParserLocale == null
+               || iRecurrenceParser.getLocale().hashCode() != currentParserLocale.hashCode() )
+               result = parseRecurrence( recurrence,
+                                         iRecurrenceParser.getLocale() );
+            if ( result != null )
+               break;
+         }
+      }
+      
+      if ( result == null )
+      {
+         Log.e( TAG, "Failed to parse recurrence " + recurrence );
+      }
+      
+      return result;
+   }
+   
+   
+   
+   public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence,
+                                                                             Locale locale )
    {
       Pair< String, Boolean > result;
       
-      if ( recurrenceLexer == null )
-         recurrenceLexer = new RecurrenceLexer();
-      
-      if ( recurrenceParser == null )
-         recurrenceParser = new RecurrenceParser();
-      
-      recurrenceLexer.setCharStream( new ANTLRStringStream( recurrence ) );
-      final CommonTokenStream antlrTokens = new CommonTokenStream( recurrenceLexer );
-      recurrenceParser.setTokenStream( antlrTokens );
+      if ( recurrenceParser == null
+         || recurrenceParser.getLocale().hashCode() != locale.hashCode() )
+         recurrenceParser = RecurrenceParserFactory.createRecurrenceParserForLocale( locale );
       
       try
       {
-         final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence();
+         final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence( recurrence );
          final Boolean isEvery = (Boolean) patternObjects.remove( RecurrencePatternParser.IS_EVERY );
          result = Pair.create( joinRecurrencePattern( patternObjects ), isEvery );
       }
       catch ( RecognitionException e )
       {
-         Log.e( TAG, "Failed to parse recurrence " + recurrence, e );
          result = null;
       }
       
       return result;
    }
    
-
-
+   
+   
    public final static String joinRecurrencePattern( Map< String, Object > parts )
    {
       final StringBuilder sb = new StringBuilder();

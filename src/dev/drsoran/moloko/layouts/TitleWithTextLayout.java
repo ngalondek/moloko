@@ -55,6 +55,14 @@ public class TitleWithTextLayout extends TitleWithViewLayout
 
 
    @Override
+   public TextView getView()
+   {
+      return textView;
+   }
+   
+
+
+   @Override
    public void setEnabled( boolean enabled )
    {
       super.setEnabled( enabled );
@@ -70,11 +78,11 @@ public class TitleWithTextLayout extends TitleWithViewLayout
       textView = !isInEditMode() ? new TextView( context )
                                 : new TextView( context, attrs );
       textView.setId( R.id.title_with_text_text );
-      textView.setAutoLinkMask( Linkify.ALL );
+      textView.setAutoLinkMask( Linkify.WEB_URLS | Linkify.EMAIL_ADDRESSES );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleWithText,
-                                                               0,
+                                                               R.attr.titleWithTextStyle,
                                                                0 );
       // Text
       setAttr( context, textView, array, new int[]

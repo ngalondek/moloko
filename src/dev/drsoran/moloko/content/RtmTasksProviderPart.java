@@ -307,6 +307,16 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
          + " FROM " + path + " WHERE old." + RawTasks.TASKSERIES_ID + " = "
          + RawTasks.TASKSERIES_ID + "); END;" );
       
+      // TRIGGER: If a RawTask's taskseries_id gets updated, delete the former
+      // taskseries if it contains no RawTasks anymore
+      db.execSQL( "CREATE TRIGGER " + path
+         + "_update_taskseries_id AFTER UPDATE OF " + RawTasks.TASKSERIES_ID
+         + " ON " + path + " FOR EACH ROW BEGIN DELETE FROM " + TaskSeries.PATH
+         + " WHERE " + TaskSeries.PATH + "." + TaskSeries._ID + " = old."
+         + RawTasks.TASKSERIES_ID + " AND NOT EXISTS (SELECT " + RawTasks._ID
+         + " FROM " + path + " WHERE old." + RawTasks.TASKSERIES_ID + " = "
+         + RawTasks.TASKSERIES_ID + "); END;" );
+      
       createModificationsTrigger( db );
    }
    

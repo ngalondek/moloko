@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,415 +22,125 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
-import android.app.ExpandableListActivity;
-import android.content.ContentProviderClient;
-import android.content.ContentResolver;
+import android.app.Dialog;
 import android.content.Intent;
-import android.database.ContentObserver;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
-import android.widget.ExpandableListView.OnGroupClickListener;
-import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
+import android.util.Pair;
+
+import com.mdt.rtm.data.RtmList;
+
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
-import dev.drsoran.moloko.dialogs.AddRenameListDialog;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
+import dev.drsoran.moloko.fragments.TaskListsFragment;
+import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
+import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class TaskListsActivity extends ExpandableListActivity implements
-         IOnSettingsChangedListener, OnGroupClickListener
+public class TaskListsActivity extends MolokoEditFragmentActivity implements
+         ITaskListsFragmentListener
 {
-   private final static String TAG = "Moloko."
-      + TaskListsActivity.class.getSimpleName();
-   
-   
-   private final class AsyncQueryLists extends
-            AsyncTask< ContentResolver, Void, List< RtmListWithTaskCount > >
+   private final static class Config
    {
-      
-      @Override
-      protected List< RtmListWithTaskCount > doInBackground( ContentResolver... params )
-      {
-         final ContentProviderClient client = params[ 0 ].acquireContentProviderClient( ListOverviews.CONTENT_URI );
-         
-         if ( client != null )
-         {
-            final List< RtmListWithTaskCount > res = ListOverviewsProviderPart.getListsOverview( client,
-                                                                                                 RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
-            client.release();
-            return res;
-         }
-         
-         return null;
-      }
-      
-
-
-      @Override
-      protected void onPostExecute( List< RtmListWithTaskCount > result )
-      {
-         final TaskListsActivity activity = TaskListsActivity.this;
-         
-         activity.setListAdapter( new TaskListsAdapter( activity,
-                                                        R.layout.tasklists_activity_group,
-                                                        R.layout.tasklists_activity_child,
-                                                        result != null
-                                                                      ? result
-                                                                      : Collections.< RtmListWithTaskCount > emptyList() ) );
-         
-         activity.findViewById( android.R.id.empty ).setVisibility( View.GONE );
-         activity.getExpandableListView()
-                 .setEmptyView( activity.findViewById( R.id.tasklists_activity_no_lists ) );
-         
-         activity.asyncQueryLists = null;
-      }
+      public final static String LIST_TO_DELETE = "list_to_delete";
    }
-   
-   private final Runnable queryListsRunnable = new Runnable()
-   {
-      public void run()
-      {
-         if ( asyncQueryLists != null )
-         {
-            Log.w( TAG, "Canceled AsyncQueryLists task." );
-            asyncQueryLists.cancel( true );
-         }
-         
-         asyncQueryLists = new AsyncQueryLists();
-         asyncQueryLists.execute( getContentResolver() );
-      }
-   };
-   
-   private ContentObserver dbObserver;
-   
-   private AsyncQueryLists asyncQueryLists;
    
    
    protected static class OptionsMenu
    {
-      protected final static int START_IDX = 0;
-      
-      private final static int MENU_ORDER_STATIC = 10000;
-      
-      public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
-      
-      public final static int SETTINGS = START_IDX + 1;
-      
-      public final static int SYNC = START_IDX + 2;
-   }
-   
-
-   protected static class CtxtMenu
-   {
-      public final static int OPEN_LIST = 1 << 0;
-      
-      public final static int EXPAND = 1 << 1;
-      
-      public final static int COLLAPSE = 1 << 2;
-      
-      public final static int DELETE = 1 << 3;
-      
-      public final static int RENAME = 1 << 4;
-      
-      public final static int MAKE_DEFAULT_LIST = 1 << 5;
-      
-      public final static int REMOVE_DEFAULT_LIST = 1 << 6;
+      public final static int ADD_LIST = R.id.menu_add_list;
    }
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.tasklists_activity );
-      
-      registerForContextMenu( getExpandableListView() );
-      getExpandableListView().setOnGroupClickListener( this );
-      
-      MolokoApp.get( this )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DEFAULTLIST,
-                                                   this );
-      
-      dbObserver = new ContentObserver( getExpandableListView().getHandler() )
-      {
-         @Override
-         public void onChange( boolean selfChange )
-         {
-            // Aggregate several calls to a single update.
-            DelayedRun.run( getExpandableListView().getHandler(),
-                            queryListsRunnable,
-                            1000 );
-         }
-      };
-      
-      ListOverviewsProviderPart.registerContentObserver( this, dbObserver );
-      
-      if ( !( getExpandableListAdapter() instanceof TaskListsAdapter ) )
-      {
-         asyncQueryLists = new AsyncQueryLists();
-         asyncQueryLists.execute( getContentResolver() );
-      }
    }
    
-
-
-   @Override
-   protected void onStop()
-   {
-      super.onStop();
-      
-      if ( asyncQueryLists != null )
-         asyncQueryLists.cancel( true );
-      
-      asyncQueryLists = null;
-   }
    
-
-
-   @Override
-   protected void onDestroy()
-   {
-      super.onDestroy();
-      
-      unregisterForContextMenu( getExpandableListView() );
-      
-      MolokoApp.get( this ).unregisterOnSettingsChangedListener( this );
-      
-      ListOverviewsProviderPart.unregisterContentObserver( this, dbObserver );
-   }
    
-
-
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      menu.add( Menu.NONE,
-                OptionsMenu.SETTINGS,
-                OptionsMenu.MENU_ORDER_STATIC,
-                R.string.phr_settings )
-          .setIcon( R.drawable.ic_menu_settings )
-          .setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
+      UIUtils.addSettingsMenuItem( this,
+                                   menu,
+                                   MenuCategory.ALTERNATIVE,
+                                   MenuItem.SHOW_AS_ACTION_NEVER );
       
-      return true;
-   }
-   
-
-
-   @Override
-   public boolean onPrepareOptionsMenu( Menu menu )
-   {
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ADD_LIST,
+                                   getString( R.string.tasklists_menu_add_list ),
+                                   MenuCategory.CONTAINER,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_add_list,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   AccountUtils.isWriteableAccess( this ) );
+      
+      UIUtils.addSearchMenuItem( this,
+                                 menu,
+                                 MenuCategory.ALTERNATIVE,
+                                 MenuItem.SHOW_AS_ACTION_IF_ROOM );
+      
       UIUtils.addSyncMenuItem( this,
                                menu,
-                               OptionsMenu.SYNC,
-                               OptionsMenu.MENU_ORDER_STATIC - 1 );
-      
+                               MenuCategory.ALTERNATIVE,
+                               MenuItem.SHOW_AS_ACTION_IF_ROOM );
       return true;
    }
    
-
-
-   @Override
-   public void onCreateContextMenu( ContextMenu menu,
-                                    View v,
-                                    ContextMenuInfo menuInfo )
-   {
-      super.onCreateContextMenu( menu, v, menuInfo );
-      
-      final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
-      final RtmListWithTaskCount list = getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
-      
-      if ( getExpandableListView().isGroupExpanded( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) )
-      {
-         // show collapse before open
-         menu.add( Menu.NONE,
-                   CtxtMenu.COLLAPSE,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_collapse,
-                              list.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.OPEN_LIST,
-                   Menu.NONE,
-                   getString( R.string.phr_open_with_name, list.getName() ) );
-      }
-      else
-      {
-         menu.add( Menu.NONE,
-                   CtxtMenu.OPEN_LIST,
-                   Menu.NONE,
-                   getString( R.string.phr_open_with_name, list.getName() ) );
-         
-         menu.add( Menu.NONE,
-                   CtxtMenu.EXPAND,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_expand,
-                              list.getName() ) );
-      }
-      
-      if ( list.getLocked() == 0 && !AccountUtils.isReadOnlyAccess( this ) )
-      {
-         menu.add( Menu.NONE,
-                   CtxtMenu.DELETE,
-                   Menu.NONE,
-                   getString( R.string.phr_delete_with_name, list.getName() ) );
-         
-         menu.add( Menu.NONE,
-                   CtxtMenu.RENAME,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_rename_list,
-                              list.getName() ) );
-      }
-      
-      if ( list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
-         menu.add( Menu.NONE,
-                   CtxtMenu.REMOVE_DEFAULT_LIST,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_remove_def_list ) );
-      else
-         menu.add( Menu.NONE,
-                   CtxtMenu.MAKE_DEFAULT_LIST,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_make_def_list ) );
-   }
    
-
-
+   
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onOptionsItemSelected( MenuItem item )
    {
-      final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
-      
       switch ( item.getItemId() )
       {
-         case CtxtMenu.OPEN_LIST:
-            openList( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) );
-            return true;
-            
-         case CtxtMenu.EXPAND:
-            getExpandableListView().expandGroup( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
-            return true;
-            
-         case CtxtMenu.COLLAPSE:
-            getExpandableListView().collapseGroup( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
-            return true;
-            
-         case CtxtMenu.DELETE:
-            deleteList( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) );
-            return true;
-            
-         case CtxtMenu.RENAME:
-            AddRenameListDialog.newDialogWithList( this,
-                                                   getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getRtmList() )
-                               .show();
-            return true;
-            
-         case CtxtMenu.MAKE_DEFAULT_LIST:
-            MolokoApp.getSettings()
-                     .setDefaultListId( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getId() );
-            return true;
-            
-         case CtxtMenu.REMOVE_DEFAULT_LIST:
-            MolokoApp.getSettings()
-                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+         case OptionsMenu.ADD_LIST:
+            showAddListDialog();
             return true;
             
          default :
-            return super.onContextItemSelected( item );
+            return super.onOptionsItemSelected( item );
       }
    }
    
-
-
+   
+   
    @Override
-   public boolean onChildClick( ExpandableListView parent,
-                                View v,
-                                int groupPosition,
-                                int childPosition,
-                                long id )
+   protected void takeConfigurationFrom( Bundle config )
    {
-      final Intent intent = ( (TaskListsAdapter) getExpandableListAdapter() ).getChildIntent( groupPosition,
-                                                                                              childPosition );
+      super.takeConfigurationFrom( config );
       
-      if ( intent != null )
-      {
-         startActivity( intent );
-         return true;
-      }
-      else
-         return super.onChildClick( parent, v, groupPosition, childPosition, id );
+      if ( config.containsKey( Config.LIST_TO_DELETE ) )
+         configuration.putParcelable( Config.LIST_TO_DELETE,
+                                      config.getParcelable( Config.LIST_TO_DELETE ) );
    }
    
-
-
-   public boolean onGroupClick( ExpandableListView parent,
-                                View v,
-                                int groupPosition,
-                                long id )
-   {
-      openList( getRtmList( groupPosition ) );
-      return true;
-   }
    
-
-
-   public void onGroupIndicatorClicked( View v )
+   
+   @Override
+   public void openList( int pos )
    {
-      final ExpandableListView listView = getExpandableListView();
-      final int pos = ExpandableListView.getPackedPositionGroup( listView.getExpandableListPosition( listView.getPositionForView( v ) ) );
+      final RtmListWithTaskCount rtmList = getRtmList( pos );
       
-      if ( listView.isGroupExpanded( pos ) )
-      {
-         listView.collapseGroup( pos );
-      }
-      else
-      {
-         listView.expandGroup( pos );
-      }
-   }
-   
-
-
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
-   {
-      getExpandableListView().getHandler().post( new Runnable()
-      {
-         public void run()
-         {
-            onContentChanged();
-         }
-      } );
-   }
-   
-
-
-   private void openList( RtmListWithTaskCount rtmList )
-   {
       // Check if the smart filter could be parsed. Otherwise
       // we do not fire the intent.
       if ( rtmList.isSmartFilterValid() )
@@ -440,10 +150,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
          final Intent intent = new Intent( Intent.ACTION_VIEW,
                                            Tasks.CONTENT_URI );
          
-         intent.putExtra( AbstractTasksListActivity.TITLE,
-                          getString( R.string.taskslist_titlebar, listName ) );
-         intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                          R.drawable.ic_title_list );
+         intent.putExtra( TasksListActivity.Config.TITLE,
+                          getString( R.string.taskslist_actionbar, listName ) );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
          
@@ -455,32 +163,124 @@ public class TaskListsActivity extends ExpandableListActivity implements
          }
          
          intent.putExtra( Lists.LIST_NAME, rtmList.getName() );
-         intent.putExtra( AbstractTasksListActivity.FILTER, filter );
+         intent.putExtra( AbstractTasksListFragment.Config.FILTER, filter );
          
          startActivity( intent );
       }
    }
    
-
-
-   private void deleteList( final RtmListWithTaskCount rtmList )
+   
+   
+   @Override
+   public void openChild( Intent intent )
    {
-      UIUtils.newDeleteElementDialog( this, rtmList.getName(), new Runnable()
+      startActivity( intent );
+   }
+   
+   
+   
+   @Override
+   public void deleteList( int pos )
+   {
+      final RtmListWithTaskCount list = getRtmList( pos );
+      setConfiguredListToDelete( list.getRtmList() );
+      
+      UIUtils.showDeleteElementDialog( this, list.getName() );
+   }
+   
+   
+   
+   @Override
+   public void renameList( int pos )
+   {
+      showRenameListDialog( getRtmList( pos ) );
+   }
+   
+   
+   
+   private void showRenameListDialog( RtmListWithTaskCount list )
+   {
+      createAddRenameListDialogFragment( createRenameListFragmentConfig( list ) );
+   }
+   
+   
+   
+   private Bundle createRenameListFragmentConfig( RtmListWithTaskCount list )
+   {
+      final Bundle config = new Bundle();
+      
+      config.putParcelable( AddRenameListDialogFragment.Config.LIST,
+                            list.getRtmList() );
+      if ( list.getRtmList().getSmartFilter() != null )
+         config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
+                               list.getRtmList().getSmartFilter() );
+      
+      return config;
+   }
+   
+   
+   
+   private void showAddListDialog()
+   {
+      createAddRenameListDialogFragment( Bundle.EMPTY );
+   }
+   
+   
+   
+   private RtmListWithTaskCount getRtmList( int pos )
+   {
+      final TaskListsFragment taskListsFragment = (TaskListsFragment) getSupportFragmentManager().findFragmentById( R.id.frag_tasklists );
+      return taskListsFragment.getRtmList( pos );
+   }
+   
+   
+   
+   private void createAddRenameListDialogFragment( Bundle config )
+   {
+      final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
+      UIUtils.showDialogFragment( this,
+                                  dialogFragment,
+                                  String.valueOf( R.id.frag_add_rename_list ) );
+   }
+   
+   
+   
+   @Override
+   protected void handleDeleteElementDialogClick( String tag, int which )
+   {
+      if ( which == Dialog.BUTTON_POSITIVE )
       {
-         public void run()
-         {
-            RtmListEditUtils.deleteList( TaskListsActivity.this,
-                                         rtmList.getRtmList() );
-         }
-      },
-                                      null ).show();
+         Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.deleteList( this,
+                                                                                                              getConfiguredListToDelete() );
+         applyModifications( modifications );
+      }
+      
+      setConfiguredListToDelete( null );
    }
    
-
-
-   private final RtmListWithTaskCount getRtmList( int flatPos )
+   
+   
+   private RtmList getConfiguredListToDelete()
    {
-      return (RtmListWithTaskCount) getExpandableListAdapter().getGroup( flatPos );
+      return configuration.getParcelable( Config.LIST_TO_DELETE );
    }
    
+   
+   
+   private void setConfiguredListToDelete( RtmList listToDelete )
+   {
+      if ( listToDelete == null )
+         configuration.remove( Config.LIST_TO_DELETE );
+      else
+         configuration.putParcelable( Config.LIST_TO_DELETE, listToDelete );
+   }
+   
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return new int[]
+      { R.id.frag_tasklists };
+   }
 }

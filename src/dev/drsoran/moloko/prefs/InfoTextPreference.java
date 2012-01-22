@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -36,7 +36,7 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
    private String infoText;
    
    
-
+   
    public InfoTextPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -59,8 +59,8 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
       array.recycle();
    }
    
-
-
+   
+   
    @Override
    protected void onBindView( View view )
    {
@@ -70,32 +70,39 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
          ( (TextView) view.findViewById( R.id.text ) ).setText( infoText );
    }
    
-
-
+   
+   
+   @Override
+   public void checkEnabled()
+   {
+   }
+   
+   
+   
+   @Override
    public void cleanUp()
    {
    }
    
-
-
+   
+   
    public String getInfoText()
    {
       return infoText;
    }
    
-
-
+   
+   
    public void setInfoText( String infoText )
    {
       this.infoText = infoText;
       notifyChanged();
    }
    
-
-
+   
+   
    public void setInfoText( int resId )
    {
       setInfoText( getContext().getResources().getString( resId ) );
    }
-   
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 	<!--
-		Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko
+		Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko
 		is free software: you can redistribute it and/or modify it under the
 		terms of the GNU General Public License as published by the Free
 		Software Foundation, either version 3 of the License, or (at your
@@ -13,13 +13,14 @@
 		Röhricht - implementation
 	-->
 
-<resources>
+<resources>   
 	<declare-styleable name="TitleWithView">
-		<attr name="showTopLine" format="boolean" />
+      <attr name="titleWithViewStyle" format="reference"/>
+      <attr name="showTopLine" format="boolean" />
 		<attr name="topLineColor" format="reference|color" />
 		<attr name="topLineHeight" format="reference|dimension" />
 		<attr name="imageSrc" format="reference" />
-		<attr name="title" format="reference|string" />
+		<attr name="titleText" format="reference|string" />
 		<attr name="titleColor" format="reference|color" />
 		<attr name="titleSize" format="reference|dimension" />
 		<attr name="titleStyle">
@@ -33,6 +34,7 @@
 	</declare-styleable>
    
    <declare-styleable name="TitleWithText">
+      <attr name="titleWithTextStyle" format="reference"/>
       <attr name="text" format="reference|string" />
       <attr name="textColor" format="reference|color" />
       <attr name="textSize" format="reference|dimension" />
@@ -45,20 +47,10 @@
    </declare-styleable>
    
    <declare-styleable name="TitleWithSpinner">
+      <attr name="titleWithSpinnerStyle" format="reference"/>
       <attr name="spinnerEntries" format="reference" />
       <attr name="spinnerValues" format="reference" />
    </declare-styleable>
-
-	<declare-styleable name="TitleBar">
-		<attr name="titleText" format="reference|string" />
-		<attr name="showButton">
-			<flag name="none" value="0" />
-			<flag name="search" value="1" />
-			<flag name="home" value="2" />
-         <flag name="add_task" value="4" />
-         <flag name="add_list" value="8" />
-		</attr>
-	</declare-styleable>
 
 	<declare-styleable name="SyncableListPreference">
 		<attr name="syncWithRtmKey" format="reference|string" />
@@ -70,7 +62,26 @@
 	</declare-styleable>
 
 	<declare-styleable name="WrappingLayout">
+      <attr name="wrappingLayoutStyle" format="reference"/>
 		<attr name="horizontal_spacing" format="reference|dimension" />
 		<attr name="vertical_spacing" format="reference|dimension" />
 	</declare-styleable>
+   
+   <declare-styleable name="ClearButtonCompoundDrawable">
+       <attr name="clearButtonStyle" format="reference" />
+       <attr name="drawablePressed" format="reference"/>
+       <attr name="drawableUnpressed" format="reference"/>       
+   </declare-styleable>
+   
+   <declare-styleable name="BottomButtonBarLayout">
+      <attr name="bottomButtonBarStyle" format="reference" />
+      <attr name="stretchSingleButton" format="boolean" />
+      <attr name="button1Text" format="reference|string" />
+      <attr name="button2Text" format="reference|string" />
+      <attr name="button1Drawable" format="reference" />
+      <attr name="button2Drawable" format="reference" />
+      <attr name="button1OnClick" format="reference|string" />
+      <attr name="button2OnClick" format="reference|string" />
+      <attr name="backgroundColor" format="reference|color" />
+   </declare-styleable>
 </resources>

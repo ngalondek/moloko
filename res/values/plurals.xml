@@ -39,24 +39,72 @@
       <item quantity="one">minute</item>
       <item quantity="other">minutes</item>
    </plurals>
-   <plurals name="g_second">
-      <item quantity="one">second</item>
-      <item quantity="other">seconds</item>
-   </plurals>   
    <plurals name="g_task">
       <item quantity="one">task</item>
       <item quantity="other">tasks</item>
    </plurals>
+   
+   <!-- Global Toasts -->
+      <!-- Task -->
+      <plurals name="toast_completed_task">
+         <item quantity="one">Task has been completed</item>
+         <item quantity="other">%1$d tasks have been completed</item>
+      </plurals>
+      <plurals name="toast_incompleted_task">
+         <item quantity="one">Task is now incomplete</item>
+         <item quantity="other">%1$d tasks are now incomplete</item>
+      </plurals>
+      <plurals name="toast_postponed_task">
+         <item quantity="one">Task has been postponed</item>
+         <item quantity="other">%1$d tasks have been postponed</item>
+      </plurals>
+      <plurals name="toast_deleted_task">
+         <item quantity="one">Task has been deleted</item>
+         <item quantity="other">%1$d tasks have been deleted</item>
+      </plurals>
+   
+   <!-- TaskLists fragment -->
+   <plurals name="tasklists_child_due_today">
+      <item quantity="one">1 due today</item>
+      <item quantity="other">%1$d due today</item>
+   </plurals>
+   <plurals name="tasklists_child_due_tomorrow">
+      <item quantity="one">1 due tomorrow</item>
+      <item quantity="other">%1$d due tomorrow</item>
+   </plurals>
+   <plurals name="tasklists_child_overdue">
+      <item quantity="one">1 overdue</item>
+      <item quantity="other">%1$d overdue</item>
+   </plurals>
+   <plurals name="tasklists_child_completed">
+      <item quantity="one">1 completed</item>
+      <item quantity="other">%1$d completed</item>
+   </plurals>
+   
+   <!-- SelectMultipleTasks fragment -->
+      <!-- Dialogs -->
+      <plurals name="select_multiple_tasks_dlg_complete">
+         <item quantity="one">Complete 1 task?</item>
+         <item quantity="other">Complete %1$d tasks?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_incomplete">
+         <item quantity="one">Incomplete 1 task?</item>
+         <item quantity="other">Incomplete %1$d tasks?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_postpone">
+         <item quantity="one">Postpone 1 task?</item>
+         <item quantity="other">Postpone %1$d tasks?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_delete">
+         <item quantity="one">Delete 1 task?</item>
+         <item quantity="other">Delete %1$d tasks?</item>
+      </plurals>
 
 	<!-- TasksList activity -->
-	<!-- Menus -->
-	<plurals name="taskslist_listitem_ctx_notes">
-		<item quantity="one">Open note</item>
-		<item quantity="other">Open notes</item>
-	</plurals>
-	<plurals name="taskslist_listitem_ctx_tags">
-		<item quantity="one">Show tasks with \'%1$s\'</item>
-		<item quantity="other">Show tasks tagged with...</item>
-	</plurals>
+   	<!-- Menus -->
+   	<plurals name="taskslist_listitem_ctx_tags">
+   		<item quantity="one">Show tasks with \'%1$s\'</item>
+   		<item quantity="other">Show tasks tagged with...</item>
+   	</plurals>
    
 </resources>

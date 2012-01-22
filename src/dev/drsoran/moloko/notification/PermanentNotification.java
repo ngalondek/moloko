@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -26,7 +26,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.RemoteViews;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
 
@@ -40,49 +39,45 @@ public class PermanentNotification
    private final int id;
    
    
-
+   
    public PermanentNotification( Context context, int id )
    {
       this.context = context;
       this.id = id;
       
-      this.notification = new Notification( R.drawable.notification_layers,
-                                            null,
-                                            System.currentTimeMillis() );
+      notification = new Notification( R.drawable.notification_layers,
+                                       null,
+                                       System.currentTimeMillis() );
       
-      this.notification.flags = Notification.FLAG_NO_CLEAR
+      notification.flags = Notification.FLAG_NO_CLEAR
          | Notification.FLAG_ONGOING_EVENT;
-      this.notification.contentView = new RemoteViews( context.getPackageName(),
-                                                       R.layout.notification_permanent );
    }
    
-
-
+   
+   
    public void update( String title,
                        String text,
                        int count,
                        Intent onClickIntent )
    {
       notification.iconLevel = count;
-      notification.contentView.setTextViewText( R.id.notification_permanent_title,
-                                                title );
-      notification.contentView.setTextViewText( R.id.notification_permanent_text,
-                                                text );
-      notification.contentIntent = Intents.createNotificationIntent( context,
-                                                                     onClickIntent );
-      
+      notification.setLatestEventInfo( context,
+                                       title,
+                                       text,
+                                       Intents.createNotificationIntent( context,
+                                                                         onClickIntent ) );
       getNotificationManager().notify( id, notification );
    }
    
-
-
+   
+   
    public void cancel()
    {
       getNotificationManager().cancel( id );
    }
    
-
-
+   
+   
    private NotificationManager getNotificationManager()
    {
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );

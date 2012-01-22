@@ -58,6 +58,7 @@ public class Modification implements Comparable< Modification >
    private final static class SortColumnName implements
             Comparator< Modification >
    {
+      @Override
       public int compare( Modification object1, Modification object2 )
       {
          return object1.colName.compareTo( object2.colName );
@@ -67,7 +68,7 @@ public class Modification implements Comparable< Modification >
    public final static SortColumnName SORT_COLUMN_NAME = new SortColumnName();
    
    
-
+   
    Modification( String id, Uri entityUri, String colName, String newValue,
       String syncedValue, boolean syncedValueSet, boolean persistent,
       long timestamp )
@@ -82,78 +83,78 @@ public class Modification implements Comparable< Modification >
       this.timestamp = timestamp;
    }
    
-
-
+   
+   
    public String getId()
    {
       return id;
    }
    
-
-
+   
+   
    public Uri getEntityUri()
    {
       return entityUri;
    }
    
-
-
+   
+   
    public String getColName()
    {
       return colName;
    }
    
-
-
+   
+   
    public String getNewValue()
    {
       return newValue;
    }
    
-
-
+   
+   
    public < T > T getNewValue( Class< T > valueClass )
    {
       return fromString( newValue, valueClass );
    }
    
-
-
+   
+   
    public String getSyncedValue()
    {
       return syncedValue;
    }
    
-
-
+   
+   
    public < T > T getSyncedValue( Class< T > valueClass )
    {
       return fromString( syncedValue, valueClass );
    }
    
-
-
+   
+   
    public boolean isSyncedValueSet()
    {
       return synedValueSet;
    }
    
-
-
+   
+   
    public boolean isPersistent()
    {
       return persistent;
    }
    
-
-
+   
+   
    public long getTimestamp()
    {
       return timestamp;
    }
    
-
-
+   
+   
    @Override
    public boolean equals( Object o )
    {
@@ -173,8 +174,8 @@ public class Modification implements Comparable< Modification >
       return equal;
    }
    
-
-
+   
+   
    @Override
    public int hashCode()
    {
@@ -187,8 +188,9 @@ public class Modification implements Comparable< Modification >
       return result;
    }
    
-
-
+   
+   
+   @Override
    public int compareTo( Modification another )
    {
       int cmp = entityUri.compareTo( another.entityUri );
@@ -202,8 +204,8 @@ public class Modification implements Comparable< Modification >
       return 0;
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {
@@ -211,8 +213,8 @@ public class Modification implements Comparable< Modification >
          + newValue + ", " + syncedValue + ", " + new Date( timestamp ) + ">";
    }
    
-
-
+   
+   
    public final static < T > Modification newModification( Uri contentUri,
                                                            String id,
                                                            String colName,
@@ -223,8 +225,8 @@ public class Modification implements Comparable< Modification >
                               newValue );
    }
    
-
-
+   
+   
    public final static < T > Modification newModification( Uri entityUri,
                                                            String colName,
                                                            T newValue )
@@ -239,8 +241,8 @@ public class Modification implements Comparable< Modification >
                                System.currentTimeMillis() );
    }
    
-
-
+   
+   
    public final static < T > Modification newModification( Uri entityUri,
                                                            String colName,
                                                            T newValue,
@@ -256,8 +258,8 @@ public class Modification implements Comparable< Modification >
                                System.currentTimeMillis() );
    }
    
-
-
+   
+   
    public final static < T > ContentProviderOperation newModificationOperation( Uri entityUri,
                                                                                 String colName,
                                                                                 T newValue,
@@ -273,8 +275,8 @@ public class Modification implements Comparable< Modification >
                                      .build();
    }
    
-
-
+   
+   
    public final static < T > Modification newNonPersistentModification( Uri contentUri,
                                                                         String id,
                                                                         String colName,
@@ -286,8 +288,8 @@ public class Modification implements Comparable< Modification >
                                            newValue );
    }
    
-
-
+   
+   
    public final static < T > Modification newNonPersistentModification( Uri entityUri,
                                                                         String colName,
                                                                         T newValue )
@@ -302,23 +304,8 @@ public class Modification implements Comparable< Modification >
                                System.currentTimeMillis() );
    }
    
-
-
-   public final static < T > ContentProviderOperation newNonPersistentModificationOperation( Uri entityUri,
-                                                                                             String colName,
-                                                                                             T newValue )
-   {
-      return ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
-                                     .withValues( ModificationsProviderPart.getContentValues( null,
-                                                                                              newNonPersistentModification( entityUri,
-                                                                                                                            colName,
-                                                                                                                            newValue ),
-                                                                                              true ) )
-                                     .build();
-   }
    
-
-
+   
    public final static Modification newTaskModified( String taskSeriesId )
    {
       return newNonPersistentModification( TaskSeries.CONTENT_URI,
@@ -327,8 +314,8 @@ public class Modification implements Comparable< Modification >
                                            System.currentTimeMillis() );
    }
    
-
-
+   
+   
    public final static Modification newNoteModified( String noteId )
    {
       return newNonPersistentModification( Notes.CONTENT_URI,
@@ -337,8 +324,8 @@ public class Modification implements Comparable< Modification >
                                            System.currentTimeMillis() );
    }
    
-
-
+   
+   
    public final static Modification newListModified( String listId )
    {
       return newNonPersistentModification( Lists.CONTENT_URI,
@@ -347,22 +334,8 @@ public class Modification implements Comparable< Modification >
                                            System.currentTimeMillis() );
    }
    
-
-
-   public final static ContentProviderOperation newTaskModifiedOperation( String taskSeriesId )
-   {
-      return ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
-                                     .withValues( ModificationsProviderPart.getContentValues( null,
-                                                                                              newNonPersistentModification( TaskSeries.CONTENT_URI,
-                                                                                                                            taskSeriesId,
-                                                                                                                            TaskSeries.MODIFIED_DATE,
-                                                                                                                            System.currentTimeMillis() ),
-                                                                                              true ) )
-                                     .build();
-   }
    
-
-
+   
    public final static < T > T get( Cursor c, int column, Class< T > valueClass )
    {
       if ( c == null )
@@ -374,8 +347,8 @@ public class Modification implements Comparable< Modification >
       return fromString( c.getString( column ), valueClass );
    }
    
-
-
+   
+   
    public final static < T > void put( ContentValues contentValues,
                                        String key,
                                        T value )
@@ -389,8 +362,8 @@ public class Modification implements Comparable< Modification >
          contentValues.put( key, toString( value ) );
    }
    
-
-
+   
+   
    @SuppressWarnings( "unchecked" )
    private final static < T > T fromString( String value, Class< T > valueClass )
    {
@@ -418,8 +391,8 @@ public class Modification implements Comparable< Modification >
             + valueClass.getName() );
    }
    
-
-
+   
+   
    private final static < T > String toString( T value )
    {
       if ( value == null )

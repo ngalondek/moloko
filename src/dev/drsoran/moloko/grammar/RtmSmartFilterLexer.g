@@ -519,13 +519,13 @@ OP_HAS_NOTES : 'hasnotes:'
                (
                   TRUE
                   {
-                     result.append( Tasks.NUM_NOTES + " > 0");
+                     result.append( Tasks.NOTE_IDS + " NOT NULL");
                      addRtmToken( OP_HAS_NOTES, TRUE_LIT );
                   }
                   |
                   FALSE
                   {
-                     result.append( Tasks.NUM_NOTES + " = 0");
+                     result.append( Tasks.NOTE_IDS + " IS NULL");
                      addRtmToken( OP_HAS_NOTES, FALSE_LIT );
                   }
                );

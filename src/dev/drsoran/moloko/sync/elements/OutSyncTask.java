@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -23,13 +23,11 @@
 package dev.drsoran.moloko.sync.elements;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.net.Uri;
-import android.text.TextUtils;
+import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
@@ -57,110 +55,49 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
-public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
+public class OutSyncTask extends SyncTaskBase implements
+         IServerSyncable< OutSyncTask, RtmTaskList >
 {
-   private final static String TAG = OutSyncTask.class.toString();
+   private final static String TAG = OutSyncTask.class.getSimpleName();
+   
+   public final static LessIdComperator< OutSyncTask > LESS_ID = new LessIdComperator< OutSyncTask >();
    
    
-   private final static class LessIdComperator implements
-            Comparator< OutSyncTask >
-   {
-      public int compare( OutSyncTask object1, OutSyncTask object2 )
-      {
-         return object1.task.getId().compareTo( object2.task.getId() );
-      }
-   }
-   
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
-   
-   private final RtmTaskSeries taskSeries;
-   
-   private final RtmTask task;
-   
-   
-   
-   public OutSyncTask( RtmTaskSeries taskSeries )
-   {
-      if ( taskSeries == null )
-         throw new NullPointerException( "taskseries is null" );
-      
-      if ( taskSeries.getTasks().size() != 1 )
-         throw new IllegalStateException( "Expected taskseries with 1 task, found "
-            + taskSeries.getTasks().size() + " task(s)" );
-      
-      this.taskSeries = taskSeries;
-      this.task = taskSeries.getTasks().get( 0 );
-   }
-   
-   
-   
-   public OutSyncTask( RtmTaskSeries taskSeries, String taskId )
-   {
-      this( taskSeries, taskSeries.getTask( taskId ) );
-   }
-   
-   
-   
+
    public OutSyncTask( RtmTaskSeries taskSeries, RtmTask task )
    {
-      if ( taskSeries == null )
-         throw new NullPointerException( "taskseries is null" );
-      if ( task == null )
-         throw new NullPointerException( "task is null" );
-      
-      this.taskSeries = taskSeries;
-      this.task = task;
+      super( taskSeries, task );
    }
    
+
+
+   public OutSyncTask( RtmTaskSeries taskSeries, String taskId )
+   {
+      super( taskSeries, taskId );
+   }
    
+
+
+   public OutSyncTask( RtmTaskSeries taskSeries )
+   {
+      super( taskSeries );
+   }
    
+
+
    public final static List< OutSyncTask > fromTaskSeries( RtmTaskSeries taskSeries )
    {
       final List< OutSyncTask > result = new ArrayList< OutSyncTask >();
       
-      for ( RtmTask task : taskSeries.getTasks() )
+      for ( final RtmTask task : taskSeries.getTasks() )
          result.add( new OutSyncTask( taskSeries, task ) );
       
       return result;
    }
    
-   
-   
-   public RtmTaskSeries getTaskSeries()
-   {
-      return taskSeries;
-   }
-   
-   
-   
-   public RtmTask getTask()
-   {
-      return task;
-   }
-   
-   
-   
-   public Date getCreatedDate()
-   {
-      return taskSeries.getCreatedDate();
-   }
-   
-   
-   
-   public Date getModifiedDate()
-   {
-      return taskSeries.getModifiedDate();
-   }
-   
-   
-   
-   public Date getDeletedDate()
-   {
-      return task.getDeletedDate();
-   }
-   
-   
-   
+
+
+   @Override
    public boolean hasModification( ModificationSet modificationSet )
    {
       return modificationSet.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
@@ -170,8 +107,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       
    }
    
-   
-   
+
+
    public IContentProviderSyncOperation handleAfterServerInsert( OutSyncTask serverElement )
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
@@ -182,14 +119,14 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
        **/
       operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                    taskSeries.getId() ) )
-                                             .withValue( TaskSeries._ID,
+                                             .withValue( BaseColumns._ID,
                                                          serverElement.taskSeries.getId() )
                                              .build() );
       
       /** Change the ID of the local rawtask to the ID of the server rawtask. **/
       operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                    task.getId() ) )
-                                             .withValue( RawTasks._ID,
+                                             .withValue( BaseColumns._ID,
                                                          serverElement.task.getId() )
                                              .build() );
       
@@ -209,8 +146,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       return operation.build();
    }
    
-   
-   
+
+
    /**
     * This stores only outgoing differences between the local task and the server task as modification.
     * 
@@ -233,7 +170,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                     serverElement.taskSeries.getRecurrence() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.RECURRENCE,
-                                                                  taskSeries.getRecurrenceSentence(),
+                                                                  taskSeries.getRecurrence(),
                                                                   serverElement.taskSeries.getRecurrence() ) );
          
          // Tags
@@ -315,13 +252,13 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       return operation.build();
    }
    
-   
-   
+
+
    public IServerSyncOperation< RtmTaskList > computeServerUpdateOperation( RtmTimeline timeline,
                                                                             ModificationSet modifications,
                                                                             OutSyncTask serverElement )
    {
-      TaskServerSyncOperation.Builder< RtmTaskList > operation = TaskServerSyncOperation.newUpdate();
+      final TaskServerSyncOperation.Builder< RtmTaskList > operation = ServerSyncOperation.newUpdate();
       
       // In case we have no server element (incremental sync)
       if ( serverElement == null )
@@ -435,7 +372,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
             operation.add( timeline.tasks_setURL( taskSeries.getListId(),
                                                   taskSeries.getId(),
                                                   task.getId(),
-                                                  taskSeries.getURL() ),
+                                                  Strings.emptyIfNull( taskSeries.getURL() ) ),
                            properties.getModification( TaskSeries.URL ) );
          }
       }
@@ -524,9 +461,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
             operation.add( timeline.tasks_setEstimate( taskSeries.getListId(),
                                                        taskSeries.getId(),
                                                        task.getId(),
-                                                       TextUtils.isEmpty( task.getEstimate() )
-                                                                                              ? Strings.EMPTY_STRING
-                                                                                              : task.getEstimate() ),
+                                                       Strings.emptyIfNull( task.getEstimate() ) ),
                            properties.getModification( RawTasks.ESTIMATE ) );
          }
          
@@ -585,8 +520,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       return operation.build( TaskServerSyncOperation.class );
    }
    
-   
-   
+
+
    public IServerSyncOperation< RtmTaskList > computeServerDeleteOperation( RtmTimeline timeLine )
    {
       return ServerSyncOperation.newDelete( timeLine.tasks_delete( taskSeries.getListId(),

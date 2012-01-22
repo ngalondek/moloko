@@ -665,12 +665,17 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.task";
       
       /**
-       * The number of notes the tag has attached
+       * A {@link NOTE_IDS_DELIMITER} separated list of all note IDs the task has attached
        * <P>
        * Type: STRING
        * </P>
        */
-      public final static String NUM_NOTES = "num_notes";
+      public final static String NOTE_IDS = "note_ids";
+      
+      /**
+       * The delimiter used to separate a list of note IDs.
+       */
+      public final static String NOTE_IDS_DELIMITER = TagColumns.TAGS_SEPARATOR;
       
       /**
        * A {@link PARTICIPANTS_DELIMITER} separated list of all {@link ContactColumns} contact IDs
@@ -704,14 +709,14 @@ public class Rtm
       /**
        * Sorts result tasks by their priority
        */
-      public final static String SORT_PRIORITY = PRIORITY + ", "
-         + TASKSERIES_NAME + " COLLATE NOCASE";
+      public final static String SORT_PRIORITY = PRIORITY + ", COALESCE("
+         + DUE_DATE + ",'-1')";
       
       /**
        * Sorts result tasks by their due date
        */
       public final static String SORT_DUE_DATE = "COALESCE(" + DUE_DATE
-         + ",'-1'), " + TASKSERIES_NAME;
+         + ",'-1'), " + PRIORITY;
       
       /**
        * Sorts result tasks by their name

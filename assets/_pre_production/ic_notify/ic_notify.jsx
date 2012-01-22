@@ -1,1 +1,1 @@
-exportAsIs = true;
+resizeImagePx( 24 );

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.w3c.dom.Element;
@@ -35,6 +34,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmData;
@@ -51,6 +51,8 @@ import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.connection.DefaultRtmConnectionFactory;
+import dev.drsoran.moloko.connection.IRtmConnection;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
@@ -64,7 +66,6 @@ import dev.drsoran.rtm.RtmSettings;
  */
 public class ServiceImpl implements Service
 {
-   
    private final static String TAG = "Moloko.*"
       + ServiceImpl.class.getSimpleName();
    
@@ -102,19 +103,7 @@ public class ServiceImpl implements Service
          || prefs.getBoolean( context.getString( R.string.key_conn_use_https ),
                               true );
       
-      final boolean useProxy = prefs != null
-         && prefs.getBoolean( context.getString( R.string.key_conn_use_proxy ),
-                              false );
-      
-      ProxySettings proxySettings = null;
-      
-      if ( useProxy )
-      {
-         proxySettings = ProxySettings.loadFromPreferences( context, prefs );
-      }
-      
       final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
-                                                       proxySettings,
                                                        !useHttps );
       
       return serviceImpl;
@@ -122,16 +111,19 @@ public class ServiceImpl implements Service
    
    
    
-   protected ServiceImpl( ApplicationInfo applicationInfo,
-      ProxySettings proxySettings, boolean useHttp )
+   protected ServiceImpl( ApplicationInfo applicationInfo, boolean useHttp )
       throws ServiceInternalException
    {
-      invoker = new Invoker( SERVER_HOST_NAME,
-                             ( useHttp ) ? SERVER_PORT_NUMBER_HTTP
-                                        : SERVER_PORT_NUMBER_HTTPS,
+      final String scheme = useHttp ? "http" : "https";
+      final int port = useHttp ? SERVER_PORT_NUMBER_HTTP
+                              : SERVER_PORT_NUMBER_HTTPS;
+      
+      final IRtmConnection connection = new DefaultRtmConnectionFactory().createRtmConnection( scheme,
+                                                                                               SERVER_HOST_NAME,
+                                                                                               port );
+      
+      invoker = new Invoker( connection,
                              REST_SERVICE_URL_POSTFIX,
-                             proxySettings,
-                             useHttp,
                              applicationInfo );
       
       this.applicationInfo = applicationInfo;
@@ -149,6 +141,16 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
+   public void shutdown()
+   {
+      if ( invoker != null )
+         invoker.shutdown();
+   }
+   
+   
+   
+   @Override
    public boolean isServiceAuthorized() throws ServiceException
    {
       if ( currentAuthToken == null )
@@ -176,6 +178,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public String beginAuthorization( RtmAuth.Perms permissions ) throws ServiceException
    {
       // Instructions from the "User authentication for desktop applications"
@@ -187,6 +190,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public String beginAuthorization( RtmFrob frob, RtmAuth.Perms permissions ) throws ServiceException
    {
       String authBaseUrl = "http://" + SERVER_HOST_NAME + "/services/auth/";
@@ -194,6 +198,7 @@ public class ServiceImpl implements Service
       { new Param( "api_key", applicationInfo.getApiKey() ),
        new Param( "perms", permissions.toString() ),
        new Param( "frob", frob.getValue() ) };
+      
       Param sig = new Param( "api_sig", invoker.calcApiSig( params ) );
       StringBuilder authUrl = new StringBuilder( authBaseUrl );
       authUrl.append( "?" );
@@ -210,6 +215,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public String completeAuthorization() throws ServiceException
    {
       return completeAuthorization( tempFrob );
@@ -217,6 +223,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public String completeAuthorization( RtmFrob frob ) throws ServiceException
    {
       currentAuthToken = auth_getToken( frob.getValue() );
@@ -226,6 +233,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmAuth auth_checkToken( String authToken ) throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -238,6 +246,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmFrob auth_getFrob() throws ServiceException
    {
       return new RtmFrob( invoker.invoke( new Param( "method",
@@ -248,6 +257,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public String auth_getToken( String frob ) throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -260,6 +270,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void contacts_add()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -267,6 +278,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void contacts_delete()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -274,6 +286,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmContacts contacts_getList() throws ServiceException
    {
       final Element response = invoker.invoke( new Param( "method",
@@ -287,6 +300,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void groups_add()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -294,6 +308,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void groups_addContact()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -301,6 +316,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void groups_delete()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -308,6 +324,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void groups_getList()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -315,6 +332,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void groups_removeContact()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -322,6 +340,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmList > lists_add( String timelineId,
                                                String listName,
                                                String smartFilter ) throws ServiceException
@@ -349,6 +368,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void lists_archive()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -356,6 +376,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmList > lists_delete( String timelineId,
                                                   String listId ) throws ServiceException
    {
@@ -372,6 +393,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmLists lists_getList() throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -385,14 +407,15 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmList lists_getList( String listName ) throws ServiceException
    {
       RtmLists fullList = lists_getList();
-      for ( Entry< String, RtmList > entry : fullList.getLists().entrySet() )
+      for ( Pair< String, RtmList > entry : fullList.getLists() )
       {
-         if ( entry.getValue().getName().equals( listName ) )
+         if ( entry.second.getName().equals( listName ) )
          {
-            return entry.getValue();
+            return entry.second;
          }
       }
       return null;
@@ -400,6 +423,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void lists_setDefaultList()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -407,6 +431,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmList > lists_setName( String timelineId,
                                                    String listId,
                                                    String newName ) throws ServiceException
@@ -425,6 +450,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void lists_unarchive()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -432,6 +458,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void reflection_getMethodInfo()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -439,6 +466,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void reflection_getMethods()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -446,6 +474,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmSettings settings_getList() throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -459,6 +488,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_add( String timelineId,
                                                    String listId,
                                                    String name ) throws ServiceException
@@ -486,6 +516,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void tasks_addTags()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -493,6 +524,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_complete( String timelineId,
                                                         String listId,
                                                         String taskSeriesId,
@@ -515,6 +547,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_uncomplete( String timelineId,
                                                           String listId,
                                                           String taskSeriesId,
@@ -536,6 +569,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_delete( String timelineId,
                                                       String listId,
                                                       String taskSeriesId,
@@ -557,6 +591,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmTasks tasks_getList( String listId, String filter, Date lastSync ) throws ServiceException
    {
       Set< Param > params = new HashSet< Param >();
@@ -580,6 +615,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmTaskSeries tasks_getTask( String taskSeriesId,
                                        String taskName,
                                        String listId ) throws ServiceException
@@ -602,6 +638,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmTaskSeries tasks_getTask( String taskName ) throws ServiceException
    {
       return tasks_getTask( null, taskName, null );
@@ -609,6 +646,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_movePriority( String timelineId,
                                                             String listId,
                                                             String taskSeriesId,
@@ -633,6 +671,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_moveTo( String timelineId,
                                                       String fromListId,
                                                       String toListId,
@@ -656,6 +695,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_postpone( String timelineId,
                                                         String listId,
                                                         String taskSeriesId,
@@ -677,6 +717,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void tasks_removeTags()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -684,6 +725,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setDueDate( String timelineId,
                                                           String listId,
                                                           String taskSeriesId,
@@ -724,6 +766,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setEstimate( String timelineId,
                                                            String listId,
                                                            String taskSeriesId,
@@ -747,6 +790,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setName( String timelineId,
                                                        String listId,
                                                        String taskSeriesId,
@@ -770,6 +814,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setPriority( String timelineId,
                                                            String listId,
                                                            String taskSeriesId,
@@ -794,6 +839,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setRecurrence( String timelineId,
                                                              String listId,
                                                              String taskSeriesId,
@@ -827,6 +873,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setTags( String timelineId,
                                                        String listId,
                                                        String taskSeriesId,
@@ -852,6 +899,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setLocation( String timelineId,
                                                            String listId,
                                                            String taskSeriesId,
@@ -886,6 +934,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskList > tasks_setURL( String timelineId,
                                                       String listId,
                                                       String taskSeriesId,
@@ -909,6 +958,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskNote > tasks_notes_add( String timelineId,
                                                          String listId,
                                                          String taskSeriesId,
@@ -936,6 +986,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskNote > tasks_notes_delete( String timelineId,
                                                             String taskSeriesId,
                                                             String noteId ) throws ServiceException
@@ -953,6 +1004,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public TimeLineResult< RtmTaskNote > tasks_notes_edit( String timelineId,
                                                           String taskSeriesId,
                                                           String noteId,
@@ -974,6 +1026,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void test_echo()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -981,6 +1034,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void test_login()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -988,6 +1042,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void time_convert()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -995,6 +1050,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void time_parse()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -1002,6 +1058,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public RtmTimeline timelines_create() throws ServiceException
    {
       return new RtmTimeline( invoker.invoke( new Param( "method",
@@ -1015,6 +1072,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void timezones_getList()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
@@ -1022,6 +1080,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public void transactions_undo( String timeline, String transactionId ) throws ServiceException
    {
       invoker.invoke( new Param( "method", "rtm.transactions.undo" ),
@@ -1033,6 +1092,7 @@ public class ServiceImpl implements Service
    
    
    
+   @Override
    public List< RtmLocation > locations_getList() throws ServiceException
    {
       Element result = invoker.invoke( new Param( "method",
@@ -1055,8 +1115,6 @@ public class ServiceImpl implements Service
    private final static TimeLineResult< RtmTaskList > newTaskResult( String timelineId,
                                                                      Element elt ) throws ServiceException
    {
-      // TODO: Check for Android > 2.1
-      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
       if ( nodes.getLength() < 2 )
@@ -1112,8 +1170,6 @@ public class ServiceImpl implements Service
                                                                      String noteId,
                                                                      String taskSeriesId ) throws ServiceException
    {
-      // TODO: Check for Android > 2.1
-      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
       if ( nodes.getLength() < 1 )
@@ -1169,8 +1225,6 @@ public class ServiceImpl implements Service
    private final static TimeLineResult< RtmList > newListResult( String timelineId,
                                                                  Element elt ) throws ServiceException
    {
-      // TODO: Check for Android > 2.1
-      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
       if ( nodes.getLength() < 1 )

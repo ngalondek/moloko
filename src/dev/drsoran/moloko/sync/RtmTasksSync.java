@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -46,9 +46,9 @@ import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.service.RtmServiceConstants;
-import dev.drsoran.moloko.sync.elements.InSyncRtmTaskSeries;
+import dev.drsoran.moloko.sync.elements.InSyncTask;
 import dev.drsoran.moloko.sync.elements.OutSyncTask;
-import dev.drsoran.moloko.sync.elements.ServerSourceSyncRtmTaskList;
+import dev.drsoran.moloko.sync.elements.ServerSyncRtmTaskList;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -73,7 +73,7 @@ public final class RtmTasksSync
       public final RtmTaskList taskList;
       
       
-      
+
       public AddTaskResult( int responseCode, RtmTaskList taskList )
       {
          this.responseCode = responseCode;
@@ -82,7 +82,7 @@ public final class RtmTasksSync
    }
    
    
-   
+
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
@@ -124,9 +124,9 @@ public final class RtmTasksSync
             local_SyncTaskList = new SyncRtmTaskList( tasks );
       }
       
-      final ServerSourceSyncRtmTaskList server_SyncTaskList = getServerTasksList( service,
-                                                                                  lastSync,
-                                                                                  syncResult );
+      final ServerSyncRtmTaskList server_SyncTaskList = getServerTasksList( service,
+                                                                            lastSync,
+                                                                            syncResult );
       if ( server_SyncTaskList == null )
       {
          return false;
@@ -196,15 +196,15 @@ public final class RtmTasksSync
       // . <-- At this point we have an up-to-date list of server TaskSeries
       // containing all changes made by outgoing sync.
       {
-         final ContentProviderSyncableList< InSyncRtmTaskSeries > local_SyncList = new ContentProviderSyncableList< InSyncRtmTaskSeries >( local_SyncTaskList.getInSyncTasksSeries(),
-                                                                                                                                           InSyncRtmTaskSeries.LESS_ID );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_SyncTaskList.getInSyncTasksSeries(),
+         final ContentProviderSyncableList< InSyncTask > local_SyncList = new ContentProviderSyncableList< InSyncTask >( local_SyncTaskList.getInSyncTasks(),
+                                                                                                                         InSyncTask.LESS_ID );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_SyncTaskList.getInSyncTasks(),
                                                                                          local_SyncList,
                                                                                          lastSync == null );
          syncResult.localOps.addAll( syncOperations );
          
-         // Process the taskserieses with deleted tasks at last. Otherwise we could remove local taskserieses and insert
-         // them again during inDiff
+         // Process the taskserieses with only deleted tasks at last. Otherwise we would remove local taskserieses and
+         // insert them again during inDiff
          final List< IContentProviderSyncOperation > removeDeletedTasksOps = server_SyncTaskList.removeDeletedTasks();
          syncResult.localOps.addAll( removeDeletedTasksOps );
       }
@@ -219,18 +219,18 @@ public final class RtmTasksSync
                                        syncResult );
    }
    
-   
-   
-   public static ServerSourceSyncRtmTaskList getServerTasksList( Service service,
-                                                                 Date lastSync,
-                                                                 MolokoSyncResult syncResult )
+
+
+   public static ServerSyncRtmTaskList getServerTasksList( Service service,
+                                                           Date lastSync,
+                                                           MolokoSyncResult syncResult )
    {
-      ServerSourceSyncRtmTaskList server_SyncTaskList = null;
+      ServerSyncRtmTaskList server_SyncTaskList = null;
       {
          try
          {
             final RtmTasks tasks = service.tasks_getList( null, null, lastSync );
-            server_SyncTaskList = new ServerSourceSyncRtmTaskList( tasks );
+            server_SyncTaskList = new ServerSyncRtmTaskList( tasks );
          }
          catch ( ServiceException e )
          {
@@ -242,8 +242,8 @@ public final class RtmTasksSync
       return server_SyncTaskList;
    }
    
-   
-   
+
+
    private static void sendNewTasks( Service service,
                                      RtmProvider provider,
                                      TimeLineFactory timeLineFactory,
@@ -282,8 +282,8 @@ public final class RtmTasksSync
       }
    }
    
-   
-   
+
+
    private final static RtmTaskList sendTask( Service service,
                                               RtmProvider provider,
                                               RtmTimeline timeline,
@@ -353,8 +353,8 @@ public final class RtmTasksSync
       return res.taskList;
    }
    
-   
-   
+
+
    private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmTaskList > > serverOps,
                                                     SyncRtmTaskList serverList ) throws ServiceException
@@ -381,8 +381,8 @@ public final class RtmTasksSync
       }
    }
    
-   
-   
+
+
    private final static AddTaskResult addTask( RtmTimeline timeline,
                                                String name,
                                                String listId )
@@ -412,8 +412,8 @@ public final class RtmTasksSync
       return new AddTaskResult( respCode, taskList );
    }
    
-   
-   
+
+
    private final static void handleResponseCode( MolokoSyncResult syncResult,
                                                  ServiceException e )
    {

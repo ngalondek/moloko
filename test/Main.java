@@ -1,7 +1,6 @@
 import java.text.ParseException;
 
 
-
 public class Main
 {
    
@@ -10,15 +9,21 @@ public class Main
     */
    public static void main( String[] args )
    {
-      DateParserTestCase.execute();
-      TimeParserTestCase.execute();
+      DateParserTestCase_en.execute(new TestDateFormaterContext_en());
+      DateParserTestCase_de.execute(new TestDateFormaterContext_de());
+      
+      TimeParserTestCase_en.execute();
+      TimeParserTestCase_de.execute();
+      
       try
       {
-         RecurrenceTestCase.execute();
+         RecurrenceTestCase_en.execute();
+         RecurrenceTestCase_de.execute();
+         
+         RecurrencePatternTestCase.execute();
       }
       catch ( ParseException e )
       {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
    }

@@ -123,4 +123,17 @@ public class ParcelableDate implements Parcelable
       dest.writeLong( date.getTime() );
    }
    
+
+
+   public final static ParcelableDate newInstanceIfNotNull( Date date )
+   {
+      return date != null ? new ParcelableDate( date ) : null;
+   }
+   
+
+
+   public final static ParcelableDate fromParcel( Parcel source )
+   {
+      return source.readParcelable( ParcelableDate.class.getClassLoader() );
+   }
 }

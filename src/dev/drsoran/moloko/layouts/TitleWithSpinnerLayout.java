@@ -22,15 +22,17 @@
 
 package dev.drsoran.moloko.layouts;
 
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.AdapterView.OnItemSelectedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Strings;
@@ -54,15 +56,15 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    private String[] values;
    
    
-
+   
    public TitleWithSpinnerLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
    public TitleWithSpinnerLayout( Context context, AttributeSet attrs,
       ViewGroup root )
    {
@@ -70,8 +72,16 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
+   @Override
+   public Spinner getView()
+   {
+      return spinner;
+   }
+   
+   
+   
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -79,29 +89,29 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       spinner.setEnabled( false );
    }
    
-
-
+   
+   
    public void setAdapter( SpinnerAdapter adapter )
    {
       spinner.setAdapter( adapter );
    }
    
-
-
+   
+   
    public void setOnItemSelectedListener( OnItemSelectedListener listener )
    {
       spinner.setOnItemSelectedListener( listener );
    }
    
-
-
+   
+   
    public void setStringConverter( StringConverter converter )
    {
       this.converter = converter;
    }
    
-
-
+   
+   
    public void setSelectionByEntry( String entry, int notFoundIndex )
    {
       final SpinnerAdapter adapter = spinner.getAdapter();
@@ -139,8 +149,8 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       }
    }
    
-
-
+   
+   
    public void setSelectionByValue( String value, int notFoundIndex )
    {
       if ( values != null )
@@ -165,8 +175,22 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       }
    }
    
-
-
+   
+   
+   public void setValues( List< String > values )
+   {
+      if ( values == null )
+         throw new NullPointerException( "values are null" );
+      
+      this.values = new String[ values.size() ];
+      for ( int i = 0; i < values.size(); ++i )
+      {
+         this.values[ i ] = values.get( i );
+      }
+   }
+   
+   
+   
    public void setValues( String[] values )
    {
       if ( values == null )
@@ -179,8 +203,8 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       }
    }
    
-
-
+   
+   
    public void setValues( Cursor c, int colIdx )
    {
       if ( c == null )
@@ -204,8 +228,8 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       }
    }
    
-
-
+   
+   
    public String getValueAtPos( int pos )
    {
       if ( values != null && values.length > pos )
@@ -214,15 +238,15 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
          return null;
    }
    
-
-
+   
+   
    public String getSelectedValue()
    {
       return getValueAtPos( spinner.getSelectedItemPosition() );
    }
    
-
-
+   
+   
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )
@@ -232,30 +256,28 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleWithSpinner,
-                                                               0,
+                                                               R.attr.titleWithSpinnerStyle,
                                                                0 );
-      if ( !isInEditMode() )
+      
+      final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
+                                                 -1 );
+      
+      if ( entriesId != -1 )
       {
-         final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
-                                                    -1 );
+         final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
+                                                                                       entriesId,
+                                                                                       android.R.layout.simple_spinner_item );
+         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
          
-         if ( entriesId != -1 )
-         {
-            final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
-                                                                                          entriesId,
-                                                                                          android.R.layout.simple_spinner_item );
-            adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-            
-            setAdapter( adapter );
-         }
-         
-         final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
-                                                   -1 );
-         
-         if ( valuesId != -1 )
-         {
-            values = context.getResources().getStringArray( valuesId );
-         }
+         setAdapter( adapter );
+      }
+      
+      final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
+                                                -1 );
+      
+      if ( valuesId != -1 )
+      {
+         values = context.getResources().getStringArray( valuesId );
       }
       
       array.recycle();

@@ -27,34 +27,49 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
+import android.support.v4.view.MenuItem.OnMenuItemClickListener;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
+
+import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
+
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.layouts.TitleBarLayout;
+import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
+import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.layouts.ActionBarMenuItemView;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
 
@@ -82,6 +97,33 @@ public final class UIUtils
    }
    
    
+   public static abstract class AfterTextChangedWatcher implements TextWatcher
+   {
+      @Override
+      abstract public void afterTextChanged( Editable s );
+      
+      
+      
+      @Override
+      public void beforeTextChanged( CharSequence s,
+                                     int start,
+                                     int count,
+                                     int after )
+      {
+      }
+      
+      
+      
+      @Override
+      public void onTextChanged( CharSequence s,
+                                 int start,
+                                 int before,
+                                 int count )
+      {
+      }
+   }
+   
+   
    
    public final static String getTrimmedText( TextView textView )
    {
@@ -97,72 +139,84 @@ public final class UIUtils
    
    
    
-   public final static void setTitle( Activity activity, String text )
+   public final static void showSoftInput( View view )
    {
-      final View titleBarText = activity.findViewById( R.id.app_titlebar_text );
-      
-      if ( titleBarText instanceof TextView )
+      if ( view != null )
       {
-         ( (TextView) titleBarText ).setText( text );
-      }
-      else
-      {
-         activity.setTitle( text );
-      }
-   }
-   
-   
-   
-   public final static void setTitle( Activity activity, int resId )
-   {
-      setTitle( activity, activity.getResources().getString( resId ) );
-   }
-   
-   
-   
-   public final static void setTitle( Activity activity,
-                                      String text,
-                                      int iconResId )
-   {
-      final View view = activity.findViewById( R.id.app_titlebar_text );
-      
-      if ( view instanceof TextView )
-      {
-         final TextView titleBarText = (TextView) view;
-         
-         titleBarText.setText( text );
-         
-         BitmapDrawable bitmap = null;
-         
-         if ( iconResId != -1 )
+         final InputMethodManager imm = (InputMethodManager) view.getContext()
+                                                                 .getSystemService( Context.INPUT_METHOD_SERVICE );
+         if ( imm != null )
          {
-            bitmap = new BitmapDrawable( activity.getResources()
-                                                 .openRawResource( iconResId ) );
-            
-            final int iconSize = activity.getResources()
-                                         .getDimensionPixelSize( R.dimen.app_titlebar_text_size );
-            
-            bitmap.setBounds( 0, 0, iconSize, iconSize );
+            imm.showSoftInput( view, InputMethodManager.SHOW_IMPLICIT );
          }
-         
-         titleBarText.setCompoundDrawables( bitmap, null, null, null );
-      }
-      else
-      {
-         activity.setTitle( text );
       }
    }
    
    
    
-   public final static void showTitleBarAddTask( Activity activity, boolean show )
+   public final static boolean hasInputCommitted( int actionId )
    {
-      final TitleBarLayout titleBar = (TitleBarLayout) activity.findViewById( R.id.app_title_bar );
-      
-      if ( titleBar != null )
+      return actionId == EditorInfo.IME_ACTION_DONE
+         || actionId == EditorInfo.IME_ACTION_NEXT
+         || actionId == EditorInfo.IME_NULL;
+   }
+   
+   
+   
+   public final static void hideSoftInput( View view )
+   {
+      if ( view != null )
       {
-         titleBar.showAddTaskInput( show );
+         hideSoftInput( view.getContext(), view.getWindowToken() );
       }
+   }
+   
+   
+   
+   public final static void hideSoftInput( Context context, IBinder windowToken )
+   {
+      if ( windowToken != null )
+      {
+         final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
+         if ( imm != null )
+         {
+            imm.hideSoftInputFromWindow( windowToken, 0 );
+         }
+      }
+   }
+   
+   
+   
+   public final static View setDropDownItemIconAndText( View dropDownView,
+                                                        Pair< Integer, String > iconWithText )
+   {
+      return setDropDownItemIconAndText( dropDownView,
+                                         iconWithText.first != null
+                                                                   ? iconWithText.first.intValue()
+                                                                   : -1,
+                                         iconWithText.second );
+      
+   }
+   
+   
+   
+   public final static View setDropDownItemIconAndText( View dropDownView,
+                                                        int iconId,
+                                                        String text )
+   {
+      final TextView textView = (TextView) dropDownView.findViewById( android.R.id.text1 );
+      textView.setText( text );
+      
+      if ( iconId != -1 )
+      {
+         textView.setCompoundDrawablesWithIntrinsicBounds( iconId, 0, 0, 0 );
+      }
+      else
+      {
+         textView.setCompoundDrawablesWithIntrinsicBounds( 0, 0, 0, 0 );
+      }
+      
+      return dropDownView;
    }
    
    
@@ -213,6 +267,32 @@ public final class UIUtils
       
       if ( !setTypeFace )
          view.setTypeface( Typeface.DEFAULT );
+   }
+   
+   
+   
+   public final static void setListTasksCountView( TextView tasksCount,
+                                                   RtmListWithTaskCount list )
+   {
+      final int numTasks = list.getIncompleteTaskCount();
+      tasksCount.setText( String.valueOf( numTasks ) );
+      
+      if ( list.hasSmartFilter() )
+      {
+         if ( list.isSmartFilterValid() )
+         {
+            tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart );
+         }
+         else
+         {
+            tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart_fail );
+            tasksCount.setText( "?" );
+         }
+      }
+      else
+      {
+         tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd );
+      }
    }
    
    
@@ -421,16 +501,37 @@ public final class UIUtils
    
    
    
-   public final static void initializeErrorWithIcon( Activity activity,
-                                                     int resId,
-                                                     Object... params )
+   public final static void inflateErrorWithIcon( Context context,
+                                                  ViewGroup container,
+                                                  int errorMsgResId,
+                                                  Object... params )
    {
-      activity.setContentView( R.layout.error_with_icon );
-      final TextView text = (TextView) activity.findViewById( R.id.title_with_text_text );
-      final String msg = activity.getResources().getString( resId, params );
+      final View view = LayoutInflater.from( context )
+                                      .inflate( R.layout.error_with_icon,
+                                                container,
+                                                true );
+      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
+      final String msg = context.getResources().getString( errorMsgResId,
+                                                           params );
       text.setText( msg );
       
-      Log.e( LogUtils.toTag( Activity.class ), msg );
+      Log.e( LogUtils.toTag( Context.class ), msg );
+   }
+   
+   
+   
+   public final static void inflateErrorWithIcon( Context context,
+                                                  ViewGroup container,
+                                                  Spanned errorText )
+   {
+      final View view = LayoutInflater.from( context )
+                                      .inflate( R.layout.error_with_icon,
+                                                container,
+                                                true );
+      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
+      text.setText( errorText );
+      
+      Log.e( LogUtils.toTag( Context.class ), errorText.toString() );
    }
    
    
@@ -443,44 +544,198 @@ public final class UIUtils
    
    
    
-   public final static void addSyncMenuItem( final Context context,
-                                             Menu menu,
-                                             int id,
-                                             int menuOrder )
+   public final static MenuItem addSettingsMenuItem( final Context context,
+                                                     Menu menu,
+                                                     int menuOrder,
+                                                     int showAsActionFlags )
    {
-      if ( menu.findItem( id ) != null )
-         menu.removeItem( id );
+      final MenuItem menuItem = addOptionalMenuItem( context,
+                                                     menu,
+                                                     R.id.menu_settings,
+                                                     context.getString( R.string.phr_settings ),
+                                                     menuOrder,
+                                                     Menu.NONE,
+                                                     R.drawable.ic_menu_settings,
+                                                     showAsActionFlags,
+                                                     new Intent( context,
+                                                                 MolokoPreferencesActivity.class ),
+                                                     true );
+      return menuItem;
+   }
+   
+   
+   
+   public final static MenuItem addSearchMenuItem( final Activity activity,
+                                                   Menu menu,
+                                                   int menuOrder,
+                                                   int showAsActionFlags )
+   {
+      final MenuItem menuItem = addOptionalMenuItem( activity,
+                                                     menu,
+                                                     R.id.menu_search_tasks,
+                                                     activity.getString( R.string.search_hint ),
+                                                     menuOrder,
+                                                     Menu.NONE,
+                                                     R.drawable.ic_menu_search,
+                                                     showAsActionFlags,
+                                                     true );
       
-      if ( SyncUtils.isSyncing( context ) )
+      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
       {
-         menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
-             .setIcon( R.drawable.ic_menu_cancel )
-             .setOnMenuItemClickListener( new OnMenuItemClickListener()
-             {
-                public boolean onMenuItemClick( MenuItem item )
-                {
-                   SyncUtils.cancelSync( context );
-                   return true;
-                }
-             } );
+         @Override
+         public boolean onMenuItemClick( MenuItem item )
+         {
+            return activity.onSearchRequested();
+         }
+      } );
+      
+      return menuItem;
+   }
+   
+   
+   
+   public final static MenuItem addSyncMenuItem( final FragmentActivity activity,
+                                                 Menu menu,
+                                                 int menuOrder,
+                                                 int showAsActionFlags )
+   {
+      final MenuItem menuItem = addOptionalMenuItem( activity,
+                                                     menu,
+                                                     R.id.menu_sync,
+                                                     activity.getString( R.string.phr_do_sync ),
+                                                     menuOrder,
+                                                     Menu.NONE,
+                                                     R.drawable.ic_menu_refresh,
+                                                     showAsActionFlags,
+                                                     true );
+      
+      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+      {
+         @Override
+         public boolean onMenuItemClick( MenuItem item )
+         {
+            SyncUtils.requestManualSync( activity );
+            return true;
+         }
+      } );
+      
+      return menuItem;
+   }
+   
+   
+   
+   public final static MenuItem addOptionalMenuItem( Context context,
+                                                     Menu menu,
+                                                     int itemId,
+                                                     String title,
+                                                     int order,
+                                                     int groupId,
+                                                     int iconId,
+                                                     int showAsActionFlags,
+                                                     boolean show )
+   {
+      return addOptionalMenuItem( context,
+                                  menu,
+                                  itemId,
+                                  title,
+                                  order,
+                                  groupId,
+                                  iconId,
+                                  showAsActionFlags,
+                                  null,
+                                  show );
+   }
+   
+   
+   
+   public final static MenuItem addOptionalMenuItem( Context context,
+                                                     Menu menu,
+                                                     int itemId,
+                                                     String title,
+                                                     int order,
+                                                     int groupId,
+                                                     int iconId,
+                                                     int showAsActionFlags,
+                                                     Intent intent,
+                                                     boolean show )
+   {
+      MenuItem item = null;
+      
+      if ( show )
+      {
+         item = menu.findItem( itemId );
+         
+         if ( item == null )
+         {
+            item = menu.add( groupId, itemId, order, title );
+            
+            if ( iconId != -1 )
+               item.setIcon( iconId );
+         }
+         
+         item.setTitle( title );
+         
+         if ( intent != null )
+         {
+            item.setIntent( intent );
+         }
+         
+         item.setShowAsAction( showAsActionFlags );
+         
+         if ( showAsActionFlags != MenuItem.SHOW_AS_ACTION_NEVER )
+         {
+            addCompatibilityActionView( context, menu, item );
+         }
       }
       else
       {
-         final MenuItem menuItem = menu.add( Menu.NONE,
-                                             id,
-                                             menuOrder,
-                                             R.string.phr_do_sync )
-                                       .setIcon( R.drawable.ic_menu_refresh );
-         
-         menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
-         {
-            public boolean onMenuItemClick( MenuItem item )
-            {
-               SyncUtils.requestManualSync( context );
-               return true;
-            }
-         } );
+         menu.removeItem( itemId );
       }
+      
+      return item;
+   }
+   
+   
+   
+   public static void addCompatibilityActionView( Context context,
+                                                  Menu menu,
+                                                  MenuItem item )
+   {
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) == false )
+      {
+         
+         final ActionBarMenuItemView actionBarMenuItemView = (ActionBarMenuItemView) LayoutInflater.from( context )
+                                                                                                   .inflate( R.layout.app_action_bar_item_view,
+                                                                                                             null );
+         actionBarMenuItemView.initialize( (MenuItemImpl) item, 0 );
+         actionBarMenuItemView.setInvokeTarget( menu, item.getItemId() );
+         
+         item.setActionView( actionBarMenuItemView );
+      }
+   }
+   
+   
+   
+   public final static void addOptionsMenuIntent( Context context,
+                                                  Menu menu,
+                                                  int id,
+                                                  Class< ? > activityClass )
+   {
+      addOptionsMenuIntent( context, menu, id, new Intent( context,
+                                                           activityClass ) );
+   }
+   
+   
+   
+   public final static void addOptionsMenuIntent( Context context,
+                                                  Menu menu,
+                                                  int id,
+                                                  Intent intent )
+   {
+      final MenuItem item = menu.findItem( id );
+      
+      if ( item != null )
+         item.setIntent( intent );
    }
    
    
@@ -561,86 +816,126 @@ public final class UIUtils
    
    
    
-   public final static Dialog newCancelWithChangesDialog( Activity activity,
-                                                          Runnable yesAction,
-                                                          Runnable noAction )
+   public final static void showApplyChangesDialog( FragmentActivity activity )
    {
-      return newDialogWithActions( activity,
-                                   activity.getString( R.string.phr_edit_dlg_cancel ),
-                                   android.R.string.yes,
-                                   android.R.string.no,
-                                   yesAction,
-                                   noAction );
+      showApplyChangesDialog( activity, null );
    }
    
    
    
-   public final static Dialog newApplyChangesDialog( Activity activity,
-                                                     Runnable yesAction,
-                                                     Runnable noAction )
+   public final static void showApplyChangesDialog( FragmentActivity activity,
+                                                    String tag )
    {
-      return newDialogWithActions( activity,
-                                   activity.getString( R.string.phr_edit_dlg_done ),
-                                   android.R.string.yes,
-                                   android.R.string.no,
-                                   yesAction,
-                                   noAction );
+      new AlertDialogFragment.Builder( R.id.dlg_apply_changes ).setTag( tag )
+                                                               .setMessage( activity.getString( R.string.phr_edit_dlg_done ) )
+                                                               .setPositiveButton( android.R.string.yes )
+                                                               .setNegativeButton( android.R.string.no )
+                                                               .show( activity );
    }
    
    
    
-   public final static Dialog newDeleteElementDialog( Activity activity,
-                                                      String elementName,
-                                                      Runnable yesAction,
-                                                      Runnable noAction )
+   public final static void showCancelWithChangesDialog( FragmentActivity activity )
    {
-      return newDialogWithActions( activity,
-                                   activity.getString( R.string.phr_delete_with_name,
-                                                      elementName )
-                                      + "?",
-                                   R.string.btn_delete,
-                                   R.string.btn_cancel,
-                                   yesAction,
-                                   noAction );
+      showCancelWithChangesDialog( activity, null );
    }
    
    
    
-   public final static Dialog newDialogWithActions( final Activity activity,
-                                                    String message,
-                                                    int positiveId,
-                                                    int negativeId,
-                                                    final Runnable yesAction,
-                                                    final Runnable noAction )
+   public final static void showCancelWithChangesDialog( FragmentActivity activity,
+                                                         String tag )
    {
-      final Dialog dialog = new AlertDialog.Builder( activity ).setMessage( message )
-                                                               .setPositiveButton( positiveId,
-                                                                                   yesAction != null
-                                                                                                    ? new DialogInterface.OnClickListener()
-                                                                                                    {
-                                                                                                       public void onClick( DialogInterface dialog,
-                                                                                                                            int which )
-                                                                                                       {
-                                                                                                          yesAction.run();
-                                                                                                       }
-                                                                                                    }
-                                                                                                    : null )
-                                                               .setNegativeButton( negativeId,
-                                                                                   noAction != null
-                                                                                                   ? new DialogInterface.OnClickListener()
-                                                                                                   {
-                                                                                                      public void onClick( DialogInterface dialog,
-                                                                                                                           int which )
-                                                                                                      {
-                                                                                                         noAction.run();
-                                                                                                      }
-                                                                                                   }
-                                                                                                   : null )
-                                                               .create();
-      dialog.setOwnerActivity( activity );
-      
-      return dialog;
-   };
+      new AlertDialogFragment.Builder( R.id.dlg_cancel_with_changes ).setTag( tag )
+                                                                     .setMessage( activity.getString( R.string.phr_edit_dlg_cancel ) )
+                                                                     .setPositiveButton( android.R.string.yes )
+                                                                     .setNegativeButton( android.R.string.no )
+                                                                     .show( activity );
+   }
+   
+   
+   
+   public final static void showDeleteElementDialog( FragmentActivity activity,
+                                                     String elementName )
+   {
+      showDeleteElementDialog( activity, elementName, null );
+   }
+   
+   
+   
+   public final static void showDeleteElementDialog( FragmentActivity activity,
+                                                     String elementName,
+                                                     String tag )
+   {
+      new AlertDialogFragment.Builder( R.id.dlg_delete_element ).setTag( tag )
+                                                                .setMessage( activity.getString( R.string.phr_delete_with_name,
+                                                                                                 elementName )
+                                                                   + "?" )
+                                                                .setPositiveButton( R.string.btn_delete )
+                                                                .setNegativeButton( R.string.btn_cancel )
+                                                                .show( activity );
+   }
+   
+   
+   
+   public final static void showReadOnlyAccessDialog( FragmentActivity activity )
+   {
+      new AlertDialogFragment.Builder( R.id.dlg_read_only_access ).setMessage( activity.getString( R.string.err_modify_access_level_read ) )
+                                                                  .setPositiveButton( R.string.btn_account_settings )
+                                                                  .setNegativeButton( R.string.btn_cancel )
+                                                                  .show( activity );
+   }
+   
+   
+   
+   public final static void showAboutMolokoDialog( FragmentActivity fragActivity )
+   {
+      final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );
+      dialog.show( fragActivity.getSupportFragmentManager(),
+                   String.valueOf( R.id.frag_about_moloko ) );
+   }
+   
+   
+   
+   public final static void showNoAccountDialog( FragmentActivity fragmentActivity )
+   {
+      new AlertDialogFragment.Builder( R.id.dlg_no_account ).setTitle( fragmentActivity.getString( R.string.dlg_no_account_title ) )
+                                                            .setIcon( R.drawable.rtm )
+                                                            .setMessage( fragmentActivity.getString( R.string.dlg_no_account_text ) )
+                                                            .setPositiveButton( R.string.btn_new_account )
+                                                            .setNegativeButton( R.string.btn_cancel )
+                                                            .show( fragmentActivity );
+   }
+   
+   
+   
+   public final static void showNotConnectedDialog( FragmentActivity fragmentActivity )
+   {
+      new AlertDialogFragment.Builder( R.id.dlg_not_connected ).setTitle( fragmentActivity.getString( R.string.err_not_connected ) )
+                                                               .setIcon( android.R.drawable.ic_dialog_alert )
+                                                               .setMessage( fragmentActivity.getString( R.string.phr_establish_connection ) )
+                                                               .setNeutralButton( R.string.btn_ok )
+                                                               .show( fragmentActivity );
+   }
+   
+   
+   
+   public final static void showDialogFragment( FragmentActivity fragmentActivity,
+                                                DialogFragment dialogFragment,
+                                                String fragmentTag )
+   {
+      if ( !isDialogFragmentAdded( fragmentActivity, fragmentTag ) )
+         dialogFragment.show( fragmentActivity.getSupportFragmentManager(),
+                              fragmentTag );
+   }
+   
+   
+   
+   public final static boolean isDialogFragmentAdded( FragmentActivity fragmentActivity,
+                                                      String fragmentTag )
+   {
+      return fragmentActivity.getSupportFragmentManager()
+                             .findFragmentByTag( fragmentTag ) != null;
+   }
    
    
    
@@ -650,6 +945,19 @@ public final class UIUtils
                                              boolean ok )
    {
       Toast.makeText( context, ok ? resIdOk : resIdFailed, Toast.LENGTH_LONG )
+           .show();
+      
+      return ok;
+   }
+   
+   
+   
+   public final static boolean reportStatus( Context context,
+                                             CharSequence strOk,
+                                             CharSequence strFailed,
+                                             boolean ok )
+   {
+      Toast.makeText( context, ok ? strOk : strFailed, Toast.LENGTH_LONG )
            .show();
       
       return ok;

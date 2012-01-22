@@ -22,21 +22,21 @@
 
 package dev.drsoran.moloko.util;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 public final class Queries
@@ -49,6 +49,23 @@ public final class Queries
    private Queries()
    {
       throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+   
+   
+   public final static String resolveTaskSortToSqlite( int sortValue )
+   {
+      switch ( sortValue )
+      {
+         case Settings.TASK_SORT_PRIORITY:
+            return Tasks.SORT_PRIORITY;
+         case Settings.TASK_SORT_DUE_DATE:
+            return Tasks.SORT_DUE_DATE;
+         case Settings.TASK_SORT_NAME:
+            return Tasks.SORT_TASK_NAME;
+         default :
+            return null;
+      }
    }
    
    
@@ -283,65 +300,31 @@ public final class Queries
    
    
    
-   public final static boolean applyModifications( Context context,
-                                                   ModificationSet modifications,
-                                                   int progressTextId )
+   public final static boolean applyActionItemList( FragmentActivity activity,
+                                                    ContentProviderActionItemList actionItemList,
+                                                    String progressText )
    {
       boolean ok = true;
       
-      if ( modifications.size() > 0 )
+      if ( actionItemList.size() > 0 )
       {
          try
          {
-            ok = new ApplyModificationsTask( context, progressTextId ).execute( modifications )
-                                                                      .get();
+            ok = new ApplyContentProviderActionItemsTask( activity,
+                                                          progressText ).execute( actionItemList )
+                                                                        .get();
          }
          catch ( InterruptedException e )
          {
             Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying modifications failed",
+                   "Applying ContentProviderActionItemList failed",
                    e );
             ok = false;
          }
          catch ( ExecutionException e )
          {
             Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying modifications failed",
-                   e );
-            ok = false;
-         }
-      }
-      
-      return ok;
-   }
-   
-   
-   
-   @SuppressWarnings( "unchecked" )
-   public final static boolean transactionalApplyOperations( Context context,
-                                                             ArrayList< ContentProviderOperation > operations,
-                                                             int progressTextId )
-   {
-      boolean ok = true;
-      
-      if ( operations.size() > 0 )
-      {
-         try
-         {
-            ok = new ApplyOperationsTask( context, progressTextId, true ).execute( operations )
-                                                                         .get();
-         }
-         catch ( InterruptedException e )
-         {
-            Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying operations failed",
-                   e );
-            ok = false;
-         }
-         catch ( ExecutionException e )
-         {
-            Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying operations failed",
+                   "Applying ContentProviderActionItemList failed",
                    e );
             ok = false;
          }

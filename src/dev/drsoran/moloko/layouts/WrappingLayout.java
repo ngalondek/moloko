@@ -55,21 +55,21 @@ public class WrappingLayout extends ViewGroup
    
    
 
-   public WrappingLayout( Context context )
+   public WrappingLayout( Context context, AttributeSet attrs )
    {
-      super( context );
+      this( context, attrs, R.attr.wrappingLayoutStyle );
    }
    
 
 
-   public WrappingLayout( Context context, AttributeSet attrs )
+   public WrappingLayout( Context context, AttributeSet attrs, int defStyle )
    {
-      super( context, attrs );
+      super( context, attrs, defStyle );
       
       // WrappingLayout
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.WrappingLayout,
-                                                               0,
+                                                               defStyle,
                                                                0 );
       
       final int hor_spc = array.getDimensionPixelOffset( R.styleable.WrappingLayout_horizontal_spacing,

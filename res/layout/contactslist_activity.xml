@@ -14,33 +14,14 @@
       implementation
    -->
 
-<LinearLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+<merge
+   xmlns:android="http://schemas.android.com/apk/res/android">
 
-   <dev.drsoran.moloko.layouts.TitleBarLayout
-      xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-      style="@style/App_TitleBar"
-      moloko:titleText="@string/app_contacts"
-      moloko:showButton="add_task|home|search" />
-
-   <ListView
-      android:id="@id/android:list"
-      style="@style/ContactsList_List"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent" />
-
-   <TextView
-      android:id="@+id/contactslist_activity_no_contacts"
-      style="@style/App_No_List_Elements_Text"
+   <fragment
+      android:id="@id/frag_contactslist"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:text="@string/contactslist_no_contacts"
-      android:visibility="gone" />
-
-   <include
-      android:id="@id/android:empty"
-      layout="@layout/app_loading_spinner" />
-</LinearLayout>
+      android:name="dev.drsoran.moloko.fragments.ContactsListFragment" >
+       <!-- Preview: layout=@layout/contactslist_fragment -->
+   </fragment>
+</merge>

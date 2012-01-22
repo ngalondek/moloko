@@ -22,512 +22,210 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collections;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.Checkable;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.util.Pair;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.prefs.TaskSortPreference;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.rtm.ListTask;
-import dev.drsoran.rtm.RtmSmartFilter;
-import dev.drsoran.rtm.SelectableListTask;
+import dev.drsoran.rtm.Task;
 
 
-public class SelectMultipleTasksActivity extends TasksListActivity
+public class SelectMultipleTasksActivity extends AbstractTasksListActivity
+         implements ISelectableTasksListFragmentListener
 {
-   private final static String TAG = "Moloko."
-      + SelectMultipleTasksActivity.class.getSimpleName();
-   
-   
-   private static class OptionsMenu
-   {
-      protected final static int START_IDX = 0;
-      
-      public final static int MENU_ORDER = 0;
-      
-      public final static int SELECT_ALL = START_IDX + 0;
-      
-      public final static int DESELECT_ALL = START_IDX + 1;
-      
-      public final static int INVERT_SELECTION = START_IDX + 2;
-      
-      public final static int SORT = START_IDX + 3;
-      
-      public final static int DO_EDIT = START_IDX + 4;
-      
-      public final static int COMPLETE = START_IDX + 5;
-      
-      public final static int UNCOMPLETE = START_IDX + 6;
-      
-      public final static int POSTPONE = START_IDX + 7;
-      
-      public final static int DELETE = START_IDX + 8;
-   }
-   
-   
-   private static class CtxtMenu
-   {
-      public final static int TOGGLE_SELECTION = 0;
-   }
-   
-   private final static String CHECK_STATE = "check_state";
-   
-   private final static int SORT_SELECTION_IDX = TaskSortPreference.SORT_ORDER_VALUES.length;
-   
-   private final static int SORT_SELECTION_VALUE = TAG.hashCode();
-   
-   
-   
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public void onCreate( Bundle savedInstanceState )
    {
-      menu.add( Menu.NONE,
-                OptionsMenu.SELECT_ALL,
-                OptionsMenu.MENU_ORDER,
-                R.string.select_multiple_tasks_menu_opt_select_all )
-          .setIcon( R.drawable.ic_menu_select_all_tasks );
+      super.onCreate( savedInstanceState );
       
-      menu.add( Menu.NONE,
-                OptionsMenu.DESELECT_ALL,
-                OptionsMenu.MENU_ORDER,
-                R.string.select_multiple_tasks_menu_opt_unselect_all )
-          .setIcon( R.drawable.ic_menu_select_no_tasks );
-      
-      menu.add( Menu.NONE,
-                OptionsMenu.INVERT_SELECTION,
-                OptionsMenu.MENU_ORDER,
-                R.string.select_multiple_tasks_menu_opt_inv_selection )
-          .setIcon( R.drawable.ic_menu_select_invert_tasks );
-      
-      return true;
+      setTitleWithSelectedCount( 0 );
    }
    
    
    
    @Override
-   public boolean onPrepareOptionsMenu( Menu menu )
+   public void onOpenTask( int pos )
    {
-      final SelectMultipleTasksListAdapter adapter = getListAdapter();
-      
-      if ( adapter != null )
-      {
-         final boolean allSelected = adapter.areAllSelected();
-         final boolean someSelected = adapter.areSomeSelected();
-         final List< SelectableListTask > tasks = adapter.getSelectedTasks();
-         final int selCnt = tasks.size();
-         
-         addOptionalMenuItem( menu,
-                              OptionsMenu.SORT,
-                              getString( R.string.abstaskslist_menu_opt_sort ),
-                              OptionsMenu.MENU_ORDER + 1,
-                              R.drawable.ic_menu_sort,
-                              adapter.getCount() > 1 );
-         
-         addOptionalMenuItem( menu,
-                              OptionsMenu.DO_EDIT,
-                              getString( R.string.select_multiple_tasks_menu_opt_do_edit,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 2,
-                              R.drawable.ic_menu_edit,
-                              someSelected );
-         
-         int selCompl = 0, selUncompl = 0;
-         
-         for ( SelectableListTask task : tasks )
-         {
-            if ( task.getCompleted() != null )
-               ++selCompl;
-            else
-               ++selUncompl;
-         }
-         
-         // The complete task menu is only shown if all selected tasks are uncompleted
-         addOptionalMenuItem( menu,
-                              OptionsMenu.COMPLETE,
-                              getString( R.string.select_multiple_tasks_menu_opt_complete,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_complete,
-                              someSelected && selUncompl == selCnt );
-         
-         // The uncomplete task menu is only shown if all selected tasks are completed
-         addOptionalMenuItem( menu,
-                              OptionsMenu.UNCOMPLETE,
-                              getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_incomplete,
-                              someSelected && selCompl == selCnt );
-         
-         addOptionalMenuItem( menu,
-                              OptionsMenu.POSTPONE,
-                              getString( R.string.select_multiple_tasks_menu_opt_postpone,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_postponed,
-                              someSelected );
-         
-         addOptionalMenuItem( menu,
-                              OptionsMenu.DELETE,
-                              getString( R.string.select_multiple_tasks_menu_opt_delete,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_trash,
-                              someSelected );
-         
-         final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );
-         selAllItem.setEnabled( !allSelected );
-         
-         final MenuItem deselAllItem = menu.findItem( OptionsMenu.DESELECT_ALL );
-         deselAllItem.setEnabled( someSelected );
-         
-         final MenuItem invSelItem = menu.findItem( OptionsMenu.INVERT_SELECTION );
-         invSelItem.setEnabled( !allSelected && someSelected );
-         
-         return true;
-      }
-      
-      return false;
+      if ( getTasksListFragment() != null )
+         getTasksListFragment().toggle( pos );
    }
    
    
    
    @Override
-   public boolean onOptionsItemSelected( MenuItem item )
+   public void onSelectionChanged( List< ? extends Task > selectedTasks )
    {
-      final SelectMultipleTasksListAdapter adapter = getListAdapter();
-      
-      if ( adapter != null )
-      {
-         // Handle item selection
-         switch ( item.getItemId() )
-         {
-            case OptionsMenu.SELECT_ALL:
-               adapter.changeSelection( SelectMultipleTasksListAdapter.SEL_MODE_ALL );
-               return true;
-               
-            case OptionsMenu.DESELECT_ALL:
-               adapter.changeSelection( SelectMultipleTasksListAdapter.SEL_MODE_NONE );
-               return true;
-               
-            case OptionsMenu.INVERT_SELECTION:
-               adapter.changeSelection( SelectMultipleTasksListAdapter.SEL_MODE_INVERT );
-               return true;
-               
-            case OptionsMenu.SORT:
-               new AlertDialog.Builder( this ).setIcon( R.drawable.ic_dialog_sort )
-                                              .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                              .setSingleChoiceItems( adapter.getSelectedCount() > 0
-                                                                                                   ? R.array.selectmultipletasks_sort_options
-                                                                                                   : R.array.app_sort_options,
-                                                                     getTaskSortIndex( getTaskSort() ),
-                                                                     this )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  null )
-                                              .show()
-                                              .setOwnerActivity( this );
-               
-               return true;
-               
-            case OptionsMenu.DO_EDIT:
-               onEditSelectedTasks();
-               return true;
-               
-            case OptionsMenu.COMPLETE:
-               new AlertDialog.Builder( this ).setMessage( getString( R.string.select_multiple_tasks_dlg_complete,
-                                                                      adapter.getSelectedCount(),
-                                                                      getResources().getQuantityString( R.plurals.g_task,
-                                                                                                        adapter.getSelectedCount() ) ) )
-                                              .setPositiveButton( R.string.btn_complete,
-                                                                  new OnClickListener()
-                                                                  {
-                                                                     public void onClick( DialogInterface dialog,
-                                                                                          int which )
-                                                                     {
-                                                                        onSelectedTasksCompletion( true );
-                                                                     }
-                                                                  } )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  null )
-                                              .show()
-                                              .setOwnerActivity( this );
-               return true;
-               
-            case OptionsMenu.UNCOMPLETE:
-               new AlertDialog.Builder( this ).setMessage( getString( R.string.select_multiple_tasks_dlg_uncomplete,
-                                                                      adapter.getSelectedCount(),
-                                                                      getResources().getQuantityString( R.plurals.g_task,
-                                                                                                        adapter.getSelectedCount() ) ) )
-                                              .setPositiveButton( R.string.btn_uncomplete,
-                                                                  new OnClickListener()
-                                                                  {
-                                                                     public void onClick( DialogInterface dialog,
-                                                                                          int which )
-                                                                     {
-                                                                        onSelectedTasksCompletion( false );
-                                                                     }
-                                                                  } )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  null )
-                                              .show()
-                                              .setOwnerActivity( this );
-               return true;
-               
-            case OptionsMenu.POSTPONE:
-               new AlertDialog.Builder( this ).setMessage( getString( R.string.select_multiple_tasks_dlg_postpone,
-                                                                      adapter.getSelectedCount(),
-                                                                      getResources().getQuantityString( R.plurals.g_task,
-                                                                                                        adapter.getSelectedCount() ) ) )
-                                              .setPositiveButton( R.string.btn_postpone,
-                                                                  new OnClickListener()
-                                                                  {
-                                                                     public void onClick( DialogInterface dialog,
-                                                                                          int which )
-                                                                     {
-                                                                        onSelectedTasksPostpone();
-                                                                     }
-                                                                  } )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  null )
-                                              .show()
-                                              .setOwnerActivity( this );
-            case OptionsMenu.DELETE:
-               new AlertDialog.Builder( this ).setMessage( getString( R.string.select_multiple_tasks_dlg_delete,
-                                                                      adapter.getSelectedCount(),
-                                                                      getResources().getQuantityString( R.plurals.g_task,
-                                                                                                        adapter.getSelectedCount() ) ) )
-                                              .setPositiveButton( R.string.btn_delete,
-                                                                  new OnClickListener()
-                                                                  {
-                                                                     public void onClick( DialogInterface dialog,
-                                                                                          int which )
-                                                                     {
-                                                                        onSelectedTasksDelete();
-                                                                     }
-                                                                  } )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  null )
-                                              .show()
-                                              .setOwnerActivity( this );
-               return true;
-               
-            default :
-               break;
-         }
-      }
-      
-      return super.onOptionsItemSelected( item );
+      setTitleWithSelectedCount( selectedTasks.size() );
    }
    
    
    
    @Override
-   public void onCreateContextMenu( ContextMenu menu,
-                                    View v,
-                                    ContextMenuInfo menuInfo )
+   public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
-      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-      final Checkable checkableView = ( (Checkable) info.targetView.findViewById( R.id.taskslist_listitem_priority ) );
-      final ListTask task = getTask( info.position );
-      
-      if ( checkableView.isChecked() )
-         menu.add( Menu.NONE,
-                   CtxtMenu.TOGGLE_SELECTION,
-                   Menu.NONE,
-                   getString( R.string.select_multiple_tasks_menu_ctx_deselect,
-                              task.getName() ) );
-      else
-         menu.add( Menu.NONE,
-                   CtxtMenu.TOGGLE_SELECTION,
-                   Menu.NONE,
-                   getString( R.string.select_multiple_tasks_menu_ctx_select,
-                              task.getName() ) );
-   }
-   
-   
-   
-   @Override
-   public boolean onContextItemSelected( MenuItem item )
-   {
-      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-      
-      switch ( item.getItemId() )
-      {
-         case CtxtMenu.TOGGLE_SELECTION:
-            ( (Checkable) info.targetView.findViewById( R.id.taskslist_listitem_priority ) ).toggle();
-            return true;
-         default :
-            return super.onContextItemSelected( item );
-      }
-   }
-   
-   
-   
-   @Override
-   public SelectMultipleTasksListAdapter getListAdapter()
-   {
-      return (SelectMultipleTasksListAdapter) super.getListAdapter();
-   }
-   
-   
-   
-   @Override
-   protected void onListItemClick( ListView l, View v, int position, long id )
-   {
-      ( (Checkable) v.findViewById( R.id.taskslist_listitem_priority ) ).toggle();
-      toggleSelection( position );
-   }
-   
-   
-   
-   @Override
-   protected ListAdapter createListAdapter( AsyncFillListResult result )
-   {
-      final List< ListTask > selTasks = result != null
-                                                      ? SelectableListTask.asListTaskList( result.tasks )
-                                                      : Collections.< ListTask > emptyList();
-      
-      return new SelectMultipleTasksListAdapter( this,
-                                                 R.layout.selectmultipletasks_activity_listitem,
-                                                 selTasks,
-                                                 result != null
-                                                               ? result.filter
-                                                               : new RtmSmartFilter( Strings.EMPTY_STRING ) );
-   }
-   
-   
-   
-   @Override
-   protected void beforeQueryTasksAsync( Bundle configuration )
-   {
-      super.beforeQueryTasksAsync( configuration );
-      
-      final SelectMultipleTasksListAdapter adapter = getListAdapter();
-      if ( adapter != null )
-         configuration.putStringArrayList( CHECK_STATE,
-                                           adapter.getSelectedTaskIds() );
-   }
-   
-   
-   
-   @Override
-   protected void setTasksResult( AsyncFillListResult result )
-   {
-      super.setTasksResult( result );
-      
-      if ( result.configuration.containsKey( CHECK_STATE ) )
-         getListAdapter().setSelectedTaskIds( result.configuration.getStringArrayList( CHECK_STATE ) );
-   }
-   
-   
-   
-   @Override
-   protected int getTaskSortIndex( int value )
-   {
-      if ( value == SORT_SELECTION_VALUE )
-         return SORT_SELECTION_IDX;
-      else
-         return super.getTaskSortIndex( value );
-   }
-   
-   
-   
-   @Override
-   protected int getTaskSortValue( int idx )
-   {
-      if ( idx == SORT_SELECTION_IDX )
-         return SORT_SELECTION_VALUE;
-      else
-         return super.getTaskSortValue( idx );
-   }
-   
-   
-   
-   @Override
-   protected void setTaskSort( int taskSort, boolean refillList )
-   {
-      if ( taskSort == SORT_SELECTION_VALUE )
-      {
-         getListAdapter().sortBySelection();
-         super.setTaskSort( taskSort, false );
-      }
-      else
-         super.setTaskSort( taskSort, refillList );
-   }
-   
-   
-   
-   @Override
-   protected boolean isSameTaskSortLikeCurrent( int sortOrder )
-   {
-      // we always want to sort cause the selection may changed
-      // TODO: Enhancement: Think about a "dirty" flag to spare sorting.
-      if ( sortOrder == SORT_SELECTION_VALUE )
-         return false;
-      else
-         return super.isSameTaskSortLikeCurrent( sortOrder );
-   }
-   
-   
-   
-   private void toggleSelection( int pos )
-   {
-      final SelectMultipleTasksListAdapter adapter = getListAdapter();
-      adapter.toggleSelection( pos );
-   }
-   
-   
-   
-   private void onEditSelectedTasks()
-   {
-      final int selCnt = getListAdapter().getSelectedCount();
+      final int selCnt = tasks.size();
       if ( selCnt > 0 )
          if ( selCnt > 1 )
-            startActivityForResult( Intents.createEditMultipleTasksIntent( this,
-                                                                           getListAdapter().getSelectedTaskIds() ),
-                                    EditMultipleTasksActivity.REQ_EDIT_TASK );
+            startActivity( Intents.createEditMultipleTasksIntent( this, tasks ) );
          else
-            startActivityForResult( Intents.createEditTaskIntent( this,
-                                                                  getListAdapter().getSelectedTaskIds()
-                                                                                  .get( 0 ) ),
-                                    TaskEditActivity.REQ_EDIT_TASK );
+            startActivity( Intents.createEditTaskIntent( this, tasks.get( 0 ) ) );
    }
    
    
    
-   private void onSelectedTasksCompletion( boolean complete )
+   @Override
+   public void onCompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      TaskEditUtils.setTasksCompletion( this,
-                                        getListAdapter().getSelectedTasks(),
-                                        complete );
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_complete,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_complete ).setMessage( message )
+                                                                              .setPositiveButton( R.string.btn_complete )
+                                                                              .setNegativeButton( R.string.btn_cancel )
+                                                                              .show( this );
    }
    
    
    
-   private void onSelectedTasksPostpone()
+   @Override
+   public void onIncompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      TaskEditUtils.postponeTasks( this, getListAdapter().getSelectedTasks() );
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_incomplete,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_incomplete ).setMessage( message )
+                                                                                .setPositiveButton( R.string.btn_uncomplete )
+                                                                                .setNegativeButton( R.string.btn_cancel )
+                                                                                .show( this );
    }
    
    
    
-   private void onSelectedTasksDelete()
+   @Override
+   public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
-      TaskEditUtils.deleteTasks( this, getListAdapter().getSelectedTasks() );
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_postpone,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_postpone ).setMessage( message )
+                                                                              .setPositiveButton( R.string.btn_postpone )
+                                                                              .setNegativeButton( R.string.btn_cancel )
+                                                                              .show( this );
+   }
+   
+   
+   
+   @Override
+   public void onDeleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_delete,
+                                                               tasks.size(),
+                                                               tasks.size() );
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_delete ).setMessage( message )
+                                                                            .setPositiveButton( R.string.btn_delete )
+                                                                            .setNegativeButton( R.string.btn_cancel )
+                                                                            .show( this );
+   }
+   
+   
+   
+   @Override
+   protected SelectableTasksListsFragment getTasksListFragment()
+   {
+      if ( super.getTasksListFragment() instanceof SelectableTasksListsFragment )
+         return (SelectableTasksListsFragment) super.getTasksListFragment();
+      else
+         return null;
+   }
+   
+   
+   
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   {
+      switch ( dialogId )
+      {
+         case R.id.dlg_selectmultipletasks_complete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               completeSelectedTasks( getTasksListFragment().getListAdapter()
+                                                            .getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_incomplete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               incompleteSelectedTasks( getTasksListFragment().getListAdapter()
+                                                              .getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_postpone:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               postponeSelectedTasks( getTasksListFragment().getListAdapter()
+                                                            .getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_delete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               deleteSelectedTasks( getTasksListFragment().getListAdapter()
+                                                          .getSelectedTasks() );
+            break;
+         
+         default :
+            super.onAlertDialogFragmentClick( dialogId, tag, which );
+            break;
+      }
+   }
+   
+   
+   
+   private void completeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                                                      tasks,
+                                                                                                                      true );
+      applyModifications( modifications );
+   }
+   
+   
+   
+   private void incompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                                                      tasks,
+                                                                                                                      false );
+      applyModifications( modifications );
+   }
+   
+   
+   
+   private void postponeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTasks( this,
+                                                                                                                 tasks );
+      applyModifications( modifications );
+   }
+   
+   
+   
+   private void deleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTasks( this,
+                                                                                                               tasks );
+      applyModifications( modifications );
+   }
+   
+   
+   
+   private void setTitleWithSelectedCount( int cnt )
+   {
+      getSupportActionBar().setTitle( getString( R.string.app_task_select_multiple,
+                                                 cnt ) );
    }
 }

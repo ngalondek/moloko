@@ -21,16 +21,13 @@ package com.mdt.rtm.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.w3c.dom.Element;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Pair;
 
 
 public class RtmLists extends RtmData
@@ -53,13 +50,13 @@ public class RtmLists extends RtmData
       
    };
    
-   private final Map< String, RtmList > lists;
+   private final List< Pair< String, RtmList > > lists;
    
    
 
    public RtmLists()
    {
-      this.lists = new HashMap< String, RtmList >();
+      this.lists = new ArrayList< Pair< String, RtmList > >( 0 );
    }
    
 
@@ -67,11 +64,11 @@ public class RtmLists extends RtmData
    public RtmLists( Element elt )
    {
       final List< Element > children = children( elt, "list" );
-      this.lists = new HashMap< String, RtmList >( children.size() );
+      this.lists = new ArrayList< Pair< String, RtmList > >( children.size() );
       for ( Element listElt : children )
       {
          final RtmList list = new RtmList( listElt );
-         lists.put( list.getId(), list );
+         lists.add( Pair.create( list.getId(), list ) );
       }
    }
    
@@ -79,43 +76,81 @@ public class RtmLists extends RtmData
 
    public RtmLists( Parcel source )
    {
-      lists = new HashMap< String, RtmList >();
+      final Parcelable[] plainLists = source.readParcelableArray( null );
       
-      final Bundle bundle = source.readBundle();
-      final Set< String > keys = bundle.keySet();
-      
-      for ( String key : keys )
+      if ( plainLists != null )
       {
-         lists.put( key, (RtmList) bundle.getParcelable( key ) );
+         lists = new ArrayList< Pair< String, RtmList > >( plainLists.length );
+         
+         for ( Parcelable parcelable : plainLists )
+         {
+            final RtmList list = (RtmList) parcelable;
+            lists.add( Pair.create( list.getId(), list ) );
+         }
       }
+      else
+         lists = new ArrayList< Pair< String, RtmList > >( 0 );
    }
    
 
 
    public RtmList getList( String id )
    {
-      return lists.get( id );
+      for ( Pair< String, RtmList > idWithList : lists )
+         if ( idWithList.first.equals( id ) )
+            return idWithList.second;
+      
+      return null;
    }
    
 
 
-   public Map< String, RtmList > getLists()
+   public List< Pair< String, RtmList > > getLists()
    {
-      return Collections.unmodifiableMap( lists );
+      return Collections.unmodifiableList( lists );
    }
    
 
 
    public List< RtmList > getListsPlain()
    {
-      return new ArrayList< RtmList >( lists.values() );
+      final List< RtmList > plainLists = new ArrayList< RtmList >( lists.size() );
+      
+      for ( Pair< String, RtmList > idWithList : lists )
+         plainLists.add( idWithList.second );
+      
+      return plainLists;
+   }
+   
+
+
+   public List< String > getListIds()
+   {
+      final List< String > listIds = new ArrayList< String >( lists.size() );
+      
+      for ( Pair< String, RtmList > idWithList : lists )
+         listIds.add( idWithList.first );
+      
+      return listIds;
+   }
+   
+
+
+   public List< String > getListNames()
+   {
+      final List< String > listNames = new ArrayList< String >( lists.size() );
+      
+      for ( Pair< String, RtmList > idWithList : lists )
+         listNames.add( idWithList.second.getName() );
+      
+      return listNames;
    }
    
 
 
    public void add( RtmList list )
    {
-      lists.put( list.getId(), list );
+      lists.add( Pair.create( list.getId(), list ) );
    }
    
 
@@ -129,15 +164,11 @@ public class RtmLists extends RtmData
 
    public void writeToParcel( Parcel dest, int flags )
    {
-      final Bundle bundle = new Bundle( lists.size() );
+      final List< RtmList > lists = getListsPlain();
       
-      final Set< String > keys = lists.keySet();
+      RtmList[] listArray = new RtmList[ lists.size() ];
+      listArray = lists.toArray( listArray );
       
-      for ( String key : keys )
-      {
-         bundle.putParcelable( key, lists.get( key ) );
-      }
-      
-      dest.writeBundle( bundle );
+      dest.writeParcelableArray( listArray, flags );
    }
 }

@@ -13,13 +13,12 @@
       implementation
    -->
 
-<Button
+<TextView
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:id="@+id/tags_layout_btn_tag"
    android:tag="tag_name"
-   style="@style/App_Tag"
+   style="@style/Tag"
    android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   android:layout_marginRight="5dip"
+   android:layout_height="wrap_content"   
    android:focusable="false"
    android:text="tag" />

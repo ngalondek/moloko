@@ -51,6 +51,7 @@ public class RtmTaskSeries extends RtmData
    
    public static final Parcelable.Creator< RtmTaskSeries > CREATOR = new Parcelable.Creator< RtmTaskSeries >()
    {
+      @Override
       public RtmTaskSeries createFromParcel( Parcel source )
       {
          return new RtmTaskSeries( source );
@@ -58,6 +59,7 @@ public class RtmTaskSeries extends RtmData
       
       
       
+      @Override
       public RtmTaskSeries[] newArray( int size )
       {
          return new RtmTaskSeries[ size ];
@@ -256,11 +258,11 @@ public class RtmTaskSeries extends RtmData
       modified = null;
       name = null;
       
-      List< Element > tasks = children( elt, "tasks" );
+      List< Element > tasks = children( elt, "task" );
       
-      // Fallback for former API
+      // Fallback for alternative API
       if ( tasks.size() == 0 )
-         tasks = children( elt, "task" );
+         tasks = children( elt, "tasks" );
       
       if ( tasks.size() == 0 )
          throw new IllegalStateException( String.format( "Found deleted RtmTaskSeries '%s' with no tasks.",
@@ -289,8 +291,8 @@ public class RtmTaskSeries extends RtmData
    {
       id = source.readString();
       listId = source.readString();
-      created = source.readParcelable( null );
-      modified = source.readParcelable( null );
+      created = ParcelableDate.fromParcel( source );
+      modified = ParcelableDate.fromParcel( source );
       name = source.readString();
       this.source = source.readString();
       tasks = source.createTypedArrayList( RtmTask.CREATOR );
@@ -300,7 +302,7 @@ public class RtmTaskSeries extends RtmData
       recurrence = source.readString();
       isEveryRecurrence = source.readInt() != 0;
       tags = source.createStringArrayList();
-      participants = source.readParcelable( null );
+      participants = source.readParcelable( ParticipantList.class.getClassLoader() );
    }
    
    
@@ -483,6 +485,7 @@ public class RtmTaskSeries extends RtmData
    
    
    
+   @Override
    public int describeContents()
    {
       return 0;
@@ -490,6 +493,7 @@ public class RtmTaskSeries extends RtmData
    
    
    
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );

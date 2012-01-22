@@ -50,8 +50,8 @@ public abstract class TitleWithViewLayout extends LinearLayout
       initImpl( context, attrs );
    }
    
-
-
+   
+   
    protected TitleWithViewLayout( Context context, AttributeSet attrs,
       ViewGroup root )
    {
@@ -64,22 +64,33 @@ public abstract class TitleWithViewLayout extends LinearLayout
       initImpl( context, attrs );
    }
    
-
-
+   
+   
+   public TextView getTitleView()
+   {
+      return (TextView) findViewById( R.id.title_with_view_title );
+   }
+   
+   
+   
+   public abstract View getView();
+   
+   
+   
    protected ViewGroup getViewContainer()
    {
       return (ViewGroup) findViewById( R.id.title_with_view_container );
    }
    
-
-
+   
+   
    private void initImpl( Context context, AttributeSet attrs )
    {
       setOrientation( VERTICAL );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleWithView,
-                                                               0,
+                                                               R.attr.titleWithViewStyle,
                                                                0 );
       
       // Image
@@ -106,7 +117,8 @@ public abstract class TitleWithViewLayout extends LinearLayout
       
       // Title
       setAttr( context, text, array, new int[]
-      { R.styleable.TitleWithView_title, R.styleable.TitleWithView_titleColor,
+      { R.styleable.TitleWithView_titleText,
+       R.styleable.TitleWithView_titleColor,
        R.styleable.TitleWithView_titleSize,
        R.styleable.TitleWithView_titleStyle,
        R.styleable.TitleWithView_titlePaddingTop } );
@@ -129,8 +141,8 @@ public abstract class TitleWithViewLayout extends LinearLayout
       array.recycle();
    }
    
-
-
+   
+   
    private void setImage( Drawable drawable )
    {
       final ImageView imageView = (ImageView) findViewById( R.id.title_with_view_image );
@@ -146,8 +158,8 @@ public abstract class TitleWithViewLayout extends LinearLayout
       }
    }
    
-
-
+   
+   
    protected final static void setAttr( Context context,
                                         TextView view,
                                         TypedArray array,
@@ -160,36 +172,32 @@ public abstract class TitleWithViewLayout extends LinearLayout
       else
          view.setText( text );
       
-      if ( text != null )
+      if ( array.hasValue( attrs[ 1 ] ) )
       {
-         if ( array.hasValue( attrs[ 1 ] ) )
-         {
-            view.setTextColor( array.getColor( attrs[ 1 ], 0 ) );
-         }
-         
-         if ( array.hasValue( attrs[ 2 ] ) )
-         {
-            final float spDensity = context.getResources().getDisplayMetrics().scaledDensity;
-            final float size = array.getDimension( attrs[ 2 ], 0.0f )
-               / spDensity;
-            view.setTextSize( size );
-         }
-         
-         if ( array.hasValue( attrs[ 3 ] ) )
-         {
-            final Typeface typeface = Typeface.create( "",
-                                                       array.getInt( attrs[ 3 ],
-                                                                     Typeface.NORMAL ) );
-            view.setTypeface( typeface );
-         }
-         
-         if ( array.hasValue( attrs[ 4 ] ) )
-         {
-            view.setPadding( 0,
-                             array.getDimensionPixelOffset( attrs[ 4 ], 0 ),
-                             0,
-                             0 );
-         }
+         view.setTextColor( array.getColor( attrs[ 1 ], 0 ) );
+      }
+      
+      if ( array.hasValue( attrs[ 2 ] ) )
+      {
+         final float spDensity = context.getResources().getDisplayMetrics().scaledDensity;
+         final float size = array.getDimension( attrs[ 2 ], 0.0f ) / spDensity;
+         view.setTextSize( size );
+      }
+      
+      if ( array.hasValue( attrs[ 3 ] ) )
+      {
+         final Typeface typeface = Typeface.create( (String) null,
+                                                    array.getInt( attrs[ 3 ],
+                                                                  Typeface.NORMAL ) );
+         view.setTypeface( typeface );
+      }
+      
+      if ( array.hasValue( attrs[ 4 ] ) )
+      {
+         view.setPadding( 0,
+                          array.getDimensionPixelOffset( attrs[ 4 ], 0 ),
+                          0,
+                          0 );
       }
    }
 }

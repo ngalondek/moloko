@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,7 +28,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.format.DateUtils;
-import android.widget.RemoteViews;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -60,7 +59,7 @@ public class DueTaskNotification
    private Notification notification;
    
    
-
+   
    public DueTaskNotification( Context context, Task task,
       long remindBeforeMillis, boolean vibrate, boolean led, Uri sound )
    {
@@ -77,16 +76,16 @@ public class DueTaskNotification
          createNotification();
    }
    
-
-
+   
+   
    public void updateMinuteTick()
    {
       if ( notification == null && isTimeToNotify() )
          createNotification();
    }
    
-
-
+   
+   
    public void update( long remindBeforeMillis )
    {
       if ( notification == null )
@@ -100,8 +99,8 @@ public class DueTaskNotification
       }
    }
    
-
-
+   
+   
    public void update( boolean vibrate, boolean led, Uri sound )
    {
       if ( notification == null )
@@ -112,102 +111,110 @@ public class DueTaskNotification
       }
    }
    
-
-
+   
+   
    public void onTimeFormatChanged()
    {
       if ( notification != null )
       {
-         setDueTimeText();
-         
+         setLatestEventInfo();
          getNotificationManager().notify( taskId.hashCode(), notification );
       }
    }
    
-
-
+   
+   
    public String getTaskId()
    {
       return taskId;
    }
    
-
-
+   
+   
    public long getDueTime()
    {
       return dueTimeMillis;
    }
    
-
-
+   
+   
    public void cancel()
    {
       if ( notification != null )
          getNotificationManager().cancel( taskId.hashCode() );
    }
    
-
-
+   
+   
    private NotificationManager getNotificationManager()
    {
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );
    }
    
-
-
+   
+   
    private void createNotification()
    {
-      this.notification = new Notification( R.drawable.ic_notify_logo_red,
-                                            context.getString( R.string.notification_due_ticker,
-                                                               taskName,
-                                                               getRelativeTimeString() ),
-                                            dueTimeMillis );
+      notification = new Notification( R.drawable.ic_notify_logo_red,
+                                       context.getString( R.string.notification_due_ticker,
+                                                          taskName,
+                                                          getRelativeTimeString() ),
+                                       dueTimeMillis );
       
-      this.notification.flags = Notification.FLAG_AUTO_CANCEL;
-      this.notification.contentView = new RemoteViews( context.getPackageName(),
-                                                       R.layout.notification_due_task );
-      this.notification.contentView.setTextViewText( R.id.notification_due_task_title,
-                                                     taskName );
-      setDueTimeText();
-      this.notification.contentIntent = Intents.createNotificationIntent( context,
-                                                                          Intents.createOpenTaskIntent( context,
-                                                                                                        taskId ) );
+      notification.flags = Notification.FLAG_AUTO_CANCEL;
       
-      this.notification.defaults = 0;
+      setLatestEventInfo();
+      
+      notification.defaults = 0;
       
       if ( vibrate )
-         this.notification.defaults |= Notification.DEFAULT_VIBRATE;
-      if ( led )
       {
-         this.notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-         this.notification.ledARGB = Color.GREEN;
-         this.notification.ledOffMS = 400;
-         this.notification.ledOnMS = 300;
+         notification.defaults |= Notification.DEFAULT_VIBRATE;
       }
       
-      this.notification.sound = sound;
+      if ( led )
+      {
+         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+         notification.ledARGB = Color.BLUE;
+         notification.ledOffMS = 400;
+         notification.ledOnMS = 500;
+      }
+      
+      notification.sound = sound;
       
       getNotificationManager().notify( taskId.hashCode(), notification );
    }
    
-
-
-   private void setDueTimeText()
+   
+   
+   private void setLatestEventInfo()
    {
-      this.notification.contentView.setTextViewText( R.id.notification_due_task_text,
-                                                     context.getString( R.string.notification_due,
-                                                                        MolokoDateUtils.formatTime( dueTimeMillis ) ) );
+      notification.setLatestEventInfo( context,
+                                       taskName,
+                                       getDueTimeText(),
+                                       Intents.createNotificationIntent( context,
+                                                                         Intents.createOpenTaskIntent( context,
+                                                                                                       taskId ) ) );
    }
    
-
-
+   
+   
+   private String getDueTimeText()
+   {
+      return context.getString( R.string.notification_due,
+                                MolokoDateUtils.formatTime( context,
+                                                            dueTimeMillis ) );
+   }
+   
+   
+   
    private boolean isTimeToNotify()
    {
       return System.currentTimeMillis() >= ( dueTimeMillis - remindBeforeMillis );
    }
    
-
-
+   
+   
    private CharSequence getRelativeTimeString()
    {
       final long now = System.currentTimeMillis();
@@ -226,8 +233,8 @@ public class DueTaskNotification
       }
    }
    
-
-
+   
+   
    @Override
    public boolean equals( Object o )
    {

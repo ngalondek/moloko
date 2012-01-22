@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -28,30 +28,27 @@ import android.content.Context;
 import android.content.Intent;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.AccountUtils;
 
 
 public class SyncAlarmReceiver extends BroadcastReceiver
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + SyncAlarmReceiver.class.getSimpleName();
-   
-   
-
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      final Account account = SyncUtils.isReadyToSync( context.getApplicationContext() );
+      final Account account = AccountUtils.getRtmAccount( context.getApplicationContext() );
       
       if ( account != null )
       {
-         SyncUtils.requestScheduledSync( context.getApplicationContext(),
-                                         account );
+         if ( SyncUtils.isReadyToSync( context.getApplicationContext() ) )
+         {
+            SyncUtils.requestScheduledSync( context.getApplicationContext(),
+                                            account );
+         }
       }
       else
       {
-         MolokoApp.stopPeriodicSync();
+         MolokoApp.get( context.getApplicationContext() ).stopPeriodicSync();
       }
    }
-   
 }

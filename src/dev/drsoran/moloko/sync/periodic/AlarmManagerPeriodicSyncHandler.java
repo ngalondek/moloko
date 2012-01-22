@@ -27,6 +27,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncResult;
 import android.content.SyncStatusObserver;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -47,7 +48,7 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
    private Object syncStatHandle = null;
    
    
-
+   
    public AlarmManagerPeriodicSyncHandler( Context context )
    {
       super( context );
@@ -58,8 +59,9 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
                                                                 this );
    }
    
-
-
+   
+   
+   @Override
    public void setPeriodicSync( long startUtc, long intervalMs )
    {
       final AlarmManager alarmManager = (AlarmManager) context.getSystemService( Context.ALARM_SERVICE );
@@ -87,8 +89,16 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
       
    }
    
-
-
+   
+   
+   @Override
+   public void delayNextSync( SyncResult syncResult, long seconds )
+   {
+   }
+   
+   
+   
+   @Override
    public void resetPeriodicSync()
    {
       final AlarmManager alarmManager = (AlarmManager) context.getSystemService( Context.ALARM_SERVICE );
@@ -102,15 +112,16 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
       }
    }
    
-
-
+   
+   
    public void onBootCompleted()
    {
       SyncUtils.schedulePeriodicSync( context );
    }
    
-
-
+   
+   
+   @Override
    public void onStatusChanged( int which )
    {
       if ( which == Constants.SYNC_OBSERVER_TYPE_SETTINGS )
@@ -122,13 +133,14 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
             if ( ContentResolver.getSyncAutomatically( account, Rtm.AUTHORITY ) )
                SyncUtils.schedulePeriodicSync( context );
             else
-               MolokoApp.stopPeriodicSync();
+               MolokoApp.get( context ).stopPeriodicSync();
          }
       }
    }
    
-
-
+   
+   
+   @Override
    public void onNetworkStatusChanged( int which, Boolean value )
    {
       final boolean hasConnection = value.booleanValue();
@@ -142,12 +154,12 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
          if ( SyncUtils.isSyncing( context ) )
             SyncUtils.cancelSync( context );
          
-         MolokoApp.stopPeriodicSync();
+         MolokoApp.get( context.getApplicationContext() ).stopPeriodicSync();
       }
    }
    
-
-
+   
+   
    @Override
    public void shutdown()
    {

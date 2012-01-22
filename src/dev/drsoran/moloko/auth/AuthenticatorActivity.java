@@ -25,6 +25,7 @@ package dev.drsoran.moloko.auth;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -37,7 +38,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +47,7 @@ import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.Connection;
+import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.provider.Rtm;
 
 
@@ -77,8 +77,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
    private TextView messageText;
    
-   private Button continueBtn;
-   
    private boolean newAccount;
    
    
@@ -99,8 +97,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       permDropDown = (Spinner) findViewById( R.id.auth_spin_permission );
       
       messageText = (TextView) findViewById( R.id.auth_text_message );
-      
-      continueBtn = (Button) findViewById( R.id.auth_btn_continue );
       
       createOrReuseAuthenticator();
       
@@ -130,6 +126,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       dialog.setCancelable( true );
       dialog.setOnCancelListener( new DialogInterface.OnCancelListener()
       {
+         @Override
          public void onCancel( DialogInterface dialog )
          {
             Log.d( TAG, "cancel has been invoked" );
@@ -159,7 +156,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    {
       messageText.setText( null );
       
-      if ( Connection.isConnected( this ) )
+      if ( ConnectionUtil.isConnected( this ) )
       {
          authenticator.beginAuthentication( this, getSelectedPermission() );
       }
@@ -178,6 +175,17 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    public void onCancel( View view )
    {
       finish();
+   }
+   
+   
+   
+   public void onPermissionInfo( View view )
+   {
+      new AlertDialog.Builder( this ).setTitle( R.string.app_account_preferences )
+                                     .setIcon( R.drawable.ic_prefs_info )
+                                     .setMessage( R.string.auth_dlg_permisson_info )
+                                     .setNeutralButton( R.string.btn_ok, null )
+                                     .show();
    }
    
    
@@ -326,7 +334,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
       if ( requestCode == RtmWebLoginActivity.ReqType.OPEN_URL
-         && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
+         && resultCode == Activity.RESULT_OK )
       {
          authenticator.completeAuthentication( this );
       }
@@ -346,12 +354,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       if ( authenticator == null )
       {
          messageText.setText( R.string.auth_err_cause_no_service );
-         continueBtn.setEnabled( false );
       }
       else
       {
-         continueBtn.setEnabled( true );
-         
          // Check the intent parameters
          final Intent intent = getIntent();
          

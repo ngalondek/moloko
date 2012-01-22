@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
+<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko 
    is free software: you can redistribute it and/or modify it under the terms 
    of the GNU General Public License as published by the Free Software Foundation, 
    either version 3 of the License, or (at your option) any later version. Moloko 
@@ -13,18 +13,51 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"   
-   android:versionName="0.15.3b"
-   android:versionCode="86019">
+   android:versionName="0.16.0b"
+   android:versionCode="90112">
 
    <uses-sdk
-      android:minSdkVersion="5"
-      android:targetSdkVersion="8" />
+      android:minSdkVersion="8"
+      android:targetSdkVersion="13" />
+   
+   <uses-permission
+      android:name="android.permission.ACCESS_NETWORK_STATE" />
+   <uses-permission
+      android:name="android.permission.INTERNET" />
+   <uses-permission
+      android:name="android.permission.GET_ACCOUNTS" />
+   <uses-permission
+      android:name="android.permission.USE_CREDENTIALS" />
+   <uses-permission
+      android:name="android.permission.MANAGE_ACCOUNTS" />
+   <uses-permission
+      android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+   <uses-permission
+      android:name="android.permission.WRITE_SETTINGS" />
+   <uses-permission
+      android:name="android.permission.READ_LOGS" />
+   <uses-permission
+      android:name="android.permission.READ_SYNC_STATS" />
+   <uses-permission
+      android:name="android.permission.READ_SYNC_SETTINGS" />
+   <uses-permission
+      android:name="android.permission.WRITE_SYNC_SETTINGS" />
+   <uses-permission
+      android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+   <uses-permission
+      android:name="android.permission.VIBRATE" />
+   <uses-permission
+      android:name="android.permission.READ_CONTACTS" />
+   <uses-permission
+      android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+   
 
    <application
       android:name=".MolokoApp"
       android:icon="@drawable/ic_launcher"
-      android:label="@string/app_name"
+      android:label="@string/app_name"      
       android:theme="@style/Theme.Moloko"
+      android:hardwareAccelerated="true"
       android:debuggable="true">
 
       <!-- Declare the default searchable Activity for the whole app -->
@@ -46,7 +79,7 @@
       <activity
          android:label="@string/app_name"
          android:name=".activities.StartUpActivity"
-         android:theme="@style/Theme.Moloko">
+         android:theme="@style/Theme.Moloko.Home">
          <intent-filter>
             <action
                android:name="android.intent.action.MAIN" />
@@ -58,12 +91,14 @@
       <activity
          android:label="@string/app_name"
          android:name=".activities.HomeActivity"
-         android:theme="@style/Theme.Moloko">
+         android:theme="@style/Theme.Moloko.Home">
       </activity>
 
       <activity
          android:label="@string/app_name"
          android:name=".activities.TasksListActivity"
+         android:theme="@style/Theme.Moloko.TasksList"
+         android:windowSoftInputMode="adjustResize"
          android:launchMode="singleTop">
          <intent-filter>
             <!-- Show a list of tasks -->
@@ -73,11 +108,6 @@
                android:name="android.intent.category.DEFAULT" />
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
-         </intent-filter>
-         <intent-filter>
-            <!-- Handle search queries -->
-            <action
-               android:name="android.intent.action.SEARCH" />
          </intent-filter>
       </activity>
 
@@ -108,6 +138,7 @@
       <activity
          android:label="@string/app_name"
          android:name=".activities.TaskSearchResultActivity"
+         android:theme="@style/Theme.Moloko.TasksList"
          android:launchMode="singleTop"> <!-- SingleTop due to searchable -->
          <intent-filter>
             <!-- Handle search queries -->
@@ -122,7 +153,7 @@
       <activity
          android:label="@string/app_task_select_multiple"
          android:name=".activities.SelectMultipleTasksActivity"
-         android:theme="@style/Theme.Moloko">
+         android:theme="@style/Theme.Moloko.SelectMultipleTasks">
          <intent-filter>
             <!-- Choose multiple tasks from a list of tasks -->
             <action
@@ -138,8 +169,9 @@
          android:label="@string/app_task"
          android:name=".activities.TaskActivity"
          android:theme="@style/Theme.Moloko.Task">
+         
+         <!-- Show a single task -->
          <intent-filter>
-            <!-- Show a single task -->
             <action
                android:name="android.intent.action.VIEW" />
             <category
@@ -147,15 +179,9 @@
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
-      </activity>
-
-      <activity
-         android:label="@string/app_task_edit"
-         android:name=".activities.TaskEditActivity"
-         android:launchMode="singleTop"
-         android:theme="@style/Theme.Moloko.Task">
+         
+         <!-- Edit a single task -->
          <intent-filter>
-            <!-- Edit a single task -->
             <action
                android:name="android.intent.action.EDIT" />
             <category
@@ -163,33 +189,27 @@
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
-      </activity>
-      
-      <activity
-         android:label="@string/app_task_edit_multiple"
-         android:name=".activities.EditMultipleTasksActivity"
-         android:launchMode="singleTop"
-         android:theme="@style/Theme.Moloko.Task">
+         
+         <!-- Insert a new task -->      
          <intent-filter>
-            <!-- Edit a list of tasks -->
             <action
-               android:name="android.intent.action.EDIT" />
+               android:name="android.intent.action.INSERT" />
             <category
                android:name="android.intent.category.DEFAULT" />
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
       </activity>
-      
+
       <activity
-         android:label="@string/app_task_add"
-         android:name=".activities.AddTaskActivity"
+         android:label="@string/app_task_edit_multiple"
+         android:name=".activities.TaskEditMultipleActivity"
          android:launchMode="singleTop"
-         android:theme="@style/Theme.Moloko.Task">
+         android:theme="@style/Theme.Moloko.Task.EditMultiple">
          <intent-filter>
-            <!-- Add a new task -->
+            <!-- Edit a list of tasks -->
             <action
-               android:name="android.intent.action.INSERT" />
+               android:name="android.intent.action.EDIT" />
             <category
                android:name="android.intent.category.DEFAULT" />
             <data
@@ -202,54 +222,6 @@
          android:launchMode="singleTop"
          android:excludeFromRecents="true"
          android:theme="@style/Theme.Moloko.Task">
-      </activity>
-
-      <activity
-         android:label="@string/app_note"
-         android:name=".activities.NoteActivity"
-         android:theme="@style/Theme.Moloko.Note">
-         <intent-filter>
-            <!-- Show a single note -->
-            <!-- Show all notes of a task -->
-            <action
-               android:name="android.intent.action.VIEW" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />
-            <data
-               android:mimeType="vnd.android.cursor.dir/vnd.rtm.note" />
-         </intent-filter>
-      </activity>
-      
-      <activity
-         android:label="@string/app_note_edit"
-         android:name=".activities.NoteEditActivity"
-         android:theme="@style/Theme.Moloko.Note">
-         <intent-filter>
-            <!-- Edit a single note -->
-            <action
-               android:name="android.intent.action.EDIT" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />            
-         </intent-filter>
-      </activity>
-      
-      <activity
-         android:label="@string/app_note_add"
-         android:name=".activities.AddNoteActivity"
-         android:theme="@style/Theme.Moloko.Note">
-         <intent-filter>
-            <!-- Add a new note -->
-            <action
-               android:name="android.intent.action.INSERT" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.dir/vnd.rtm.note" />            
-         </intent-filter>
       </activity>
 
       <activity
@@ -268,8 +240,7 @@
 
       <activity
          android:label="@string/app_tagcloud"
-         android:name=".activities.TagCloudActivity"
-         android:theme="@style/Theme.Moloko">
+         android:name=".activities.TagCloudActivity">
       </activity>
 
       <activity
@@ -305,19 +276,20 @@
       <activity
          android:name=".auth.AuthenticatorActivity"
          android:label="@string/rtm_full"
-         android:theme="@style/Theme"
+         android:theme="@style/Theme.Moloko.Authenticator"
          android:excludeFromRecents="true" />
 
       <activity
          android:name=".auth.RtmWebLoginActivity"
          android:label="@string/rtm_full"
-         android:theme="@style/Theme"
+         android:theme="@style/Theme.Moloko.Authenticator"
          android:excludeFromRecents="true" />
 
+      <!-- 
       <activity
          android:name=".activities.RtmSmartFilterTestActivity"
          android:label="Grammar tests"
-         android:excludeFromRecents="true" />
+         android:excludeFromRecents="true" /> -->
 
       <activity
          android:name="org.acra.CrashReportDialog"
@@ -342,8 +314,7 @@
 
       <service
          android:name=".auth.AuthenticationService"
-         android:label="@string/svc_auth"
-         android:exported="true">
+         android:label="@string/svc_auth">
          <intent-filter>
             <action
                android:name="android.accounts.AccountAuthenticator" />
@@ -355,8 +326,7 @@
 
       <service
          android:name=".sync.SyncService"
-         android:label="@string/svc_sync"
-         android:exported="true">
+         android:label="@string/svc_sync">
          <intent-filter>
             <action
                android:name="android.content.SyncAdapter" />
@@ -376,6 +346,10 @@
          <intent-filter>
             <action
                android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+         <intent-filter>
             <action
                android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             <category
@@ -397,42 +371,17 @@
          android:name=".receivers.TimeChangedReceiver">
          <intent-filter>
             <action
-               android:name="android.intent.action.TIME_SET" />
+               android:name="android.intent.action.TIME_SET" />            
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+         <intent-filter>
             <action
-               android:name="android.intent.action.DATE_CHANGED" />
+               android:name="android.intent.action.DATE_CHANGED" />            
             <category
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
       </receiver>
-
    </application>
 
-   <uses-permission
-      android:name="android.permission.ACCESS_NETWORK_STATE" />
-   <uses-permission
-      android:name="android.permission.INTERNET" />
-   <uses-permission
-      android:name="android.permission.GET_ACCOUNTS" />
-   <uses-permission
-      android:name="android.permission.USE_CREDENTIALS" />
-   <uses-permission
-      android:name="android.permission.MANAGE_ACCOUNTS" />
-   <uses-permission
-      android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-   <uses-permission
-      android:name="android.permission.WRITE_SETTINGS" />
-   <uses-permission
-      android:name="android.permission.READ_LOGS" />
-   <uses-permission
-      android:name="android.permission.READ_SYNC_STATS" />
-   <uses-permission
-      android:name="android.permission.READ_SYNC_SETTINGS" />
-   <uses-permission
-      android:name="android.permission.WRITE_SYNC_SETTINGS" />
-   <uses-permission
-      android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-   <uses-permission
-      android:name="android.permission.VIBRATE" />
-   <uses-permission
-      android:name="android.permission.READ_CONTACTS" />
 </manifest> 

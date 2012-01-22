@@ -26,48 +26,50 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.AutoCompleteTextView;
-import dev.drsoran.moloko.util.PressCompoundDrawable;
+import dev.drsoran.moloko.EditTextFocusHandler;
 
 
 public class ClearableAutoCompleteTextView extends AutoCompleteTextView
 {
+   @SuppressWarnings( "unused" )
+   private final EditTextFocusHandler editTextFocusHandler;
    
-   private PressCompoundDrawable clearButton;
+   private ClearButtonCompoundDrawable clearButton;
    
    
-
+   
    public ClearableAutoCompleteTextView( Context context )
    {
-      super( context );
-      init();
+      this( context, null, android.R.attr.autoCompleteTextViewStyle );
    }
    
-
-
+   
+   
    public ClearableAutoCompleteTextView( Context context, AttributeSet attrs )
    {
-      super( context, attrs );
-      init();
+      this( context, attrs, android.R.attr.autoCompleteTextViewStyle );
    }
    
-
-
+   
+   
    public ClearableAutoCompleteTextView( Context context, AttributeSet attrs,
       int defStyle )
    {
       super( context, attrs, defStyle );
-      init();
+      init( attrs );
+      
+      editTextFocusHandler = new EditTextFocusHandler( this );
    }
    
-
-
+   
+   
    public String getTextTrimmed()
    {
       return super.getText().toString().trim();
    }
    
-
-
+   
+   
    @Override
    public boolean onTouchEvent( MotionEvent event )
    {
@@ -77,8 +79,29 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
          return false;
    }
    
-
-
+   
+   
+   @Override
+   protected void onTextChanged( CharSequence text,
+                                 int start,
+                                 int lengthBefore,
+                                 int lengthAfter )
+   {
+      super.onTextChanged( text, start, lengthBefore, lengthAfter );
+      
+      if ( clearButton != null )
+      {
+         final boolean clearButtonIsShown = clearButton.isShown();
+         
+         if ( clearButtonIsShown && text.length() == 0 )
+            clearButton.hide();
+         else if ( !clearButtonIsShown && text.length() > 0 )
+            clearButton.show();
+      }
+   }
+   
+   
+   
    @Override
    protected int[] onCreateDrawableState( int extraSpace )
    {
@@ -100,10 +123,10 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
       return super.onCreateDrawableState( extraSpace );
    }
    
-
-
-   private void init()
+   
+   
+   private void init( AttributeSet attrs )
    {
-      clearButton = new PressCompoundDrawable( this );
+      clearButton = new ClearButtonCompoundDrawable( this, attrs );
    }
 }

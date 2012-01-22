@@ -63,7 +63,7 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( Creation creation,
                                                        boolean withId )
    {
@@ -81,8 +81,8 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static Creation getCreation( ContentProviderClient client,
                                              String id )
    {
@@ -116,8 +116,8 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
       return creation;
    }
    
-
-
+   
+   
    public final static List< Creation > getCreations( ContentProviderClient client,
                                                       Uri contentUri )
    {
@@ -165,8 +165,8 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
       return creations;
    }
    
-
-
+   
+   
    public final static ContentProviderOperation newCreation( Uri entityUri,
                                                              long timestamp )
    {
@@ -181,8 +181,8 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
                                      .build();
    }
    
-
-
+   
+   
    public final static ContentProviderOperation deleteCreation( Uri entityUri )
    {
       return ContentProviderOperation.newDelete( Creations.CONTENT_URI )
@@ -194,16 +194,16 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
                                      .build();
    }
    
-
-
+   
+   
    public final static ContentProviderOperation deleteCreation( Uri contentUri,
                                                                 String entityId )
    {
       return deleteCreation( Queries.contentUriWithId( contentUri, entityId ) );
    }
    
-
-
+   
+   
    private static Creation createCreation( Cursor c )
    {
       return Creation.newCreation( c.getString( COL_INDICES.get( Creations._ID ) ),
@@ -211,15 +211,16 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
                                    c.getLong( COL_INDICES.get( Creations.TIMESTAMP ) ) );
    }
    
-
-
+   
+   
    public CreationsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Creations.PATH );
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Creations._ID
@@ -228,54 +229,57 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
          + " INTEGER NOT NULL" + ");" );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Creations.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Creations.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Creations.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Creations.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -23,236 +23,61 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ListActivity;
-import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.ContentObserver;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.ActionBar;
+import android.support.v4.app.ActionBar.OnNavigationListener;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
+import android.widget.SpinnerAdapter;
 import dev.drsoran.moloko.IFilter;
-import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.QuickAddTaskActionBarSwitcher;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.dialogs.LocationChooser;
-import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.layouts.TitleBarLayout;
-import dev.drsoran.moloko.prefs.TaskSortPreference;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
+import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
+import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
+import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
+import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskActionBarFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
+import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.ListTask;
-import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.rtm.RtmListWithTaskCount;
+import dev.drsoran.rtm.Task;
 
 
-public abstract class AbstractTasksListActivity extends ListActivity implements
-         DialogInterface.OnClickListener, View.OnClickListener,
-         IOnSettingsChangedListener
+abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
+         implements ITasksListFragmentListener, OnNavigationListener,
+         IQuickAddTaskActionBarFragmentListener,
+         IQuickAddTaskButtonBarFragmentListener,
+         LoaderCallbacks< List< RtmListWithTaskCount > >
 {
-   private final static String TAG = "Moloko."
-      + AbstractTasksListActivity.class.getSimpleName();
+   private final static int[] FRAGMENT_IDS =
+   { R.id.frag_quick_add_task_action_bar, R.id.frag_taskslist,
+    R.id.frag_quick_add_task_button_bar };
    
    
-   protected final static class AsyncFillListResult
+   public static class Config
    {
-      public final List< ListTask > tasks;
+      public final static String TITLE = "title";
       
-      public final IFilter filter;
+      public final static String SUB_TITLE = "sub_title";
       
-      public final Bundle configuration;
-      
-      
-      
-      public AsyncFillListResult( List< ListTask > tasks, IFilter filter,
-         Bundle configuration )
-      {
-         this.tasks = tasks;
-         this.filter = filter;
-         this.configuration = configuration;
-      }
+      public final static String LIST_NAME = Lists.LIST_NAME;
    }
    
+   private final static int LISTS_LOADER_ID = 1;
    
-   protected class AsyncFillList extends
-            AsyncTask< ContentResolver, Void, AsyncFillListResult >
-   {
-      private final Bundle configuration;
-      
-      
-      
-      public AsyncFillList( Bundle configuration )
-      {
-         this.configuration = configuration;
-      }
-      
-      
-      
-      @Override
-      protected void onPreExecute()
-      {
-         beforeQueryTasksAsync( configuration );
-      }
-      
-      
-      
-      @Override
-      protected AsyncFillListResult doInBackground( ContentResolver... params )
-      {
-         if ( params.length < 1 )
-            throw new IllegalArgumentException( "Expected 1 parameter of type ContentResolver" );
-         
-         return queryTasksAsync( params[ 0 ], configuration );
-      }
-      
-      
-      
-      @Override
-      protected void onPostExecute( AsyncFillListResult result )
-      {
-         if ( result != null )
-         {
-            final TitleBarLayout titleBarLayout = (TitleBarLayout) findViewById( R.id.app_title_bar );
-            updateTitleBarSmartFilter( result.filter, titleBarLayout );
-            updateTitleBar( titleBarLayout );
-            setTasksResult( result );
-         }
-         else
-         {
-            showError( AbstractTasksListActivity.this.getString( R.string.abstaskslist_query_error ) );
-         }
-         
-         AbstractTasksListActivity.this.asyncFillList = null;
-      }
-   }
+   private QuickAddTaskActionBarSwitcher quickAddTaskActionBarSwitcher;
    
-   
-   protected class ClearAndAsyncFillList extends AsyncFillList
-   {
-      public ClearAndAsyncFillList( Bundle configuration )
-      {
-         super( configuration );
-      }
-      
-      
-      
-      @Override
-      protected void onPreExecute()
-      {
-         super.onPreExecute();
-         
-         // Show loading spinner
-         clearList( AbstractTasksListActivity.this.findViewById( android.R.id.empty ) );
-      }
-   }
-   
-   public static final String TITLE = "title";
-   
-   public static final String TITLE_ICON = "title_icon";
-   
-   public static final String FILTER = "filter";
-   
-   public static final String TASK_SORT_ORDER = "task_sort_order";
-   
-   
-   protected static class OptionsMenu
-   {
-      protected final static int START_IDX = 0;
-      
-      private final static int MENU_ORDER_STATIC = 10000;
-      
-      public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
-      
-      protected final static int MENU_ORDER_FRONT = 1000;
-      
-      public final static int SORT = START_IDX + 1;
-      
-      public final static int SETTINGS = START_IDX + 2;
-      
-      public final static int SYNC = START_IDX + 3;
-      
-      public final static int EDIT_MULTIPLE_TASKS = START_IDX + 4;
-   }
-   
-   
-   protected static class CtxtMenu
-   {
-      public final static int OPEN_TASK = 1;
-      
-      public final static int EDIT_TASK = 2;
-      
-      public final static int COMPLETE_TASK = 3;
-      
-      public final static int POSTPONE_TASK = 4;
-      
-      public final static int DELETE_TASK = 5;
-      
-      public final static int OPEN_LIST = 6;
-      
-      public final static int TAGS = 7;
-      
-      public final static int TASKS_AT_LOCATION = 8;
-      
-      public final static int NOTES = 9;
-   }
-   
-   protected final Runnable dontClearAndfillListRunnable = new Runnable()
-   {
-      public void run()
-      {
-         if ( asyncFillList != null )
-         {
-            Log.w( TAG, "Canceled AsyncFillList task." );
-            asyncFillList.cancel( true );
-         }
-         
-         asyncFillList = new AsyncFillList( AbstractTasksListActivity.this.getIntent()
-                                                                          .getExtras() );
-         asyncFillList.execute( getContentResolver() );
-      }
-   };
-   
-   protected View emptyListView;
-   
-   protected AsyncFillList asyncFillList;
-   
-   protected final Handler handler = new Handler();
-   
-   protected final ContentObserver dbObserver = new ContentObserver( handler )
-   {
-      @Override
-      public void onChange( boolean selfChange )
-      {
-         // Aggregate several calls to a single update.
-         DelayedRun.run( handler, dontClearAndfillListRunnable, 1000 );
-      }
-   };
+   private SpinnerAdapter actionBarNavigationAdapter;
    
    
    
@@ -260,73 +85,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
       setContentView( R.layout.taskslist_activity );
       
-      emptyListView = findViewById( R.id.taskslist_activity_no_elements );
+      quickAddTaskActionBarSwitcher = new QuickAddTaskActionBarSwitcher( this,
+                                                                         savedInstanceState );
+      initializeActionBar();
       
-      registerForContextMenu( getListView() );
-      
-      MolokoApp.get( this )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_TIMEZONE
-                                                      | IOnSettingsChangedListener.RTM_DATEFORMAT
-                                                      | IOnSettingsChangedListener.RTM_TIMEFORMAT
-                                                      | IOnSettingsChangedListener.TASK_SORT,
-                                                   this );
-      
-      TasksProviderPart.registerContentObserver( this, dbObserver );
-      
-      if ( getIntent().getExtras() == null )
-         // Put an empty bundle, this prevents null pointer checking
-         // in later steps.
-         getIntent().putExtras( new Bundle() );
-      
-      if ( savedInstanceState != null )
-         getIntent().putExtras( savedInstanceState );
-      
-      if ( !getIntent().hasExtra( TASK_SORT_ORDER ) )
-         setTaskSort( MolokoApp.getSettings().getTaskSort(), false );
-      
-      onNewIntent( getIntent() );
-   }
-   
-   
-   
-   @Override
-   protected void onStop()
-   {
-      super.onStop();
-      
-      if ( asyncFillList != null )
-         asyncFillList.cancel( true );
-      
-      asyncFillList = null;
-      
-      UIUtils.showTitleBarAddTask( this, false );
-   }
-   
-   
-   
-   @Override
-   protected void onDestroy()
-   {
-      super.onDestroy();
-      
-      unregisterForContextMenu( getListView() );
-      
-      MolokoApp.get( this ).unregisterOnSettingsChangedListener( this );
-      
-      TasksProviderPart.unregisterContentObserver( this, dbObserver );
-   }
-   
-   
-   
-   @Override
-   protected void onNewIntent( Intent intent )
-   {
-      UIUtils.showTitleBarAddTask( this, false );
-      
-      setIntent( intent );
-      handleIntent( intent );
+      if ( savedInstanceState == null )
+         initTasksListWithConfiguration( getIntent(), configuration );
    }
    
    
@@ -335,7 +102,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      outState.putAll( getIntent().getExtras() );
+      quickAddTaskActionBarSwitcher.saveInstanceState( outState );
    }
    
    
@@ -344,745 +111,422 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    protected void onRestoreInstanceState( Bundle state )
    {
       super.onRestoreInstanceState( state );
-      
-      if ( state != null )
-      {
-         getIntent().putExtras( state );
-         
-         handleIntent( getIntent() );
-      }
+      quickAddTaskActionBarSwitcher.restoreInstanceState( state );
    }
    
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   protected void onNewIntent( Intent intent )
    {
-      menu.add( Menu.NONE,
-                OptionsMenu.SETTINGS,
-                OptionsMenu.MENU_ORDER_STATIC,
-                R.string.phr_settings ).setIcon( R.drawable.ic_menu_settings );
-      
-      return addOptionsMenuIntents( menu );
+      super.onNewIntent( intent );
+      setTitleAndNavigationMode();
+   }
+   
+   
+   
+   private void initializeActionBar()
+   {
+      quickAddTaskActionBarSwitcher.showInLastState();
+      setTitleAndNavigationMode();
+   }
+   
+   
+   
+   private void setTitleAndNavigationMode()
+   {
+      getSupportActionBar().setTitle( getConfiguredTitle() );
+      getSupportActionBar().setSubtitle( getConfiguredSubTitle() );
+      setActionBarNavigationMode();
    }
    
    
    
    @Override
-   public boolean onPrepareOptionsMenu( Menu menu )
+   public void onBackPressed()
    {
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               OptionsMenu.SYNC,
-                               OptionsMenu.MENU_ORDER_FRONT );
-      
-      if ( getListAdapter() != null )
+      if ( isQuickAddTaskFragmentOpen() )
+         showQuickAddTaskActionBarFragment( false );
+      else
+         super.onBackPressed();
+   }
+   
+   
+   
+   protected void setActionBarNavigationMode()
+   {
+      // If we are opened for a list, then we show the other lists as navigation
+      // alternative
+      if ( isConfiguredWithListName() )
       {
-         addOptionalMenuItem( menu,
-                              OptionsMenu.SORT,
-                              getString( R.string.abstaskslist_menu_opt_sort ),
-                              OptionsMenu.MENU_ORDER,
-                              R.drawable.ic_menu_sort,
-                              getListAdapter().getCount() > 1 );
-         
-         addOptionalMenuItem( menu,
-                              OptionsMenu.EDIT_MULTIPLE_TASKS,
-                              getString( R.string.abstaskslist_menu_opt_edit_multiple ),
-                              OptionsMenu.MENU_ORDER,
-                              R.drawable.ic_menu_edit_multiple_tasks,
-                              Intents.createSelectMultipleTasksIntent( this,
-                                                                       (IFilter) getIntent().getParcelableExtra( FILTER ),
-                                                                       getTaskSort() ),
-                              !AccountUtils.isReadOnlyAccess( this )
-                                 && getListAdapter().getCount() > 1 );
-      }
-      
-      return true;
-   }
-   
-   
-   
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
-   {
-      switch ( item.getItemId() )
-      {
-         case OptionsMenu.SORT:
-            new AlertDialog.Builder( this ).setIcon( R.drawable.ic_dialog_sort )
-                                           .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                           .setSingleChoiceItems( R.array.app_sort_options,
-                                                                  getTaskSortIndex( getTaskSort() ),
-                                                                  this )
-                                           .setNegativeButton( R.string.btn_cancel,
-                                                               this )
-                                           .show()
-                                           .setOwnerActivity( this );
-            return true;
-         default :
-            return super.onOptionsItemSelected( item );
-      }
-   }
-   
-   
-   
-   @Override
-   public void onCreateContextMenu( ContextMenu menu,
-                                    View v,
-                                    ContextMenuInfo menuInfo )
-   {
-      super.onCreateContextMenu( menu, v, menuInfo );
-      
-      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-      
-      final ListTask task = getTask( info.position );
-      
-      menu.add( Menu.NONE,
-                CtxtMenu.OPEN_TASK,
-                Menu.NONE,
-                getString( R.string.phr_open_with_name, task.getName() ) );
-      
-      if ( !AccountUtils.isReadOnlyAccess( this ) )
-      {
-         menu.add( Menu.NONE,
-                   CtxtMenu.EDIT_TASK,
-                   Menu.NONE,
-                   getString( R.string.phr_edit_with_name, task.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.COMPLETE_TASK,
-                   Menu.NONE,
-                   getString( task.getCompleted() == null
-                                                         ? R.string.abstaskslist_listitem_ctx_complete_task
-                                                         : R.string.abstaskslist_listitem_ctx_uncomplete_task,
-                              task.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.POSTPONE_TASK,
-                   Menu.NONE,
-                   getString( R.string.abstaskslist_listitem_ctx_postpone_task,
-                              task.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.DELETE_TASK,
-                   Menu.NONE,
-                   getString( R.string.phr_delete_with_name, task.getName() ) );
-      }
-      
-      final IFilter filter = getIntent().getParcelableExtra( FILTER );
-      
-      // If the list name was in the filter then we are in one list only. So no need to
-      // open it again.
-      if ( !( filter instanceof RtmSmartFilter )
-         || !RtmSmartFilterParsing.hasOperatorAndValue( ( (RtmSmartFilter) filter ).getTokens(),
-                                                        RtmSmartFilterLexer.OP_LIST,
-                                                        task.getListName(),
-                                                        false ) )
-      {
-         menu.add( Menu.NONE,
-                   CtxtMenu.OPEN_LIST,
-                   Menu.NONE,
-                   getString( R.string.abstaskslist_listitem_ctx_open_list,
-                              task.getListName() ) );
-      }
-      
-      final int tagsCount = task.getTags().size();
-      if ( tagsCount > 0 )
-      {
-         final View tagsContainer = info.targetView.findViewById( R.id.taskslist_listitem_additionals_container );
-         
-         if ( tagsContainer.getVisibility() == View.VISIBLE )
-            menu.add( Menu.NONE,
-                      CtxtMenu.TAGS,
-                      Menu.NONE,
-                      getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
-                                                        tagsCount,
-                                                        task.getTags().get( 0 ) ) );
-      }
-      
-      final String locationName = task.getLocationName();
-      if ( !TextUtils.isEmpty( locationName ) )
-      {
-         final View locationView = info.targetView.findViewById( R.id.taskslist_listitem_location );
-         
-         if ( locationView.getVisibility() == View.VISIBLE )
-         {
-            menu.add( Menu.NONE,
-                      CtxtMenu.TASKS_AT_LOCATION,
-                      Menu.NONE,
-                      getString( R.string.abstaskslist_listitem_ctx_tasks_at_location,
-                                 locationName ) );
-         }
-      }
-      
-      final int notesCount = task.getNumberOfNotes();
-      if ( notesCount > 0 )
-         menu.add( Menu.NONE,
-                   CtxtMenu.NOTES,
-                   Menu.NONE,
-                   getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_notes,
-                                                     notesCount ) );
-   }
-   
-   
-   
-   @Override
-   public boolean onContextItemSelected( MenuItem item )
-   {
-      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-      
-      switch ( item.getItemId() )
-      {
-         case CtxtMenu.OPEN_TASK:
-            onTaskClicked( info.position );
-            return true;
-            
-         case CtxtMenu.EDIT_TASK:
-            onTaskEdit( info.position );
-            return true;
-            
-         case CtxtMenu.COMPLETE_TASK:
-            onTaskComplete( info.position );
-            return true;
-            
-         case CtxtMenu.POSTPONE_TASK:
-            onTaskPostpone( info.position );
-            return true;
-            
-         case CtxtMenu.DELETE_TASK:
-            onTaskDelete( info.position );
-            return true;
-            
-         case CtxtMenu.OPEN_LIST:
-            onListNameClicked( info.targetView.findViewById( R.id.taskslist_listitem_btn_list_name ) );
-            return true;
-            
-         case CtxtMenu.TAGS:
-            final List< String > tags = getTask( info.position ).getTags();
-            
-            if ( tags.size() == 1 )
-               onTagClicked( tags.get( 0 ) );
-            else
-               openMultipleTags( tags );
-            return true;
-            
-         case CtxtMenu.TASKS_AT_LOCATION:
-            onLocationClicked( info.position );
-            return true;
-            
-         case CtxtMenu.NOTES:
-            openNotes( info.position, null );
-            return true;
-            
-         default :
-            return super.onContextItemSelected( item );
-      }
-   }
-   
-   
-   
-   @Override
-   protected void onListItemClick( ListView l, View v, int position, long id )
-   {
-      onTaskClicked( position );
-   }
-   
-   
-   
-   public void onClick( DialogInterface dialog, int which )
-   {
-      if ( dialog instanceof MultiChoiceDialog )
-      {
-         final MultiChoiceDialog tagsChoice = (MultiChoiceDialog) dialog;
-         
-         final CharSequence[] tags = tagsChoice.getItems();
-         final boolean[] states = tagsChoice.getStates();
-         
-         final ArrayList< String > chosenTags = new ArrayList< String >();
-         
-         // filter out the chosen tags
-         for ( int i = 0; i < states.length; i++ )
-         {
-            if ( states[ i ] )
-            {
-               chosenTags.add( tags[ i ].toString() );
-            }
-         }
-         
-         final int chosenTagsSize = chosenTags.size();
-         
-         if ( chosenTagsSize == 1 )
-         {
-            onTagClicked( chosenTags.get( 0 ) );
-         }
-         else if ( chosenTagsSize > 1 )
-         {
-            final boolean andLink = ( which == DialogInterface.BUTTON1 );
-            final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                              Tasks.CONTENT_URI );
-            intent.putExtra( TITLE_ICON, R.drawable.ic_title_tag );
-            
-            final StringBuilder filter = new StringBuilder();
-            
-            for ( int i = 0; i < chosenTagsSize; ++i )
-            {
-               final String chosenTag = chosenTags.get( i );
-               
-               filter.append( RtmSmartFilterLexer.OP_TAG_LIT )
-                     .append( chosenTag );
-               
-               // not last element
-               if ( i < chosenTagsSize - 1 )
-               {
-                  if ( andLink )
-                     filter.append( " " )
-                           .append( RtmSmartFilterLexer.AND_LIT )
-                           .append( " " );
-                  else
-                     filter.append( " " )
-                           .append( RtmSmartFilterLexer.OR_LIT )
-                           .append( " " );
-               }
-            }
-            
-            intent.putExtra( FILTER, new RtmSmartFilter( filter.toString() ) );
-            intent.putExtra( TITLE,
-                             getString( R.string.taskslist_titlebar,
-                                        TextUtils.join( ( andLink )
-                                                                   ? " "
-                                                                      + getString( R.string.abstaskslist_dlg_show_tags_and )
-                                                                      + " "
-                                                                   : " "
-                                                                      + getString( R.string.abstaskslist_dlg_show_tags_or )
-                                                                      + " ",
-                                                        chosenTags ) ) );
-            
-            startActivity( intent );
-         }
-      }
-      
-      // Sort dialog
-      else if ( dialog instanceof AlertDialog )
-      {
-         switch ( which )
-         {
-            case Dialog.BUTTON_NEGATIVE:
-               break;
-            
-            default :
-               final int newTaskSort = getTaskSortValue( which );
-               
-               if ( newTaskSort != -1
-                  && !isSameTaskSortLikeCurrent( newTaskSort ) )
-               {
-                  setTaskSort( newTaskSort, true );
-               }
-               
-               dialog.dismiss();
-               break;
-         }
-      }
-   }
-   
-   
-   
-   public void onClick( View view )
-   {
-      if ( view.getId() == R.id.tags_layout_btn_tag )
-      {
-         onTagClicked( view );
-      }
-   }
-   
-   
-   
-   public void onTaskClicked( int pos )
-   {
-      startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
-   }
-   
-   
-   
-   public void onTaskClicked( View view )
-   {
-      onTaskClicked( getListView().getPositionForView( view ) );
-   }
-   
-   
-   
-   private void onTaskEdit( int pos )
-   {
-      startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
-   }
-   
-   
-   
-   private void onTaskComplete( int pos )
-   {
-      final ListTask task = getTask( pos );
-      TaskEditUtils.setTaskCompletion( this, task, task.getCompleted() == null );
-   }
-   
-   
-   
-   private void onTaskPostpone( int pos )
-   {
-      TaskEditUtils.postponeTask( this, getTask( pos ) );
-   }
-   
-   
-   
-   private void onTaskDelete( int pos )
-   {
-      final ListTask task = getTask( pos );
-      
-      UIUtils.newDeleteElementDialog( this, task.getName(), new Runnable()
-      {
-         public void run()
-         {
-            TaskEditUtils.deleteTask( AbstractTasksListActivity.this, task );
-         }
-      }, null ).show();
-   }
-   
-   
-   
-   public void onListNameClicked( View view )
-   {
-      final int pos = getListView().getPositionForView( view );
-      final ListTask listTask = getTask( pos );
-      
-      if ( listTask != null )
-      {
-         final Intent intent = Intents.createOpenListIntent( this,
-                                                             listTask.getListId(),
-                                                             null );
-         
-         if ( intent != null )
-            startActivity( intent );
-      }
-   }
-   
-   
-   
-   public void onTagClicked( View view )
-   {
-      final TextView tagCtrl = (TextView) view;
-      
-      onTagClicked( tagCtrl.getText() );
-   }
-   
-   
-   
-   public void onTagClicked( CharSequence tag )
-   {
-      startActivity( Intents.createOpenTagIntent( this, tag.toString() ) );
-   }
-   
-   
-   
-   public void gotoLocation( int pos )
-   {
-      LocationChooser.showChooser( this, getTask( pos ).getLocationName(), true );
-   }
-   
-   
-   
-   public void onLocationClicked( int pos )
-   {
-      startActivity( Intents.createOpenLocationIntentByName( this,
-                                                             getTask( pos ).getLocationName() ) );
-   }
-   
-   
-   
-   public void onLocationClicked( View view )
-   {
-      final TextView location = (TextView) view;
-      startActivity( Intents.createOpenLocationIntentByName( this,
-                                                             location.getText()
-                                                                     .toString() ) );
-   }
-   
-   
-   
-   public void openMultipleTags( List< String > tags )
-   {
-      final ArrayList< CharSequence > tmp = new ArrayList< CharSequence >();
-      
-      for ( final String tag : tags )
-      {
-         tmp.add( tag );
-      }
-      
-      new MultiChoiceDialog( this, tmp, this ).setTitle( getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
-                                                                                           tags.size() ) )
-                                              .setIcon( R.drawable.ic_dialog_tag )
-                                              .setButtonText( getString( R.string.abstaskslist_dlg_show_tags_and ) )
-                                              .setButton2Text( getString( R.string.abstaskslist_dlg_show_tags_or ) )
-                                              .show();
-   }
-   
-   
-   
-   public void openNotes( int position, String startNoteId )
-   {
-      final ListTask task = getTask( position );
-      final List< RtmTaskNote > notes = task.getNotes( this );
-      
-      if ( notes.size() > 0 )
-      {
-         if ( notes.size() == 1 )
-            startActivity( Intents.createOpenNotesIntent( this,
-                                                          null,
-                                                          notes.get( 0 )
-                                                               .getId() ) );
-         else
-            startActivity( Intents.createOpenNotesIntent( this,
-                                                          notes.get( 0 )
-                                                               .getTaskSeriesId(),
-                                                          startNoteId ) );
+         getSupportLoaderManager().initLoader( LISTS_LOADER_ID,
+                                               Bundle.EMPTY,
+                                               this );
       }
       else
       {
-         Log.e( TAG, "Tried to open notes from a task with no notes." );
+         setDropDownNavigationMode( null );
       }
    }
    
    
    
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldVlaues )
+   @Override
+   protected void takeConfigurationFrom( Bundle config )
    {
-      switch ( which )
-      {
-         case IOnSettingsChangedListener.TASK_SORT:
-            // Check if this list was sorted by now changed task sort.
-            // If so, we must re-sort it.
-            if ( getTaskSort() == (Integer) oldVlaues.get( Integer.valueOf( which ) ) )
-            {
-               setTaskSort( MolokoApp.getSettings().getTaskSort(), true );
-            }
-            else
-            {
-               break;
-            }
-            
-         default :
-            onContentChanged();
-      }
-   }
-   
-   
-   
-   /**
-    * Note: This will run in the GUI thread.
-    */
-   protected void beforeQueryTasksAsync( Bundle configuration )
-   {
-      UIUtils.setTitle( AbstractTasksListActivity.this, R.string.phr_loading );
-   }
-   
-   
-   
-   /**
-    * Note: This will run in a background thread.
-    */
-   abstract protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
-                                                           Bundle configuration );
-   
-   
-   
-   /**
-    * Note: This will run in the GUI thread.
-    */
-   abstract protected void setTasksResult( AsyncFillListResult result );
-   
-   
-   
-   abstract protected ListAdapter createListAdapter( AsyncFillListResult result );
-   
-   
-   
-   abstract protected void handleIntent( Intent intent );
-   
-   
-   
-   protected void clearList( View emptyView )
-   {
-      setListAdapter( createListAdapter( null ) );
-      switchEmptyView( emptyView );
-   }
-   
-   
-   
-   protected void fillListAsync()
-   {
-      handler.post( new Runnable()
-      {
-         public void run()
-         {
-            if ( asyncFillList != null )
-            {
-               Log.w( TAG, "Canceled AsyncFillList task." );
-               asyncFillList.cancel( true );
-            }
-            
-            asyncFillList = new ClearAndAsyncFillList( getIntent().getExtras() );
-            asyncFillList.execute( getContentResolver() );
-         }
-      } );
-   }
-   
-   
-   
-   private boolean addOptionsMenuIntents( Menu menu )
-   {
-      boolean ok = true;
+      super.takeConfigurationFrom( config );
       
-      final MenuItem item = menu.findItem( OptionsMenu.SETTINGS );
+      if ( config.containsKey( Config.TITLE ) )
+         configuration.putString( Config.TITLE, config.getString( Config.TITLE ) );
+      if ( config.containsKey( Config.SUB_TITLE ) )
+         configuration.putString( Config.SUB_TITLE,
+                                  config.getString( Config.SUB_TITLE ) );
+      if ( config.containsKey( Config.LIST_NAME ) )
+         configuration.putString( Config.LIST_NAME,
+                                  config.getString( Config.LIST_NAME ) );
+   }
+   
+   
+   
+   @Override
+   public void putDefaultConfigurationTo( Bundle bundle )
+   {
+      super.putDefaultConfigurationTo( bundle );
       
-      ok = item != null;
+      bundle.putString( Config.TITLE, getString( R.string.app_name ) );
+   }
+   
+   
+   
+   private Bundle getCurrentTasksListFragmentConfiguration()
+   {
+      return getFragmentConfigurations( R.id.frag_taskslist );
+   }
+   
+   
+   
+   private Bundle getCurrentActivityAndFragmentsConfiguration()
+   {
+      return getActivityAndFragmentsConfiguration( R.id.frag_taskslist );
+   }
+   
+   
+   
+   @Override
+   public void onTaskSortChanged( int newTaskSort )
+   {
+      final Bundle config = getCurrentTasksListFragmentConfiguration();
+      config.putInt( AbstractTasksListFragment.Config.TASK_SORT_ORDER,
+                     newTaskSort );
       
-      if ( ok )
-      {
-         item.setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
-      }
-      
-      return ok;
+      newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
    }
    
    
    
-   protected void updateTitleBar( TitleBarLayout titleBar )
+   protected final Task getTask( int pos )
    {
-      
-   }
-   
-   
-   
-   private static void updateTitleBarSmartFilter( IFilter filter,
-                                                  TitleBarLayout titleBar )
-   {
-      if ( filter instanceof RtmSmartFilter )
-         titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
-   }
-   
-   
-   
-   protected final ListTask getTask( int pos )
-   {
-      return (ListTask) getListAdapter().getItem( pos );
-   }
-   
-   
-   
-   protected int getTaskSortValue( int idx )
-   {
-      return TaskSortPreference.getValueOfIndex( idx );
-   }
-   
-   
-   
-   protected int getTaskSortIndex( int value )
-   {
-      return TaskSortPreference.getIndexOfValue( value );
+      return getTasksListFragment().getTask( pos );
    }
    
    
    
    protected int getTaskSort()
    {
-      return getIntent().getIntExtra( TASK_SORT_ORDER,
-                                      Settings.TASK_SORT_DEFAULT );
-   }
-   
-   
-   
-   protected void setTaskSort( int taskSort, boolean refillList )
-   {
-      getIntent().putExtra( TASK_SORT_ORDER, taskSort );
-      
-      if ( refillList )
-         fillListAsync();
+      return getTasksListFragment().getTaskSortConfiguration();
    }
    
    
    
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
-      return getTaskSort() == sortOrder;
+      return getTasksListFragment().getTaskSortConfiguration() == sortOrder;
    }
    
    
    
-   protected void addOptionalMenuItem( Menu menu,
-                                       int id,
-                                       String title,
-                                       int order,
-                                       int iconId,
-                                       boolean show )
+   protected IFilter getConfiguredFilter()
    {
-      addOptionalMenuItem( menu, id, title, order, iconId, null, show );
+      return getTasksListFragment().getFilter();
    }
    
    
    
-   protected void addOptionalMenuItem( Menu menu,
-                                       int id,
-                                       String title,
-                                       int order,
-                                       int iconId,
-                                       Intent intent,
-                                       boolean show )
+   protected String getConfiguredListName()
+   {
+      return configuration.getString( Config.LIST_NAME );
+   }
+   
+   
+   
+   protected void configuredTitle( String title )
+   {
+      configuration.putString( Config.TITLE, title );
+   }
+   
+   
+   
+   protected String getConfiguredTitle()
+   {
+      final String title = configuration.getString( Config.TITLE );
+      return !TextUtils.isEmpty( title ) ? title
+                                        : getString( R.string.app_name );
+   }
+   
+   
+   
+   protected String getConfiguredSubTitle()
+   {
+      return Strings.nullIfEmpty( configuration.getString( Config.SUB_TITLE ) );
+   }
+   
+   
+   
+   protected boolean isConfiguredWithListName()
+   {
+      return !TextUtils.isEmpty( getConfiguredListName() );
+   }
+   
+   
+   
+   protected boolean isInDropDownNavigationMode()
+   {
+      return getSupportActionBar() != null
+         && getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
+   }
+   
+   
+   
+   protected void setDropDownNavigationMode( SpinnerAdapter spinnerAdapter )
+   {
+      if ( getSupportActionBar() != null )
+      {
+         if ( spinnerAdapter != null )
+         {
+            getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
+            getSupportActionBar().setListNavigationCallbacks( spinnerAdapter,
+                                                              this );
+         }
+         else
+         {
+            getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+         }
+      }
+   }
+   
+   
+   
+   protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
+   {
+      final List< String > items = new ArrayList< String >( lists.size() );
+      
+      for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
+      {
+         items.add( rtmListWithTaskCount.getName() );
+      }
+      
+      actionBarNavigationAdapter = new ActionBarNavigationAdapter( this, items );
+      return actionBarNavigationAdapter;
+   }
+   
+   
+   
+   @Override
+   public Loader< List< RtmListWithTaskCount >> onCreateLoader( int id,
+                                                                Bundle args )
+   {
+      return new RtmListWithTaskCountLoader( this );
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< List< RtmListWithTaskCount >> loader,
+                               List< RtmListWithTaskCount > data )
+   {
+      if ( data.size() > 1 )
+      {
+         setDropDownNavigationMode( createActionBarNavigationAdapterForResult( data ) );
+         
+         final String configuredListName = Strings.emptyIfNull( getConfiguredListName() );
+         
+         int pos = -1;
+         for ( int i = 0, cnt = data.size(); i < cnt && pos == -1; i++ )
+         {
+            final RtmListWithTaskCount list = data.get( i );
+            if ( list.getName().equalsIgnoreCase( configuredListName ) )
+               pos = i;
+         }
+         
+         if ( pos != -1 )
+         {
+            getSupportActionBar().setTitle( null );
+            getSupportActionBar().setSelectedNavigationItem( pos );
+         }
+         
+         invalidateOptionsMenu();
+      }
+   }
+   
+   
+   
+   @Override
+   public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
+   {
+      setDropDownNavigationMode( null );
+   }
+   
+   
+   
+   @Override
+   public boolean onNavigationItemSelected( int itemPosition, long itemId )
+   {
+      boolean handled = false;
+      
+      final String item = (String) actionBarNavigationAdapter.getItem( itemPosition );
+      
+      if ( !item.equalsIgnoreCase( getConfiguredListName() ) )
+      {
+         final Bundle newConfig = getCurrentActivityAndFragmentsConfiguration();
+         newConfig.putAll( Intents.Extras.createOpenListExtrasByName( this,
+                                                                      item,
+                                                                      null ) );
+         reloadTasksListWithConfiguration( newConfig );
+         
+         handled = true;
+      }
+      
+      return handled;
+   }
+   
+   
+   
+   protected void showQuickAddTaskActionBarFragment( boolean show )
    {
       if ( show )
       {
-         MenuItem item = menu.findItem( id );
-         
-         if ( item == null )
-         {
-            item = menu.add( Menu.NONE, id, order, title );
-            
-            if ( iconId != -1 )
-               item.setIcon( iconId );
-         }
-         
-         item.setTitle( title );
-         
-         if ( intent != null )
-            item.setIntent( intent );
+         quickAddTaskActionBarSwitcher.showSwitched( createQuickAddTaskActionBarFragmentConfiguration() );
       }
       else
       {
-         menu.removeItem( id );
+         quickAddTaskActionBarSwitcher.showUnswitched();
       }
    }
    
    
    
-   protected void switchEmptyView( View newEmptyView )
+   @Override
+   public void onCloseQuickAddTaskFragment()
    {
-      final View currentView = getListView().getEmptyView();
+      showQuickAddTaskActionBarFragment( false );
+   }
+   
+   
+   
+   protected boolean isQuickAddTaskFragmentOpen()
+   {
+      return quickAddTaskActionBarSwitcher.isSwitched();
+   }
+   
+   
+   
+   protected Bundle createQuickAddTaskActionBarFragmentConfiguration()
+   {
+      final Bundle config = new Bundle();
       
-      final boolean change = ( currentView != null && newEmptyView == null )
-         || ( currentView == null && newEmptyView != null )
-         || ( currentView.getId() != newEmptyView.getId() );
+      config.putParcelable( QuickAddTaskActionBarFragment.Config.FILTER,
+                            getConfiguredFilter() );
+      return config;
+   }
+   
+   
+   
+   @Override
+   public void onQuickAddAddNewTask( Bundle parsedValues )
+   {
+      showQuickAddTaskActionBarFragment( false );
+      startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
+   }
+   
+   
+   
+   @Override
+   public void onQuickAddTaskOperatorSelected( char operator )
+   {
+      quickAddTaskActionBarSwitcher.insertOperator( operator );
+   }
+   
+   
+   
+   @SuppressWarnings( "unchecked" )
+   protected AbstractTasksListFragment< ? extends Task > getTasksListFragment()
+   {
+      return (AbstractTasksListFragment< ? extends Task >) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
+   }
+   
+   
+   
+   private void initTasksListWithConfiguration( Intent intent, Bundle config )
+   {
+      final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
       
-      if ( change )
+      if ( newTasksListFragment != null )
       {
-         if ( currentView != null )
-            currentView.setVisibility( View.GONE );
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         transaction.add( R.id.frag_taskslist, newTasksListFragment );
          
-         getListView().setEmptyView( newEmptyView );
+         transaction.commit();
       }
    }
    
    
    
-   protected void showError( CharSequence text )
+   protected void reloadTasksListWithConfiguration( Bundle config )
    {
-      final View errorView = findViewById( R.id.taskslist_activity_error );
-      final TextView textView = (TextView) errorView.findViewById( R.id.title_with_text_text );
+      final Intent newIntent = getNewConfiguredIntent( config );
       
-      textView.setText( text );
+      onNewIntent( newIntent );
+      newTasksListFragmentbyIntent( newIntent );
+   }
+   
+   
+   
+   protected void newTasksListFragmentbyIntent( Intent intent )
+   {
+      final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
       
-      clearList( errorView );
+      if ( newTasksListFragment != null )
+      {
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         transaction.replace( R.id.frag_taskslist, newTasksListFragment );
+         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+         
+         transaction.commit();
+      }
+   }
+   
+   
+   
+   protected Fragment getNewTasksListFragmentInstance( Intent intent )
+   {
+      return TasksListFragmentFactory.newFragment( this, intent );
+   }
+   
+   
+   
+   private Intent getNewConfiguredIntent( Bundle config )
+   {
+      final Intent newIntent = getTasksListFragment().newDefaultIntent();
+      newIntent.putExtras( config );
+      
+      return newIntent;
+   }
+   
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return FRAGMENT_IDS;
    }
 }

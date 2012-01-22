@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,141 +22,154 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.List;
+
 import android.app.SearchManager;
-import android.content.Intent;
+import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.text.Html;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.layouts.TitleBarLayout;
+import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class TaskSearchResultActivity extends TasksListActivity
+public class TaskSearchResultActivity extends
+         AbstractFullDetailedTasksListActivity implements
+         ITasksSearchResultListFragmentListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TaskSearchResultActivity.class.getSimpleName();
-   
-   
-   protected static class OptionsMenu
+   private static class OptionsMenu
    {
-      protected final static int START_IDX = TasksListActivity.OptionsMenu.START_IDX + 1000;
+      public final static int ADD_LIST = R.id.menu_add_list;
       
-      public final static int MENU_ORDER = TasksListActivity.OptionsMenu.MENU_ORDER;
-      
-      public final static int NEW_SEARCH = START_IDX + 0;
-      
-      public final static int CLEAR_HISTORY = START_IDX + 1;
+      public final static int CLEAR_HISTORY = R.id.menu_clear_search_history;
    }
    
+   private boolean lastQuerySucceeded = true;
    
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
       super.onCreateOptionsMenu( menu );
       
-      menu.removeItem( TasksListActivity.OptionsMenu.SHOW_LISTS );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ADD_LIST,
+                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
+                                   MenuCategory.CONTAINER,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_add_list,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   lastQuerySucceeded
+                                      && AccountUtils.isWriteableAccess( this ) );
       
-      menu.add( Menu.NONE,
-                OptionsMenu.NEW_SEARCH,
-                OptionsMenu.MENU_ORDER,
-                R.string.menu_opt_search_task_title )
-          .setIcon( R.drawable.ic_menu_search );
-      
-      menu.add( Menu.NONE,
-                OptionsMenu.CLEAR_HISTORY,
-                OptionsMenu.MENU_ORDER,
-                R.string.tasksearchresult_menu_opt_clear_history_title )
-          .setIcon( R.drawable.ic_menu_delete );
-      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.CLEAR_HISTORY,
+                                   getString( R.string.tasksearchresult_menu_opt_clear_history_title ),
+                                   MenuCategory.ALTERNATIVE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_delete,
+                                   MenuItem.SHOW_AS_ACTION_NEVER,
+                                   true );
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
-      // Handle item selection
       switch ( item.getItemId() )
       {
-         case OptionsMenu.NEW_SEARCH:
-            onSearchRequested();
-            return true;
          case OptionsMenu.CLEAR_HISTORY:
             getRecentSuggestions().clearHistory();
+            
+            Toast.makeText( this,
+                            R.string.tasksearchresult_toast_history_cleared,
+                            Toast.LENGTH_SHORT ).show();
             return true;
+            
+         case OptionsMenu.ADD_LIST:
+            showAddListDialog();
+            return true;
+            
          default :
             return super.onOptionsItemSelected( item );
       }
    }
    
-
-
+   
+   
    @Override
-   protected void handleIntent( Intent intent )
+   protected void takeConfigurationFrom( Bundle config )
    {
-      if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) )
-      {
-         final RtmSmartFilter filter = new RtmSmartFilter( intent.getStringExtra( SearchManager.QUERY ) );
-         
-         // try to evaluate the query
-         final String evalQuery = filter.getEvaluatedFilterString( true );
-         
-         if ( evalQuery != null )
-         {
-            getRecentSuggestions().saveRecentQuery( filter.getFilterString(),
-                                                    null );
-            
-            configureTitleBar( TitleBarLayout.BUTTON_ADD_LIST
-               | TitleBarLayout.BUTTON_ADD_TASK | TitleBarLayout.BUTTON_HOME
-               | TitleBarLayout.BUTTON_SEARCH, filter );
-            
-            final Intent newIntent = Intents.createSmartFilterIntent( this,
-                                                                      filter,
-                                                                      getString( R.string.tasksearchresult_titlebar,
-                                                                                 filter.getFilterString() ),
-                                                                      -1 );
-            setIntent( newIntent );
-            super.handleIntent( newIntent );
-         }
-         else
-         {
-            UIUtils.setTitle( this,
-                              getString( R.string.tasksearchresult_titlebar_error ),
-                              R.drawable.ic_title_error );
-            
-            configureTitleBar( TitleBarLayout.BUTTON_HOME
-               | TitleBarLayout.BUTTON_SEARCH, null );
-            
-            showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
-                                                     filter.getFilterString() ) ) );
-         }
-      }
+      super.takeConfigurationFrom( config );
+      
+      if ( config.containsKey( SearchManager.QUERY ) )
+         configuration.putString( Config.TITLE,
+                                  config.getString( SearchManager.QUERY ) );
    }
    
-
-
+   
+   
+   @Override
+   public void onQuerySucceeded( String queryString )
+   {
+      getRecentSuggestions().saveRecentQuery( queryString, null );
+      
+      lastQuerySucceeded = true;
+      invalidateOptionsMenu();
+   }
+   
+   
+   
+   @Override
+   public void onQueryFailed( String queryString )
+   {
+      lastQuerySucceeded = false;
+      invalidateOptionsMenu();
+   }
+   
+   
+   
+   @Override
+   public void onOpenList( int pos, String listId )
+   {
+      startActivity( Intents.createOpenListIntentById( this, listId, null ) );
+   }
+   
+   
+   
+   @Override
+   public void onOpenLocation( int pos, String locationId )
+   {
+      startActivity( Intents.createOpenLocationIntentByName( this,
+                                                             getTask( pos ).getLocationName() ) );
+   }
+   
+   
+   
+   @Override
+   protected void onOpenChoosenTags( List< String > tags,
+                                     String logicalOperation )
+   {
+      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
+   }
+   
+   
+   
    private final SearchRecentSuggestions getRecentSuggestions()
    {
       return new SearchRecentSuggestions( this,
                                           TasksSearchRecentSuggestionsProvider.AUTHORITY,
                                           TasksSearchRecentSuggestionsProvider.MODE );
-   }
-   
-
-
-   private final void configureTitleBar( int buttonMask,
-                                         RtmSmartFilter addSmartListFilter )
-   {
-      final TitleBarLayout titleBarLayout = (TitleBarLayout) findViewById( R.id.app_title_bar );
-      titleBarLayout.setButtonsVisible( buttonMask );
-      titleBarLayout.setAddSmartListFilter( addSmartListFilter );
    }
 }

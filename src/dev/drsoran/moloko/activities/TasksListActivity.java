@@ -28,8 +28,11 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.util.Pair;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.RtmListEditUtils;
@@ -92,7 +95,8 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
                                    Menu.NONE,
                                    R.drawable.ic_menu_trash,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   isConfiguredWithListName()
+                                   !isListLocked()
+                                      && isConfiguredWithListName()
                                       && !AccountUtils.isReadOnlyAccess( this ) );
       
       return true;
@@ -128,7 +132,10 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       {
          final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
          
-         RtmListEditUtils.deleteListByName( TasksListActivity.this, listName );
+         Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteListActions = RtmListEditUtils.deleteListByName( TasksListActivity.this,
+                                                                                                                        listName );
+         applyModifications( deleteListActions );
+         
          finish();
       }
    }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -78,6 +78,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private QuickAddTaskActionBarSwitcher quickAddTaskActionBarSwitcher;
    
    private SpinnerAdapter actionBarNavigationAdapter;
+   
+   private RtmListWithTaskCount loadedListWithTaskCount;
    
    
    
@@ -289,6 +291,21 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
+   protected RtmListWithTaskCount getLoadedListWithTaskCount()
+   {
+      return loadedListWithTaskCount;
+   }
+   
+   
+   
+   protected boolean isListLocked()
+   {
+      return loadedListWithTaskCount != null
+         && loadedListWithTaskCount.getLocked() != 0;
+   }
+   
+   
+   
    protected boolean isInDropDownNavigationMode()
    {
       return getSupportActionBar() != null
@@ -362,6 +379,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          {
             getSupportActionBar().setTitle( null );
             getSupportActionBar().setSelectedNavigationItem( pos );
+            loadedListWithTaskCount = data.get( pos );
          }
          
          invalidateOptionsMenu();
@@ -374,6 +392,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
    {
       setDropDownNavigationMode( null );
+      loadedListWithTaskCount = null;
    }
    
    

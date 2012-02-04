@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -30,27 +30,21 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
 
 
-public class PermanentNotification
+class PermanentNotification
 {
+   private final static int ID = R.id.notification_permanent;
+   
    private final Context context;
    
-   private final Notification notification;
-   
-   private final int id;
+   private Notification notification;
    
    
    
-   public PermanentNotification( Context context, int id )
+   public PermanentNotification( Context context )
    {
       this.context = context;
-      this.id = id;
       
-      notification = new Notification( R.drawable.notification_layers,
-                                       null,
-                                       System.currentTimeMillis() );
-      
-      notification.flags = Notification.FLAG_NO_CLEAR
-         | Notification.FLAG_ONGOING_EVENT;
+      createNotification();
    }
    
    
@@ -66,14 +60,23 @@ public class PermanentNotification
                                        text,
                                        Intents.createNotificationIntent( context,
                                                                          onClickIntent ) );
-      getNotificationManager().notify( id, notification );
+      getNotificationManager().notify( ID, notification );
    }
    
    
    
    public void cancel()
    {
-      getNotificationManager().cancel( id );
+      getNotificationManager().cancel( ID );
+   }
+   
+   
+   
+   private void createNotification()
+   {
+      notification = new Notification( R.drawable.notification_layers, null, 0 );
+      notification.flags = Notification.FLAG_NO_CLEAR
+         | Notification.FLAG_ONGOING_EVENT;
    }
    
    
@@ -82,5 +85,4 @@ public class PermanentNotification
    {
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );
    }
-   
 }

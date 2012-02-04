@@ -243,5 +243,13 @@
    <item
       type="id"
       name="ctx_menu_unset_default_list" />
+   
+   <!-- Notificatin IDs -->
+   <item
+      type="id"
+      name="notification_permanent" />
+   <item
+      type="id"
+      name="notification_due_tasks" />
 
 </resources>

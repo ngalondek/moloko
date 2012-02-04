@@ -25,123 +25,112 @@ package dev.drsoran.moloko.notification;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.rtm.Task;
 
 
-public class DueTaskNotification
+class DueTaskNotification
 {
+   private final static int ID = R.id.notification_due_tasks;
+   
    private final Context context;
    
-   private final String taskId;
-   
-   private final String taskName;
-   
-   private final long dueTimeMillis;
-   
-   private boolean vibrate;
-   
-   private boolean led;
-   
-   private Uri sound;
-   
-   private long remindBeforeMillis;
-   
-   /**
-    * If this reference is != null means we have already notified this {@link Notification}. We never notify an
-    * {@link Notification} twice.
-    */
    private Notification notification;
    
    
    
-   public DueTaskNotification( Context context, Task task,
-      long remindBeforeMillis, boolean vibrate, boolean led, Uri sound )
+   public DueTaskNotification( Context context )
    {
       this.context = context;
-      this.taskId = task.getId();
-      this.taskName = task.getName();
-      this.dueTimeMillis = task.getDue().getTime();
-      this.remindBeforeMillis = remindBeforeMillis;
-      this.vibrate = vibrate;
-      this.led = led;
-      this.sound = sound;
       
-      if ( isTimeToNotify() )
-         createNotification();
+      createNotification();
    }
    
    
    
-   public void updateMinuteTick()
+   public void update( String title,
+                       String text,
+                       String tickerText,
+                       int count,
+                       Intent onClickIntent )
    {
-      if ( notification == null && isTimeToNotify() )
-         createNotification();
+      notification.tickerText = tickerText;
+      notification.iconLevel = count;
+      notification.setLatestEventInfo( context,
+                                       title,
+                                       text,
+                                       Intents.createNotificationIntent( context,
+                                                                         onClickIntent ) );
+      getNotificationManager().notify( ID, notification );
    }
    
    
    
-   public void update( long remindBeforeMillis )
+   public void setNotificationFeatures( Uri sound, boolean led, boolean vibrate )
    {
-      if ( notification == null )
-      {
-         this.remindBeforeMillis = remindBeforeMillis;
-         
-         if ( isTimeToNotify() )
-         {
-            createNotification();
-         }
-      }
-   }
-   
-   
-   
-   public void update( boolean vibrate, boolean led, Uri sound )
-   {
-      if ( notification == null )
-      {
-         this.vibrate = vibrate;
-         this.led = led;
-         this.sound = sound;
-      }
-   }
-   
-   
-   
-   public void onTimeFormatChanged()
-   {
-      if ( notification != null )
-      {
-         setLatestEventInfo();
-         getNotificationManager().notify( taskId.hashCode(), notification );
-      }
-   }
-   
-   
-   
-   public String getTaskId()
-   {
-      return taskId;
-   }
-   
-   
-   
-   public long getDueTime()
-   {
-      return dueTimeMillis;
+      setSound( sound );
+      setLed( led );
+      setVibrate( vibrate );
    }
    
    
    
    public void cancel()
    {
-      if ( notification != null )
-         getNotificationManager().cancel( taskId.hashCode() );
+      getNotificationManager().cancel( ID );
+   }
+   
+   
+   
+   private void createNotification()
+   {
+      notification = new Notification( R.drawable.ic_notify_logo_red, null, 0 );
+      notification.flags = Notification.FLAG_AUTO_CANCEL;
+      notification.defaults = 0;
+   }
+   
+   
+   
+   private void setVibrate( boolean vibrate )
+   {
+      if ( vibrate )
+      {
+         notification.defaults |= Notification.DEFAULT_VIBRATE;
+      }
+      else
+      {
+         notification.defaults &= ~Notification.DEFAULT_VIBRATE;
+      }
+   }
+   
+   
+   
+   private void setLed( boolean useLed )
+   {
+      if ( useLed )
+      {
+         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+         notification.ledARGB = Color.BLUE;
+         notification.ledOffMS = 400;
+         notification.ledOnMS = 500;
+      }
+      else
+      {
+         notification.flags &= ~Notification.FLAG_SHOW_LIGHTS;
+         notification.ledARGB = 0;
+         notification.ledOffMS = 0;
+         notification.ledOnMS = 0;
+      }
+   }
+   
+   
+   
+   private void setSound( Uri soundToPay )
+   {
+      notification.sound = soundToPay;
    }
    
    
@@ -149,103 +138,5 @@ public class DueTaskNotification
    private NotificationManager getNotificationManager()
    {
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );
-   }
-   
-   
-   
-   private void createNotification()
-   {
-      notification = new Notification( R.drawable.ic_notify_logo_red,
-                                       context.getString( R.string.notification_due_ticker,
-                                                          taskName,
-                                                          getRelativeTimeString() ),
-                                       dueTimeMillis );
-      
-      notification.flags = Notification.FLAG_AUTO_CANCEL;
-      
-      setLatestEventInfo();
-      
-      notification.defaults = 0;
-      
-      if ( vibrate )
-      {
-         notification.defaults |= Notification.DEFAULT_VIBRATE;
-      }
-      
-      if ( led )
-      {
-         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-         notification.ledARGB = Color.BLUE;
-         notification.ledOffMS = 400;
-         notification.ledOnMS = 500;
-      }
-      
-      notification.sound = sound;
-      
-      getNotificationManager().notify( taskId.hashCode(), notification );
-   }
-   
-   
-   
-   private void setLatestEventInfo()
-   {
-      notification.setLatestEventInfo( context,
-                                       taskName,
-                                       getDueTimeText(),
-                                       Intents.createNotificationIntent( context,
-                                                                         Intents.createOpenTaskIntent( context,
-                                                                                                       taskId ) ) );
-   }
-   
-   
-   
-   private String getDueTimeText()
-   {
-      return context.getString( R.string.notification_due,
-                                MolokoDateUtils.formatTime( context,
-                                                            dueTimeMillis ) );
-   }
-   
-   
-   
-   private boolean isTimeToNotify()
-   {
-      return System.currentTimeMillis() >= ( dueTimeMillis - remindBeforeMillis );
-   }
-   
-   
-   
-   private CharSequence getRelativeTimeString()
-   {
-      final long now = System.currentTimeMillis();
-      final long resolution = MolokoDateUtils.getFittingDateUtilsResolution( dueTimeMillis,
-                                                                             now );
-      
-      if ( resolution == DateUtils.SECOND_IN_MILLIS )
-      {
-         return context.getString( R.string.phr_now );
-      }
-      else
-      {
-         return DateUtils.getRelativeTimeSpanString( dueTimeMillis,
-                                                     now,
-                                                     resolution );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean equals( Object o )
-   {
-      if ( o instanceof DueTaskNotification )
-      {
-         final DueTaskNotification other = (DueTaskNotification) o;
-         
-         return other.taskId.equals( this.taskId )
-            && other.dueTimeMillis == this.dueTimeMillis;
-      }
-      else
-         return false;
    }
 }

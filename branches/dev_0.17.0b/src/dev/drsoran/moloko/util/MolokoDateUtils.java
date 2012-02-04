@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -40,6 +40,8 @@ import dev.drsoran.rtm.ParcelableDate;
 
 public class MolokoDateUtils
 {
+   public final static int NO_FLAGS = 0;
+   
    public final static int FORMAT_WITH_YEAR = DateUtils.FORMAT_SHOW_YEAR;
    
    public final static int FORMAT_NUMERIC = DateUtils.FORMAT_NUMERIC_DATE;

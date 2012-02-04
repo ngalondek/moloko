@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko 
+<!-- Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko 
    is free software: you can redistribute it and/or modify it under the terms 
    of the GNU General Public License as published by the Free Software Foundation, 
    either version 3 of the License, or (at your option) any later version. Moloko 
@@ -13,8 +13,8 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"   
-   android:versionName="0.16.0b"
-   android:versionCode="90112">
+   android:versionName="0.16.1b"
+   android:versionCode="90113">
 
    <uses-sdk
       android:minSdkVersion="8"

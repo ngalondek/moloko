@@ -300,7 +300,8 @@
       <!-- 1 task due or overdue, show task name -->
    <string name="notification_permanent_text_one_task">%1$s</string>
    <string name="notification_due_ticker">%1$s due %2$s</string>
-   <string name="notification_due">due at %1$s</string>   
+   <string name="notification_due">due at %1$s</string>
+   <string name="notification_due_tasks_list_title">Due tasks</string>
 
    <!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">No tasks to display</string>
@@ -426,7 +427,7 @@
    <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tasks with due time</string>
    <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
    <string name="moloko_prefs_notification_tasks_w_due_before_title">Reminders</string>
-   <string name="moloko_prefs_notification_tasks_w_due_before_default_value">900000</string>
+   <string name="moloko_prefs_notification_tasks_w_due_before_default_value">@integer/fifteen_min_ms</string>
    <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Notification tone</string>
    <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrate</string>
    <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>

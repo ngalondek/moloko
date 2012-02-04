@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
       free software: you can redistribute it and/or modify it under the terms of
       the GNU General Public License as published by the Free Software
       Foundation, either version 3 of the License, or (at your option) any later
@@ -89,12 +89,12 @@
    -->
    <string-array
       name="moloko_acc_prefs_sync_interval_values">
-      <item>-1</item>
-      <item>900000</item>
-      <item>1800000</item>
-      <item>3600000</item>
-      <item>43200000</item>
-      <item>86400000</item>
+      <item>@integer/acc_prefs_sync_interval_off</item>
+      <item>@integer/fifteen_min_ms</item>
+      <item>@integer/thirty_min_ms</item>
+      <item>@integer/one_hour_ms</item>
+      <item>@integer/twelve_hours_ms</item>
+      <item>@integer/twentyfour_hours_ms</item>
    </string-array>
 
    <string-array
@@ -112,12 +112,12 @@
    -->
    <string-array
       name="moloko_prefs_notification_task_due_before_values">
-      <item>300000</item>
-      <item>900000</item>
-      <item>1800000</item>
-      <item>3600000</item>
-      <item>43200000</item>
-      <item>86400000</item>
+      <item>@integer/five_min_ms</item>
+      <item>@integer/fifteen_min_ms</item>
+      <item>@integer/thirty_min_ms</item>
+      <item>@integer/one_hour_ms</item>
+      <item>@integer/twelve_hours_ms</item>
+      <item>@integer/twentyfour_hours_ms</item>
    </string-array>
 
    <string-array
@@ -130,10 +130,10 @@
 
    <string-array
       name="moloko_prefs_notification_permanent_values">
-      <item>0</item>
-      <item>1</item>
-      <item>2</item>
-      <item>3</item>
+      <item>@integer/notification_permanent_off</item>
+      <item>@integer/notification_permanent_today</item>
+      <item>@integer/notification_permanent_tomorrow</item>
+      <item>@integer/notification_permanent_today_and_tomorrow</item>
    </string-array>
    
    <string-array

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   
+   <!-- Time constants -->
+   <integer name="five_min_ms">300000</integer>
+   <integer name="fifteen_min_ms">900000</integer>
+   <integer name="thirty_min_ms">1800000</integer>
+   <integer name="one_hour_ms">3600000</integer>
+   <integer name="twelve_hours_ms">43200000</integer>
+   <integer name="twentyfour_hours_ms">86400000</integer>
+   
+   <!-- Account preferences -->
+   <integer name="acc_prefs_sync_interval_off">-1</integer>
+
+   <!-- Permanent notification -->
+   <integer name="notification_permanent_off">0</integer>
+   <integer name="notification_permanent_today">1</integer>
+   <integer name="notification_permanent_tomorrow">2</integer>
+   <integer name="notification_permanent_today_and_tomorrow">3</integer>   
+</resources>

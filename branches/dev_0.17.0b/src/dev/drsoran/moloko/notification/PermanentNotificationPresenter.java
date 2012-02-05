@@ -86,10 +86,11 @@ class PermanentNotificationPresenter
    {
       permanentNotification = new PermanentNotification( context );
    }
-
-
-
-   private void updateAndLaunchNotification( Cursor tasksCursor, String filterString )
+   
+   
+   
+   private void updateAndLaunchNotification( Cursor tasksCursor,
+                                             String filterString )
    {
       final String title = getNotificationTitle();
       final String text = buildPermanentNotificationRowText( tasksCursor );
@@ -111,13 +112,13 @@ class PermanentNotificationPresenter
       
       switch ( notificationType )
       {
-         case R.integer.notification_permanent_today:
+         case PermanentNotificationType.TODAY:
             return context.getString( R.string.notification_permanent_today_title );
             
-         case R.integer.notification_permanent_tomorrow:
+         case PermanentNotificationType.TOMORROW:
             return context.getString( R.string.notification_permanent_tomorrow_title );
             
-         case R.integer.notification_permanent_today_and_tomorrow:
+         case PermanentNotificationType.TODAY_AND_TOMORROW:
          {
             final MolokoCalendar cal = MolokoCalendar.getInstance();
             
@@ -134,7 +135,7 @@ class PermanentNotificationPresenter
                                                                   MolokoDateUtils.FORMAT_NUMERIC ) );
          }
          
-         case R.integer.notification_permanent_off:
+         case PermanentNotificationType.OFF:
          default :
             return Strings.EMPTY_STRING;
       }
@@ -155,6 +156,8 @@ class PermanentNotificationPresenter
       
       if ( tasksCount == 1 )
       {
+         tasksCursor.moveToFirst();
+         
          final String taskName = Queries.getOptString( tasksCursor,
                                                        getColumnIndex( Tasks.TASKSERIES_NAME ) );
          result = context.getString( R.string.notification_permanent_text_one_task,
@@ -211,8 +214,8 @@ class PermanentNotificationPresenter
       
       MolokoCalendar nowCal = null;
       
-      boolean hasNext = true;
-      for ( tasksCursor.moveToFirst(); hasNext; hasNext = tasksCursor.moveToNext() )
+      boolean hasNext = tasksCursor.moveToFirst();
+      for ( ; hasNext; hasNext = tasksCursor.moveToNext() )
       {
          final String priorityString = Queries.getOptString( tasksCursor,
                                                              getColumnIndex( Tasks.PRIORITY ) );
@@ -300,7 +303,7 @@ class PermanentNotificationPresenter
       if ( prefs != null )
       {
          notificationType = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_permanent ),
-                                                               String.valueOf( R.integer.notification_permanent_off ) ) );
+                                                               String.valueOf( PermanentNotificationType.OFF ) ) );
       }
       
       return notificationType;

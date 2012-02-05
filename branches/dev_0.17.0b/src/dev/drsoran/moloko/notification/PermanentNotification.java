@@ -58,8 +58,8 @@ class PermanentNotification
       notification.setLatestEventInfo( context,
                                        title,
                                        text,
-                                       Intents.createNotificationIntent( context,
-                                                                         onClickIntent ) );
+                                       Intents.createPermanentNotificationIntent( context,
+                                                                                  onClickIntent ) );
       getNotificationManager().notify( ID, notification );
    }
    

@@ -62,8 +62,8 @@ class DueTaskNotification
       notification.setLatestEventInfo( context,
                                        title,
                                        text,
-                                       Intents.createNotificationIntent( context,
-                                                                         onClickIntent ) );
+                                       Intents.createDueTasksNotificationIntent( context,
+                                                                                 onClickIntent ) );
       getNotificationManager().notify( ID, notification );
    }
    
@@ -87,7 +87,9 @@ class DueTaskNotification
    
    private void createNotification()
    {
-      notification = new Notification( R.drawable.ic_notify_logo_red, null, 0 );
+      notification = new Notification( R.drawable.notification_layers_red,
+                                       null,
+                                       0 );
       notification.flags = Notification.FLAG_AUTO_CANCEL;
       notification.defaults = 0;
    }

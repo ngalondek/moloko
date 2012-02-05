@@ -28,7 +28,6 @@ import android.database.Cursor;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
@@ -63,17 +62,17 @@ class LoadPermanentTasksAsyncTask extends AbstractNotificationTasksLoader
       
       switch ( type )
       {
-         case R.integer.notification_permanent_today:
+         case PermanentNotificationType.TODAY:
             filterString = RtmSmartFilterLexer.OP_DUE_LIT
                + DateParser.tokenNames[ DateParser.TODAY ];
             break;
          
-         case R.integer.notification_permanent_tomorrow:
+         case PermanentNotificationType.TOMORROW:
             filterString = RtmSmartFilterLexer.OP_DUE_LIT
                + DateParser.tokenNames[ DateParser.TOMORROW ];
             break;
          
-         case R.integer.notification_permanent_today_and_tomorrow:
+         case PermanentNotificationType.TODAY_AND_TOMORROW:
             filterString = RtmSmartFilterLexer.OP_DUE_WITHIN_LIT
                + RtmSmartFilterLexer.quotify( "2 of "
                   + DateParser.tokenNames[ DateParser.TODAY ] );

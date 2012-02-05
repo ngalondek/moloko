@@ -127,6 +127,8 @@ class PermanentNotifier extends AbstractNotificator
       {
          cancelPermanentNotification();
       }
+      
+      releaseCurrentCursor();
    }
    
    
@@ -141,7 +143,7 @@ class PermanentNotifier extends AbstractNotificator
    
    private void reEvaluatePermanentNotification()
    {
-      if ( notificationType == R.integer.notification_permanent_off
+      if ( notificationType == PermanentNotificationType.OFF
          && !showOverDueTasks )
       {
          stopLoadingTasksToNotify();
@@ -184,7 +186,7 @@ class PermanentNotifier extends AbstractNotificator
       if ( prefs != null )
       {
          notificationType = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_permanent ),
-                                                               String.valueOf( R.integer.notification_permanent_off ) ) );
+                                                               String.valueOf( PermanentNotificationType.OFF ) ) );
          showOverDueTasks = prefs.getBoolean( context.getString( R.string.key_notify_permanent_overdue ),
                                               false );
       }

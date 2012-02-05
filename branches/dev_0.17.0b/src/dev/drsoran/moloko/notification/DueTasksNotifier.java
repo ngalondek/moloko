@@ -1,22 +1,22 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  *
- *	This file is part of Moloko.
+ * This file is part of Moloko.
  *
- *	Moloko is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *	Moloko is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU General Public License for more details.
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *	You should have received a copy of the GNU General Public License
- *	along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	Contributors:
+ * Contributors:
  * Ronny Röhricht - implementation
  */
 
@@ -151,6 +151,7 @@ class DueTasksNotifier extends AbstractNotificator
    {
       super.shutdown();
       cancelDueTaskNotifications();
+      releaseCurrentCursor();
    }
    
    
@@ -175,9 +176,9 @@ class DueTasksNotifier extends AbstractNotificator
    
    private void reEvaluateDueTaskNotifications()
    {
-      final Cursor currentTasks = getCurrentTasksCursor();
-      if ( showDueTasks && currentTasks != null )
+      if ( showDueTasks && hasTasks() )
       {
+         final Cursor currentTasks = getCurrentTasksCursor();
          final int tasksToNotifyEndIndex = getTasksToNotifyExcusiveEndIndex( currentTasks );
          presenter.showNotificationsFor( currentTasks, tasksToNotifyEndIndex );
       }
@@ -189,20 +190,23 @@ class DueTasksNotifier extends AbstractNotificator
    {
       int endIndex = 0;
       
-      final long nowMillis = System.currentTimeMillis();
-      final int numTasks = currentTasks.getCount();
-      
-      boolean notifyTask = false;
-      for ( int i = 0; i < numTasks && notifyTask; ++i )
+      if ( currentTasks.moveToFirst() )
       {
-         final long taskDueTimeMillis = Queries.getOptLong( currentTasks,
-                                                            TasksProviderPart.COL_INDICES.get( Tasks.DUE_DATE ) )
-                                               .longValue();
+         final long nowMillis = System.currentTimeMillis();
+         final int numTasks = currentTasks.getCount();
          
-         notifyTask = ( taskDueTimeMillis - remindBeforeMillis ) <= nowMillis;
-         if ( !notifyTask )
+         boolean notifyTask = true;
+         for ( ; endIndex < numTasks && notifyTask; currentTasks.moveToNext() )
          {
-            endIndex = i;
+            final long taskDueTimeMillis = Queries.getOptLong( currentTasks,
+                                                               TasksProviderPart.COL_INDICES.get( Tasks.DUE_DATE ) )
+                                                  .longValue();
+            
+            notifyTask = ( taskDueTimeMillis - remindBeforeMillis ) <= nowMillis;
+            if ( notifyTask )
+            {
+               ++endIndex;
+            }
          }
       }
       
@@ -214,6 +218,14 @@ class DueTasksNotifier extends AbstractNotificator
    private void cancelDueTaskNotifications()
    {
       presenter.cancelNotifications();
+   }
+   
+   
+   
+   private boolean hasTasks()
+   {
+      return getCurrentTasksCursor() != null
+         && getCurrentTasksCursor().getCount() > 0;
    }
    
    

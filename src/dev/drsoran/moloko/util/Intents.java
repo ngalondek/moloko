@@ -332,8 +332,8 @@ public final class Intents
    
    
    
-   public final static PendingIntent createNotificationIntent( Context context,
-                                                               Intent onClickIntent )
+   public final static PendingIntent createPermanentNotificationIntent( Context context,
+                                                                        Intent onClickIntent )
    {
       onClickIntent.setFlags( onClickIntent.getFlags()
          | Intent.FLAG_ACTIVITY_SINGLE_TOP );
@@ -341,6 +341,20 @@ public final class Intents
                                         0,
                                         onClickIntent,
                                         PendingIntent.FLAG_UPDATE_CURRENT );
+   }
+   
+   
+   
+   public final static PendingIntent createDueTasksNotificationIntent( Context context,
+                                                                       Intent onClickIntent )
+   {
+      onClickIntent.setFlags( onClickIntent.getFlags()
+         | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+      return PendingIntent.getActivity( context,
+                                        1,
+                                        onClickIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                           | PendingIntent.FLAG_ONE_SHOT );
    }
    
    

@@ -89,12 +89,12 @@
    -->
    <string-array
       name="moloko_acc_prefs_sync_interval_values">
-      <item>@integer/acc_prefs_sync_interval_off</item>
-      <item>@integer/fifteen_min_ms</item>
-      <item>@integer/thirty_min_ms</item>
-      <item>@integer/one_hour_ms</item>
-      <item>@integer/twelve_hours_ms</item>
-      <item>@integer/twentyfour_hours_ms</item>
+      <item>@string/acc_prefs_sync_interval_off</item>
+      <item>@string/fifteen_min_ms</item>
+      <item>@string/thirty_min_ms</item>
+      <item>@string/one_hour_ms</item>
+      <item>@string/twelve_hours_ms</item>
+      <item>@string/twentyfour_hours_ms</item>
    </string-array>
 
    <string-array
@@ -112,12 +112,12 @@
    -->
    <string-array
       name="moloko_prefs_notification_task_due_before_values">
-      <item>@integer/five_min_ms</item>
-      <item>@integer/fifteen_min_ms</item>
-      <item>@integer/thirty_min_ms</item>
-      <item>@integer/one_hour_ms</item>
-      <item>@integer/twelve_hours_ms</item>
-      <item>@integer/twentyfour_hours_ms</item>
+      <item>@string/five_min_ms</item>
+      <item>@string/fifteen_min_ms</item>
+      <item>@string/thirty_min_ms</item>
+      <item>@string/one_hour_ms</item>
+      <item>@string/twelve_hours_ms</item>
+      <item>@string/twentyfour_hours_ms</item>
    </string-array>
 
    <string-array
@@ -130,10 +130,10 @@
 
    <string-array
       name="moloko_prefs_notification_permanent_values">
-      <item>@integer/notification_permanent_off</item>
-      <item>@integer/notification_permanent_today</item>
-      <item>@integer/notification_permanent_tomorrow</item>
-      <item>@integer/notification_permanent_today_and_tomorrow</item>
+      <item>0</item>
+      <item>1</item>
+      <item>2</item>
+      <item>3</item>
    </string-array>
    
    <string-array

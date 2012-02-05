@@ -85,7 +85,10 @@ class DueTaskNotificationPresenter
       showLedOnNotification = showLed;
       vibrateOnNotification = vibrate;
       
-      applyNotificationFeatures();
+      if ( dueTaskNotification != null )
+      {
+         applyNotificationFeatures();
+      }
    }
    
    
@@ -118,11 +121,7 @@ class DueTaskNotificationPresenter
       final String ticker = getNotificationTicker( tasksCursor );
       final Intent onClickIntent = createOnClickIntent( tasksCursor, endIndex );
       
-      dueTaskNotification.update( title,
-                                  text,
-                                  ticker,
-                                  tasksCursor.getCount(),
-                                  onClickIntent );
+      dueTaskNotification.update( title, text, ticker, endIndex, onClickIntent );
    }
    
    
@@ -168,30 +167,21 @@ class DueTaskNotificationPresenter
    
    
    
-   private Intent createOnClickIntent( Cursor tasksCursor, int endIndex )
+   private Intent createOnClickIntent( Cursor tasksCursor, int numTasks )
    {
       final Intent onClickIntent;
-      final int numTasks = endIndex - 1;
       
       tasksCursor.moveToFirst();
       
       if ( numTasks == 1 )
       {
-         if ( tasksCursor.moveToFirst() )
-         {
-            onClickIntent = Intents.createOpenTaskIntent( context,
-                                                          Queries.getOptString( tasksCursor,
-                                                                                getColumnIndex( Tasks.TASKSERIES_ID ) ) );
-         }
-         else
-         {
-            onClickIntent = null;
-         }
+         onClickIntent = Intents.createOpenTaskIntent( context,
+                                                       Queries.getOptString( tasksCursor,
+                                                                             getColumnIndex( Tasks._ID ) ) );
       }
-      else
+      else if ( numTasks > 1 )
       {
-         final String tasksListSelection = getDueTasksListSelection( tasksCursor,
-                                                                     endIndex );
+         final String tasksListSelection = getDueTasksListSelection( tasksCursor );
          final SqlSelectionFilter filter = new SqlSelectionFilter( tasksListSelection );
          final String title = context.getString( R.string.notification_due_tasks_list_title );
          
@@ -199,24 +189,25 @@ class DueTaskNotificationPresenter
                                                                  filter,
                                                                  title );
       }
+      else
+      {
+         onClickIntent = null;
+      }
       
       return onClickIntent;
    }
    
    
    
-   private static String getDueTasksListSelection( Cursor tasksCursor,
-                                                   int endIndex )
+   private static String getDueTasksListSelection( Cursor tasksCursor )
    {
       final StringBuilder stringBuilder = new StringBuilder();
       
       while ( !tasksCursor.isAfterLast() )
       {
          final String taskId = Queries.getOptString( tasksCursor,
-                                                     getColumnIndex( Tasks.TASKSERIES_ID ) );
-         stringBuilder.append( Tasks.TASKSERIES_ID )
-                      .append( "=" )
-                      .append( taskId );
+                                                     getColumnIndex( Tasks._ID ) );
+         stringBuilder.append( Tasks._ID ).append( "=" ).append( taskId );
          
          if ( !tasksCursor.isLast() )
          {

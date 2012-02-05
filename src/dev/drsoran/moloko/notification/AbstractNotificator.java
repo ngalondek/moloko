@@ -30,6 +30,7 @@ import android.database.Cursor;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.DelayedRun;
 
 
@@ -42,7 +43,7 @@ abstract class AbstractNotificator implements INotifier,
    
    private Cursor currentTasksCursor;
    
-   private ContentObserver cursorObserver;
+   private ContentObserver tasksContentProviderObserver;
    
    
    
@@ -50,6 +51,7 @@ abstract class AbstractNotificator implements INotifier,
    {
       this.context = context;
       registerPreferenceListener();
+      registerTasksContentProviderObserver();
    }
    
    
@@ -57,10 +59,11 @@ abstract class AbstractNotificator implements INotifier,
    @Override
    public void shutdown()
    {
+      unregisterPreferenceListener();
       stopLoadingTasksToNotify();
       cancelHandlerMessages();
       closeCurrentCursor();
-      unregisterPreferenceListener();
+      unregisterTasksContentProviderObserver();
    }
    
    
@@ -102,6 +105,13 @@ abstract class AbstractNotificator implements INotifier,
    
    
    
+   protected void releaseCurrentCursor()
+   {
+      closeCurrentCursor();
+   }
+   
+   
+   
    protected Handler getHandler()
    {
       return handler;
@@ -138,32 +148,7 @@ abstract class AbstractNotificator implements INotifier,
       if ( currentTasksCursor == null )
       {
          currentTasksCursor = cursor;
-         
-         createCursorObserver();
-         currentTasksCursor.registerContentObserver( cursorObserver );
       }
-   }
-   
-   
-   
-   private void createCursorObserver()
-   {
-      cursorObserver = new ContentObserver( handler )
-      {
-         @Override
-         public void onChange( boolean selfChange )
-         {
-            // Aggregate several calls to a single update.
-            DelayedRun.run( handler, new Runnable()
-            {
-               @Override
-               public void run()
-               {
-                  onDatasetChanged();
-               }
-            }, 500 );
-         }
-      };
    }
    
    
@@ -172,19 +157,9 @@ abstract class AbstractNotificator implements INotifier,
    {
       if ( currentTasksCursor != null )
       {
-         currentTasksCursor.unregisterContentObserver( cursorObserver );
-         deleteCursorObserver();
-         
          currentTasksCursor.close();
          currentTasksCursor = null;
       }
-   }
-   
-   
-   
-   private void deleteCursorObserver()
-   {
-      cursorObserver = null;
    }
    
    
@@ -197,6 +172,46 @@ abstract class AbstractNotificator implements INotifier,
       onFinishedLoadingTasksToNotify( cursor );
       
       tasksLoader = null;
+   }
+   
+   
+   
+   private void registerTasksContentProviderObserver()
+   {
+      if ( tasksContentProviderObserver == null )
+      {
+         tasksContentProviderObserver = new ContentObserver( handler )
+         {
+            @Override
+            public void onChange( boolean selfChange )
+            {
+               // Aggregate several calls to a single update.
+               DelayedRun.run( handler, new Runnable()
+               {
+                  @Override
+                  public void run()
+                  {
+                     onDatasetChanged();
+                  }
+               }, 500 );
+            }
+         };
+         
+         TasksProviderPart.registerContentObserver( context,
+                                                    tasksContentProviderObserver );
+      }
+   }
+   
+   
+   
+   private void unregisterTasksContentProviderObserver()
+   {
+      if ( tasksContentProviderObserver != null )
+      {
+         TasksProviderPart.unregisterContentObserver( context,
+                                                      tasksContentProviderObserver );
+         tasksContentProviderObserver = null;
+      }
    }
    
    

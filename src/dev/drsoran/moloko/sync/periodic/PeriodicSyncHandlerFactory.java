@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,29 +22,20 @@
 
 package dev.drsoran.moloko.sync.periodic;
 
-import android.accounts.Account;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.os.Bundle;
+import android.os.Build;
+import dev.drsoran.moloko.MolokoApp;
 
 
 public final class PeriodicSyncHandlerFactory
 {
    public final static IPeriodicSyncHandler createPeriodicSyncHandler( Context context )
    {
-      // Check which Android version we have and if we can use native
-      // periodic sync support.
-      try
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.FROYO ) )
       {
-         ContentResolver.class.getMethod( "addPeriodicSync",
-                                          Account.class,
-                                          String.class,
-                                          Bundle.class,
-                                          long.class );
-         
          return new NativePeriodicSyncHandler( context );
       }
-      catch ( Throwable e )
+      else
       {
          return new AlarmManagerPeriodicSyncHandler( context );
       }

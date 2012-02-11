@@ -46,7 +46,7 @@ import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
 
 
-public class StartUpViewPreference extends AutoSummaryListPreference implements
+class StartUpViewPreference extends AutoSummaryListPreference implements
          IOnSettingsChangedListener
 {
    private EntriesAndValues defListEntriesAndValues;
@@ -76,6 +76,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
    
    
    
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
@@ -120,7 +121,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
                     .equals( newValueStr )
             && MolokoApp.getSettings( getContext() ).getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
          {
-            defListEntriesAndValues = DefaultListPreference.createEntriesAndValues( getContext() );
+            defListEntriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync();
             
             if ( defListEntriesAndValues != null )
             {
@@ -133,6 +134,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
                                                                                                    -1,
                                                                                                    new OnClickListener()
                                                                                                    {
+                                                                                                      @Override
                                                                                                       public void onClick( DialogInterface dialog,
                                                                                                                            int which )
                                                                                                       {
@@ -143,6 +145,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
                                                                             .create();
                dialog.setOnDismissListener( new OnDismissListener()
                {
+                  @Override
                   public void onDismiss( DialogInterface dialog )
                   {
                      final boolean positive = chosenDefListIdx > EntriesAndValues.NONE_IDX

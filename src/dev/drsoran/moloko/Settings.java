@@ -22,20 +22,23 @@
 
 package dev.drsoran.moloko;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
+import dev.drsoran.moloko.notification.PermanentNotificationType;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmSettings;
 
 
-public class Settings
+public class Settings implements IOnSettingsChangedListener
 {
    public final static String NO_DEFAULT_LIST_ID = Strings.EMPTY_STRING;
    
@@ -74,6 +77,15 @@ public class Settings
       }
       
       loadRtmSettings();
+      
+      regsiterRtmSettingsSyncedListener();
+   }
+   
+   
+   
+   public void release()
+   {
+      unregsiterRtmSettingsSyncedListener();
    }
    
    
@@ -96,8 +108,33 @@ public class Settings
    public String getDefaultListId()
    {
       return loadString( context.getString( R.string.key_def_list_local ),
-                         context.getString( R.string.key_def_list_sync_with_rtm ),
                          NO_DEFAULT_LIST_ID );
+   }
+   
+   
+   
+   public void setDefaultListIdSyncWithRtm( boolean sync )
+   {
+      setSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ),
+                      sync );
+      if ( sync && rtmSettings != null )
+      {
+         String syncedDefList = rtmSettings.getDefaultListId();
+         if ( syncedDefList == null )
+         {
+            syncedDefList = NO_DEFAULT_LIST_ID;
+         }
+         
+         storeStringIfChanged( context.getString( R.string.key_def_list_local ),
+                               syncedDefList );
+      }
+   }
+   
+   
+   
+   public boolean isDefaultListIdInSyncWithRtm()
+   {
+      return isInSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ) );
    }
    
    
@@ -109,10 +146,22 @@ public class Settings
          id = NO_DEFAULT_LIST_ID;
       }
       
-      storeString( context.getString( R.string.key_def_list_local ),
-                   context.getString( R.string.key_def_list_sync_with_rtm ),
-                   id,
-                   false );
+      storeStringIfChanged( context.getString( R.string.key_def_list_local ),
+                            id );
+      setSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ),
+                      false );
+   }
+   
+   
+   
+   private void checkDefaultListIdChangedBySync()
+   {
+      if ( rtmSettings != null
+         && isInSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
+      {
+         storeStringIfChanged( context.getString( R.string.key_def_list_local ),
+                               rtmSettings.getDefaultListId() );
+      }
    }
    
    
@@ -134,7 +183,6 @@ public class Settings
    public int getStartupView()
    {
       return loadInt( context.getString( R.string.key_startup_view ),
-                      null,
                       STARTUP_VIEW_DEFAULT );
    }
    
@@ -150,7 +198,6 @@ public class Settings
    public int getTaskSort()
    {
       return loadInt( context.getString( R.string.key_task_sort ),
-                      null,
                       TASK_SORT_DEFAULT );
    }
    
@@ -163,81 +210,118 @@ public class Settings
    
    
    
+   public long getSyncInterval()
+   {
+      return loadLong( context.getString( R.string.key_sync_inverval ),
+                       Long.valueOf( context.getString( R.string.acc_pref_sync_interval_default_value ) ) );
+   }
+   
+   
+   
+   public boolean isNotifyingDueTasks()
+   {
+      return loadBool( context.getString( R.string.key_notify_due_tasks ),
+                       false );
+   }
+   
+   
+   
+   public long getNotifyingDueTasksBeforeMs()
+   {
+      return loadLong( context.getString( R.string.key_notify_due_tasks_before ),
+                       Long.valueOf( context.getString( R.string.moloko_prefs_notification_tasks_w_due_before_default_value ) ) );
+   }
+   
+   
+   
+   public Uri getNotifyingDueTasksRingtoneUri()
+   {
+      final String uriString = loadString( context.getString( R.string.key_notify_due_tasks_ringtone ),
+                                           null );
+      if ( !TextUtils.isEmpty( uriString ) )
+         return Uri.parse( uriString );
+      else
+         return null;
+   }
+   
+   
+   
+   public boolean isNotifyingDueTasksVibration()
+   {
+      return loadBool( context.getString( R.string.key_notify_due_tasks_vibrate ),
+                       false );
+   }
+   
+   
+   
+   public boolean isNotifyingDueTasksLed()
+   {
+      return loadBool( context.getString( R.string.key_notify_due_tasks_led ),
+                       false );
+   }
+   
+   
+   
+   public int getNotifyingPermanentTasksType()
+   {
+      return loadInt( context.getString( R.string.key_notify_permanent ),
+                      PermanentNotificationType.OFF );
+   }
+   
+   
+   
+   public boolean isNotifyingPermanentOverdueTasks()
+   {
+      return loadBool( context.getString( R.string.key_notify_permanent_overdue ),
+                       false );
+   }
+   
+   
+   
+   public boolean isUsingHttps()
+   {
+      return loadBool( context.getString( R.string.key_conn_use_https ), true );
+   }
+   
+   
+   
    @Override
-   public void onSharedPreferenceChanged( SharedPreferences newValue, String key )
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
    {
-      if ( key != null && newValue != null )
+      if ( which == RTM_SETTINGS_SYNCED )
       {
-         if ( key.equals( context.getString( R.string.key_def_list_local ) )
-            || key.equals( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
-         {
-            setDefaultListId();
-         }
+         loadRtmSettings();
+         checkDefaultListIdChangedBySync();
       }
    }
    
    
    
-   private void setDefaultListId()
+   private void regsiterRtmSettingsSyncedListener()
    {
-      String newListId;
-      
-      final String keySync = context.getString( R.string.key_def_list_sync_with_rtm );
-      final String key = context.getString( R.string.key_def_list_local );
-      final boolean useRtm = useRtmSetting( keySync );
-      
-      if ( useRtm )
-      {
-         if ( rtmSettings != null && rtmSettings.getDefaultListId() != null )
-         {
-            newListId = rtmSettings.getDefaultListId();
-         }
-         else
-         {
-            newListId = NO_DEFAULT_LIST_ID;
-         }
-      }
-      else
-      {
-         newListId = preferences.getString( key, defaultListId );
-      }
-      
-      if ( !defaultListId.equals( newListId ) )
-      {
-         final String oldDefListId = defaultListId;
-         
-         defaultListId = newListId;
-         storeString( key, keySync, defaultListId, useRtm );
-         
-         return oldDefListId;
-      }
+      MolokoApp.getNotifierContext( context )
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED,
+                                                   this );
    }
    
    
    
-   private boolean useRtmSetting( String key )
+   private void unregsiterRtmSettingsSyncedListener()
    {
-      if ( !preferences.contains( key ) )
-      {
-         preferences.edit().putBoolean( key, true ).commit();
-         return true;
-      }
-      else
-      {
-         return preferences.getBoolean( key, true );
-      }
+      MolokoApp.getNotifierContext( context )
+               .unregisterOnSettingsChangedListener( this );
    }
    
    
    
-   private String loadString( String key, String keySync, String defValue )
+   private String loadString( String key, String defValue )
    {
       String value;
       
-      final Editor editor = preferences.edit();
-      
       if ( !preferences.contains( key ) )
       {
+         final Editor editor = preferences.edit();
          editor.putString( key, defValue ).commit();
          value = defValue;
       }
@@ -246,62 +330,91 @@ public class Settings
          value = preferences.getString( key, defValue );
       }
       
-      if ( keySync != null && !preferences.contains( keySync ) )
-      {
-         editor.putBoolean( keySync, true ).commit();
-      }
-      
       return value;
    }
    
    
    
-   private void storeString( String key,
-                             String keySync,
-                             String value,
-                             boolean useRtm )
+   private void storeStringIfChanged( String key, String value )
    {
-      final Editor editor = preferences.edit();
-      
-      if ( !preferences.getString( key, Strings.EMPTY_STRING ).equals( value ) )
+      final String nonNullValue = Strings.emptyIfNull( value );
+      if ( hasValueChanged( key, nonNullValue ) )
       {
-         editor.putString( key, value ).commit();
-      }
-      
-      if ( preferences.getBoolean( keySync, true ) != useRtm )
-      {
-         editor.putBoolean( keySync, useRtm ).commit();
+         final Editor editor = preferences.edit();
+         editor.putString( key, nonNullValue ).commit();
       }
    }
    
    
    
-   private int loadInt( String key, String keySync, int defValue )
+   private int loadInt( String key, int defValue )
    {
-      return Integer.parseInt( loadString( key,
-                                           keySync,
-                                           String.valueOf( defValue ) ) );
+      return Integer.parseInt( loadString( key, String.valueOf( defValue ) ) );
    }
    
    
    
-   public void storeInt( String key, int value )
+   private void storeInt( String key, int value )
    {
-      storeString( key, null, String.valueOf( value ), false );
+      storeStringIfChanged( key, String.valueOf( value ) );
+   }
+   
+   
+   
+   private long loadLong( String key, long defValue )
+   {
+      return Long.parseLong( loadString( key, String.valueOf( defValue ) ) );
+   }
+   
+   
+   
+   private boolean loadBool( String key, boolean defValue )
+   {
+      return preferences.getBoolean( key, defValue );
+   }
+   
+   
+   
+   private boolean hasValueChanged( String key, String value )
+   {
+      return !preferences.getString( key, Strings.EMPTY_STRING ).equals( value );
+   }
+   
+   
+   
+   private boolean isInSyncWithRtm( String key )
+   {
+      if ( !preferences.contains( key ) )
+      {
+         setSyncWithRtm( key, false );
+      }
+      
+      return preferences.getBoolean( key, false );
+   }
+   
+   
+   
+   private void setSyncWithRtm( String key, boolean value )
+   {
+      preferences.edit().putBoolean( key, value ).commit();
    }
    
    
    
    private void loadRtmSettings()
    {
-      // TODO: Load the settings form DB in a background task
       final ContentProviderClient client = context.getContentResolver()
                                                   .acquireContentProviderClient( dev.drsoran.provider.Rtm.Settings.CONTENT_URI );
       
       if ( client != null )
       {
-         rtmSettings = RtmSettingsProviderPart.getSettings( client );
+         final RtmSettings settings = RtmSettingsProviderPart.getSettings( client );
          client.release();
+         
+         if ( settings != null )
+         {
+            rtmSettings = settings;
+         }
       }
    }
 }

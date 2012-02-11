@@ -53,7 +53,7 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmSettings;
 
 
-public class RtmSyncStatePreference extends InfoTextPreference implements
+class RtmSyncStatePreference extends InfoTextPreference implements
          ISyncStatusListener, OnCancelListener, OnAccountsUpdateListener,
          AccountManagerCallback< Bundle >
 {

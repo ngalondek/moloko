@@ -22,22 +22,19 @@
 
 package dev.drsoran.moloko;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.notification.PermanentNotificationType;
@@ -51,8 +48,8 @@ import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 @ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
-public class MolokoApp extends Application implements
-         OnSharedPreferenceChangeListener, IOnBootCompletedListener
+public class MolokoApp extends Application implements IOnBootCompletedListener,
+         IOnSettingsChangedListener
 {
    private Settings settings;
    
@@ -109,21 +106,17 @@ public class MolokoApp extends Application implements
    
    public static MolokoApp get( Context context )
    {
-      MolokoApp app = null;
-      
-      if ( context instanceof MolokoApp )
-         app = (MolokoApp) context;
-      else if ( context instanceof Activity )
-         app = (MolokoApp) context.getApplicationContext();
-      
-      return app;
+      return (MolokoApp) context.getApplicationContext();
    }
    
    
    
    public static NotifierContext getNotifierContext( Context context )
    {
-      return MolokoApp.get( context ).getNotifierContext();
+      if ( context instanceof NotifierContext )
+         return (NotifierContext) context;
+      else
+         return MolokoApp.get( context ).getNotifierContext();
    }
    
    
@@ -237,24 +230,17 @@ public class MolokoApp extends Application implements
    
    private void registerNotificationSettingsListener()
    {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-      
-      if ( prefs != null )
-      {
-         prefs.registerOnSharedPreferenceChangeListener( this );
-      }
+      notifierContext.registerOnSettingsChangedListener( IOnSettingsChangedListener.NOTIFY_DUE_TASKS
+                                                            | IOnSettingsChangedListener.NOTIFY_PERMAENT_TASKS
+                                                            | IOnSettingsChangedListener.NOTIFY_PERMAENT_OVERDUE_TASKS,
+                                                         this );
    }
    
    
    
    private void unregisterNotificationSettingsListener()
    {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-      
-      if ( prefs != null )
-      {
-         prefs.unregisterOnSharedPreferenceChangeListener( this );
-      }
+      notifierContext.unregisterOnSettingsChangedListener( this );
    }
    
    
@@ -340,23 +326,16 @@ public class MolokoApp extends Application implements
    
    
    @Override
-   public void onSharedPreferenceChanged( SharedPreferences prefs, String key )
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
    {
-      if ( prefs != null && key != null )
+      if ( areNotificationsActivated() )
       {
-         if ( key.equals( getString( R.string.key_notify_due_tasks ) )
-            || key.equals( getString( R.string.key_notify_permanent ) )
-            || key.equals( getString( R.string.key_notify_permanent_overdue ) ) )
-         {
-            if ( areNotificationsActivated() )
-            {
-               startNotificationService();
-            }
-            else
-            {
-               stopNotificationService();
-            }
-         }
+         startNotificationService();
+      }
+      else
+      {
+         stopNotificationService();
       }
    }
    
@@ -373,20 +352,12 @@ public class MolokoApp extends Application implements
    private boolean areNotificationsActivated()
    {
       boolean activated = false;
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
       
-      if ( prefs != null )
+      activated = settings.isNotifyingDueTasks();
+      activated |= settings.isNotifyingPermanentOverdueTasks();
+      if ( !activated )
       {
-         activated = prefs.getBoolean( getString( R.string.key_notify_due_tasks ),
-                                       false );
-         activated |= prefs.getBoolean( getString( R.string.key_notify_permanent_overdue ),
-                                        false );
-         if ( !activated )
-         {
-            final int permanentNotificationType = Integer.parseInt( prefs.getString( getString( R.string.key_notify_permanent ),
-                                                                                     String.valueOf( PermanentNotificationType.OFF ) ) );
-            activated = permanentNotificationType != PermanentNotificationType.OFF;
-         }
+         activated = settings.getNotifyingPermanentTasksType() != PermanentNotificationType.OFF;
       }
       
       return activated;

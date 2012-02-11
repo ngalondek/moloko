@@ -395,7 +395,7 @@
    <string name="acc_pref_account_tilte">@string/app_account_preferences</string>
    <string name="acc_pref_account_summary">Synchronization, HTTP(S) settings</string>
    <string name="acc_pref_sync_interval_title">Synchronization</string>
-   <string name="acc_pref_sync_interval_default_value">86400000</string>
+   <string name="acc_pref_sync_interval_default_value">@string/twentyfour_hours_ms</string>
    <string name="acc_pref_perm_title">Access Level</string>
    <string name="acc_pref_perm_value">%1$s - click to change</string>
    <string name="acc_pref_perm_has_not">No permission</string>

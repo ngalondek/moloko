@@ -242,13 +242,11 @@ public class TaskListsFragment extends
             return true;
             
          case CtxtMenu.MAKE_DEFAULT_LIST:
-            MolokoApp.getSettings( getFragmentActivity() )
-                     .setDefaultListId( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getId() );
+            setAsDefaultList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
             return true;
             
          case CtxtMenu.REMOVE_DEFAULT_LIST:
-            MolokoApp.getSettings( getFragmentActivity() )
-                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+            resetDefaultList();
             return true;
             
          default :
@@ -321,9 +319,7 @@ public class TaskListsFragment extends
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      final ExpandableListView expandableListView = getExpandableListView();
-      if ( expandableListView != null )
-         expandableListView.requestLayout();
+      notifyDataSetChanged();
    }
    
    
@@ -389,5 +385,21 @@ public class TaskListsFragment extends
    public RtmListWithTaskCount getRtmList( int flatPos )
    {
       return (RtmListWithTaskCount) getExpandableListAdapter().getGroup( flatPos );
+   }
+   
+   
+   
+   private void setAsDefaultList( int pos )
+   {
+      MolokoApp.getSettings( getFragmentActivity() )
+               .setDefaultListId( getRtmList( pos ).getId() );
+   }
+   
+   
+   
+   private void resetDefaultList()
+   {
+      MolokoApp.getSettings( getFragmentActivity() )
+               .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
 }

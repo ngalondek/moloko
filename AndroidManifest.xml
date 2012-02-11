@@ -335,28 +335,18 @@
             android:name="android.content.SyncAdapter"
             android:resource="@xml/syncadapter" />
       </service>
+      
+      <service 
+         android:name=".notification.MolokoNotificationService"
+         android:label="@string/svc_notification"
+         android:exported="false">        
+      </service>
 
       <!-- Broadcast receivers -->
 
       <receiver
          android:name=".receivers.SyncAlarmReceiver" />
 
-      <receiver
-         android:name=".receivers.NetworkStatusReceiver">
-         <intent-filter>
-            <action
-               android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>
-         <intent-filter>
-            <action
-               android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>
-      </receiver>
-    
       <receiver
          android:name=".receivers.BootReceiver">
          <intent-filter>
@@ -366,22 +356,7 @@
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
       </receiver>
-
-      <receiver
-         android:name=".receivers.TimeChangedReceiver">
-         <intent-filter>
-            <action
-               android:name="android.intent.action.TIME_SET" />            
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>
-         <intent-filter>
-            <action
-               android:name="android.intent.action.DATE_CHANGED" />            
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>
-      </receiver>
+  
    </application>
 
 </manifest> 

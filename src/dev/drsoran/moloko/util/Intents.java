@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -36,6 +36,7 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.HomeActivity;
@@ -46,6 +47,7 @@ import dev.drsoran.moloko.activities.TasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.notification.MolokoNotificationService;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
@@ -70,6 +72,8 @@ public final class Intents
       public final static String TASKS_LISTS_MIN_DETAILED = "dev.drsoran.moloko.util.Intents.Action.TASKS_LISTS_MIN_DETAILED";
       
       public final static String SYNC_STATUS_UPDATE = "dev.drsoran.moloko.util.Intents.Action.SYNC_STATUS_UPDATE";
+      
+      public final static String SETTINGS_CHANGED = "dev.drsoran.moloko.util.Intents.Action.SETTINGS_CHANGED";
    }
    
    
@@ -300,6 +304,15 @@ public final class Intents
    
    
    /** INTENTS **/
+   
+   public final static Intent createNotificationServiceIntent( MolokoApp molokoApp )
+   {
+      final Intent intent = new Intent( molokoApp,
+                                        MolokoNotificationService.class );
+      return intent;
+   }
+   
+   
    
    public final static PendingIntent createSyncAlarmIntent( Context context )
    {

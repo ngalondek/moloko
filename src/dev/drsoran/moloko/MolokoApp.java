@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import java.lang.reflect.Method;
 import java.util.Locale;
 
 import org.acra.ACRA;
@@ -32,58 +31,39 @@ import org.acra.annotation.ReportsCrashes;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.IDateFormatContext;
-import dev.drsoran.moloko.notification.MolokoNotificationManager;
-import dev.drsoran.moloko.receivers.SyncStatusReceiver;
-import dev.drsoran.moloko.receivers.TimeTickReceiver;
+import dev.drsoran.moloko.notification.PermanentNotificationType;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
 import dev.drsoran.moloko.sync.periodic.PeriodicSyncHandlerFactory;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 @ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
-public class MolokoApp extends Application
+public class MolokoApp extends Application implements
+         OnSharedPreferenceChangeListener, IOnBootCompletedListener
 {
-   private final static String TAG = "Moloko."
-      + MolokoApp.class.getSimpleName();
+   private Settings settings;
    
-   private static Settings SETTINGS;
-   
-   private MolokoNotificationManager molokoNotificationManager;
-   
-   private TimeTickReceiver timeTickReceiver;
-   
-   private SyncStatusReceiver syncStatusReceiver;
+   private NotifierContext notifierContext;
    
    private IPeriodicSyncHandler periodicSyncHandler;
-   
-   private ListenerList< IOnTimeChangedListener > timeChangedListeners;
-   
-   private ListenerList< IOnSettingsChangedListener > settingsChangedListeners;
-   
-   private ListenerList< IOnBootCompletedListener > bootCompletedListeners;
-   
-   private ListenerList< IOnNetworkStatusChangedListener > networkStatusListeners;
-   
-   private ListenerList< ISyncStatusListener > syncStatusListeners;
    
    private IDateFormatContext dateFormatContext;
    
    
-
+   
    @Override
    public void onCreate()
    {
@@ -91,112 +71,42 @@ public class MolokoApp extends Application
       
       super.onCreate();
       
-      // NOTE: Instantiate the ListenerLists at first cause other components may register in ctor.
-      try
-      {
-         timeChangedListeners = new ListenerList< IOnTimeChangedListener >( findMethod( IOnTimeChangedListener.class,
-                                                                                        "onTimeChanged" ) );
-         settingsChangedListeners = new ListenerList< IOnSettingsChangedListener >( findMethod( IOnSettingsChangedListener.class,
-                                                                                                "onSettingsChanged" ) );
-         bootCompletedListeners = new ListenerList< IOnBootCompletedListener >( findMethod( IOnBootCompletedListener.class,
-                                                                                            "onBootCompleted" ) );
-         networkStatusListeners = new ListenerList< IOnNetworkStatusChangedListener >( findMethod( IOnNetworkStatusChangedListener.class,
-                                                                                                   "onNetworkStatusChanged" ) );
-         syncStatusListeners = new ListenerList< ISyncStatusListener >( findMethod( ISyncStatusListener.class,
-                                                                                    "onSyncStatusChanged" ) );
-      }
-      catch ( SecurityException e )
-      {
-         Log.e( TAG, Strings.EMPTY_STRING, e );
-         throw e;
-      }
-      catch ( NoSuchMethodException e )
-      {
-         Log.e( TAG, Strings.EMPTY_STRING, e );
-         throw new IllegalStateException( e );
-      }
+      createNotifierContext();
+      createSettings();
+      createPeriodicSyncHandler();
       
-      SETTINGS = Settings.getInstance( getApplicationContext() );
-      
-      molokoNotificationManager = new MolokoNotificationManager( this );
-      
-      timeTickReceiver = new TimeTickReceiver();
-      registerReceiver( timeTickReceiver,
-                        new IntentFilter( Intent.ACTION_TIME_TICK ) );
-      
-      periodicSyncHandler = PeriodicSyncHandlerFactory.createPeriodicSyncHandler( getApplicationContext() );
-      
-      syncStatusReceiver = new SyncStatusReceiver();
-      registerReceiver( syncStatusReceiver,
-                        new IntentFilter( Intents.Action.SYNC_STATUS_UPDATE ) );
+      registerNotificationSettingsListener();
       
       initParserLanguages();
       initDateFormatContext();
+      
+      startNotificationServiceIfNotificationsAreActive();
    }
    
-
-
+   
+   
    @Override
    public void onTerminate()
    {
-      super.onTerminate();
-      
-      SETTINGS.release();
-      
-      molokoNotificationManager.shutdown();
-      
-      periodicSyncHandler.shutdown();
-      
-      unregisterReceiver( timeTickReceiver );
-      
-      unregisterReceiver( syncStatusReceiver );
-      
+      unregisterNotificationSettingsListener();
       deleteDateFormatContext();
+      deleteNotifierContext();
+      
+      super.onTerminate();
    }
    
-
-
+   
+   
    @Override
    public void onConfigurationChanged( Configuration newConfig )
    {
       super.onConfigurationChanged( newConfig );
       
       initParserLanguages();
-      recreateNotifications();
    }
    
-
-
-   private void initParserLanguages()
-   {
-      RecurrenceParsing.initPatternLanguage( getResources() );
-   }
    
-
-
-   private void recreateNotifications()
-   {
-      molokoNotificationManager.onSystemLanguageChanged();
-   }
    
-
-
-   private void initDateFormatContext()
-   {
-      dateFormatContext = new AndroidDateFormatContext( getApplicationContext() );
-      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
-   }
-   
-
-
-   private void deleteDateFormatContext()
-   {
-      dateFormatContext = null;
-      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
-   }
-   
-
-
    public static MolokoApp get( Context context )
    {
       MolokoApp app = null;
@@ -209,8 +119,15 @@ public class MolokoApp extends Application
       return app;
    }
    
-
-
+   
+   
+   public static NotifierContext getNotifierContext( Context context )
+   {
+      return MolokoApp.get( context ).getNotifierContext();
+   }
+   
+   
+   
    public static Handler getHandler( Context context )
    {
       final MolokoApp app = MolokoApp.get( context );
@@ -220,29 +137,36 @@ public class MolokoApp extends Application
          return null;
    }
    
-
-
+   
+   
    public Handler getHandler()
    {
       return handler;
    }
    
-
-
+   
+   
+   public NotifierContext getNotifierContext()
+   {
+      return notifierContext;
+   }
+   
+   
+   
    public static IDateFormatContext getDateFormatContext( Context context )
    {
       return MolokoApp.get( context ).getDateFormatContext();
    }
    
-
-
+   
+   
    public IDateFormatContext getDateFormatContext()
    {
       return dateFormatContext;
    }
    
-
-
+   
+   
    public Locale getActiveResourcesLocale()
    {
       final String resourcesLangString = getString( R.string.res_language );
@@ -254,228 +178,242 @@ public class MolokoApp extends Application
          return new Locale( resourcesLangString, resourcesCountryString );
    }
    
-
-
-   public void registerOnSettingsChangedListener( int which,
-                                                  IOnSettingsChangedListener listener )
+   
+   
+   private void createNotifierContext()
    {
-      if ( listener != null )
+      notifierContext = new NotifierContext( this );
+   }
+   
+   
+   
+   private void deleteNotifierContext()
+   {
+      if ( notifierContext != null )
       {
-         settingsChangedListeners.registerListener( which, listener );
+         notifierContext.shutdown();
+         notifierContext = null;
       }
    }
    
-
-
-   public void unregisterOnSettingsChangedListener( IOnSettingsChangedListener listener )
+   
+   
+   private void createSettings()
    {
-      if ( listener != null )
+      settings = new Settings( this );
+   }
+   
+   
+   
+   private void createPeriodicSyncHandler()
+   {
+      periodicSyncHandler = PeriodicSyncHandlerFactory.createPeriodicSyncHandler( getApplicationContext() );
+   }
+   
+   
+   
+   private void initParserLanguages()
+   {
+      RecurrenceParsing.initPatternLanguage( getResources() );
+   }
+   
+   
+   
+   private void initDateFormatContext()
+   {
+      dateFormatContext = new AndroidDateFormatContext( getApplicationContext() );
+      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
+   }
+   
+   
+   
+   private void deleteDateFormatContext()
+   {
+      dateFormatContext = null;
+      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
+   }
+   
+   
+   
+   private void registerNotificationSettingsListener()
+   {
+      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
+      
+      if ( prefs != null )
       {
-         settingsChangedListeners.removeListener( listener );
+         prefs.registerOnSharedPreferenceChangeListener( this );
       }
    }
    
-
-
-   public void registerOnTimeChangedListener( int which,
-                                              IOnTimeChangedListener listener )
+   
+   
+   private void unregisterNotificationSettingsListener()
    {
-      if ( listener != null )
+      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
+      
+      if ( prefs != null )
       {
-         timeChangedListeners.registerListener( which, listener );
+         prefs.unregisterOnSharedPreferenceChangeListener( this );
       }
    }
    
-
-
-   public void unregisterOnTimeChangedListener( IOnTimeChangedListener listener )
+   
+   
+   private void startNotificationService()
    {
-      if ( listener != null )
+      startService( Intents.createNotificationServiceIntent( this ) );
+   }
+   
+   
+   
+   private void startNotificationServiceIfNotificationsAreActive()
+   {
+      if ( areNotificationsActivated() )
       {
-         timeChangedListeners.removeListener( listener );
+         startNotificationService();
       }
    }
    
-
-
-   public void registerOnBootCompletedListener( IOnBootCompletedListener listener )
+   
+   
+   private void stopNotificationService()
    {
-      if ( listener != null )
-      {
-         bootCompletedListeners.registerListener( Integer.MAX_VALUE, listener );
-      }
+      stopService( Intents.createNotificationServiceIntent( this ) );
    }
    
-
-
-   public void unregisterOnBootCompletedListener( IOnBootCompletedListener listener )
+   
+   
+   public final Settings getSettings()
    {
-      if ( listener != null )
-      {
-         bootCompletedListeners.removeListener( listener );
-      }
+      return settings;
    }
    
-
-
-   public void registerOnNetworkStatusChangedListener( IOnNetworkStatusChangedListener listener )
+   
+   
+   public final static Settings getSettings( Context context )
    {
-      if ( listener != null )
-      {
-         networkStatusListeners.registerListener( Integer.MAX_VALUE, listener );
-      }
+      return get( context ).getSettings();
    }
    
-
-
-   public void unregisterOnNetworkStatusChangedListener( IOnNetworkStatusChangedListener listener )
-   {
-      if ( listener != null )
-      {
-         networkStatusListeners.removeListener( listener );
-      }
-   }
    
-
-
-   public void registerSyncStatusChangedListener( ISyncStatusListener listener )
-   {
-      if ( listener != null )
-      {
-         syncStatusListeners.registerListener( Integer.MAX_VALUE, listener );
-      }
-   }
    
-
-
-   public void unregisterSyncStatusChangedListener( ISyncStatusListener listener )
-   {
-      if ( listener != null )
-      {
-         syncStatusListeners.removeListener( listener );
-      }
-   }
-   
-
-
-   public final static Settings getSettings()
-   {
-      return SETTINGS;
-   }
-   
-
-
    public final static boolean isApiLevelSupported( int apiLevel )
    {
       return Build.VERSION.SDK_INT >= apiLevel;
    }
    
-
-
+   
+   
    public final static String getRtmApiKey( Context context )
    {
       return context.getString( R.string.app_rtm_api_key );
    }
    
-
-
+   
+   
    public final static String getRtmSharedSecret( Context context )
    {
       return context.getString( R.string.app_rtm_shared_secret );
    }
    
-
-
+   
+   
    public final void schedulePeriodicSync( long startUtc, long intervalMs )
    {
       periodicSyncHandler.setPeriodicSync( startUtc, intervalMs );
    }
    
-
-
+   
+   
    public final IPeriodicSyncHandler getPeriodicSyncHander()
    {
       return periodicSyncHandler;
    }
    
-
-
+   
+   
    public final void stopPeriodicSync()
    {
       periodicSyncHandler.resetPeriodicSync();
    }
    
-
-
-   public final MolokoNotificationManager getMolokoNotificationManager()
+   
+   
+   @Override
+   public void onSharedPreferenceChanged( SharedPreferences prefs, String key )
    {
-      return molokoNotificationManager;
+      if ( prefs != null && key != null )
+      {
+         if ( key.equals( getString( R.string.key_notify_due_tasks ) )
+            || key.equals( getString( R.string.key_notify_permanent ) )
+            || key.equals( getString( R.string.key_notify_permanent_overdue ) ) )
+         {
+            if ( areNotificationsActivated() )
+            {
+               startNotificationService();
+            }
+            else
+            {
+               stopNotificationService();
+            }
+         }
+      }
    }
    
-
-
-   private final static < T > Method findMethod( Class< T > cls, String name ) throws NoSuchMethodException
+   
+   
+   @Override
+   public void onBootCompleted()
    {
-      Method method = null;
+      startNotificationServiceIfNotificationsAreActive();
+   }
+   
+   
+   
+   private boolean areNotificationsActivated()
+   {
+      boolean activated = false;
+      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
       
-      final Method[] methods = cls.getMethods();
-      
-      for ( int i = 0; i < methods.length && method == null; i++ )
+      if ( prefs != null )
       {
-         if ( methods[ i ].getName().equals( name ) )
-            method = methods[ i ];
+         activated = prefs.getBoolean( getString( R.string.key_notify_due_tasks ),
+                                       false );
+         activated |= prefs.getBoolean( getString( R.string.key_notify_permanent_overdue ),
+                                        false );
+         if ( !activated )
+         {
+            final int permanentNotificationType = Integer.parseInt( prefs.getString( getString( R.string.key_notify_permanent ),
+                                                                                     String.valueOf( PermanentNotificationType.OFF ) ) );
+            activated = permanentNotificationType != PermanentNotificationType.OFF;
+         }
       }
       
-      if ( method == null )
-         throw new NoSuchMethodException( "The class " + cls.getName()
-            + " does not has a method " + name );
-      
-      return method;
+      return activated;
    }
    
    private final Handler handler = new Handler()
    {
+      
       @Override
       public void handleMessage( Message msg )
       {
          boolean handled = false;
          if ( msg.obj instanceof ListenerList.MessgageObject< ? > )
          {
-            handled = true;
-            
             final ListenerList.MessgageObject< ? > msgObj = (MessgageObject< ? >) msg.obj;
             
             if ( msgObj.type.getName()
-                            .equals( IOnTimeChangedListener.class.getName() ) )
+                            .equals( IOnBootCompletedListener.class.getName() ) )
             {
-               timeChangedListeners.notifyListeners( msg.what );
+               onBootCompleted();
             }
-            else if ( msgObj.type.getName()
-                                 .equals( IOnSettingsChangedListener.class.getName() ) )
-            {
-               settingsChangedListeners.notifyListeners( msg.what, msgObj.value );
-            }
-            else if ( msgObj.type.getName()
-                                 .equals( IOnBootCompletedListener.class.getName() ) )
-            {
-               bootCompletedListeners.notifyListeners();
-            }
-            else if ( msgObj.type.getName()
-                                 .equals( IOnNetworkStatusChangedListener.class.getName() ) )
-            {
-               networkStatusListeners.notifyListeners( msg.what, msgObj.value );
-            }
-            else if ( msgObj.type.getName()
-                                 .equals( ISyncStatusListener.class.getName() ) )
-            {
-               syncStatusListeners.notifyListeners( msg.what );
-            }
-            else
-               handled = false;
          }
          
          if ( !handled )
+         {
             super.handleMessage( msg );
+         }
       }
    };
 }

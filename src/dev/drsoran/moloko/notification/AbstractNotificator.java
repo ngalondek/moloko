@@ -34,7 +34,7 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.DelayedRun;
 
 
-abstract class AbstractNotificator implements INotifier,
+abstract class AbstractNotificator implements IStatusbarNotifier,
          OnSharedPreferenceChangeListener
 {
    protected final Context context;

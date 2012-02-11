@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -56,10 +56,6 @@ public class MinDetailedTasksListFragment extends
          AbstractTasksListFragment< Task > implements
          IOnSettingsChangedListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + MinDetailedTasksListFragment.class.getSimpleName();
-   
    private final static IntentFilter INTENT_FILTER;
    
    static
@@ -86,7 +82,7 @@ public class MinDetailedTasksListFragment extends
    private IMinDetailedTasksListFragmentListener listener;
    
    
-
+   
    public static MinDetailedTasksListFragment newInstance( Bundle configuration )
    {
       final MinDetailedTasksListFragment fragment = new MinDetailedTasksListFragment();
@@ -96,23 +92,23 @@ public class MinDetailedTasksListFragment extends
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -124,8 +120,8 @@ public class MinDetailedTasksListFragment extends
          listener = new NullTasksListFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -133,8 +129,8 @@ public class MinDetailedTasksListFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -143,8 +139,8 @@ public class MinDetailedTasksListFragment extends
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-
-
+   
+   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -161,8 +157,8 @@ public class MinDetailedTasksListFragment extends
                                    hasMultipleTasks() && hasRtmWriteAccess() );
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -177,16 +173,16 @@ public class MinDetailedTasksListFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected int getDefaultTaskSort()
    {
-      return MolokoApp.getSettings().getTaskSort();
+      return MolokoApp.getSettings( getFragmentActivity() ).getTaskSort();
    }
    
-
-
+   
+   
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
@@ -202,8 +198,8 @@ public class MinDetailedTasksListFragment extends
       return loader;
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
@@ -211,8 +207,8 @@ public class MinDetailedTasksListFragment extends
                                                       R.layout.mindetailed_taskslist_listitem );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapterForResult( List< Task > result,
                                                      IFilter filter )
@@ -222,16 +218,16 @@ public class MinDetailedTasksListFragment extends
                                                       result );
    }
    
-
-
+   
+   
    @Override
    public MinDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (MinDetailedTasksListFragmentAdapter) super.getListAdapter();
    }
    
-
-
+   
+   
    @Override
    protected void notifyDataSetChanged()
    {

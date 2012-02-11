@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -68,7 +68,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    private boolean ignoreAccountListenerAfterRegister = true;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -83,11 +83,12 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       
       AccountUtils.registerAccountListener( this, handler, this );
       
-      MolokoApp.get( this ).registerSyncStatusChangedListener( this );
+      MolokoApp.getNotifierContext( this )
+               .registerSyncStatusChangedListener( this );
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( String name, Context context, AttributeSet attrs )
    {
@@ -96,8 +97,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return super.onCreateView( name, context, attrs );
    }
    
-
-
+   
+   
    @Override
    protected void onNewIntent( Intent intent )
    {
@@ -109,8 +110,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       setIntent( intent );
    }
    
-
-
+   
+   
    protected void configureByIntent( Intent intent )
    {
       final Bundle intentExtras = intent.getExtras();
@@ -124,15 +125,15 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       configure( intentConfig );
    }
    
-
-
+   
+   
    protected void configureBySavedInstanceState( Bundle savedInstanceState )
    {
       configure( savedInstanceState );
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -140,11 +141,12 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       
       AccountUtils.unregisterAccountListener( this, this );
       
-      MolokoApp.get( this ).unregisterSyncStatusChangedListener( this );
+      MolokoApp.getNotifierContext( this )
+               .unregisterSyncStatusChangedListener( this );
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -152,8 +154,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       outState.putAll( getConfiguration() );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
@@ -161,8 +163,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       configure( state );
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -190,30 +192,30 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return handled || super.onOptionsItemSelected( item );
    }
    
-
-
+   
+   
    protected boolean IsShowHomeAsUp()
    {
       return ( getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP;
    }
    
-
-
+   
+   
    protected boolean onFinishActivityByHome()
    {
       return true;
    }
    
-
-
+   
+   
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-
-
+   
+   
    @Override
    public void configure( Bundle config )
    {
@@ -224,8 +226,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          takeConfigurationFrom( config );
    }
    
-
-
+   
+   
    @Override
    public void clearConfiguration()
    {
@@ -233,8 +235,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          configuration.clear();
    }
    
-
-
+   
+   
    @Override
    public Bundle createDefaultConfiguration()
    {
@@ -245,8 +247,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return bundle;
    }
    
-
-
+   
+   
    public Bundle getActivityAndFragmentsConfiguration( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -257,8 +259,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    public Bundle getFragmentConfigurations( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -275,20 +277,20 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    protected void takeConfigurationFrom( Bundle config )
    {
    }
    
-
-
+   
+   
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
    }
    
-
-
+   
+   
    @Override
    public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
    {
@@ -303,8 +305,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    protected void handleNoAccountDialogClick( int which )
    {
       if ( which == Dialog.BUTTON_POSITIVE )
@@ -314,8 +316,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onAccountsUpdated( Account[] accounts )
    {
@@ -329,8 +331,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onSyncStatusChanged( int status )
    {
@@ -349,16 +351,16 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
       invalidateOptionsMenu();
       notifyFragmentsAboutRtmAccessLevelChange( currentAccessLevel );
    }
    
-
-
+   
+   
    protected void notifyFragmentsAboutRtmAccessLevelChange( RtmAuth.Perms currentAccessLevel )
    {
       final int[] fragIds = getFragmentIds();
@@ -377,8 +379,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    protected boolean removeFragmentByTag( String fragmentTag, int transit )
    {
       boolean removed = false;
@@ -400,8 +402,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return removed;
    }
    
-
-
+   
+   
    protected Fragment findAddedFragmentById( int fragmentId )
    {
       Fragment fragment = getSupportFragmentManager().findFragmentById( fragmentId );
@@ -412,8 +414,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return fragment;
    }
    
-
-
+   
+   
    protected Fragment findAddedFragmentByTag( String fragmentTag )
    {
       Fragment fragment = getSupportFragmentManager().findFragmentByTag( fragmentTag );
@@ -424,14 +426,14 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return fragment;
    }
    
-
-
+   
+   
    private void initializeSyncingProgressIndicator()
    {
       setProgressBarIndeterminateVisibility( SyncUtils.isSyncing( this ) );
    }
    
-
-
+   
+   
    protected abstract int[] getFragmentIds();
 }

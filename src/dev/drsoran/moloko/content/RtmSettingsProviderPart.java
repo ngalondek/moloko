@@ -27,6 +27,7 @@ import java.util.HashMap;
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -65,7 +66,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( RtmSettings settings )
    {
       ContentValues values = null;
@@ -100,8 +101,8 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static String getSettingsId( ContentProviderClient client )
    {
       String id = null;
@@ -134,8 +135,8 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       return id;
    }
    
-
-
+   
+   
    public final static RtmSettings getSettings( ContentProviderClient client )
    {
       RtmSettings settings = null;
@@ -177,15 +178,32 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       return settings;
    }
    
-
-
+   
+   
+   public static void registerContentObserver( Context context,
+                                               ContentObserver observer )
+   {
+      context.getContentResolver()
+             .registerContentObserver( Settings.CONTENT_URI, true, observer );
+   }
+   
+   
+   
+   public static void unregisterContentObserver( Context context,
+                                                 ContentObserver observer )
+   {
+      context.getContentResolver().unregisterContentObserver( observer );
+   }
+   
+   
+   
    public RtmSettingsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Settings.PATH );
    }
    
-
-
+   
+   
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE "
@@ -202,54 +220,54 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          + Lists._ID + " ) );" );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Settings.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Settings.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Settings.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return null;
    }
    
-
-
+   
+   
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
    public String[] getProjection()
    {
       return PROJECTION;

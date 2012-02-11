@@ -53,7 +53,8 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
    {
       super( context );
       
-      MolokoApp.get( context ).registerOnNetworkStatusChangedListener( this );
+      MolokoApp.getNotifierContext( context )
+               .registerOnNetworkStatusChangedListener( this );
       
       syncStatHandle = ContentResolver.addStatusChangeListener( Constants.SYNC_OBSERVER_TYPE_SETTINGS,
                                                                 this );
@@ -165,7 +166,8 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
    {
       super.shutdown();
       
-      MolokoApp.get( context ).unregisterOnNetworkStatusChangedListener( this );
+      MolokoApp.getNotifierContext( context )
+               .unregisterOnNetworkStatusChangedListener( this );
       
       ContentResolver.removeStatusChangeListener( syncStatHandle );
       syncStatHandle = null;

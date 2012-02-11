@@ -161,11 +161,11 @@ public final class RtmListEditUtils
          {
             actionItemList.add( 0, modifications );
             
-            final String defaultListId = MolokoApp.getSettings()
+            final String defaultListId = MolokoApp.getSettings( activity )
                                                   .getDefaultListId();
             if ( defaultListId.equals( listId ) )
             {
-               MolokoApp.getSettings()
+               MolokoApp.getSettings( activity )
                         .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
             }
          }

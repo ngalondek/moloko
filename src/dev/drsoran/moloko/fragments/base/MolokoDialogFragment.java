@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -94,7 +94,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
             }
          };
          
-         MolokoApp.get( activity )
+         MolokoApp.getNotifierContext( activity )
                   .registerOnSettingsChangedListener( settingsMask,
                                                       onSettingsChangedListener );
       }
@@ -109,7 +109,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       
       if ( onSettingsChangedListener != null )
       {
-         MolokoApp.get( getFragmentActivity() )
+         MolokoApp.getNotifierContext( getFragmentActivity() )
                   .unregisterOnSettingsChangedListener( onSettingsChangedListener );
          
          onSettingsChangedListener = null;

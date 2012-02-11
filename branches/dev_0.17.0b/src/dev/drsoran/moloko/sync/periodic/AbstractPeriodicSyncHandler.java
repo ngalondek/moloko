@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,25 +22,22 @@
 
 package dev.drsoran.moloko.sync.periodic;
 
+import java.util.HashMap;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
-import android.preference.PreferenceManager;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 
 
-public abstract class AbstractPeriodicSyncHandler implements
-         IPeriodicSyncHandler, OnSharedPreferenceChangeListener,
-         OnAccountsUpdateListener
+abstract class AbstractPeriodicSyncHandler implements IPeriodicSyncHandler,
+         IOnSettingsChangedListener, OnAccountsUpdateListener
 {
    private final Handler handler = new Handler();
    
@@ -54,34 +51,24 @@ public abstract class AbstractPeriodicSyncHandler implements
    {
       this.context = context;
       
-      {
-         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-         if ( prefs != null )
-            prefs.registerOnSharedPreferenceChangeListener( this );
-      }
-      
-      {
-         final AccountManager accountManager = AccountManager.get( context );
-         if ( accountManager != null )
-            accountManager.addOnAccountsUpdatedListener( this, handler, true );
-      }
+      registerSettingsChangedListener();
+      registerAccountsUpdatedListener();
    }
    
    
    
    @Override
-   public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
-                                          String key )
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
    {
-      if ( sharedPreferences != null && key != null
-         && key.equals( context.getString( R.string.key_sync_inverval ) ) )
+      if ( which == IOnSettingsChangedListener.SYNC_INTERVAL )
       {
          final Account account = AccountUtils.getRtmAccount( context );
          
          if ( account != null )
          {
-            final long syncInterval = SyncIntervalPreference.getSyncInterval( context,
-                                                                              sharedPreferences );
+            final long syncInterval = MolokoApp.getSettings( context )
+                                               .getSyncInterval();
             
             if ( syncInterval != Constants.SYNC_INTERVAL_MANUAL )
                SyncUtils.schedulePeriodicSync( context.getApplicationContext(),
@@ -101,10 +88,14 @@ public abstract class AbstractPeriodicSyncHandler implements
       boolean foundAccount = false;
       
       if ( accounts != null )
-         for ( Account account : accounts )
-            if ( account != null
-               && account.type.equals( dev.drsoran.moloko.auth.Constants.ACCOUNT_TYPE ) )
-               foundAccount = true;
+      {
+         for ( int i = 0; i < accounts.length && !foundAccount; i++ )
+         {
+            final Account account = accounts[ i ];
+            foundAccount = account != null
+               && account.type.equals( dev.drsoran.moloko.auth.Constants.ACCOUNT_TYPE );
+         }
+      }
       
       if ( foundAccount && !hasAccount )
       {
@@ -123,19 +114,42 @@ public abstract class AbstractPeriodicSyncHandler implements
    @Override
    public void shutdown()
    {
-      resetPeriodicSync();
-      
-      {
-         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-         if ( prefs != null )
-            prefs.unregisterOnSharedPreferenceChangeListener( this );
-         
-      }
-      
-      {
-         final AccountManager accountManager = AccountManager.get( context );
-         if ( accountManager != null )
-            accountManager.removeOnAccountsUpdatedListener( this );
-      }
+      unregisterSettingsChangedListener();
+      unregisterAccountsUpdatedListener();
+   }
+   
+   
+   
+   private void registerSettingsChangedListener()
+   {
+      MolokoApp.getNotifierContext( context )
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.SYNC_INTERVAL,
+                                                   this );
+   }
+   
+   
+   
+   private void unregisterSettingsChangedListener()
+   {
+      MolokoApp.getNotifierContext( context )
+               .unregisterOnSettingsChangedListener( this );
+   }
+   
+   
+   
+   private void registerAccountsUpdatedListener()
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      if ( accountManager != null )
+         accountManager.addOnAccountsUpdatedListener( this, handler, true );
+   }
+   
+   
+   
+   private void unregisterAccountsUpdatedListener()
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      if ( accountManager != null )
+         accountManager.removeOnAccountsUpdatedListener( this );
    }
 }

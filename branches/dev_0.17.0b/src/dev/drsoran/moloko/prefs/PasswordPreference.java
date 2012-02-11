@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -33,7 +33,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class PasswordPreference extends AutoSummaryEditTextPreference implements
+class PasswordPreference extends AutoSummaryEditTextPreference implements
          OnSharedPreferenceChangeListener
 {
    
@@ -45,8 +45,8 @@ public class PasswordPreference extends AutoSummaryEditTextPreference implements
            .setTransformationMethod( new PasswordTransformationMethod() );
    }
    
-
-
+   
+   
    @Override
    protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
    {
@@ -60,8 +60,8 @@ public class PasswordPreference extends AutoSummaryEditTextPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public void cleanUp()
    {
@@ -75,8 +75,8 @@ public class PasswordPreference extends AutoSummaryEditTextPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public CharSequence getSummary()
    {
@@ -97,16 +97,17 @@ public class PasswordPreference extends AutoSummaryEditTextPreference implements
          return Strings.EMPTY_STRING;
    }
    
-
-
+   
+   
    @Override
    public void setSummary( CharSequence summary )
    {
       super.setSummary( getSummary() );
    }
    
-
-
+   
+   
+   @Override
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {

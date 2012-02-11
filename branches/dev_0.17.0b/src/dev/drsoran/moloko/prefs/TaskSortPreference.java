@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -27,16 +27,15 @@ import android.util.AttributeSet;
 import dev.drsoran.moloko.Settings;
 
 
-public class TaskSortPreference extends AutoSummaryListPreference
+class TaskSortPreference extends AutoSummaryListPreference
 {
    public final static String[] SORT_ORDER_VALUES =
-   {
-    String.valueOf( Settings.TASK_SORT_PRIORITY ),
+   { String.valueOf( Settings.TASK_SORT_PRIORITY ),
     String.valueOf( Settings.TASK_SORT_DUE_DATE ),
     String.valueOf( Settings.TASK_SORT_NAME ) };
    
    
-
+   
    public TaskSortPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -44,8 +43,8 @@ public class TaskSortPreference extends AutoSummaryListPreference
       setEntryValues( SORT_ORDER_VALUES );
    }
    
-
-
+   
+   
    public final static int getIndexOfValue( int value )
    {
       for ( int i = 0; i < SORT_ORDER_VALUES.length; i++ )
@@ -57,8 +56,8 @@ public class TaskSortPreference extends AutoSummaryListPreference
       return -1;
    }
    
-
-
+   
+   
    public final static int getValueOfIndex( int idx )
    {
       if ( idx > -1 && idx < SORT_ORDER_VALUES.length )

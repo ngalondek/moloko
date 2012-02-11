@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -31,7 +31,7 @@ import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 
 
-public class AboutPreference extends InfoTextPreference
+class AboutPreference extends InfoTextPreference
 {
    
    public AboutPreference( Context context, AttributeSet attrs )

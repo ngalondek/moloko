@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,23 +22,12 @@
 
 package dev.drsoran.moloko.prefs;
 
-import java.util.List;
-
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.util.AttributeSet;
-
-import com.mdt.rtm.data.RtmList;
-import com.mdt.rtm.data.RtmLists;
-
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
-import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.moloko.MolokoApp;
 
 
-public class DefaultListPreference extends SyncableListPreference
+class DefaultListPreference extends SyncableListPreference
 {
    public final static class EntriesAndValues
    {
@@ -50,12 +39,12 @@ public class DefaultListPreference extends SyncableListPreference
    }
    
    
-
+   
    public DefaultListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       
-      final EntriesAndValues entriesAndValues = createEntriesAndValues( context );
+      final EntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync();
       
       if ( entriesAndValues != null )
       {
@@ -64,63 +53,21 @@ public class DefaultListPreference extends SyncableListPreference
       }
    }
    
-
-
-   public final static EntriesAndValues createEntriesAndValues( Context context )
+   
+   
+   @Override
+   protected boolean isSyncWithRtm()
    {
-      EntriesAndValues entriesAndValues = null;
-      
-      // get all lists
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Lists.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final RtmLists lists = RtmListsProviderPart.getAllLists( client,
-                                                                  RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
-         client.release();
-         
-         if ( lists != null )
-         {
-            final List< RtmList > plainLists = lists.getListsPlain();
-            
-            final CharSequence[] entries = new CharSequence[ plainLists.size() + 1 ]; // +1
-            // cause
-            // of
-            // "none"
-            final CharSequence[] entryValues = new CharSequence[ plainLists.size() + 1 ]; // +1
-            // cause
-            // of
-            // "none"
-            
-            entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
-                                                          .getString( R.string.phr_none_f );
-            entryValues[ EntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
-            
-            for ( int i = 0, cnt = plainLists.size(); i < cnt; ++i )
-            {
-               entryValues[ i + 1 ] = plainLists.get( i ).getId();
-               entries[ i + 1 ] = plainLists.get( i ).getName();
-            }
-            
-            entriesAndValues = new EntriesAndValues();
-            entriesAndValues.entries = entries;
-            entriesAndValues.values = entryValues;
-         }
-         else
-         {
-            LogUtils.logDBError( context,
-                                 LogUtils.toTag( DefaultListPreference.class ),
-                                 "Lists" );
-         }
-      }
-      else
-      {
-         LogUtils.logDBError( context,
-                              LogUtils.toTag( DefaultListPreference.class ),
-                              "Lists" );
-      }
-      
-      return entriesAndValues;
+      return MolokoApp.getSettings( getContext() )
+                      .isDefaultListIdInSyncWithRtm();
    }
+   
+   
+   
+   @Override
+   protected void setSyncWithRtm( boolean value )
+   {
+      MolokoApp.getSettings( getContext() ).setDefaultListIdSyncWithRtm( value );
+   }
+   
 }

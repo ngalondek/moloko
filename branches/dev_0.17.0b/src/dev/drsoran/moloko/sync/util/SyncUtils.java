@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -41,7 +41,6 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -212,7 +211,7 @@ public final class SyncUtils
     */
    public final static void schedulePeriodicSync( Context context )
    {
-      final long interval = SyncIntervalPreference.getSyncInterval( context );
+      final long interval = MolokoApp.getSettings( context ).getSyncInterval();
       
       if ( interval != Constants.SYNC_INTERVAL_MANUAL )
          SyncUtils.schedulePeriodicSync( context, interval );

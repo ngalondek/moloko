@@ -23,21 +23,14 @@
 package dev.drsoran.moloko.notification;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
-import dev.drsoran.moloko.R;
 
 
-class PermanentNotifier extends AbstractNotificator
+class PermanentNotifier extends AbstractNotifier
 {
    private final PermanentNotificationPresenter presenter;
-   
-   private int notificationType;
-   
-   private boolean showOverDueTasks;
    
    private String lastLoaderfilterString;
    
@@ -49,7 +42,6 @@ class PermanentNotifier extends AbstractNotificator
       
       presenter = new PermanentNotificationPresenter( context );
       
-      readPreferences();
       reEvaluatePermanentNotification();
    }
    
@@ -81,6 +73,10 @@ class PermanentNotifier extends AbstractNotificator
             reEvaluatePermanentNotification();
             break;
          
+         case IOnSettingsChangedListener.NOTIFY_PERMANENT_RELATED:
+            reEvaluatePermanentNotification();
+            break;
+         
          default :
             break;
       }
@@ -93,25 +89,6 @@ class PermanentNotifier extends AbstractNotificator
    {
       super.shutdown();
       cancelPermanentNotification();
-   }
-   
-   
-   
-   @Override
-   public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
-                                          String key )
-   {
-      super.onSharedPreferenceChanged( sharedPreferences, key );
-      
-      if ( sharedPreferences != null && key != null )
-      {
-         if ( key.equals( context.getString( R.string.key_notify_permanent ) )
-            || key.equals( context.getString( R.string.key_notify_permanent_overdue ) ) )
-         {
-            readPreferences();
-            reEvaluatePermanentNotification();
-         }
-      }
    }
    
    
@@ -143,6 +120,9 @@ class PermanentNotifier extends AbstractNotificator
    
    private void reEvaluatePermanentNotification()
    {
+      final int notificationType = getSettings().getNotifyingPermanentTasksType();
+      final boolean showOverDueTasks = getSettings().isNotifyingPermanentOverdueTasks();
+      
       if ( notificationType == PermanentNotificationType.OFF
          && !showOverDueTasks )
       {
@@ -175,20 +155,5 @@ class PermanentNotifier extends AbstractNotificator
    private void buildOrUpdatePermanentNotification( Cursor cursor )
    {
       presenter.showNotificationFor( cursor, lastLoaderfilterString );
-   }
-   
-   
-   
-   private void readPreferences()
-   {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      
-      if ( prefs != null )
-      {
-         notificationType = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_permanent ),
-                                                               String.valueOf( PermanentNotificationType.OFF ) ) );
-         showOverDueTasks = prefs.getBoolean( context.getString( R.string.key_notify_permanent_overdue ),
-                                              false );
-      }
    }
 }

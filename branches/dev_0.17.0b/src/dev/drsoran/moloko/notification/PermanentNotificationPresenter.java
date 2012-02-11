@@ -26,13 +26,12 @@ import java.util.Calendar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
 import android.util.Pair;
 
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.Intents;
@@ -108,7 +107,7 @@ class PermanentNotificationPresenter
    
    private String getNotificationTitle()
    {
-      final int notificationType = getPermanentNotificationTypeFromPreferences();
+      final int notificationType = getPermanentNotificationTypeFromSettings();
       
       switch ( notificationType )
       {
@@ -295,18 +294,9 @@ class PermanentNotificationPresenter
    
    
    
-   private int getPermanentNotificationTypeFromPreferences()
+   private int getPermanentNotificationTypeFromSettings()
    {
-      int notificationType = 0;
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      
-      if ( prefs != null )
-      {
-         notificationType = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_permanent ),
-                                                               String.valueOf( PermanentNotificationType.OFF ) ) );
-      }
-      
-      return notificationType;
+      return MolokoApp.getSettings( context ).getNotifyingPermanentTasksType();
    }
    
    

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -45,15 +45,15 @@ import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.provider.Rtm;
 
 
-public class ClearDbPreference extends InfoTextPreference
+class ClearDbPreference extends InfoTextPreference
 {
    public ClearDbPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
    }
    
-
-
+   
+   
    @Override
    protected void onClick()
    {
@@ -78,6 +78,7 @@ public class ClearDbPreference extends InfoTextPreference
                                                                       checked,
                                                                       new OnMultiChoiceClickListener()
                                                                       {
+                                                                         @Override
                                                                          public void onClick( DialogInterface dialog,
                                                                                               int which,
                                                                                               boolean isChecked )
@@ -88,6 +89,7 @@ public class ClearDbPreference extends InfoTextPreference
                                                 .setPositiveButton( android.R.string.yes,
                                                                     new OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
@@ -109,8 +111,8 @@ public class ClearDbPreference extends InfoTextPreference
       }
    }
    
-
-
+   
+   
    private void clear( final List< ? extends IRtmProviderPart > parts )
    {
       new AsyncTask< Void, Void, Void >()
@@ -120,7 +122,7 @@ public class ClearDbPreference extends InfoTextPreference
          private final AtomicBoolean failed = new AtomicBoolean();
          
          
-
+         
          @Override
          protected void onPreExecute()
          {
@@ -131,8 +133,8 @@ public class ClearDbPreference extends InfoTextPreference
                                           false );
          }
          
-
-
+         
+         
          @Override
          protected Void doInBackground( Void... params )
          {
@@ -159,8 +161,8 @@ public class ClearDbPreference extends InfoTextPreference
             return null;
          }
          
-
-
+         
+         
          @Override
          protected void onPostExecute( Void result )
          {

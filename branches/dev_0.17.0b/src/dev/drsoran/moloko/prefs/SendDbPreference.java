@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -42,7 +42,7 @@ import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.util.LogUtils;
 
 
-public class SendDbPreference extends InfoTextPreference
+class SendDbPreference extends InfoTextPreference
 {
    private final Context context;
    

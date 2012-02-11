@@ -23,26 +23,19 @@
 package dev.drsoran.moloko.notification;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
-import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-class DueTasksNotifier extends AbstractNotificator
+class DueTasksNotifier extends AbstractNotifier
 {
    private final DueTaskNotificationPresenter presenter;
-   
-   private boolean showDueTasks;
-   
-   private long remindBeforeMillis;
    
    
    
@@ -52,7 +45,6 @@ class DueTasksNotifier extends AbstractNotificator
       
       presenter = new DueTaskNotificationPresenter( context );
       
-      readPreferences();
       setNotificationFeatures();
       reCreateDueTaskNotifications();
    }
@@ -89,35 +81,20 @@ class DueTasksNotifier extends AbstractNotificator
             // reEvaluateDueTaskNotifications( NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED );
             break;
          
+         case IOnSettingsChangedListener.NOTIFY_DUE_TASKS:
+            reCreateDueTaskNotifications();
+            break;
+         
+         case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_BEFORE_TIME:
+            reEvaluateDueTaskNotifications();
+            break;
+         
+         case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_FEATURE:
+            setNotificationFeatures();
+            break;
+         
          default :
             break;
-      }
-   }
-   
-   
-   
-   @Override
-   public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
-                                          String key )
-   {
-      if ( sharedPreferences != null && key != null )
-      {
-         if ( key.equals( context.getString( R.string.key_notify_due_tasks ) ) )
-         {
-            readPreferences();
-            reCreateDueTaskNotifications();
-         }
-         else if ( key.equals( context.getString( R.string.key_notify_due_tasks_before ) ) )
-         {
-            readPreferences();
-            reEvaluateDueTaskNotifications();
-         }
-         else if ( key.equals( context.getString( R.string.key_notify_due_tasks_ringtone ) )
-            || key.equals( context.getString( R.string.key_notify_due_tasks_vibrate ) )
-            || key.equals( context.getString( R.string.key_notify_due_tasks_led ) ) )
-         {
-            setNotificationFeatures();
-         }
       }
    }
    
@@ -158,6 +135,8 @@ class DueTasksNotifier extends AbstractNotificator
    
    private void reCreateDueTaskNotifications()
    {
+      final boolean showDueTasks = getSettings().isNotifyingDueTasks();
+      
       if ( !showDueTasks )
       {
          stopLoadingTasksToNotify();
@@ -165,9 +144,10 @@ class DueTasksNotifier extends AbstractNotificator
       }
       else
       {
-         LoadDueTasksAsyncTask loader = new LoadDueTasksAsyncTask( context,
-                                                                   getHandler(),
-                                                                   remindBeforeMillis );
+         final long remindBeforeMillis = getSettings().getNotifyingDueTasksBeforeMs();
+         final LoadDueTasksAsyncTask loader = new LoadDueTasksAsyncTask( context,
+                                                                         getHandler(),
+                                                                         remindBeforeMillis );
          startTasksLoader( loader );
       }
    }
@@ -176,6 +156,8 @@ class DueTasksNotifier extends AbstractNotificator
    
    private void reEvaluateDueTaskNotifications()
    {
+      final boolean showDueTasks = getSettings().isNotifyingDueTasks();
+      
       if ( showDueTasks && hasTasks() )
       {
          final Cursor currentTasks = getCurrentTasksCursor();
@@ -192,6 +174,7 @@ class DueTasksNotifier extends AbstractNotificator
       
       if ( currentTasks.moveToFirst() )
       {
+         final long remindBeforeMillis = getSettings().getNotifyingDueTasksBeforeMs();
          final long nowMillis = System.currentTimeMillis();
          final int numTasks = currentTasks.getCount();
          
@@ -230,50 +213,14 @@ class DueTasksNotifier extends AbstractNotificator
    
    
    
-   private void readPreferences()
-   {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      
-      if ( prefs != null )
-      {
-         showDueTasks = prefs.getBoolean( context.getString( R.string.key_notify_due_tasks ),
-                                          false );
-         remindBeforeMillis = Long.parseLong( prefs.getString( context.getString( R.string.key_notify_due_tasks_before ),
-                                                               context.getString( R.string.moloko_prefs_notification_tasks_w_due_before_default_value ) ) );
-      }
-   }
-   
-   
-   
    private void setNotificationFeatures()
    {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+      final Settings settings = getSettings();
       
-      if ( prefs != null )
-      {
-         final Uri ringtone = readRingtoneUriFromPreferences( prefs );
-         final boolean vibrate = prefs.getBoolean( context.getString( R.string.key_notify_due_tasks_vibrate ),
-                                                   false );
-         final boolean showLed = prefs.getBoolean( context.getString( R.string.key_notify_due_tasks_led ),
-                                                   false );
-         
-         presenter.setNotificationFeatures( ringtone, showLed, vibrate );
-      }
-   }
-   
-   
-   
-   private Uri readRingtoneUriFromPreferences( SharedPreferences preferences )
-   {
-      final String ringtone = preferences.getString( context.getString( R.string.key_notify_due_tasks_ringtone ),
-                                                     null );
+      final Uri ringtone = settings.getNotifyingDueTasksRingtoneUri();
+      final boolean vibrate = settings.isNotifyingDueTasksVibration();
+      final boolean showLed = settings.isNotifyingDueTasksLed();
       
-      Uri ringtoneUri = null;
-      if ( !TextUtils.isEmpty( ringtone ) )
-      {
-         ringtoneUri = Uri.parse( ringtone );
-      }
-      
-      return ringtoneUri;
+      presenter.setNotificationFeatures( ringtone, showLed, vibrate );
    }
 }

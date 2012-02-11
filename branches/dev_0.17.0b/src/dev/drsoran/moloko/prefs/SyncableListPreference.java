@@ -39,8 +39,8 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 
 
-public class SyncableListPreference extends AutoSummaryListPreference implements
-         OnClickListener
+abstract class SyncableListPreference extends AutoSummaryListPreference
+         implements OnClickListener
 {
    private CheckBox checkBox;
    
@@ -120,10 +120,20 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {
-      if ( key != null && key.equals( getKey() ) && isSyncWithRtm() )
+      if ( key != null )
       {
-         setValue( sharedPreferences.getString( getKey(), getValue() ) );
-         notifyChanged();
+         if ( key.equals( getKey() ) )
+         {
+            final String value = sharedPreferences.getString( getKey(),
+                                                              getValue() );
+            
+            setValue( value );
+            notifyChanged();
+         }
+         else if ( key.equals( syncWithRtmKey ) )
+         {
+            notifyChanged();
+         }
       }
       else
       {
@@ -147,8 +157,7 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    {
       if ( settingSourceText != null )
       {
-         if ( isSyncWithRtm()
-            && MolokoApp.getSettings( getContext() ).getRtmSettings() != null )
+         if ( isSyncWithRtm() && hasRtmSettings() )
          {
             settingSourceText.setText( R.string.g_settings_src_rtm );
             settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_refresh ),
@@ -169,36 +178,9 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    
    
    
-   protected void setSyncWithRtm( boolean value )
+   protected boolean hasRtmSettings()
    {
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null && callChangeListener( Boolean.valueOf( value ) ) )
-      {
-         prefs.edit().putBoolean( syncWithRtmKey, value ).commit();
-         
-         // if the user checked the box we have reset the current value
-         // cause we loaded the RTM setting in the background and must
-         // notify the list.
-         if ( value )
-         {
-            setValue( prefs.getString( getKey(), getValue() ) );
-         }
-      }
-   }
-   
-   
-   
-   protected boolean isSyncWithRtm()
-   {
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
-      {
-         return prefs.getBoolean( syncWithRtmKey, true );
-      }
-      
-      return true;
+      return MolokoApp.getSettings( getContext() ).getRtmSettings() != null;
    }
    
    
@@ -244,4 +226,12 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       
       return drawable;
    }
+   
+   
+   
+   abstract protected boolean isSyncWithRtm();
+   
+   
+   
+   abstract protected void setSyncWithRtm( boolean value );
 }

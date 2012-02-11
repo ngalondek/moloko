@@ -23,19 +23,17 @@
 package dev.drsoran.moloko.notification;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.DelayedRun;
 
 
-abstract class AbstractNotificator implements IStatusbarNotifier,
-         OnSharedPreferenceChangeListener
+abstract class AbstractNotifier implements IStatusbarNotifier
 {
    protected final Context context;
    
@@ -47,10 +45,9 @@ abstract class AbstractNotificator implements IStatusbarNotifier,
    
    
    
-   protected AbstractNotificator( Context context )
+   protected AbstractNotifier( Context context )
    {
       this.context = context;
-      registerPreferenceListener();
       registerTasksContentProviderObserver();
    }
    
@@ -59,7 +56,6 @@ abstract class AbstractNotificator implements IStatusbarNotifier,
    @Override
    public void shutdown()
    {
-      unregisterPreferenceListener();
       stopLoadingTasksToNotify();
       cancelHandlerMessages();
       closeCurrentCursor();
@@ -68,10 +64,9 @@ abstract class AbstractNotificator implements IStatusbarNotifier,
    
    
    
-   @Override
-   public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
-                                          String key )
+   protected Settings getSettings()
    {
+      return MolokoApp.getSettings( context );
    }
    
    
@@ -115,30 +110,6 @@ abstract class AbstractNotificator implements IStatusbarNotifier,
    protected Handler getHandler()
    {
       return handler;
-   }
-   
-   
-   
-   private void registerPreferenceListener()
-   {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      
-      if ( prefs != null )
-      {
-         prefs.registerOnSharedPreferenceChangeListener( this );
-      }
-   }
-   
-   
-   
-   private void unregisterPreferenceListener()
-   {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      
-      if ( prefs != null )
-      {
-         prefs.unregisterOnSharedPreferenceChangeListener( this );
-      }
    }
    
    

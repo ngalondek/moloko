@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -20,25 +20,21 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.prefs;
+package dev.drsoran.moloko.auth;
 
-import java.util.TimeZone;
+import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import dev.drsoran.moloko.R;
 
-import android.content.Context;
-import android.util.AttributeSet;
 
-
-public class TimezonePreference extends SyncableListPreference
+public class AccountPreferencesActivity extends PreferenceActivity
 {
-   
-   public TimezonePreference( Context context, AttributeSet attrs )
+   @Override
+   protected void onCreate( Bundle savedInstanceState )
    {
-      super( context, attrs );
+      super.onCreate( savedInstanceState );
       
-      final String[] timeZoneIds = TimeZone.getAvailableIDs();
-      
-      setEntries( timeZoneIds );
-      setEntryValues( timeZoneIds );
+      addPreferencesFromResource( R.xml.account_preferences_activity );
    }
    
 }

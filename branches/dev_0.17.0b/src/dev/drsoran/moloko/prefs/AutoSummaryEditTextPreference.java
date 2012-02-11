@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -31,7 +31,7 @@ import android.util.AttributeSet;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class AutoSummaryEditTextPreference extends EditTextPreference implements
+class AutoSummaryEditTextPreference extends EditTextPreference implements
          IMolokoPreference, OnPreferenceChangeListener
 {
    

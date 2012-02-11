@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.auth.prefs;
+package dev.drsoran.moloko.prefs.auth;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -45,7 +45,7 @@ import dev.drsoran.moloko.prefs.InfoTextPreference;
 import dev.drsoran.moloko.util.AccountUtils;
 
 
-public class AccountAccessLevelPreference extends InfoTextPreference implements
+class AccountAccessLevelPreference extends InfoTextPreference implements
          AccountManagerCallback< Bundle >
 {
    private WeakReference< AccountManager > accountManager;
@@ -55,14 +55,14 @@ public class AccountAccessLevelPreference extends InfoTextPreference implements
    private final Handler handler = new Handler();
    
    
-
+   
    public AccountAccessLevelPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
    }
    
-
-
+   
+   
    @Override
    protected void onBindView( View view )
    {
@@ -103,8 +103,8 @@ public class AccountAccessLevelPreference extends InfoTextPreference implements
       super.onBindView( view );
    }
    
-
-
+   
+   
    @Override
    protected void onClick()
    {
@@ -130,8 +130,9 @@ public class AccountAccessLevelPreference extends InfoTextPreference implements
       }
    }
    
-
-
+   
+   
+   @Override
    public void run( AccountManagerFuture< Bundle > future )
    {
       changeAccountHandle = null;
@@ -164,8 +165,8 @@ public class AccountAccessLevelPreference extends InfoTextPreference implements
       }
    }
    
-
-
+   
+   
    private String getPermissionEntry( String permValue )
    {
       String entry = null;
@@ -197,8 +198,8 @@ public class AccountAccessLevelPreference extends InfoTextPreference implements
       return ( entry );
    }
    
-
-
+   
+   
    private AccountManager getAccountManager()
    {
       if ( accountManager == null || accountManager.get() == null )

@@ -258,7 +258,7 @@
 
       <activity
          android:label="@string/app_account_preferences"
-         android:name=".auth.prefs.AccountPreferencesActivity"
+         android:name=".auth.AccountPreferencesActivity"
          android:theme="@style/Theme.Moloko.Preferences"
          android:taskAffinity="android.system"
          android:launchMode="singleTask"

@@ -20,56 +20,17 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.prefs;
+package dev.drsoran.moloko.prefs.auth;
 
 import android.content.Context;
-import android.os.Vibrator;
-import android.preference.CheckBoxPreference;
 import android.util.AttributeSet;
+import dev.drsoran.moloko.prefs.AutoSummaryListPreference;
 
 
-class VibratePreference extends CheckBoxPreference
+class SyncIntervalPreference extends AutoSummaryListPreference
 {
-   
-   public VibratePreference( Context context, AttributeSet attrs, int defStyle )
-   {
-      super( context, attrs, defStyle );
-   }
-   
-   
-   
-   public VibratePreference( Context context, AttributeSet attrs )
+   public SyncIntervalPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
-   }
-   
-   
-   
-   public VibratePreference( Context context )
-   {
-      super( context );
-   }
-   
-   
-   
-   @Override
-   protected void onClick()
-   {
-      super.onClick();
-      
-      if ( isChecked() )
-      {
-         testVibrate();
-      }
-   }
-   
-   
-   
-   private void testVibrate()
-   {
-      final Vibrator vibrator = (Vibrator) getContext().getSystemService( Context.VIBRATOR_SERVICE );
-      
-      if ( vibrator != null )
-         vibrator.vibrate( 300 );
    }
 }

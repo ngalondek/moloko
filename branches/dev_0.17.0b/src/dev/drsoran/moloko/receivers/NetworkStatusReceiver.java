@@ -1,5 +1,5 @@
 /* 
-	Copyright (c) 2010 Ronny Röhricht
+	Copyright (c) 2012 Ronny Röhricht
 
 	This file is part of Moloko.
 
@@ -26,14 +26,25 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.Handler;
 import android.os.Message;
 import dev.drsoran.moloko.IOnNetworkStatusChangedListener;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.ListenerList;
 
 
 public class NetworkStatusReceiver extends BroadcastReceiver
 {
+   
+   private final Handler handler;
+   
+   
+   
+   public NetworkStatusReceiver( Handler handler )
+   {
+      this.handler = handler;
+   }
+   
+   
    
    @Override
    public void onReceive( Context context, Intent intent )
@@ -52,9 +63,7 @@ public class NetworkStatusReceiver extends BroadcastReceiver
             msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
                                                                                           Boolean.valueOf( cm.getBackgroundDataSetting() ) );
             
-            MolokoApp.get( context.getApplicationContext() )
-                     .getHandler()
-                     .sendMessage( msg );
+            handler.sendMessage( msg );
          }
       }
       else if ( intent.getAction()
@@ -67,9 +76,7 @@ public class NetworkStatusReceiver extends BroadcastReceiver
                                                                                        Boolean.valueOf( intent.getBooleanExtra( ConnectivityManager.EXTRA_NO_CONNECTIVITY,
                                                                                                                                 false ) ) );
          
-         MolokoApp.get( context.getApplicationContext() )
-                  .getHandler()
-                  .sendMessage( msg );
+         handler.sendMessage( msg );
       }
    }
 }

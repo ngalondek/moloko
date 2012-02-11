@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -196,7 +196,8 @@ public class TaskListsFragment extends
                               list.getName() ) );
       }
       
-      if ( list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
+      if ( list.getId().equals( MolokoApp.getSettings( getFragmentActivity() )
+                                         .getDefaultListId() ) )
          menu.add( Menu.NONE,
                    CtxtMenu.REMOVE_DEFAULT_LIST,
                    Menu.NONE,
@@ -241,12 +242,12 @@ public class TaskListsFragment extends
             return true;
             
          case CtxtMenu.MAKE_DEFAULT_LIST:
-            MolokoApp.getSettings()
+            MolokoApp.getSettings( getFragmentActivity() )
                      .setDefaultListId( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getId() );
             return true;
             
          case CtxtMenu.REMOVE_DEFAULT_LIST:
-            MolokoApp.getSettings()
+            MolokoApp.getSettings( getFragmentActivity() )
                      .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
             return true;
             

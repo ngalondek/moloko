@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.notification;
 
-interface INotifier
+interface IStatusbarNotifier
 {
    void onTimeChanged( int which );
    

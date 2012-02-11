@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -66,7 +66,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    private final Handler handler = new Handler();
    
    
-
+   
    public RtmSyncStatePreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -80,8 +80,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public void run( AccountManagerFuture< Bundle > future )
    {
@@ -116,8 +116,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onAccountsUpdated( Account[] accounts )
    {
@@ -130,8 +130,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public void cleanUp()
    {
@@ -149,8 +149,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       unregisterSyncStatusChangedListener();
    }
    
-
-
+   
+   
    @Override
    protected void onBindView( View view )
    {
@@ -158,7 +158,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       
       if ( account != null )
       {
-         final RtmSettings settings = MolokoApp.getSettings().getRtmSettings();
+         final RtmSettings settings = MolokoApp.getSettings( getContext() )
+                                               .getRtmSettings();
          
          if ( settings == null )
          {
@@ -187,8 +188,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       super.onBindView( view );
    }
    
-
-
+   
+   
    @Override
    protected void onClick()
    {
@@ -205,8 +206,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       }
    }
    
-
-
+   
+   
    protected void showDialog()
    {
       dialog = ProgressDialog.show( getContext(),
@@ -217,8 +218,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       dialog.setOnCancelListener( this );
    }
    
-
-
+   
+   
    @Override
    public void onSyncStatusChanged( int status )
    {
@@ -243,8 +244,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onCancel( DialogInterface dialog )
    {
@@ -252,17 +253,19 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       dialog = null;
    }
    
-
-
+   
+   
    private void registerSyncStatusChangedListener()
    {
-      MolokoApp.get( getContext() ).registerSyncStatusChangedListener( this );
+      MolokoApp.getNotifierContext( getContext() )
+               .registerSyncStatusChangedListener( this );
    }
    
-
-
+   
+   
    private void unregisterSyncStatusChangedListener()
    {
-      MolokoApp.get( getContext() ).unregisterSyncStatusChangedListener( this );
+      MolokoApp.getNotifierContext( getContext() )
+               .unregisterSyncStatusChangedListener( this );
    }
 }

@@ -25,30 +25,38 @@ package dev.drsoran.moloko.notification;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
-import android.content.Context;
-import dev.drsoran.moloko.IOnBootCompletedListener;
+import android.content.res.Configuration;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.NotifierContext;
 
 
-public class MolokoNotificationManager implements IOnBootCompletedListener,
-         IOnTimeChangedListener, IOnSettingsChangedListener
+class MolokoNotificationManager implements IOnTimeChangedListener,
+         IOnSettingsChangedListener
 {
-   private final Context context;
+   private final NotifierContext context;
    
-   private List< INotifier > notifiers = new ArrayList< INotifier >();
+   private final List< IStatusbarNotifier > notifiers = new ArrayList< IStatusbarNotifier >();
+   
+   private Locale lastUsedLocale;
    
    
    
-   public MolokoNotificationManager( Context context )
+   public MolokoNotificationManager( NotifierContext context )
    {
       this.context = context;
+      this.lastUsedLocale = getCurrentNotificatonLocale();
       
       registerListeners();
-      createNotifiers();
-      
+   }
+   
+   
+   
+   public void start()
+   {
       recreateNotifications();
    }
    
@@ -62,18 +70,14 @@ public class MolokoNotificationManager implements IOnBootCompletedListener,
    
    
    
-   @Override
-   public void onBootCompleted()
+   public void onConfiurationChanged( Configuration newConfig )
    {
-      MolokoApp.get( context ).unregisterOnBootCompletedListener( this );
-      recreateNotifications();
-   }
-   
-   
-   
-   public void onSystemLanguageChanged()
-   {
-      recreateNotifications();
+      final Locale currentLocale = getCurrentNotificatonLocale();
+      if ( !currentLocale.equals( lastUsedLocale ) )
+      {
+         lastUsedLocale = currentLocale;
+         recreateNotifications();
+      }
    }
    
    
@@ -81,7 +85,7 @@ public class MolokoNotificationManager implements IOnBootCompletedListener,
    @Override
    public void onTimeChanged( int which )
    {
-      for ( INotifier notifier : notifiers )
+      for ( IStatusbarNotifier notifier : notifiers )
       {
          notifier.onTimeChanged( which );
       }
@@ -93,7 +97,7 @@ public class MolokoNotificationManager implements IOnBootCompletedListener,
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      for ( INotifier notifier : notifiers )
+      for ( IStatusbarNotifier notifier : notifiers )
       {
          notifier.onSettingsChanged( which );
       }
@@ -119,7 +123,7 @@ public class MolokoNotificationManager implements IOnBootCompletedListener,
    
    private void shutdownNotifiers()
    {
-      for ( INotifier notifier : notifiers )
+      for ( IStatusbarNotifier notifier : notifiers )
       {
          notifier.shutdown();
       }
@@ -131,20 +135,23 @@ public class MolokoNotificationManager implements IOnBootCompletedListener,
    
    private void registerListeners()
    {
-      MolokoApp.get( context ).registerOnBootCompletedListener( this );
-      MolokoApp.get( context )
-               .registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
-      MolokoApp.get( context )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
-                                                   this );
+      context.registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
+      context.registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
+                                                 this );
    }
    
    
    
    private void unregisterListeners()
    {
-      // IOnBootCompletedListener will be unregistered in onBootCompleted().
-      MolokoApp.get( context ).unregisterOnTimeChangedListener( this );
-      MolokoApp.get( context ).unregisterOnSettingsChangedListener( this );
+      context.unregisterOnTimeChangedListener( this );
+      context.unregisterOnSettingsChangedListener( this );
+   }
+   
+   
+   
+   private Locale getCurrentNotificatonLocale()
+   {
+      return MolokoApp.getSettings( context ).getLocale();
    }
 }

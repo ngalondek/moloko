@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -148,7 +148,7 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       if ( settingSourceText != null )
       {
          if ( isSyncWithRtm()
-            && MolokoApp.getSettings().getRtmSettings() != null )
+            && MolokoApp.getSettings( getContext() ).getRtmSettings() != null )
          {
             settingSourceText.setText( R.string.g_settings_src_rtm );
             settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_refresh ),

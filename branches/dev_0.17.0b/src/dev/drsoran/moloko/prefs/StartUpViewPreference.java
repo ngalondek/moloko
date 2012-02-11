@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -56,7 +56,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
    private int oldValueIdx;
    
    
-
+   
    public StartUpViewPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -69,13 +69,13 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       setEntries( createEntries() );
       setEntryValues( entryValues );
       
-      MolokoApp.get( getContext() )
+      MolokoApp.getNotifierContext( getContext() )
                .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DEFAULTLIST,
                                                    this );
    }
    
-
-
+   
+   
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
@@ -85,7 +85,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       // list has
       // been set to none, we switch to the default start up view.
       if ( getValue().equals( String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST ) )
-         && MolokoApp.getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
+         && MolokoApp.getSettings( getContext() ).getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
       {
          setValue( String.valueOf( Settings.STARTUP_VIEW_DEFAULT ) );
       }
@@ -93,16 +93,17 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       notifyChanged();
    }
    
-
-
+   
+   
    @Override
    public void cleanUp()
    {
-      MolokoApp.get( getContext() ).unregisterOnSettingsChangedListener( this );
+      MolokoApp.getNotifierContext( getContext() )
+               .unregisterOnSettingsChangedListener( this );
    }
    
-
-
+   
+   
    @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
@@ -117,7 +118,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
          // list we must open a new list dialog with all lists to select one.
          if ( String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST )
                     .equals( newValueStr )
-            && MolokoApp.getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
+            && MolokoApp.getSettings( getContext() ).getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
          {
             defListEntriesAndValues = DefaultListPreference.createEntriesAndValues( getContext() );
             
@@ -149,7 +150,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
                      
                      // Check if the client has chosen a list.
                      if ( positive )
-                        MolokoApp.getSettings()
+                        MolokoApp.getSettings( getContext() )
                                  .setDefaultListId( defListEntriesAndValues.values[ chosenDefListIdx ].toString() );
                      else
                         setValueIndex( oldValueIdx );
@@ -168,8 +169,8 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       return ok;
    }
    
-
-
+   
+   
    @Override
    protected void onDialogClosed( boolean positiveResult )
    {
@@ -177,8 +178,8 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       super.onDialogClosed( positiveResult );
    }
    
-
-
+   
+   
    private CharSequence[] createEntries()
    {
       final String defListName = getDefaultListName();
@@ -194,11 +195,12 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
        resources.getString( R.string.moloko_prefs_startup_view_home ) };
    }
    
-
-
+   
+   
    private String getDefaultListName()
    {
-      final String defListId = MolokoApp.getSettings().getDefaultListId();
+      final String defListId = MolokoApp.getSettings( getContext() )
+                                        .getDefaultListId();
       String defListName = null;
       
       if ( defListId != null )

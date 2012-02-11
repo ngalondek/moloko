@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,14 +25,24 @@ package dev.drsoran.moloko.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.Message;
 import dev.drsoran.moloko.IOnTimeChangedListener;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.ListenerList;
 
 
 public class TimeChangedReceiver extends BroadcastReceiver
 {
+   private final Handler handler;
+   
+   
+   
+   public TimeChangedReceiver( Handler handler )
+   {
+      this.handler = handler;
+   }
+   
+   
    
    @Override
    public void onReceive( Context context, Intent intent )
@@ -42,8 +52,6 @@ public class TimeChangedReceiver extends BroadcastReceiver
                                                                            null );
       msg.what = IOnTimeChangedListener.SYSTEM_TIME;
       
-      MolokoApp.get( context.getApplicationContext() )
-               .getHandler()
-               .sendMessage( msg );
+      handler.sendMessage( msg );
    }
 }

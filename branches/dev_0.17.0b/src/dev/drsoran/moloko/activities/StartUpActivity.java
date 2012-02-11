@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -47,10 +47,6 @@ import dev.drsoran.provider.Rtm.Lists;
 
 public class StartUpActivity extends MolokoFragmentActivity
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + StartUpActivity.class.getSimpleName();
-   
    private final static String STATE_INDEX_KEY = "state_index";
    
    private final static int MSG_STATE_CHANGED = 0;
@@ -126,7 +122,7 @@ public class StartUpActivity extends MolokoFragmentActivity
       else if ( dialogId == R.id.dlg_startup_default_list_not_exists
          && which == Dialog.BUTTON_POSITIVE )
       {
-         final Settings settings = MolokoApp.getSettings();
+         final Settings settings = MolokoApp.getSettings( this );
          
          settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
          settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
@@ -171,7 +167,7 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    private void determineStartupView()
    {
-      final Settings settings = MolokoApp.getSettings();
+      final Settings settings = MolokoApp.getSettings( this );
       
       if ( settings != null )
       {
@@ -213,14 +209,14 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    private void onStartUpCompleted()
    {
-      final int startUpView = MolokoApp.getSettings().getStartupView();
+      final Settings settings = MolokoApp.getSettings( this );
+      final int startUpView = settings.getStartupView();
       
       switch ( startUpView )
       {
          case Settings.STARTUP_VIEW_DEFAULT_LIST:
             startActivity( Intents.createOpenListIntentById( this,
-                                                             MolokoApp.getSettings()
-                                                                      .getDefaultListId(),
+                                                             settings.getDefaultListId(),
                                                              null ) );
             break;
          
@@ -235,7 +231,6 @@ public class StartUpActivity extends MolokoFragmentActivity
          
          default :
             throw new IllegalStateException( "Unknown state: " + startUpView );
-            
       }
       
       finish();

@@ -26,8 +26,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import dev.drsoran.moloko.MolokoApp;
-
 
 public final class MolokoCalendar
 {
@@ -359,7 +357,7 @@ public final class MolokoCalendar
    
    public final static MolokoCalendar getInstance()
    {
-      return new MolokoCalendar( MolokoApp.getSettings().getTimezone() );
+      return new MolokoCalendar( TimeZone.getDefault() );
    }
    
    

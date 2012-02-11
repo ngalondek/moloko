@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -390,7 +390,7 @@ public class FullDetailedTasksListFragment extends
    @Override
    protected int getDefaultTaskSort()
    {
-      return MolokoApp.getSettings().getTaskSort();
+      return MolokoApp.getSettings( getFragmentActivity() ).getTaskSort();
    }
    
    

@@ -104,7 +104,7 @@ public class MolokoDateUtils
    
    public final static Time newTime()
    {
-      final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
+      final Time t = new Time( TimeZone.getDefault().getID() );
       t.setToNow();
       return t;
    }
@@ -113,7 +113,7 @@ public class MolokoDateUtils
    
    public final static Time newTime( long millis )
    {
-      final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
+      final Time t = new Time( TimeZone.getDefault().getID() );
       t.set( millis );
       return t;
    }
@@ -143,7 +143,7 @@ public class MolokoDateUtils
    
    public static int getTimespanInDays( long start, long end )
    {
-      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
+      final TimeZone timeZone = TimeZone.getDefault();
       final int offStart = timeZone.getOffset( start ) / 1000; // in sec.
       final int offEnd = timeZone.getOffset( end ) / 1000; // in sec.
       
@@ -476,9 +476,9 @@ public class MolokoDateUtils
       // Time
       if ( time )
       {
-         final String timePattern = ( MolokoApp.getSettings().Is24hTimeformat() )
-                                                                                 ? context.getString( R.string.time_pattern_24 )
-                                                                                 : context.getString( R.string.time_pattern_12 );
+         final String timePattern = ( MolokoApp.getSettings( context ).Is24hTimeformat() )
+                                                                                          ? context.getString( R.string.time_pattern_24 )
+                                                                                          : context.getString( R.string.time_pattern_12 );
          
          if ( date )
          {

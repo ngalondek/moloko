@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import android.os.Bundle;
 import android.util.Log;
 
 
@@ -49,7 +50,7 @@ public class ListenerList< T >
       public final Object value;
       
       
-
+      
       public MessgageObject( Class< T > type, Object value )
       {
          this.type = type;
@@ -57,7 +58,7 @@ public class ListenerList< T >
       }
    }
    
-
+   
    private final class ListenerEntry
    {
       public final int mask;
@@ -65,29 +66,29 @@ public class ListenerList< T >
       public final WeakReference< T > listener;
       
       
-
+      
       public ListenerEntry( int mask, T listener )
       {
          this.mask = mask;
          this.listener = new WeakReference< T >( listener );
       }
       
-
-
+      
+      
       boolean isDead()
       {
          return listener.get() == null;
       }
       
-
-
+      
+      
       boolean matches( int setting )
       {
          return ( ( mask & setting ) != 0 );
       }
       
-
-
+      
+      
       void notifyEmpty()
       {
          if ( listener.get() != null )
@@ -111,8 +112,8 @@ public class ListenerList< T >
          }
       }
       
-
-
+      
+      
       void notify( int mask )
       {
          if ( listener.get() != null )
@@ -136,8 +137,8 @@ public class ListenerList< T >
          }
       }
       
-
-
+      
+      
       void notify( int mask, HashMap< Integer, Object > oldValues )
       {
          if ( listener.get() != null )
@@ -161,13 +162,14 @@ public class ListenerList< T >
          }
       }
       
-
-
-      boolean notifyIfMatches( int mask, HashMap< Integer, Object > oldValues )
+      
+      
+      boolean notifyIfMatches( int mask, Bundle oldValues )
       {
          boolean ok = !isDead();
          
          if ( ok && matches( mask ) )
+         {
             try
             {
                method.invoke( listener.get(), mask, oldValues );
@@ -184,6 +186,7 @@ public class ListenerList< T >
             {
                Log.e( TAG, Strings.EMPTY_STRING, e );
             }
+         }
          
          return ok;
       }
@@ -196,14 +199,14 @@ public class ListenerList< T >
    private final List< ListenerEntry > listeners = new CopyOnWriteArrayList< ListenerEntry >();
    
    
-
+   
    public ListenerList( Method method )
    {
       this.method = method;
    }
    
-
-
+   
+   
    public void registerListener( int which, T listener )
    {
       if ( listener != null )
@@ -212,8 +215,8 @@ public class ListenerList< T >
       }
    }
    
-
-
+   
+   
    public void unregisterListener( T listener )
    {
       if ( listener != null )
@@ -222,8 +225,15 @@ public class ListenerList< T >
       }
    }
    
-
-
+   
+   
+   public void clear()
+   {
+      listeners.clear();
+   }
+   
+   
+   
    public void notifyListeners()
    {
       List< ListenerEntry > deadEntries = null;
@@ -247,8 +257,8 @@ public class ListenerList< T >
          listeners.removeAll( deadEntries );
    }
    
-
-
+   
+   
    public void notifyListeners( int mask )
    {
       List< ListenerEntry > deadEntries = null;
@@ -272,8 +282,8 @@ public class ListenerList< T >
          listeners.removeAll( deadEntries );
    }
    
-
-
+   
+   
    public void notifyListeners( int mask, Object oldValue )
    {
       if ( mask > 0 )
@@ -304,9 +314,9 @@ public class ListenerList< T >
       }
    }
    
-
-
-   public void notifyListeners( int mask, HashMap< Integer, Object > oldValues )
+   
+   
+   public void notifyListeners( int mask, Bundle oldValues )
    {
       if ( mask > 0 )
       {
@@ -330,8 +340,8 @@ public class ListenerList< T >
       }
    }
    
-
-
+   
+   
    public boolean removeListener( T listener )
    {
       ListenerEntry entryToRemove = null;

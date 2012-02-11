@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -80,7 +80,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
             }
          };
          
-         MolokoApp.get( activity )
+         MolokoApp.getNotifierContext( activity )
                   .registerOnSettingsChangedListener( settingsMask,
                                                       onSettingsChangedListener );
       }
@@ -95,7 +95,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       
       if ( onSettingsChangedListener != null )
       {
-         MolokoApp.get( getFragmentActivity() )
+         MolokoApp.getNotifierContext( getFragmentActivity() )
                   .unregisterOnSettingsChangedListener( onSettingsChangedListener );
          
          onSettingsChangedListener = null;

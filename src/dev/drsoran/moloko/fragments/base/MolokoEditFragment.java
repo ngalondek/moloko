@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,41 +22,35 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.util.Pair;
 import android.view.View;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
-import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoEditFragment< T extends Fragment > extends
          MolokoFragment implements IEditFragment< T >
 {
-   private final Handler handler = new Handler();
+   private final EditFragmentImpl impl;
    
-   private IBinder windowToken;
    
-   private IEditFragmentListener listener;
+   
+   protected MolokoEditFragment()
+   {
+      impl = new EditFragmentImpl( this );
+   }
    
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
-      
-      if ( activity instanceof IEditFragmentListener )
-         listener = (IEditFragmentListener) activity;
-      else
-         listener = null;
+      impl.onAttach( activity.asActivity() );
    }
    
    
@@ -65,7 +59,7 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      windowToken = view.getWindowToken();
+      impl.onViewCreated( view, savedInstanceState );
    }
    
    
@@ -73,8 +67,8 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      listener = null;
    }
    
    
@@ -82,20 +76,7 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
    @Override
    public void onDestroyView()
    {
-      if ( windowToken != null )
-      {
-         handler.post( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               final Context context = getFragmentActivity();
-               if ( context != null )
-                  UIUtils.hideSoftInput( context, windowToken );
-            }
-         } );
-      }
-      
+      impl.onDestroyView();
       super.onDestroyView();
    }
    
@@ -126,16 +107,14 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
    protected boolean applyModifications( ContentProviderActionItemList actionItemList,
                                          ApplyChangesInfo applyChangesInfo )
    {
-      boolean ok = listener != null;
-      return ok
-         && listener.applyModifications( actionItemList, applyChangesInfo );
+      return impl.applyModifications( actionItemList, applyChangesInfo );
    }
    
    
    
    protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
    {
-      return applyModifications( modifications.first, modifications.second );
+      return impl.applyModifications( modifications.first, modifications.second );
    }
    
    

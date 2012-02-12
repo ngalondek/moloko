@@ -32,11 +32,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.SupportActivity;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
 
 
 public abstract class MolokoDialogFragment extends DialogFragment implements
-         IConfigurable
+         IConfigurable, IOnSettingsChangedListener
 {
    
    private final DialogInterface.OnClickListener genericListener = new OnClickListener()
@@ -48,9 +47,14 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       }
    };
    
-   private IOnSettingsChangedListener onSettingsChangedListener;
+   private final MolokoFragmentImpl impl;
    
-   protected Bundle configuration;
+   
+   
+   protected MolokoDialogFragment()
+   {
+      impl = new MolokoFragmentImpl( this, getSettingsMask() );
+   }
    
    
    
@@ -58,46 +62,16 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
-      if ( savedInstanceState == null )
-         configure( getArguments() );
-      else
-         configure( savedInstanceState );
+      impl.onCreate( savedInstanceState );
    }
    
    
    
    @Override
-   public final void onAttach( SupportActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
-      
-      onAttach( (FragmentActivity) activity );
-   }
-   
-   
-   
-   public void onAttach( FragmentActivity activity )
-   {
-      final int settingsMask = getSettingsMask();
-      
-      if ( settingsMask != 0 )
-      {
-         onSettingsChangedListener = new IOnSettingsChangedListener()
-         {
-            @Override
-            public void onSettingsChanged( int which,
-                                           HashMap< Integer, Object > oldValues )
-            {
-               if ( isAdded() && !isDetached() )
-                  MolokoDialogFragment.this.onSettingsChanged( which, oldValues );
-            }
-         };
-         
-         MolokoApp.getNotifierContext( activity )
-                  .registerOnSettingsChangedListener( settingsMask,
-                                                      onSettingsChangedListener );
-      }
+      impl.onAttach( activity );
    }
    
    
@@ -105,15 +79,15 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      
-      if ( onSettingsChangedListener != null )
-      {
-         MolokoApp.getNotifierContext( getFragmentActivity() )
-                  .unregisterOnSettingsChangedListener( onSettingsChangedListener );
-         
-         onSettingsChangedListener = null;
-      }
+   }
+   
+   
+   
+   public FragmentActivity getFragmentActivity()
+   {
+      return (FragmentActivity) getSupportActivity();
    }
    
    
@@ -122,8 +96,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public void setArguments( Bundle args )
    {
       super.setArguments( args );
-      
-      configure( args );
+      impl.setArguments( args );
    }
    
    
@@ -132,41 +105,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      
-      outState.putAll( getConfiguration() );
-   }
-   
-   
-   
-   @Override
-   public final void configure( Bundle config )
-   {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-         takeConfigurationFrom( config );
-   }
-   
-   
-   
-   @Override
-   public void clearConfiguration()
-   {
-      if ( configuration != null )
-         configuration.clear();
-   }
-   
-   
-   
-   @Override
-   public final Bundle createDefaultConfiguration()
-   {
-      final Bundle bundle = new Bundle();
-      
-      putDefaultConfigurationTo( bundle );
-      
-      return bundle;
+      impl.onSaveInstanceState( outState );
    }
    
    
@@ -174,7 +113,31 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    @Override
    public Bundle getConfiguration()
    {
-      return new Bundle( configuration );
+      return impl.getConfiguration();
+   }
+   
+   
+   
+   @Override
+   public final void configure( Bundle config )
+   {
+      impl.configure( config );
+   }
+   
+   
+   
+   @Override
+   public void clearConfiguration()
+   {
+      impl.clearConfiguration();
+   }
+   
+   
+   
+   @Override
+   public final Bundle createDefaultConfiguration()
+   {
+      return impl.createDefaultConfiguration();
    }
    
    
@@ -191,6 +154,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    
    
    
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
@@ -201,13 +165,6 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public int getSettingsMask()
    {
       return 0;
-   }
-   
-   
-   
-   public FragmentActivity getFragmentActivity()
-   {
-      return (FragmentActivity) getSupportActivity();
    }
    
    

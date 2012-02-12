@@ -28,62 +28,30 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.SupportActivity;
-import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
 
 
-public abstract class MolokoFragment extends Fragment implements IConfigurable
+public abstract class MolokoFragment extends Fragment implements IConfigurable,
+         IOnSettingsChangedListener
 {
-   private IOnSettingsChangedListener onSettingsChangedListener;
-   
-   protected Bundle configuration;
+   MolokoFragmentImpl impl;
    
    
    
-   @Override
-   public void onCreate( Bundle savedInstanceState )
+   protected MolokoFragment()
    {
-      super.onCreate( savedInstanceState );
-      
-      configure( getArguments() );
+      impl = new MolokoFragmentImpl( this, getSettingsMask() );
    }
    
    
    
    @Override
-   public final void onAttach( SupportActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
-      
-      onAttach( (FragmentActivity) activity );
-   }
-   
-   
-   
-   public void onAttach( FragmentActivity activity )
-   {
-      final int settingsMask = getSettingsMask();
-      
-      if ( settingsMask != 0 )
-      {
-         onSettingsChangedListener = new IOnSettingsChangedListener()
-         {
-            @Override
-            public void onSettingsChanged( int which,
-                                           HashMap< Integer, Object > oldValues )
-            {
-               if ( isAdded() && !isDetached() )
-                  MolokoFragment.this.onSettingsChanged( which, oldValues );
-            }
-         };
-         
-         MolokoApp.getNotifierContext( activity )
-                  .registerOnSettingsChangedListener( settingsMask,
-                                                      onSettingsChangedListener );
-      }
+      impl.onAttach( activity );
    }
    
    
@@ -91,15 +59,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      
-      if ( onSettingsChangedListener != null )
-      {
-         MolokoApp.getNotifierContext( getFragmentActivity() )
-                  .unregisterOnSettingsChangedListener( onSettingsChangedListener );
-         
-         onSettingsChangedListener = null;
-      }
    }
    
    
@@ -115,8 +76,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    public void setArguments( Bundle args )
    {
       super.setArguments( args );
-      
-      configure( args );
+      impl.setArguments( args );
    }
    
    
@@ -125,8 +85,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    public void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      
-      outState.putAll( getConfiguration() );
+      impl.onSaveInstanceState( outState );
    }
    
    
@@ -134,7 +93,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public final Bundle getConfiguration()
    {
-      return new Bundle( configuration );
+      return impl.getConfiguration();
    }
    
    
@@ -142,11 +101,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public final void configure( Bundle config )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-         takeConfigurationFrom( config );
+      impl.configure( config );
    }
    
    
@@ -154,8 +109,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public void clearConfiguration()
    {
-      if ( configuration != null )
-         configuration.clear();
+      impl.clearConfiguration();
    }
    
    
@@ -163,11 +117,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public final Bundle createDefaultConfiguration()
    {
-      final Bundle bundle = new Bundle();
-      
-      putDefaultConfigurationTo( bundle );
-      
-      return bundle;
+      return impl.createDefaultConfiguration();
    }
    
    
@@ -186,18 +136,14 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    
    public final ViewGroup getContentView()
    {
-      final View root = getView();
-      
-      if ( root != null )
-         return (ViewGroup) root.findViewById( android.R.id.content );
-      else
-         return null;
+      return impl.getContentView();
    }
    
    
    
-   protected void onSettingsChanged( int which,
-                                     HashMap< Integer, Object > oldValues )
+   @Override
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
    {
    }
    

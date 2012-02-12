@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,32 +22,32 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.util.Pair;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
-import dev.drsoran.moloko.util.UIUtils;
 
 
-public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
+public abstract class MolokoLoaderEditFragment< T, D > extends
          MolokoLoaderFragment< D > implements IEditFragment< T >
 {
-   private IEditFragmentListener listener;
+   private final EditFragmentImpl impl;
+   
+   
+   
+   protected MolokoLoaderEditFragment()
+   {
+      impl = new EditFragmentImpl( this );
+   }
    
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
-      
-      if ( activity instanceof IEditFragmentListener )
-         listener = (IEditFragmentListener) activity;
-      else
-         listener = null;
+      impl.onAttach( activity.asActivity() );
    }
    
    
@@ -55,8 +55,8 @@ public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      listener = null;
    }
    
    
@@ -64,8 +64,7 @@ public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
    @Override
    public void onDestroyView()
    {
-      UIUtils.hideSoftInput( getContentView() );
-      
+      impl.onDestroyView();
       super.onDestroyView();
    }
    
@@ -96,16 +95,14 @@ public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
    protected boolean applyModifications( ContentProviderActionItemList actionItemList,
                                          ApplyChangesInfo applyChangesInfo )
    {
-      boolean ok = listener != null;
-      return ok
-         && listener.applyModifications( actionItemList, applyChangesInfo );
+      return impl.applyModifications( actionItemList, applyChangesInfo );
    }
    
    
    
    protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
    {
-      return applyModifications( modifications.first, modifications.second );
+      return impl.applyModifications( modifications.first, modifications.second );
    }
    
    

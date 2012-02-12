@@ -1,0 +1,128 @@
+/* 
+ *	Copyright (c) 2012 Ronny Röhricht
+ *
+ *	This file is part of Moloko.
+ *
+ *	Moloko is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	Moloko is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *	Contributors:
+ * Ronny Röhricht - implementation
+ */
+
+package dev.drsoran.moloko.fragments.base;
+
+import java.util.HashMap;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.MolokoApp;
+
+
+class FragmentConfigurableImpl implements IOnSettingsChangedListener
+{
+   private final Fragment fragment;
+   
+   private final int settingsMask;
+   
+   private FragmentActivity activity;
+   
+   private Bundle configuration;
+   
+   
+   
+   public FragmentConfigurableImpl( Fragment fragment, int settingsMask )
+   {
+      this.fragment = fragment;
+      this.settingsMask = settingsMask;
+   }
+   
+   
+   
+   public void onAttach( FragmentActivity activity, Bundle config )
+   {
+      if ( settingsMask != 0 && activity instanceof IOnSettingsChangedListener )
+      {
+         MolokoApp.getNotifierContext( activity )
+                  .registerOnSettingsChangedListener( settingsMask, this );
+      }
+      
+      this.activity = activity;
+      configure( config );
+   }
+   
+   
+   
+   public void onDetach()
+   {
+      if ( activity instanceof IOnSettingsChangedListener )
+      {
+         MolokoApp.getNotifierContext( activity )
+                  .unregisterOnSettingsChangedListener( this );
+         
+         activity = null;
+      }
+   }
+   
+   
+   
+   public Bundle getConfiguration()
+   {
+      return configuration;
+   }
+   
+   
+   
+   public void configure( Bundle config )
+   {
+      if ( configuration == null )
+         configuration = createDefaultConfiguration();
+      
+      if ( config != null )
+         takeConfigurationFrom( config );
+   }
+   
+   
+   
+   public void clearConfiguration()
+   {
+      if ( configuration != null )
+         configuration.clear();
+   }
+   
+   
+   
+   public Bundle createDefaultConfiguration()
+   {
+      final Bundle bundle = new Bundle();
+      
+      putDefaultConfigurationTo( bundle );
+      
+      return bundle;
+   }
+   
+   
+   
+   @Override
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
+   {
+      if ( fragment.isAdded() && !fragment.isDetached() )
+      {
+         ( (IOnSettingsChangedListener) fragment ).onSettingsChanged( which,
+                                                                      oldValues );
+      }
+   }
+}

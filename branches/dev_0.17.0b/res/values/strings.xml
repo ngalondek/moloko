@@ -55,7 +55,7 @@
 
    <string name="svc_sync">RTM Synchronization</string>
    <string name="svc_auth">RTM Authentication</string>
-   <string name="svc_notification">Moloko Notification Service</string>
+   <string name="svc_notification">Notification Service</string>
 
    <string name="rtm_full">Remember The Milk</string>
 

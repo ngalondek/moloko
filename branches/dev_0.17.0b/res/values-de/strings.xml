@@ -47,7 +47,7 @@
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>
-   <string name="svc_notification">Moloko Benachrichtigungesdienst</string>
+   <string name="svc_notification">Benachrichtigungsdienst</string>
       
    <!-- Global constants -->
    <string name="g_settings_src_rtm_btn">Einstellung vom RTM Server übernehmen</string>

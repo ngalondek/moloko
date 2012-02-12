@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,7 +25,7 @@ package dev.drsoran.moloko;
 import android.support.v4.app.Fragment;
 
 
-public interface IEditFragment< T extends Fragment >
+public interface IEditFragment< T >
 {
    boolean onFinishEditing();
    

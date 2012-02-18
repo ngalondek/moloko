@@ -20,26 +20,21 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.annotations;
 
-import android.os.Bundle;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
-public interface IConfigurable
+@Retention( value = RetentionPolicy.RUNTIME )
+@Target( value = ElementType.FIELD )
+public @interface InstanceState
 {
-   
-   void registerAnnotatedConfiguredInstance( Object instance,
-                                             Bundle initialState );
+   String key();
    
    
    
-   Bundle getConfiguration();
-   
-   
-   
-   void configure( Bundle config );
-   
-   
-   
-   void clearConfiguration();
+   String defaultValue();
 }

@@ -11,50 +11,49 @@ public final class Bundles
       throw new AssertionError();
    }
    
-
-
-   public final static < V > void put( Bundle bundle,
-                                       String key,
-                                       V value,
-                                       Class< V > type )
+   
+   
+   public final static void put( Bundle bundle, String key, Object value )
    {
-      if ( type == String.class )
+      final Class< ? > valueClass = value.getClass();
+      
+      if ( valueClass == String.class )
       {
          bundle.putString( key, String.class.cast( value ) );
          return;
       }
       
-      else if ( type == Long.class )
+      else if ( valueClass == Long.class )
       {
          bundle.putLong( key, Long.class.cast( value ) );
          return;
       }
       
-      else if ( type == Integer.class )
+      else if ( valueClass == Integer.class )
       {
          bundle.putInt( key, Integer.class.cast( value ) );
          return;
       }
       
-      else if ( type == Boolean.class )
+      else if ( valueClass == Boolean.class )
       {
          bundle.putBoolean( key, Boolean.class.cast( value ) );
          return;
       }
       
-      else if ( type == Bundle.class )
+      else if ( valueClass == Bundle.class )
       {
          bundle.putBundle( key, Bundle.class.cast( value ) );
          return;
       }
       
-      else if ( type == Float.class )
+      else if ( valueClass == Float.class )
       {
          bundle.putFloat( key, Float.class.cast( value ) );
          return;
       }
       
-      else if ( type == Double.class )
+      else if ( valueClass == Double.class )
       {
          bundle.putDouble( key, Double.class.cast( value ) );
          return;
@@ -62,7 +61,7 @@ public final class Bundles
       
       else
       {
-         final Class< ? >[] interfaces = type.getInterfaces();
+         final Class< ? >[] interfaces = valueClass.getInterfaces();
          if ( interfaces != null )
          {
             for ( int i = 0; i < interfaces.length; i++ )
@@ -76,7 +75,17 @@ public final class Bundles
          }
       }
       
-      throw new IllegalArgumentException( "The type " + type.getName()
+      throw new IllegalArgumentException( "The type " + valueClass.getName()
          + " is not supported" );
+   }
+   
+   
+   
+   public final static < V > void put( Bundle bundle,
+                                       String key,
+                                       V value,
+                                       Class< V > type )
+   {
+      put( bundle, key, value );
    }
 }

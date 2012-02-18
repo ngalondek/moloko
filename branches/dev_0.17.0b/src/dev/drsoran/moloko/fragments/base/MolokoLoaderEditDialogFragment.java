@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -33,6 +33,7 @@ import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.base.impl.LoaderFragmentImpl;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
 import dev.drsoran.moloko.loaders.AbstractLoader;
@@ -42,10 +43,7 @@ import dev.drsoran.moloko.util.UIUtils;
 public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
          extends MolokoEditDialogFragment< T > implements LoaderCallbacks< D >
 {
-   private final static class Config
-   {
-      public final static String LOADER_RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
-   }
+   private final LoaderFragmentImpl< D > loaderImpl;
    
    private final Handler handler = new Handler();
    
@@ -54,6 +52,13 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    private D loaderData;
    
    private boolean loaderNotDataFound;
+   
+   
+   
+   public MolokoLoaderEditDialogFragment()
+   {
+      loaderImpl = new LoaderFragmentImpl( this );
+   }
    
    
    

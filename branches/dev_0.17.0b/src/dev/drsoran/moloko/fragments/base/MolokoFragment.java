@@ -31,12 +31,13 @@ import android.support.v4.app.SupportActivity;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.fragments.base.impl.MolokoFragmentImpl;
 
 
 public abstract class MolokoFragment extends Fragment implements IConfigurable,
          IOnSettingsChangedListener
 {
-   MolokoFragmentImpl impl;
+   private MolokoFragmentImpl impl;
    
    
    
@@ -91,6 +92,15 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    
    
    @Override
+   public final void registerAnnotatedConfiguredInstance( Object instance,
+                                                          Bundle initialState )
+   {
+      impl.registerAnnotatedConfiguredInstance( instance, initialState );
+   }
+   
+   
+   
+   @Override
    public final Bundle getConfiguration()
    {
       return impl.getConfiguration();
@@ -107,29 +117,9 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    
    
    @Override
-   public void clearConfiguration()
+   public final void clearConfiguration()
    {
-      impl.clearConfiguration();
-   }
-   
-   
-   
-   @Override
-   public final Bundle createDefaultConfiguration()
-   {
-      return impl.createDefaultConfiguration();
-   }
-   
-   
-   
-   protected void takeConfigurationFrom( Bundle config )
-   {
-   }
-   
-   
-   
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
+      impl.setDefaultConfiguration();
    }
    
    

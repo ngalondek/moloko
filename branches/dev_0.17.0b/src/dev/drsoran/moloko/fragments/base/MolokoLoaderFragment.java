@@ -30,6 +30,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import dev.drsoran.moloko.fragments.base.impl.LoaderFragmentImpl;
 
 
 public abstract class MolokoLoaderFragment< D > extends MolokoFragment
@@ -92,28 +93,6 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    {
       super.onViewCreated( view, savedInstanceState );
       impl.onViewCreated( view, savedInstanceState );
-   }
-   
-   
-   
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.LOADER_RESPECT_CONTENT_CHANGES ) )
-         configuration.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
-                                   config.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES ) );
-   }
-   
-   
-   
-   @Override
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, true );
    }
    
    

@@ -20,116 +20,119 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.base;
+package dev.drsoran.moloko.fragments.base.impl;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.SupportActivity;
 import android.view.View;
-import android.view.ViewGroup;
 
 
-class MolokoFragmentImpl
+public class MolokoListFragmentImpl
 {
-   private final Fragment fragment;
+   private final MolokoFragmentImpl impl;
    
-   private final FragmentConfigurableImpl configuration;
-   
-   private FragmentActivity activity;
+   private final ListFragment fragment;
    
    
    
-   public MolokoFragmentImpl( Fragment fragment, int settingsMask )
+   public MolokoListFragmentImpl( ListFragment fragment, int settingsMask )
    {
+      impl = new MolokoFragmentImpl( fragment, settingsMask );
       this.fragment = fragment;
-      configuration = new FragmentConfigurableImpl( fragment, settingsMask );
    }
    
    
    
    public void onCreate( Bundle savedInstanceState )
    {
-      if ( savedInstanceState == null )
-         configure( getArguments() );
-      else
-         configure( savedInstanceState );
+      impl.onCreate( savedInstanceState );
    }
    
    
    
    public void onAttach( SupportActivity activity )
    {
-      onAttach( (FragmentActivity) activity );
+      impl.onAttach( activity );
    }
    
    
    
    public void onDetach()
    {
-      configuration.onDetach();
-      activity = null;
+      impl.onDetach();
    }
    
    
    
    public void setArguments( Bundle args )
    {
-      configure( args );
+      impl.setArguments( args );
    }
    
    
    
    public void onSaveInstanceState( Bundle outState )
    {
-      outState.putAll( getConfiguration() );
+      impl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   public void registerAnnotatedConfiguredInstance( Object instance,
+                                                    Bundle initialState )
+   {
+      impl.registerAnnotatedConfiguredInstance( instance, initialState );
    }
    
    
    
    public Bundle getConfiguration()
    {
-      return new Bundle( configuration.getConfiguration() );
+      return impl.getConfiguration();
    }
    
    
    
    public void configure( Bundle config )
    {
-      configuration.configure( config );
+      impl.configure( config );
    }
    
    
    
    public void clearConfiguration()
    {
-      configuration.clearConfiguration();
+      impl.setDefaultConfiguration();
    }
    
    
    
-   public Bundle createDefaultConfiguration()
+   public View getEmptyView()
    {
-      return configuration.createDefaultConfiguration();
-   }
-   
-   
-   
-   public ViewGroup getContentView()
-   {
-      final View root = fragment.getView();
+      View emptyView = null;
       
-      if ( root != null )
-         return (ViewGroup) root.findViewById( android.R.id.content );
-      else
-         return null;
+      if ( fragment.getView() != null && fragment.getListView() != null )
+         emptyView = fragment.getListView().getEmptyView();
+      
+      return emptyView;
    }
    
    
    
-   private void onAttach( FragmentActivity activity )
+   public void showEmptyView( boolean show )
    {
-      this.activity = activity;
-      configuration.onAttach( activity, getArguments() );
+      final View emptyView = getEmptyView();
+      if ( emptyView != null )
+         emptyView.setVisibility( show ? View.VISIBLE : View.GONE );
+   }
+   
+   
+   
+   public void showListView( boolean show )
+   {
+      final View listView = fragment.getListView();
+      if ( listView != null )
+         listView.setVisibility( show ? View.VISIBLE : View.GONE );
    }
 }

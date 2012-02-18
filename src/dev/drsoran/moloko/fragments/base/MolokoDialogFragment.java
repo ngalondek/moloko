@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.SupportActivity;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.fragments.base.impl.MolokoDialogFragmentImpl;
 
 
 public abstract class MolokoDialogFragment extends DialogFragment implements
@@ -47,13 +48,13 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       }
    };
    
-   private final MolokoFragmentImpl impl;
+   private final MolokoDialogFragmentImpl impl;
    
    
    
    protected MolokoDialogFragment()
    {
-      impl = new MolokoFragmentImpl( this, getSettingsMask() );
+      impl = new MolokoDialogFragmentImpl( this, getSettingsMask() );
    }
    
    
@@ -110,6 +111,14 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    
    
    
+   public final void registerAnnotatedConfiguredInstance( Object instance,
+                                                          Bundle initialState )
+   {
+      impl.registerAnnotatedConfiguredInstance( instance, initialState );
+   }
+   
+   
+   
    @Override
    public Bundle getConfiguration()
    {
@@ -130,26 +139,6 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public void clearConfiguration()
    {
       impl.clearConfiguration();
-   }
-   
-   
-   
-   @Override
-   public final Bundle createDefaultConfiguration()
-   {
-      return impl.createDefaultConfiguration();
-   }
-   
-   
-   
-   protected void takeConfigurationFrom( Bundle config )
-   {
-   }
-   
-   
-   
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
    }
    
    

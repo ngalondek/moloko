@@ -20,47 +20,26 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.base;
+package dev.drsoran.moloko.fragments.base.impl;
 
 import java.util.HashMap;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
-import dev.drsoran.moloko.loaders.AbstractLoader;
+import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-class LoaderFragmentImpl< D > implements LoaderCallbacks< D >
+public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
 {
-   public static interface Support< D >
+   public static interface Support< D > extends
+            LoaderFragmentImplBase.Support< D >
    {
-      int getLoaderId();
-      
-      
-      
-      String getLoaderDataName();
-      
-      
-      
-      Loader< D > newLoaderInstance( int id, Bundle config );
-      
-      
-      
       void initContent( ViewGroup content );
-   }
-   
-   
-   private final static class Config
-   {
-      public final static String LOADER_RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
    }
    
    private final MolokoFragment fragment;
@@ -68,8 +47,6 @@ class LoaderFragmentImpl< D > implements LoaderCallbacks< D >
    private final Support< D > support;
    
    private final Handler handler = new Handler();
-   
-   private ILoaderFragmentListener loaderListener;
    
    private D loaderData;
    
@@ -80,33 +57,21 @@ class LoaderFragmentImpl< D > implements LoaderCallbacks< D >
    @SuppressWarnings( "unchecked" )
    public LoaderFragmentImpl( MolokoFragment fragment )
    {
+      super( fragment, fragment );
+      
       this.fragment = fragment;
       this.support = (Support< D >) fragment;
    }
    
    
    
+   @Override
    public void onCreate( Bundle savedInstanceState )
    {
+      super.onCreate( savedInstanceState );
+      
       if ( getLoaderData() == null )
          startLoader();
-   }
-   
-   
-   
-   public void onAttach( FragmentActivity activity )
-   {
-      if ( activity instanceof ILoaderFragmentListener )
-         loaderListener = (ILoaderFragmentListener) activity;
-      else
-         loaderListener = new NullLoaderFragmentListener();
-   }
-   
-   
-   
-   public void onDetach()
-   {
-      loaderListener = null;
    }
    
    
@@ -156,44 +121,11 @@ class LoaderFragmentImpl< D > implements LoaderCallbacks< D >
    
    
    
-   public void setRespectContentChanges( boolean respect )
-   {
-      fragment.getConfiguration()
-              .putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, respect );
-      
-      if ( fragment.isAdded() )
-      {
-         final Loader< D > loader = fragment.getLoaderManager()
-                                            .getLoader( support.getLoaderId() );
-         
-         if ( loader instanceof AbstractLoader< ? > )
-            ( (AbstractLoader< ? >) loader ).setRespectContentChanges( respect );
-      }
-   }
-   
-   
-   
-   public boolean isRespectingContentChanges()
-   {
-      return fragment.getConfiguration()
-                     .getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, false );
-   }
-   
-   
-   
    @Override
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinner();
-      
-      final Loader< D > loader = support.newLoaderInstance( id, args );
-      
-      if ( loader instanceof AbstractLoader< ? > )
-         ( (AbstractLoader< ? >) loader ).setRespectContentChanges( isRespectingContentChanges() );
-      
-      loaderListener.onFragmentLoadStarted( fragment.getId(), fragment.getTag() );
-      
-      return loader;
+      return super.onCreateLoader( id, args );
    }
    
    
@@ -209,9 +141,7 @@ class LoaderFragmentImpl< D > implements LoaderCallbacks< D >
       else
          showContentAsync();
       
-      loaderListener.onFragmentLoadFinished( fragment.getId(),
-                                             fragment.getTag(),
-                                             !loaderNotDataFound );
+      super.onLoadFinished( loader, data );
    }
    
    
@@ -221,15 +151,8 @@ class LoaderFragmentImpl< D > implements LoaderCallbacks< D >
    {
       loaderData = null;
       loaderNotDataFound = false;
-   }
-   
-   
-   
-   private void startLoader()
-   {
-      fragment.getLoaderManager().initLoader( support.getLoaderId(),
-                                              fragment.getConfiguration(),
-                                              this );
+      
+      super.onLoaderReset( loader );
    }
    
    
@@ -250,7 +173,7 @@ class LoaderFragmentImpl< D > implements LoaderCallbacks< D >
    
    
    
-   private View getLoadingSpinnerView()
+   public View getLoadingSpinnerView()
    {
       View loadView = null;
       

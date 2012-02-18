@@ -20,30 +20,33 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.base;
+package dev.drsoran.moloko.fragments.base.impl;
 
 import java.util.HashMap;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
+import android.view.View;
+import android.view.ViewGroup;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 
 
-class FragmentConfigurableImpl implements IOnSettingsChangedListener
+public class MolokoFragmentImpl implements IOnSettingsChangedListener
 {
-   private final Fragment fragment;
+   private final AnnotatedConfigurationSupport annotatedConfigSupport = new AnnotatedConfigurationSupport();
    
-   private final int settingsMask;
+   private final Fragment fragment;
    
    private FragmentActivity activity;
    
-   private Bundle configuration;
+   private int settingsMask;
    
    
    
-   public FragmentConfigurableImpl( Fragment fragment, int settingsMask )
+   public MolokoFragmentImpl( Fragment fragment, int settingsMask )
    {
       this.fragment = fragment;
       this.settingsMask = settingsMask;
@@ -51,16 +54,24 @@ class FragmentConfigurableImpl implements IOnSettingsChangedListener
    
    
    
-   public void onAttach( FragmentActivity activity, Bundle config )
+   public void onCreate( Bundle savedInstanceState )
    {
+      if ( savedInstanceState == null )
+         configure( fragment.getArguments() );
+      else
+         configure( savedInstanceState );
+   }
+   
+   
+   
+   public void onAttach( SupportActivity activity )
+   {
+      this.activity = (FragmentActivity) activity;
       if ( settingsMask != 0 && activity instanceof IOnSettingsChangedListener )
       {
-         MolokoApp.getNotifierContext( activity )
+         MolokoApp.getNotifierContext( this.activity )
                   .registerOnSettingsChangedListener( settingsMask, this );
       }
-      
-      this.activity = activity;
-      configure( config );
    }
    
    
@@ -71,46 +82,50 @@ class FragmentConfigurableImpl implements IOnSettingsChangedListener
       {
          MolokoApp.getNotifierContext( activity )
                   .unregisterOnSettingsChangedListener( this );
-         
-         activity = null;
       }
+   }
+   
+   
+   
+   public void setArguments( Bundle args )
+   {
+      configure( args );
    }
    
    
    
    public Bundle getConfiguration()
    {
-      return configuration;
+      return annotatedConfigSupport.getInstanceStates();
    }
    
    
    
    public void configure( Bundle config )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-         takeConfigurationFrom( config );
+      annotatedConfigSupport.setInstanceStates( config );
    }
    
    
    
-   public void clearConfiguration()
+   public void setDefaultConfiguration()
    {
-      if ( configuration != null )
-         configuration.clear();
+      annotatedConfigSupport.setDefaultInstanceStates();
    }
    
    
    
-   public Bundle createDefaultConfiguration()
+   public void registerAnnotatedConfiguredInstance( Object instance,
+                                                    Bundle initialState )
    {
-      final Bundle bundle = new Bundle();
-      
-      putDefaultConfigurationTo( bundle );
-      
-      return bundle;
+      annotatedConfigSupport.registerInstance( instance, initialState );
+   }
+   
+   
+   
+   public void onSaveInstanceState( Bundle outState )
+   {
+      annotatedConfigSupport.onSaveInstanceStates( outState );
    }
    
    
@@ -124,5 +139,17 @@ class FragmentConfigurableImpl implements IOnSettingsChangedListener
          ( (IOnSettingsChangedListener) fragment ).onSettingsChanged( which,
                                                                       oldValues );
       }
+   }
+   
+   
+   
+   public ViewGroup getContentView()
+   {
+      final View root = fragment.getView();
+      
+      if ( root != null )
+         return (ViewGroup) root.findViewById( android.R.id.content );
+      else
+         return null;
    }
 }

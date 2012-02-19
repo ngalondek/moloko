@@ -29,7 +29,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
@@ -142,7 +142,7 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -174,9 +174,9 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   public View onCreateView( LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState )
    {
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
@@ -444,7 +444,7 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   protected ListAdapter createEmptyListAdapter()
+   public ListAdapter createEmptyListAdapter()
    {
       return new FullDetailedTasksListFragmentAdapter( getFragmentActivity(),
                                                        R.layout.fulldetailed_taskslist_listitem );
@@ -453,8 +453,8 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   protected ListAdapter createListAdapterForResult( List< Task > result,
-                                                     IFilter filter )
+   public ListAdapter createListAdapterForResult( List< Task > result,
+                                                  IFilter filter )
    {
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getFragmentActivity(),

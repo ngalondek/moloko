@@ -26,11 +26,14 @@ import java.util.HashMap;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
+import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -40,9 +43,17 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
             LoaderFragmentImplBase.Support< D >
    {
       void initContent( ViewGroup content );
+      
+      
+      
+      ViewGroup getContentView();
+      
+      
+      
+      FragmentActivity getFragmentActivity();
    }
    
-   private final MolokoFragment fragment;
+   private final Fragment fragment;
    
    private final Support< D > support;
    
@@ -55,9 +66,10 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    @SuppressWarnings( "unchecked" )
-   public LoaderFragmentImpl( MolokoFragment fragment )
+   public LoaderFragmentImpl( Fragment fragment,
+      LoaderCallbacks< D > loaderCallbacks, IConfigurable configurable )
    {
-      super( fragment, fragment );
+      super( fragment, loaderCallbacks, configurable );
       
       this.fragment = fragment;
       this.support = (Support< D >) fragment;
@@ -115,8 +127,8 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      if ( !loaderNotDataFound && fragment.getContentView() != null )
-         support.initContent( fragment.getContentView() );
+      if ( !loaderNotDataFound && support.getContentView() != null )
+         support.initContent( support.getContentView() );
    }
    
    
@@ -165,7 +177,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
          if ( spinner != null )
             spinner.setVisibility( View.VISIBLE );
          
-         final View contentView = fragment.getContentView();
+         final View contentView = support.getContentView();
          if ( contentView != null )
             contentView.setVisibility( View.GONE );
       }
@@ -193,7 +205,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
          if ( spinner != null )
             spinner.setVisibility( View.GONE );
          
-         final ViewGroup content = fragment.getContentView();
+         final ViewGroup content = support.getContentView();
          if ( content != null )
          {
             support.initContent( content );
@@ -223,17 +235,16 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    {
       if ( fragment.getView() != null )
       {
-         final View spinner = fragment.getView()
-                                      .findViewById( R.id.loading_spinner );
+         final View spinner = getLoadingSpinnerView();
          if ( spinner != null )
             spinner.setVisibility( View.GONE );
          
-         final ViewGroup content = fragment.getContentView();
+         final ViewGroup content = support.getContentView();
          if ( content != null )
          {
             content.removeAllViews();
             
-            UIUtils.inflateErrorWithIcon( fragment.getFragmentActivity(),
+            UIUtils.inflateErrorWithIcon( support.getFragmentActivity(),
                                           content,
                                           R.string.err_entity_not_found,
                                           support.getLoaderDataName() );

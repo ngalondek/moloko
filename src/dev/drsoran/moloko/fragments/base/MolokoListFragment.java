@@ -27,11 +27,10 @@ import java.util.HashMap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IConfigurable;
@@ -42,13 +41,14 @@ import dev.drsoran.moloko.util.AccountUtils;
 
 
 public abstract class MolokoListFragment< D > extends ListFragment implements
-         IConfigurable, LoaderListFragmentImpl.Support< D >
+         IConfigurable, LoaderCallbacks< D >,
+         LoaderListFragmentImpl.Support< D >
 {
-   private MolokoListFragmentImpl baseImpl;
+   private final MolokoListFragmentImpl baseImpl;
    
-   private LoaderListFragmentImpl< D > loaderImpl;
+   private final LoaderListFragmentImpl< D > loaderImpl;
    
-   private EditFragmentImpl editImpl;
+   private final EditFragmentImpl editImpl;
    
    
    
@@ -72,7 +72,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    
    @Override
-   public final void onAttach( SupportActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       baseImpl.onAttach( activity );
@@ -89,19 +89,6 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       loaderImpl.onDetach();
       editImpl.onDetach();
       super.onDetach();
-   }
-   
-   
-   
-   @Override
-   public final View onCreateView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
-   {
-      final View fragmentView = createFragmentView( inflater,
-                                                    container,
-                                                    savedInstanceState );
-      return fragmentView;
    }
    
    
@@ -144,14 +131,6 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    
    
-   public final void registerAnnotatedConfiguredInstance( Object instance,
-                                                          Bundle initialState )
-   {
-      baseImpl.registerAnnotatedConfiguredInstance( instance, initialState );
-   }
-   
-   
-   
    @Override
    public void setArguments( Bundle args )
    {
@@ -166,6 +145,15 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    {
       super.onSaveInstanceState( outState );
       baseImpl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   @Override
+   public final void registerAnnotatedConfiguredInstance( Object instance,
+                                                          Bundle initialState )
+   {
+      baseImpl.registerAnnotatedConfiguredInstance( instance, initialState );
    }
    
    
@@ -268,6 +256,30 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    
    @Override
+   public Loader< D > onCreateLoader( int id, Bundle args )
+   {
+      return loaderImpl.onCreateLoader( id, args );
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< D > loader, D data )
+   {
+      loaderImpl.onLoadFinished( loader, data );
+   }
+   
+   
+   
+   @Override
+   public void onLoaderReset( Loader< D > loader )
+   {
+      loaderImpl.onLoaderReset( loader );
+   }
+   
+   
+   
+   @Override
    abstract public Loader< D > newLoaderInstance( int id, Bundle config );
    
    
@@ -289,11 +301,4 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    @Override
    abstract public ListAdapter createListAdapterForResult( D result );
-   
-   
-   
-   abstract protected View createFragmentView( LayoutInflater inflater,
-                                               ViewGroup container,
-                                               Bundle savedInstanceState );
-   
 }

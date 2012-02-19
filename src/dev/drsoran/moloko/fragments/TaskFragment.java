@@ -1,6 +1,5 @@
 /* 
-
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,7 +27,7 @@ import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -41,6 +40,7 @@ import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
@@ -58,10 +58,6 @@ import dev.drsoran.rtm.Task;
 public class TaskFragment extends MolokoLoaderFragment< Task > implements
          IEditableFragment< TaskFragment >
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TaskFragment.class.getSimpleName();
-   
    private final static IntentFilter INTENT_FILTER;
    
    static
@@ -90,6 +86,9 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private ITaskFragmentListener listener;
    
+   @InstanceState( key = Config.TASK_ID )
+   private String taskId;
+   
    private ViewGroup content;
    
    private TextView addedDate;
@@ -115,7 +114,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    private View urlSection;
    
    
-
+   
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -125,17 +124,17 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -145,17 +144,17 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          listener = new NullTaskFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -181,27 +180,15 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       return fragmentView;
    }
    
-
-
-   @Override
-   public void takeConfigurationFrom( Bundle config )
+   
+   
+   public String getTaskId()
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TASK_ID ) )
-         configuration.putString( Config.TASK_ID,
-                                  config.getString( Config.TASK_ID ) );
+      return taskId;
    }
    
-
-
-   public String getConfiguredTaskId()
-   {
-      return configuration.getString( Config.TASK_ID );
-   }
    
-
-
+   
    @Override
    public void initContent( ViewGroup container )
    {
@@ -272,8 +259,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -361,8 +348,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -436,8 +423,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -472,8 +459,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    @Override
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
@@ -481,32 +468,32 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                              args.getString( Config.TASK_ID ) );
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_task );
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
       return TASK_LOADER_ID;
    }
    
-
-
+   
+   
    @Override
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
    
-
-
+   
+   
    @Override
    public boolean canBeEdited()
    {
@@ -514,8 +501,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          && AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-
-
+   
+   
    @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {

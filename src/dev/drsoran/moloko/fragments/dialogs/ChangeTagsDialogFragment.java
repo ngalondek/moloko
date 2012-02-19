@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -35,7 +35,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -121,7 +121,7 @@ public class ChangeTagsDialogFragment extends
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -136,8 +136,8 @@ public class ChangeTagsDialogFragment extends
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    

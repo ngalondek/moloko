@@ -235,14 +235,14 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    protected int getTaskSort()
    {
-      return getTasksListFragment().getTaskSortConfiguration();
+      return getTasksListFragment().getTaskSort();
    }
    
    
    
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
-      return getTasksListFragment().getTaskSortConfiguration() == sortOrder;
+      return getTasksListFragment().getTaskSort() == sortOrder;
    }
    
    

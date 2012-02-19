@@ -22,12 +22,9 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.app.Dialog;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SupportActivity;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.ApplyChangesInfo;
@@ -36,11 +33,9 @@ import dev.drsoran.moloko.content.ContentProviderActionItemList;
 
 
 public abstract class MolokoEditDialogFragment< T extends Fragment > extends
-         MolokoDialogFragment implements IEditFragment< T >
+         MolokoContentDialogFragment implements IEditFragment< T >
 {
    private final EditFragmentImpl impl;
-   
-   private ViewGroup dialogView;
    
    
    
@@ -74,27 +69,6 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    {
       impl.onDestroyView();
       super.onDestroyView();
-   }
-   
-   
-   
-   @Override
-   public final Dialog onCreateDialog( Bundle savedInstanceState )
-   {
-      dialogView = createContent( LayoutInflater.from( getFragmentActivity() ) );
-      impl.setWindowToken( dialogView.getWindowToken() );
-      
-      onContentCreated( dialogView );
-      
-      final Dialog dialog = createDialog( dialogView );
-      return dialog;
-   }
-   
-   
-   
-   public View getDialogView()
-   {
-      return dialogView;
    }
    
    
@@ -170,17 +144,11 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    
    
    
+   @Override
    protected void onContentCreated( ViewGroup dialogView )
    {
+      impl.setWindowToken( dialogView.getWindowToken() );
    }
-   
-   
-   
-   abstract protected ViewGroup createContent( LayoutInflater inflater );
-   
-   
-   
-   abstract protected Dialog createDialog( View fragmentView );
    
    
    

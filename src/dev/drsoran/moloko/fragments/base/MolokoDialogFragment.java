@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.SupportActivity;
+import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.fragments.base.impl.MolokoDialogFragmentImpl;
@@ -86,6 +87,13 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    
    
    
+   protected ViewGroup getContentView()
+   {
+      return impl.getContentView();
+   }
+   
+   
+   
    public FragmentActivity getFragmentActivity()
    {
       return (FragmentActivity) getSupportActivity();
@@ -111,6 +119,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    
    
    
+   @Override
    public final void registerAnnotatedConfiguredInstance( Object instance,
                                                           Bundle initialState )
    {

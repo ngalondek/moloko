@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
 import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener.CloseReason;
 
@@ -32,9 +32,9 @@ public abstract class AbstractPickerDialogFragment extends MolokoDialogFragment
    private IPickerDialogListener listener;
    
    
-
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -44,8 +44,8 @@ public abstract class AbstractPickerDialogFragment extends MolokoDialogFragment
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -53,16 +53,16 @@ public abstract class AbstractPickerDialogFragment extends MolokoDialogFragment
       listener = null;
    }
    
-
-
+   
+   
    protected void notifiyDialogClosedOk()
    {
       if ( listener != null )
          listener.onPickerDialogClosed( this, CloseReason.OK );
    }
    
-
-
+   
+   
    protected void notifiyDialogClosedCancel()
    {
       if ( listener != null )

@@ -30,6 +30,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.SupportActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import dev.drsoran.moloko.AnnotatedConfigurationSupport;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 

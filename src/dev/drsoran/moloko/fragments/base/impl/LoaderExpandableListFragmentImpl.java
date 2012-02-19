@@ -27,35 +27,37 @@ import java.util.HashMap;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.base.MolokoListFragment;
+import dev.drsoran.moloko.fragments.base.MolokoExpandableListFragment;
 
 
-public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
+public class LoaderExpandableListFragmentImpl< D > extends
+         LoaderFragmentImplBase< D >
 {
    public static interface Support< D > extends
             LoaderFragmentImplBase.Support< D >
    {
-      ListAdapter getListAdapter();
+      ExpandableListAdapter getExpandableListAdapter();
       
       
       
-      ListAdapter createEmptyListAdapter();
+      ExpandableListAdapter createEmptyExpandableListAdapter();
       
       
       
-      ListAdapter createListAdapterForResult( D result );
+      ExpandableListAdapter createExpandableListAdapterForResult( D result );
    }
    
-   private final MolokoListFragment< D > fragment;
+   private final MolokoExpandableListFragment< D > fragment;
    
    private final Support< D > support;
    
    
    
-   public LoaderListFragmentImpl( MolokoListFragment< D > fragment )
+   public LoaderExpandableListFragmentImpl(
+      MolokoExpandableListFragment< D > fragment )
    {
       super( fragment, fragment, fragment );
       
@@ -70,7 +72,7 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    {
       super.onCreate( savedInstanceState );
       
-      if ( support.getListAdapter() == null )
+      if ( support.getExpandableListAdapter() == null )
          startLoader();
    }
    
@@ -78,7 +80,7 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      if ( support.getListAdapter() == null )
+      if ( support.getExpandableListAdapter() == null )
          showLoadingSpinner( true );
    }
    
@@ -105,7 +107,7 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    public void onLoadFinished( Loader< D > loader, D data )
    {
       if ( data != null )
-         fragment.setListAdapter( support.createListAdapterForResult( data ) );
+         fragment.setExpandableListAdapter( support.createExpandableListAdapterForResult( data ) );
       else
          fragment.getLoaderManager().destroyLoader( support.getLoaderId() );
       
@@ -114,21 +116,21 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
-   public void showLoadingSpinner( boolean show )
+   private void notifyDataSetChanged()
+   {
+      if ( fragment.getExpandableListAdapter() instanceof BaseExpandableListAdapter )
+         ( (BaseExpandableListAdapter) fragment.getExpandableListAdapter() ).notifyDataSetChanged();
+   }
+   
+   
+   
+   private void showLoadingSpinner( boolean show )
    {
       fragment.showEmptyView( false );
       
       final View spinner = getLoadingSpinnerView();
       if ( spinner != null )
          spinner.setVisibility( show ? View.VISIBLE : View.GONE );
-   }
-   
-   
-   
-   private void notifyDataSetChanged()
-   {
-      if ( fragment.getListAdapter() instanceof BaseAdapter )
-         ( (BaseAdapter) fragment.getListAdapter() ).notifyDataSetChanged();
    }
    
    

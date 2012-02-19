@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -26,7 +26,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
@@ -46,6 +46,7 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
@@ -94,10 +95,32 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    private ITasksListFragmentListener listener;
    
+   @InstanceState( key = Config.FILTER )
+   private IFilter filter;
+   
+   @InstanceState( key = Config.TASK_SORT_ORDER, defaultValue = "1" )
+   private int tasksSort;
+   
+   
+   
+   protected AbstractTasksListFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, null );
+   }
+   
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      ensureFilter();
+   }
+   
+   
+   
+   @Override
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -112,8 +135,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
@@ -122,7 +145,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
-      
       setHasOptionsMenu( true );
    }
    
@@ -131,33 +153,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    protected CharSequence getEmptyListText()
    {
       return getString( R.string.abstaskslist_no_tasks );
-   }
-   
-   
-   
-   @Override
-   public void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.FILTER ) )
-         configuration.putParcelable( Config.FILTER,
-                                      config.getParcelable( Config.FILTER ) );
-      configuration.putInt( Config.TASK_SORT_ORDER,
-                            config.getInt( Config.TASK_SORT_ORDER,
-                                           configuration.getInt( Config.TASK_SORT_ORDER ) ) );
-   }
-   
-   
-   
-   @Override
-   public void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putParcelable( Config.FILTER,
-                            new RtmSmartFilter( Strings.EMPTY_STRING ) );
-      bundle.putInt( Config.TASK_SORT_ORDER, getDefaultTaskSort() );
    }
    
    
@@ -179,7 +174,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       {
          subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
          
-         final int currentTaskSort = getTaskSortConfiguration();
+         final int currentTaskSort = getTaskSort();
          initializeTasksSortSubMenu( subMenu, currentTaskSort );
       }
    }
@@ -193,7 +188,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       
       if ( sortMenuItem != null )
       {
-         final int currentTaskSort = getTaskSortConfiguration();
+         final int currentTaskSort = getTaskSort();
          initializeTasksSortSubMenu( sortMenuItem.getSubMenu(), currentTaskSort );
       }
    }
@@ -311,7 +306,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    public IFilter getFilter()
    {
-      return configuration.getParcelable( Config.FILTER );
+      return filter;
    }
    
    
@@ -319,9 +314,16 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public RtmSmartFilter getRtmSmartFilter()
    {
       final IFilter filter = getFilter();
-      
       return ( filter instanceof RtmSmartFilter ) ? (RtmSmartFilter) filter
                                                  : null;
+   }
+   
+   
+   
+   private void ensureFilter()
+   {
+      if ( filter == null )
+         filter = new RtmSmartFilter( Strings.EMPTY_STRING );
    }
    
    
@@ -371,16 +373,16 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public int getTaskSortConfiguration()
+   public int getTaskSort()
    {
-      return configuration.getInt( Config.TASK_SORT_ORDER );
+      return tasksSort;
    }
    
    
    
    public boolean shouldResortTasks( int taskSort )
    {
-      return getTaskSortConfiguration() != taskSort;
+      return getTaskSort() != taskSort;
    }
    
    
@@ -418,7 +420,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onLoadFinished( Loader< List< T >> loader, List< T > data )
    {
       super.onLoadFinished( loader, data );
-      
       invalidateOptionsMenu();
    }
    
@@ -428,7 +429,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onLoaderReset( Loader< List< T >> loader )
    {
       super.onLoaderReset( loader );
-      
       invalidateOptionsMenu();
    }
    
@@ -460,7 +460,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   protected ListAdapter createListAdapterForResult( List< T > result )
+   public ListAdapter createListAdapterForResult( List< T > result )
    {
       return createListAdapterForResult( result, getFilter() );
    }

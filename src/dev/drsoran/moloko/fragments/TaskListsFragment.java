@@ -23,12 +23,11 @@
 package dev.drsoran.moloko.fragments;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItem;
 import android.view.ContextMenu;
@@ -92,7 +91,7 @@ public class TaskListsFragment extends
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -116,30 +115,22 @@ public class TaskListsFragment extends
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
    
    @Override
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   public View onCreateView( LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.tasklists_fragment,
                                                   container,
                                                   false );
       
       return fragmentView;
-   }
-   
-   
-   
-   @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
-   {
-      super.onViewCreated( view, savedInstanceState );
    }
    
    
@@ -301,7 +292,9 @@ public class TaskListsFragment extends
          return true;
       }
       else
+      {
          return super.onChildClick( parent, v, groupPosition, childPosition, id );
+      }
    }
    
    
@@ -316,16 +309,7 @@ public class TaskListsFragment extends
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
-   {
-      notifyDataSetChanged();
-   }
-   
-   
-   
-   @Override
-   protected ExpandableListAdapter createEmptyExpandableListAdapter()
+   public ExpandableListAdapter createEmptyExpandableListAdapter()
    {
       return new TaskListsAdapter( getFragmentActivity(),
                                    R.layout.tasklists_fragment_group,
@@ -336,7 +320,7 @@ public class TaskListsFragment extends
    
    
    @Override
-   protected ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
+   public ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
    {
       final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getFragmentActivity(),
                                                                       R.layout.tasklists_fragment_group,
@@ -350,8 +334,8 @@ public class TaskListsFragment extends
    
    
    @Override
-   protected Loader< List< RtmListWithTaskCount >> newLoaderInstance( int id,
-                                                                      Bundle config )
+   public Loader< List< RtmListWithTaskCount >> newLoaderInstance( int id,
+                                                                   Bundle config )
    {
       return new RtmListWithTaskCountLoader( getFragmentActivity() );
    }
@@ -402,4 +386,5 @@ public class TaskListsFragment extends
       MolokoApp.getSettings( getFragmentActivity() )
                .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
+   
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,26 +22,84 @@
 
 package dev.drsoran.moloko.fragments.base;
 
+import java.util.HashMap;
+
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
+import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.fragments.base.impl.LoaderExpandableListFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
 
 
-public abstract class MolokoExpandableListFragment< D > extends
-         MolokoListFragment< D > implements
+public abstract class MolokoExpandableListFragment< D > extends ListFragment
+         implements IConfigurable, LoaderCallbacks< D >,
+         LoaderExpandableListFragmentImpl.Support< D >,
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
          ExpandableListView.OnGroupCollapseListener,
          ExpandableListView.OnGroupExpandListener
 {
+   private final MolokoListFragmentImpl baseImpl;
+   
+   private final LoaderExpandableListFragmentImpl< D > loaderImpl;
+   
+   private final EditFragmentImpl editImpl;
+   
+   
+   
+   protected MolokoExpandableListFragment()
+   {
+      baseImpl = new MolokoListFragmentImpl( this, getSettingsMask() );
+      loaderImpl = new LoaderExpandableListFragmentImpl< D >( this );
+      editImpl = new EditFragmentImpl( this );
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      baseImpl.onCreate( savedInstanceState );
+      loaderImpl.onCreate( savedInstanceState );
+   }
+   
+   
+   
+   @Override
+   public void onAttach( SupportActivity activity )
+   {
+      super.onAttach( activity );
+      baseImpl.onAttach( activity );
+      loaderImpl.onAttach( activity );
+      editImpl.onAttach( activity.asActivity() );
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
+      baseImpl.onDetach();
+      loaderImpl.onDetach();
+      editImpl.onDetach();
+      super.onDetach();
+   }
+   
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
+      loaderImpl.onViewCreated( view, savedInstanceState );
       
       final ExpandableListView expandableListView = getExpandableListView();
       
@@ -51,21 +109,102 @@ public abstract class MolokoExpandableListFragment< D > extends
       expandableListView.setOnGroupExpandListener( this );
    }
    
-
-
-   @Override
+   
+   
    public View getEmptyView()
    {
-      View emptyView = null;
-      
-      if ( getView() != null && getExpandableListView() != null )
-         emptyView = getExpandableListView().getEmptyView();
-      
-      return emptyView;
+      return baseImpl.getEmptyView();
    }
    
-
-
+   
+   
+   public void showEmptyView( boolean show )
+   {
+      baseImpl.showEmptyView( show );
+   }
+   
+   
+   
+   public void showListView( boolean show )
+   {
+      baseImpl.showListView( show );
+   }
+   
+   
+   
+   public FragmentActivity getFragmentActivity()
+   {
+      return (FragmentActivity) getSupportActivity();
+   }
+   
+   
+   
+   @Override
+   public void setArguments( Bundle args )
+   {
+      super.setArguments( args );
+      baseImpl.setArguments( args );
+   }
+   
+   
+   
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      baseImpl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   @Override
+   public final void registerAnnotatedConfiguredInstance( Object instance,
+                                                          Bundle initialState )
+   {
+      baseImpl.registerAnnotatedConfiguredInstance( instance, initialState );
+   }
+   
+   
+   
+   @Override
+   public final Bundle getConfiguration()
+   {
+      return baseImpl.getConfiguration();
+   }
+   
+   
+   
+   @Override
+   public final void configure( Bundle config )
+   {
+      baseImpl.configure( config );
+   }
+   
+   
+   
+   @Override
+   public void clearConfiguration()
+   {
+      baseImpl.clearConfiguration();
+   }
+   
+   
+   
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
+   {
+      loaderImpl.onSettingsChanged( which, oldValues );
+   }
+   
+   
+   
+   protected int getSettingsMask()
+   {
+      return 0;
+   }
+   
+   
+   
    @Override
    public boolean onGroupClick( ExpandableListView parent,
                                 View v,
@@ -75,8 +214,8 @@ public abstract class MolokoExpandableListFragment< D > extends
       return false;
    }
    
-
-
+   
+   
    @Override
    public boolean onChildClick( ExpandableListView parent,
                                 View v,
@@ -87,115 +226,88 @@ public abstract class MolokoExpandableListFragment< D > extends
       return false;
    }
    
-
-
+   
+   
    @Override
    public void onGroupExpand( int groupPosition )
    {
    }
    
-
-
+   
+   
    @Override
    public void onGroupCollapse( int groupPosition )
    {
    }
    
-
-
+   
+   
    public ExpandableListView getExpandableListView()
    {
       return (ExpandableListView) super.getListView();
    }
    
-
-
+   
+   
    public void setExpandableListAdapter( ExpandableListAdapter adapter )
    {
       getExpandableListView().setAdapter( adapter );
    }
    
-
-
+   
+   
+   @Override
    public ExpandableListAdapter getExpandableListAdapter()
    {
       return getExpandableListView().getExpandableListAdapter();
    }
    
-
-
-   @Override
+   
+   
    public boolean hasListAdapter()
    {
       return getExpandableListAdapter() != null;
    }
    
-
-
+   
+   
    @Override
-   public final void setListAdapter( ListAdapter adapter )
+   public Loader< D > onCreateLoader( int id, Bundle args )
    {
-      throw new UnsupportedOperationException( "use setExpandableListAdapter" );
+      return loaderImpl.onCreateLoader( id, args );
    }
    
-
-
-   @Override
-   public final ListAdapter getListAdapter()
-   {
-      throw new UnsupportedOperationException( "use getExpandableListAdapter" );
-   }
    
-
-
+   
    @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
-      if ( data != null )
-         setExpandableListAdapter( createExpandableListAdapterForResult( data ) );
-      else
-         getLoaderManager().destroyLoader( getLoaderId() );
+      loaderImpl.onLoadFinished( loader, data );
    }
    
-
-
+   
+   
    @Override
+   public void onLoaderReset( Loader< D > loader )
+   {
+      loaderImpl.onLoaderReset( loader );
+   }
+   
+   
+   
    protected void invalidateOptionsMenu()
    {
       if ( getFragmentActivity() != null )
          getFragmentActivity().invalidateOptionsMenu();
    }
    
-
-
+   
+   
    @Override
-   protected void notifyDataSetChanged()
-   {
-      if ( getExpandableListAdapter() instanceof BaseExpandableListAdapter )
-         ( (BaseExpandableListAdapter) getExpandableListAdapter() ).notifyDataSetChanged();
-   }
+   public abstract ExpandableListAdapter createEmptyExpandableListAdapter();
    
-
-
+   
+   
    @Override
-   protected final ListAdapter createEmptyListAdapter()
-   {
-      throw new UnsupportedOperationException( "use createEmptyExpandableListAdapter" );
-   }
-   
-
-
-   @Override
-   protected final ListAdapter createListAdapterForResult( D result )
-   {
-      throw new UnsupportedOperationException( "use createExpandableListAdapterForResult" );
-   }
-   
-
-
-   abstract protected ExpandableListAdapter createEmptyExpandableListAdapter();
-   
-
-
-   abstract protected ExpandableListAdapter createExpandableListAdapterForResult( D result );
+   public abstract ExpandableListAdapter createExpandableListAdapterForResult( D result );
 }

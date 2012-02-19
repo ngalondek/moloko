@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -44,6 +44,7 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmListsProviderPart.NewRtmListId;
@@ -64,6 +65,12 @@ public class AddRenameListDialogFragment extends
       public final static String FILTER = "filter";
    }
    
+   @InstanceState( key = Config.LIST )
+   private RtmList list;
+   
+   @InstanceState( key = Config.FILTER )
+   private IFilter filter;
+   
    private TextView listNameEdit;
    
    private TextView filterEdit;
@@ -77,6 +84,13 @@ public class AddRenameListDialogFragment extends
       fragment.setArguments( config );
       
       return fragment;
+   }
+   
+   
+   
+   public AddRenameListDialogFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, null );
    }
    
    
@@ -117,7 +131,7 @@ public class AddRenameListDialogFragment extends
       {
          title = getString( R.string.dlg_rename_list_title );
       }
-      else if ( getConfiguredFilter() != null )
+      else if ( getFilter() != null )
       {
          title = getString( R.string.dlg_add_smart_list_title );
       }
@@ -157,7 +171,7 @@ public class AddRenameListDialogFragment extends
    
    private void configureAsRenameListDialog()
    {
-      listNameEdit.setText( getConfiguredList().getName() );
+      listNameEdit.setText( getList().getName() );
       
       // Show only the list name edit, so this will close on IME action
       listNameEdit.setImeActionLabel( filterEdit.getImeActionLabel(),
@@ -169,7 +183,7 @@ public class AddRenameListDialogFragment extends
    
    private void configureAsNewListDialog()
    {
-      final IFilter filter = getConfiguredFilter();
+      final IFilter filter = getFilter();
       
       if ( filter instanceof RtmSmartFilter )
          filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
@@ -177,38 +191,23 @@ public class AddRenameListDialogFragment extends
    
    
    
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.LIST ) )
-         configuration.putParcelable( Config.LIST,
-                                      config.getParcelable( Config.LIST ) );
-      if ( config.containsKey( Config.FILTER ) )
-         configuration.putParcelable( Config.FILTER,
-                                      config.getParcelable( Config.FILTER ) );
-   }
-   
-   
-   
    private boolean isRenameMode()
    {
-      return getConfiguredList() != null;
+      return getList() != null;
    }
    
    
    
-   private RtmList getConfiguredList()
+   private RtmList getList()
    {
-      return configuration.getParcelable( Config.LIST );
+      return list;
    }
    
    
    
-   private IFilter getConfiguredFilter()
+   private IFilter getFilter()
    {
-      return configuration.getParcelable( Config.FILTER );
+      return filter;
    }
    
    
@@ -217,7 +216,7 @@ public class AddRenameListDialogFragment extends
    public boolean hasChanges()
    {
       final String trimmedListName = UIUtils.getTrimmedText( listNameEdit );
-      final RtmList list = getConfiguredList();
+      final RtmList list = getList();
       
       if ( list != null )
          return !list.getName().equals( trimmedListName );
@@ -231,7 +230,7 @@ public class AddRenameListDialogFragment extends
    @Override
    protected boolean saveChanges()
    {
-      final RtmList list = getConfiguredList();
+      final RtmList list = getList();
       
       if ( list == null )
          return createNewList();
@@ -246,7 +245,7 @@ public class AddRenameListDialogFragment extends
    {
       boolean ok = validateListName();
       
-      if ( ok && getConfiguredList() == null )
+      if ( ok && getList() == null )
          ok = validateSmartFilter();
       
       return ok;

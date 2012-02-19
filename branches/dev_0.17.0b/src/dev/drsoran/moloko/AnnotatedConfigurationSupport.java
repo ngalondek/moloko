@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.base.impl;
+package dev.drsoran.moloko;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

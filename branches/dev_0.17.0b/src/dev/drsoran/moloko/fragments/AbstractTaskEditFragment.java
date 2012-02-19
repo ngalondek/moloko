@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,7 +29,7 @@ import java.util.List;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -241,7 +241,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -256,8 +256,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
@@ -316,10 +316,9 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   protected void initContent( ViewGroup content )
+   public void initContent( ViewGroup content )
    {
       initialValues = getInitialValues();
-      putInitialChanges();
       
       if ( initialValues != null )
       {
@@ -345,12 +344,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          
          putExtaInitialValues();
       }
-   }
-   
-   
-   
-   protected void putInitialChanges()
-   {
    }
    
    
@@ -1233,7 +1226,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   protected String getLoaderDataName()
+   public String getLoaderDataName()
    {
       return TaskEditDatabaseData.class.getSimpleName();
    }
@@ -1241,7 +1234,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   protected int getLoaderId()
+   public int getLoaderId()
    {
       return TASK_EDIT_LOADER;
    }
@@ -1249,13 +1242,12 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   protected Loader< TaskEditDatabaseData > newLoaderInstance( int id,
-                                                               Bundle args )
+   public Loader< TaskEditDatabaseData > newLoaderInstance( int id, Bundle args )
    {
       return new TaskEditDatabaseDataLoader( getFragmentActivity() );
    }
    
    
    
-   abstract protected Bundle getInitialValues();
+   protected abstract Bundle getInitialValues();
 }

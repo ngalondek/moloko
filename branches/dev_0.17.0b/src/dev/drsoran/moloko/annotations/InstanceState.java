@@ -27,6 +27,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import dev.drsoran.moloko.util.Strings;
+
 
 @Retention( value = RetentionPolicy.RUNTIME )
 @Target( value = ElementType.FIELD )
@@ -36,5 +38,5 @@ public @interface InstanceState
    
    
    
-   String defaultValue();
+   String defaultValue() default Strings.NULL;
 }

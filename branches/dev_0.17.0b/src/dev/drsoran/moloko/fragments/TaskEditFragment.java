@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -37,6 +37,7 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -79,6 +80,16 @@ public class TaskEditFragment extends
       return fragment;
    }
    
+   @InstanceState( key = Config.TASK )
+   private Task task;
+   
+   
+   
+   public TaskEditFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, null );
+   }
+   
    
    
    public static IntentFilter getIntentFilter()
@@ -91,7 +102,7 @@ public class TaskEditFragment extends
    @Override
    protected Bundle getInitialValues()
    {
-      final Task task = getConfiguredTaskAssertNotNull();
+      final Task task = getTaskAssertNotNull();
       
       final Bundle initialValues = new Bundle();
       
@@ -122,7 +133,7 @@ public class TaskEditFragment extends
    @Override
    protected void initializeHeadSection()
    {
-      final Task task = getConfiguredTaskAssertNotNull();
+      final Task task = getTaskAssertNotNull();
       
       defaultInitializeHeadSectionImpl( task );
    }
@@ -147,22 +158,8 @@ public class TaskEditFragment extends
    
    
    
-   @Override
-   public void takeConfigurationFrom( Bundle config )
+   public Task getTaskAssertNotNull()
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TASK ) )
-         configuration.putParcelable( Config.TASK,
-                                      config.getParcelable( Config.TASK ) );
-   }
-   
-   
-   
-   public Task getConfiguredTaskAssertNotNull()
-   {
-      final Task task = configuration.getParcelable( Config.TASK );
-      
       if ( task == null )
          throw new AssertionError( "expected task to be not null" );
       
@@ -178,7 +175,7 @@ public class TaskEditFragment extends
       
       if ( ok )
       {
-         final ModificationSet modifications = createModificationSet( Collections.singletonList( getConfiguredTaskAssertNotNull() ) );
+         final ModificationSet modifications = createModificationSet( Collections.singletonList( getTaskAssertNotNull() ) );
          
          if ( modifications != null && modifications.size() > 0 )
          {
@@ -197,7 +194,7 @@ public class TaskEditFragment extends
       final Bundle config = new Bundle();
       
       config.putString( TaskFragment.Config.TASK_ID,
-                        getConfiguredTaskAssertNotNull().getId() );
+                        getTaskAssertNotNull().getId() );
       
       final TaskFragment fragment = TaskFragment.newInstance( config );
       return fragment;

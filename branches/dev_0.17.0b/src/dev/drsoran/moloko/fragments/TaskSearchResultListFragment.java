@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,7 +28,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -36,6 +36,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -43,10 +44,6 @@ import dev.drsoran.rtm.Task;
 
 public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TaskSearchResultListFragment.class.getSimpleName();
-   
    private final static IntentFilter INTENT_FILTER;
    
    static
@@ -63,10 +60,13 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    
    private ITasksSearchResultListFragmentListener listener;
    
+   @InstanceState( key = Config.QUERY )
+   private String query;
+   
    private boolean queryEvalFailed;
    
    
-
+   
    public static TaskSearchResultListFragment newInstance( Bundle configuration )
    {
       final TaskSearchResultListFragment fragment = new TaskSearchResultListFragment();
@@ -76,10 +76,17 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       return fragment;
    }
    
-
-
+   
+   
+   public TaskSearchResultListFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, null );
+   }
+   
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -89,8 +96,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -98,56 +105,45 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       listener = null;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ) );
    }
    
-
-
-   @Override
-   public void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.QUERY ) )
-         configuration.putString( Config.QUERY, config.getString( Config.QUERY ) );
-   }
    
-
-
+   
    @Override
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   public View onCreateView( LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState )
    {
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       if ( queryEvalFailed )
          showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
-                                                  getConfiguredQueryString() ) ) );
+                                                  getQuery() ) ) );
       else
          super.onViewCreated( view, savedInstanceState );
    }
    
-
-
+   
+   
    @Override
    public void startLoader()
    {
@@ -160,24 +156,24 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       else
       {
          if ( listener != null )
-            listener.onQueryFailed( getConfiguredQueryString() );
+            listener.onQueryFailed( getQuery() );
       }
    }
    
-
-
+   
+   
    @Override
    public IFilter getFilter()
    {
       return getRtmSmartFilter();
    }
    
-
-
+   
+   
    @Override
    public RtmSmartFilter getRtmSmartFilter()
    {
-      RtmSmartFilter filter = new RtmSmartFilter( getConfiguredQueryString() );
+      RtmSmartFilter filter = new RtmSmartFilter( getQuery() );
       
       // Collect tokens for the quick add task fragment
       final String evalQuery = filter.getEvaluatedFilterString( true );
@@ -190,19 +186,19 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       return filter;
    }
    
-
-
+   
+   
    @Override
    public void onLoadFinished( Loader< List< Task >> loader, List< Task > data )
    {
       super.onLoadFinished( loader, data );
       
       if ( listener != null )
-         listener.onQuerySucceeded( getConfiguredQueryString() );
+         listener.onQuerySucceeded( getQuery() );
    }
    
-
-
+   
+   
    private Bundle transformQueryToSmartFilterConfig( Bundle config )
    {
       final RtmSmartFilter filter = getRtmSmartFilter();
@@ -220,10 +216,10 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       return config;
    }
    
-
-
-   private String getConfiguredQueryString()
+   
+   
+   private String getQuery()
    {
-      return configuration.getString( Config.QUERY );
+      return query;
    }
 }

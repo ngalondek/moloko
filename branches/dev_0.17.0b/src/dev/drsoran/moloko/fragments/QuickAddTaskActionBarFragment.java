@@ -1,3 +1,25 @@
+/* 
+ * Copyright (c) 2012 Ronny Röhricht
+ *
+ * This file is part of Moloko.
+ *
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contributors:
+ * Ronny Röhricht - implementation
+ */
+
 package dev.drsoran.moloko.fragments;
 
 import java.util.LinkedList;
@@ -6,7 +28,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -22,13 +44,13 @@ import android.widget.TextView.OnEditorActionListener;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.RtmSmartAddAdapter;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskActionBarFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
@@ -51,11 +73,14 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       public final static String FILTER = "filter";
    }
    
+   private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
+   
    private IQuickAddTaskActionBarFragmentListener listener;
    
    private RtmSmartAddTextView addTaskEdit;
    
-   private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
+   @InstanceState( key = Config.FILTER )
+   private IFilter filter;
    
    
    
@@ -71,7 +96,7 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -86,8 +111,8 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
@@ -138,35 +163,10 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    @Override
    public void onDestroyView()
    {
-      super.onDestroyView();
-      
       hideSoftInput();
       clearEditText();
-   }
-   
-   
-   
-   @Override
-   public void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
       
-      if ( config.containsKey( Config.FILTER ) )
-         configuration.putParcelable( Config.FILTER,
-                                      config.getParcelable( Config.FILTER ) );
-      
-      getArguments().putAll( configuration );
-   }
-   
-   
-   
-   @Override
-   public void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putParcelable( Config.FILTER,
-                            new RtmSmartFilter( Strings.EMPTY_STRING ) );
+      super.onDestroyView();
    }
    
    
@@ -232,7 +232,6 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    
    private RtmSmartFilter getConfiguredRtmSmartFilter()
    {
-      final IFilter filter = configuration.getParcelable( Config.FILTER );
       if ( filter instanceof RtmSmartFilter )
          return (RtmSmartFilter) filter;
       else

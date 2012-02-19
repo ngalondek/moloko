@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItem;
 import android.view.ContextMenu;
@@ -71,7 +71,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
@@ -87,7 +87,6 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
-      
       registerForContextMenu( getListView() );
    }
    
@@ -96,16 +95,16 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
    
    @Override
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   public View onCreateView( LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.contactslist_fragment,
                                                   container,
@@ -176,7 +175,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   protected ListAdapter createEmptyListAdapter()
+   public ListAdapter createEmptyListAdapter()
    {
       return new ContactsListAdapter( getFragmentActivity(),
                                       R.layout.contactslist_activity_listitem,
@@ -186,7 +185,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   protected ListAdapter createListAdapterForResult( List< Contact > result )
+   public ListAdapter createListAdapterForResult( List< Contact > result )
    {
       return new ContactsListAdapter( getFragmentActivity(),
                                       R.layout.contactslist_activity_listitem,
@@ -196,7 +195,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   protected Loader< List< Contact >> newLoaderInstance( int id, Bundle config )
+   public Loader< List< Contact >> newLoaderInstance( int id, Bundle config )
    {
       return new ContactsLoader( getFragmentActivity() );
    }

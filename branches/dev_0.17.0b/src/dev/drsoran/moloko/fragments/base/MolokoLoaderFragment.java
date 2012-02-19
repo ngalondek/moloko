@@ -25,6 +25,7 @@ package dev.drsoran.moloko.fragments.base;
 import java.util.HashMap;
 
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -34,16 +35,16 @@ import dev.drsoran.moloko.fragments.base.impl.LoaderFragmentImpl;
 
 
 public abstract class MolokoLoaderFragment< D > extends MolokoFragment
-         implements LoaderFragmentImpl.Support< D >
+         implements LoaderCallbacks< D >, LoaderFragmentImpl.Support< D >
 
 {
-   private final LoaderFragmentImpl< D > impl;
+   private final LoaderFragmentImpl< D > loaderImpl;
    
    
    
    protected MolokoLoaderFragment()
    {
-      impl = new LoaderFragmentImpl< D >( this );
+      loaderImpl = new LoaderFragmentImpl< D >( this, this, this );
    }
    
    
@@ -52,7 +53,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      impl.onCreate( savedInstanceState );
+      loaderImpl.onCreate( savedInstanceState );
    }
    
    
@@ -61,7 +62,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
-      impl.onAttach( getFragmentActivity() );
+      loaderImpl.onAttach( getFragmentActivity() );
    }
    
    
@@ -69,7 +70,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    @Override
    public void onDetach()
    {
-      impl.onDetach();
+      loaderImpl.onDetach();
       super.onDetach();
    }
    
@@ -92,28 +93,52 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      impl.onViewCreated( view, savedInstanceState );
+      loaderImpl.onViewCreated( view, savedInstanceState );
    }
    
    
    
    public D getLoaderData()
    {
-      return impl.getLoaderData();
+      return loaderImpl.getLoaderData();
    }
    
    
    
    public D getLoaderDataAssertNotNull()
    {
-      return impl.getLoaderDataAssertNotNull();
+      return loaderImpl.getLoaderDataAssertNotNull();
    }
    
    
    
    public boolean isLoaderDataFound()
    {
-      return impl.isLoaderDataFound();
+      return loaderImpl.isLoaderDataFound();
+   }
+   
+   
+   
+   @Override
+   public Loader< D > onCreateLoader( int id, Bundle args )
+   {
+      return loaderImpl.onCreateLoader( id, args );
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< D > loader, D data )
+   {
+      loaderImpl.onLoadFinished( loader, data );
+   }
+   
+   
+   
+   @Override
+   public void onLoaderReset( Loader< D > loader )
+   {
+      loaderImpl.onLoaderReset( loader );
    }
    
    
@@ -122,21 +147,21 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      impl.onSettingsChanged( which, oldValues );
+      loaderImpl.onSettingsChanged( which, oldValues );
    }
    
    
    
    public final void setRespectContentChanges( boolean respect )
    {
-      impl.setRespectContentChanges( respect );
+      loaderImpl.setRespectContentChanges( respect );
    }
    
    
    
    public final boolean isRespectingContentChanges()
    {
-      return impl.isRespectingContentChanges();
+      return loaderImpl.isRespectingContentChanges();
    }
    
    

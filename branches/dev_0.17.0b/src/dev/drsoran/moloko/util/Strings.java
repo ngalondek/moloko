@@ -30,6 +30,8 @@ public final class Strings
 {
    public final static String EMPTY_STRING = "";
    
+   public final static String NULL = "null";
+   
    
    
    private Strings()
@@ -76,7 +78,12 @@ public final class Strings
    
    public final static Object convertTo( String value, Class< ? > valueClass )
    {
-      if ( valueClass == String.class )
+      if ( value.equalsIgnoreCase( NULL ) )
+      {
+         return null;
+      }
+      
+      else if ( valueClass == String.class )
       {
          return value;
       }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -35,19 +35,19 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.loaders.RtmTaskNoteLoader;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 
 
 public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          IEditableFragment< NoteFragment >
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + NoteFragment.class.getSimpleName();
+   private final static int NOTE_LOADER_ID = 1;
    
    
    public static class Config
@@ -55,10 +55,11 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       public final static String NOTE_ID = "note_id";
    }
    
-   private final static int NOTE_LOADER_ID = 1;
+   @InstanceState( key = Config.NOTE_ID, defaultValue = Strings.EMPTY_STRING )
+   private String noteId;
    
    
-
+   
    public final static NoteFragment newInstance( Bundle config )
    {
       final NoteFragment fragment = new NoteFragment();
@@ -68,8 +69,15 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       return fragment;
    }
    
-
-
+   
+   
+   public NoteFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, null );
+   }
+   
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -82,8 +90,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void initContent( ViewGroup container )
    {
@@ -101,34 +109,22 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
    }
    
-
-
-   @Override
-   public void takeConfigurationFrom( Bundle config )
+   
+   
+   public String getNoteId()
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.NOTE_ID ) )
-         configuration.putString( Config.NOTE_ID,
-                                  config.getString( Config.NOTE_ID ) );
+      return noteId;
    }
    
-
-
-   public String getConfiguredNoteId()
-   {
-      return configuration.getString( Config.NOTE_ID );
-   }
    
-
-
+   
    public RtmTaskNote getNote()
    {
       return getLoaderData();
    }
    
-
-
+   
+   
    @Override
    public Loader< RtmTaskNote > newLoaderInstance( int id, Bundle args )
    {
@@ -136,24 +132,24 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
                                     args.getString( Config.NOTE_ID ) );
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_note );
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
       return NOTE_LOADER_ID;
    }
    
-
-
+   
+   
    @Override
    public boolean canBeEdited()
    {
@@ -161,8 +157,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          && AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-
-
+   
+   
    @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {
@@ -175,6 +171,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          return fragment;
       }
       else
+      {
          return null;
+      }
    }
 }

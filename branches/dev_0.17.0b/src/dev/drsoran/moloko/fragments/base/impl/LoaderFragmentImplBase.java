@@ -34,8 +34,7 @@ import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 
 
-public abstract class LoaderFragmentImplBase< D > implements
-         LoaderCallbacks< D >
+abstract class LoaderFragmentImplBase< D >
 {
    protected static interface Support< D >
    {
@@ -52,6 +51,8 @@ public abstract class LoaderFragmentImplBase< D > implements
    
    private final Fragment fragment;
    
+   private final LoaderCallbacks< D > loaderCallbacks;
+   
    private final IConfigurable config;
    
    private final Support< D > support;
@@ -64,9 +65,11 @@ public abstract class LoaderFragmentImplBase< D > implements
    
    
    @SuppressWarnings( "unchecked" )
-   protected LoaderFragmentImplBase( Fragment fragment, IConfigurable config )
+   protected LoaderFragmentImplBase( Fragment fragment,
+      LoaderCallbacks< D > loaderCallbacks, IConfigurable config )
    {
       this.fragment = fragment;
+      this.loaderCallbacks = loaderCallbacks;
       this.config = config;
       this.support = (Support< D >) fragment;
    }
@@ -120,7 +123,6 @@ public abstract class LoaderFragmentImplBase< D > implements
    
    
    
-   @Override
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
       final Loader< D > loader = support.newLoaderInstance( id, args );
@@ -135,7 +137,6 @@ public abstract class LoaderFragmentImplBase< D > implements
    
    
    
-   @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
       loaderListener.onFragmentLoadFinished( fragment.getId(),
@@ -145,7 +146,6 @@ public abstract class LoaderFragmentImplBase< D > implements
    
    
    
-   @Override
    public void onLoaderReset( Loader< D > loader )
    {
    }
@@ -163,6 +163,6 @@ public abstract class LoaderFragmentImplBase< D > implements
    {
       fragment.getLoaderManager().initLoader( support.getLoaderId(),
                                               config,
-                                              this );
+                                              loaderCallbacks );
    }
 }

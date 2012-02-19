@@ -369,7 +369,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       
       if ( fragment instanceof TaskEditFragment )
       {
-         task = ( (TaskEditFragment) fragment ).getConfiguredTaskAssertNotNull();
+         task = ( (TaskEditFragment) fragment ).getTaskAssertNotNull();
       }
       else if ( fragment instanceof TaskFragment )
       {
@@ -401,7 +401,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       
       if ( fragment instanceof NoteEditFragment )
       {
-         note = ( (NoteEditFragment) fragment ).getConfiguredNoteAssertNotNull();
+         note = ( (NoteEditFragment) fragment ).getNoteAssertNotNull();
       }
       else if ( fragment instanceof NoteFragment )
       {

@@ -1,5 +1,7 @@
 package dev.drsoran.moloko.util;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.os.Parcelable;
 
@@ -56,6 +58,20 @@ public final class Bundles
       else if ( valueClass == Double.class )
       {
          bundle.putDouble( key, Double.class.cast( value ) );
+         return;
+      }
+      
+      else if ( valueClass == ArrayList.class )
+      {
+         @SuppressWarnings( "unchecked" )
+         ArrayList< String > cast = ArrayList.class.cast( value );
+         bundle.putStringArrayList( key, cast );
+         return;
+      }
+      
+      else if ( valueClass == boolean[].class )
+      {
+         bundle.putBooleanArray( key, boolean[].class.cast( value ) );
          return;
       }
       

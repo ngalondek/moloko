@@ -38,6 +38,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -53,6 +54,9 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    {
       public final static String NOTE = "note";
    }
+   
+   @InstanceState( key = Config.NOTE )
+   private RtmTaskNote note;
    
    private EditText title;
    
@@ -83,7 +87,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       title = (EditText) fragmentView.findViewById( R.id.note_edit_title );
       text = (EditText) fragmentView.findViewById( R.id.note_edit_text );
       
-      showNote( fragmentView, getConfiguredNoteAssertNotNull() );
+      showNote( fragmentView, getNoteAssertNotNull() );
       
       return fragmentView;
    }
@@ -95,18 +99,6 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    {
       super.onViewCreated( view, savedInstanceState );
       text.requestFocus();
-   }
-   
-   
-   
-   @Override
-   public void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.NOTE ) )
-         configuration.putParcelable( Config.NOTE,
-                                      config.getParcelable( Config.NOTE ) );
    }
    
    
@@ -138,10 +130,8 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    
    
    
-   public RtmTaskNote getConfiguredNoteAssertNotNull()
+   public RtmTaskNote getNoteAssertNotNull()
    {
-      final RtmTaskNote note = configuration.getParcelable( Config.NOTE );
-      
       if ( note == null )
          throw new IllegalStateException( "note must not be null" );
       
@@ -153,7 +143,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    @Override
    public boolean hasChanges()
    {
-      final RtmTaskNote note = getConfiguredNoteAssertNotNull();
+      final RtmTaskNote note = getNoteAssertNotNull();
       
       return SyncUtils.hasChanged( Strings.nullIfEmpty( note.getTitle() ),
                                    Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ) )
@@ -182,7 +172,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       }
       else
       {
-         final RtmTaskNote note = getConfiguredNoteAssertNotNull();
+         final RtmTaskNote note = getNoteAssertNotNull();
          final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.setNoteTitleAndText( getFragmentActivity(),
                                                                                                                           note.getId(),
                                                                                                                           title,
@@ -201,7 +191,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       final Bundle config = new Bundle();
       
       config.putString( NoteFragment.Config.NOTE_ID,
-                        getConfiguredNoteAssertNotNull().getId() );
+                        getNoteAssertNotNull().getId() );
       
       final NoteFragment fragment = NoteFragment.newInstance( config );
       return fragment;

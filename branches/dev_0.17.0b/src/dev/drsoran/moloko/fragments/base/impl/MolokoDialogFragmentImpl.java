@@ -25,6 +25,7 @@ package dev.drsoran.moloko.fragments.base.impl;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.SupportActivity;
+import android.view.ViewGroup;
 
 
 public class MolokoDialogFragmentImpl
@@ -100,5 +101,12 @@ public class MolokoDialogFragmentImpl
    public void clearConfiguration()
    {
       impl.setDefaultConfiguration();
+   }
+   
+   
+   
+   public ViewGroup getContentView()
+   {
+      return impl.getContentView();
    }
 }

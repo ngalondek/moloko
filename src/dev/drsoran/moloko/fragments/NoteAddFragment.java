@@ -98,7 +98,16 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    public NoteAddFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this, NoteAddFragment.class, null );
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      configure( savedInstanceState );
    }
    
    

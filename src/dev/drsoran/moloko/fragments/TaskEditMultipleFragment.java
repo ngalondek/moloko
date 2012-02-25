@@ -42,7 +42,9 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.util.Bundles;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -73,7 +75,8 @@ public class TaskEditMultipleFragment extends
    
    public static class Config
    {
-      public final static String TASKS = "tasks";
+      public final static String TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
+         + "tasks";
    }
    
    /**
@@ -83,12 +86,15 @@ public class TaskEditMultipleFragment extends
     */
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
    
+   @InstanceState( key = Config.TASKS )
+   private ArrayList< Task > tasks = new ArrayList< Task >();
+   
    
    
    @Override
    protected Bundle getInitialValues()
    {
-      final List< Task > tasks = getConfiguredTasksAssertNotNull();
+      final List< Task > tasks = getTasksAssertNotNull();
       
       joinAttributes( tasks );
       
@@ -190,7 +196,7 @@ public class TaskEditMultipleFragment extends
    
    
    @Override
-   protected void initContent( ViewGroup content )
+   public void initContent( ViewGroup content )
    {
       super.initContent( content );
       
@@ -201,7 +207,7 @@ public class TaskEditMultipleFragment extends
          
          if ( nameEditText instanceof AutoCompleteTextView )
          {
-            final List< Task > tasks = getConfiguredTasksAssertNotNull();
+            final List< Task > tasks = getTasksAssertNotNull();
             final Set< String > names = new HashSet< String >( tasks.size() );
             
             for ( Task task : tasks )
@@ -231,7 +237,7 @@ public class TaskEditMultipleFragment extends
    @Override
    protected void initializeHeadSection()
    {
-      final List< Task > tasks = getConfiguredTasksAssertNotNull();
+      final List< Task > tasks = getTasksAssertNotNull();
       
       if ( !isMultiTask() && tasks.size() > 0 )
       {
@@ -339,22 +345,8 @@ public class TaskEditMultipleFragment extends
    
    
    
-   @Override
-   public void takeConfigurationFrom( Bundle config )
+   public List< Task > getTasksAssertNotNull()
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TASKS ) )
-         configuration.putParcelableArrayList( Config.TASKS,
-                                               config.getParcelableArrayList( Config.TASKS ) );
-   }
-   
-   
-   
-   public List< Task > getConfiguredTasksAssertNotNull()
-   {
-      final List< Task > tasks = configuration.getParcelableArrayList( Config.TASKS );
-      
       if ( tasks == null )
          throw new AssertionError( "expected tasks to be not null" );
       
@@ -381,7 +373,7 @@ public class TaskEditMultipleFragment extends
       
       if ( ok )
       {
-         final ModificationSet modifications = createModificationSet( getConfiguredTasksAssertNotNull() );
+         final ModificationSet modifications = createModificationSet( getTasksAssertNotNull() );
          
          if ( modifications != null && modifications.size() > 0 )
          {
@@ -475,6 +467,6 @@ public class TaskEditMultipleFragment extends
    
    private final boolean isMultiTask()
    {
-      return getConfiguredTasksAssertNotNull().size() > 1;
+      return getTasksAssertNotNull().size() > 1;
    }
 }

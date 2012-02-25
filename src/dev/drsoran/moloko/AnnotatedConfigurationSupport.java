@@ -42,9 +42,18 @@ public class AnnotatedConfigurationSupport
    
    
    
-   public void registerInstance( Object instance, Bundle instanceState )
+   public < T > void registerInstance( T instance, Class< T > clazz )
    {
-      createAnnotatedInstanceStateFor( instance );
+      registerInstance( instance, clazz, null );
+   }
+   
+   
+   
+   public < T > void registerInstance( T instance,
+                                       Class< T > clazz,
+                                       Bundle instanceState )
+   {
+      createAnnotatedInstanceStateFor( instance, clazz );
       
       if ( instanceState != null )
       {
@@ -60,9 +69,12 @@ public class AnnotatedConfigurationSupport
    
    public void onSaveInstanceStates( Bundle outState )
    {
-      for ( Object instance : registeredInstances.keySet() )
+      if ( registeredInstances != null )
       {
-         onSaveInstanceState( instance, outState );
+         for ( Object instance : registeredInstances.keySet() )
+         {
+            onSaveInstanceState( instance, outState );
+         }
       }
    }
    
@@ -78,9 +90,12 @@ public class AnnotatedConfigurationSupport
    
    public void onRestoreInstanceStates( Bundle state )
    {
-      for ( Object instance : registeredInstances.keySet() )
+      if ( registeredInstances != null )
       {
-         onRestoreInstanceState( instance, state );
+         for ( Object instance : registeredInstances.keySet() )
+         {
+            onRestoreInstanceState( instance, state );
+         }
       }
    }
    
@@ -96,9 +111,12 @@ public class AnnotatedConfigurationSupport
    public Bundle getInstanceStates()
    {
       final Bundle mergedState = new Bundle();
-      for ( Object instance : registeredInstances.keySet() )
+      if ( registeredInstances != null )
       {
-         mergedState.putAll( getInstanceState( instance ) );
+         for ( Object instance : registeredInstances.keySet() )
+         {
+            mergedState.putAll( getInstanceState( instance ) );
+         }
       }
       
       return mergedState;
@@ -108,15 +126,18 @@ public class AnnotatedConfigurationSupport
    
    public Bundle getInstanceState( Object instance )
    {
-      final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
-      final Bundle instanceState = new Bundle( annotatedFields.size() );
+      final Bundle instanceState = new Bundle();
       
-      for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+      if ( registeredInstances != null )
       {
-         getValue( instance,
-                   instanceState,
-                   annotatedField.first,
-                   annotatedField.second.key() );
+         final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
+         for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+         {
+            getValue( instance,
+                      instanceState,
+                      annotatedField.first,
+                      annotatedField.second.key() );
+         }
       }
       
       return instanceState;
@@ -126,9 +147,12 @@ public class AnnotatedConfigurationSupport
    
    public void setInstanceStates( Bundle instanceState )
    {
-      for ( Object instance : registeredInstances.keySet() )
+      if ( registeredInstances != null )
       {
-         setInstanceState( instance, instanceState );
+         for ( Object instance : registeredInstances.keySet() )
+         {
+            setInstanceState( instance, instanceState );
+         }
       }
    }
    
@@ -136,13 +160,16 @@ public class AnnotatedConfigurationSupport
    
    public void setInstanceState( Object instance, Bundle instanceState )
    {
-      final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
-      for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+      if ( registeredInstances != null )
       {
-         setValue( instance,
-                   instanceState,
-                   annotatedField.first,
-                   annotatedField.second.key() );
+         final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
+         for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+         {
+            setValue( instance,
+                      instanceState,
+                      annotatedField.first,
+                      annotatedField.second.key() );
+         }
       }
    }
    
@@ -150,9 +177,12 @@ public class AnnotatedConfigurationSupport
    
    public void setDefaultInstanceStates()
    {
-      for ( Object instance : registeredInstances.keySet() )
+      if ( registeredInstances != null )
       {
-         setDefaultInstanceState( instance );
+         for ( Object instance : registeredInstances.keySet() )
+         {
+            setDefaultInstanceState( instance );
+         }
       }
    }
    
@@ -160,16 +190,62 @@ public class AnnotatedConfigurationSupport
    
    public void setDefaultInstanceState( Object instance )
    {
-      final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
-      
-      for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+      if ( registeredInstances != null )
       {
-         final Field fieldToSet = annotatedField.first;
+         final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
          
-         setInstaceFieldValue( instance,
-                               fieldToSet,
-                               Strings.convertTo( annotatedField.second.defaultValue(),
-                                                  fieldToSet.getType() ) );
+         for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+         {
+            final InstanceState annotation = annotatedField.second;
+            
+            if ( !annotation.defaultValue()
+                            .equalsIgnoreCase( InstanceState.NO_DEFAULT ) )
+            {
+               final Field fieldToSet = annotatedField.first;
+               final Object defaultValue = getDefaultValueInstance( fieldToSet,
+                                                                    annotation );
+               
+               setInstaceFieldValue( instance, fieldToSet, defaultValue );
+            }
+         }
+      }
+   }
+   
+   
+   
+   private static Object getDefaultValueInstance( Field field,
+                                                  InstanceState annotation )
+   {
+      final String defaultValue = annotation.defaultValue();
+      final Class< ? > defaultValueType = field.getType();
+      
+      if ( defaultValue.equalsIgnoreCase( InstanceState.NULL ) )
+      {
+         return null;
+      }
+      
+      else if ( defaultValue.equalsIgnoreCase( InstanceState.NEW ) )
+      {
+         try
+         {
+            return defaultValueType.newInstance();
+         }
+         catch ( InstantiationException e )
+         {
+            throw new RuntimeException( String.format( "$s could not be instantiated.",
+                                                       defaultValueType.getName() ),
+                                        e );
+         }
+         catch ( IllegalAccessException e )
+         {
+            throw new RuntimeException( String.format( "$s could not be instantiated.",
+                                                       defaultValueType.getName() ),
+                                        e );
+         }
+      }
+      else
+      {
+         return Strings.convertTo( defaultValue, defaultValueType );
       }
    }
    
@@ -182,14 +258,16 @@ public class AnnotatedConfigurationSupport
    
    
    
-   private List< Pair< Field, InstanceState >> createAnnotatedInstanceStateFor( Object instance )
+   private < T > List< Pair< Field, InstanceState >> createAnnotatedInstanceStateFor( T instance,
+                                                                                      Class< T > clazz )
    {
       if ( registeredInstances == null )
       {
          registeredInstances = new HashMap< Object, List< Pair< Field, InstanceState >> >();
       }
       
-      final List< Pair< Field, InstanceState >> annotatedInstanceState = collectAnnotatedFields( instance );
+      final List< Pair< Field, InstanceState >> annotatedInstanceState = collectAnnotatedFields( instance,
+                                                                                                 clazz );
       registeredInstances.put( instance, annotatedInstanceState );
       
       return annotatedInstanceState;
@@ -224,9 +302,12 @@ public class AnnotatedConfigurationSupport
    
    private Object getInstanceFieldValue( Object instance, Field field )
    {
+      final boolean access = field.isAccessible();
       try
       {
-         return field.get( instance );
+         field.setAccessible( true );
+         final Object value = field.get( instance );
+         return value;
       }
       catch ( IllegalArgumentException e )
       {
@@ -242,14 +323,20 @@ public class AnnotatedConfigurationSupport
                 e );
          throw new RuntimeException( e );
       }
+      finally
+      {
+         field.setAccessible( access );
+      }
    }
    
    
    
    private void setInstaceFieldValue( Object instance, Field field, Object value )
    {
+      final boolean access = field.isAccessible();
       try
       {
+         field.setAccessible( true );
          field.set( instance, value );
       }
       catch ( IllegalArgumentException e )
@@ -266,15 +353,20 @@ public class AnnotatedConfigurationSupport
                 e );
          throw new RuntimeException( e );
       }
+      finally
+      {
+         field.setAccessible( access );
+      }
    }
    
    
    
-   private List< Pair< Field, InstanceState >> collectAnnotatedFields( Object instance )
+   private < T > List< Pair< Field, InstanceState >> collectAnnotatedFields( T instance,
+                                                                             Class< T > clazz )
    {
       final List< Pair< Field, InstanceState >> annotatedFields = new ArrayList< Pair< Field, InstanceState > >();
       
-      for ( Field field : instance.getClass().getFields() )
+      for ( Field field : clazz.getDeclaredFields() )
       {
          final InstanceState instanceStateAnnotation = field.getAnnotation( InstanceState.class );
          

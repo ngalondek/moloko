@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -29,8 +29,6 @@ import android.text.TextUtils;
 public final class Strings
 {
    public final static String EMPTY_STRING = "";
-   
-   public final static String NULL = "null";
    
    
    
@@ -78,37 +76,32 @@ public final class Strings
    
    public final static Object convertTo( String value, Class< ? > valueClass )
    {
-      if ( value.equalsIgnoreCase( NULL ) )
-      {
-         return null;
-      }
-      
-      else if ( valueClass == String.class )
+      if ( valueClass == String.class )
       {
          return value;
       }
       
-      else if ( valueClass == Long.class )
+      else if ( valueClass == Long.class || valueClass == long.class )
       {
          return Long.parseLong( value );
       }
       
-      else if ( valueClass == Integer.class )
+      else if ( valueClass == Integer.class || valueClass == int.class )
       {
          return Integer.parseInt( value );
       }
       
-      else if ( valueClass == Boolean.class )
+      else if ( valueClass == Boolean.class || valueClass == boolean.class )
       {
          return Boolean.parseBoolean( value );
       }
       
-      else if ( valueClass == Float.class )
+      else if ( valueClass == Float.class || valueClass == float.class )
       {
          return Float.parseFloat( value );
       }
       
-      else if ( valueClass == Double.class )
+      else if ( valueClass == Double.class || valueClass == double.class )
       {
          return Double.parseDouble( value );
       }

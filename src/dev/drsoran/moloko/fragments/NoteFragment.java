@@ -73,7 +73,16 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    
    public NoteFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this, NoteFragment.class, null );
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      configure( savedInstanceState );
    }
    
    

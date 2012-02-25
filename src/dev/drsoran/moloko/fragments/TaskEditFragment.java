@@ -87,7 +87,7 @@ public class TaskEditFragment extends
    
    public TaskEditFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this, TaskEditFragment.class );
    }
    
    

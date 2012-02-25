@@ -116,10 +116,11 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    
    
    
-   public void registerAnnotatedConfiguredInstance( Object instance,
-                                                    Bundle initialState )
+   public < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                          Class< T > clazz,
+                                                          Bundle initialConfig )
    {
-      annotatedConfigSupport.registerInstance( instance, initialState );
+      annotatedConfigSupport.registerInstance( instance, clazz, initialConfig );
    }
    
    

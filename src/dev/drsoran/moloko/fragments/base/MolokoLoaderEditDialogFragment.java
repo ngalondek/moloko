@@ -107,6 +107,27 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    
    
    
+   public D getLoaderData()
+   {
+      return loaderImpl.getLoaderData();
+   }
+   
+   
+   
+   public D getLoaderDataAssertNotNull()
+   {
+      return loaderImpl.getLoaderDataAssertNotNull();
+   }
+   
+   
+   
+   public boolean isLoaderDataFound()
+   {
+      return loaderImpl.isLoaderDataFound();
+   }
+   
+   
+   
    @Override
    public Loader< D > onCreateLoader( int id, Bundle args )
    {

@@ -67,21 +67,13 @@ public class LoaderExpandableListFragmentImpl< D > extends
    
    
    
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      if ( support.getExpandableListAdapter() == null )
-         startLoader();
-   }
-   
-   
-   
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       if ( support.getExpandableListAdapter() == null )
+      {
+         startLoader();
          showLoadingSpinner( true );
+      }
    }
    
    

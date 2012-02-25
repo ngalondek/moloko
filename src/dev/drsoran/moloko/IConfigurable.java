@@ -28,8 +28,9 @@ import android.os.Bundle;
 public interface IConfigurable
 {
    
-   void registerAnnotatedConfiguredInstance( Object instance,
-                                             Bundle initialState );
+   < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                   Class< T > clazz,
+                                                   Bundle initialState );
    
    
    

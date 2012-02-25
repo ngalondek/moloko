@@ -78,7 +78,9 @@ abstract class LoaderFragmentImplBase< D >
    
    public void onCreate( Bundle savedInstanceState )
    {
-      config.registerAnnotatedConfiguredInstance( this, savedInstanceState );
+      config.registerAnnotatedConfiguredInstance( this,
+                                                  LoaderFragmentImplBase.class,
+                                                  savedInstanceState );
    }
    
    

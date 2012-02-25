@@ -80,7 +80,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    
    public TaskSearchResultListFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this,
+                                           TaskSearchResultListFragment.class );
    }
    
    

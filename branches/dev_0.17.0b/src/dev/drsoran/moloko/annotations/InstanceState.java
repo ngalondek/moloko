@@ -27,16 +27,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dev.drsoran.moloko.util.Strings;
-
 
 @Retention( value = RetentionPolicy.RUNTIME )
 @Target( value = ElementType.FIELD )
 public @interface InstanceState
 {
+   public final static String NEW = "new";
+   
+   public final static String NULL = "null";
+   
+   public final static String NO_DEFAULT = "no_default";
+   
+   
+   
    String key();
    
    
    
-   String defaultValue() default Strings.NULL;
+   String defaultValue() default NO_DEFAULT;
 }

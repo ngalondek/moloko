@@ -79,10 +79,11 @@ public class MolokoListFragmentImpl
    
    
    
-   public void registerAnnotatedConfiguredInstance( Object instance,
-                                                    Bundle initialState )
+   public < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                          Class< T > clazz,
+                                                          Bundle initialConfig )
    {
-      impl.registerAnnotatedConfiguredInstance( instance, initialState );
+      impl.registerAnnotatedConfiguredInstance( instance, clazz, initialConfig );
    }
    
    

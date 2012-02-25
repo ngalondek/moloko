@@ -170,7 +170,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    
    public TaskAddFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this, TaskAddFragment.class );
    }
    
    
@@ -186,8 +186,14 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       checkCreatedDate();
+   }
+   
+   
+   
+   @Override
+   protected Bundle getInitialValues()
+   {
       determineListId();
       determineLocationId();
       
@@ -201,13 +207,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
          if ( listId == null )
             listId = lastRemovedListId;
       }
-   }
-   
-   
-   
-   @Override
-   protected Bundle getInitialValues()
-   {
+      
       final Bundle initialValues = new Bundle();
       
       initialValues.putString( Tasks.TASKSERIES_NAME, taskName );
@@ -265,7 +265,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    
    private Uri getNewTaskUri()
    {
-      return Uri.parse( url );
+      return Uri.parse( Strings.emptyIfNull( url ) );
    }
    
    
@@ -328,17 +328,21 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    {
       String listId = null;
       
-      final List< Pair< String, String > > listIdsToName = getLoaderDataAssertNotNull().getListIdsToListNames();
-      
-      for ( Iterator< String > i = tags.iterator(); i.hasNext(); )
+      if ( tags.size() > 0 )
       {
-         final String tag = i.next();
-         // Check if the tag is a list name
-         listId = getIdByName( listIdsToName, tag );
+         final List< Pair< String, String > > listIdsToName = getLoaderDataAssertNotNull().getListIdsToListNames();
          
-         if ( listId != null )
-            i.remove();
+         for ( Iterator< String > i = tags.iterator(); i.hasNext(); )
+         {
+            final String tag = i.next();
+            // Check if the tag is a list name
+            listId = getIdByName( listIdsToName, tag );
+            
+            if ( listId != null )
+               i.remove();
+         }
       }
+      
       return listId;
    }
    

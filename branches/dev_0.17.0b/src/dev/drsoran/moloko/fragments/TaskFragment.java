@@ -133,6 +133,13 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
+   public TaskFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, TaskFragment.class );
+   }
+   
+   
+   
    @Override
    public void onAttach( SupportActivity activity )
    {

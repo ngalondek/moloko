@@ -103,9 +103,10 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected AbstractTasksListFragment()
+   public AbstractTasksListFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this,
+                                           AbstractTasksListFragment.class );
    }
    
    

@@ -39,6 +39,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.QuickAddTaskActionBarSwitcher;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
@@ -81,13 +82,29 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private RtmListWithTaskCount loadedListWithTaskCount;
    
+   @InstanceState( key = Config.TITLE, defaultValue = Strings.EMPTY_STRING )
+   private String title;
+   
+   @InstanceState( key = Config.SUB_TITLE, defaultValue = InstanceState.NULL )
+   private String subTitle;
+   
+   @InstanceState( key = Config.LIST_NAME, defaultValue = InstanceState.NULL )
+   private String listName;
+   
+   
+   
+   protected AbstractTasksListActivity()
+   {
+      registerAnnotatedConfiguredInstance( this,
+                                           AbstractTasksListActivity.class );
+   }
+   
    
    
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       setContentView( R.layout.taskslist_activity );
       
       quickAddTaskActionBarSwitcher = new QuickAddTaskActionBarSwitcher( this,
@@ -95,7 +112,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       initializeActionBar();
       
       if ( savedInstanceState == null )
-         initTasksListWithConfiguration( getIntent(), configuration );
+         initTasksListWithConfiguration( getIntent(), getConfiguration() );
    }
    
    
@@ -137,7 +154,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private void setTitleAndNavigationMode()
    {
-      getSupportActionBar().setTitle( getConfiguredTitle() );
+      getSupportActionBar().setTitle( getActivityTitle() );
       getSupportActionBar().setSubtitle( getConfiguredSubTitle() );
       setActionBarNavigationMode();
    }
@@ -169,33 +186,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       {
          setDropDownNavigationMode( null );
       }
-   }
-   
-   
-   
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TITLE ) )
-         configuration.putString( Config.TITLE, config.getString( Config.TITLE ) );
-      if ( config.containsKey( Config.SUB_TITLE ) )
-         configuration.putString( Config.SUB_TITLE,
-                                  config.getString( Config.SUB_TITLE ) );
-      if ( config.containsKey( Config.LIST_NAME ) )
-         configuration.putString( Config.LIST_NAME,
-                                  config.getString( Config.LIST_NAME ) );
-   }
-   
-   
-   
-   @Override
-   public void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putString( Config.TITLE, getString( R.string.app_name ) );
    }
    
    
@@ -254,23 +244,22 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   protected String getConfiguredListName()
+   protected String getListName()
    {
-      return configuration.getString( Config.LIST_NAME );
+      return listName;
    }
    
    
    
-   protected void configuredTitle( String title )
+   protected void setActivityTitle( String title )
    {
-      configuration.putString( Config.TITLE, title );
+      this.title = title;
    }
    
    
    
-   protected String getConfiguredTitle()
+   protected String getActivityTitle()
    {
-      final String title = configuration.getString( Config.TITLE );
       return !TextUtils.isEmpty( title ) ? title
                                         : getString( R.string.app_name );
    }
@@ -279,14 +268,14 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    protected String getConfiguredSubTitle()
    {
-      return Strings.nullIfEmpty( configuration.getString( Config.SUB_TITLE ) );
+      return Strings.nullIfEmpty( subTitle );
    }
    
    
    
    protected boolean isConfiguredWithListName()
    {
-      return !TextUtils.isEmpty( getConfiguredListName() );
+      return !TextUtils.isEmpty( getListName() );
    }
    
    
@@ -365,7 +354,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       {
          setDropDownNavigationMode( createActionBarNavigationAdapterForResult( data ) );
          
-         final String configuredListName = Strings.emptyIfNull( getConfiguredListName() );
+         final String configuredListName = Strings.emptyIfNull( getListName() );
          
          int pos = -1;
          for ( int i = 0, cnt = data.size(); i < cnt && pos == -1; i++ )
@@ -404,7 +393,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       
       final String item = (String) actionBarNavigationAdapter.getItem( itemPosition );
       
-      if ( !item.equalsIgnoreCase( getConfiguredListName() ) )
+      if ( !item.equalsIgnoreCase( getListName() ) )
       {
          final Bundle newConfig = getCurrentActivityAndFragmentsConfiguration();
          newConfig.putAll( Intents.Extras.createOpenListExtrasByName( this,

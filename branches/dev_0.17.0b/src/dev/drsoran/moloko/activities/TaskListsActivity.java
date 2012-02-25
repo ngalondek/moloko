@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -34,6 +34,7 @@ import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
@@ -64,13 +65,22 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       public final static int ADD_LIST = R.id.menu_add_list;
    }
    
+   @InstanceState( key = Config.LIST_TO_DELETE, defaultValue = InstanceState.NULL )
+   private RtmList listToDelete;
+   
+   
+   
+   public TaskListsActivity()
+   {
+      registerAnnotatedConfiguredInstance( this, TaskListsActivity.class );
+   }
+   
    
    
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       setContentView( R.layout.tasklists_activity );
    }
    
@@ -125,18 +135,6 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    
    @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.LIST_TO_DELETE ) )
-         configuration.putParcelable( Config.LIST_TO_DELETE,
-                                      config.getParcelable( Config.LIST_TO_DELETE ) );
-   }
-   
-   
-   
-   @Override
    public void openList( int pos )
    {
       final RtmListWithTaskCount rtmList = getRtmList( pos );
@@ -183,7 +181,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    public void deleteList( int pos )
    {
       final RtmListWithTaskCount list = getRtmList( pos );
-      setConfiguredListToDelete( list.getRtmList() );
+      setListToDelete( list.getRtmList() );
       
       UIUtils.showDeleteElementDialog( this, list.getName() );
    }
@@ -251,28 +249,25 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       if ( which == Dialog.BUTTON_POSITIVE )
       {
          Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.deleteList( this,
-                                                                                                              getConfiguredListToDelete() );
+                                                                                                              getListToDelete() );
          applyModifications( modifications );
       }
       
-      setConfiguredListToDelete( null );
+      setListToDelete( null );
    }
    
    
    
-   private RtmList getConfiguredListToDelete()
+   private RtmList getListToDelete()
    {
-      return configuration.getParcelable( Config.LIST_TO_DELETE );
+      return listToDelete;
    }
    
    
    
-   private void setConfiguredListToDelete( RtmList listToDelete )
+   private void setListToDelete( RtmList listToDelete )
    {
-      if ( listToDelete == null )
-         configuration.remove( Config.LIST_TO_DELETE );
-      else
-         configuration.putParcelable( Config.LIST_TO_DELETE, listToDelete );
+      this.listToDelete = listToDelete;
    }
    
    

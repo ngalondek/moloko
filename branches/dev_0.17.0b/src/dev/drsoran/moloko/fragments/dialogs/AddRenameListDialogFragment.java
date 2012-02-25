@@ -90,7 +90,8 @@ public class AddRenameListDialogFragment extends
    
    public AddRenameListDialogFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this,
+                                           AddRenameListDialogFragment.class );
    }
    
    

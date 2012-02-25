@@ -49,6 +49,15 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    
    
    @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      impl.onCreate( savedInstanceState );
+   }
+   
+   
+   
+   @Override
    public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
@@ -92,10 +101,19 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    
    
    @Override
-   public final void registerAnnotatedConfiguredInstance( Object instance,
-                                                          Bundle initialState )
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz,
+                                                                Bundle initialConfig )
    {
-      impl.registerAnnotatedConfiguredInstance( instance, initialState );
+      impl.registerAnnotatedConfiguredInstance( instance, clazz, initialConfig );
+   }
+   
+   
+   
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz )
+   {
+      registerAnnotatedConfiguredInstance( instance, clazz, null );
    }
    
    

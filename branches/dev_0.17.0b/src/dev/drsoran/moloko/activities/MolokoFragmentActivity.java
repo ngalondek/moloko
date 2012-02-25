@@ -40,6 +40,7 @@ import android.view.View;
 
 import com.mdt.rtm.data.RtmAuth;
 
+import dev.drsoran.moloko.AnnotatedConfigurationSupport;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.ISyncStatusListener;
@@ -61,9 +62,9 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       public final static int ADD_ACCOUNT = 1;
    }
    
-   protected final Handler handler = new Handler();
+   private final AnnotatedConfigurationSupport annotatedConfigSupport = new AnnotatedConfigurationSupport();
    
-   protected Bundle configuration;
+   private final Handler handler = new Handler();
    
    private boolean ignoreAccountListenerAfterRegister = true;
    
@@ -93,7 +94,6 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    public View onCreateView( String name, Context context, AttributeSet attrs )
    {
       initializeSyncingProgressIndicator();
-      
       return super.onCreateView( name, context, attrs );
    }
    
@@ -137,12 +137,12 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    @Override
    protected void onDestroy()
    {
-      super.onDestroy();
-      
       AccountUtils.unregisterAccountListener( this, this );
       
       MolokoApp.getNotifierContext( this )
                .unregisterSyncStatusChangedListener( this );
+      
+      super.onDestroy();
    }
    
    
@@ -151,7 +151,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      outState.putAll( getConfiguration() );
+      annotatedConfigSupport.onSaveInstanceStates( outState );
    }
    
    
@@ -159,8 +159,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
+      annotatedConfigSupport.onRestoreInstanceStates( state );
       super.onRestoreInstanceState( state );
-      configure( state );
    }
    
    
@@ -209,9 +209,27 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
    
    @Override
+   public < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                          Class< T > clazz,
+                                                          Bundle initialConfig )
+   {
+      annotatedConfigSupport.registerInstance( instance, clazz, initialConfig );
+   }
+   
+   
+   
+   public < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                          Class< T > clazz )
+   {
+      registerAnnotatedConfiguredInstance( instance, clazz, null );
+   }
+   
+   
+   
+   @Override
    public Bundle getConfiguration()
    {
-      return new Bundle( configuration );
+      return annotatedConfigSupport.getInstanceStates();
    }
    
    
@@ -219,11 +237,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    @Override
    public void configure( Bundle config )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-         takeConfigurationFrom( config );
+      annotatedConfigSupport.setInstanceStates( config );
    }
    
    
@@ -231,20 +245,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    @Override
    public void clearConfiguration()
    {
-      if ( configuration != null )
-         configuration.clear();
-   }
-   
-   
-   
-   @Override
-   public Bundle createDefaultConfiguration()
-   {
-      final Bundle bundle = new Bundle();
-      
-      putDefaultConfigurationTo( bundle );
-      
-      return bundle;
+      annotatedConfigSupport.setDefaultInstanceStates();
    }
    
    
@@ -253,7 +254,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    {
       final Bundle config = new Bundle();
       
-      config.putAll( configuration );
+      config.putAll( getConfiguration() );
       config.putAll( getFragmentConfigurations( fragmentIds ) );
       
       return config;
@@ -279,18 +280,6 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
    
    
-   protected void takeConfigurationFrom( Bundle config )
-   {
-   }
-   
-   
-   
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
-   }
-   
-   
-   
    @Override
    public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
    {
@@ -303,6 +292,13 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          default :
             break;
       }
+   }
+   
+   
+   
+   protected Handler getHandler()
+   {
+      return handler;
    }
    
    

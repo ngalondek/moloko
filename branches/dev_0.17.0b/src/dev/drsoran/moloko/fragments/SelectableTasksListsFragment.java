@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -49,7 +48,6 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter;
 import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter.ISelectionChangedListener;
-import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.SelectableTasksLoader;
@@ -118,9 +116,6 @@ public class SelectableTasksListsFragment extends
    
    public final static int TASK_SORT_SELECTION = 1 << 16;
    
-   @InstanceState( key = Config.SELECTION_STATE, defaultValue = StringArray )
-   private String selectionState;
-   
    private ISelectableTasksListFragmentListener listener;
    
    
@@ -138,7 +133,8 @@ public class SelectableTasksListsFragment extends
    
    public SelectableTasksListsFragment()
    {
-      registerAnnotatedConfiguredInstance( this, null );
+      registerAnnotatedConfiguredInstance( this,
+                                           SelectableTasksListsFragment.class );
    }
    
    
@@ -200,24 +196,10 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   public void takeConfigurationFrom( Bundle config )
+   public void onSaveInstanceState( Bundle outState )
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.SELECTION_STATE ) )
-         configuration.putStringArrayList( Config.SELECTION_STATE,
-                                           config.getStringArrayList( Config.SELECTION_STATE ) );
-   }
-   
-   
-   
-   @Override
-   public void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putStringArrayList( Config.SELECTION_STATE,
-                                 new ArrayList< String >( 0 ) );
+      super.onSaveInstanceState( outState );
+      saveSelectedTaskIds( outState );
    }
    
    
@@ -387,7 +369,6 @@ public class SelectableTasksListsFragment extends
       
       if ( adapter != null )
       {
-         // Handle item selection
          switch ( item.getItemId() )
          {
             case OptionsMenu.SORT_SELECTION:
@@ -529,11 +510,20 @@ public class SelectableTasksListsFragment extends
       
       final SelectableTasksLoader loader = new SelectableTasksLoader( getFragmentActivity(),
                                                                       selection,
-                                                                      order,
-                                                                      config.getStringArrayList( Config.SELECTION_STATE ) );
+                                                                      order );
       loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
       
       return loader;
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< List< SelectableTask >> loader,
+                               List< SelectableTask > data )
+   {
+      super.onLoadFinished( loader, data );
+      notifyListenerSelectionChanged();
    }
    
    
@@ -555,6 +545,7 @@ public class SelectableTasksListsFragment extends
                                                                                                  R.layout.selectmultipletasks_activity_listitem,
                                                                                                  result );
       adapter.setSelectionChangedListener( this );
+      restoreSelectedTaskIds( getConfiguration() );
       
       if ( getTaskSort() == TASK_SORT_SELECTION )
          adapter.sortBySelection();
@@ -573,20 +564,36 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   public void onLoadFinished( Loader< List< SelectableTask >> loader,
-                               List< SelectableTask > data )
+   public void onSelectionChanged()
    {
-      super.onLoadFinished( loader, data );
+      invalidateOptionsMenu();
       notifyListenerSelectionChanged();
    }
    
    
    
-   @Override
-   public void onSelectionChanged()
+   private void saveSelectedTaskIds( Bundle outState )
    {
-      invalidateOptionsMenu();
-      notifyListenerSelectionChanged();
+      if ( getListAdapter() != null )
+      {
+         outState.putStringArrayList( Config.SELECTION_STATE,
+                                      getListAdapter().getSelectedTaskIds() );
+      }
+   }
+   
+   
+   
+   private void restoreSelectedTaskIds( Bundle savedInstanceState )
+   {
+      if ( savedInstanceState != null && getListAdapter() != null )
+      {
+         final List< String > selectedTaskIds = savedInstanceState.getStringArrayList( Config.SELECTION_STATE );
+         if ( selectedTaskIds != null )
+         {
+            getListAdapter().setSelectedTaskIds( selectedTaskIds );
+            savedInstanceState.remove( Config.SELECTION_STATE );
+         }
+      }
    }
    
    

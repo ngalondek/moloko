@@ -50,6 +50,7 @@ import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.loaders.TagsLoader;
@@ -85,9 +86,10 @@ public class ChangeTagsDialogFragment extends
    
    private final static int TAGS_LOADER_ID = 1;
    
-   private final Set< String > chosenTags = new TreeSet< String >();
-   
    private final MultiAutoCompleteTextView.Tokenizer tokenizer = new MultiAutoCompleteTextView.CommaTokenizer();
+   
+   @InstanceState( key = Config.TAGS )
+   private ArrayList< String > chosenTags = new ArrayList< String >();
    
    private IChangeTagsFragmentListener listener;
    
@@ -108,14 +110,20 @@ public class ChangeTagsDialogFragment extends
    
    
    
+   public ChangeTagsDialogFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, ChangeTagsDialogFragment.class );
+   }
+   
+   
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       setStyle( STYLE_NORMAL, R.style.Theme_ChangeTagsDialog );
-      
       super.onCreate( savedInstanceState );
       
-      setChosenTagsFromConfiguration();
+      ensureUniqueTags();
    }
    
    
@@ -143,15 +151,6 @@ public class ChangeTagsDialogFragment extends
    
    
    @Override
-   public void onSaveInstanceState( Bundle outState )
-   {
-      configuredTags( new ArrayList< String >( chosenTags ) );
-      super.onSaveInstanceState( outState );
-   }
-   
-   
-   
-   @Override
    protected ViewGroup createContent( LayoutInflater inflater )
    {
       final View fragmentView = inflater.inflate( R.layout.change_tags_fragment,
@@ -162,7 +161,7 @@ public class ChangeTagsDialogFragment extends
    
    
    @Override
-   protected void initContent( ViewGroup container )
+   public void initContent( ViewGroup container )
    {
       tagsList = (ListView) container.findViewById( android.R.id.list );
       tagsList.setOnItemClickListener( new OnItemClickListener()
@@ -221,38 +220,9 @@ public class ChangeTagsDialogFragment extends
    
    
    
-   private void setChosenTagsFromConfiguration()
+   public List< String > getChosenTags()
    {
-      for ( String tag : getConfiguredTags() )
-         chosenTags.add( tag );
-   }
-   
-   
-   
-   @Override
-   public void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TAGS ) )
-         configuration.putStringArrayList( Config.TAGS,
-                                           config.getStringArrayList( Config.TAGS ) );
-   }
-   
-   
-   
-   public List< String > getConfiguredTags()
-   {
-      final List< String > tags = configuration.getStringArrayList( Config.TAGS );
-      return tags != null ? tags : new ArrayList< String >( 0 );
-   }
-   
-   
-   
-   // Use type ArrayList for performance reasons
-   public void configuredTags( ArrayList< String > tags )
-   {
-      configuration.putStringArrayList( Config.TAGS, tags );
+      return chosenTags;
    }
    
    
@@ -304,6 +274,14 @@ public class ChangeTagsDialogFragment extends
    
    
    
+   private void ensureUniqueTags()
+   {
+      final Set< String > uniqueTags = new TreeSet< String >( chosenTags );
+      chosenTags = new ArrayList< String >( uniqueTags );
+   }
+   
+   
+   
    private void updateTagList()
    {
       chosenTags.clear();
@@ -319,7 +297,7 @@ public class ChangeTagsDialogFragment extends
       final int length = content.length();
       int posStart = 0;
       
-      // Tokenize all entries. Duplicates will be filtered out by the set.
+      // Tokenize all entries.
       while ( posStart < length )
       {
          final int posEnd = tokenizer.findTokenEnd( content, posStart );
@@ -329,6 +307,9 @@ public class ChangeTagsDialogFragment extends
                                 .trim() );
          posStart = posEnd + 1;
       }
+      
+      // Duplicates will be filtered out
+      ensureUniqueTags();
       
       final List< String > allTags = getAllTagsAssertNotNull();
       final List< ChangeTag > changeTags = new ArrayList< ChangeTag >( chosenTags.size()
@@ -357,7 +338,6 @@ public class ChangeTagsDialogFragment extends
                                                 null,
                                                 new Tag.ASC_ALPHA(),
                                                 true );
-      
       loader.setRespectContentChanges( false );
       
       return loader;

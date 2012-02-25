@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -25,12 +25,15 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.text.TextUtils;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -50,7 +53,26 @@ public class TaskSearchResultActivity extends
       public final static int CLEAR_HISTORY = R.id.menu_clear_search_history;
    }
    
+   @InstanceState( key = SearchManager.QUERY, defaultValue = InstanceState.NULL )
+   private String lastQuery;
+   
    private boolean lastQuerySucceeded = true;
+   
+   
+   
+   public TaskSearchResultActivity()
+   {
+      registerAnnotatedConfiguredInstance( this, TaskSearchResultActivity.class );
+   }
+   
+   
+   
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      putQueryAsActivityTitle( intent.getExtras() );
+      super.onNewIntent( intent );
+   }
    
    
    
@@ -109,18 +131,6 @@ public class TaskSearchResultActivity extends
    
    
    @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( SearchManager.QUERY ) )
-         configuration.putString( Config.TITLE,
-                                  config.getString( SearchManager.QUERY ) );
-   }
-   
-   
-   
-   @Override
    public void onQuerySucceeded( String queryString )
    {
       getRecentSuggestions().saveRecentQuery( queryString, null );
@@ -162,6 +172,16 @@ public class TaskSearchResultActivity extends
                                      String logicalOperation )
    {
       startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
+   }
+   
+   
+   
+   private void putQueryAsActivityTitle( Bundle bundle )
+   {
+      if ( !TextUtils.isEmpty( lastQuery ) )
+      {
+         bundle.putString( Config.TITLE, lastQuery );
+      }
    }
    
    

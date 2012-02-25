@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -53,6 +53,7 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 import dev.drsoran.moloko.util.LogUtils;
@@ -130,6 +131,18 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       }
    }
    
+   @InstanceState( key = Config.LONGITUDE )
+   private float longitude;
+   
+   @InstanceState( key = Config.LATITUDE )
+   private float latitude;
+   
+   @InstanceState( key = Config.ZOOM )
+   private int zoom;
+   
+   @InstanceState( key = Config.ADDRESS )
+   private String address;
+   
    private List< Pair< Intent, ResolveInfo > > resolvedIntents;
    
    
@@ -195,9 +208,10 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
    
    
    
-   public boolean hasIntents()
+   public LocationChooserDialogFragment()
    {
-      return resolvedIntents.size() > 0;
+      registerAnnotatedConfiguredInstance( this,
+                                           LocationChooserDialogFragment.class );
    }
    
    
@@ -212,26 +226,6 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       final Dialog dialog = createDialogImpl();
       
       return dialog;
-   }
-   
-   
-   
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.LONGITUDE ) )
-         configuration.putFloat( Config.LONGITUDE,
-                                 config.getFloat( Config.LONGITUDE ) );
-      if ( config.containsKey( Config.LATITUDE ) )
-         configuration.putFloat( Config.LATITUDE,
-                                 config.getFloat( Config.LATITUDE ) );
-      if ( config.containsKey( Config.ZOOM ) )
-         configuration.putInt( Config.ZOOM, config.getInt( Config.ZOOM ) );
-      if ( config.containsKey( Config.ADDRESS ) )
-         configuration.putString( Config.ADDRESS,
-                                  config.getString( Config.ADDRESS ) );
    }
    
    
@@ -265,14 +259,9 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
    
    
    
-   private Intent[] createIntentsByConfiguration()
+   public boolean hasIntents()
    {
-      final float lon = configuration.getFloat( Config.LONGITUDE );
-      final float lat = configuration.getFloat( Config.LATITUDE );
-      final int zoom = configuration.getInt( Config.ZOOM );
-      final String address = configuration.getString( Config.ADDRESS );
-      
-      return createIntents( lon, lat, zoom, address );
+      return resolvedIntents.size() > 0;
    }
    
    
@@ -283,7 +272,10 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
       
       final PackageManager pm = getFragmentActivity().getPackageManager();
       final ResolveInfo.DisplayNameComparator cmp = new ResolveInfo.DisplayNameComparator( pm );
-      final Intent[] intents = createIntentsByConfiguration();
+      final Intent[] intents = createIntents( longitude,
+                                              latitude,
+                                              zoom,
+                                              address );
       
       for ( int i = 0; i < intents.length; i++ )
       {

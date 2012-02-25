@@ -158,10 +158,13 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    
    
    @Override
-   public final void registerAnnotatedConfiguredInstance( Object instance,
-                                                          Bundle initialState )
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz,
+                                                                Bundle initialConfig )
    {
-      baseImpl.registerAnnotatedConfiguredInstance( instance, initialState );
+      baseImpl.registerAnnotatedConfiguredInstance( instance,
+                                                    clazz,
+                                                    initialConfig );
    }
    
    

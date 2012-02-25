@@ -27,12 +27,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 
 
 public abstract class MolokoContentDialogFragment extends MolokoDialogFragment
-         implements IConfigurable, IOnSettingsChangedListener
+         implements IOnSettingsChangedListener
 {
    private ViewGroup dialogView;
    

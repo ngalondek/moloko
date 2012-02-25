@@ -38,17 +38,14 @@ public class SelectableTasksLoader extends
    
    private final String order;
    
-   private final List< String > selectedTaskIds;
    
    
-   
-   public SelectableTasksLoader( Context context, String selection,
-      String order, List< String > selectedTaskIds )
+   public SelectableTasksLoader( Context context, String selection, String order )
    {
       super( context );
       this.selection = selection;
       this.order = order;
-      this.selectedTaskIds = selectedTaskIds;
+      
    }
    
    
@@ -59,11 +56,8 @@ public class SelectableTasksLoader extends
       final List< Task > tasks = TasksProviderPart.getTasks( client,
                                                              selection,
                                                              order );
+      
       final List< SelectableTask > selectableTasks = SelectableTask.fromTaskList( tasks );
-      
-      if ( selectableTasks != null )
-         SelectableTask.selectTasksById( selectableTasks, selectedTaskIds );
-      
       return selectableTasks;
    }
 }

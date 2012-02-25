@@ -150,10 +150,21 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    
    @Override
-   public final void registerAnnotatedConfiguredInstance( Object instance,
-                                                          Bundle initialState )
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz,
+                                                                Bundle initialConfig )
    {
-      baseImpl.registerAnnotatedConfiguredInstance( instance, initialState );
+      baseImpl.registerAnnotatedConfiguredInstance( instance,
+                                                    clazz,
+                                                    initialConfig );
+   }
+   
+   
+   
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz )
+   {
+      registerAnnotatedConfiguredInstance( instance, clazz, null );
    }
    
    

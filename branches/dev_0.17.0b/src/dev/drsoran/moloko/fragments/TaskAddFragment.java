@@ -149,8 +149,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    @InstanceState( key = Config.ESTIMATE_MILLIS, defaultValue = "-1" )
    private long estimateMillis;
    
-   @InstanceState( key = Config.NEW_TASK_URI )
-   private String url;
+   @InstanceState( key = Config.NEW_TASK_URI, defaultValue = InstanceState.NULL )
+   private Uri newTaskUri;
    
    @InstanceState( key = Config.CREATED_DATE, defaultValue = "-1" )
    private long created;
@@ -223,7 +223,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       initialValues.putString( Tasks.ESTIMATE, estimate );
       initialValues.putLong( Tasks.ESTIMATE_MILLIS, estimateMillis );
       initialValues.putString( Tasks.LOCATION_ID, locationId );
-      initialValues.putString( Tasks.URL, url );
+      initialValues.putString( Tasks.URL, null );
       
       return initialValues;
    }
@@ -265,14 +265,14 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    
    private Uri getNewTaskUri()
    {
-      return Uri.parse( Strings.emptyIfNull( url ) );
+      return newTaskUri;
    }
    
    
    
    private void setNewTaskUri( Uri newTaskUri )
    {
-      url = newTaskUri.toString();
+      this.newTaskUri = newTaskUri;
    }
    
    

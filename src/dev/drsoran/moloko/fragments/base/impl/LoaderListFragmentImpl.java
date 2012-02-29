@@ -70,8 +70,10 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    {
       super.onCreate( savedInstanceState );
       
-      if ( support.getListAdapter() == null )
+      if ( support.getListAdapter() == null && support.isReadyToStartLoader() )
+      {
          startLoader();
+      }
    }
    
    

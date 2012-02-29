@@ -268,7 +268,16 @@ public class AnnotatedConfigurationSupport
       
       final List< Pair< Field, InstanceState >> annotatedInstanceState = collectAnnotatedFields( instance,
                                                                                                  clazz );
-      registeredInstances.put( instance, annotatedInstanceState );
+      final List< Pair< Field, InstanceState >> baseClassInstanceState = registeredInstances.get( instance );
+      
+      if ( baseClassInstanceState != null )
+      {
+         baseClassInstanceState.addAll( annotatedInstanceState );
+      }
+      else
+      {
+         registeredInstances.put( instance, annotatedInstanceState );
+      }
       
       return annotatedInstanceState;
    }

@@ -155,7 +155,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private void setTitleAndNavigationMode()
    {
       getSupportActionBar().setTitle( getActivityTitle() );
-      getSupportActionBar().setSubtitle( getConfiguredSubTitle() );
+      getSupportActionBar().setSubtitle( getSubTitle() );
       setActionBarNavigationMode();
    }
    
@@ -176,7 +176,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    {
       // If we are opened for a list, then we show the other lists as navigation
       // alternative
-      if ( isConfiguredWithListName() )
+      if ( hasListName() )
       {
          getSupportLoaderManager().initLoader( LISTS_LOADER_ID,
                                                Bundle.EMPTY,
@@ -253,7 +253,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    protected void setActivityTitle( String title )
    {
-      this.title = title;
+      this.title = Strings.emptyIfNull( title );
+      setTitle( this.title );
    }
    
    
@@ -266,14 +267,25 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   protected String getConfiguredSubTitle()
+   protected void setSubTilte( String subTitle )
+   {
+      this.subTitle = subTitle;
+      if ( getSupportActionBar() != null )
+      {
+         getSupportActionBar().setSubtitle( this.subTitle );
+      }
+   }
+   
+   
+   
+   protected String getSubTitle()
    {
       return Strings.nullIfEmpty( subTitle );
    }
    
    
    
-   protected boolean isConfiguredWithListName()
+   protected boolean hasListName()
    {
       return !TextUtils.isEmpty( getListName() );
    }

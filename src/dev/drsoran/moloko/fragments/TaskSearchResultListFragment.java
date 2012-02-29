@@ -63,7 +63,9 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    @InstanceState( key = Config.QUERY )
    private String query;
    
-   private boolean queryEvalFailed;
+   private RtmSmartFilter filter;
+   
+   private boolean queryEvaluated;
    
    
    
@@ -87,6 +89,19 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    
    
    @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      
+      if ( !evaluateQuery() && listener != null )
+      {
+         listener.onQueryFailed( getQuery() );
+      }
+   }
+   
+   
+   
+   @Override
    public void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
@@ -102,8 +117,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
@@ -136,7 +151,7 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      if ( queryEvalFailed )
+      if ( !evaluateQuery() )
          showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
                                                   getQuery() ) ) );
       else
@@ -146,19 +161,19 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    
    
    @Override
-   public void startLoader()
+   public boolean isReadyToStartLoader()
    {
-      final Bundle loaderConfig = transformQueryToSmartFilterConfig( getConfiguration() );
-      
-      if ( !queryEvalFailed )
-      {
-         startLoaderWithConfiguration( loaderConfig );
-      }
-      else
-      {
-         if ( listener != null )
-            listener.onQueryFailed( getQuery() );
-      }
+      boolean isReady = super.isReadyToStartLoader() && evaluateQuery();
+      return isReady;
+   }
+   
+   
+   
+   @Override
+   public Bundle getLoaderConfig()
+   {
+      final Bundle loaderConfig = super.getLoaderConfig();
+      return putTransformedQueryFromSmartFilter( loaderConfig );
    }
    
    
@@ -174,14 +189,19 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    @Override
    public RtmSmartFilter getRtmSmartFilter()
    {
-      RtmSmartFilter filter = new RtmSmartFilter( getQuery() );
-      
-      // Collect tokens for the quick add task fragment
-      final String evalQuery = filter.getEvaluatedFilterString( true );
-      
-      if ( evalQuery == null )
+      if ( !queryEvaluated )
       {
-         filter = null;
+         filter = new RtmSmartFilter( getQuery() );
+         
+         // Collect tokens for the quick add task fragment
+         final String evalQuery = filter.getEvaluatedFilterString( true );
+         
+         if ( evalQuery == null )
+         {
+            filter = null;
+         }
+         
+         queryEvaluated = true;
       }
       
       return filter;
@@ -200,21 +220,24 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    
    
    
-   private Bundle transformQueryToSmartFilterConfig( Bundle config )
+   private boolean evaluateQuery()
+   {
+      final boolean result = getRtmSmartFilter() != null;
+      return result;
+   }
+   
+   
+   
+   private Bundle putTransformedQueryFromSmartFilter( Bundle loaderConfig )
    {
       final RtmSmartFilter filter = getRtmSmartFilter();
       
       if ( filter != null )
       {
-         config.putParcelable( Config.FILTER, filter );
-      }
-      else
-      {
-         config.remove( Config.FILTER );
-         queryEvalFailed = true;
+         loaderConfig.putParcelable( Config.FILTER, filter );
       }
       
-      return config;
+      return loaderConfig;
    }
    
    

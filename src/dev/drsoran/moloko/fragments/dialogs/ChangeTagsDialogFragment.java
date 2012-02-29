@@ -151,7 +151,7 @@ public class ChangeTagsDialogFragment extends
    
    
    @Override
-   protected ViewGroup createContent( LayoutInflater inflater )
+   protected ViewGroup createDialogView( LayoutInflater inflater )
    {
       final View fragmentView = inflater.inflate( R.layout.change_tags_fragment,
                                                   null );

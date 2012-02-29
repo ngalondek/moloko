@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -71,6 +71,13 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       fragment.setArguments( config );
       
       return fragment;
+   }
+   
+   
+   
+   public NoteEditFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, NoteEditFragment.class, null );
    }
    
    

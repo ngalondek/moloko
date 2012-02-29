@@ -97,7 +97,7 @@ public class AddRenameListDialogFragment extends
    
    
    @Override
-   protected ViewGroup createContent( LayoutInflater inflater )
+   protected ViewGroup createDialogView( LayoutInflater inflater )
    {
       final View view = inflater.inflate( R.layout.add_rename_list_dialog, null );
       

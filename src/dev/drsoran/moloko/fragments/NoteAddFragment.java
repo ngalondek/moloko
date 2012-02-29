@@ -104,15 +104,6 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    
    @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      configure( savedInstanceState );
-   }
-   
-   
-   
-   @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState )

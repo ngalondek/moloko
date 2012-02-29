@@ -29,6 +29,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
+import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.fragments.base.impl.LoaderFragmentImpl;
 
@@ -76,10 +77,18 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    
    
    @Override
-   public void onContentCreated( ViewGroup dialogView )
+   public void onDialogViewCreated( ViewGroup dialogView )
    {
-      super.onContentCreated( dialogView );
+      super.onDialogViewCreated( dialogView );
       loaderImpl.onViewCreated( dialogView, null );
+   }
+   
+   
+   
+   @Override
+   public View getRootView()
+   {
+      return getDialogView();
    }
    
    
@@ -124,6 +133,22 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    public boolean isLoaderDataFound()
    {
       return loaderImpl.isLoaderDataFound();
+   }
+   
+   
+   
+   @Override
+   public boolean isReadyToStartLoader()
+   {
+      return true;
+   }
+   
+   
+   
+   @Override
+   public Bundle getLoaderConfig()
+   {
+      return getConfiguration();
    }
    
    

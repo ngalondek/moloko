@@ -98,6 +98,14 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
    
    
+   @Override
+   public View getRootView()
+   {
+      return getView();
+   }
+   
+   
+   
    public D getLoaderData()
    {
       return loaderImpl.getLoaderData();
@@ -115,6 +123,22 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    public boolean isLoaderDataFound()
    {
       return loaderImpl.isLoaderDataFound();
+   }
+   
+   
+   
+   @Override
+   public boolean isReadyToStartLoader()
+   {
+      return true;
+   }
+   
+   
+   
+   @Override
+   public Bundle getLoaderConfig()
+   {
+      return getConfiguration();
    }
    
    

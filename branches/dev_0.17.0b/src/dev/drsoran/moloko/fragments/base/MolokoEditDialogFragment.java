@@ -145,7 +145,7 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    
    
    @Override
-   protected void onContentCreated( ViewGroup dialogView )
+   protected void onDialogViewCreated( ViewGroup dialogView )
    {
       impl.setWindowToken( dialogView.getWindowToken() );
    }

@@ -298,6 +298,22 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    
    
    
+   @Override
+   public boolean isReadyToStartLoader()
+   {
+      return true;
+   }
+   
+   
+   
+   @Override
+   public Bundle getLoaderConfig()
+   {
+      return getConfiguration();
+   }
+   
+   
+   
    protected void invalidateOptionsMenu()
    {
       if ( getFragmentActivity() != null )

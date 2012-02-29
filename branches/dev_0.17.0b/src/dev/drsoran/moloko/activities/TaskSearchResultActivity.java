@@ -68,10 +68,19 @@ public class TaskSearchResultActivity extends
    
    
    @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      setQueryAsActivityTitle();
+   }
+   
+   
+   
+   @Override
    protected void onNewIntent( Intent intent )
    {
-      putQueryAsActivityTitle( intent.getExtras() );
       super.onNewIntent( intent );
+      setQueryAsActivityTitle();
    }
    
    
@@ -176,11 +185,11 @@ public class TaskSearchResultActivity extends
    
    
    
-   private void putQueryAsActivityTitle( Bundle bundle )
+   private void setQueryAsActivityTitle()
    {
       if ( !TextUtils.isEmpty( lastQuery ) )
       {
-         bundle.putString( Config.TITLE, lastQuery );
+         setActivityTitle( lastQuery );
       }
    }
    

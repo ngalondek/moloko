@@ -96,43 +96,17 @@ public final class Bundles
          
          else
          {
-            boolean implementsParcableInterface = implementsInterface( valueClass,
-                                                                       Parcelable.class );
-            if ( implementsParcableInterface )
+            try
             {
-               bundle.putParcelable( key, Parcelable.class.cast( value ) );
+               final Parcelable parcelable = Parcelable.class.cast( value );
+               bundle.putParcelable( key, parcelable );
             }
-            
-            else
+            catch ( ClassCastException e )
             {
                throw new IllegalArgumentException( "The type "
                   + valueClass.getName() + " is not supported" );
             }
          }
       }
-   }
-   
-   
-   
-   private static < T > boolean implementsInterface( Class< ? > clazz,
-                                                     Class< T > interfaceType )
-   {
-      final Class< ? >[] interfaces = clazz.getInterfaces();
-      
-      boolean foundInterface = false;
-      if ( interfaces != null )
-      {
-         for ( int i = 0; i < interfaces.length && !foundInterface; i++ )
-         {
-            final Class< ? > interfaceOfClazz = interfaces[ i ];
-            
-            foundInterface = interfaceOfClazz == interfaceType;
-            if ( !foundInterface )
-               foundInterface = implementsInterface( interfaceOfClazz,
-                                                     interfaceType );
-         }
-      }
-      
-      return foundInterface;
    }
 }

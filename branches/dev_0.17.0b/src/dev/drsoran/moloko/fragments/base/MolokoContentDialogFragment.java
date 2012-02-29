@@ -40,8 +40,8 @@ public abstract class MolokoContentDialogFragment extends MolokoDialogFragment
    @Override
    public final Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      dialogView = createContent( LayoutInflater.from( getFragmentActivity() ) );
-      onContentCreated( dialogView );
+      dialogView = createDialogView( LayoutInflater.from( getFragmentActivity() ) );
+      onDialogViewCreated( dialogView );
       
       final Dialog dialog = createDialog( dialogView );
       return dialog;
@@ -49,7 +49,7 @@ public abstract class MolokoContentDialogFragment extends MolokoDialogFragment
    
    
    
-   protected void onContentCreated( ViewGroup dialogView )
+   protected void onDialogViewCreated( ViewGroup dialogView )
    {
    }
    
@@ -62,15 +62,14 @@ public abstract class MolokoContentDialogFragment extends MolokoDialogFragment
    
    
    
-   @Override
    public ViewGroup getContentView()
    {
-      return super.getContentView();
+      return (ViewGroup) dialogView.findViewById( android.R.id.content );
    }
    
    
    
-   protected abstract ViewGroup createContent( LayoutInflater inflater );
+   protected abstract ViewGroup createDialogView( LayoutInflater inflater );
    
    
    

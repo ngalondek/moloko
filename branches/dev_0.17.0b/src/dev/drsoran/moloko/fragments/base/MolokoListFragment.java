@@ -222,20 +222,6 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    
    
-   public void startLoader()
-   {
-      loaderImpl.startLoader();
-   }
-   
-   
-   
-   public void startLoaderWithConfiguration( Bundle config )
-   {
-      loaderImpl.startLoaderWithConfiguration( config );
-   }
-   
-   
-   
    public final boolean isRespectingContentChanges()
    {
       return loaderImpl.isRespectingContentChanges();
@@ -286,6 +272,22 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    public void onLoaderReset( Loader< D > loader )
    {
       loaderImpl.onLoaderReset( loader );
+   }
+   
+   
+   
+   @Override
+   public boolean isReadyToStartLoader()
+   {
+      return true;
+   }
+   
+   
+   
+   @Override
+   public Bundle getLoaderConfig()
+   {
+      return getConfiguration();
    }
    
    

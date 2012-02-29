@@ -42,6 +42,10 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    public static interface Support< D > extends
             LoaderFragmentImplBase.Support< D >
    {
+      View getRootView();
+      
+      
+      
       void initContent( ViewGroup content );
       
       
@@ -82,8 +86,10 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    {
       super.onCreate( savedInstanceState );
       
-      if ( getLoaderData() == null )
+      if ( getLoaderData() == null && support.isReadyToStartLoader() )
+      {
          startLoader();
+      }
    }
    
    
@@ -171,7 +177,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private void showLoadingSpinner()
    {
-      if ( fragment.getView() != null )
+      if ( support.getRootView() != null )
       {
          final View spinner = getLoadingSpinnerView();
          if ( spinner != null )
@@ -189,8 +195,8 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    {
       View loadView = null;
       
-      if ( fragment.getView() != null )
-         loadView = fragment.getView().findViewById( R.id.loading_spinner );
+      if ( support.getRootView() != null )
+         loadView = support.getRootView().findViewById( R.id.loading_spinner );
       
       return loadView;
    }
@@ -199,7 +205,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private void showContent()
    {
-      if ( fragment.getView() != null )
+      if ( support.getRootView() != null )
       {
          final View spinner = getLoadingSpinnerView();
          if ( spinner != null )
@@ -233,7 +239,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private void showElementNotFoundError()
    {
-      if ( fragment.getView() != null )
+      if ( support.getRootView() != null )
       {
          final View spinner = getLoadingSpinnerView();
          if ( spinner != null )

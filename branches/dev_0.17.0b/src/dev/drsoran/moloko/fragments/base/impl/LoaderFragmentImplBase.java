@@ -38,6 +38,14 @@ abstract class LoaderFragmentImplBase< D >
 {
    protected static interface Support< D >
    {
+      boolean isReadyToStartLoader();
+      
+      
+      
+      Bundle getLoaderConfig();
+      
+      
+      
       int getLoaderId();
       
       
@@ -156,7 +164,7 @@ abstract class LoaderFragmentImplBase< D >
    
    public void startLoader()
    {
-      startLoaderWithConfiguration( config.getConfiguration() );
+      startLoaderWithConfiguration( support.getLoaderConfig() );
    }
    
    

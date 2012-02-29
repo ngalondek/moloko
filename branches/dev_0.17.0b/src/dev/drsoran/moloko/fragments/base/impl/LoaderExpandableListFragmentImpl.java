@@ -69,7 +69,8 @@ public class LoaderExpandableListFragmentImpl< D > extends
    
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      if ( support.getExpandableListAdapter() == null )
+      if ( support.getExpandableListAdapter() == null
+         && support.isReadyToStartLoader() )
       {
          startLoader();
          showLoadingSpinner( true );

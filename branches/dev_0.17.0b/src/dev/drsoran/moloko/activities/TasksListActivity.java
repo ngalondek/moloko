@@ -96,7 +96,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
                                    R.drawable.ic_menu_trash,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    !isListLocked()
-                                      && isConfiguredWithListName()
+                                      && hasListName()
                                       && !AccountUtils.isReadOnlyAccess( this ) );
       
       return true;
@@ -149,7 +149,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       
       // if we are configured with a list name then we already are in a list
       // and do not need to add a new one.
-      show = show && !isConfiguredWithListName();
+      show = show && !hasListName();
       
       if ( show )
       {

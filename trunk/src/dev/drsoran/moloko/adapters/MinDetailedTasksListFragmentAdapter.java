@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -191,21 +191,21 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
                   }
                }
                
-               // Is it next week?
+               // Is it in the range [today + 1, today + 6]?
                else
                {
-                  MolokoCalendar calNextWeek = nowCal;
-                  calNextWeek.roll( Calendar.WEEK_OF_YEAR, true );
+                  final MolokoCalendar calWeekdayRange = nowCal;
+                  calWeekdayRange.add( Calendar.DAY_OF_MONTH, 6 );
                   nowCal = null;
                   
-                  if ( calNextWeek.get( Calendar.WEEK_OF_YEAR ) == cal.get( Calendar.WEEK_OF_YEAR ) )
+                  if ( calWeekdayRange.get( Calendar.DAY_OF_YEAR ) >= cal.get( Calendar.DAY_OF_YEAR ) )
                   {
                      // we only show the week day
                      dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
                                                                    false );
                   }
                   
-                  // Not the same week and not next week
+                  // Not the same week and not in the range [today + 1, today + 6]
                   else
                   {
                      // we show the date but w/o year

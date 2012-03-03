@@ -22,10 +22,10 @@
 
 package dev.drsoran.moloko.notification;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.RemoteViews;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
 
@@ -36,15 +36,11 @@ class PermanentNotification
    
    private final Context context;
    
-   private Notification notification;
-   
    
    
    public PermanentNotification( Context context )
    {
       this.context = context;
-      
-      createNotification();
    }
    
    
@@ -54,13 +50,22 @@ class PermanentNotification
                        int count,
                        Intent onClickIntent )
    {
-      notification.iconLevel = count;
-      notification.setLatestEventInfo( context,
-                                       title,
-                                       text,
-                                       Intents.createPermanentNotificationIntent( context,
-                                                                                  onClickIntent ) );
-      getNotificationManager().notify( ID, notification );
+      final RemoteViews contentView = new RemoteViews( context.getPackageName(),
+                                                       R.layout.notification );
+      contentView.setImageViewResource( android.R.id.icon,
+                                        R.drawable.ic_launcher );
+      contentView.setTextViewText( android.R.id.title, title );
+      contentView.setTextViewText( android.R.id.text1, text );
+      
+      final INotificationBuilder builder = NotificationBuilderFactory.create( context );
+      
+      builder.setOngoing( true );
+      builder.setSmallIcon( R.drawable.notification_layers, count );
+      builder.setContent( contentView );
+      builder.setContentIntent( Intents.createPermanentNotificationIntent( context,
+                                                                           onClickIntent ) );
+      
+      getNotificationManager().notify( ID, builder.build() );
    }
    
    
@@ -68,15 +73,6 @@ class PermanentNotification
    public void cancel()
    {
       getNotificationManager().cancel( ID );
-   }
-   
-   
-   
-   private void createNotification()
-   {
-      notification = new Notification( R.drawable.notification_layers, null, 0 );
-      notification.flags = Notification.FLAG_NO_CLEAR
-         | Notification.FLAG_ONGOING_EVENT;
    }
    
    

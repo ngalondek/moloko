@@ -159,10 +159,10 @@ class DueTaskNotificationPresenter
       
       final String relativeDueTimeFromNow = getRelativeTimeString( dueTimeMillis );
       
-      final String text = context.getString( R.string.notification_due_ticker,
+      final String tickerText = context.getString( R.string.notification_due_ticker,
                                              taskName,
                                              relativeDueTimeFromNow );
-      return text;
+      return tickerText;
    }
    
    

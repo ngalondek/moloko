@@ -302,6 +302,7 @@
    <string name="notification_permanent_text_one_task">%1$s</string>
    <string name="notification_due_ticker">%1$s due %2$s</string>
    <string name="notification_due">due at %1$s</string>
+   <string name="notification_due_stack_counter">+%1$d</string>
    <string name="notification_due_tasks_list_title">Due tasks</string>
 
    <!-- AbstractTasksList -->

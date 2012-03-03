@@ -22,31 +22,34 @@
 
 package dev.drsoran.moloko.notification;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.view.View;
+import android.widget.RemoteViews;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
 
 
 class DueTaskNotification
 {
+   private final static long[] VIBRATE_PATTERN =
+   { 0, 300 };
+   
    private final static int ID = R.id.notification_due_tasks;
    
    private final Context context;
    
-   private Notification notification;
+   private INotificationBuilder builder;
    
    
    
    public DueTaskNotification( Context context )
    {
       this.context = context;
-      
-      createNotification();
+      createInitialNotificationBuilder();
    }
    
    
@@ -57,14 +60,14 @@ class DueTaskNotification
                        int count,
                        Intent onClickIntent )
    {
-      notification.tickerText = tickerText;
-      notification.iconLevel = count;
-      notification.setLatestEventInfo( context,
-                                       title,
-                                       text,
-                                       Intents.createDueTasksNotificationIntent( context,
-                                                                                 onClickIntent ) );
-      getNotificationManager().notify( ID, notification );
+      final RemoteViews contentView = createContent( title, text, count );
+      
+      builder.setTicker( tickerText );
+      builder.setSmallIcon( R.drawable.notification_layers_red, count );
+      builder.setContent( contentView );
+      builder.setContentIntent( Intents.createDueTasksNotificationIntent( context,
+                                                                          onClickIntent ) );
+      getNotificationManager().notify( ID, builder.build() );
    }
    
    
@@ -85,13 +88,37 @@ class DueTaskNotification
    
    
    
-   private void createNotification()
+   private void createInitialNotificationBuilder()
    {
-      notification = new Notification( R.drawable.notification_layers_red,
-                                       null,
-                                       0 );
-      notification.flags = Notification.FLAG_AUTO_CANCEL;
-      notification.defaults = 0;
+      builder = NotificationBuilderFactory.create( context );
+      builder.setSmallIcon( R.drawable.notification_layers_red );
+      builder.setAutoCancel( true );
+   }
+   
+   
+   
+   private RemoteViews createContent( String title, String text, int count )
+   {
+      final RemoteViews contentView = new RemoteViews( context.getPackageName(),
+                                                       R.layout.notification );
+      contentView.setImageViewResource( android.R.id.icon,
+                                        R.drawable.notification_layers_red );
+      contentView.setTextViewText( android.R.id.title, title );
+      contentView.setTextViewText( android.R.id.text1, text );
+      
+      if ( count > 1 )
+      {
+         contentView.setViewVisibility( R.id.stackCount, View.VISIBLE );
+         contentView.setTextViewText( R.id.stackCount,
+                                      context.getString( R.string.notification_due_stack_counter,
+                                                         count - 1 ) );
+      }
+      else
+      {
+         contentView.setViewVisibility( R.id.stackCount, View.GONE );
+      }
+      
+      return contentView;
    }
    
    
@@ -100,11 +127,11 @@ class DueTaskNotification
    {
       if ( vibrate )
       {
-         notification.defaults |= Notification.DEFAULT_VIBRATE;
+         builder.setVibrate( VIBRATE_PATTERN );
       }
       else
       {
-         notification.defaults &= ~Notification.DEFAULT_VIBRATE;
+         builder.setVibrate( null );
       }
    }
    
@@ -114,17 +141,11 @@ class DueTaskNotification
    {
       if ( useLed )
       {
-         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-         notification.ledARGB = Color.BLUE;
-         notification.ledOffMS = 400;
-         notification.ledOnMS = 500;
+         builder.setLights( Color.BLUE, 400, 500 );
       }
       else
       {
-         notification.flags &= ~Notification.FLAG_SHOW_LIGHTS;
-         notification.ledARGB = 0;
-         notification.ledOffMS = 0;
-         notification.ledOnMS = 0;
+         builder.setLights( 0, 0, 0 );
       }
    }
    
@@ -132,7 +153,7 @@ class DueTaskNotification
    
    private void setSound( Uri soundToPay )
    {
-      notification.sound = soundToPay;
+      builder.setSound( soundToPay );
    }
    
    

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -110,7 +110,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    @Override
    protected void onDestroy()
    {
-      shutDownRtmAuthenticator();
+      shutdownRtmAuthenticator();
       super.onDestroy();
    }
    
@@ -495,10 +495,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
    
    
-   private void shutDownRtmAuthenticator()
+   private void shutdownRtmAuthenticator()
    {
       if ( authenticator != null )
-         authenticator.cancelExecution();
+         authenticator.shutdown();
       
       authenticator = null;
    }

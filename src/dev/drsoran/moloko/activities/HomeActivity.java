@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -30,8 +30,8 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -55,12 +55,14 @@ public class HomeActivity extends MolokoFragmentActivity implements
    private IMolokoHomeWidget addAccountWidget;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.home_activity );
+      
+      setAccountNameAsSubTitle();
       
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setOnItemClickListener( this );
@@ -68,8 +70,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       fillGrid();
    }
    
-
-
+   
+   
    @Override
    protected void onResume()
    {
@@ -85,8 +87,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    protected void onStop()
    {
@@ -98,8 +100,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
          homeAdapter.stopWidgets();
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -128,8 +130,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -148,15 +150,15 @@ public class HomeActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void onAddTask()
    {
       startActivity( Intents.createAddTaskIntent( this, null ) );
    }
    
-
-
+   
+   
    @Override
    public void onAccountsUpdated( Account[] accounts )
    {
@@ -165,8 +167,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
    }
    
-
-
+   
+   
    private HomeAdapter getHomeAdapter()
    {
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
@@ -175,8 +177,19 @@ public class HomeActivity extends MolokoFragmentActivity implements
       return homeAdapter;
    }
    
-
-
+   
+   
+   private void setAccountNameAsSubTitle()
+   {
+      final Account account = AccountUtils.getRtmAccount( this );
+      if ( account != null )
+      {
+         getSupportActionBar().setSubtitle( account.name );
+      }
+   }
+   
+   
+   
    private void fillGrid()
    {
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
@@ -185,8 +198,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       gridview.setAdapter( adapter );
    }
    
-
-
+   
+   
    @Override
    public void onItemClick( AdapterView< ? > adapterView,
                             View view,
@@ -208,16 +221,16 @@ public class HomeActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {
       return null;
    }
    
-
-
+   
+   
    private void showAddAccountWidget( boolean show )
    {
       if ( show )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -48,9 +48,9 @@ public class AsyncRtmAuthenticator
    private abstract class RtmAsyncAuthTask< Param, Result > extends
             AsyncTask< Param, Void, Result >
    {
-      protected volatile WeakReference< AuthenticatorActivity > activity;
+      protected final WeakReference< AuthenticatorActivity > activity;
       
-      protected volatile Service service;
+      protected final Service service;
       
       protected volatile ServiceException exception;
       
@@ -69,9 +69,6 @@ public class AsyncRtmAuthenticator
       {
          AsyncRtmAuthenticator.this.runningTask = null;
          super.onPostExecute( result );
-         
-         if ( service != null )
-            service.shutdown();
       }
    }
    
@@ -220,6 +217,14 @@ public class AsyncRtmAuthenticator
    
    
    
+   public void shutdown()
+   {
+      cancelExecution();
+      shutdownService();
+   }
+   
+   
+   
    public boolean cancelExecution()
    {
       boolean ok = false;
@@ -293,5 +298,15 @@ public class AsyncRtmAuthenticator
                                                                    null );
       
       return ServiceImpl.getInstance( activity, applicationInfo );
+   }
+   
+   
+   
+   private void shutdownService()
+   {
+      if ( rtmService != null )
+      {
+         rtmService.shutdown();
+      }
    }
 }

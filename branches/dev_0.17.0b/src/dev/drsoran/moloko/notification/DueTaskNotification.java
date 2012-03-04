@@ -63,7 +63,7 @@ class DueTaskNotification
       final RemoteViews contentView = createContent( title, text, count );
       
       builder.setTicker( tickerText );
-      builder.setSmallIcon( R.drawable.notification_layers_red, count );
+      builder.setSmallIcon( R.drawable.notification_due_task, count );
       builder.setContent( contentView );
       builder.setContentIntent( Intents.createDueTasksNotificationIntent( context,
                                                                           onClickIntent ) );
@@ -91,7 +91,7 @@ class DueTaskNotification
    private void createInitialNotificationBuilder()
    {
       builder = NotificationBuilderFactory.create( context );
-      builder.setSmallIcon( R.drawable.notification_layers_red );
+      builder.setSmallIcon( R.drawable.ic_notify_logo_red );
       builder.setAutoCancel( true );
    }
    
@@ -102,7 +102,7 @@ class DueTaskNotification
       final RemoteViews contentView = new RemoteViews( context.getPackageName(),
                                                        R.layout.notification );
       contentView.setImageViewResource( android.R.id.icon,
-                                        R.drawable.notification_layers_red );
+                                        R.drawable.ic_notify_logo_red );
       contentView.setTextViewText( android.R.id.title, title );
       contentView.setTextViewText( android.R.id.text1, text );
       

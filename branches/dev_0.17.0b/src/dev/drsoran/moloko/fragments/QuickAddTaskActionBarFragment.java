@@ -95,6 +95,14 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    
    
    
+   public QuickAddTaskActionBarFragment()
+   {
+      registerAnnotatedConfiguredInstance( this,
+                                           QuickAddTaskActionBarFragment.class );
+   }
+   
+   
+   
    @Override
    public void onAttach( SupportActivity activity )
    {

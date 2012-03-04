@@ -135,6 +135,17 @@ class PermanentNotificationPresenter
          }
          
          case PermanentNotificationType.OFF:
+         {
+            if ( isNotifyingPermanentOverdueTasks() )
+            {
+               return context.getString( R.string.notification_permanent_overdue_title );
+            }
+            else
+            {
+               return Strings.EMPTY_STRING;
+            }
+         }
+         
          default :
             return Strings.EMPTY_STRING;
       }
@@ -297,6 +308,14 @@ class PermanentNotificationPresenter
    private int getPermanentNotificationTypeFromSettings()
    {
       return MolokoApp.getSettings( context ).getNotifyingPermanentTasksType();
+   }
+   
+   
+   
+   private boolean isNotifyingPermanentOverdueTasks()
+   {
+      return MolokoApp.getSettings( context )
+                      .isNotifyingPermanentOverdueTasks();
    }
    
    

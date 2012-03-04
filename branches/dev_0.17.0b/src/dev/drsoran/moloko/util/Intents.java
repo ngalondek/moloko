@@ -349,11 +349,11 @@ public final class Intents
                                                                         Intent onClickIntent )
    {
       onClickIntent.setFlags( onClickIntent.getFlags()
-         | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+         | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK );
       return PendingIntent.getActivity( context,
                                         0,
                                         onClickIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT );
+                                        PendingIntent.FLAG_CANCEL_CURRENT );
    }
    
    
@@ -362,11 +362,11 @@ public final class Intents
                                                                        Intent onClickIntent )
    {
       onClickIntent.setFlags( onClickIntent.getFlags()
-         | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+         | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK );
       return PendingIntent.getActivity( context,
                                         1,
                                         onClickIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                        PendingIntent.FLAG_CANCEL_CURRENT
                                            | PendingIntent.FLAG_ONE_SHOT );
    }
    

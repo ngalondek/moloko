@@ -60,7 +60,7 @@ class PermanentNotification
       final INotificationBuilder builder = NotificationBuilderFactory.create( context );
       
       builder.setOngoing( true );
-      builder.setSmallIcon( R.drawable.notification_layers, count );
+      builder.setSmallIcon( R.drawable.notification_permanent, count );
       builder.setContent( contentView );
       builder.setContentIntent( Intents.createPermanentNotificationIntent( context,
                                                                            onClickIntent ) );

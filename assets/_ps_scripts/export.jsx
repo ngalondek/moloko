@@ -4,10 +4,19 @@ var preProdFolder = Folder.selectDialog( "Select _pre_production folder",
                                          "/d/Programmierung/Projects/java/Moloko/assets/_pre_production" );
 var startFolder = Folder.selectDialog( "Select start folder", preProdFolder );
 
+var drawableFolder = preProdFolder + "/../../res/drawable";
+var ldpiFolder         = preProdFolder + "/../../res/drawable-ldpi";
+var mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi";
+var hdpiFolder	   = preProdFolder + "/../../res/drawable-hdpi";
+var xhdpiFolder	 = preProdFolder + "/../../res/drawable-xhdpi";
+
+var file = null;
+var prefix = null;
+var suffix = "";
 
 if ( preProdFolder != null && startFolder != null )
 {
-	var prefix = ( startFolder.name != preProdFolder.name ) ? startFolder.name : null;
+	prefix = ( startFolder.name != preProdFolder.name ) ? startFolder.name : null;
 	
 	// If we have a start folder != preproduction folder, then we walk up the
 	// path tree and append the folder names until we reach preproduction folder.
@@ -24,7 +33,7 @@ if ( preProdFolder != null && startFolder != null )
 		}
 	}
 	
-    loadMolokoStyles();
+    //loadMolokoStyles();
     
 	exportFolder( startFolder, prefix );
 	
@@ -38,7 +47,7 @@ function exportFolder( folder, prefix )
        
 	for ( var i = 0; i < files.length; i++ )
 	{      
-		var file = files[ i ];
+		file = files[ i ];
 	  
 		if ( file instanceof Folder )
 		{
@@ -76,40 +85,19 @@ function exportFolder( folder, prefix )
 				
 					var ok = true;
 					var alreadyExported = false;
-					var exportAsIs = false;
-					
-					var drawableFolder = preProdFolder + "/../../res/drawable";
-					var ldpiFolder     = preProdFolder + "/../../res/drawable-ldpi";
-					var mdpiFolder 	   = preProdFolder + "/../../res/drawable-mdpi";
-					var hdpiFolder	   = preProdFolder + "/../../res/drawable-hdpi";
-					var xhdpiFolder	   = preProdFolder + "/../../res/drawable-xhdpi-v11";
+					var exportAsIs = false;				
 					 
+                       var prefixSave = prefix;
+                       var suffixSave = suffix;
+                       
 					eval( script );
-
-					if ( ok && !alreadyExported )
-					{
-						if ( exportAsIs )
-						{
-						   if ( drawableFolder != null )
-							  exportDrawable( file, drawableFolder, prefix, "" );
-						}
-						else
-						{
-						   if ( ldpiFolder != null )
-							  exportLDPI( file, ldpiFolder, prefix, "" );
-						   
-						   if ( mdpiFolder != null )
-							  exportMDPI( file, mdpiFolder, prefix, "" );
-						   
-						   if ( hdpiFolder != null )
-							  exportHDPI( file, hdpiFolder, prefix, "" );
-						   
-						   if ( xhdpiFolder != null )
-							  exportXHDPI( file, xhdpiFolder, prefix, "" );
-						}
-						
-						activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-					}
+                    
+                      doExport(ok, alreadyExported, exportAsIs);
+                      
+                      activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+                      
+                      prefix = prefixSave;
+                      suffix = suffixSave;
 				}
 			}
 		}
@@ -143,6 +131,44 @@ function loadScriptsFromFolder( folder )
 	}
 		
 	return scriptFilesAsString;
+}
+
+function trimPrefixLayers( prefix , count )
+{
+    var trimmedPrefix = prefix;
+    
+    for ( var i = count; i > 0; --i )
+    {
+        trimmedPrefix = trimmedPrefix.substring( 0, trimmedPrefix.lastIndexOf("_") );
+    }
+    
+    return trimmedPrefix;
+}
+
+function doExport(ok, alreadyExported, exportAsIs)
+{
+    if ( ok && !alreadyExported )
+    {
+        if ( exportAsIs )
+        {
+           if ( drawableFolder != null )
+              exportDrawable( file, drawableFolder, prefix, "" );
+        }
+        else
+        {
+           if ( ldpiFolder != null )
+              exportLDPI( file, ldpiFolder, prefix, suffix );
+           
+           if ( mdpiFolder != null )
+              exportMDPI( file, mdpiFolder, prefix, suffix );
+           
+           if ( hdpiFolder != null )
+              exportHDPI( file, hdpiFolder, prefix, suffix );
+           
+           if ( xhdpiFolder != null )
+              exportXHDPI( file, xhdpiFolder, prefix, suffix );
+        }
+    }
 }
 
 function exportDrawable( file, folder, prefix, suffix )
@@ -221,20 +247,20 @@ function exportHDPI( file, folder, prefix, suffix, leaveOpen )
 
 function exportXHDPI( file, folder, prefix, suffix, leaveOpen )
 {	
-	var hdpiFolder = new Folder( folder );
+	var xhdpiFolder = new Folder( folder );
 		
-	if ( !hdpiFolder.exists )
+	if ( !xhdpiFolder.exists )
 	{
-		hdpiFolder = Folder.selectDialog( "Select hdpi output folder", preProdFolder.toString() );
+		xhdpiFolder = Folder.selectDialog( "Select xhdpi output folder", preProdFolder.toString() );
 	}
 	
-	if ( hdpiFolder != null )
+	if ( xhdpiFolder != null )
 	{
 		var temp = activeDocument;
 		activeDocument = activeDocument.duplicate( "temp" );
    	
 		resizeImage( 200 );
-		saveForWebPNG24( hdpiFolder, file, prefix, suffix );
+		saveForWebPNG24( xhdpiFolder, file, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
 		activeDocument = temp;
@@ -912,3 +938,601 @@ function applyMenuIconStyle()
     desc3.putReference( idT, ref3 );
     executeAction( idASty, desc3, DialogModes.NO )
 }
+
+function setText( text )
+{
+   var idsetd = charIDToTypeID( "setd" );
+       var desc2 = new ActionDescriptor();
+       var idnull = charIDToTypeID( "null" );
+           var ref1 = new ActionReference();
+           var idTxLr = charIDToTypeID( "TxLr" );
+           var idOrdn = charIDToTypeID( "Ordn" );
+           var idTrgt = charIDToTypeID( "Trgt" );
+           ref1.putEnumerated( idTxLr, idOrdn, idTrgt );
+       desc2.putReference( idnull, ref1 );
+       var idT = charIDToTypeID( "T   " );
+           var desc3 = new ActionDescriptor();
+           var idTxt = charIDToTypeID( "Txt " );
+           desc3.putString( idTxt, text );
+           var idwarp = stringIDToTypeID( "warp" );
+               var desc4 = new ActionDescriptor();
+               var idwarpStyle = stringIDToTypeID( "warpStyle" );
+               var idwarpStyle = stringIDToTypeID( "warpStyle" );
+               var idwarpNone = stringIDToTypeID( "warpNone" );
+               desc4.putEnumerated( idwarpStyle, idwarpStyle, idwarpNone );
+               var idwarpValue = stringIDToTypeID( "warpValue" );
+               desc4.putDouble( idwarpValue, 0.000000 );
+               var idwarpPerspective = stringIDToTypeID( "warpPerspective" );
+               desc4.putDouble( idwarpPerspective, 0.000000 );
+               var idwarpPerspectiveOther = stringIDToTypeID( "warpPerspectiveOther" );
+               desc4.putDouble( idwarpPerspectiveOther, 0.000000 );
+               var idwarpRotate = stringIDToTypeID( "warpRotate" );
+               var idOrnt = charIDToTypeID( "Ornt" );
+               var idHrzn = charIDToTypeID( "Hrzn" );
+               desc4.putEnumerated( idwarpRotate, idOrnt, idHrzn );
+           var idwarp = stringIDToTypeID( "warp" );
+           desc3.putObject( idwarp, idwarp, desc4 );
+           var idtextGridding = stringIDToTypeID( "textGridding" );
+           var idtextGridding = stringIDToTypeID( "textGridding" );
+           var idNone = charIDToTypeID( "None" );
+           desc3.putEnumerated( idtextGridding, idtextGridding, idNone );
+           var idOrnt = charIDToTypeID( "Ornt" );
+           var idOrnt = charIDToTypeID( "Ornt" );
+           var idHrzn = charIDToTypeID( "Hrzn" );
+           desc3.putEnumerated( idOrnt, idOrnt, idHrzn );
+           var idAntA = charIDToTypeID( "AntA" );
+           var idAnnt = charIDToTypeID( "Annt" );
+           var idantiAliasSharp = stringIDToTypeID( "antiAliasSharp" );
+           desc3.putEnumerated( idAntA, idAnnt, idantiAliasSharp );
+           var idtextShape = stringIDToTypeID( "textShape" );
+               var list1 = new ActionList();
+                   var desc5 = new ActionDescriptor();
+                   var idTEXT = charIDToTypeID( "TEXT" );
+                   var idTEXT = charIDToTypeID( "TEXT" );
+                   var idPnt = charIDToTypeID( "Pnt " );
+                   desc5.putEnumerated( idTEXT, idTEXT, idPnt );
+                   var idOrnt = charIDToTypeID( "Ornt" );
+                   var idOrnt = charIDToTypeID( "Ornt" );
+                   var idHrzn = charIDToTypeID( "Hrzn" );
+                   desc5.putEnumerated( idOrnt, idOrnt, idHrzn );
+                   var idTrnf = charIDToTypeID( "Trnf" );
+                       var desc6 = new ActionDescriptor();
+                       var idxx = stringIDToTypeID( "xx" );
+                       desc6.putDouble( idxx, 1.000000 );
+                       var idxy = stringIDToTypeID( "xy" );
+                       desc6.putDouble( idxy, 0.000000 );
+                       var idyx = stringIDToTypeID( "yx" );
+                       desc6.putDouble( idyx, 0.000000 );
+                       var idyy = stringIDToTypeID( "yy" );
+                       desc6.putDouble( idyy, 1.000000 );
+                       var idtx = stringIDToTypeID( "tx" );
+                       desc6.putDouble( idtx, 0.000000 );
+                       var idty = stringIDToTypeID( "ty" );
+                       desc6.putDouble( idty, 0.000000 );
+                   var idTrnf = charIDToTypeID( "Trnf" );
+                   desc5.putObject( idTrnf, idTrnf, desc6 );
+                   var idrowCount = stringIDToTypeID( "rowCount" );
+                   desc5.putInteger( idrowCount, 1 );
+                   var idcolumnCount = stringIDToTypeID( "columnCount" );
+                   desc5.putInteger( idcolumnCount, 1 );
+                   var idrowMajorOrder = stringIDToTypeID( "rowMajorOrder" );
+                   desc5.putBoolean( idrowMajorOrder, true );
+                   var idrowGutter = stringIDToTypeID( "rowGutter" );
+                   var idPxl = charIDToTypeID( "#Pxl" );
+                   desc5.putUnitDouble( idrowGutter, idPxl, 0.000000 );
+                   var idcolumnGutter = stringIDToTypeID( "columnGutter" );
+                   var idPxl = charIDToTypeID( "#Pxl" );
+                   desc5.putUnitDouble( idcolumnGutter, idPxl, 0.000000 );
+                   var idSpcn = charIDToTypeID( "Spcn" );
+                   var idPxl = charIDToTypeID( "#Pxl" );
+                   desc5.putUnitDouble( idSpcn, idPxl, 0.000000 );
+                   var idframeBaselineAlignment = stringIDToTypeID( "frameBaselineAlignment" );
+                   var idframeBaselineAlignment = stringIDToTypeID( "frameBaselineAlignment" );
+                   var idalignByAscent = stringIDToTypeID( "alignByAscent" );
+                   desc5.putEnumerated( idframeBaselineAlignment, idframeBaselineAlignment, idalignByAscent );
+                   var idfirstBaselineMinimum = stringIDToTypeID( "firstBaselineMinimum" );
+                   var idPxl = charIDToTypeID( "#Pxl" );
+                   desc5.putUnitDouble( idfirstBaselineMinimum, idPxl, 0.000000 );
+                   var idbase = stringIDToTypeID( "base" );
+                       var desc7 = new ActionDescriptor();
+                       var idHrzn = charIDToTypeID( "Hrzn" );
+                       desc7.putDouble( idHrzn, 0.000000 );
+                       var idVrtc = charIDToTypeID( "Vrtc" );
+                       desc7.putDouble( idVrtc, 0.000000 );
+                   var idPnt = charIDToTypeID( "Pnt " );
+                   desc5.putObject( idbase, idPnt, desc7 );
+               var idtextShape = stringIDToTypeID( "textShape" );
+               list1.putObject( idtextShape, desc5 );
+           desc3.putList( idtextShape, list1 );
+           var idTxtt = charIDToTypeID( "Txtt" );
+               var list2 = new ActionList();
+                   var desc8 = new ActionDescriptor();
+                   var idFrom = charIDToTypeID( "From" );
+                   desc8.putInteger( idFrom, 0 );
+                   var idT = charIDToTypeID( "T   " );
+                   desc8.putInteger( idT, 2 );
+                   var idTxtS = charIDToTypeID( "TxtS" );
+                       var desc9 = new ActionDescriptor();
+                       var idstyleSheetHasParent = stringIDToTypeID( "styleSheetHasParent" );
+                       desc9.putBoolean( idstyleSheetHasParent, true );
+                       var idfontPostScriptName = stringIDToTypeID( "fontPostScriptName" );
+                       desc9.putString( idfontPostScriptName, "ArialMT" );
+                       var idFntN = charIDToTypeID( "FntN" );
+                       desc9.putString( idFntN, "Arial" );
+                       var idFntS = charIDToTypeID( "FntS" );
+                       desc9.putString( idFntS, "Regular" );
+                       var idScrp = charIDToTypeID( "Scrp" );
+                       desc9.putInteger( idScrp, 0 );
+                       var idFntT = charIDToTypeID( "FntT" );
+                       desc9.putInteger( idFntT, 1 );
+                       var idSz = charIDToTypeID( "Sz  " );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc9.putUnitDouble( idSz, idPxl, 11.000000 );
+                       var idHrzS = charIDToTypeID( "HrzS" );
+                       desc9.putDouble( idHrzS, 100.000000 );
+                       var idVrtS = charIDToTypeID( "VrtS" );
+                       desc9.putDouble( idVrtS, 100.000000 );
+                       var idsyntheticBold = stringIDToTypeID( "syntheticBold" );
+                       desc9.putBoolean( idsyntheticBold, false );
+                       var idsyntheticItalic = stringIDToTypeID( "syntheticItalic" );
+                       desc9.putBoolean( idsyntheticItalic, false );
+                       var idautoLeading = stringIDToTypeID( "autoLeading" );
+                       desc9.putBoolean( idautoLeading, true );
+                       var idTrck = charIDToTypeID( "Trck" );
+                       desc9.putInteger( idTrck, 0 );
+                       var idBsln = charIDToTypeID( "Bsln" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc9.putUnitDouble( idBsln, idPxl, 0.000000 );
+                       var idcharacterRotation = stringIDToTypeID( "characterRotation" );
+                       desc9.putDouble( idcharacterRotation, 0.000000 );
+                       var idAtKr = charIDToTypeID( "AtKr" );
+                       var idAtKr = charIDToTypeID( "AtKr" );
+                       var idmetricsKern = stringIDToTypeID( "metricsKern" );
+                       desc9.putEnumerated( idAtKr, idAtKr, idmetricsKern );
+                       var idfontCaps = stringIDToTypeID( "fontCaps" );
+                       var idfontCaps = stringIDToTypeID( "fontCaps" );
+                       var idNrml = charIDToTypeID( "Nrml" );
+                       desc9.putEnumerated( idfontCaps, idfontCaps, idNrml );
+                       var idbaseline = stringIDToTypeID( "baseline" );
+                       var idbaseline = stringIDToTypeID( "baseline" );
+                       var idNrml = charIDToTypeID( "Nrml" );
+                       desc9.putEnumerated( idbaseline, idbaseline, idNrml );
+                       var idotbaseline = stringIDToTypeID( "otbaseline" );
+                       var idotbaseline = stringIDToTypeID( "otbaseline" );
+                       var idNrml = charIDToTypeID( "Nrml" );
+                       desc9.putEnumerated( idotbaseline, idotbaseline, idNrml );
+                       var idstrikethrough = stringIDToTypeID( "strikethrough" );
+                       var idstrikethrough = stringIDToTypeID( "strikethrough" );
+                       var idstrikethroughOff = stringIDToTypeID( "strikethroughOff" );
+                       desc9.putEnumerated( idstrikethrough, idstrikethrough, idstrikethroughOff );
+                       var idUndl = charIDToTypeID( "Undl" );
+                       var idUndl = charIDToTypeID( "Undl" );
+                       var idunderlineOff = stringIDToTypeID( "underlineOff" );
+                       desc9.putEnumerated( idUndl, idUndl, idunderlineOff );
+                       var idunderlineOffset = stringIDToTypeID( "underlineOffset" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc9.putUnitDouble( idunderlineOffset, idPxl, 0.000000 );
+                       var idligature = stringIDToTypeID( "ligature" );
+                       desc9.putBoolean( idligature, true );
+                       var idaltligature = stringIDToTypeID( "altligature" );
+                       desc9.putBoolean( idaltligature, false );
+                       var idcontextualLigatures = stringIDToTypeID( "contextualLigatures" );
+                       desc9.putBoolean( idcontextualLigatures, true );
+                       var idalternateLigatures = stringIDToTypeID( "alternateLigatures" );
+                       desc9.putBoolean( idalternateLigatures, false );
+                       var idoldStyle = stringIDToTypeID( "oldStyle" );
+                       desc9.putBoolean( idoldStyle, false );
+                       var idfractions = stringIDToTypeID( "fractions" );
+                       desc9.putBoolean( idfractions, false );
+                       var idordinals = stringIDToTypeID( "ordinals" );
+                       desc9.putBoolean( idordinals, false );
+                       var idswash = stringIDToTypeID( "swash" );
+                       desc9.putBoolean( idswash, false );
+                       var idtitling = stringIDToTypeID( "titling" );
+                       desc9.putBoolean( idtitling, false );
+                       var idconnectionForms = stringIDToTypeID( "connectionForms" );
+                       desc9.putBoolean( idconnectionForms, true );
+                       var idstylisticAlternates = stringIDToTypeID( "stylisticAlternates" );
+                       desc9.putBoolean( idstylisticAlternates, false );
+                       var idornaments = stringIDToTypeID( "ornaments" );
+                       desc9.putBoolean( idornaments, false );
+                       var idfigureStyle = stringIDToTypeID( "figureStyle" );
+                       var idfigureStyle = stringIDToTypeID( "figureStyle" );
+                       var idNrml = charIDToTypeID( "Nrml" );
+                       desc9.putEnumerated( idfigureStyle, idfigureStyle, idNrml );
+                       var idproportionalMetrics = stringIDToTypeID( "proportionalMetrics" );
+                       desc9.putBoolean( idproportionalMetrics, false );
+                       var idkana = stringIDToTypeID( "kana" );
+                       desc9.putBoolean( idkana, false );
+                       var iditalics = stringIDToTypeID( "italics" );
+                       desc9.putBoolean( iditalics, false );
+                       var idruby = stringIDToTypeID( "ruby" );
+                       desc9.putBoolean( idruby, false );
+                       var idbaselineDirection = stringIDToTypeID( "baselineDirection" );
+                       var idbaselineDirection = stringIDToTypeID( "baselineDirection" );
+                       var idwithStream = stringIDToTypeID( "withStream" );
+                       desc9.putEnumerated( idbaselineDirection, idbaselineDirection, idwithStream );
+                       var idtextLanguage = stringIDToTypeID( "textLanguage" );
+                       var idtextLanguage = stringIDToTypeID( "textLanguage" );
+                       var idukenglishLanguage = stringIDToTypeID( "ukenglishLanguage" );
+                       desc9.putEnumerated( idtextLanguage, idtextLanguage, idukenglishLanguage );
+                       var idjapaneseAlternate = stringIDToTypeID( "japaneseAlternate" );
+                       var idjapaneseAlternate = stringIDToTypeID( "japaneseAlternate" );
+                       var iddefaultForm = stringIDToTypeID( "defaultForm" );
+                       desc9.putEnumerated( idjapaneseAlternate, idjapaneseAlternate, iddefaultForm );
+                       var idmojiZume = stringIDToTypeID( "mojiZume" );
+                       desc9.putDouble( idmojiZume, 0.000000 );
+                       var idgridAlignment = stringIDToTypeID( "gridAlignment" );
+                       var idgridAlignment = stringIDToTypeID( "gridAlignment" );
+                       var idroman = stringIDToTypeID( "roman" );
+                       desc9.putEnumerated( idgridAlignment, idgridAlignment, idroman );
+                       var idenableWariChu = stringIDToTypeID( "enableWariChu" );
+                       desc9.putBoolean( idenableWariChu, false );
+                       var idwariChuCount = stringIDToTypeID( "wariChuCount" );
+                       desc9.putInteger( idwariChuCount, 2 );
+                       var idwariChuLineGap = stringIDToTypeID( "wariChuLineGap" );
+                       desc9.putInteger( idwariChuLineGap, 0 );
+                       var idwariChuScale = stringIDToTypeID( "wariChuScale" );
+                       desc9.putDouble( idwariChuScale, 0.500000 );
+                       var idwariChuWidow = stringIDToTypeID( "wariChuWidow" );
+                       desc9.putInteger( idwariChuWidow, 2 );
+                       var idwariChuOrphan = stringIDToTypeID( "wariChuOrphan" );
+                       desc9.putInteger( idwariChuOrphan, 2 );
+                       var idwariChuJustification = stringIDToTypeID( "wariChuJustification" );
+                       var idwariChuJustification = stringIDToTypeID( "wariChuJustification" );
+                       var idwariChuAutoJustify = stringIDToTypeID( "wariChuAutoJustify" );
+                       desc9.putEnumerated( idwariChuJustification, idwariChuJustification, idwariChuAutoJustify );
+                       var idtcyUpDown = stringIDToTypeID( "tcyUpDown" );
+                       desc9.putInteger( idtcyUpDown, 0 );
+                       var idtcyLeftRight = stringIDToTypeID( "tcyLeftRight" );
+                       desc9.putInteger( idtcyLeftRight, 0 );
+                       var idleftAki = stringIDToTypeID( "leftAki" );
+                       desc9.putDouble( idleftAki, -1.000000 );
+                       var idrightAki = stringIDToTypeID( "rightAki" );
+                       desc9.putDouble( idrightAki, -1.000000 );
+                       var idjiDori = stringIDToTypeID( "jiDori" );
+                       desc9.putInteger( idjiDori, 0 );
+                       var idnoBreak = stringIDToTypeID( "noBreak" );
+                       desc9.putBoolean( idnoBreak, false );
+                       var idClr = charIDToTypeID( "Clr " );
+                           var desc10 = new ActionDescriptor();
+                           var idRd = charIDToTypeID( "Rd  " );
+                           desc10.putDouble( idRd, 0.000000 );
+                           var idGrn = charIDToTypeID( "Grn " );
+                           desc10.putDouble( idGrn, 0.000000 );
+                           var idBl = charIDToTypeID( "Bl  " );
+                           desc10.putDouble( idBl, 0.000000 );
+                       var idRGBC = charIDToTypeID( "RGBC" );
+                       desc9.putObject( idClr, idRGBC, desc10 );
+                       var idstrokeColor = stringIDToTypeID( "strokeColor" );
+                           var desc11 = new ActionDescriptor();
+                           var idRd = charIDToTypeID( "Rd  " );
+                           desc11.putDouble( idRd, 191.000110 );
+                           var idGrn = charIDToTypeID( "Grn " );
+                           desc11.putDouble( idGrn, 191.000110 );
+                           var idBl = charIDToTypeID( "Bl  " );
+                           desc11.putDouble( idBl, 191.000110 );
+                       var idRGBC = charIDToTypeID( "RGBC" );
+                       desc9.putObject( idstrokeColor, idRGBC, desc11 );
+                       var idFl = charIDToTypeID( "Fl  " );
+                       desc9.putBoolean( idFl, true );
+                       var idStrk = charIDToTypeID( "Strk" );
+                       desc9.putBoolean( idStrk, false );
+                       var idfillFirst = stringIDToTypeID( "fillFirst" );
+                       desc9.putBoolean( idfillFirst, false );
+                       var idfillOverPrint = stringIDToTypeID( "fillOverPrint" );
+                       desc9.putBoolean( idfillOverPrint, false );
+                       var idstrokeOverPrint = stringIDToTypeID( "strokeOverPrint" );
+                       desc9.putBoolean( idstrokeOverPrint, false );
+                       var idlineCap = stringIDToTypeID( "lineCap" );
+                       var idlineCap = stringIDToTypeID( "lineCap" );
+                       var idbuttCap = stringIDToTypeID( "buttCap" );
+                       desc9.putEnumerated( idlineCap, idlineCap, idbuttCap );
+                       var idlineJoin = stringIDToTypeID( "lineJoin" );
+                       var idlineJoin = stringIDToTypeID( "lineJoin" );
+                       var idmiterJoin = stringIDToTypeID( "miterJoin" );
+                       desc9.putEnumerated( idlineJoin, idlineJoin, idmiterJoin );
+                       var idlineWidth = stringIDToTypeID( "lineWidth" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc9.putUnitDouble( idlineWidth, idPxl, 1.000000 );
+                       var idmiterLimit = stringIDToTypeID( "miterLimit" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc9.putUnitDouble( idmiterLimit, idPxl, 4.000000 );
+                       var idlineDashoffset = stringIDToTypeID( "lineDashoffset" );
+                       desc9.putDouble( idlineDashoffset, 0.000000 );
+                   var idTxtS = charIDToTypeID( "TxtS" );
+                   desc8.putObject( idTxtS, idTxtS, desc9 );
+               var idTxtt = charIDToTypeID( "Txtt" );
+               list2.putObject( idTxtt, desc8 );
+           desc3.putList( idTxtt, list2 );
+           var idparagraphStyleRange = stringIDToTypeID( "paragraphStyleRange" );
+               var list3 = new ActionList();
+                   var desc12 = new ActionDescriptor();
+                   var idFrom = charIDToTypeID( "From" );
+                   desc12.putInteger( idFrom, 0 );
+                   var idT = charIDToTypeID( "T   " );
+                   desc12.putInteger( idT, 2 );
+                   var idparagraphStyle = stringIDToTypeID( "paragraphStyle" );
+                       var desc13 = new ActionDescriptor();
+                       var idAlgn = charIDToTypeID( "Algn" );
+                       var idAlg = charIDToTypeID( "Alg " );
+                       var idLeft = charIDToTypeID( "Left" );
+                       desc13.putEnumerated( idAlgn, idAlg, idLeft );
+                       var idfirstLineIndent = stringIDToTypeID( "firstLineIndent" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc13.putUnitDouble( idfirstLineIndent, idPxl, 0.000000 );
+                       var idstartIndent = stringIDToTypeID( "startIndent" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc13.putUnitDouble( idstartIndent, idPxl, 0.000000 );
+                       var idendIndent = stringIDToTypeID( "endIndent" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc13.putUnitDouble( idendIndent, idPxl, 0.000000 );
+                       var idspaceBefore = stringIDToTypeID( "spaceBefore" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc13.putUnitDouble( idspaceBefore, idPxl, 0.000000 );
+                       var idspaceAfter = stringIDToTypeID( "spaceAfter" );
+                       var idPxl = charIDToTypeID( "#Pxl" );
+                       desc13.putUnitDouble( idspaceAfter, idPxl, 0.000000 );
+                       var iddropCapMultiplier = stringIDToTypeID( "dropCapMultiplier" );
+                       desc13.putInteger( iddropCapMultiplier, 1 );
+                       var idautoLeadingPercentage = stringIDToTypeID( "autoLeadingPercentage" );
+                       desc13.putDouble( idautoLeadingPercentage, 1.200000 );
+                       var idleadingType = stringIDToTypeID( "leadingType" );
+                       var idleadingType = stringIDToTypeID( "leadingType" );
+                       var idleadingBelow = stringIDToTypeID( "leadingBelow" );
+                       desc13.putEnumerated( idleadingType, idleadingType, idleadingBelow );
+                       var idhyphenate = stringIDToTypeID( "hyphenate" );
+                       desc13.putBoolean( idhyphenate, true );
+                       var idhyphenateWordSize = stringIDToTypeID( "hyphenateWordSize" );
+                       desc13.putInteger( idhyphenateWordSize, 6 );
+                       var idhyphenatePreLength = stringIDToTypeID( "hyphenatePreLength" );
+                       desc13.putInteger( idhyphenatePreLength, 2 );
+                       var idhyphenatePostLength = stringIDToTypeID( "hyphenatePostLength" );
+                       desc13.putInteger( idhyphenatePostLength, 2 );
+                       var idhyphenateLimit = stringIDToTypeID( "hyphenateLimit" );
+                       desc13.putInteger( idhyphenateLimit, 0 );
+                       var idhyphenationZone = stringIDToTypeID( "hyphenationZone" );
+                       desc13.putDouble( idhyphenationZone, 36.000000 );
+                       var idhyphenateCapitalized = stringIDToTypeID( "hyphenateCapitalized" );
+                       desc13.putBoolean( idhyphenateCapitalized, true );
+                       var idhyphenationPreference = stringIDToTypeID( "hyphenationPreference" );
+                       desc13.putDouble( idhyphenationPreference, 0.500000 );
+                       var idjustificationWordMinimum = stringIDToTypeID( "justificationWordMinimum" );
+                       desc13.putDouble( idjustificationWordMinimum, 0.800000 );
+                       var idjustificationWordDesired = stringIDToTypeID( "justificationWordDesired" );
+                       desc13.putDouble( idjustificationWordDesired, 1.000000 );
+                       var idjustificationWordMaximum = stringIDToTypeID( "justificationWordMaximum" );
+                       desc13.putDouble( idjustificationWordMaximum, 1.330000 );
+                       var idjustificationLetterMinimum = stringIDToTypeID( "justificationLetterMinimum" );
+                       desc13.putDouble( idjustificationLetterMinimum, 0.000000 );
+                       var idjustificationLetterDesired = stringIDToTypeID( "justificationLetterDesired" );
+                       desc13.putDouble( idjustificationLetterDesired, 0.000000 );
+                       var idjustificationLetterMaximum = stringIDToTypeID( "justificationLetterMaximum" );
+                       desc13.putDouble( idjustificationLetterMaximum, 0.000000 );
+                       var idjustificationGlyphMinimum = stringIDToTypeID( "justificationGlyphMinimum" );
+                       desc13.putDouble( idjustificationGlyphMinimum, 1.000000 );
+                       var idjustificationGlyphDesired = stringIDToTypeID( "justificationGlyphDesired" );
+                       desc13.putDouble( idjustificationGlyphDesired, 1.000000 );
+                       var idjustificationGlyphMaximum = stringIDToTypeID( "justificationGlyphMaximum" );
+                       desc13.putDouble( idjustificationGlyphMaximum, 1.000000 );
+                       var idsingleWordJustification = stringIDToTypeID( "singleWordJustification" );
+                       var idAlg = charIDToTypeID( "Alg " );
+                       var idJstA = charIDToTypeID( "JstA" );
+                       desc13.putEnumerated( idsingleWordJustification, idAlg, idJstA );
+                       var idhangingRoman = stringIDToTypeID( "hangingRoman" );
+                       desc13.putBoolean( idhangingRoman, false );
+                       var idautoTCY = stringIDToTypeID( "autoTCY" );
+                       desc13.putInteger( idautoTCY, 1 );
+                       var idkeepTogether = stringIDToTypeID( "keepTogether" );
+                       desc13.putBoolean( idkeepTogether, true );
+                       var idburasagari = stringIDToTypeID( "burasagari" );
+                       var idburasagari = stringIDToTypeID( "burasagari" );
+                       var idburasagariNone = stringIDToTypeID( "burasagariNone" );
+                       desc13.putEnumerated( idburasagari, idburasagari, idburasagariNone );
+                       var idpreferredKinsokuOrder = stringIDToTypeID( "preferredKinsokuOrder" );
+                       var idpreferredKinsokuOrder = stringIDToTypeID( "preferredKinsokuOrder" );
+                       var idpushIn = stringIDToTypeID( "pushIn" );
+                       desc13.putEnumerated( idpreferredKinsokuOrder, idpreferredKinsokuOrder, idpushIn );
+                       var idkurikaeshiMojiShori = stringIDToTypeID( "kurikaeshiMojiShori" );
+                       desc13.putBoolean( idkurikaeshiMojiShori, false );
+                       var idtextEveryLineComposer = stringIDToTypeID( "textEveryLineComposer" );
+                       desc13.putBoolean( idtextEveryLineComposer, false );
+                       var iddefaultTabWidth = stringIDToTypeID( "defaultTabWidth" );
+                       desc13.putDouble( iddefaultTabWidth, 36.000000 );
+                       var iddefaultStyle = stringIDToTypeID( "defaultStyle" );
+                           var desc14 = new ActionDescriptor();
+                           var idfontPostScriptName = stringIDToTypeID( "fontPostScriptName" );
+                           desc14.putString( idfontPostScriptName, "MyriadPro-Regular" );
+                           var idFntN = charIDToTypeID( "FntN" );
+                           desc14.putString( idFntN, "Myriad Pro" );
+                           var idFntS = charIDToTypeID( "FntS" );
+                           desc14.putString( idFntS, "Regular" );
+                           var idScrp = charIDToTypeID( "Scrp" );
+                           desc14.putInteger( idScrp, 0 );
+                           var idFntT = charIDToTypeID( "FntT" );
+                           desc14.putInteger( idFntT, 0 );
+                           var idSz = charIDToTypeID( "Sz  " );
+                           var idPxl = charIDToTypeID( "#Pxl" );
+                           desc14.putUnitDouble( idSz, idPxl, 12.000000 );
+                           var idHrzS = charIDToTypeID( "HrzS" );
+                           desc14.putDouble( idHrzS, 100.000000 );
+                           var idVrtS = charIDToTypeID( "VrtS" );
+                           desc14.putDouble( idVrtS, 100.000000 );
+                           var idsyntheticBold = stringIDToTypeID( "syntheticBold" );
+                           desc14.putBoolean( idsyntheticBold, false );
+                           var idsyntheticItalic = stringIDToTypeID( "syntheticItalic" );
+                           desc14.putBoolean( idsyntheticItalic, false );
+                           var idautoLeading = stringIDToTypeID( "autoLeading" );
+                           desc14.putBoolean( idautoLeading, true );
+                           var idTrck = charIDToTypeID( "Trck" );
+                           desc14.putInteger( idTrck, 0 );
+                           var idBsln = charIDToTypeID( "Bsln" );
+                           var idPxl = charIDToTypeID( "#Pxl" );
+                           desc14.putUnitDouble( idBsln, idPxl, 0.000000 );
+                           var idcharacterRotation = stringIDToTypeID( "characterRotation" );
+                           desc14.putDouble( idcharacterRotation, 0.000000 );
+                           var idAtKr = charIDToTypeID( "AtKr" );
+                           var idAtKr = charIDToTypeID( "AtKr" );
+                           var idmetricsKern = stringIDToTypeID( "metricsKern" );
+                           desc14.putEnumerated( idAtKr, idAtKr, idmetricsKern );
+                           var idfontCaps = stringIDToTypeID( "fontCaps" );
+                           var idfontCaps = stringIDToTypeID( "fontCaps" );
+                           var idNrml = charIDToTypeID( "Nrml" );
+                           desc14.putEnumerated( idfontCaps, idfontCaps, idNrml );
+                           var idbaseline = stringIDToTypeID( "baseline" );
+                           var idbaseline = stringIDToTypeID( "baseline" );
+                           var idNrml = charIDToTypeID( "Nrml" );
+                           desc14.putEnumerated( idbaseline, idbaseline, idNrml );
+                           var idotbaseline = stringIDToTypeID( "otbaseline" );
+                           var idotbaseline = stringIDToTypeID( "otbaseline" );
+                           var idNrml = charIDToTypeID( "Nrml" );
+                           desc14.putEnumerated( idotbaseline, idotbaseline, idNrml );
+                           var idstrikethrough = stringIDToTypeID( "strikethrough" );
+                           var idstrikethrough = stringIDToTypeID( "strikethrough" );
+                           var idstrikethroughOff = stringIDToTypeID( "strikethroughOff" );
+                           desc14.putEnumerated( idstrikethrough, idstrikethrough, idstrikethroughOff );
+                           var idUndl = charIDToTypeID( "Undl" );
+                           var idUndl = charIDToTypeID( "Undl" );
+                           var idunderlineOff = stringIDToTypeID( "underlineOff" );
+                           desc14.putEnumerated( idUndl, idUndl, idunderlineOff );
+                           var idunderlineOffset = stringIDToTypeID( "underlineOffset" );
+                           var idPxl = charIDToTypeID( "#Pxl" );
+                           desc14.putUnitDouble( idunderlineOffset, idPxl, 0.000000 );
+                           var idligature = stringIDToTypeID( "ligature" );
+                           desc14.putBoolean( idligature, true );
+                           var idaltligature = stringIDToTypeID( "altligature" );
+                           desc14.putBoolean( idaltligature, false );
+                           var idcontextualLigatures = stringIDToTypeID( "contextualLigatures" );
+                           desc14.putBoolean( idcontextualLigatures, false );
+                           var idalternateLigatures = stringIDToTypeID( "alternateLigatures" );
+                           desc14.putBoolean( idalternateLigatures, false );
+                           var idoldStyle = stringIDToTypeID( "oldStyle" );
+                           desc14.putBoolean( idoldStyle, false );
+                           var idfractions = stringIDToTypeID( "fractions" );
+                           desc14.putBoolean( idfractions, false );
+                           var idordinals = stringIDToTypeID( "ordinals" );
+                           desc14.putBoolean( idordinals, false );
+                           var idswash = stringIDToTypeID( "swash" );
+                           desc14.putBoolean( idswash, false );
+                           var idtitling = stringIDToTypeID( "titling" );
+                           desc14.putBoolean( idtitling, false );
+                           var idconnectionForms = stringIDToTypeID( "connectionForms" );
+                           desc14.putBoolean( idconnectionForms, false );
+                           var idstylisticAlternates = stringIDToTypeID( "stylisticAlternates" );
+                           desc14.putBoolean( idstylisticAlternates, false );
+                           var idornaments = stringIDToTypeID( "ornaments" );
+                           desc14.putBoolean( idornaments, false );
+                           var idfigureStyle = stringIDToTypeID( "figureStyle" );
+                           var idfigureStyle = stringIDToTypeID( "figureStyle" );
+                           var idNrml = charIDToTypeID( "Nrml" );
+                           desc14.putEnumerated( idfigureStyle, idfigureStyle, idNrml );
+                           var idproportionalMetrics = stringIDToTypeID( "proportionalMetrics" );
+                           desc14.putBoolean( idproportionalMetrics, false );
+                           var idkana = stringIDToTypeID( "kana" );
+                           desc14.putBoolean( idkana, false );
+                           var iditalics = stringIDToTypeID( "italics" );
+                           desc14.putBoolean( iditalics, false );
+                           var idruby = stringIDToTypeID( "ruby" );
+                           desc14.putBoolean( idruby, false );
+                           var idbaselineDirection = stringIDToTypeID( "baselineDirection" );
+                           var idbaselineDirection = stringIDToTypeID( "baselineDirection" );
+                           var idrotated = stringIDToTypeID( "rotated" );
+                           desc14.putEnumerated( idbaselineDirection, idbaselineDirection, idrotated );
+                           var idtextLanguage = stringIDToTypeID( "textLanguage" );
+                           var idtextLanguage = stringIDToTypeID( "textLanguage" );
+                           var idenglishLanguage = stringIDToTypeID( "englishLanguage" );
+                           desc14.putEnumerated( idtextLanguage, idtextLanguage, idenglishLanguage );
+                           var idmojiZume = stringIDToTypeID( "mojiZume" );
+                           desc14.putDouble( idmojiZume, 0.000000 );
+                           var idgridAlignment = stringIDToTypeID( "gridAlignment" );
+                           var idgridAlignment = stringIDToTypeID( "gridAlignment" );
+                           var idroman = stringIDToTypeID( "roman" );
+                           desc14.putEnumerated( idgridAlignment, idgridAlignment, idroman );
+                           var idenableWariChu = stringIDToTypeID( "enableWariChu" );
+                           desc14.putBoolean( idenableWariChu, false );
+                           var idwariChuCount = stringIDToTypeID( "wariChuCount" );
+                           desc14.putInteger( idwariChuCount, 2 );
+                           var idwariChuLineGap = stringIDToTypeID( "wariChuLineGap" );
+                           desc14.putInteger( idwariChuLineGap, 0 );
+                           var idwariChuScale = stringIDToTypeID( "wariChuScale" );
+                           desc14.putDouble( idwariChuScale, 0.500000 );
+                           var idwariChuWidow = stringIDToTypeID( "wariChuWidow" );
+                           desc14.putInteger( idwariChuWidow, 2 );
+                           var idwariChuOrphan = stringIDToTypeID( "wariChuOrphan" );
+                           desc14.putInteger( idwariChuOrphan, 2 );
+                           var idwariChuJustification = stringIDToTypeID( "wariChuJustification" );
+                           var idwariChuJustification = stringIDToTypeID( "wariChuJustification" );
+                           var idwariChuAutoJustify = stringIDToTypeID( "wariChuAutoJustify" );
+                           desc14.putEnumerated( idwariChuJustification, idwariChuJustification, idwariChuAutoJustify );
+                           var idtcyUpDown = stringIDToTypeID( "tcyUpDown" );
+                           desc14.putInteger( idtcyUpDown, 0 );
+                           var idtcyLeftRight = stringIDToTypeID( "tcyLeftRight" );
+                           desc14.putInteger( idtcyLeftRight, 0 );
+                           var idleftAki = stringIDToTypeID( "leftAki" );
+                           desc14.putDouble( idleftAki, -1.000000 );
+                           var idrightAki = stringIDToTypeID( "rightAki" );
+                           desc14.putDouble( idrightAki, -1.000000 );
+                           var idjiDori = stringIDToTypeID( "jiDori" );
+                           desc14.putInteger( idjiDori, 0 );
+                           var idnoBreak = stringIDToTypeID( "noBreak" );
+                           desc14.putBoolean( idnoBreak, false );
+                           var idClr = charIDToTypeID( "Clr " );
+                               var desc15 = new ActionDescriptor();
+                               var idRd = charIDToTypeID( "Rd  " );
+                               desc15.putDouble( idRd, 0.000000 );
+                               var idGrn = charIDToTypeID( "Grn " );
+                               desc15.putDouble( idGrn, 0.000000 );
+                               var idBl = charIDToTypeID( "Bl  " );
+                               desc15.putDouble( idBl, 0.000000 );
+                           var idRGBC = charIDToTypeID( "RGBC" );
+                           desc14.putObject( idClr, idRGBC, desc15 );
+                           var idstrokeColor = stringIDToTypeID( "strokeColor" );
+                               var desc16 = new ActionDescriptor();
+                               var idRd = charIDToTypeID( "Rd  " );
+                               desc16.putDouble( idRd, 0.000000 );
+                               var idGrn = charIDToTypeID( "Grn " );
+                               desc16.putDouble( idGrn, 0.000000 );
+                               var idBl = charIDToTypeID( "Bl  " );
+                               desc16.putDouble( idBl, 0.000000 );
+                           var idRGBC = charIDToTypeID( "RGBC" );
+                           desc14.putObject( idstrokeColor, idRGBC, desc16 );
+                           var idFl = charIDToTypeID( "Fl  " );
+                           desc14.putBoolean( idFl, true );
+                           var idStrk = charIDToTypeID( "Strk" );
+                           desc14.putBoolean( idStrk, false );
+                           var idfillFirst = stringIDToTypeID( "fillFirst" );
+                           desc14.putBoolean( idfillFirst, true );
+                           var idfillOverPrint = stringIDToTypeID( "fillOverPrint" );
+                           desc14.putBoolean( idfillOverPrint, false );
+                           var idstrokeOverPrint = stringIDToTypeID( "strokeOverPrint" );
+                           desc14.putBoolean( idstrokeOverPrint, false );
+                           var idlineCap = stringIDToTypeID( "lineCap" );
+                           var idlineCap = stringIDToTypeID( "lineCap" );
+                           var idbuttCap = stringIDToTypeID( "buttCap" );
+                           desc14.putEnumerated( idlineCap, idlineCap, idbuttCap );
+                           var idlineJoin = stringIDToTypeID( "lineJoin" );
+                           var idlineJoin = stringIDToTypeID( "lineJoin" );
+                           var idmiterJoin = stringIDToTypeID( "miterJoin" );
+                           desc14.putEnumerated( idlineJoin, idlineJoin, idmiterJoin );
+                           var idlineWidth = stringIDToTypeID( "lineWidth" );
+                           var idPxl = charIDToTypeID( "#Pxl" );
+                           desc14.putUnitDouble( idlineWidth, idPxl, 1.000000 );
+                           var idmiterLimit = stringIDToTypeID( "miterLimit" );
+                           var idPxl = charIDToTypeID( "#Pxl" );
+                           desc14.putUnitDouble( idmiterLimit, idPxl, 4.000000 );
+                           var idlineDashoffset = stringIDToTypeID( "lineDashoffset" );
+                           desc14.putDouble( idlineDashoffset, 0.000000 );
+                       var idTxtS = charIDToTypeID( "TxtS" );
+                       desc13.putObject( iddefaultStyle, idTxtS, desc14 );
+                   var idparagraphStyle = stringIDToTypeID( "paragraphStyle" );
+                   desc12.putObject( idparagraphStyle, idparagraphStyle, desc13 );
+               var idparagraphStyleRange = stringIDToTypeID( "paragraphStyleRange" );
+               list3.putObject( idparagraphStyleRange, desc12 );
+           desc3.putList( idparagraphStyleRange, list3 );
+           var idkerningRange = stringIDToTypeID( "kerningRange" );
+               var list4 = new ActionList();
+           desc3.putList( idkerningRange, list4 );
+       var idTxLr = charIDToTypeID( "TxLr" );
+       desc2.putObject( idT, idTxLr, desc3 );
+   executeAction( idsetd, desc2, DialogModes.NO );
+ }

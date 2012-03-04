@@ -53,6 +53,12 @@ import dev.drsoran.rtm.Task;
 public class TaskEditMultipleFragment extends
          AbstractTaskEditFragment< TaskEditMultipleFragment >
 {
+   public static class Config
+   {
+      public final static String TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
+         + "tasks";
+   }
+   
    private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
    
    private final static String URL_MULTI_VALUE = null;
@@ -60,6 +66,16 @@ public class TaskEditMultipleFragment extends
    public final static String TAGS_MULTI_VALUE = "multi_tag";
    
    private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
+   
+   /**
+    * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
+    * 
+    * e.g. Map< Tasks.TASKSERIES_NAME, Map< "Task Name", 2 > >
+    */
+   private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
+   
+   @InstanceState( key = Config.TASKS )
+   private final ArrayList< Task > tasks = new ArrayList< Task >();
    
    
    
@@ -73,21 +89,11 @@ public class TaskEditMultipleFragment extends
    }
    
    
-   public static class Config
+   
+   public TaskEditMultipleFragment()
    {
-      public final static String TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
-         + "tasks";
+      registerAnnotatedConfiguredInstance( this, TaskEditMultipleFragment.class );
    }
-   
-   /**
-    * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
-    * 
-    * e.g. Map< Tasks.TASKSERIES_NAME, Map< "Task Name", 2 > >
-    */
-   private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
-   
-   @InstanceState( key = Config.TASKS )
-   private ArrayList< Task > tasks = new ArrayList< Task >();
    
    
    

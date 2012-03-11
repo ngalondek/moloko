@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import java.lang.reflect.Method;
-
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -38,6 +36,7 @@ import dev.drsoran.moloko.receivers.TimeTickReceiver;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.ListenerList.MessgageObject;
+import dev.drsoran.moloko.util.Reflection;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -178,24 +177,19 @@ public class NotifierContext extends ContextWrapper
    {
       try
       {
-         timeChangedListeners = new ListenerList< IOnTimeChangedListener >( findMethod( IOnTimeChangedListener.class,
-                                                                                        "onTimeChanged" ) );
-         settingsChangedListeners = new ListenerList< IOnSettingsChangedListener >( findMethod( IOnSettingsChangedListener.class,
-                                                                                                "onSettingsChanged" ) );
-         networkStatusListeners = new ListenerList< IOnNetworkStatusChangedListener >( findMethod( IOnNetworkStatusChangedListener.class,
-                                                                                                   "onNetworkStatusChanged" ) );
-         syncStatusListeners = new ListenerList< ISyncStatusListener >( findMethod( ISyncStatusListener.class,
-                                                                                    "onSyncStatusChanged" ) );
+         timeChangedListeners = new ListenerList< IOnTimeChangedListener >( Reflection.findMethod( IOnTimeChangedListener.class,
+                                                                                                   "onTimeChanged" ) );
+         settingsChangedListeners = new ListenerList< IOnSettingsChangedListener >( Reflection.findMethod( IOnSettingsChangedListener.class,
+                                                                                                           "onSettingsChanged" ) );
+         networkStatusListeners = new ListenerList< IOnNetworkStatusChangedListener >( Reflection.findMethod( IOnNetworkStatusChangedListener.class,
+                                                                                                              "onNetworkStatusChanged" ) );
+         syncStatusListeners = new ListenerList< ISyncStatusListener >( Reflection.findMethod( ISyncStatusListener.class,
+                                                                                               "onSyncStatusChanged" ) );
       }
       catch ( SecurityException e )
       {
          Log.e( TAG, Strings.EMPTY_STRING, e );
          throw e;
-      }
-      catch ( NoSuchMethodException e )
-      {
-         Log.e( TAG, Strings.EMPTY_STRING, e );
-         throw new IllegalStateException( e );
       }
    }
    
@@ -308,27 +302,6 @@ public class NotifierContext extends ContextWrapper
    private void unregisterSettingsListener()
    {
       settingsListener.shutdown();
-   }
-   
-   
-   
-   private final static < T > Method findMethod( Class< T > clazz, String name ) throws NoSuchMethodException
-   {
-      Method method = null;
-      
-      final Method[] methods = clazz.getMethods();
-      
-      for ( int i = 0; i < methods.length && method == null; i++ )
-      {
-         if ( methods[ i ].getName().equals( name ) )
-            method = methods[ i ];
-      }
-      
-      if ( method == null )
-         throw new NoSuchMethodException( "The class " + clazz.getName()
-            + " does not has a method " + name );
-      
-      return method;
    }
    
    private final Handler handler = new Handler()

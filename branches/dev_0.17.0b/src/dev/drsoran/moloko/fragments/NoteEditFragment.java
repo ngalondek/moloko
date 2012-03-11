@@ -77,7 +77,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    
    public NoteEditFragment()
    {
-      registerAnnotatedConfiguredInstance( this, NoteEditFragment.class, null );
+      registerAnnotatedConfiguredInstance( this, NoteEditFragment.class );
    }
    
    

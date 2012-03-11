@@ -73,6 +73,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
+      annotatedConfigSupport.onAttach( this, savedInstanceState );
+      
       super.onCreate( savedInstanceState );
       
       requestWindowFeature( Window.FEATURE_INDETERMINATE_PROGRESS );
@@ -137,6 +139,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    @Override
    protected void onDestroy()
    {
+      annotatedConfigSupport.onDetach();
+      
       AccountUtils.unregisterAccountListener( this, this );
       
       MolokoApp.getNotifierContext( this )
@@ -210,18 +214,9 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
    @Override
    public < T > void registerAnnotatedConfiguredInstance( T instance,
-                                                          Class< T > clazz,
-                                                          Bundle initialConfig )
-   {
-      annotatedConfigSupport.registerInstance( instance, clazz, initialConfig );
-   }
-   
-   
-   
-   public < T > void registerAnnotatedConfiguredInstance( T instance,
                                                           Class< T > clazz )
    {
-      registerAnnotatedConfiguredInstance( instance, clazz, null );
+      annotatedConfigSupport.registerInstance( instance, clazz );
    }
    
    

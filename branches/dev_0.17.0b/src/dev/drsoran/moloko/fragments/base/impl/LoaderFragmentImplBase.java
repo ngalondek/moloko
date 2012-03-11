@@ -57,6 +57,12 @@ abstract class LoaderFragmentImplBase< D >
       Loader< D > newLoaderInstance( int id, Bundle config );
    }
    
+   
+   public static class Config
+   {
+      public final static String RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
+   }
+   
    private final Fragment fragment;
    
    private final LoaderCallbacks< D > loaderCallbacks;
@@ -67,7 +73,7 @@ abstract class LoaderFragmentImplBase< D >
    
    private ILoaderFragmentListener loaderListener;
    
-   @InstanceState( key = "loader_respect_content_changes", defaultValue = "false" )
+   @InstanceState( key = Config.RESPECT_CONTENT_CHANGES )
    private boolean respectContentChanges;
    
    
@@ -84,21 +90,32 @@ abstract class LoaderFragmentImplBase< D >
    
    
    
-   public void onCreate( Bundle savedInstanceState )
-   {
-      config.registerAnnotatedConfiguredInstance( this,
-                                                  LoaderFragmentImplBase.class,
-                                                  savedInstanceState );
-   }
-   
-   
-   
    public void onAttach( SupportActivity activity )
    {
+      config.registerAnnotatedConfiguredInstance( this,
+                                                  LoaderFragmentImplBase.class );
+      
       if ( activity instanceof ILoaderFragmentListener )
          loaderListener = (ILoaderFragmentListener) activity;
       else
          loaderListener = new NullLoaderFragmentListener();
+   }
+   
+   
+   
+   public void onCreate( Bundle savedInstanceState )
+   {
+      if ( savedInstanceState != null )
+      {
+         config.configure( savedInstanceState );
+      }
+      else
+      {
+         final Bundle bundle = new Bundle();
+         bundle.putBoolean( Config.RESPECT_CONTENT_CHANGES, false );
+         
+         config.configure( bundle );
+      }
    }
    
    

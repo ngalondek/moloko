@@ -37,7 +37,7 @@ import dev.drsoran.moloko.fragments.base.impl.MolokoFragmentImpl;
 public abstract class MolokoFragment extends Fragment implements IConfigurable,
          IOnSettingsChangedListener
 {
-   private MolokoFragmentImpl impl;
+   private final MolokoFragmentImpl impl;
    
    
    
@@ -102,18 +102,9 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    
    @Override
    public final < T > void registerAnnotatedConfiguredInstance( T instance,
-                                                                Class< T > clazz,
-                                                                Bundle initialConfig )
-   {
-      impl.registerAnnotatedConfiguredInstance( instance, clazz, initialConfig );
-   }
-   
-   
-   
-   public final < T > void registerAnnotatedConfiguredInstance( T instance,
                                                                 Class< T > clazz )
    {
-      registerAnnotatedConfiguredInstance( instance, clazz, null );
+      impl.registerAnnotatedConfiguredInstance( instance, clazz );
    }
    
    

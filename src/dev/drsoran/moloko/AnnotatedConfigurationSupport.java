@@ -23,46 +23,65 @@
 package dev.drsoran.moloko;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.util.Bundles;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.Reflection;
 import dev.drsoran.moloko.util.Strings;
 
 
 public class AnnotatedConfigurationSupport
 {
+   private Context context;
+   
    private HashMap< Object, List< Pair< Field, InstanceState >>> registeredInstances;
    
    
    
    public < T > void registerInstance( T instance, Class< T > clazz )
    {
-      registerInstance( instance, clazz, null );
+      createAnnotatedInstanceStateFor( instance, clazz );
    }
    
    
    
-   public < T > void registerInstance( T instance,
-                                       Class< T > clazz,
-                                       Bundle instanceState )
+   public void onAttach( Context context )
    {
-      createAnnotatedInstanceStateFor( instance, clazz );
+      onAttach( context, null );
+   }
+   
+   
+   
+   public void onAttach( Context context, Bundle savedInstanceState )
+   {
+      this.context = context;
       
-      if ( instanceState != null )
+      if ( savedInstanceState != null )
       {
-         setInstanceState( instance, instanceState );
+         setInstanceStates( savedInstanceState );
       }
       else
       {
-         setDefaultInstanceState( instance );
+         setDefaultInstanceStates();
       }
+   }
+   
+   
+   
+   public void onDetach()
+   {
+      context = null;
+      registeredInstances = null;
    }
    
    
@@ -162,13 +181,20 @@ public class AnnotatedConfigurationSupport
    {
       if ( registeredInstances != null )
       {
-         final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
-         for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+         if ( instanceState != null )
          {
-            setValue( instance,
-                      instanceState,
-                      annotatedField.first,
-                      annotatedField.second.key() );
+            final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
+            for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+            {
+               setValue( instance,
+                         instanceState,
+                         annotatedField.first,
+                         annotatedField.second.key() );
+            }
+         }
+         else
+         {
+            setDefaultInstanceState( instance );
          }
       }
    }
@@ -196,18 +222,71 @@ public class AnnotatedConfigurationSupport
          
          for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
          {
-            final InstanceState annotation = annotatedField.second;
-            
-            if ( !annotation.defaultValue()
-                            .equalsIgnoreCase( InstanceState.NO_DEFAULT ) )
+            if ( !setDefaultFromSettings( instance,
+                                          annotatedField.first,
+                                          annotatedField.second ) )
             {
-               final Field fieldToSet = annotatedField.first;
-               final Object defaultValue = getDefaultValueInstance( fieldToSet,
-                                                                    annotation );
-               
-               setInstaceFieldValue( instance, fieldToSet, defaultValue );
+               setDefaultFromDefaultValue( instance,
+                                           annotatedField.first,
+                                           annotatedField.second );
             }
          }
+      }
+   }
+   
+   
+   
+   private boolean setDefaultFromSettings( Object instance,
+                                           Field field,
+                                           InstanceState instanceState )
+   {
+      final String settingsMethod = instanceState.settingsValue();
+      boolean hasSet = false;
+      
+      if ( !settingsMethod.equals( InstanceState.NULL ) )
+      {
+         final Method method = Reflection.findMethod( Settings.class,
+                                                      settingsMethod );
+         try
+         {
+            final Object defaultValue = method.invoke( MolokoApp.getSettings( context ) );
+            setInstaceFieldValue( instance, field, defaultValue );
+         }
+         catch ( IllegalArgumentException e )
+         {
+            throw new RuntimeException( String.format( "Settings method '%s' could not be invoked.",
+                                                       settingsMethod ),
+                                        e );
+         }
+         catch ( IllegalAccessException e )
+         {
+            throw new RuntimeException( String.format( "Settings method '%s' could not be invoked.",
+                                                       settingsMethod ),
+                                        e );
+         }
+         catch ( InvocationTargetException e )
+         {
+            throw new RuntimeException( String.format( "Settings method '%s' could not be invoked.",
+                                                       settingsMethod ),
+                                        e );
+         }
+      }
+      
+      return hasSet;
+   }
+   
+   
+   
+   private void setDefaultFromDefaultValue( Object instance,
+                                            Field field,
+                                            InstanceState instanceState )
+   {
+      if ( !instanceState.defaultValue()
+                         .equalsIgnoreCase( InstanceState.NO_DEFAULT ) )
+      {
+         final Object defaultValue = getDefaultValueInstance( field,
+                                                              instanceState );
+         setInstaceFieldValue( instance, field, defaultValue );
       }
    }
    
@@ -232,13 +311,13 @@ public class AnnotatedConfigurationSupport
          }
          catch ( InstantiationException e )
          {
-            throw new RuntimeException( String.format( "$s could not be instantiated.",
+            throw new RuntimeException( String.format( "%s could not be instantiated.",
                                                        defaultValueType.getName() ),
                                         e );
          }
          catch ( IllegalAccessException e )
          {
-            throw new RuntimeException( String.format( "$s could not be instantiated.",
+            throw new RuntimeException( String.format( "%s could not be instantiated.",
                                                        defaultValueType.getName() ),
                                         e );
          }

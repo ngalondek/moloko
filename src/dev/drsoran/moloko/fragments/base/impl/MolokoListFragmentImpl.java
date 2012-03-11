@@ -80,10 +80,9 @@ public class MolokoListFragmentImpl
    
    
    public < T > void registerAnnotatedConfiguredInstance( T instance,
-                                                          Class< T > clazz,
-                                                          Bundle initialConfig )
+                                                          Class< T > clazz )
    {
-      impl.registerAnnotatedConfiguredInstance( instance, clazz, initialConfig );
+      impl.registerAnnotatedConfiguredInstance( instance, clazz );
    }
    
    

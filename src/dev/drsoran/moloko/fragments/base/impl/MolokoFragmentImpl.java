@@ -43,7 +43,7 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    
    private FragmentActivity activity;
    
-   private int settingsMask;
+   private final int settingsMask;
    
    
    
@@ -51,6 +51,20 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    {
       this.fragment = fragment;
       this.settingsMask = settingsMask;
+   }
+   
+   
+   
+   public void onAttach( SupportActivity activity )
+   {
+      this.activity = (FragmentActivity) activity;
+      this.annotatedConfigSupport.onAttach( this.activity );
+      
+      if ( settingsMask != 0 && activity instanceof IOnSettingsChangedListener )
+      {
+         MolokoApp.getNotifierContext( this.activity )
+                  .registerOnSettingsChangedListener( settingsMask, this );
+      }
    }
    
    
@@ -65,20 +79,10 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    
    
    
-   public void onAttach( SupportActivity activity )
-   {
-      this.activity = (FragmentActivity) activity;
-      if ( settingsMask != 0 && activity instanceof IOnSettingsChangedListener )
-      {
-         MolokoApp.getNotifierContext( this.activity )
-                  .registerOnSettingsChangedListener( settingsMask, this );
-      }
-   }
-   
-   
-   
    public void onDetach()
    {
+      annotatedConfigSupport.onDetach();
+      
       if ( activity instanceof IOnSettingsChangedListener )
       {
          MolokoApp.getNotifierContext( activity )
@@ -117,10 +121,9 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    
    
    public < T > void registerAnnotatedConfiguredInstance( T instance,
-                                                          Class< T > clazz,
-                                                          Bundle initialConfig )
+                                                          Class< T > clazz )
    {
-      annotatedConfigSupport.registerInstance( instance, clazz, initialConfig );
+      annotatedConfigSupport.registerInstance( instance, clazz );
    }
    
    

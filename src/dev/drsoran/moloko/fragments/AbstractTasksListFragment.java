@@ -98,7 +98,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @InstanceState( key = Config.FILTER )
    private IFilter filter;
    
-   @InstanceState( key = Config.TASK_SORT_ORDER, defaultValue = "1" )
+   @InstanceState( key = Config.TASK_SORT_ORDER, settingsValue = "getTaskSort" )
    private int tasksSort;
    
    
@@ -115,7 +115,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      ensureFilter();
+      ensureFilter();      
    }
    
    

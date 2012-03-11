@@ -20,33 +20,31 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.annotations;
+package dev.drsoran.moloko.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 
 
-@Retention( value = RetentionPolicy.RUNTIME )
-@Target( value = ElementType.FIELD )
-public @interface InstanceState
+public final class Reflection
 {
-   public final static String NEW = "new";
-   
-   public final static String NULL = "null";
-   
-   public final static String NO_DEFAULT = "no_default";
-   
-   
-   
-   String key();
-   
-   
-   
-   String defaultValue() default NO_DEFAULT;
-   
-   
-   
-   String settingsValue() default NULL;
+   public final static < T > Method findMethod( Class< T > clazz, String name )
+   {
+      Method method = null;
+      
+      final Method[] methods = clazz.getMethods();
+      
+      for ( int i = 0; i < methods.length && method == null; i++ )
+      {
+         if ( methods[ i ].getName().equals( name ) )
+            method = methods[ i ];
+      }
+      
+      if ( method == null )
+      {
+         throw new RuntimeException( "The class " + clazz.getName()
+            + " does not has a method " + name );
+      }
+      
+      return method;
+   }
 }

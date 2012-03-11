@@ -113,18 +113,9 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    
    @Override
    public final < T > void registerAnnotatedConfiguredInstance( T instance,
-                                                                Class< T > clazz,
-                                                                Bundle initialConfig )
-   {
-      impl.registerAnnotatedConfiguredInstance( instance, clazz, initialConfig );
-   }
-   
-   
-   
-   public final < T > void registerAnnotatedConfiguredInstance( T instance,
                                                                 Class< T > clazz )
    {
-      registerAnnotatedConfiguredInstance( instance, clazz, null );
+      impl.registerAnnotatedConfiguredInstance( instance, clazz );
    }
    
    

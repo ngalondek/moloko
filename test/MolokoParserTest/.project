@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>MolokoParserTest_trunk</name>
+	<name>MolokoParserTest</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -246,4 +246,10 @@
 			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/recurrence/de/RecurrenceParserImpl.java</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>Moloko</name>
+			<value>file:/D:/Programmierung/Projects/java/Moloko_trunk</value>
+		</variable>
+	</variableList>
 </projectDescription>

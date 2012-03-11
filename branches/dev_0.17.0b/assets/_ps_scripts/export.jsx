@@ -4,36 +4,31 @@ var preProdFolder = Folder.selectDialog( "Select _pre_production folder",
                                          "/d/Programmierung/Projects/java/Moloko/assets/_pre_production" );
 var startFolder = Folder.selectDialog( "Select start folder", preProdFolder );
 
-var drawableFolder = preProdFolder + "/../../res/drawable";
-var ldpiFolder         = preProdFolder + "/../../res/drawable-ldpi";
-var mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi";
-var hdpiFolder	   = preProdFolder + "/../../res/drawable-hdpi";
-var xhdpiFolder	 = preProdFolder + "/../../res/drawable-xhdpi";
-
-var file = null;
-var prefix = null;
-var suffix = "";
-
 if ( preProdFolder != null && startFolder != null )
 {
-	prefix = ( startFolder.name != preProdFolder.name ) ? startFolder.name : null;
+	prefix = ( startFolder.name != preProdFolder.name ) ? "" : null;
 	
 	// If we have a start folder != preproduction folder, then we walk up the
-	// path tree and append the folder names until we reach preproduction folder.
+	// path tree and append all folder names that do not start with '#' until we reach
+    // the preproduction folder.
 	if ( prefix != null )
 	{
 		var currentFolder = startFolder;
-		var parent = currentFolder.parent;
-		
-		while( parent.name != preProdFolder.name )
-		{			
-			prefix = parent.name + "_" + currentFolder.name;
-			currentFolder = parent;
-			parent = currentFolder.parent;
+
+		while( currentFolder.name != preProdFolder.name )
+		{
+             if ( isPrefixRelevantFolder( currentFolder.name ) )
+             {
+                 if ( prefix == "" )
+                    prefix = currentFolder.name;
+                 else
+                    prefix = currentFolder.name + "_" + prefix;
+             }
+			currentFolder = currentFolder.parent;
 		}
 	}
 	
-    //loadMolokoStyles();
+    loadMolokoStyles();
     
 	exportFolder( startFolder, prefix );
 	
@@ -43,7 +38,7 @@ if ( preProdFolder != null && startFolder != null )
 
 function exportFolder( folder, prefix )
 {
-	var files = folder.getFiles();
+     var files = folder.getFiles();
        
 	for ( var i = 0; i < files.length; i++ )
 	{      
@@ -51,10 +46,23 @@ function exportFolder( folder, prefix )
 	  
 		if ( file instanceof Folder )
 		{
+             var folderName = file.name;
+             
 			// Skip folder starting with ".", e.g. ".svn"
-			if ( !file.name.match(/^\./) )
-				exportFolder( file,
-							 ( ( prefix != null ) ? prefix + "_" + file.name : file.name ) );
+			if ( !folderName.match(/^\./) )
+             {
+                 var recursionPrefix = prefix;
+                 
+                 if (isPrefixRelevantFolder(folderName))
+                 {
+                    if (recursionPrefix != null)
+                        recursionPrefix += "_" + folderName;
+                    else
+                        recursionPrefix = folderName;
+                 }
+             
+				exportFolder(file, recursionPrefix);
+              }
 		}
 		
 		else
@@ -75,30 +83,39 @@ function exportFolder( folder, prefix )
 					}
 					
 					// resolve links
-					else if ( !file.name.match( /psd$/ ) )
+					else if ( file.alias )
 					{
-						file = resolveLink( file );
-					}			
-					
+                           file = file.resolve();
+					}
+                
 					// Export the file
 					open( file );
 				
+                      var drawableFolder = preProdFolder + "/../../res/drawable";
+                      var ldpiFolder         = preProdFolder + "/../../res/drawable-ldpi";
+                      var mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi";
+                      var hdpiFolder	   = preProdFolder + "/../../res/drawable-hdpi";
+                      var xhdpiFolder	 = preProdFolder + "/../../res/drawable-xhdpi";
+
 					var ok = true;
 					var alreadyExported = false;
-					var exportAsIs = false;				
-					 
-                       var prefixSave = prefix;
-                       var suffixSave = suffix;
-                       
-					eval( script );
+					var exportAsIs = false;
+	
+                      eval( script );
                     
-                      doExport(ok, alreadyExported, exportAsIs);
+                      if ( ok && !alreadyExported )
+                      {
+                        doExport(file,
+                                      drawableFolder,
+                                      ldpiFolder,
+                                      mdpiFolder,
+                                      hdpiFolder,
+                                      xhdpiFolder,
+                                      prefix, "", exportAsIs);
+                      }
                       
-                      activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-                      
-                      prefix = prefixSave;
-                      suffix = suffixSave;
-				}
+                      activeDocument.close( SaveOptions.DONOTSAVECHANGES );                      
+     			}
 			}
 		}
 	}
@@ -133,6 +150,11 @@ function loadScriptsFromFolder( folder )
 	return scriptFilesAsString;
 }
 
+function isPrefixRelevantFolder(folderName)
+{
+    return folderName.substring(0, 1) != "#";
+}
+
 function trimPrefixLayers( prefix , count )
 {
     var trimmedPrefix = prefix;
@@ -145,30 +167,22 @@ function trimPrefixLayers( prefix , count )
     return trimmedPrefix;
 }
 
-function doExport(ok, alreadyExported, exportAsIs)
-{
-    if ( ok && !alreadyExported )
-    {
-        if ( exportAsIs )
-        {
-           if ( drawableFolder != null )
-              exportDrawable( file, drawableFolder, prefix, "" );
-        }
-        else
-        {
-           if ( ldpiFolder != null )
-              exportLDPI( file, ldpiFolder, prefix, suffix );
-           
-           if ( mdpiFolder != null )
-              exportMDPI( file, mdpiFolder, prefix, suffix );
-           
-           if ( hdpiFolder != null )
-              exportHDPI( file, hdpiFolder, prefix, suffix );
-           
-           if ( xhdpiFolder != null )
-              exportXHDPI( file, xhdpiFolder, prefix, suffix );
-        }
-    }
+function doExport(file, drawable, ldpi, mdpi, hdpi, xhdpi, prefix, suffix, exportAsIs)
+{    
+       if ( drawable != null )
+          exportDrawable( file, drawable, prefix, suffix );
+          
+       if ( ldpi != null )
+          exportLDPI( file, ldpi, prefix, suffix, exportAsIs );
+       
+       if ( mdpi != null )
+          exportMDPI( file, mdpi, prefix, suffix );
+       
+       if ( hdpi != null )
+          exportHDPI( file, hdpi, prefix, suffix, exportAsIs );
+       
+       if ( xhdpi != null )
+          exportXHDPI( file, xhdpi, prefix, suffix, exportAsIs );
 }
 
 function exportDrawable( file, folder, prefix, suffix )
@@ -177,7 +191,7 @@ function exportDrawable( file, folder, prefix, suffix )
 
 	if ( !drawableFolder.exists )
 	{
-		drawableFolder = Folder.selectDialog( "Select drawable output folder", preProdFolder.toString() );
+		drawableFolder.create();
 	}
 		
 	if ( drawableFolder != null )
@@ -186,13 +200,13 @@ function exportDrawable( file, folder, prefix, suffix )
 	}
 }
 
-function exportLDPI( file, folder, prefix, suffix )
+function exportLDPI( file, folder, prefix, suffix, exportAsIs )
 {	
 	var ldpiFolder = new Folder( folder );
 		
 	if ( !ldpiFolder.exists )
 	{
-		ldpiFolder = Folder.selectDialog( "Select ldpi output folder", preProdFolder.toString() );
+         ldpiFolder.create();
 	}
 		
 	if ( ldpiFolder != null )
@@ -200,7 +214,11 @@ function exportLDPI( file, folder, prefix, suffix )
 		var temp = activeDocument;
 		activeDocument = activeDocument.duplicate( "temp" );
 
-		resizeImage( 75 );
+         if ( !exportAsIs )
+         {
+             resizeImage( 75 );
+         }
+
 		saveForWebPNG24( ldpiFolder, file, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 
@@ -214,7 +232,7 @@ function exportMDPI( file, folder, prefix, suffix )
 	
 	if ( !mdpiFolder.exists )
 	{
-		mdpiFolder = Folder.selectDialog( "Select mdpi output folder", preProdFolder.toString() );
+		mdpiFolder.create();
 	}
 	
 	if ( mdpiFolder != null )
@@ -223,13 +241,13 @@ function exportMDPI( file, folder, prefix, suffix )
 	}
 }
 
-function exportHDPI( file, folder, prefix, suffix, leaveOpen )
+function exportHDPI( file, folder, prefix, suffix, exportAsIs )
 {	
 	var hdpiFolder = new Folder( folder );
 		
 	if ( !hdpiFolder.exists )
 	{
-		hdpiFolder = Folder.selectDialog( "Select hdpi output folder", preProdFolder.toString() );
+		hdpiFolder.create();
 	}
 	
 	if ( hdpiFolder != null )
@@ -237,7 +255,11 @@ function exportHDPI( file, folder, prefix, suffix, leaveOpen )
 		var temp = activeDocument;
 		activeDocument = activeDocument.duplicate( "temp" );
    	
-		resizeImage( 150 );
+         if ( !exportAsIs)
+         {
+		   resizeImage( 150 );
+         }
+
 		saveForWebPNG24( hdpiFolder, file, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
@@ -245,13 +267,13 @@ function exportHDPI( file, folder, prefix, suffix, leaveOpen )
 	}
 }
 
-function exportXHDPI( file, folder, prefix, suffix, leaveOpen )
+function exportXHDPI( file, folder, prefix, suffix, exportAsIs )
 {	
 	var xhdpiFolder = new Folder( folder );
 		
 	if ( !xhdpiFolder.exists )
 	{
-		xhdpiFolder = Folder.selectDialog( "Select xhdpi output folder", preProdFolder.toString() );
+		xhdpiFolder.create();
 	}
 	
 	if ( xhdpiFolder != null )
@@ -259,7 +281,11 @@ function exportXHDPI( file, folder, prefix, suffix, leaveOpen )
 		var temp = activeDocument;
 		activeDocument = activeDocument.duplicate( "temp" );
    	
-		resizeImage( 200 );
+         if ( !exportAsIs )
+         {
+		   resizeImage( 200 );
+         }
+           
 		saveForWebPNG24( xhdpiFolder, file, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
@@ -270,17 +296,34 @@ function exportXHDPI( file, folder, prefix, suffix, leaveOpen )
 function resizeImage( percentage )
 {
 	activeDocument.resizeImage( UnitValue( percentage, "%" ),
-					      			  UnitValue( percentage, "%" ),
-											null,
-											ResampleMethod.BICUBIC );
+					      			      UnitValue( percentage, "%" ),
+										   null,
+                                                ResampleMethod.BICUBIC );
 }
 
 function resizeImagePx( pixel )
 {
 	activeDocument.resizeImage( UnitValue( pixel, "px" ),
-					      			  UnitValue( pixel, "px" ),
-											null,
-											ResampleMethod.BICUBIC );
+					      			      UnitValue( pixel, "px" ),
+										   null,
+										   ResampleMethod.BICUBIC );
+}
+
+function resizeImagePx( width, height )
+{
+    var idImgS = charIDToTypeID( "ImgS" );
+    var desc2 = new ActionDescriptor();
+    var idWdth = charIDToTypeID( "Wdth" );
+    var idPxl = charIDToTypeID( "#Pxl" );
+    desc2.putUnitDouble( idWdth, idPxl, width );
+    var idHght = charIDToTypeID( "Hght" );
+    var idPxl = charIDToTypeID( "#Pxl" );
+    desc2.putUnitDouble( idHght, idPxl, height );
+    var idIntr = charIDToTypeID( "Intr" );
+    var idIntp = charIDToTypeID( "Intp" );
+    var idBcbc = charIDToTypeID( "Bcbc" );
+    desc2.putEnumerated( idIntr, idIntp, idBcbc );
+    executeAction( idImgS, desc2, DialogModes.NO );
 }
 
 function saveForWebPNG24( folder, file, prefix, suffix )
@@ -941,6 +984,11 @@ function applyMenuIconStyle()
 
 function setText( text )
 {
+    setText( text, 0.0, 0.0, 0.0, 12.0 );
+}
+
+function setText( text, r, g, b, sizePt )
+{
    var idsetd = charIDToTypeID( "setd" );
        var desc2 = new ActionDescriptor();
        var idnull = charIDToTypeID( "null" );
@@ -1067,7 +1115,7 @@ function setText( text )
                        desc9.putInteger( idFntT, 1 );
                        var idSz = charIDToTypeID( "Sz  " );
                        var idPxl = charIDToTypeID( "#Pxl" );
-                       desc9.putUnitDouble( idSz, idPxl, 11.000000 );
+                       desc9.putUnitDouble( idSz, idPxl, sizePt );
                        var idHrzS = charIDToTypeID( "HrzS" );
                        desc9.putDouble( idHrzS, 100.000000 );
                        var idVrtS = charIDToTypeID( "VrtS" );
@@ -1197,11 +1245,11 @@ function setText( text )
                        var idClr = charIDToTypeID( "Clr " );
                            var desc10 = new ActionDescriptor();
                            var idRd = charIDToTypeID( "Rd  " );
-                           desc10.putDouble( idRd, 0.000000 );
+                           desc10.putDouble( idRd, r );
                            var idGrn = charIDToTypeID( "Grn " );
-                           desc10.putDouble( idGrn, 0.000000 );
+                           desc10.putDouble( idGrn, g);
                            var idBl = charIDToTypeID( "Bl  " );
-                           desc10.putDouble( idBl, 0.000000 );
+                           desc10.putDouble( idBl, b );
                        var idRGBC = charIDToTypeID( "RGBC" );
                        desc9.putObject( idClr, idRGBC, desc10 );
                        var idstrokeColor = stringIDToTypeID( "strokeColor" );
@@ -1353,7 +1401,7 @@ function setText( text )
                            desc14.putInteger( idFntT, 0 );
                            var idSz = charIDToTypeID( "Sz  " );
                            var idPxl = charIDToTypeID( "#Pxl" );
-                           desc14.putUnitDouble( idSz, idPxl, 12.000000 );
+                           desc14.putUnitDouble( idSz, idPxl, sizePt );
                            var idHrzS = charIDToTypeID( "HrzS" );
                            desc14.putDouble( idHrzS, 100.000000 );
                            var idVrtS = charIDToTypeID( "VrtS" );

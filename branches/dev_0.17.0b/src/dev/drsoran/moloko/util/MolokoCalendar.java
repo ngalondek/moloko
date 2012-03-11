@@ -323,6 +323,9 @@ public final class MolokoCalendar
       if ( !this.hasDate )
       {
          impl.clear( Calendar.DATE );
+         impl.clear( Calendar.DAY_OF_WEEK );
+         impl.clear( Calendar.DAY_OF_WEEK_IN_MONTH );
+         impl.clear( Calendar.DAY_OF_YEAR );
          impl.clear( Calendar.WEEK_OF_YEAR );
          impl.clear( Calendar.MONTH );
          impl.clear( Calendar.YEAR );

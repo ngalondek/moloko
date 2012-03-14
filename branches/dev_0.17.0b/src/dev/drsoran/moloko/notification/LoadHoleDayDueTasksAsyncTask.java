@@ -35,7 +35,7 @@ import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-class LoadDueTasksAsyncTask extends AbstractNotificationTasksLoader
+class LoadHoleDayDueTasksAsyncTask extends AbstractNotificationTasksLoader
 {
    private final static String DUE_TASKS_QUERY_WITH_REMIND_BEFORE = Tasks.HAS_DUE_TIME
       + " != 0 AND "
@@ -51,7 +51,7 @@ class LoadDueTasksAsyncTask extends AbstractNotificationTasksLoader
    
    
    
-   public LoadDueTasksAsyncTask( Context context, Handler handler,
+   public LoadHoleDayDueTasksAsyncTask( Context context, Handler handler,
       long remindBeforeMillis )
    {
       super( context, handler );

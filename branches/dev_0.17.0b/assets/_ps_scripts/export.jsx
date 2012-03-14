@@ -1,8 +1,7 @@
 ﻿$.localize = true;
 
-var preProdFolder = Folder.selectDialog( "Select _pre_production folder",
-                                         "/d/Programmierung/Projects/java/Moloko/assets/_pre_production" );
-var startFolder = Folder.selectDialog( "Select start folder", preProdFolder );
+var preProdFolder = getPreproductionFolder();
+var startFolder = getStartFolder();
 
 if ( preProdFolder != null && startFolder != null )
 {
@@ -33,6 +32,50 @@ if ( preProdFolder != null && startFolder != null )
 	exportFolder( startFolder, prefix );
 	
 	alert( "Finished!" );
+}
+
+
+function getPreproductionFolder()
+{
+    var preProdFolder = "/d/Programmierung/Projects/java/.workspaces/Moloko_dev/Moloko/assets/_pre_production";    
+    var lastPreprodFolderTemp = new File(Folder.current + "/lastPreProdFolder.tmp");
+    
+    if (lastPreprodFolderTemp.exists)
+    {
+        lastPreprodFolderTemp.open("r", null, null);
+        preProdFolder = lastPreprodFolderTemp.readln();
+        lastPreprodFolderTemp.close();
+    }
+        
+    preProdFolder = Folder.selectDialog( "Select _pre_production folder", preProdFolder);
+    
+    lastPreprodFolderTemp.open("w", null, null);
+    lastPreprodFolderTemp.writeln(preProdFolder);
+    lastPreprodFolderTemp.close();
+    
+    return preProdFolder;
+}
+
+
+function getStartFolder()
+{
+    var startFolder = preProdFolder; 
+    var lastStartFolderTemp = new File(Folder.current + "/lastStartFolder.tmp");
+    
+    if (lastStartFolderTemp.exists)
+    {
+        lastStartFolderTemp.open("r", null, null);
+        startFolder = lastStartFolderTemp.readln();
+        lastStartFolderTemp.close();
+    }
+        
+    startFolder = Folder.selectDialog( "Select start folder", startFolder);
+    
+    lastStartFolderTemp.open("w", null, null);
+    lastStartFolderTemp.writeln(startFolder);
+    lastStartFolderTemp.close();
+    
+    return startFolder;
 }
 
 
@@ -91,7 +134,7 @@ function exportFolder( folder, prefix )
 					// Export the file
 					open( file );
 				
-                      var drawableFolder = preProdFolder + "/../../res/drawable";
+                      var drawableFolder = null;
                       var ldpiFolder         = preProdFolder + "/../../res/drawable-ldpi";
                       var mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi";
                       var hdpiFolder	   = preProdFolder + "/../../res/drawable-hdpi";

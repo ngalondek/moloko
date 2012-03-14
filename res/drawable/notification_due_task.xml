@@ -17,9 +17,6 @@
    xmlns:android="http://schemas.android.com/apk/res/android">
 
    <item
-      android:maxLevel="0"
-      android:drawable="@drawable/ic_notify_logo_red" />
-   <item
       android:maxLevel="1"
       android:drawable="@drawable/ic_notify_due_task_layer_1" />       
    <item

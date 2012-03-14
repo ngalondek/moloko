@@ -53,7 +53,7 @@ class PermanentNotification
       final RemoteViews contentView = new RemoteViews( context.getPackageName(),
                                                        R.layout.notification );
       contentView.setImageViewResource( android.R.id.icon,
-                                        R.drawable.ic_launcher );
+                                        R.drawable.ic_notify_permanent_expanded );
       contentView.setTextViewText( android.R.id.title, title );
       contentView.setTextViewText( android.R.id.text1, text );
       

@@ -279,7 +279,7 @@ abstract class AbstractPermanentNotificationPresenter implements
          {
             onClickIntent = Intents.createOpenTaskIntent( context,
                                                           Queries.getOptString( tasksCursor,
-                                                                                getColumnIndex( Tasks.TASKSERIES_ID ) ) );
+                                                                                getColumnIndex( Tasks._ID ) ) );
          }
          else
          {

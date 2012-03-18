@@ -250,6 +250,6 @@
       name="notification_permanent" />
    <item
       type="id"
-      name="notification_due_tasks" />
+      name="notification_due_tasks_stacked" />
 
 </resources>

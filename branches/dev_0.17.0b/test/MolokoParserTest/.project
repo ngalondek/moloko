@@ -78,7 +78,7 @@
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/IDateFormatContext.java</name>
 			<type>1</type>
-			<location>D:/Programmierung/Projects/java/Moloko/src/dev/drsoran/moloko/grammar/IDateFormatContext.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/IDateFormatContext.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/LexerException.java</name>

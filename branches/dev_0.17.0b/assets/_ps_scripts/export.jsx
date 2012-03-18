@@ -38,20 +38,20 @@ if ( preProdFolder != null && startFolder != null )
 function getPreproductionFolder()
 {
     var preProdFolder = "/d/Programmierung/Projects/java/.workspaces/Moloko_dev/Moloko/assets/_pre_production";    
-    var lastPreprodFolderTemp = new File(Folder.current + "/lastPreProdFolder.tmp");
+    //var lastPreprodFolderTemp = new File(Folder.current + "/lastPreProdFolder.tmp");
     
-    if (lastPreprodFolderTemp.exists)
+    /*if (lastPreprodFolderTemp.exists)
     {
         lastPreprodFolderTemp.open("r", null, null);
         preProdFolder = lastPreprodFolderTemp.readln();
         lastPreprodFolderTemp.close();
-    }
-        
+    }*/
+    
     preProdFolder = Folder.selectDialog( "Select _pre_production folder", preProdFolder);
     
-    lastPreprodFolderTemp.open("w", null, null);
+    /*lastPreprodFolderTemp.open("w", null, null);
     lastPreprodFolderTemp.writeln(preProdFolder);
-    lastPreprodFolderTemp.close();
+    lastPreprodFolderTemp.close();*/
     
     return preProdFolder;
 }
@@ -60,20 +60,20 @@ function getPreproductionFolder()
 function getStartFolder()
 {
     var startFolder = preProdFolder; 
-    var lastStartFolderTemp = new File(Folder.current + "/lastStartFolder.tmp");
+    //var lastStartFolderTemp = new File(Folder.current + "/lastStartFolder.tmp");
     
-    if (lastStartFolderTemp.exists)
+    /*if (lastStartFolderTemp.exists)
     {
         lastStartFolderTemp.open("r", null, null);
         startFolder = lastStartFolderTemp.readln();
         lastStartFolderTemp.close();
-    }
-        
+    }*/
+    
     startFolder = Folder.selectDialog( "Select start folder", startFolder);
     
-    lastStartFolderTemp.open("w", null, null);
+    /*lastStartFolderTemp.open("w", null, null);
     lastStartFolderTemp.writeln(startFolder);
-    lastStartFolderTemp.close();
+    lastStartFolderTemp.close();*/
     
     return startFolder;
 }

@@ -30,7 +30,7 @@ import dev.drsoran.moloko.IOnTimeChangedListener;
 
 class PermanentNotifier extends AbstractNotifier
 {
-   private final PermanentNotificationPresenter presenter;
+   private final IPermanentNotificationPresenter presenter;
    
    private String lastLoaderfilterString;
    
@@ -40,7 +40,7 @@ class PermanentNotifier extends AbstractNotifier
    {
       super( context );
       
-      presenter = new PermanentNotificationPresenter( context );
+      presenter = NotificationPresenterFactory.createPermanentNotificationPresenter( context );
       
       reEvaluatePermanentNotification();
    }

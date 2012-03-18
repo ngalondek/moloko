@@ -34,7 +34,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -44,18 +43,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -327,15 +323,21 @@ public class FullDetailedTasksListFragment extends
             return true;
             
          case CtxtMenu.COMPLETE_TASK:
-            onCompleteTask( info.position );
+         {
+            final Task task = getTask( info.position );
+            if ( task.getCompleted() == null )
+               listener.onCompleteTask( info.position );
+            else
+               listener.onIncompleteTask( info.position );
+         }
             return true;
             
          case CtxtMenu.POSTPONE_TASK:
-            onPostponeTask( info.position );
+            listener.onPostponeTask( info.position );
             return true;
             
          case CtxtMenu.DELETE_TASK:
-            onDeleteTask( info.position );
+            listener.onDeleteTask( info.position );
             return true;
             
          case CtxtMenu.OPEN_LIST:
@@ -391,37 +393,6 @@ public class FullDetailedTasksListFragment extends
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings( getFragmentActivity() ).getTaskSort();
-   }
-   
-   
-   
-   private void onCompleteTask( int pos )
-   {
-      final Task task = getTask( pos );
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( getFragmentActivity(),
-                                                                                                                     task,
-                                                                                                                     task.getCompleted() == null );
-      applyModifications( modifications.first, modifications.second );
-   }
-   
-   
-   
-   private void onPostponeTask( int pos )
-   {
-      final Task task = getTask( pos );
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( getFragmentActivity(),
-                                                                                                                task );
-      applyModifications( modifications.first, modifications.second );
-   }
-   
-   
-   
-   private void onDeleteTask( int pos )
-   {
-      final Task task = getTask( pos );
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( getFragmentActivity(),
-                                                                                                              task );
-      applyModifications( modifications.first, modifications.second );
    }
    
    

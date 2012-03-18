@@ -183,15 +183,23 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
          // at last step cause the Calendar methods
          // will set them again.
          {
+            cal.setHasDate( isSuccess() );
+            
             if ( clearTime )
                cal.setHasTime( false );      
          }
       | NOW
       {
+         cal.setHasDate( true );
          // In case of NOW we do not respect the clearTime Parameter
          // cause NOW has always a time.
          cal.setTimeInMillis( System.currentTimeMillis() );
          cal.setHasTime( true );
+      }
+      | NEVER
+      {
+         cal.setHasDate( false );
+         cal.setHasTime( false );
       }
    )
    ;
@@ -396,12 +404,7 @@ date_end_of_the_MW [MolokoCalendar cal]
 date_natural [MolokoCalendar cal]
    : (TODAY | TONIGHT)
      {
-     }
-   | NEVER
-     {
-        cal.setHasDate( false );
-        cal.setHasTime( false );
-     }
+     }  
    | TOMORROW
      {
         cal.roll( Calendar.DAY_OF_YEAR, true );

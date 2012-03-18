@@ -71,19 +71,20 @@ class StackedDueTaskNotificationPresenter extends
       final int indexOfLastDueTask = endIndex - 1;
       tasksCursor.moveToPosition( indexOfLastDueTask );
       
+      final int count = endIndex;
       final String title = getNotificationTitle( tasksCursor );
       final String text = getNotificationText( tasksCursor );
       final String ticker = getNotificationTicker( tasksCursor );
-      final Intent onClickIntent = createOnClickIntent( tasksCursor, endIndex );
+      final Intent onClickIntent = createOnClickIntent( tasksCursor, count );
       
       final INotificationBuilder builder;
       
-      if ( indexOfLastDueTask > 1 )
+      if ( count > 1 )
       {
          builder = newStackedNotification( title,
                                            text,
                                            ticker,
-                                           indexOfLastDueTask,
+                                           count,
                                            onClickIntent );
       }
       else
@@ -91,7 +92,7 @@ class StackedDueTaskNotificationPresenter extends
          builder = newSingletonNotification( title,
                                              text,
                                              ticker,
-                                             indexOfLastDueTask,
+                                             count,
                                              onClickIntent );
       }
       
@@ -137,6 +138,7 @@ class StackedDueTaskNotificationPresenter extends
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_due_task_expanded_stacked );
       builder.setLargeIcon( largeIcon );
+      builder.setNumber( count );
       
       return builder;
    }

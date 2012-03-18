@@ -271,11 +271,11 @@
    <string name="notification_permanent_today_and_tomorrow_title">Aufgaben für %1$s, %2$s</string>
    <string name="notification_permanent_overdue_title">Überfällige Aufgaben</string>
       <!-- >1 task due, 0 tasks overdue -->
-   <string name="notification_permanent_text_multiple">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
+   <string name="notification_permanent_text_multiple">%1$d fällig, %2$d hohe Priorität</string>
       <!-- >0 task due, >0 tasks overdue -->
-   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s fällig, %3$d %4$s überfällig</string>
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d fällig, %2$d überfällig</string>
       <!-- 0 tasks due, >1 task overdue -->
-   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s überfällig</string>
+   <string name="notification_permanent_text_multiple_overdue">%1$d überfällig</string>
    <string name="notification_due_ticker">%1$s fällig %2$s</string>
    <string name="notification_due">fällig um %1$s</string>
    <string name="notification_due_tasks_list_title">Fällige Aufgaben</string>

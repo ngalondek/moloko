@@ -301,8 +301,6 @@ public abstract class AbstractDateParser extends Parser
    
    protected ParseDateReturn finishedDateParsing( MolokoCalendar cal )
    {
-      cal.setHasDate( success );
-      
       if ( input instanceof ANTLRIncrementalTokenStream )
       {
          final ANTLRIncrementalTokenStream incStream = (ANTLRIncrementalTokenStream) input;
@@ -336,6 +334,13 @@ public abstract class AbstractDateParser extends Parser
    protected void notifyParsingDateFailed()
    {
       success = false;
+   }
+   
+   
+   
+   protected boolean isSuccess()
+   {
+      return success;
    }
    
    

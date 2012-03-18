@@ -115,7 +115,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      ensureFilter();      
+      ensureFilter();
    }
    
    
@@ -361,6 +361,28 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public T getTask( View view )
    {
       return getTask( getTaskPos( view ) );
+   }
+   
+   
+   
+   public T getTask( String taskId )
+   {
+      T task = null;
+      
+      final ListAdapter adapter = getListAdapter();
+      final int itemCount = adapter.getCount();
+      for ( int i = 0; i < itemCount && task == null; i++ )
+      {
+         @SuppressWarnings(
+         { "unchecked" } )
+         final T temp = (T) adapter.getItem( i );
+         if ( temp.getId().equals( taskId ) )
+         {
+            task = temp;
+         }
+      }
+      
+      return task;
    }
    
    

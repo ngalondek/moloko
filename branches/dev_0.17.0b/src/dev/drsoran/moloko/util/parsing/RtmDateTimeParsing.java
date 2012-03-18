@@ -98,6 +98,7 @@ public final class RtmDateTimeParsing
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
       
+      boolean parsingFailed = true;
       boolean hasTime = false;
       boolean hasDate = false;
       
@@ -106,6 +107,7 @@ public final class RtmDateTimeParsing
       // first try to parse time spec
       try
       {
+         parsingFailed = false;
          final Matcher timePrefixMatcher = TIME_PREFIX_PATTERN.matcher( spec );
          
          if ( timePrefixMatcher.find() )
@@ -120,6 +122,7 @@ public final class RtmDateTimeParsing
       }
       catch ( RecognitionException e )
       {
+         parsingFailed = true;
       }
       
       final String datePart = spec.substring( startOfDatePos, spec.length() );
@@ -128,6 +131,8 @@ public final class RtmDateTimeParsing
       int endOfDatePos = spec.length();
       if ( !eof )
       {
+         parsingFailed = false;
+         
          try
          {
             final ParseDateReturn ret = parseDate( datePart, cal, !hasTime );
@@ -138,6 +143,7 @@ public final class RtmDateTimeParsing
          catch ( RecognitionException e )
          {
             endOfDatePos = 0;
+            parsingFailed = true;
          }
          
          // Check if there is a time trailing or we only have a time.
@@ -151,6 +157,8 @@ public final class RtmDateTimeParsing
             eof = potentialTimePart.length() == 0;
             if ( !eof )
             {
+               parsingFailed = false;
+               
                try
                {
                   eof = parseTime( potentialTimePart, cal, !hasDate ).isEof;
@@ -158,10 +166,13 @@ public final class RtmDateTimeParsing
                }
                catch ( RecognitionException re2 )
                {
+                  parsingFailed = true;
                }
                
                if ( !eof && !hasTime )
                {
+                  parsingFailed = false;
+                  
                   try
                   {
                      eof = parseTimeSpec( potentialTimePart, cal, !hasDate ).isEof;
@@ -169,13 +180,14 @@ public final class RtmDateTimeParsing
                   }
                   catch ( RecognitionException re3 )
                   {
+                     parsingFailed = true;
                   }
                }
             }
          }
       }
       
-      return ( hasTime || hasDate ) ? cal : null;
+      return !parsingFailed ? cal : null;
    }
    
    

@@ -184,29 +184,17 @@ abstract class AbstractPermanentNotificationPresenter implements
          if ( overdueCnt == 0 )
             result = context.getString( R.string.notification_permanent_text_multiple,
                                         tasksDueCnt,
-                                        context.getResources()
-                                               .getQuantityString( R.plurals.g_task,
-                                                                   tasksDueCnt ),
                                         highPrioCnt );
          else if ( overdueCnt > 0 )
             result = context.getString( R.string.notification_permanent_text_multiple_w_overdue,
                                         tasksDueCnt,
-                                        context.getResources()
-                                               .getQuantityString( R.plurals.g_task,
-                                                                   tasksDueCnt ),
-                                        overdueCnt,
-                                        context.getResources()
-                                               .getQuantityString( R.plurals.g_task,
-                                                                   overdueCnt ) );
+                                        overdueCnt );
       }
       
       else if ( tasksDueCnt == 0 && overdueCnt > 1 )
       {
          result = context.getString( R.string.notification_permanent_text_multiple_overdue,
-                                     overdueCnt,
-                                     context.getResources()
-                                            .getQuantityString( R.plurals.g_task,
-                                                                overdueCnt ) );
+                                     overdueCnt );
       }
       
       else

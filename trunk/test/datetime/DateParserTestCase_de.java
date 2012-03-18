@@ -37,6 +37,30 @@ public class DateParserTestCase_de
    
    
    
+   private static void parseDate( String string,
+                                  int d,
+                                  int m,
+                                  int y,
+                                  int h,
+                                  int min,
+                                  int s,
+                                  boolean hasDate,
+                                  boolean hasTime )
+   {
+      DateTimeTestHelper.parseDate( DATE_FORMAT_CONTEXT,
+                                    string,
+                                    d,
+                                    m,
+                                    y,
+                                    h,
+                                    min,
+                                    s,
+                                    hasDate,
+                                    hasTime );
+   }
+   
+   
+   
    private static void parseDateWithin( String string,
                                         boolean past,
                                         int sy,
@@ -83,6 +107,21 @@ public class DateParserTestCase_de
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ) );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.setHasDate( false );
+         cal.setHasTime( false );
+         
+         parseDate( "nie",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    cal.get( Calendar.HOUR ),
+                    cal.get( Calendar.MINUTE ),
+                    cal.get( Calendar.SECOND ),
+                    false,
+                    false );
       }
       {
          final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,6 +29,22 @@ public interface IFullDetailedTasksListFragmentListener extends
          ITasksListFragmentListener
 {
    void onEditTask( int pos );
+   
+   
+   
+   void onCompleteTask( int pos );
+   
+   
+   
+   void onIncompleteTask( int pos );
+   
+   
+   
+   void onPostponeTask( int pos );
+   
+   
+   
+   void onDeleteTask( int pos );
    
    
    

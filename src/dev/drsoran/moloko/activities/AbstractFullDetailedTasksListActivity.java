@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -24,12 +24,16 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.util.Pair;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
@@ -38,7 +42,9 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractFullDetailedTasksListActivity extends
@@ -164,6 +170,50 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    @Override
+   public void onCompleteTask( int pos )
+   {
+      final Task task = getTask( pos );
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                                                                     task,
+                                                                                                                     true );
+      applyModifications( modifications.first, modifications.second );
+   }
+   
+   
+   
+   @Override
+   public void onIncompleteTask( int pos )
+   {
+      final Task task = getTask( pos );
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                                                                     task,
+                                                                                                                     false );
+      applyModifications( modifications.first, modifications.second );
+   }
+   
+   
+   
+   @Override
+   public void onPostponeTask( int pos )
+   {
+      final Task task = getTask( pos );
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( this,
+                                                                                                                task );
+      applyModifications( modifications.first, modifications.second );
+   }
+   
+   
+   
+   @Override
+   public void onDeleteTask( int pos )
+   {
+      final Task task = getTask( pos );
+      UIUtils.showDeleteElementDialog( this, task.getName(), task.getId() );
+   }
+   
+   
+   
+   @Override
    public void onOpenList( int pos, String listId )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenListExtrasById( this,
@@ -204,8 +254,26 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    public final void onShowTasksWithTags( List< String > tags,
                                           LogicalOperation operation )
    {
-      final String logOpString = determineLogicalOperantionString( operation );
+      final String logOpString = determineLogicalOperationString( operation );
       onOpenChoosenTags( tags, logOpString );
+   }
+   
+   
+   
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   {
+      switch ( dialogId )
+      {
+         case R.id.dlg_delete_element:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               deleteTaskImpl( tag );
+            break;
+         
+         default :
+            super.onAlertDialogFragmentClick( dialogId, tag, which );
+            break;
+      }
    }
    
    
@@ -224,6 +292,18 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
+   private void deleteTaskImpl( String taskId )
+   {
+      final Task task = getTask( taskId );
+      
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( this,
+                                                                                                              task );
+      applyModifications( modifications );
+      
+   }
+   
+   
+   
    private void showQuickAddTaskInput()
    {
       showQuickAddTaskActionBarFragment( !isQuickAddTaskFragmentOpen() );
@@ -231,7 +311,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
-   private static String determineLogicalOperantionString( LogicalOperation operation )
+   private static String determineLogicalOperationString( LogicalOperation operation )
    {
       final String logOpString;
       

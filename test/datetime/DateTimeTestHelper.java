@@ -135,6 +135,22 @@ public class DateTimeTestHelper
                                  int min,
                                  int s )
    {
+      parseDate( dateFormatContext, string, d, m, y, h, min, s, true, h != -1 );
+   }
+   
+   
+   
+   public static void parseDate( IDateFormatContext dateFormatContext,
+                                 String string,
+                                 int d,
+                                 int m,
+                                 int y,
+                                 int h,
+                                 int min,
+                                 int s,
+                                 boolean hasDate,
+                                 boolean hasTime )
+   {
       System.out.println( ">input: " + string );
       
       RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
@@ -148,6 +164,7 @@ public class DateTimeTestHelper
          
          System.out.println( string + ": " + cal.getTimeInMillis() );
          System.out.println( string + ": " + cal.getTime() );
+         System.out.println( string + " has date: " + cal.hasDate() );
          System.out.println( string + " has time: " + cal.hasTime() );
          
          Asserts.assertEquals( cal.get( Calendar.DAY_OF_MONTH ),
@@ -156,16 +173,20 @@ public class DateTimeTestHelper
          Asserts.assertEquals( cal.get( Calendar.MONTH ), m, "Month is wrong." );
          Asserts.assertEquals( cal.get( Calendar.YEAR ), y, "Year is wrong." );
          
-         if ( h != -1 )
-         {
-            Asserts.assertEquals( cal.get( Calendar.HOUR_OF_DAY ),
-                                  h,
-                                  "Hour is wrong." );
+         if ( hasDate )
+            Asserts.assertTrue( cal.hasDate(), "Calendar has no date." );
+         else
+            Asserts.assertTrue( !cal.hasDate(), "Calendar has date." );
+         
+         if ( hasTime )
             Asserts.assertTrue( cal.hasTime(), "Calendar has no time." );
-         }
          else
             Asserts.assertTrue( !cal.hasTime(), "Calendar has time." );
          
+         if ( h != -1 )
+            Asserts.assertEquals( cal.get( Calendar.HOUR_OF_DAY ),
+                                  h,
+                                  "Hour is wrong." );
          if ( min != -1 )
             Asserts.assertEquals( cal.get( Calendar.MINUTE ),
                                   min,

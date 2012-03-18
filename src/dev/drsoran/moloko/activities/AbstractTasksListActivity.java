@@ -223,6 +223,13 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
+   protected final Task getTask( String taskId )
+   {
+      return getTasksListFragment().getTask( taskId );
+   }
+   
+   
+   
    protected int getTaskSort()
    {
       return getTasksListFragment().getTaskSort();

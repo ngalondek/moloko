@@ -293,11 +293,11 @@
    <string name="notification_permanent_today_and_tomorrow_title">Tasks for %1$s, %2$s</string>
    <string name="notification_permanent_overdue_title">Overdue tasks</string>
       <!-- >1 task due, 0 tasks overdue -->
-   <string name="notification_permanent_text_multiple">%1$d %2$s due, %3$d with high priority</string>
+   <string name="notification_permanent_text_multiple">%1$d due, %2$d high priority</string>
       <!-- >0 task due, >0 tasks overdue -->
-   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s due, %3$d %4$s overdue</string>
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d due, %2$d overdue</string>
       <!-- 0 tasks due, >1 task overdue -->
-   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s overdue</string>
+   <string name="notification_permanent_text_multiple_overdue">%1$d overdue</string>
       <!-- 1 task due or overdue, show task name -->
    <string name="notification_permanent_text_one_task">%1$s</string>
    <string name="notification_due_ticker">%1$s due %2$s</string>

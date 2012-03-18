@@ -55,6 +55,34 @@ public class NullTasksListFragmentListener implements
    
    
    @Override
+   public void onCompleteTask( int pos )
+   {
+   }
+
+
+
+   @Override
+   public void onIncompleteTask( int pos )
+   {
+   }
+
+
+
+   @Override
+   public void onPostponeTask( int pos )
+   {
+   }
+
+
+
+   @Override
+   public void onDeleteTask( int pos )
+   {
+   }
+
+
+
+   @Override
    public void onOpenList( int pos, String listId )
    {
    }

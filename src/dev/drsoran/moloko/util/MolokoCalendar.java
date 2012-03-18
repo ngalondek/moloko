@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -322,13 +322,11 @@ public final class MolokoCalendar
       
       if ( !this.hasDate )
       {
+         impl.clear( Calendar.YEAR );
+         impl.clear( Calendar.MONTH );
          impl.clear( Calendar.DATE );
-         impl.clear( Calendar.DAY_OF_WEEK );
-         impl.clear( Calendar.DAY_OF_WEEK_IN_MONTH );
          impl.clear( Calendar.DAY_OF_YEAR );
          impl.clear( Calendar.WEEK_OF_YEAR );
-         impl.clear( Calendar.MONTH );
-         impl.clear( Calendar.YEAR );
       }
    }
    

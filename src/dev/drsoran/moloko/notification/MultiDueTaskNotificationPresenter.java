@@ -48,11 +48,11 @@ class MultiDueTaskNotificationPresenter extends
    @Override
    public void cancelNotifications()
    {
-      if ( isNotificationShown )
-      {
-         getNotificationManager().cancel( ID );
-         isNotificationShown = false;
-      }
+      // if ( isNotificationShown )
+      // {
+      // getNotificationManager().cancel( ID );
+      // isNotificationShown = false;
+      // }
    }
    
    
@@ -73,7 +73,7 @@ class MultiDueTaskNotificationPresenter extends
                                                                             1,
                                                                             onClickIntent );
       
-      getNotificationManager().notify( ID, builder.build() );
+      // getNotificationManager().notify( ID, builder.build() );
    }
    
 }

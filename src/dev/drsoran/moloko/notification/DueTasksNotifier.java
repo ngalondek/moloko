@@ -35,7 +35,7 @@ import dev.drsoran.provider.Rtm.Tasks;
 
 class DueTasksNotifier extends AbstractNotifier
 {
-   private final DueTaskNotificationPresenter presenter;
+   private final IDueTaskNotificationPresenter presenter;
    
    
    
@@ -43,7 +43,7 @@ class DueTasksNotifier extends AbstractNotifier
    {
       super( context );
       
-      presenter = new DueTaskNotificationPresenter( context );
+      presenter = NotificationPresenterFactory.createDueTaskNotificationPresenter( context );
       
       setNotificationFeatures();
       reCreateDueTaskNotifications();

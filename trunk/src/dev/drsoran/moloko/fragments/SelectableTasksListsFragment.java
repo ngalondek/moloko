@@ -41,6 +41,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
 import dev.drsoran.moloko.IFilter;
@@ -452,7 +453,7 @@ public class SelectableTasksListsFragment extends
                                     ContextMenuInfo menuInfo )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-      final Checkable checkableView = ( (Checkable) info.targetView.findViewById( R.id.selectmultipletasks_listitem_selected ) );
+      final Checkable checkableView = ( (CheckBox) info.targetView.findViewById( R.id.selectmultipletasks_listitem_selected ) );
       final Task task = getTask( info.position );
       
       if ( checkableView.isChecked() )

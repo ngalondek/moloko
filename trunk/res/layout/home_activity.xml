@@ -14,8 +14,7 @@
    -->
 
 <merge
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko">
+   xmlns:android="http://schemas.android.com/apk/res/android">
 
    <GridView
       android:id="@+id/home_gridview"

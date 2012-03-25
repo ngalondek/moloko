@@ -40,7 +40,35 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    private final Runnable runnable;
    
    
+   
+   public SimpleHomeWidgetLayout( Context context )
+   {
+      this( context, null, 0 );
+   }
 
+
+
+   public SimpleHomeWidgetLayout( Context context, AttributeSet attrs )
+   {
+      this( context, attrs, 0 );
+   }
+
+
+
+   public SimpleHomeWidgetLayout( Context context, AttributeSet attrs,
+      int defStyle )
+   {
+      this( context, attrs, 0, 0, new Runnable()
+      {
+         @Override
+         public void run()
+         {
+         }
+      } );
+   }
+   
+   
+   
    public SimpleHomeWidgetLayout( Context context, AttributeSet attrs,
       int labelId, int imgId, Intent intent )
    {
@@ -52,8 +80,8 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
       this.runnable = null;
    }
    
-
-
+   
+   
    public SimpleHomeWidgetLayout( Context context, AttributeSet attrs,
       int labelId, int imgId, Runnable runnable )
    {
@@ -65,34 +93,38 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
       this.runnable = runnable;
    }
    
-
-
+   
+   
+   @Override
    public Intent getIntent()
    {
       return intent;
    }
    
-
-
+   
+   
+   @Override
    public Runnable getRunnable()
    {
       return runnable;
    }
    
-
-
+   
+   
+   @Override
    public void start()
    {
    }
    
-
-
+   
+   
+   @Override
    public void stop()
    {
    }
    
-
-
+   
+   
    private void initUi( Context context, int labelId, int imgId )
    {
       setOrientation( LinearLayout.VERTICAL );

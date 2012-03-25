@@ -59,7 +59,7 @@
       android:label="@string/app_name"      
       android:theme="@style/Theme.Moloko"
       android:hardwareAccelerated="true"
-      android:debuggable="true" android:allowBackup="true">
+      android:allowBackup="true">
 
       <!-- Declare the default searchable Activity for the whole app -->
       <meta-data

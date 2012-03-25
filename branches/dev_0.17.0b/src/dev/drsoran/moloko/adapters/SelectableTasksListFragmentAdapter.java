@@ -31,7 +31,7 @@ import java.util.List;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Checkable;
+import android.widget.CheckBox;
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.SelectableTask;
 import dev.drsoran.rtm.Task;
@@ -111,7 +111,7 @@ public class SelectableTasksListFragmentAdapter extends
       
       final boolean isSelected = getItem( position ).isSelected();
       
-      ( (Checkable) v.findViewById( R.id.selectmultipletasks_listitem_selected ) ).setChecked( isSelected );
+      ( (CheckBox) v.findViewById( R.id.selectmultipletasks_listitem_selected ) ).setChecked( isSelected );
       
       return v;
    }

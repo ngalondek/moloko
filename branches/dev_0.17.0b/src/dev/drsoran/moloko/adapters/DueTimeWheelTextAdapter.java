@@ -56,7 +56,7 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
    private int lastIndex;
    
    
-
+   
    public DueTimeWheelTextAdapter( Context context, MolokoCalendar cal, int type )
    {
       super( context );
@@ -91,15 +91,16 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
       this.max = cal.getActualMaximum( type ) + 1;
    }
    
-
-
+   
+   
+   @Override
    public int getItemsCount()
    {
       return ( max - min ) + 1;
    }
    
-
-
+   
+   
    @Override
    protected CharSequence getItemText( int index )
    {
@@ -119,13 +120,14 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
       }
    }
    
-
-
+   
+   
    @Override
    protected void configureTextView( TextView view )
    {
       if ( lastIndex == 0 )
-         view.setTextColor( R.color.app_dlg_due_picker_weekday );
+         view.setTextColor( context.getResources()
+                                   .getColor( R.color.app_dlg_due_picker_weekday ) );
       else
          super.configureTextView( view );
    }

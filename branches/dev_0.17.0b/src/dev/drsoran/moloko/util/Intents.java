@@ -74,12 +74,20 @@ public final class Intents
       public final static String SYNC_STATUS_UPDATE = "dev.drsoran.moloko.util.Intents.Action.SYNC_STATUS_UPDATE";
       
       public final static String SETTINGS_CHANGED = "dev.drsoran.moloko.util.Intents.Action.SETTINGS_CHANGED";
+      
+      public final static String NOTIFICATION_SERVICE_START = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_START";
+      
+      public final static String NOTIFICATION_SERVICE_NOTIFICATION_CLICKED = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED";
+      
+      public final static String NOTIFICATION_SERVICE_NOTIFICATON_CLEARED = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED";
    }
    
    
    public final static class Extras
    {
       public final static String KEY_SYNC_STATUS = "sync_status";
+      
+      public final static String KEY_NOTIFICATION_ID = "notification_id";
       
       
       
@@ -305,10 +313,12 @@ public final class Intents
    
    /** INTENTS **/
    
-   public final static Intent createNotificationServiceIntent( MolokoApp molokoApp )
+   public final static Intent createStartNotificationServiceIntent( MolokoApp molokoApp )
    {
       final Intent intent = new Intent( molokoApp,
                                         MolokoNotificationService.class );
+      intent.setAction( Action.NOTIFICATION_SERVICE_START );
+      
       return intent;
    }
    
@@ -346,28 +356,53 @@ public final class Intents
    
    
    public final static PendingIntent createPermanentNotificationIntent( Context context,
-                                                                        Intent onClickIntent )
+                                                                        int notificationId )
    {
-      onClickIntent.setFlags( onClickIntent.getFlags()
-         | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK );
-      return PendingIntent.getActivity( context,
-                                        0,
-                                        onClickIntent,
-                                        PendingIntent.FLAG_CANCEL_CURRENT );
+      final Intent onClickIntent = new Intent( context,
+                                               MolokoNotificationService.class );
+      
+      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
+      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      
+      return PendingIntent.getService( context,
+                                       0,
+                                       onClickIntent,
+                                       PendingIntent.FLAG_CANCEL_CURRENT );
    }
    
    
    
    public final static PendingIntent createDueTasksNotificationIntent( Context context,
-                                                                       Intent onClickIntent )
+                                                                       int notificationId )
    {
-      onClickIntent.setFlags( onClickIntent.getFlags()
-         | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK );
-      return PendingIntent.getActivity( context,
-                                        1,
-                                        onClickIntent,
-                                        PendingIntent.FLAG_CANCEL_CURRENT
-                                           | PendingIntent.FLAG_ONE_SHOT );
+      final Intent onClickIntent = new Intent( context,
+                                               MolokoNotificationService.class );
+      
+      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
+      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      
+      return PendingIntent.getService( context,
+                                       1,
+                                       onClickIntent,
+                                       PendingIntent.FLAG_CANCEL_CURRENT
+                                          | PendingIntent.FLAG_ONE_SHOT );
+   }
+   
+   
+   
+   public final static PendingIntent createNotificationClearedIntent( Context context,
+                                                                      int notificationId )
+   {
+      final Intent onClickIntent = new Intent( context,
+                                               MolokoNotificationService.class );
+      
+      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED );
+      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      
+      return PendingIntent.getService( context,
+                                       2,
+                                       onClickIntent,
+                                       PendingIntent.FLAG_CANCEL_CURRENT );
    }
    
    

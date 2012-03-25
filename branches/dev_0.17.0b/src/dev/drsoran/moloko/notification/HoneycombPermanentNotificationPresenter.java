@@ -24,11 +24,9 @@ package dev.drsoran.moloko.notification;
 
 import android.app.Notification;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.Intents;
 
 
 class HoneycombPermanentNotificationPresenter extends
@@ -43,18 +41,15 @@ class HoneycombPermanentNotificationPresenter extends
    
    
    @Override
-   protected Notification newNotfication( String title,
-                                          String text,
-                                          int count,
-                                          Intent onClickIntent )
+   protected Notification newNotfication( String title, String text, int count )
    {
       if ( count > 1 )
       {
-         return newStackedNotification( title, text, count, onClickIntent );
+         return newStackedNotification( title, text, count );
       }
       else
       {
-         return newSingletonNotification( title, text, count, onClickIntent );
+         return newSingletonNotification( title, text, count );
       }
    }
    
@@ -62,13 +57,11 @@ class HoneycombPermanentNotificationPresenter extends
    
    private Notification newSingletonNotification( String title,
                                                   String text,
-                                                  int count,
-                                                  Intent onClickIntent )
+                                                  int count )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            count,
-                                                                            onClickIntent );
+                                                                            count );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_permanent_expanded );
@@ -81,36 +74,15 @@ class HoneycombPermanentNotificationPresenter extends
    
    private Notification newStackedNotification( String title,
                                                 String text,
-                                                int count,
-                                                Intent onClickIntent )
+                                                int count )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            count,
-                                                                            onClickIntent );
+                                                                            count );
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_permanent_expanded_stacked );
       builder.setLargeIcon( largeIcon );
       
       return builder.build();
-   }
-   
-   
-   
-   private INotificationBuilder createDefaultInitializedBuilder( String title,
-                                                                 String text,
-                                                                 int count,
-                                                                 Intent onClickIntent )
-   {
-      final INotificationBuilder builder = NotificationBuilderFactory.create( getContext() );
-      
-      builder.setOngoing( true );
-      builder.setSmallIcon( R.drawable.notification_permanent, count );
-      builder.setContentTitle( title );
-      builder.setContentText( text );
-      builder.setContentIntent( Intents.createPermanentNotificationIntent( getContext(),
-                                                                           onClickIntent ) );
-      
-      return builder;
    }
 }

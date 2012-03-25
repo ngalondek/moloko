@@ -22,8 +22,19 @@
 
 package dev.drsoran.moloko.notification;
 
+import android.content.Intent;
+
+
 interface IStatusbarNotifier
 {
+   void onNotificationClicked( int notificationId, Intent onClickIntent );
+   
+   
+   
+   void onNotificationCleared( int notificationId, Intent onClearIntent );
+   
+   
+   
    void onTimeChanged( int which );
    
    

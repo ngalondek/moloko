@@ -47,6 +47,8 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    
    private PendingIntent contentIntent;
    
+   private PendingIntent deleteIntent;
+   
    private CharSequence tickerText;
    
    private int defaults = Notification.DEFAULT_ALL;
@@ -126,6 +128,15 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    public INotificationBuilder setContentTitle( CharSequence title )
    {
       contentTitle = title;
+      return this;
+   }
+   
+   
+   
+   @Override
+   public INotificationBuilder setDeleteIntent( PendingIntent intent )
+   {
+      deleteIntent = intent;
       return this;
    }
    
@@ -243,6 +254,9 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
                                        contentTitle,
                                        contentText,
                                        contentIntent );
+      
+      notification.deleteIntent = deleteIntent;
+      
       if ( content != null )
       {
          notification.contentView = content;

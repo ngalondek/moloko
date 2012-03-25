@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.notification;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
@@ -36,6 +37,8 @@ import dev.drsoran.provider.Rtm.Tasks;
 class DueTasksNotifier extends AbstractNotifier
 {
    private final IDueTaskNotificationPresenter presenter;
+   
+   private int notificationEndIndex;
    
    
    
@@ -62,7 +65,7 @@ class DueTasksNotifier extends AbstractNotifier
          
          case IOnTimeChangedListener.SYSTEM_TIME:
          case IOnTimeChangedListener.MINUTE_TICK:
-            reEvaluateDueTaskNotifications();
+            updateNotificationsIfRangeChanged();
             break;
          
          default :
@@ -77,16 +80,13 @@ class DueTasksNotifier extends AbstractNotifier
    {
       switch ( which )
       {
-         case IOnSettingsChangedListener.TIMEFORMAT:
-            // reEvaluateDueTaskNotifications( NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED );
-            break;
-         
          case IOnSettingsChangedListener.NOTIFY_DUE_TASKS:
             reCreateDueTaskNotifications();
             break;
          
+         case IOnSettingsChangedListener.TIMEFORMAT:
          case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_BEFORE_TIME:
-            reEvaluateDueTaskNotifications();
+            updateNotifications();
             break;
          
          case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_FEATURE:
@@ -101,11 +101,33 @@ class DueTasksNotifier extends AbstractNotifier
    
    
    @Override
+   public void onNotificationClicked( int notificationId, Intent onClickIntent )
+   {
+      if ( presenter.isHandlingNotification( notificationId ) )
+      {
+         presenter.handleNotificationClicked( notificationId );
+      }
+   }
+   
+   
+   
+   @Override
+   public void onNotificationCleared( int notificationId, Intent onClearIntent )
+   {
+      if ( presenter.isHandlingNotification( notificationId ) )
+      {
+         presenter.handleNotificationCleared( notificationId );
+      }
+   }
+   
+   
+   
+   @Override
    protected void onFinishedLoadingTasksToNotify( Cursor cursor )
    {
       if ( cursor != null && cursor.moveToFirst() )
       {
-         reEvaluateDueTaskNotifications();
+         evaluateNotificationsRangeAndUpdateNotifications();
       }
       else
       {
@@ -154,21 +176,45 @@ class DueTasksNotifier extends AbstractNotifier
    
    
    
-   private void reEvaluateDueTaskNotifications()
+   private void evaluateNotificationsRangeAndUpdateNotifications()
    {
-      final boolean showDueTasks = getSettings().isNotifyingDueTasks();
+      evaluateNotificationsRange();
+      updateNotifications();
+   }
+   
+   
+   
+   private void updateNotificationsIfRangeChanged()
+   {
+      final int tasksToNotifyEndIndex = notificationEndIndex;
+      evaluateNotificationsRange();
       
-      if ( showDueTasks && hasTasks() )
+      if ( notificationEndIndex != tasksToNotifyEndIndex )
       {
-         final Cursor currentTasks = getCurrentTasksCursor();
-         final int tasksToNotifyEndIndex = getTasksToNotifyExcusiveEndIndex( currentTasks );
-         presenter.showNotificationsFor( currentTasks, tasksToNotifyEndIndex );
+         notificationEndIndex = tasksToNotifyEndIndex;
+         updateNotifications();
       }
    }
    
    
    
-   private int getTasksToNotifyExcusiveEndIndex( Cursor currentTasks )
+   private void updateNotifications()
+   {
+      final Cursor currentTasks = getCurrentTasksCursor();
+      presenter.showNotificationsFor( currentTasks, notificationEndIndex );
+   }
+   
+   
+   
+   private void evaluateNotificationsRange()
+   {
+      final Cursor currentTasks = getCurrentTasksCursor();
+      notificationEndIndex = getTasksToNotifyOpenRange( currentTasks );
+   }
+   
+   
+   
+   private int getTasksToNotifyOpenRange( Cursor currentTasks )
    {
       int endIndex = 0;
       
@@ -201,14 +247,6 @@ class DueTasksNotifier extends AbstractNotifier
    private void cancelDueTaskNotifications()
    {
       presenter.cancelNotifications();
-   }
-   
-   
-   
-   private boolean hasTasks()
-   {
-      return getCurrentTasksCursor() != null
-         && getCurrentTasksCursor().getCount() > 0;
    }
    
    

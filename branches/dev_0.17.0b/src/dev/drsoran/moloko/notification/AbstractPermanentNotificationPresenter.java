@@ -52,6 +52,8 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    private final Context context;
    
+   private Intent onClickIntent;
+   
    private boolean isNotificationActive;
    
    
@@ -72,13 +74,41 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    
    @Override
+   public boolean isHandlingNotification( int notificationId )
+   {
+      return notificationId == ID;
+   }
+   
+   
+   
+   @Override
+   public void handleNotificationClicked( int notificationId )
+   {
+      startActivity( onClickIntent );
+   }
+   
+   
+   
+   @Override
    public void cancelNotification()
    {
       if ( isNotificationActive )
       {
          getNotificationManager().cancel( ID );
+         
+         onClickIntent = null;
          isNotificationActive = false;
       }
+   }
+   
+   
+   
+   protected void startActivity( Intent intent )
+   {
+      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TASK
+         | Intent.FLAG_ACTIVITY_NEW_TASK );
+      
+      context.startActivity( intent );
    }
    
    
@@ -90,21 +120,38 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    
    
+   protected INotificationBuilder createDefaultInitializedBuilder( String title,
+                                                                   String text,
+                                                                   int count )
+   {
+      final INotificationBuilder builder = NotificationBuilderFactory.create( getContext() );
+      
+      builder.setOngoing( true );
+      builder.setSmallIcon( R.drawable.notification_permanent, count );
+      builder.setContentTitle( title );
+      builder.setContentText( text );
+      builder.setContentIntent( Intents.createPermanentNotificationIntent( getContext(),
+                                                                           ID ) );
+      
+      return builder;
+   }
+   
+   
+   
    private void updateOrLaunchNotification( Cursor tasksCursor,
                                             String filterString )
    {
       final String title = getNotificationTitle();
       final String text = buildPermanentNotificationRowText( tasksCursor );
-      final Intent onClickIntent = createOnClickIntent( tasksCursor,
-                                                        title,
-                                                        filterString );
       
-      Notification notification = newNotfication( title,
-                                                  text,
-                                                  tasksCursor.getCount(),
-                                                  onClickIntent );
+      final Notification notification = newNotfication( title,
+                                                        text,
+                                                        tasksCursor.getCount() );
+      
+      createOnClickIntent( tasksCursor, title, filterString );
       
       getNotificationManager().notify( ID, notification );
+      
       isNotificationActive = true;
    }
    
@@ -266,11 +313,10 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    
    
-   private Intent createOnClickIntent( Cursor tasksCursor,
-                                       String activityTitle,
-                                       String filterString )
+   private void createOnClickIntent( Cursor tasksCursor,
+                                     String activityTitle,
+                                     String filterString )
    {
-      final Intent onClickIntent;
       final int numTasks = tasksCursor.getCount();
       
       if ( numTasks == 1 )
@@ -292,8 +338,6 @@ abstract class AbstractPermanentNotificationPresenter implements
                                                           new RtmSmartFilter( filterString ),
                                                           activityTitle );
       }
-      
-      return onClickIntent;
    }
    
    
@@ -329,6 +373,5 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    protected abstract Notification newNotfication( String title,
                                                    String text,
-                                                   int count,
-                                                   Intent onClickIntent );
+                                                   int count );
 }

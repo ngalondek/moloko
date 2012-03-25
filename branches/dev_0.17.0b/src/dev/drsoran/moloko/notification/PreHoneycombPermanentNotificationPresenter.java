@@ -24,9 +24,6 @@ package dev.drsoran.moloko.notification;
 
 import android.app.Notification;
 import android.content.Context;
-import android.content.Intent;
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.Intents;
 
 
 class PreHoneycombPermanentNotificationPresenter extends
@@ -41,20 +38,11 @@ class PreHoneycombPermanentNotificationPresenter extends
    
    
    @Override
-   protected Notification newNotfication( String title,
-                                          String text,
-                                          int count,
-                                          Intent onClickIntent )
+   protected Notification newNotfication( String title, String text, int count )
    {
-      final INotificationBuilder builder = NotificationBuilderFactory.create( getContext() );
-      
-      builder.setOngoing( true );
-      builder.setSmallIcon( R.drawable.notification_permanent, count );
-      builder.setContentTitle( title );
-      builder.setContentText( text );
-      builder.setContentIntent( Intents.createPermanentNotificationIntent( getContext(),
-                                                                           onClickIntent ) );
-      
+      final INotificationBuilder builder = createDefaultInitializedBuilder( title,
+                                                                            text,
+                                                                            count );
       return builder.build();
    }
 }

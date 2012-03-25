@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.notification;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
@@ -80,6 +81,24 @@ class PermanentNotifier extends AbstractNotifier
          default :
             break;
       }
+   }
+   
+   
+   
+   @Override
+   public void onNotificationClicked( int notificationId, Intent onClickIntent )
+   {
+      if ( presenter.isHandlingNotification( notificationId ) )
+      {
+         presenter.handleNotificationClicked( notificationId );
+      }
+   }
+   
+   
+   
+   @Override
+   public void onNotificationCleared( int notificationId, Intent onClearIntent )
+   {
    }
    
    

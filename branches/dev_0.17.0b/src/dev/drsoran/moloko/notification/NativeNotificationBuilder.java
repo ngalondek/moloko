@@ -99,6 +99,15 @@ class NativeNotificationBuilder implements INotificationBuilder
    
    
    @Override
+   public INotificationBuilder setDeleteIntent( PendingIntent intent )
+   {
+      nativeBuilder.setDeleteIntent( intent );
+      return this;
+   }
+   
+   
+   
+   @Override
    public INotificationBuilder setDefaults( int defaults )
    {
       nativeBuilder.setDefaults( defaults );

@@ -22,18 +22,30 @@
 
 package dev.drsoran.moloko.notification;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.SqlSelectionFilter;
+import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 class StackedDueTaskNotificationPresenter extends
-         DueTaskNotificationPresenterBase
+         AbstractDueTaskNotificationPresenter
 {
    private final static int ID = R.id.notification_due_tasks_stacked;
+   
+   // Key: Task ID, Value: true, if the notification should be part of the stack.
+   private final Map< String, Boolean > notificationsMap = new TreeMap< String, Boolean >();
    
    private boolean isNotificationShown;
    
@@ -49,7 +61,32 @@ class StackedDueTaskNotificationPresenter extends
    @Override
    public void showNotificationsFor( Cursor tasksCursor, int endIndex )
    {
-      updateOrLaunchNotification( tasksCursor, endIndex );
+      super.showNotificationsFor( tasksCursor, endIndex );
+      
+   }
+   
+   
+   
+   @Override
+   public boolean isHandlingNotification( int notificationId )
+   {
+      return notificationId == ID;
+   }
+   
+   
+   
+   @Override
+   public void handleNotificationClicked( int notificationId )
+   {
+      final Intent openTasksIntent = createOpenTasksIntent();
+      startActivity( openTasksIntent );
+   }
+   
+   
+   
+   @Override
+   public void handleNotificationCleared( int notificationId )
+   {
    }
    
    
@@ -66,6 +103,51 @@ class StackedDueTaskNotificationPresenter extends
    
    
    
+   @Override
+   protected void updateExistingNotifications( Cursor tasksCursor,
+                                               List< String > taskIdsToNotify,
+                                               Collection< String > updatedValues )
+   {
+      for ( String updatedNotificationTaskId : updatedValues )
+      {
+         notificationsMap.get( updatedNotificationTaskId );
+      }
+   }
+   
+   
+   
+   @Override
+   protected void insertNewNotifications( Cursor tasksCursor,
+                                          List< String > taskIdsToNotify,
+                                          Collection< String > newValues )
+   {
+      for ( String newNotificationTaskId : newValues )
+      {
+         notificationsMap.put( newNotificationTaskId, Boolean.TRUE );
+      }
+   }
+   
+   
+   
+   @Override
+   protected void cancelRemovedNotifications( Collection< String > removedValues )
+   {
+      for ( String removedNotificationTaskId : removedValues )
+      {
+         notificationsMap.remove( removedNotificationTaskId );
+      }
+   }
+   
+   
+   
+   @Override
+   protected Collection< String > getNotifiedTasksIds()
+   {
+      return notificationsMap.keySet();
+   }
+   
+   
+   
    private void updateOrLaunchNotification( Cursor tasksCursor, int endIndex )
    {
       final int indexOfLastDueTask = endIndex - 1;
@@ -75,25 +157,16 @@ class StackedDueTaskNotificationPresenter extends
       final String title = getNotificationTitle( tasksCursor );
       final String text = getNotificationText( tasksCursor );
       final String ticker = getNotificationTicker( tasksCursor );
-      final Intent onClickIntent = createOnClickIntent( tasksCursor, count );
       
       final INotificationBuilder builder;
       
       if ( count > 1 )
       {
-         builder = newStackedNotification( title,
-                                           text,
-                                           ticker,
-                                           count,
-                                           onClickIntent );
+         builder = newStackedNotification( title, text, ticker, count );
       }
       else
       {
-         builder = newSingletonNotification( title,
-                                             text,
-                                             ticker,
-                                             count,
-                                             onClickIntent );
+         builder = newSingletonNotification( title, text, ticker, count );
       }
       
       getNotificationManager().notify( ID, builder.build() );
@@ -105,14 +178,12 @@ class StackedDueTaskNotificationPresenter extends
    private INotificationBuilder newSingletonNotification( String title,
                                                           String text,
                                                           String ticker,
-                                                          int count,
-                                                          Intent onClickIntent )
+                                                          int count )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
                                                                             ticker,
-                                                                            count,
-                                                                            onClickIntent );
+                                                                            count );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_due_task_expanded );
@@ -126,14 +197,12 @@ class StackedDueTaskNotificationPresenter extends
    private INotificationBuilder newStackedNotification( String title,
                                                         String text,
                                                         String ticker,
-                                                        int count,
-                                                        Intent onClickIntent )
+                                                        int count )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
                                                                             ticker,
-                                                                            count,
-                                                                            onClickIntent );
+                                                                            count );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_due_task_expanded_stacked );
@@ -141,5 +210,55 @@ class StackedDueTaskNotificationPresenter extends
       builder.setNumber( count );
       
       return builder;
+   }
+   
+   
+   
+   private Intent createOpenTasksIntent()
+   {
+      final Intent openTasksIntent;
+      
+      if ( notificationsMap.size() == 1 )
+      {
+         openTasksIntent = Intents.createOpenTaskIntent( getContext(),
+                                                         Queries.getOptString( /* tasksCursor */null,
+                                                                               getColumnIndex( Tasks._ID ) ) );
+      }
+      else if ( notificationsMap.size() > 1 )
+      {
+         final String tasksListSelection = getDueTasksListSelection( /* tasksCursor */null );
+         final SqlSelectionFilter filter = new SqlSelectionFilter( tasksListSelection );
+         final String title = getContext().getString( R.string.notification_due_tasks_list_title );
+         
+         final Intent onClickIntent = Intents.createSqlSelectionFilterIntent( getContext(),
+                                                                              filter,
+                                                                              title );
+         
+      }
+      
+      return /* openTasksIntent */null;
+   }
+   
+   
+   
+   private static String getDueTasksListSelection( Cursor tasksCursor )
+   {
+      final StringBuilder stringBuilder = new StringBuilder();
+      
+      while ( !tasksCursor.isAfterLast() )
+      {
+         final String taskId = Queries.getOptString( tasksCursor,
+                                                     getColumnIndex( Tasks._ID ) );
+         stringBuilder.append( Tasks._ID ).append( "=" ).append( taskId );
+         
+         if ( !tasksCursor.isLast() )
+         {
+            stringBuilder.append( " OR " );
+         }
+         
+         tasksCursor.moveToNext();
+      }
+      
+      return stringBuilder.toString();
    }
 }

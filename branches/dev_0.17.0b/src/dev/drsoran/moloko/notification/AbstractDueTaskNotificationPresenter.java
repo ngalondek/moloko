@@ -22,6 +22,10 @@
 
 package dev.drsoran.moloko.notification;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -30,21 +34,19 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-abstract class DueTaskNotificationPresenterBase implements
+abstract class AbstractDueTaskNotificationPresenter implements
          IDueTaskNotificationPresenter
 {
-   private final Context context;
-   
    private final static long[] VIBRATE_PATTERN =
    { 0, 300 };
+   
+   private final Context context;
    
    private boolean vibrateOnNotification;
    
@@ -54,7 +56,7 @@ abstract class DueTaskNotificationPresenterBase implements
    
    
    
-   protected DueTaskNotificationPresenterBase( Context context )
+   protected AbstractDueTaskNotificationPresenter( Context context )
    {
       this.context = context;
    }
@@ -65,6 +67,26 @@ abstract class DueTaskNotificationPresenterBase implements
    public void showNotificationsFor( Cursor tasksCursor )
    {
       showNotificationsFor( tasksCursor, tasksCursor.getCount() );
+   }
+   
+   
+   
+   @Override
+   public void showNotificationsFor( Cursor tasksCursor, int endIndex )
+   {
+      final List< String > taskIdsToNotify = getTaskIds( tasksCursor, endIndex );
+      final Collection< String > taskIdsInNotification = getNotifiedTasksIds();
+      
+      final NotificationDiffer.Diff diff = new NotificationDiffer().diffTaskIdSets( taskIdsInNotification,
+                                                                                    taskIdsToNotify );
+      
+      cancelRemovedNotifications( diff.getRemovedValues() );
+      
+      insertNewNotifications( tasksCursor, taskIdsToNotify, diff.getNewValues() );
+      
+      updateExistingNotifications( tasksCursor,
+                                   taskIdsToNotify,
+                                   diff.getUpdatedValues() );
    }
    
    
@@ -84,6 +106,16 @@ abstract class DueTaskNotificationPresenterBase implements
    protected Context getContext()
    {
       return context;
+   }
+   
+   
+   
+   protected void startActivity( Intent intent )
+   {
+      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TASK
+         | Intent.FLAG_ACTIVITY_NEW_TASK );
+      
+      context.startActivity( intent );
    }
    
    
@@ -164,34 +196,29 @@ abstract class DueTaskNotificationPresenterBase implements
    
    
    
-   protected Intent createOnClickIntent( Cursor tasksCursor, int numTasks )
+   protected List< String > getTaskIds( Cursor tasksCursor, int endIndex )
    {
-      final Intent onClickIntent;
+      final List< String > taskIds = new ArrayList< String >( endIndex );
       
-      tasksCursor.moveToFirst();
-      
-      if ( numTasks == 1 )
+      boolean ok = tasksCursor.moveToFirst();
+      if ( ok )
       {
-         onClickIntent = Intents.createOpenTaskIntent( context,
-                                                       Queries.getOptString( tasksCursor,
-                                                                             getColumnIndex( Tasks._ID ) ) );
-      }
-      else if ( numTasks > 1 )
-      {
-         final String tasksListSelection = getDueTasksListSelection( tasksCursor );
-         final SqlSelectionFilter filter = new SqlSelectionFilter( tasksListSelection );
-         final String title = context.getString( R.string.notification_due_tasks_list_title );
-         
-         onClickIntent = Intents.createSqlSelectionFilterIntent( context,
-                                                                 filter,
-                                                                 title );
-      }
-      else
-      {
-         onClickIntent = null;
+         for ( int i = 0; i < endIndex && ok; ok = tasksCursor.moveToNext() )
+         {
+            final String taskId = Queries.getOptString( tasksCursor,
+                                                        getColumnIndex( Tasks._ID ) );
+            taskIds.add( taskId );
+         }
       }
       
-      return onClickIntent;
+      return taskIds;
+   }
+   
+   
+   
+   protected static int taskIdToNotificationId( String taskId )
+   {
+      return Integer.parseInt( taskId );
    }
    
    
@@ -199,8 +226,7 @@ abstract class DueTaskNotificationPresenterBase implements
    protected INotificationBuilder createDefaultInitializedBuilder( String title,
                                                                    String text,
                                                                    String ticker,
-                                                                   int count,
-                                                                   Intent onClickIntent )
+                                                                   int count )
    {
       final INotificationBuilder builder = NotificationBuilderFactory.create( getContext() );
       
@@ -209,12 +235,17 @@ abstract class DueTaskNotificationPresenterBase implements
       builder.setContentText( text );
       builder.setTicker( ticker );
       builder.setSmallIcon( R.drawable.notification_due_task, count );
-      builder.setContentIntent( Intents.createDueTasksNotificationIntent( getContext(),
-                                                                          onClickIntent ) );
       
       applyNotificationFeatures( builder );
       
       return builder;
+   }
+   
+   
+   
+   protected static int getColumnIndex( String colName )
+   {
+      return TasksProviderPart.COL_INDICES.get( colName ).intValue();
    }
    
    
@@ -224,36 +255,6 @@ abstract class DueTaskNotificationPresenterBase implements
       setVibrate( builder );
       setLed( builder );
       setSound( builder );
-   }
-   
-   
-   
-   private static String getDueTasksListSelection( Cursor tasksCursor )
-   {
-      final StringBuilder stringBuilder = new StringBuilder();
-      
-      while ( !tasksCursor.isAfterLast() )
-      {
-         final String taskId = Queries.getOptString( tasksCursor,
-                                                     getColumnIndex( Tasks._ID ) );
-         stringBuilder.append( Tasks._ID ).append( "=" ).append( taskId );
-         
-         if ( !tasksCursor.isLast() )
-         {
-            stringBuilder.append( " OR " );
-         }
-         
-         tasksCursor.moveToNext();
-      }
-      
-      return stringBuilder.toString();
-   }
-   
-   
-   
-   private static int getColumnIndex( String colName )
-   {
-      return TasksProviderPart.COL_INDICES.get( colName ).intValue();
    }
    
    
@@ -310,4 +311,24 @@ abstract class DueTaskNotificationPresenterBase implements
    {
       builder.setSound( soundForNotification );
    }
+   
+   
+   
+   protected abstract void updateExistingNotifications( Cursor tasksCursor,
+                                                        List< String > taskIdsToNotify,
+                                                        Collection< String > updatedValues );
+   
+   
+   
+   protected abstract void insertNewNotifications( Cursor tasksCursor,
+                                                   List< String > taskIdsToNotify,
+                                                   Collection< String > newValues );
+   
+   
+   
+   protected abstract void cancelRemovedNotifications( Collection< String > removedValues );
+   
+   
+   
+   protected abstract Collection< String > getNotifiedTasksIds();
 }

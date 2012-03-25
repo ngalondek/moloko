@@ -22,11 +22,14 @@
 
 package dev.drsoran.moloko.notification;
 
+import java.security.InvalidParameterException;
+
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.IBinder;
 import dev.drsoran.moloko.NotifierContext;
+import dev.drsoran.moloko.util.Intents.Action;
 
 
 public class MolokoNotificationService extends Service
@@ -51,7 +54,25 @@ public class MolokoNotificationService extends Service
    @Override
    public int onStartCommand( Intent intent, int flags, int startId )
    {
-      notificationManager.start();
+      final String action = intent.getAction();
+      
+      if ( Action.NOTIFICATION_SERVICE_START.equals( action ) )
+      {
+         notificationManager.start();
+      }
+      else if ( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED.equals( action ) )
+      {
+         handleNotificationClicked( intent );
+      }
+      else if ( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED.equals( action ) )
+      {
+         handleNotificationCleared( intent );
+      }
+      else
+      {
+         throw new InvalidParameterException( String.format( "'%s' is no valid MolokoNotificationService intent action.",
+                                                             action ) );
+      }
       
       return Service.START_STICKY;
    }
@@ -62,7 +83,7 @@ public class MolokoNotificationService extends Service
    public void onConfigurationChanged( Configuration newConfig )
    {
       super.onConfigurationChanged( newConfig );
-      notificationManager.onConfiurationChanged( newConfig );
+      notificationManager.onConfigurationChanged( newConfig );
    }
    
    
@@ -82,6 +103,20 @@ public class MolokoNotificationService extends Service
    public IBinder onBind( Intent intent )
    {
       return serviceNotBindable();
+   }
+   
+   
+   
+   private void handleNotificationClicked( Intent intent )
+   {
+      notificationManager.onNotificationClicked( intent );
+   }
+   
+   
+   
+   private void handleNotificationCleared( Intent intent )
+   {
+      notificationManager.onNotificationCleared( intent );
    }
    
    

@@ -51,30 +51,6 @@
    </string-array>
 
    <string-array
-      name="moloko_prefs_rtm_dateformat">
-      <item>@string/moloko_prefs_rtm_dateformat_eu</item>
-      <item>@string/moloko_prefs_rtm_dateformat_us</item>
-   </string-array>
-
-   <string-array
-      name="moloko_prefs_rtm_dateformat_values">
-      <item>0</item>
-      <item>1</item>
-   </string-array>
-
-   <string-array
-      name="moloko_prefs_rtm_timeformat">
-      <item>@string/moloko_prefs_rtm_timeformat_12</item>
-      <item>@string/moloko_prefs_rtm_timeformat_24</item>
-   </string-array>
-
-   <string-array
-      name="moloko_prefs_rtm_timeformat_values">
-      <item>0</item>
-      <item>1</item>
-   </string-array>
-
-   <string-array
       name="moloko_acc_prefs_sync_interval_entries">
       <item>@string/phr_manuell</item>
       <item>@string/time_interval_15min</item>

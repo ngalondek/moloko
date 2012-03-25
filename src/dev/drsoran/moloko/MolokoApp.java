@@ -247,7 +247,7 @@ public class MolokoApp extends Application implements IOnBootCompletedListener,
    
    private void startNotificationService()
    {
-      startService( Intents.createNotificationServiceIntent( this ) );
+      startService( Intents.createStartNotificationServiceIntent( this ) );
    }
    
    
@@ -264,7 +264,7 @@ public class MolokoApp extends Application implements IOnBootCompletedListener,
    
    private void stopNotificationService()
    {
-      stopService( Intents.createNotificationServiceIntent( this ) );
+      stopService( Intents.createStartNotificationServiceIntent( this ) );
    }
    
    

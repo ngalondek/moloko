@@ -55,6 +55,10 @@ interface INotificationBuilder
    
    
    
+   INotificationBuilder setDeleteIntent( PendingIntent intent );
+   
+   
+   
    INotificationBuilder setDefaults( int defaults );
    
    

@@ -22,16 +22,16 @@
 
 package dev.drsoran.moloko.notification;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.NotifierContext;
+import dev.drsoran.moloko.util.Intents.Extras;
 
 
 class MolokoNotificationManager implements IOnTimeChangedListener,
@@ -39,7 +39,7 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
 {
    private final NotifierContext context;
    
-   private final List< IStatusbarNotifier > notifiers = new ArrayList< IStatusbarNotifier >();
+   private final IStatusbarNotifier[] notifiers = new IStatusbarNotifier[ 2 ];
    
    private Locale lastUsedLocale;
    
@@ -70,7 +70,7 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    
    
-   public void onConfiurationChanged( Configuration newConfig )
+   public void onConfigurationChanged( Configuration newConfig )
    {
       final Locale currentLocale = getCurrentNotificatonLocale();
       if ( !currentLocale.equals( lastUsedLocale ) )
@@ -105,6 +105,28 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    
    
+   public void onNotificationClicked( Intent intent )
+   {
+      int notificationId = getNotificationId( intent );
+      for ( int i = 0; i < notifiers.length; i++ )
+      {
+         notifiers[ i ].onNotificationClicked( notificationId, intent );
+      }
+   }
+   
+   
+   
+   public void onNotificationCleared( Intent intent )
+   {
+      int notificationId = getNotificationId( intent );
+      for ( int i = 0; i < notifiers.length; i++ )
+      {
+         notifiers[ i ].onNotificationCleared( notificationId, intent );
+      }
+   }
+   
+   
+   
    public void recreateNotifications()
    {
       shutdownNotifiers();
@@ -115,20 +137,22 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    private void createNotifiers()
    {
-      notifiers.add( new PermanentNotifier( context ) );
-      notifiers.add( new DueTasksNotifier( context ) );
+      notifiers[ 0 ] = new PermanentNotifier( context );
+      notifiers[ 1 ] = new DueTasksNotifier( context );
    }
    
    
    
    private void shutdownNotifiers()
    {
-      for ( IStatusbarNotifier notifier : notifiers )
+      for ( int i = 0; i < notifiers.length; i++ )
       {
-         notifier.shutdown();
+         if ( notifiers[ i ] != null )
+         {
+            notifiers[ i ].shutdown();
+            notifiers[ i ] = null;
+         }
       }
-      
-      notifiers.clear();
    }
    
    
@@ -153,5 +177,18 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    private Locale getCurrentNotificatonLocale()
    {
       return MolokoApp.getSettings( context ).getLocale();
+   }
+   
+   
+   
+   private static int getNotificationId( Intent intent )
+   {
+      int notificationId = intent.getIntExtra( Extras.KEY_NOTIFICATION_ID, -1 );
+      if ( notificationId == -1 )
+      {
+         throw new IllegalArgumentException( "The intent has no notification ID." );
+      }
+      
+      return notificationId;
    }
 }

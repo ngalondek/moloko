@@ -42,5 +42,17 @@ interface IDueTaskNotificationPresenter
    
    
    
+   boolean isHandlingNotification( int notificationId );
+   
+   
+   
+   void handleNotificationClicked( int notificationId );
+   
+   
+   
+   void handleNotificationCleared( int notificationId );
+   
+   
+   
    void cancelNotifications();
 }

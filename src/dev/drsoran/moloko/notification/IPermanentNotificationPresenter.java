@@ -31,5 +31,13 @@ interface IPermanentNotificationPresenter
    
    
    
+   boolean isHandlingNotification( int notificationId );
+   
+   
+   
+   void handleNotificationClicked( int notificationId );
+   
+   
+   
    void cancelNotification();
 }

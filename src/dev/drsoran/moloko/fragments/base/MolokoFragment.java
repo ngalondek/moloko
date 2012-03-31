@@ -31,28 +31,19 @@ import android.support.v4.app.SupportActivity;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.fragments.base.impl.MolokoFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
 
 
 public abstract class MolokoFragment extends Fragment implements IConfigurable,
          IOnSettingsChangedListener
 {
-   private final MolokoFragmentImpl impl;
+   private final ConfigurableFragmentImpl impl;
    
    
    
    protected MolokoFragment()
    {
-      impl = new MolokoFragmentImpl( this, getSettingsMask() );
-   }
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      impl.onCreate( savedInstanceState );
+      impl = new ConfigurableFragmentImpl( this, getSettingsMask() );
    }
    
    
@@ -62,6 +53,15 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    {
       super.onAttach( activity );
       impl.onAttach( activity );
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      impl.onCreate( savedInstanceState );
    }
    
    
@@ -148,7 +148,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    
    
    
-   public int getSettingsMask()
+   protected int getSettingsMask()
    {
       return 0;
    }

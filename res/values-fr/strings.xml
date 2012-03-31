@@ -161,8 +161,8 @@
       <string name="toast_delete_task_failed">Echec de supression de la tâche</string>
       <!-- Note -->
       <string name="toast_insert_note">Ajout d\'une nouvelle note&#8230;</string>
-      <string name="toast_insert_note_ok">Nouvelle tâche ajoutée</string>
-      <string name="toast_insert_note_fail">Echec d\'ajout d\'une nouvelle tâche</string>
+      <string name="toast_insert_note_ok">Nouvelle note ajoutée</string>
+      <string name="toast_insert_note_fail">Echec d\'ajout d\'une nouvelle note</string>
       <string name="toast_save_note">Enregistement des modifications de la note&#8230;</string>
       <string name="toast_save_note_ok">Modifications de la note enregistrées</string>
       <string name="toast_save_note_failed">Echec d\'enregistrement des modifications de la note</string>

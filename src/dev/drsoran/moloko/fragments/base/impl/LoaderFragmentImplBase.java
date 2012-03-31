@@ -73,8 +73,8 @@ abstract class LoaderFragmentImplBase< D >
    
    private ILoaderFragmentListener loaderListener;
    
-   @InstanceState( key = Config.RESPECT_CONTENT_CHANGES )
-   private boolean respectContentChanges;
+   @InstanceState( key = Config.RESPECT_CONTENT_CHANGES, defaultValue = "true" )
+   private boolean respectContentChanges = true;
    
    
    
@@ -112,7 +112,8 @@ abstract class LoaderFragmentImplBase< D >
       else
       {
          final Bundle bundle = new Bundle();
-         bundle.putBoolean( Config.RESPECT_CONTENT_CHANGES, false );
+         bundle.putBoolean( Config.RESPECT_CONTENT_CHANGES,
+                            isRespectingContentChanges() );
          
          config.configure( bundle );
       }

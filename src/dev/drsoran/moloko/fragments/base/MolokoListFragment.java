@@ -34,14 +34,16 @@ import android.view.View;
 import android.widget.ListAdapter;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
 import dev.drsoran.moloko.util.AccountUtils;
 
 
 public abstract class MolokoListFragment< D > extends ListFragment implements
-         IConfigurable, LoaderCallbacks< D >,
+         IConfigurable, IOnSettingsChangedListener, LoaderCallbacks< D >,
          LoaderListFragmentImpl.Support< D >
 {
    private final MolokoListFragmentImpl baseImpl;
@@ -99,6 +101,15 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       super.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
       editImpl.onViewCreated( view, savedInstanceState );
+   }
+   
+   
+   
+   @Override
+   public void onDestroyView()
+   {
+      super.onDestroyView();
+      editImpl.onDestroyView();
    }
    
    
@@ -177,7 +188,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    @Override
    public void clearConfiguration()
    {
-      baseImpl.clearConfiguration();
+      baseImpl.setDefaultConfiguration();
    }
    
    
@@ -189,6 +200,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    
    
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
@@ -197,7 +209,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
    
    
-   public int getSettingsMask()
+   protected int getSettingsMask()
    {
       return 0;
    }

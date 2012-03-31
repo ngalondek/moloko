@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.base;
+package dev.drsoran.moloko.fragments.base.impl;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -35,7 +35,7 @@ import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-class EditFragmentImpl
+public class EditFragmentImpl
 {
    private final Fragment fragment;
    

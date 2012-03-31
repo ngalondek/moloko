@@ -139,7 +139,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    @Override
    public void clearConfiguration()
    {
-      impl.clearConfiguration();
+      impl.setDefaultConfiguration();
    }
    
    
@@ -152,7 +152,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    
    
    
-   public int getSettingsMask()
+   protected int getSettingsMask()
    {
       return 0;
    }

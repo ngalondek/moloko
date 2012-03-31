@@ -24,6 +24,9 @@ package dev.drsoran.moloko.notification;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.app.NotificationManager;
@@ -43,6 +46,91 @@ import dev.drsoran.provider.Rtm.Tasks;
 abstract class AbstractDueTaskNotificationPresenter implements
          IDueTaskNotificationPresenter
 {
+   protected final static class DueTaskNotification
+   {
+      private final String taskId;
+      
+      private final long due;
+      
+      private boolean isVisible = true;
+      
+      
+      
+      public DueTaskNotification( String taskId, long due )
+      {
+         this.taskId = taskId;
+         this.due = due;
+      }
+      
+      
+      
+      public boolean isVisible()
+      {
+         return isVisible;
+      }
+      
+      
+      
+      public void setVisible( boolean isVisible )
+      {
+         this.isVisible = isVisible;
+      }
+      
+      
+      
+      public String getTaskId()
+      {
+         return taskId;
+      }
+      
+      
+      
+      public long getDue()
+      {
+         return due;
+      }
+      
+      
+      
+      @Override
+      public boolean equals( Object o )
+      {
+         if ( o == null )
+            return false;
+         
+         if ( o == this )
+            return true;
+         
+         if ( o.getClass() != getClass() )
+            return false;
+         
+         return taskId.equals( ( (DueTaskNotification) o ).getTaskId() )
+            && due == ( (DueTaskNotification) o ).due;
+      }
+      
+      
+      
+      @Override
+      public int hashCode()
+      {
+         int hashCode = taskId.hashCode();
+         hashCode = 31 * hashCode + (int) due;
+         
+         return hashCode;
+      }
+      
+      
+      
+      @Override
+      public String toString()
+      {
+         return String.format( "%s, %s, %s",
+                               taskId,
+                               new Date( due ).toString(),
+                               String.valueOf( isVisible ) );
+      }
+   }
+   
    private final static long[] VIBRATE_PATTERN =
    { 0, 300 };
    
@@ -53,6 +141,8 @@ abstract class AbstractDueTaskNotificationPresenter implements
    private boolean showLedOnNotification;
    
    private Uri soundForNotification;
+   
+   protected final List< DueTaskNotification > notifications = new LinkedList< DueTaskNotification >();
    
    
    
@@ -87,6 +177,14 @@ abstract class AbstractDueTaskNotificationPresenter implements
       updateExistingNotifications( tasksCursor,
                                    taskIdsToNotify,
                                    diff.getUpdatedValues() );
+   }
+   
+   
+   
+   @Override
+   public void cancelNotifications()
+   {
+      notifications.clear();
    }
    
    
@@ -201,14 +299,11 @@ abstract class AbstractDueTaskNotificationPresenter implements
       final List< String > taskIds = new ArrayList< String >( endIndex );
       
       boolean ok = tasksCursor.moveToFirst();
-      if ( ok )
+      for ( int i = 0; i < endIndex && ok; ok = tasksCursor.moveToNext(), ++i )
       {
-         for ( int i = 0; i < endIndex && ok; ok = tasksCursor.moveToNext() )
-         {
-            final String taskId = Queries.getOptString( tasksCursor,
-                                                        getColumnIndex( Tasks._ID ) );
-            taskIds.add( taskId );
-         }
+         final String taskId = Queries.getOptString( tasksCursor,
+                                                     getColumnIndex( Tasks._ID ) );
+         taskIds.add( taskId );
       }
       
       return taskIds;
@@ -225,7 +320,6 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected INotificationBuilder createDefaultInitializedBuilder( String title,
                                                                    String text,
-                                                                   String ticker,
                                                                    int count )
    {
       final INotificationBuilder builder = NotificationBuilderFactory.create( getContext() );
@@ -233,10 +327,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
       builder.setAutoCancel( true );
       builder.setContentTitle( title );
       builder.setContentText( text );
-      builder.setTicker( ticker );
       builder.setSmallIcon( R.drawable.notification_due_task, count );
-      
-      applyNotificationFeatures( builder );
       
       return builder;
    }
@@ -250,11 +341,137 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   private void applyNotificationFeatures( INotificationBuilder builder )
+   protected void useNotificationFeatures( INotificationBuilder builder )
    {
       setVibrate( builder );
       setLed( builder );
       setSound( builder );
+   }
+   
+   
+   
+   protected Collection< String > getNotifiedTasksIds()
+   {
+      final List< String > taskIds = new ArrayList< String >( notifications.size() );
+      
+      for ( DueTaskNotification notification : notifications )
+      {
+         taskIds.add( notification.getTaskId() );
+      }
+      
+      return taskIds;
+   }
+   
+   
+   
+   protected boolean containsNotifiedTasksId( String taskId )
+   {
+      return getNotificationByTaskId( taskId ) != null;
+   }
+   
+   
+   
+   protected DueTaskNotification getNotificationByTaskId( String taskId )
+   {
+      for ( DueTaskNotification notification : notifications )
+      {
+         if ( notification.getTaskId().equals( taskId ) )
+            return notification;
+      }
+      
+      return null;
+   }
+   
+   
+   
+   private void updateExistingNotifications( Cursor tasksCursor,
+                                             List< String > taskIdsToNotify,
+                                             Collection< String > updatedValues )
+   {
+      for ( String updatedNotificationTaskId : updatedValues )
+      {
+         final DueTaskNotification notification = getDueTaskNotification( updatedNotificationTaskId );
+         if ( notification != null )
+         {
+            final int cursorIndexOfNew = taskIdsToNotify.indexOf( updatedNotificationTaskId );
+            tasksCursor.moveToPosition( cursorIndexOfNew );
+            
+            final DueTaskNotification updatedNotification = newDueTaskNotification( tasksCursor,
+                                                                                    updatedNotificationTaskId );
+            updatedNotification.setVisible( notification.isVisible() );
+            
+            notifications.remove( notification );
+            notifications.add( updatedNotification );
+            
+            onNotificationUpdate( tasksCursor,
+                                  taskIdsToNotify,
+                                  notification,
+                                  updatedNotification );
+         }
+      }
+   }
+   
+   
+   
+   private void insertNewNotifications( Cursor tasksCursor,
+                                        List< String > taskIdsToNotify,
+                                        Collection< String > newValues )
+   {
+      for ( String newNotificationTaskId : newValues )
+      {
+         final int cursorIndexOfNew = taskIdsToNotify.indexOf( newNotificationTaskId );
+         tasksCursor.moveToPosition( cursorIndexOfNew );
+         
+         final DueTaskNotification newNotification = newDueTaskNotification( tasksCursor,
+                                                                             newNotificationTaskId );
+         notifications.add( newNotification );
+         
+         onNewNotification( tasksCursor, taskIdsToNotify, newNotification );
+      }
+   }
+   
+   
+   
+   private void cancelRemovedNotifications( Collection< String > removedValues )
+   {
+      for ( String removedNotificationTaskId : removedValues )
+      {
+         final DueTaskNotification notification = getDueTaskNotification( removedNotificationTaskId );
+         if ( notification != null )
+         {
+            notifications.remove( notification );
+            onNotificationRemoved( notification );
+         }
+      }
+   }
+   
+   
+   
+   private DueTaskNotification newDueTaskNotification( Cursor tasksCursor,
+                                                       String newNotificationTaskId )
+   {
+      final DueTaskNotification newNotification = new DueTaskNotification( newNotificationTaskId,
+                                                                           tasksCursor.getLong( getColumnIndex( Tasks.DUE_DATE ) ) );
+      return newNotification;
+   }
+   
+   
+   
+   private DueTaskNotification getDueTaskNotification( String removedNotificationTaskId )
+   {
+      DueTaskNotification foundNotification = null;
+      
+      for ( Iterator< DueTaskNotification > i = notifications.iterator(); foundNotification == null
+         && i.hasNext(); )
+      {
+         final DueTaskNotification notification = i.next();
+         if ( notification.getTaskId().equals( removedNotificationTaskId ) )
+         {
+            foundNotification = notification;
+         }
+      }
+      
+      return foundNotification;
    }
    
    
@@ -314,21 +531,18 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   protected abstract void updateExistingNotifications( Cursor tasksCursor,
-                                                        List< String > taskIdsToNotify,
-                                                        Collection< String > updatedValues );
+   protected abstract void onNotificationUpdate( Cursor tasksCursor,
+                                                 List< String > taskIdsToNotify,
+                                                 DueTaskNotification oldNotification,
+                                                 DueTaskNotification newNotification );
    
    
    
-   protected abstract void insertNewNotifications( Cursor tasksCursor,
-                                                   List< String > taskIdsToNotify,
-                                                   Collection< String > newValues );
+   protected abstract void onNewNotification( Cursor tasksCursor,
+                                              List< String > taskIdsToNotify,
+                                              DueTaskNotification newNotification );
    
    
    
-   protected abstract void cancelRemovedNotifications( Collection< String > removedValues );
-   
-   
-   
-   protected abstract Collection< String > getNotifiedTasksIds();
+   protected abstract void onNotificationRemoved( DueTaskNotification removedNotification );
 }

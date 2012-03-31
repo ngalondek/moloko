@@ -65,7 +65,14 @@ class DueTasksNotifier extends AbstractNotifier
          
          case IOnTimeChangedListener.SYSTEM_TIME:
          case IOnTimeChangedListener.MINUTE_TICK:
-            updateNotificationsIfRangeChanged();
+            if ( presenter.needsAllTimeChanges() )
+            {
+               evaluateNotificationsRangeAndUpdateNotifications();
+            }
+            else
+            {
+               updateNotificationsIfRangeChanged();
+            }
             break;
          
          default :
@@ -166,12 +173,19 @@ class DueTasksNotifier extends AbstractNotifier
       }
       else
       {
-         final long remindBeforeMillis = getSettings().getNotifyingDueTasksBeforeMs();
-         final LoadHoleDayDueTasksAsyncTask loader = new LoadHoleDayDueTasksAsyncTask( context,
-                                                                                       getHandler(),
-                                                                                       remindBeforeMillis );
-         startTasksLoader( loader );
+         loadDueTasks();
       }
+   }
+   
+   
+   
+   private void loadDueTasks()
+   {
+      final long remindBeforeMillis = getSettings().getNotifyingDueTasksBeforeMs();
+      final LoadHoleDayDueTasksAsyncTask loader = new LoadHoleDayDueTasksAsyncTask( context,
+                                                                                    getHandler(),
+                                                                                    remindBeforeMillis );
+      startTasksLoader( loader );
    }
    
    
@@ -201,7 +215,10 @@ class DueTasksNotifier extends AbstractNotifier
    private void updateNotifications()
    {
       final Cursor currentTasks = getCurrentTasksCursor();
-      presenter.showNotificationsFor( currentTasks, notificationEndIndex );
+      if ( currentTasks != null )
+      {
+         presenter.showNotificationsFor( currentTasks, notificationEndIndex );
+      }
    }
    
    
@@ -209,7 +226,10 @@ class DueTasksNotifier extends AbstractNotifier
    private void evaluateNotificationsRange()
    {
       final Cursor currentTasks = getCurrentTasksCursor();
-      notificationEndIndex = getTasksToNotifyOpenRange( currentTasks );
+      if ( currentTasks != null )
+      {
+         notificationEndIndex = getTasksToNotifyOpenRange( currentTasks );
+      }
    }
    
    

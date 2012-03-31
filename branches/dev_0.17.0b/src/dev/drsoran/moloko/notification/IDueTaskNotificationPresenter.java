@@ -42,6 +42,10 @@ interface IDueTaskNotificationPresenter
    
    
    
+   boolean needsAllTimeChanges();
+   
+   
+   
    boolean isHandlingNotification( int notificationId );
    
    

@@ -22,88 +22,16 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
-import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.SupportActivity;
 import android.view.View;
 
 
-public class MolokoListFragmentImpl
+public class MolokoListFragmentImpl extends ConfigurableFragmentImpl
 {
-   private final MolokoFragmentImpl impl;
-   
-   private final ListFragment fragment;
-   
-   
    
    public MolokoListFragmentImpl( ListFragment fragment, int settingsMask )
    {
-      impl = new MolokoFragmentImpl( fragment, settingsMask );
-      this.fragment = fragment;
-   }
-   
-   
-   
-   public void onCreate( Bundle savedInstanceState )
-   {
-      impl.onCreate( savedInstanceState );
-   }
-   
-   
-   
-   public void onAttach( SupportActivity activity )
-   {
-      impl.onAttach( activity );
-   }
-   
-   
-   
-   public void onDetach()
-   {
-      impl.onDetach();
-   }
-   
-   
-   
-   public void setArguments( Bundle args )
-   {
-      impl.setArguments( args );
-   }
-   
-   
-   
-   public void onSaveInstanceState( Bundle outState )
-   {
-      impl.onSaveInstanceState( outState );
-   }
-   
-   
-   
-   public < T > void registerAnnotatedConfiguredInstance( T instance,
-                                                          Class< T > clazz )
-   {
-      impl.registerAnnotatedConfiguredInstance( instance, clazz );
-   }
-   
-   
-   
-   public Bundle getConfiguration()
-   {
-      return impl.getConfiguration();
-   }
-   
-   
-   
-   public void configure( Bundle config )
-   {
-      impl.configure( config );
-   }
-   
-   
-   
-   public void clearConfiguration()
-   {
-      impl.setDefaultConfiguration();
+      super( fragment, settingsMask );
    }
    
    
@@ -112,6 +40,7 @@ public class MolokoListFragmentImpl
    {
       View emptyView = null;
       
+      final ListFragment fragment = (ListFragment) getFragment();
       if ( fragment.getView() != null && fragment.getListView() != null )
          emptyView = fragment.getListView().getEmptyView();
       
@@ -131,6 +60,7 @@ public class MolokoListFragmentImpl
    
    public void showListView( boolean show )
    {
+      final ListFragment fragment = (ListFragment) getFragment();
       final View listView = fragment.getListView();
       if ( listView != null )
          listView.setVisibility( show ? View.VISIBLE : View.GONE );

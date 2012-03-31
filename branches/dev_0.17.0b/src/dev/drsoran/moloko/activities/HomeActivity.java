@@ -62,8 +62,6 @@ public class HomeActivity extends MolokoFragmentActivity implements
       super.onCreate( savedInstanceState );
       setContentView( R.layout.home_activity );
       
-      setAccountNameAsSubTitle();
-      
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setOnItemClickListener( this );
       
@@ -76,6 +74,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
    protected void onResume()
    {
       super.onResume();
+      
+      setAccountNameAsSubTitle();
       
       final HomeAdapter homeAdapter = getHomeAdapter();
       

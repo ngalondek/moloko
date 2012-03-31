@@ -65,25 +65,13 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
-   @Override
-   public void onCreate( Bundle savedInstanceState )
+   public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      super.onCreate( savedInstanceState );
-      
-      setRespectContentChanges( true );
-      
       if ( support.getListAdapter() == null && support.isReadyToStartLoader() )
       {
          startLoader();
-      }
-   }
-   
-   
-   
-   public void onViewCreated( View view, Bundle savedInstanceState )
-   {
-      if ( support.getListAdapter() == null )
          showLoadingSpinner( true );
+      }
    }
    
    

@@ -179,7 +179,7 @@
       <string name="toast_delete_task_failed">Failed to delete the task</string>
       <!-- Note -->
       <string name="toast_insert_note">Adding new note&#8230;</string>
-      <string name="toast_insert_note_ok">New task added</string>
+      <string name="toast_insert_note_ok">New note added</string>
       <string name="toast_insert_note_fail">Failed to add new task</string>
       <string name="toast_save_note">Saving note changes&#8230;</string>
       <string name="toast_save_note_ok">Changes to the note have been saved</string>

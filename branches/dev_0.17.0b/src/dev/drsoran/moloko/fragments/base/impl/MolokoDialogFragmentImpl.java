@@ -22,91 +22,13 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
-import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.SupportActivity;
-import android.view.ViewGroup;
 
 
-public class MolokoDialogFragmentImpl
+public class MolokoDialogFragmentImpl extends ConfigurableFragmentImpl
 {
-   private final MolokoFragmentImpl impl;
-   
-   
-   
    public MolokoDialogFragmentImpl( DialogFragment fragment, int settingsMask )
    {
-      impl = new MolokoFragmentImpl( fragment, settingsMask );
-   }
-   
-   
-   
-   public void onCreate( Bundle savedInstanceState )
-   {
-      impl.onCreate( savedInstanceState );
-   }
-   
-   
-   
-   public void onAttach( SupportActivity activity )
-   {
-      impl.onAttach( activity );
-   }
-   
-   
-   
-   public void onDetach()
-   {
-      impl.onDetach();
-   }
-   
-   
-   
-   public void setArguments( Bundle args )
-   {
-      impl.setArguments( args );
-   }
-   
-   
-   
-   public void onSaveInstanceState( Bundle outState )
-   {
-      impl.onSaveInstanceState( outState );
-   }
-   
-   
-   
-   public < T > void registerAnnotatedConfiguredInstance( T instance,
-                                                          Class< T > clazz )
-   {
-      impl.registerAnnotatedConfiguredInstance( instance, clazz );
-   }
-   
-   
-   
-   public Bundle getConfiguration()
-   {
-      return impl.getConfiguration();
-   }
-   
-   
-   
-   public void configure( Bundle config )
-   {
-      impl.configure( config );
-   }
-   
-   
-   
-   public void clearConfiguration()
-   {
-      impl.setDefaultConfiguration();
-   }
-   
-   
-   
-   public ViewGroup getContentView()
-   {
-      return impl.getContentView();
+      super( fragment, settingsMask );
    }
 }

@@ -180,7 +180,8 @@ public final class UIUtils
          final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
          if ( imm != null )
          {
-            imm.hideSoftInputFromWindow( windowToken, 0 );
+            imm.hideSoftInputFromWindow( windowToken,
+                                         InputMethodManager.HIDE_NOT_ALWAYS );
          }
       }
    }

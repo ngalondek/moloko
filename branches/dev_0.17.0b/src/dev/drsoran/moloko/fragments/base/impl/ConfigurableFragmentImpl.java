@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
-import java.util.HashMap;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -35,7 +33,7 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 
 
-public class MolokoFragmentImpl implements IOnSettingsChangedListener
+public class ConfigurableFragmentImpl
 {
    private final AnnotatedConfigurationSupport annotatedConfigSupport = new AnnotatedConfigurationSupport();
    
@@ -47,10 +45,17 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    
    
    
-   public MolokoFragmentImpl( Fragment fragment, int settingsMask )
+   public ConfigurableFragmentImpl( Fragment fragment, int settingsMask )
    {
       this.fragment = fragment;
       this.settingsMask = settingsMask;
+   }
+   
+   
+   
+   public Fragment getFragment()
+   {
+      return fragment;
    }
    
    
@@ -60,10 +65,11 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
       this.activity = (FragmentActivity) activity;
       this.annotatedConfigSupport.onAttach( this.activity );
       
-      if ( settingsMask != 0 && activity instanceof IOnSettingsChangedListener )
+      if ( settingsMask != 0 && fragment instanceof IOnSettingsChangedListener )
       {
          MolokoApp.getNotifierContext( this.activity )
-                  .registerOnSettingsChangedListener( settingsMask, this );
+                  .registerOnSettingsChangedListener( settingsMask,
+                                                      (IOnSettingsChangedListener) fragment );
       }
    }
    
@@ -83,10 +89,10 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    {
       annotatedConfigSupport.onDetach();
       
-      if ( activity instanceof IOnSettingsChangedListener )
+      if ( fragment instanceof IOnSettingsChangedListener )
       {
          MolokoApp.getNotifierContext( activity )
-                  .unregisterOnSettingsChangedListener( this );
+                  .unregisterOnSettingsChangedListener( (IOnSettingsChangedListener) fragment );
       }
    }
    
@@ -131,19 +137,6 @@ public class MolokoFragmentImpl implements IOnSettingsChangedListener
    public void onSaveInstanceState( Bundle outState )
    {
       annotatedConfigSupport.onSaveInstanceStates( outState );
-   }
-   
-   
-   
-   @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
-   {
-      if ( fragment.isAdded() && !fragment.isDetached() )
-      {
-         ( (IOnSettingsChangedListener) fragment ).onSettingsChanged( which,
-                                                                      oldValues );
-      }
    }
    
    

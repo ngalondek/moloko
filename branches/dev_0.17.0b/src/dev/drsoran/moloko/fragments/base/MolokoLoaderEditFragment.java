@@ -22,11 +22,14 @@
 
 package dev.drsoran.moloko.fragments.base;
 
+import android.os.Bundle;
 import android.support.v4.app.SupportActivity;
 import android.util.Pair;
+import android.view.View;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
 public abstract class MolokoLoaderEditFragment< T, D > extends
@@ -48,6 +51,15 @@ public abstract class MolokoLoaderEditFragment< T, D > extends
    {
       super.onAttach( activity );
       impl.onAttach( activity.asActivity() );
+   }
+   
+   
+   
+   @Override
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      super.onViewCreated( view, savedInstanceState );
+      impl.onViewCreated( view, savedInstanceState );
    }
    
    

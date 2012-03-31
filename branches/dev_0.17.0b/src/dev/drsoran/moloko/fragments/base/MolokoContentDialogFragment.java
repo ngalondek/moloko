@@ -27,11 +27,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.IOnSettingsChangedListener;
 
 
 public abstract class MolokoContentDialogFragment extends MolokoDialogFragment
-         implements IOnSettingsChangedListener
 {
    private ViewGroup dialogView;
    

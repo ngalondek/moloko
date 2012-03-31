@@ -34,13 +34,15 @@ import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderExpandableListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
 
 
 public abstract class MolokoExpandableListFragment< D > extends ListFragment
-         implements IConfigurable, LoaderCallbacks< D >,
-         LoaderExpandableListFragmentImpl.Support< D >,
+         implements IConfigurable, IOnSettingsChangedListener,
+         LoaderCallbacks< D >, LoaderExpandableListFragmentImpl.Support< D >,
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
          ExpandableListView.OnGroupCollapseListener,
@@ -100,6 +102,7 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    {
       super.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
+      editImpl.onViewCreated( view, savedInstanceState );
       
       final ExpandableListView expandableListView = getExpandableListView();
       
@@ -107,6 +110,15 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
       expandableListView.setOnChildClickListener( this );
       expandableListView.setOnGroupCollapseListener( this );
       expandableListView.setOnGroupExpandListener( this );
+   }
+   
+   
+   
+   @Override
+   public void onDestroyView()
+   {
+      super.onDestroyView();
+      editImpl.onDestroyView();
    }
    
    
@@ -185,11 +197,12 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    @Override
    public void clearConfiguration()
    {
-      baseImpl.clearConfiguration();
+      baseImpl.setDefaultConfiguration();
    }
    
    
    
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {

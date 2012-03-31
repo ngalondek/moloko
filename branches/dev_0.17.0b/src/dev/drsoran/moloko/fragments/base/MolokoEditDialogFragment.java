@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
 public abstract class MolokoEditDialogFragment< T extends Fragment > extends

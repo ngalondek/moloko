@@ -71,9 +71,6 @@ class PermanentNotifier extends AbstractNotifier
       switch ( which )
       {
          case IOnSettingsChangedListener.DATEFORMAT:
-            reEvaluatePermanentNotification();
-            break;
-         
          case IOnSettingsChangedListener.NOTIFY_PERMANENT_RELATED:
             reEvaluatePermanentNotification();
             break;
@@ -152,14 +149,22 @@ class PermanentNotifier extends AbstractNotifier
       }
       else
       {
-         LoadPermanentTasksAsyncTask loader = new LoadPermanentTasksAsyncTask( context,
-                                                                               getHandler(),
-                                                                               notificationType,
-                                                                               showOverDueTasks );
-         lastLoaderfilterString = loader.getFilterString();
-         
-         startTasksLoader( loader );
+         loadPermanentTasks( notificationType, showOverDueTasks );
       }
+   }
+   
+   
+   
+   private void loadPermanentTasks( int notificationType,
+                                    boolean showOverDueTasks )
+   {
+      final LoadPermanentTasksAsyncTask loader = new LoadPermanentTasksAsyncTask( context,
+                                                                                  getHandler(),
+                                                                                  notificationType,
+                                                                                  showOverDueTasks );
+      lastLoaderfilterString = loader.getFilterString();
+      
+      startTasksLoader( loader );
    }
    
    

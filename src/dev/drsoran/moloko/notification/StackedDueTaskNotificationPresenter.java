@@ -22,10 +22,12 @@
 
 package dev.drsoran.moloko.notification;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import android.content.Context;
 import android.content.Intent;
@@ -35,19 +37,33 @@ import android.graphics.BitmapFactory;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
 class StackedDueTaskNotificationPresenter extends
          AbstractDueTaskNotificationPresenter
 {
+   
+   private final static class DistanceToNowComparator implements
+            Comparator< DueTaskNotification >
+   {
+      private final long nowMillis = System.currentTimeMillis();
+      
+      
+      
+      @Override
+      public int compare( DueTaskNotification lhs, DueTaskNotification rhs )
+      {
+         final long lhsDistance = Math.abs( nowMillis - lhs.getDue() );
+         final long rhsDistance = Math.abs( nowMillis - rhs.getDue() );
+         
+         return (int) ( lhsDistance - rhsDistance );
+      }
+   };
+   
    private final static int ID = R.id.notification_due_tasks_stacked;
    
-   // Key: Task ID, Value: true, if the notification should be part of the stack.
-   private final Map< String, Boolean > notificationsMap = new TreeMap< String, Boolean >();
-   
-   private boolean isNotificationShown;
+   private DueTaskNotification lastTopOfStack;
    
    
    
@@ -63,6 +79,16 @@ class StackedDueTaskNotificationPresenter extends
    {
       super.showNotificationsFor( tasksCursor, endIndex );
       
+      sortNotifications();
+      updateOrLaunchNotification( tasksCursor );
+   }
+   
+   
+   
+   @Override
+   public boolean needsAllTimeChanges()
+   {
+      return true;
    }
    
    
@@ -80,6 +106,9 @@ class StackedDueTaskNotificationPresenter extends
    {
       final Intent openTasksIntent = createOpenTasksIntent();
       startActivity( openTasksIntent );
+      
+      setDueTaskNotificationsNotPartOfStack();
+      lastTopOfStack = null;
    }
    
    
@@ -87,6 +116,8 @@ class StackedDueTaskNotificationPresenter extends
    @Override
    public void handleNotificationCleared( int notificationId )
    {
+      setDueTaskNotificationsNotPartOfStack();
+      lastTopOfStack = null;
    }
    
    
@@ -94,95 +125,98 @@ class StackedDueTaskNotificationPresenter extends
    @Override
    public void cancelNotifications()
    {
-      if ( isNotificationShown )
+      if ( countDueTaskNotificationsPartOfStack() > 0 )
       {
          getNotificationManager().cancel( ID );
-         isNotificationShown = false;
+         lastTopOfStack = null;
       }
+      
+      super.cancelNotifications();
    }
    
    
    
    @Override
-   protected void updateExistingNotifications( Cursor tasksCursor,
-                                               List< String > taskIdsToNotify,
-                                               Collection< String > updatedValues )
+   protected void onNotificationUpdate( Cursor tasksCursor,
+                                        List< String > taskIdsToNotify,
+                                        DueTaskNotification oldNotification,
+                                        DueTaskNotification newNotification )
    {
-      for ( String updatedNotificationTaskId : updatedValues )
-      {
-         notificationsMap.get( updatedNotificationTaskId );
-      }
+      final boolean dueHasChanged = oldNotification.getDue() != newNotification.getDue();
+      newNotification.setVisible( newNotification.isVisible() | dueHasChanged );
    }
    
    
    
    @Override
-   protected void insertNewNotifications( Cursor tasksCursor,
-                                          List< String > taskIdsToNotify,
-                                          Collection< String > newValues )
+   protected void onNewNotification( Cursor tasksCursor,
+                                     List< String > taskIdsToNotify,
+                                     DueTaskNotification newNotification )
    {
-      for ( String newNotificationTaskId : newValues )
-      {
-         notificationsMap.put( newNotificationTaskId, Boolean.TRUE );
-      }
    }
    
    
    
    @Override
-   protected void cancelRemovedNotifications( Collection< String > removedValues )
+   protected void onNotificationRemoved( DueTaskNotification removedNotification )
    {
-      for ( String removedNotificationTaskId : removedValues )
-      {
-         notificationsMap.remove( removedNotificationTaskId );
-      }
    }
    
    
    
-   @Override
-   protected Collection< String > getNotifiedTasksIds()
+   private void updateOrLaunchNotification( Cursor tasksCursor )
    {
-      return notificationsMap.keySet();
-   }
-   
-   
-   
-   private void updateOrLaunchNotification( Cursor tasksCursor, int endIndex )
-   {
-      final int indexOfLastDueTask = endIndex - 1;
-      tasksCursor.moveToPosition( indexOfLastDueTask );
+      final int count = countDueTaskNotificationsPartOfStack();
       
-      final int count = endIndex;
-      final String title = getNotificationTitle( tasksCursor );
-      final String text = getNotificationText( tasksCursor );
-      final String ticker = getNotificationTicker( tasksCursor );
-      
-      final INotificationBuilder builder;
-      
-      if ( count > 1 )
+      if ( count > 0 )
       {
-         builder = newStackedNotification( title, text, ticker, count );
+         final List< DueTaskNotification > notificationStack = getDueTaskNotificationsPartOfStack();
+         final DueTaskNotification topOfStackNotification = notificationStack.get( 0 );
+         final boolean topOfStackHasChanged = !topOfStackNotification.equals( lastTopOfStack );
+         
+         moveCursorToTask( tasksCursor, topOfStackNotification.getTaskId() );
+         
+         final String title = getNotificationTitle( tasksCursor );
+         final String text = getNotificationText( tasksCursor );
+         
+         final INotificationBuilder builder;
+         
+         if ( count > 1 )
+         {
+            builder = newStackedNotification( title, text, count );
+         }
+         else
+         {
+            builder = newSingletonNotification( title, text, count );
+         }
+         
+         builder.setContentIntent( Intents.createDueTasksNotificationIntent( getContext(),
+                                                                             ID ) );
+         builder.setDeleteIntent( Intents.createNotificationClearedIntent( getContext(),
+                                                                           ID ) );
+         
+         if ( topOfStackHasChanged )
+         {
+            final String ticker = getNotificationTicker( tasksCursor );
+            builder.setTicker( ticker );
+            
+            useNotificationFeatures( builder );
+         }
+         
+         getNotificationManager().notify( ID, builder.build() );
+         
+         lastTopOfStack = topOfStackNotification;
       }
-      else
-      {
-         builder = newSingletonNotification( title, text, ticker, count );
-      }
-      
-      getNotificationManager().notify( ID, builder.build() );
-      isNotificationShown = true;
    }
    
    
    
    private INotificationBuilder newSingletonNotification( String title,
                                                           String text,
-                                                          String ticker,
                                                           int count )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            ticker,
                                                                             count );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
@@ -196,12 +230,10 @@ class StackedDueTaskNotificationPresenter extends
    
    private INotificationBuilder newStackedNotification( String title,
                                                         String text,
-                                                        String ticker,
                                                         int count )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            ticker,
                                                                             count );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
@@ -214,49 +246,121 @@ class StackedDueTaskNotificationPresenter extends
    
    
    
-   private Intent createOpenTasksIntent()
+   private List< DueTaskNotification > getDueTaskNotificationsPartOfStack()
    {
-      final Intent openTasksIntent;
+      final List< DueTaskNotification > partOfStackNotifications = new ArrayList< DueTaskNotification >();
       
-      if ( notificationsMap.size() == 1 )
+      for ( DueTaskNotification dueTaskNotification : notifications )
       {
-         openTasksIntent = Intents.createOpenTaskIntent( getContext(),
-                                                         Queries.getOptString( /* tasksCursor */null,
-                                                                               getColumnIndex( Tasks._ID ) ) );
-      }
-      else if ( notificationsMap.size() > 1 )
-      {
-         final String tasksListSelection = getDueTasksListSelection( /* tasksCursor */null );
-         final SqlSelectionFilter filter = new SqlSelectionFilter( tasksListSelection );
-         final String title = getContext().getString( R.string.notification_due_tasks_list_title );
-         
-         final Intent onClickIntent = Intents.createSqlSelectionFilterIntent( getContext(),
-                                                                              filter,
-                                                                              title );
-         
+         if ( dueTaskNotification.isVisible() )
+         {
+            partOfStackNotifications.add( dueTaskNotification );
+         }
       }
       
-      return /* openTasksIntent */null;
+      return partOfStackNotifications;
    }
    
    
    
-   private static String getDueTasksListSelection( Cursor tasksCursor )
+   private void sortNotifications()
+   {
+      Collections.sort( notifications, new DistanceToNowComparator() );
+   }
+   
+   
+   
+   private int countDueTaskNotificationsPartOfStack()
+   {
+      int cnt = 0;
+      for ( DueTaskNotification dueTaskNotification : notifications )
+      {
+         if ( dueTaskNotification.isVisible() )
+         {
+            ++cnt;
+         }
+      }
+      
+      return cnt;
+   }
+   
+   
+   
+   private void setDueTaskNotificationsNotPartOfStack()
+   {
+      for ( DueTaskNotification notification : notifications )
+      {
+         notification.setVisible( false );
+      }
+   }
+   
+   
+   
+   private Intent createOpenTasksIntent()
+   {
+      final List< DueTaskNotification > partOfStackNotifications = getDueTaskNotificationsPartOfStack();
+      final Intent openTasksIntent;
+      
+      if ( partOfStackNotifications.size() == 1 )
+      {
+         openTasksIntent = Intents.createOpenTaskIntent( getContext(),
+                                                         partOfStackNotifications.get( 0 )
+                                                                                 .getTaskId() );
+      }
+      
+      else if ( partOfStackNotifications.size() > 1 )
+      {
+         final String tasksListSelection = getDueTasksListSelection( partOfStackNotifications );
+         final SqlSelectionFilter filter = new SqlSelectionFilter( tasksListSelection );
+         final String title = getContext().getString( R.string.notification_due_tasks_list_title );
+         
+         openTasksIntent = Intents.createSqlSelectionFilterIntent( getContext(),
+                                                                   filter,
+                                                                   title );
+         
+      }
+      
+      else
+      {
+         throw new IllegalStateException( "No notifications are part of the stack. Expected at least one." );
+      }
+      
+      return openTasksIntent;
+   }
+   
+   
+   
+   private void moveCursorToTask( Cursor tasksCursor, String taskId )
+   {
+      boolean found = false;
+      for ( tasksCursor.moveToFirst(); !found && !tasksCursor.isAfterLast(); )
+      {
+         found = taskId.equals( tasksCursor.getString( getColumnIndex( Tasks._ID ) ) );
+         if ( !found )
+         {
+            tasksCursor.moveToNext();
+         }
+      }
+   }
+   
+   
+   
+   private static String getDueTasksListSelection( Collection< DueTaskNotification > dueTaskNotifications )
    {
       final StringBuilder stringBuilder = new StringBuilder();
       
-      while ( !tasksCursor.isAfterLast() )
+      for ( Iterator< DueTaskNotification > i = dueTaskNotifications.iterator(); i.hasNext(); )
       {
-         final String taskId = Queries.getOptString( tasksCursor,
-                                                     getColumnIndex( Tasks._ID ) );
-         stringBuilder.append( Tasks._ID ).append( "=" ).append( taskId );
+         final DueTaskNotification dueTaskNotification = i.next();
          
-         if ( !tasksCursor.isLast() )
+         stringBuilder.append( Tasks._ID )
+                      .append( "=" )
+                      .append( dueTaskNotification.getTaskId() );
+         
+         if ( i.hasNext() )
          {
             stringBuilder.append( " OR " );
          }
-         
-         tasksCursor.moveToNext();
       }
       
       return stringBuilder.toString();

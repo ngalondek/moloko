@@ -22,10 +22,7 @@
 
 package dev.drsoran.moloko.notification;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -38,11 +35,6 @@ import dev.drsoran.provider.Rtm.Tasks;
 class MultiDueTaskNotificationPresenter extends
          AbstractDueTaskNotificationPresenter
 {
-   // Key: task ID, Value: true, if the notification is currently visible to the user
-   private final Map< String, Boolean > notificationsMap = new HashMap< String, Boolean >();
-   
-   
-   
    public MultiDueTaskNotificationPresenter( Context context )
    {
       super( context );
@@ -51,9 +43,17 @@ class MultiDueTaskNotificationPresenter extends
    
    
    @Override
+   public boolean needsAllTimeChanges()
+   {
+      return false;
+   }
+   
+   
+   
+   @Override
    public boolean isHandlingNotification( int notificationId )
    {
-      return notificationsMap.containsKey( String.valueOf( notificationId ) );
+      return containsNotifiedTasksId( String.valueOf( notificationId ) );
    }
    
    
@@ -74,7 +74,7 @@ class MultiDueTaskNotificationPresenter extends
    @Override
    public void handleNotificationCleared( int notificationId )
    {
-      markNotificationInvisible( String.valueOf( notificationId ) );
+      markAllNotificationInvisible();
    }
    
    
@@ -82,86 +82,73 @@ class MultiDueTaskNotificationPresenter extends
    @Override
    public void cancelNotifications()
    {
-      for ( String taskId : notificationsMap.keySet() )
+      for ( String taskId : getNotifiedTasksIds() )
       {
          cancelNotification( taskIdToNotificationId( taskId ) );
       }
       
-      notificationsMap.clear();
+      super.cancelNotifications();
    }
    
    
    
    @Override
-   protected void insertNewNotifications( Cursor tasksCursor,
-                                          List< String > taskIdsToNotify,
-                                          Collection< String > newNotificationTaskIds )
+   protected void onNotificationUpdate( Cursor tasksCursor,
+                                        List< String > taskIdsToNotify,
+                                        DueTaskNotification oldNotification,
+                                        DueTaskNotification newNotification )
    {
-      for ( String newNotificationTaskId : newNotificationTaskIds )
+      final boolean dueHasChanged = oldNotification.getDue() != newNotification.getDue();
+      newNotification.setVisible( newNotification.isVisible() | dueHasChanged );
+      
+      if ( newNotification.isVisible() )
       {
-         final int cursorIndexOfUpdate = taskIdsToNotify.indexOf( newNotificationTaskId );
-         launchNotification( taskIdToNotificationId( newNotificationTaskId ),
-                             tasksCursor,
-                             cursorIndexOfUpdate );
-         
-         notificationsMap.put( newNotificationTaskId, Boolean.TRUE );
+         final String updatedNotificationId = newNotification.getTaskId();
+         final int cursorIndexOfUpdate = taskIdsToNotify.indexOf( updatedNotificationId );
+         launchOrUpdateNotification( taskIdToNotificationId( updatedNotificationId ),
+                                     tasksCursor,
+                                     cursorIndexOfUpdate,
+                                     dueHasChanged );
       }
    }
    
    
    
    @Override
-   protected void updateExistingNotifications( Cursor tasksCursor,
-                                               List< String > taskIdsToNotify,
-                                               Collection< String > updatedNotificationIds )
+   protected void onNewNotification( Cursor tasksCursor,
+                                     List< String > taskIdsToNotify,
+                                     DueTaskNotification newNotification )
    {
-      for ( String updatedNotificationId : updatedNotificationIds )
-      {
-         final Boolean isVisible = notificationsMap.get( updatedNotificationId );
-         if ( isVisible == Boolean.TRUE )
-         {
-            final int cursorIndexOfUpdate = taskIdsToNotify.indexOf( updatedNotificationId );
-            launchNotification( taskIdToNotificationId( updatedNotificationId ),
-                                tasksCursor,
-                                cursorIndexOfUpdate );
-         }
-      }
+      final String newNotificationTaskId = newNotification.getTaskId();
+      final int cursorIndexOfNew = taskIdsToNotify.indexOf( newNotificationTaskId );
+      launchOrUpdateNotification( taskIdToNotificationId( newNotificationTaskId ),
+                                  tasksCursor,
+                                  cursorIndexOfNew,
+                                  true );
    }
    
    
    
    @Override
-   protected void cancelRemovedNotifications( Collection< String > removedNotificationTaskIds )
+   protected void onNotificationRemoved( DueTaskNotification removedNotification )
    {
-      for ( String removedNotificationTaskId : removedNotificationTaskIds )
+      if ( removedNotification.isVisible() )
       {
-         final Boolean isVisible = notificationsMap.remove( removedNotificationTaskId );
-         if ( isVisible == Boolean.TRUE )
-         {
-            cancelNotification( taskIdToNotificationId( removedNotificationTaskId ) );
-         }
+         cancelNotification( taskIdToNotificationId( removedNotification.getTaskId() ) );
       }
    }
    
    
    
-   @Override
-   protected Collection< String > getNotifiedTasksIds()
-   {
-      return notificationsMap.keySet();
-   }
-   
-   
-   
-   private void launchNotification( int id,
-                                    Cursor tasksCursor,
-                                    int taskIndexInCursor )
+   private void launchOrUpdateNotification( int id,
+                                            Cursor tasksCursor,
+                                            int taskIndexInCursor,
+                                            boolean fullUpdate )
    {
       tasksCursor.moveToPosition( taskIndexInCursor );
       
       final String title = getNotificationTitle( tasksCursor );
       final String text = getNotificationText( tasksCursor );
-      final String ticker = getNotificationTicker( tasksCursor );
       
       final String taskId = tasksCursor.getString( getColumnIndex( Tasks._ID ) );
       final PendingIntent onClickIntent = createOnClickIntent( taskId );
@@ -169,10 +156,17 @@ class MultiDueTaskNotificationPresenter extends
       
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            ticker,
                                                                             1 );
       builder.setContentIntent( onClickIntent );
       builder.setDeleteIntent( onDeleteIntent );
+      
+      if ( fullUpdate )
+      {
+         final String ticker = getNotificationTicker( tasksCursor );
+         builder.setTicker( ticker );
+         
+         useNotificationFeatures( builder );
+      }
       
       getNotificationManager().notify( id, builder.build() );
    }
@@ -188,7 +182,17 @@ class MultiDueTaskNotificationPresenter extends
    
    private void markNotificationInvisible( String taskId )
    {
-      notificationsMap.put( taskId, Boolean.FALSE );
+      getNotificationByTaskId( taskId ).setVisible( false );
+   }
+   
+   
+   
+   private void markAllNotificationInvisible()
+   {
+      for ( DueTaskNotification notification : notifications )
+      {
+         markNotificationInvisible( notification.getTaskId() );
+      }
    }
    
    
@@ -206,5 +210,4 @@ class MultiDueTaskNotificationPresenter extends
       return Intents.createNotificationClearedIntent( getContext(),
                                                       taskIdToNotificationId( taskId ) );
    }
-   
 }

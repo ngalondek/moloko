@@ -54,24 +54,37 @@ public class MolokoNotificationService extends Service
    @Override
    public int onStartCommand( Intent intent, int flags, int startId )
    {
-      final String action = intent.getAction();
-      
-      if ( Action.NOTIFICATION_SERVICE_START.equals( action ) )
+      try
       {
-         notificationManager.start();
+         if ( intent != null )
+         {
+            final String action = intent.getAction();
+            
+            if ( Action.NOTIFICATION_SERVICE_START.equals( action ) )
+            {
+               notificationManager.start();
+            }
+            else if ( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED.equals( action ) )
+            {
+               handleNotificationClicked( intent );
+            }
+            else if ( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED.equals( action ) )
+            {
+               handleNotificationCleared( intent );
+            }
+            else
+            {
+               throw new InvalidParameterException( String.format( "'%s' is no valid MolokoNotificationService intent action.",
+                                                                   action ) );
+            }
+         }
       }
-      else if ( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED.equals( action ) )
+      catch ( Throwable e )
       {
-         handleNotificationClicked( intent );
-      }
-      else if ( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED.equals( action ) )
-      {
-         handleNotificationCleared( intent );
-      }
-      else
-      {
-         throw new InvalidParameterException( String.format( "'%s' is no valid MolokoNotificationService intent action.",
-                                                             action ) );
+         stopSelf();
+         
+         throw new RuntimeException( "MolokoNotificationService encountered an exception. Stopping self.",
+                                     e );
       }
       
       return Service.START_STICKY;

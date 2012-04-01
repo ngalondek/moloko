@@ -323,9 +323,9 @@ abstract class AbstractPermanentNotificationPresenter implements
       {
          if ( tasksCursor.moveToFirst() )
          {
-            onClickIntent = Intents.createOpenTaskIntent( context,
-                                                          Queries.getOptString( tasksCursor,
-                                                                                getColumnIndex( Tasks._ID ) ) );
+            onClickIntent = Intents.createOpenTaskIntentFromNotification( context,
+                                                                          Queries.getOptString( tasksCursor,
+                                                                                                getColumnIndex( Tasks._ID ) ) );
          }
          else
          {
@@ -336,7 +336,9 @@ abstract class AbstractPermanentNotificationPresenter implements
       {
          onClickIntent = Intents.createSmartFilterIntent( context,
                                                           new RtmSmartFilter( filterString ),
-                                                          activityTitle );
+                                                          activityTitle )
+                                .putExtra( Intents.Extras.KEY_FROM_NOTIFICATION,
+                                           true );
       }
    }
    

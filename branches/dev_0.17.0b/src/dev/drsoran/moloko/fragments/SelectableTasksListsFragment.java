@@ -52,6 +52,7 @@ import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter.ISelection
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.SelectableTasksLoader;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
@@ -110,7 +111,7 @@ public class SelectableTasksListsFragment extends
    }
    
    
-   public static class Config extends MinDetailedTasksListFragment.Config
+   public static class Config
    {
       private final static String SELECTION_STATE = "selection_state";
    }
@@ -505,9 +506,9 @@ public class SelectableTasksListsFragment extends
    public Loader< List< SelectableTask >> newLoaderInstance( int id,
                                                              Bundle config )
    {
-      final IFilter filter = config.getParcelable( Config.FILTER );
+      final IFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
       final String selection = filter != null ? filter.getSqlSelection() : null;
-      final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );
+      final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
       final SelectableTasksLoader loader = new SelectableTasksLoader( getFragmentActivity(),
                                                                       selection,

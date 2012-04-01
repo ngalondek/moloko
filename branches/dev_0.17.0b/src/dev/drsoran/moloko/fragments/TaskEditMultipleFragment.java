@@ -44,7 +44,7 @@ import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.util.Bundles;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -53,12 +53,6 @@ import dev.drsoran.rtm.Task;
 public class TaskEditMultipleFragment extends
          AbstractTaskEditFragment< TaskEditMultipleFragment >
 {
-   public static class Config
-   {
-      public final static String TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
-         + "tasks";
-   }
-   
    private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
    
    private final static String URL_MULTI_VALUE = null;
@@ -74,7 +68,7 @@ public class TaskEditMultipleFragment extends
     */
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
    
-   @InstanceState( key = Config.TASKS )
+   @InstanceState( key = Intents.Extras.KEY_TASKS )
    private final ArrayList< Task > tasks = new ArrayList< Task >();
    
    

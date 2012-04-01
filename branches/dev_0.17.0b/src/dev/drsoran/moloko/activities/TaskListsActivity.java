@@ -36,12 +36,12 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
@@ -65,7 +65,8 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       public final static int ADD_LIST = R.id.menu_add_list;
    }
    
-   @InstanceState( key = Config.LIST_TO_DELETE, defaultValue = InstanceState.NULL )
+   @InstanceState( key = Config.LIST_TO_DELETE,
+                   defaultValue = InstanceState.NULL )
    private RtmList listToDelete;
    
    
@@ -148,7 +149,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
          final Intent intent = new Intent( Intent.ACTION_VIEW,
                                            Tasks.CONTENT_URI );
          
-         intent.putExtra( TasksListActivity.Config.TITLE,
+         intent.putExtra( Intents.Extras.KEY_ACTIVITY_TITLE,
                           getString( R.string.taskslist_actionbar, listName ) );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
@@ -161,7 +162,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
          }
          
          intent.putExtra( Lists.LIST_NAME, rtmList.getName() );
-         intent.putExtra( AbstractTasksListFragment.Config.FILTER, filter );
+         intent.putExtra( Intents.Extras.KEY_FILTER, filter );
          
          startActivity( intent );
       }

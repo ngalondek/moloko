@@ -303,9 +303,9 @@ class StackedDueTaskNotificationPresenter extends
       
       if ( partOfStackNotifications.size() == 1 )
       {
-         openTasksIntent = Intents.createOpenTaskIntent( getContext(),
-                                                         partOfStackNotifications.get( 0 )
-                                                                                 .getTaskId() );
+         openTasksIntent = Intents.createOpenTaskIntentFromNotification( getContext(),
+                                                                         partOfStackNotifications.get( 0 )
+                                                                                                 .getTaskId() );
       }
       
       else if ( partOfStackNotifications.size() > 1 )

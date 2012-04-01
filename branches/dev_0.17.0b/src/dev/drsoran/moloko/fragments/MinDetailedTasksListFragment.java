@@ -186,9 +186,9 @@ public class MinDetailedTasksListFragment extends
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
-      final IFilter filter = config.getParcelable( Config.FILTER );
+      final IFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
       final String selection = filter != null ? filter.getSqlSelection() : null;
-      final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );
+      final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
       final TasksLoader loader = new TasksLoader( getFragmentActivity(),
                                                   selection,

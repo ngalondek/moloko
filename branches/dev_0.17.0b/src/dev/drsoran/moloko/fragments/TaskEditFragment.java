@@ -39,6 +39,7 @@ import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -64,12 +65,6 @@ public class TaskEditFragment extends
    }
    
    
-   public static class Config
-   {
-      public final static String TASK = "task";
-   }
-   
-   
    
    public final static TaskEditFragment newInstance( Bundle config )
    {
@@ -80,7 +75,7 @@ public class TaskEditFragment extends
       return fragment;
    }
    
-   @InstanceState( key = Config.TASK )
+   @InstanceState( key = Intents.Extras.KEY_TASK )
    private Task task;
    
    

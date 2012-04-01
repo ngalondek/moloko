@@ -158,7 +158,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_due_today ) );
             break;
          
@@ -167,7 +167,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TOMORROW ] );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_due_tomorrow ) );
             break;
          
@@ -176,7 +176,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_overdue ) );
             break;
          
@@ -185,7 +185,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_STATUS_LIT
                                                       + RtmSmartFilterLexer.COMPLETED_LIT );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_completed ) );
             break;
          

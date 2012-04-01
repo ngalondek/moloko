@@ -64,8 +64,8 @@ class MultiDueTaskNotificationPresenter extends
       final String taskId = String.valueOf( notificationId );
       markNotificationInvisible( taskId );
       
-      final Intent openTaskIntent = Intents.createOpenTaskIntent( getContext(),
-                                                                  taskId );
+      final Intent openTaskIntent = Intents.createOpenTaskIntentFromNotification( getContext(),
+                                                                                  taskId );
       startActivity( openTaskIntent );
    }
    

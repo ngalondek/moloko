@@ -47,6 +47,7 @@ import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -515,7 +516,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    {
       final Bundle config = new Bundle();
       
-      config.putParcelable( TaskEditFragment.Config.TASK,
+      config.putParcelable( Intents.Extras.KEY_TASK,
                             getLoaderDataAssertNotNull() );
       
       final TaskEditFragment fragment = TaskEditFragment.newInstance( config );

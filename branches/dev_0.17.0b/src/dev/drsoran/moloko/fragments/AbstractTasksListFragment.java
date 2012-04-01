@@ -51,6 +51,7 @@ import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.layouts.TitleWithTextLayout;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -62,14 +63,6 @@ import dev.drsoran.rtm.Task;
 public abstract class AbstractTasksListFragment< T extends Task > extends
          MolokoListFragment< List< T > > implements IRtmAccessLevelAware
 {
-   public static class Config
-   {
-      public final static String FILTER = "filter";
-      
-      public final static String TASK_SORT_ORDER = "task_sort_order";
-   }
-   
-   
    protected static class OptionsMenu
    {
       public final static int SORT = R.id.menu_sort;
@@ -95,10 +88,11 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    private ITasksListFragmentListener listener;
    
-   @InstanceState( key = Config.FILTER )
+   @InstanceState( key = Intents.Extras.KEY_FILTER )
    private IFilter filter;
    
-   @InstanceState( key = Config.TASK_SORT_ORDER, settingsValue = "getTaskSort" )
+   @InstanceState( key = Intents.Extras.KEY_TASK_SORT_ORDER,
+                   settingsValue = "getTaskSort" )
    private int tasksSort;
    
    

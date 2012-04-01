@@ -88,8 +88,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
 {
    public static class Config
    {
-      public final static String TASK = TaskEditFragment.Config.TASK;
-      
       private final static String EDIT_MODE_FRAG_ID = "editModeFragmentId";
       
       private final static String NOTE_FRAGMENT_CONTAINERS = "note_fragment_containers";
@@ -198,11 +196,17 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @InstanceState( key = Config.EDIT_MODE_FRAG_ID, defaultValue = "0" )
    private int editModeFragmentId;
    
-   @InstanceState( key = Config.NOTE_FRAGMENT_CONTAINERS, defaultValue = InstanceState.NULL )
+   @InstanceState( key = Config.NOTE_FRAGMENT_CONTAINERS,
+                   defaultValue = InstanceState.NULL )
    private ArrayList< NoteFragmentContainerState > noteFragmentContainers;
    
-   @InstanceState( key = Config.NOTE_ID_TO_DELETE, defaultValue = InstanceState.NULL )
+   @InstanceState( key = Config.NOTE_ID_TO_DELETE,
+                   defaultValue = InstanceState.NULL )
    private String noteIdToDelete;
+   
+   @InstanceState( key = Intents.Extras.KEY_FROM_NOTIFICATION,
+                   defaultValue = "false" )
+   private boolean showHomeButton;
    
    
    
@@ -217,7 +221,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
       setContentView( R.layout.task_activity );
+      setHomeNavigationBehaviour();
       
       createTaskFragment();
       restoreNoteFragmentContainers();
@@ -778,6 +784,16 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
+   private void setHomeNavigationBehaviour()
+   {
+      if ( showHomeButton )
+      {
+         // TODO: Handle coming from notification.
+      }
+   }
+   
+   
+   
    private void deleteTaskImpl()
    {
       final Task task = getTaskAssertNotNull();
@@ -1107,7 +1123,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    {
       final Bundle config = getFragmentConfigurations( R.id.frag_task );
       
-      config.putParcelable( TaskEditFragment.Config.TASK, task );
+      config.putParcelable( Intents.Extras.KEY_TASK, task );
       
       return config;
    }

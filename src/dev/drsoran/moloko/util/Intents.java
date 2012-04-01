@@ -41,11 +41,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
-import dev.drsoran.moloko.activities.TaskActivity;
-import dev.drsoran.moloko.activities.TaskEditMultipleActivity;
-import dev.drsoran.moloko.activities.TasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.notification.MolokoNotificationService;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
@@ -85,9 +81,24 @@ public final class Intents
    
    public final static class Extras
    {
+      public final static String KEY_ACTIVITY_TITLE = "activity_title";
+      
+      public final static String KEY_ACTIVITY_SUB_TITLE = "activity_sub_title";
+      
+      public final static String KEY_TASK = "task";
+      
+      public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
+         + "tasks";
+      
+      public final static String KEY_FILTER = "filter";
+      
+      public final static String KEY_TASK_SORT_ORDER = "tasks_sort_order";
+      
       public final static String KEY_SYNC_STATUS = "sync_status";
       
       public final static String KEY_NOTIFICATION_ID = "notification_id";
+      
+      public final static String KEY_FROM_NOTIFICATION = "from_notification";
       
       
       
@@ -106,7 +117,7 @@ public final class Intents
       {
          final Bundle bundle = new Bundle( 1 );
          
-         bundle.putParcelable( TaskActivity.Config.TASK, task );
+         bundle.putParcelable( Extras.KEY_TASK, task );
          
          return bundle;
       }
@@ -279,13 +290,13 @@ public final class Intents
       {
          final Bundle extras = new Bundle();
          
-         extras.putString( TasksListActivity.Config.TITLE,
+         extras.putString( Extras.KEY_ACTIVITY_TITLE,
                            context.getString( R.string.taskslist_actionbar,
                                               ( title != null )
                                                                ? title
                                                                : context.getString( R.string.app_name ) ) );
          
-         extras.putParcelable( AbstractTasksListFragment.Config.FILTER, filter );
+         extras.putParcelable( Extras.KEY_FILTER, filter );
          
          return extras;
       }
@@ -298,12 +309,12 @@ public final class Intents
       {
          final Bundle extras = new Bundle();
          
-         extras.putString( TasksListActivity.Config.TITLE,
+         extras.putString( Extras.KEY_ACTIVITY_TITLE,
                            context.getString( R.string.taskslist_actionbar,
                                               ( title != null )
                                                                ? title
                                                                : filter.getFilterString() ) );
-         extras.putParcelable( AbstractTasksListFragment.Config.FILTER, filter );
+         extras.putParcelable( Extras.KEY_FILTER, filter );
          
          return extras;
       }
@@ -572,6 +583,15 @@ public final class Intents
    
    
    
+   public final static Intent createOpenTaskIntentFromNotification( Context context,
+                                                                    String taskId )
+   {
+      return createOpenTaskIntent( context, taskId ).putExtra( Extras.KEY_FROM_NOTIFICATION,
+                                                               true );
+   }
+   
+   
+   
    public final static Intent createEditTaskIntent( Context context, Task task )
    {
       return new Intent( Intent.ACTION_EDIT,
@@ -585,7 +605,7 @@ public final class Intents
                                                              List< ? extends Task > tasks )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT, Tasks.CONTENT_URI );
-      intent.putParcelableArrayListExtra( TaskEditMultipleActivity.Config.TASKS,
+      intent.putParcelableArrayListExtra( Extras.KEY_TASKS,
                                           new ArrayList< Task >( tasks ) );
       
       return intent;
@@ -611,8 +631,7 @@ public final class Intents
       intent.setAction( Intent.ACTION_PICK );
       
       if ( sortOrder != -1 )
-         intent.putExtra( AbstractTasksListFragment.Config.TASK_SORT_ORDER,
-                          sortOrder );
+         intent.putExtra( Extras.KEY_TASK_SORT_ORDER, sortOrder );
       
       return intent;
    }

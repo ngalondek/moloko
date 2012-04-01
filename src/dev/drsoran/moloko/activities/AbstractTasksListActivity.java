@@ -67,10 +67,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    public static class Config
    {
-      public final static String TITLE = "title";
-      
-      public final static String SUB_TITLE = "sub_title";
-      
       public final static String LIST_NAME = Lists.LIST_NAME;
    }
    
@@ -82,10 +78,12 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private RtmListWithTaskCount loadedListWithTaskCount;
    
-   @InstanceState( key = Config.TITLE, defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = Intents.Extras.KEY_ACTIVITY_TITLE,
+                   defaultValue = Strings.EMPTY_STRING )
    private String title;
    
-   @InstanceState( key = Config.SUB_TITLE, defaultValue = InstanceState.NULL )
+   @InstanceState( key = Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
+                   defaultValue = InstanceState.NULL )
    private String subTitle;
    
    @InstanceState( key = Config.LIST_NAME, defaultValue = InstanceState.NULL )
@@ -208,8 +206,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public void onTaskSortChanged( int newTaskSort )
    {
       final Bundle config = getCurrentTasksListFragmentConfiguration();
-      config.putInt( AbstractTasksListFragment.Config.TASK_SORT_ORDER,
-                     newTaskSort );
+      config.putInt( Intents.Extras.KEY_TASK_SORT_ORDER, newTaskSort );
       
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
    }

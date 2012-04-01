@@ -38,6 +38,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
@@ -53,7 +54,7 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    }
    
    
-   public static class Config extends FullDetailedTasksListFragment.Config
+   public static class Config
    {
       public final static String QUERY = SearchManager.QUERY;
    }
@@ -234,7 +235,7 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       
       if ( filter != null )
       {
-         loaderConfig.putParcelable( Config.FILTER, filter );
+         loaderConfig.putParcelable( Intents.Extras.KEY_FILTER, filter );
       }
       
       return loaderConfig;

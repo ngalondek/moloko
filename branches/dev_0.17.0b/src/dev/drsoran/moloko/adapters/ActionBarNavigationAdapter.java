@@ -63,7 +63,7 @@ public class ActionBarNavigationAdapter extends ArrayAdapter< String >
    {
       if ( convertView == null )
          convertView = View.inflate( getContext(),
-                                     R.layout.abs__simple_spinner_item,
+                                     R.layout.sherlock_spinner_item,
                                      null );
       
       final String item = getItem( position );

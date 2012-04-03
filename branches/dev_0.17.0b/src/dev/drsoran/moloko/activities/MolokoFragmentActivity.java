@@ -29,15 +29,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.Window;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.AnnotatedConfigurationSupport;
@@ -53,9 +53,9 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 
 
-public abstract class MolokoFragmentActivity extends FragmentActivity implements
-         IConfigurable, IAlertDialogFragmentListener, ISyncStatusListener,
-         OnAccountsUpdateListener
+public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
+         implements IConfigurable, IAlertDialogFragmentListener,
+         ISyncStatusListener, OnAccountsUpdateListener
 {
    public final static class StartActivityRequestCode
    {

@@ -121,7 +121,7 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
-      final FragmentActivity activity = getFragmentActivity();
+      final FragmentActivity activity = getSherlockActivity();
       
       final LayoutInflater inflater = LayoutInflater.from( activity );
       container = inflater.inflate( R.layout.recurr_picker_dialog, null );
@@ -202,7 +202,7 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
    
    public String getSentence()
    {
-      return RecurrenceParsing.parseRecurrencePattern( getFragmentActivity(),
+      return RecurrenceParsing.parseRecurrencePattern( getSherlockActivity(),
                                                        getPatternString(),
                                                        isEvery() );
    }
@@ -281,7 +281,7 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
    
    private void initEvAftWheel( boolean isEvery )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       final Resources res = activity.getResources();
       
       evAftWheel.setViewAdapter( new ArrayWheelAdapter< String >( activity,
@@ -296,7 +296,7 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
    
    private void initIntervalWheel( Integer interval )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       intervalWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 999 ) );
       
       if ( interval != null )
@@ -309,7 +309,7 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
    
    private void initFreqWheel( Map< Integer, List< Object >> elements )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       final Resources res = activity.getResources();
       final int interval = getInterval();
       
@@ -394,7 +394,7 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
    
    private Dialog createDialogImpl()
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       
       return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_recurrent )
                                                 .setTitle( R.string.dlg_recurr_picker_title )

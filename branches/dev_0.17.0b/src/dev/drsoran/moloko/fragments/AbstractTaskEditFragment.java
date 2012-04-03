@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -241,7 +241,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -365,7 +365,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    protected void defaultInitializeHeadSectionImpl( Task task )
    {
-      final Context context = getFragmentActivity();
+      final Context context = getSherlockActivity();
       
       addedDate.setText( MolokoDateUtils.formatDateTime( context,
                                                          task.getAdded()
@@ -398,7 +398,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       
       if ( !TextUtils.isEmpty( task.getSource() ) )
          source.setText( getString( R.string.task_source,
-                                    UIUtils.convertSource( getFragmentActivity(),
+                                    UIUtils.convertSource( getSherlockActivity(),
                                                            task.getSource() ) ) );
       else
          source.setText( "?" );
@@ -544,7 +544,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected void createListSpinnerAdapterForValues( List< String > listIds,
                                                      List< String > listNames )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getFragmentActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          listNames );
@@ -577,7 +577,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    protected void initializeTagsSection()
    {
-      UIUtils.inflateTags( getFragmentActivity(),
+      UIUtils.inflateTags( getSherlockActivity(),
                            tagsLayout,
                            getTags(),
                            null,
@@ -589,7 +589,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected void createLocationSpinnerAdapterForValues( List< String > locationIds,
                                                          List< String > locationNames )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getFragmentActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          new ArrayList< String >( locationNames ) );
@@ -623,7 +623,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected void createPrioritySpinnerAdapterForValues( List< String > texts,
                                                          List< String > values )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getFragmentActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          texts );
@@ -729,7 +729,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                                                               String.class ) );
       if ( !ok )
       {
-         Toast.makeText( getFragmentActivity(),
+         Toast.makeText( getSherlockActivity(),
                          R.string.task_edit_validate_empty_name,
                          Toast.LENGTH_LONG ).show();
          nameEditText.requestFocus();
@@ -892,7 +892,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       
       if ( estimateMillis.longValue() != -1 )
       {
-         final String estEditText = MolokoDateUtils.formatEstimated( getFragmentActivity(),
+         final String estEditText = MolokoDateUtils.formatEstimated( getSherlockActivity(),
                                                                      estimateMillis.longValue() );
          putChange( Tasks.ESTIMATE, estEditText, String.class );
          putChange( Tasks.ESTIMATE_MILLIS, estimateMillis, Long.class );
@@ -1244,7 +1244,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    @Override
    public Loader< TaskEditDatabaseData > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskEditDatabaseDataLoader( getFragmentActivity() );
+      return new TaskEditDatabaseDataLoader( getSherlockActivity() );
    }
    
    

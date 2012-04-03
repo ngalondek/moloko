@@ -24,10 +24,10 @@ package dev.drsoran.moloko.fragments.base;
 
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +59,7 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       loaderImpl.onAttach( activity );

@@ -24,11 +24,11 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -103,7 +103,7 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       

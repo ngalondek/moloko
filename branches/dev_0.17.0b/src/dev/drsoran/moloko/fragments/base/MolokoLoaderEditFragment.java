@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.fragments.base;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.util.Pair;
 import android.view.View;
 import dev.drsoran.moloko.ApplyChangesInfo;
@@ -47,10 +47,10 @@ public abstract class MolokoLoaderEditFragment< T, D > extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      impl.onAttach( activity.asActivity() );
+      impl.onAttach( activity );
    }
    
    

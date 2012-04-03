@@ -24,19 +24,21 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -110,7 +112,7 @@ public class MinDetailedTasksListFragment extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -146,7 +148,7 @@ public class MinDetailedTasksListFragment extends
    {
       super.onCreateOptionsMenu( menu, inflater );
       
-      UIUtils.addOptionalMenuItem( getFragmentActivity(),
+      UIUtils.addOptionalMenuItem( getSherlockActivity(),
                                    menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
                                    getString( R.string.abstaskslist_menu_opt_edit_multiple ),
@@ -178,7 +180,7 @@ public class MinDetailedTasksListFragment extends
    @Override
    protected int getDefaultTaskSort()
    {
-      return MolokoApp.getSettings( getFragmentActivity() ).getTaskSort();
+      return MolokoApp.getSettings( getSherlockActivity() ).getTaskSort();
    }
    
    
@@ -190,7 +192,7 @@ public class MinDetailedTasksListFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
-      final TasksLoader loader = new TasksLoader( getFragmentActivity(),
+      final TasksLoader loader = new TasksLoader( getSherlockActivity(),
                                                   selection,
                                                   order );
       loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
@@ -203,7 +205,7 @@ public class MinDetailedTasksListFragment extends
    @Override
    public ListAdapter createEmptyListAdapter()
    {
-      return new MinDetailedTasksListFragmentAdapter( getFragmentActivity(),
+      return new MinDetailedTasksListFragmentAdapter( getSherlockActivity(),
                                                       R.layout.mindetailed_taskslist_listitem );
    }
    
@@ -213,7 +215,7 @@ public class MinDetailedTasksListFragment extends
    public ListAdapter createListAdapterForResult( List< Task > result,
                                                   IFilter filter )
    {
-      return new MinDetailedTasksListFragmentAdapter( getFragmentActivity(),
+      return new MinDetailedTasksListFragmentAdapter( getSherlockActivity(),
                                                       R.layout.mindetailed_taskslist_listitem,
                                                       result );
    }

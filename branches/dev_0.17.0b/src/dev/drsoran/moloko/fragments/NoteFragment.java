@@ -98,7 +98,7 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       final RtmTaskNote note = getLoaderDataAssertNotNull();
       
       final TextView createdDate = (TextView) container.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+      createdDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                            note.getCreatedDate()
                                                                .getTime(),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
@@ -128,7 +128,7 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    @Override
    public Loader< RtmTaskNote > newLoaderInstance( int id, Bundle args )
    {
-      return new RtmTaskNoteLoader( getFragmentActivity(),
+      return new RtmTaskNoteLoader( getSherlockActivity(),
                                     args.getString( Config.NOTE_ID ) );
    }
    
@@ -154,7 +154,7 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    public boolean canBeEdited()
    {
       return getNote() != null
-         && AccountUtils.isWriteableAccess( getFragmentActivity() );
+         && AccountUtils.isWriteableAccess( getSherlockActivity() );
    }
    
    

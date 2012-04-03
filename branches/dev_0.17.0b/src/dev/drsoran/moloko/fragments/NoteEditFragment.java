@@ -127,7 +127,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    private void showNote( View content, RtmTaskNote note )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+      createdDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                            note.getCreatedDate()
                                                                .getTime(),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
@@ -173,14 +173,14 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       if ( !ok )
       {
          this.text.requestFocus();
-         Toast.makeText( getFragmentActivity(),
+         Toast.makeText( getSherlockActivity(),
                          R.string.note_edit_toast_title_and_text_empty,
                          Toast.LENGTH_LONG ).show();
       }
       else
       {
          final RtmTaskNote note = getNoteAssertNotNull();
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.setNoteTitleAndText( getFragmentActivity(),
+         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.setNoteTitleAndText( getSherlockActivity(),
                                                                                                                           note.getId(),
                                                                                                                           title,
                                                                                                                           text );

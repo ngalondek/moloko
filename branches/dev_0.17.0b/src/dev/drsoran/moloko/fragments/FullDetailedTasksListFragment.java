@@ -25,24 +25,26 @@ package dev.drsoran.moloko.fragments;
 import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -139,7 +141,7 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -185,7 +187,7 @@ public class FullDetailedTasksListFragment extends
    {
       super.onCreateOptionsMenu( menu, inflater );
       
-      UIUtils.addOptionalMenuItem( getFragmentActivity(),
+      UIUtils.addOptionalMenuItem( getSherlockActivity(),
                                    menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
                                    getString( R.string.abstaskslist_menu_opt_edit_multiple ),
@@ -195,7 +197,7 @@ public class FullDetailedTasksListFragment extends
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    hasMultipleTasks() && hasRtmWriteAccess() );
       
-      UIUtils.addSyncMenuItem( getFragmentActivity(),
+      UIUtils.addSyncMenuItem( getSherlockActivity(),
                                menu,
                                MenuCategory.SECONDARY,
                                MenuItem.SHOW_AS_ACTION_NEVER );
@@ -309,7 +311,7 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
       
@@ -393,7 +395,7 @@ public class FullDetailedTasksListFragment extends
    @Override
    protected int getDefaultTaskSort()
    {
-      return MolokoApp.getSettings( getFragmentActivity() ).getTaskSort();
+      return MolokoApp.getSettings( getSherlockActivity() ).getTaskSort();
    }
    
    
@@ -405,7 +407,7 @@ public class FullDetailedTasksListFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
-      final TasksLoader loader = new TasksLoader( getFragmentActivity(),
+      final TasksLoader loader = new TasksLoader( getSherlockActivity(),
                                                   selection,
                                                   order );
       loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
@@ -418,7 +420,7 @@ public class FullDetailedTasksListFragment extends
    @Override
    public ListAdapter createEmptyListAdapter()
    {
-      return new FullDetailedTasksListFragmentAdapter( getFragmentActivity(),
+      return new FullDetailedTasksListFragmentAdapter( getSherlockActivity(),
                                                        R.layout.fulldetailed_taskslist_listitem );
    }
    
@@ -429,7 +431,7 @@ public class FullDetailedTasksListFragment extends
                                                   IFilter filter )
    {
       final int flags = 0;
-      return new FullDetailedTasksListFragmentAdapter( getFragmentActivity(),
+      return new FullDetailedTasksListFragmentAdapter( getSherlockActivity(),
                                                        R.layout.fulldetailed_taskslist_listitem,
                                                        result,
                                                        filter,

@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.fragments.base;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.SupportActivity;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,10 +48,10 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      impl.onAttach( activity.asActivity() );
+      impl.onAttach( activity );
    }
    
    

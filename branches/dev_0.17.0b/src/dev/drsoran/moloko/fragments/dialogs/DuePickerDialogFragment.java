@@ -135,7 +135,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    private void initTimeFormat()
    {
-      is24hTimeFormat = MolokoApp.getSettings( getFragmentActivity() )
+      is24hTimeFormat = MolokoApp.getSettings( getSherlockActivity() )
                                  .Is24hTimeformat();
    }
    
@@ -143,7 +143,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    private View initWheels()
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
@@ -193,7 +193,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    private Dialog createDialogImpl( View content )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       
       return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_time )
                                                 .setTitle( R.string.dlg_due_picker_title )

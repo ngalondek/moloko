@@ -24,18 +24,19 @@ package dev.drsoran.moloko.fragments.base;
 
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.SupportActivity;
 import android.view.ViewGroup;
+
+import com.actionbarsherlock.app.SherlockFragment;
+
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
 
 
-public abstract class MolokoFragment extends Fragment implements IConfigurable,
-         IOnSettingsChangedListener
+public abstract class MolokoFragment extends SherlockFragment implements
+         IConfigurable, IOnSettingsChangedListener
 {
    private final ConfigurableFragmentImpl impl;
    
@@ -49,7 +50,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       impl.onAttach( activity );
@@ -71,13 +72,6 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable,
    {
       impl.onDetach();
       super.onDetach();
-   }
-   
-   
-   
-   public FragmentActivity getFragmentActivity()
-   {
-      return (FragmentActivity) getSupportActivity();
    }
    
    

@@ -215,7 +215,7 @@ public class TaskEditMultipleFragment extends
             
             final List< String > uniqueTaskNames = new ArrayList< String >( names );
             
-            ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getFragmentActivity(),
+            ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getSherlockActivity(),
                                                                                             android.R.layout.simple_dropdown_item_1line,
                                                                                             android.R.id.text1,
                                                                                             uniqueTaskNames ) );

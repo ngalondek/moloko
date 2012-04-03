@@ -35,9 +35,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.MenuItem.OnMenuItemClickListener;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -61,6 +58,9 @@ import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
 import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;

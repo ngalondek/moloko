@@ -24,21 +24,21 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.SubMenu;
 import android.text.Spanned;
 import android.text.format.DateUtils;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IFilter;
@@ -115,7 +115,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -155,8 +155,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
-      if ( getFragmentActivity() != null )
-         getFragmentActivity().invalidateOptionsMenu();
+      if ( getSherlockActivity() != null )
+         getSherlockActivity().invalidateOptionsMenu();
    }
    
    
@@ -231,7 +231,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          subMenu.setIcon( R.drawable.ic_menu_sort );
          subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
          
-         UIUtils.addCompatibilityActionView( getFragmentActivity(),
+         UIUtils.addCompatibilityActionView( getSherlockActivity(),
                                              menu,
                                              subMenu.getItem() );
          

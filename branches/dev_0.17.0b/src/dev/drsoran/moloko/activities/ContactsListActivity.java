@@ -23,8 +23,10 @@
 package dev.drsoran.moloko.activities;
 
 import android.os.Bundle;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
@@ -40,7 +42,7 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
       + ContactsListActivity.class.getSimpleName();
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -49,8 +51,8 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
       setContentView( R.layout.contactslist_activity );
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -66,24 +68,24 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
       return true;
    }
    
-
-
+   
+   
    @Override
    public void onShowPhoneBookEntryOfContact( String lookUpKey )
    {
       startActivity( Intents.createShowPhonebookContactIntent( lookUpKey ) );
    }
    
-
-
+   
+   
    @Override
    public void onShowTasksOfContact( String fullname, String username )
    {
       startActivity( Intents.createOpenContactIntent( this, fullname, username ) );
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {

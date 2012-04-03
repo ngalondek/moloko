@@ -22,12 +22,12 @@
 
 package dev.drsoran.moloko.fragments.dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.SupportActivity;
 import android.text.TextUtils;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
@@ -154,10 +154,12 @@ public class AlertDialogFragment extends MolokoDialogFragment
    @InstanceState( key = Config.TAG, defaultValue = Strings.EMPTY_STRING )
    private String tag;
    
-   @InstanceState( key = Config.TITLE_STRING, defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = Config.TITLE_STRING,
+                   defaultValue = Strings.EMPTY_STRING )
    private String title;
    
-   @InstanceState( key = Config.MESSAGE_STRING, defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = Config.MESSAGE_STRING,
+                   defaultValue = Strings.EMPTY_STRING )
    private String message;
    
    @InstanceState( key = Config.ICON_ID, defaultValue = "-1" )
@@ -193,7 +195,7 @@ public class AlertDialogFragment extends MolokoDialogFragment
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -220,7 +222,7 @@ public class AlertDialogFragment extends MolokoDialogFragment
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
-      final Context context = getFragmentActivity();
+      final Context context = getSherlockActivity();
       
       final AlertDialog.Builder builder = new AlertDialog.Builder( context );
       

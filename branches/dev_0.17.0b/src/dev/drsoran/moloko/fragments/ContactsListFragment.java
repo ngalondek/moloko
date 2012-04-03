@@ -25,19 +25,20 @@ package dev.drsoran.moloko.fragments;
 import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItem;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import com.actionbarsherlock.view.Menu;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ContactsListAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
@@ -71,7 +72,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -140,7 +141,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
       
@@ -177,7 +178,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    @Override
    public ListAdapter createEmptyListAdapter()
    {
-      return new ContactsListAdapter( getFragmentActivity(),
+      return new ContactsListAdapter( getSherlockActivity(),
                                       R.layout.contactslist_activity_listitem,
                                       Collections.< Contact > emptyList() );
    }
@@ -187,7 +188,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    @Override
    public ListAdapter createListAdapterForResult( List< Contact > result )
    {
-      return new ContactsListAdapter( getFragmentActivity(),
+      return new ContactsListAdapter( getSherlockActivity(),
                                       R.layout.contactslist_activity_listitem,
                                       result );
    }
@@ -197,7 +198,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    @Override
    public Loader< List< Contact >> newLoaderInstance( int id, Bundle config )
    {
-      return new ContactsLoader( getFragmentActivity() );
+      return new ContactsLoader( getSherlockActivity() );
    }
    
    

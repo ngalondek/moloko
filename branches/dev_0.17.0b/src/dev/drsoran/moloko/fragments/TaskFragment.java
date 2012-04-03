@@ -22,12 +22,12 @@
 
 package dev.drsoran.moloko.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -142,7 +142,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -202,7 +202,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    {
       final Task task = getLoaderDataAssertNotNull();
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+      addedDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                          task.getAdded()
                                                              .getTime(),
                                                          FULL_DATE_FLAGS ) );
@@ -210,7 +210,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       if ( task.getCompleted() != null )
       {
          completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+         completedDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                                 task.getCompleted()
                                                                     .getTime(),
                                                                 FULL_DATE_FLAGS ) );
@@ -244,7 +244,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       
       listName.setText( task.getListName() );
       
-      UIUtils.inflateTags( getFragmentActivity(),
+      UIUtils.inflateTags( getSherlockActivity(),
                            tagsLayout,
                            task.getTags(),
                            null,
@@ -290,14 +290,14 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             if ( task.hasDueTime() )
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( getFragmentActivity(),
+                                        MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                                         task.getDue()
                                                                             .getTime(),
                                                                         MolokoDateUtils.FORMAT_WITH_YEAR
                                                                            | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             else
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( getFragmentActivity(),
+                                        MolokoDateUtils.formatDate( getSherlockActivity(),
                                                                     task.getDue()
                                                                         .getTime(),
                                                                     MolokoDateUtils.FORMAT_WITH_YEAR
@@ -307,7 +307,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          
          if ( isRecurrent )
          {
-            final String sentence = RecurrenceParsing.parseRecurrencePattern( getFragmentActivity(),
+            final String sentence = RecurrenceParsing.parseRecurrencePattern( getSherlockActivity(),
                                                                               task.getRecurrence(),
                                                                               task.isEveryRecurrence() );
             
@@ -335,7 +335,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             UIUtils.appendAtNewLine( textBuffer,
                                      getString( R.string.task_datetime_estimate_inline,
-                                                MolokoDateUtils.formatEstimated( getFragmentActivity(),
+                                                MolokoDateUtils.formatEstimated( getSherlockActivity(),
                                                                                  task.getEstimateMillis() ) ) );
          }
          
@@ -398,7 +398,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          if ( locationIsClickable )
          {
             // Check if we can click the location
-            if ( LocationChooserDialogFragment.hasIntentHandler( getFragmentActivity(),
+            if ( LocationChooserDialogFragment.hasIntentHandler( getSherlockActivity(),
                                                                  task.getLocationAddress() ) )
             {
                final SpannableString clickableLocation = new SpannableString( locationName );
@@ -455,7 +455,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                }
             }, 0, clickableContact.length(), 0 );
             
-            final TextView textView = new TextView( getFragmentActivity() );
+            final TextView textView = new TextView( getSherlockActivity() );
             UIUtils.applySpannable( textView, clickableContact );
             
             view.addView( textView );
@@ -472,7 +472,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    @Override
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskLoader( getFragmentActivity(),
+      return new TaskLoader( getSherlockActivity(),
                              args.getString( Config.TASK_ID ) );
    }
    
@@ -506,7 +506,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    public boolean canBeEdited()
    {
       return getLoaderData() != null
-         && AccountUtils.isWriteableAccess( getFragmentActivity() );
+         && AccountUtils.isWriteableAccess( getSherlockActivity() );
    }
    
    

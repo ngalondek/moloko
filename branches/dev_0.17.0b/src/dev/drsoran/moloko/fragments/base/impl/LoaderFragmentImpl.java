@@ -54,7 +54,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
       
       
       
-      FragmentActivity getFragmentActivity();
+      FragmentActivity getSherlockActivity();
    }
    
    private final Fragment fragment;
@@ -250,7 +250,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
          {
             content.removeAllViews();
             
-            UIUtils.inflateErrorWithIcon( support.getFragmentActivity(),
+            UIUtils.inflateErrorWithIcon( support.getSherlockActivity(),
                                           content,
                                           R.string.err_entity_not_found,
                                           support.getLoaderDataName() );

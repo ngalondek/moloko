@@ -24,10 +24,13 @@ package dev.drsoran.moloko;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
 import dev.drsoran.moloko.fragments.QuickAddTaskButtonBarFragment;
 
@@ -54,14 +57,14 @@ public class QuickAddTaskActionBarSwitcher
    
    
    
-   public QuickAddTaskActionBarSwitcher( FragmentActivity activity )
+   public QuickAddTaskActionBarSwitcher( SherlockFragmentActivity activity )
    {
       this( activity, null );
    }
    
    
    
-   public QuickAddTaskActionBarSwitcher( FragmentActivity activity,
+   public QuickAddTaskActionBarSwitcher( SherlockFragmentActivity activity,
       Bundle savedInstanceState )
    {
       this.activity = activity;

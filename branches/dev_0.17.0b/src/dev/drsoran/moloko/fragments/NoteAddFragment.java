@@ -125,7 +125,7 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
                                                   false );
       
       final TextView createdDate = (TextView) fragmentView.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+      createdDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                            created.toMillis( true ),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
       
@@ -211,7 +211,7 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
                                                       Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
                                                       Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
          
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.insertNote( getFragmentActivity(),
+         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.insertNote( getSherlockActivity(),
                                                                                                                  newNote );
          ok = applyModifications( modifications );
          
@@ -228,7 +228,7 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    private NewNoteId createNewNoteId()
    {
-      return RtmNotesProviderPart.createNewNoteId( getFragmentActivity().getContentResolver()
+      return RtmNotesProviderPart.createNewNoteId( getSherlockActivity().getContentResolver()
                                                                         .acquireContentProviderClient( Notes.CONTENT_URI ) );
    }
    

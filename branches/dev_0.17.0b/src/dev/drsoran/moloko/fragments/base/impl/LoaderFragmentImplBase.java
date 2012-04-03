@@ -22,10 +22,10 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.annotations.InstanceState;
@@ -90,7 +90,7 @@ abstract class LoaderFragmentImplBase< D >
    
    
    
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       config.registerAnnotatedConfiguredInstance( this,
                                                   LoaderFragmentImplBase.class );

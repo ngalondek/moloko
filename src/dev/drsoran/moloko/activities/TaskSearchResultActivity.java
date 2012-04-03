@@ -28,10 +28,12 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;

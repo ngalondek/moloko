@@ -157,7 +157,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       if ( initialValue == 0 )
          initialValue = 1;
       
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.estimate_picker_dialog, null );
       
@@ -209,7 +209,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    private Dialog createDialogImpl( View contentView )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       
       return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_thumb )
                                                 .setTitle( R.string.dlg_estimate_picker_title )
@@ -285,7 +285,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    private void setUnits( int pos )
    {
-      final Context context = getFragmentActivity();
+      final Context context = getSherlockActivity();
       final Resources res = context.getResources();
       
       unitWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,

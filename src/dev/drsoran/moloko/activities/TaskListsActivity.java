@@ -26,10 +26,10 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.util.Pair;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.ApplyChangesInfo;

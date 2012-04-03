@@ -22,10 +22,9 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.SupportActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.AnnotatedConfigurationSupport;
@@ -39,7 +38,7 @@ public class ConfigurableFragmentImpl
    
    private final Fragment fragment;
    
-   private FragmentActivity activity;
+   private Activity activity;
    
    private final int settingsMask;
    
@@ -60,9 +59,9 @@ public class ConfigurableFragmentImpl
    
    
    
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
-      this.activity = (FragmentActivity) activity;
+      this.activity = activity;
       this.annotatedConfigSupport.onAttach( this.activity );
       
       if ( settingsMask != 0 && fragment instanceof IOnSettingsChangedListener )

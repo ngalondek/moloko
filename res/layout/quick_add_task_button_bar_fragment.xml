@@ -28,7 +28,7 @@
         android:layout_height="40dip"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?selectableItemBackground"
+        android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_time"
         android:text="^" />
 
@@ -38,7 +38,7 @@
         android:layout_height="40dip"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?selectableItemBackground"
+        android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_priority"
         android:text="!" />
 
@@ -48,7 +48,7 @@
         android:layout_height="40dip"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?selectableItemBackground"
+        android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_smart_add_list_or_tag"
         android:text="#" />
 
@@ -58,7 +58,7 @@
         android:layout_height="40dip"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?selectableItemBackground"
+        android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_location"
         android:text=" @" />
 
@@ -68,7 +68,7 @@
         android:layout_height="40dip"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?selectableItemBackground"
+        android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_recurrent"
         android:text="*" />
 
@@ -78,7 +78,7 @@
         android:layout_height="40dip"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?selectableItemBackground"
+        android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_thumb"
         android:text="=" />
 

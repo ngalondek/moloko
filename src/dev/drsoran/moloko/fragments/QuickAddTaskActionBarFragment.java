@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -104,7 +104,7 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -146,7 +146,7 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
       addTaskEdit = (RtmSmartAddTextView) view.findViewById( R.id.quick_add_task_edit );
       addTaskEdit.setTokenizer( smartAddTokenizer );
       addTaskEdit.setThreshold( 1 );
-      addTaskEdit.setAdapter( new RtmSmartAddAdapter( getFragmentActivity() ) );
+      addTaskEdit.setAdapter( new RtmSmartAddAdapter( getSherlockActivity() ) );
       addTaskEdit.requestFocus();
       
       final RtmSmartFilter filter = getConfiguredRtmSmartFilter();
@@ -432,7 +432,7 @@ public class QuickAddTaskActionBarFragment extends MolokoFragment implements
                               if ( estimated != -1 )
                               {
                                  config.putString( Tasks.ESTIMATE,
-                                                   MolokoDateUtils.formatEstimated( getFragmentActivity(),
+                                                   MolokoDateUtils.formatEstimated( getSherlockActivity(),
                                                                                     estimated ) );
                                  config.putLong( Tasks.ESTIMATE_MILLIS,
                                                  Long.valueOf( estimated ) );

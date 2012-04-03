@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +50,7 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       

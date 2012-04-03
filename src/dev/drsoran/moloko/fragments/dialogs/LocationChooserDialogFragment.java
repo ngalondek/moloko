@@ -232,7 +232,7 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
    
    private Dialog createDialogImpl()
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       
       final AlertDialog.Builder builder = new AlertDialog.Builder( activity );
       builder.setTitle( R.string.task_dlg_choose_location_app );
@@ -270,7 +270,7 @@ public class LocationChooserDialogFragment extends MolokoDialogFragment
    {
       resolvedIntents = new ArrayList< Pair< Intent, ResolveInfo > >();
       
-      final PackageManager pm = getFragmentActivity().getPackageManager();
+      final PackageManager pm = getSherlockActivity().getPackageManager();
       final ResolveInfo.DisplayNameComparator cmp = new ResolveInfo.DisplayNameComparator( pm );
       final Intent[] intents = createIntents( longitude,
                                               latitude,

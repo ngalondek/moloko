@@ -26,9 +26,11 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.util.Pair;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
@@ -95,8 +97,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
                                    Menu.NONE,
                                    R.drawable.ic_menu_trash,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   !isListLocked()
-                                      && hasListName()
+                                   !isListLocked() && hasListName()
                                       && !AccountUtils.isReadOnlyAccess( this ) );
       
       return true;

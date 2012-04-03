@@ -25,11 +25,10 @@ package dev.drsoran.moloko.fragments;
 import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItem;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -91,7 +90,7 @@ public class TaskListsFragment extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -173,7 +172,7 @@ public class TaskListsFragment extends
       }
       
       if ( list.getLocked() == 0
-         && AccountUtils.isWriteableAccess( getFragmentActivity() ) )
+         && AccountUtils.isWriteableAccess( getSherlockActivity() ) )
       {
          menu.add( Menu.NONE,
                    CtxtMenu.DELETE,
@@ -187,7 +186,7 @@ public class TaskListsFragment extends
                               list.getName() ) );
       }
       
-      if ( list.getId().equals( MolokoApp.getSettings( getFragmentActivity() )
+      if ( list.getId().equals( MolokoApp.getSettings( getSherlockActivity() )
                                          .getDefaultListId() ) )
          menu.add( Menu.NONE,
                    CtxtMenu.REMOVE_DEFAULT_LIST,
@@ -203,7 +202,7 @@ public class TaskListsFragment extends
    
    
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
       
@@ -311,7 +310,7 @@ public class TaskListsFragment extends
    @Override
    public ExpandableListAdapter createEmptyExpandableListAdapter()
    {
-      return new TaskListsAdapter( getFragmentActivity(),
+      return new TaskListsAdapter( getSherlockActivity(),
                                    R.layout.tasklists_fragment_group,
                                    R.layout.tasklists_fragment_child,
                                    Collections.< RtmListWithTaskCount > emptyList() );
@@ -322,7 +321,7 @@ public class TaskListsFragment extends
    @Override
    public ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
    {
-      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getFragmentActivity(),
+      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getSherlockActivity(),
                                                                       R.layout.tasklists_fragment_group,
                                                                       R.layout.tasklists_fragment_child,
                                                                       result );
@@ -337,7 +336,7 @@ public class TaskListsFragment extends
    public Loader< List< RtmListWithTaskCount >> newLoaderInstance( int id,
                                                                    Bundle config )
    {
-      return new RtmListWithTaskCountLoader( getFragmentActivity() );
+      return new RtmListWithTaskCountLoader( getSherlockActivity() );
    }
    
    
@@ -375,7 +374,7 @@ public class TaskListsFragment extends
    
    private void setAsDefaultList( int pos )
    {
-      MolokoApp.getSettings( getFragmentActivity() )
+      MolokoApp.getSettings( getSherlockActivity() )
                .setDefaultListId( getRtmList( pos ).getId() );
    }
    
@@ -383,7 +382,7 @@ public class TaskListsFragment extends
    
    private void resetDefaultList()
    {
-      MolokoApp.getSettings( getFragmentActivity() )
+      MolokoApp.getSettings( getSherlockActivity() )
                .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
    

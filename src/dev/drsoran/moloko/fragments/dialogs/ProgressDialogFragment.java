@@ -75,9 +75,9 @@ public class ProgressDialogFragment extends MolokoDialogFragment
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
-      final ProgressDialog progressDialog = new ProgressDialog( getFragmentActivity() );
+      final ProgressDialog progressDialog = new ProgressDialog( getSherlockActivity() );
       
-      progressDialog.setMessage( getFragmentActivity().getString( getProgressMessageId() ) );
+      progressDialog.setMessage( getSherlockActivity().getString( getProgressMessageId() ) );
       progressDialog.setCancelable( false );
       
       return progressDialog;

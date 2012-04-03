@@ -49,7 +49,7 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      final Activity context = getFragmentActivity();
+      final Activity context = getSherlockActivity();
       
       CharSequence message = null;
       

@@ -123,7 +123,7 @@ public class AddRenameListDialogFragment extends
    @Override
    protected Dialog createDialog( View fragmentView )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       
       final boolean isRenameMode = isRenameMode();
       final String title;
@@ -260,7 +260,7 @@ public class AddRenameListDialogFragment extends
       
       if ( TextUtils.isEmpty( text ) )
       {
-         Toast.makeText( getFragmentActivity(),
+         Toast.makeText( getSherlockActivity(),
                          R.string.dlg_add_rename_list_toast_empty_list_name,
                          Toast.LENGTH_LONG ).show();
          listNameEdit.requestFocus();
@@ -273,7 +273,7 @@ public class AddRenameListDialogFragment extends
          if ( trimmedText.equalsIgnoreCase( getString( R.string.app_list_name_inbox ) )
             || trimmedText.equalsIgnoreCase( getString( R.string.app_list_name_sent ) ) )
          {
-            Toast.makeText( getFragmentActivity(),
+            Toast.makeText( getSherlockActivity(),
                             R.string.dlg_add_rename_list_toast_invalid_list_name,
                             Toast.LENGTH_LONG )
                  .show();
@@ -295,7 +295,7 @@ public class AddRenameListDialogFragment extends
       {
          if ( RtmSmartFilter.evaluate( text.toString(), false ) == null )
          {
-            Toast.makeText( getFragmentActivity(),
+            Toast.makeText( getSherlockActivity(),
                             getString( R.string.dlg_add_rename_list_toast_invalid_filter,
                                        text ),
                             Toast.LENGTH_LONG )
@@ -327,7 +327,7 @@ public class AddRenameListDialogFragment extends
                                            0,
                                            getEnteredSmartFilter() );
       
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.insertList( getFragmentActivity(),
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.insertList( getSherlockActivity(),
                                                                                                                  newList );
       ok = applyModifications( modifications );
       
@@ -338,7 +338,7 @@ public class AddRenameListDialogFragment extends
    
    private NewRtmListId createNewListId()
    {
-      return RtmListsProviderPart.createNewListId( getFragmentActivity().getContentResolver()
+      return RtmListsProviderPart.createNewListId( getSherlockActivity().getContentResolver()
                                                                         .acquireContentProviderClient( Lists.CONTENT_URI ) );
    }
    
@@ -346,7 +346,7 @@ public class AddRenameListDialogFragment extends
    
    private boolean renameList( RtmList list )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.setListName( getFragmentActivity(),
+      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.setListName( getSherlockActivity(),
                                                                                                                   list.getId(),
                                                                                                                   UIUtils.getTrimmedText( listNameEdit ) );
       return applyModifications( modifications );

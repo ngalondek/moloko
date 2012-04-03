@@ -38,7 +38,7 @@ public abstract class MolokoContentDialogFragment extends MolokoDialogFragment
    @Override
    public final Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      dialogView = createDialogView( LayoutInflater.from( getFragmentActivity() ) );
+      dialogView = createDialogView( LayoutInflater.from( getSherlockActivity() ) );
       onDialogViewCreated( dialogView );
       
       final Dialog dialog = createDialog( dialogView );

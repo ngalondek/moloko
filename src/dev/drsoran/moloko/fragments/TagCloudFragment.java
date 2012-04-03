@@ -32,7 +32,6 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -188,7 +187,7 @@ public class TagCloudFragment extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -230,7 +229,7 @@ public class TagCloudFragment extends
       
       if ( cloudEntries.size() > 0 )
       {
-         final Activity activity = getFragmentActivity();
+         final Activity activity = getSherlockActivity();
          
          // Sort all cloud entries by their name
          Collections.sort( cloudEntries );
@@ -296,7 +295,7 @@ public class TagCloudFragment extends
    @Override
    public Loader< List< TagCloudEntry > > newLoaderInstance( int id, Bundle args )
    {
-      return new TagCloudEntryLoader( getFragmentActivity() );
+      return new TagCloudEntryLoader( getSherlockActivity() );
    }
    
    

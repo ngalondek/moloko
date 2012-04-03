@@ -233,7 +233,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    @Override
    protected void initializeHeadSection()
    {
-      addedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+      addedDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                          created,
                                                          FULL_DATE_FLAGS ) );
       completedDate.setVisibility( View.GONE );
@@ -375,7 +375,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       {
          final Task newTask = newTask();
          
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.insertTask( getFragmentActivity(),
+         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.insertTask( getSherlockActivity(),
                                                                                                                  newTask );
          ok = applyModifications( modifications );
          
@@ -433,7 +433,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    
    private NewTaskIds createNewTaskIds()
    {
-      return TasksProviderPart.createNewTaskIds( getFragmentActivity().getContentResolver()
+      return TasksProviderPart.createNewTaskIds( getSherlockActivity().getContentResolver()
                                                                       .acquireContentProviderClient( Tasks.CONTENT_URI ) );
    }
    

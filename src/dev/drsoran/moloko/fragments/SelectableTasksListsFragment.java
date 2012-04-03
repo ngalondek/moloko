@@ -24,25 +24,27 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.SubMenu;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
+
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -157,7 +159,7 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -238,7 +240,7 @@ public class SelectableTasksListsFragment extends
          final List< SelectableTask > tasks = adapter.getSelectedTasks();
          final int selCnt = tasks.size();
          
-         UIUtils.addOptionalMenuItem( getFragmentActivity(),
+         UIUtils.addOptionalMenuItem( getSherlockActivity(),
                                       menu,
                                       OptionsMenu.DO_EDIT,
                                       getString( R.string.select_multiple_tasks_menu_opt_do_edit,
@@ -260,7 +262,7 @@ public class SelectableTasksListsFragment extends
          }
          
          // The complete task menu is only shown if all selected tasks are uncompleted
-         UIUtils.addOptionalMenuItem( getFragmentActivity(),
+         UIUtils.addOptionalMenuItem( getSherlockActivity(),
                                       menu,
                                       OptionsMenu.COMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_complete,
@@ -272,7 +274,7 @@ public class SelectableTasksListsFragment extends
                                       someSelected && selUncompl == selCnt );
          
          // The incomplete task menu is only shown if all selected tasks are completed
-         UIUtils.addOptionalMenuItem( getFragmentActivity(),
+         UIUtils.addOptionalMenuItem( getSherlockActivity(),
                                       menu,
                                       OptionsMenu.INCOMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
@@ -283,7 +285,7 @@ public class SelectableTasksListsFragment extends
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected && selCompl == selCnt );
          
-         UIUtils.addOptionalMenuItem( getFragmentActivity(),
+         UIUtils.addOptionalMenuItem( getSherlockActivity(),
                                       menu,
                                       OptionsMenu.POSTPONE,
                                       getString( R.string.select_multiple_tasks_menu_opt_postpone,
@@ -294,7 +296,7 @@ public class SelectableTasksListsFragment extends
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected );
          
-         UIUtils.addOptionalMenuItem( getFragmentActivity(),
+         UIUtils.addOptionalMenuItem( getSherlockActivity(),
                                       menu,
                                       OptionsMenu.DELETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_delete,
@@ -446,7 +448,7 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
       
@@ -472,7 +474,7 @@ public class SelectableTasksListsFragment extends
    @Override
    protected int getDefaultTaskSort()
    {
-      return MolokoApp.getSettings( getFragmentActivity() ).getTaskSort();
+      return MolokoApp.getSettings( getSherlockActivity() ).getTaskSort();
    }
    
    
@@ -510,7 +512,7 @@ public class SelectableTasksListsFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
-      final SelectableTasksLoader loader = new SelectableTasksLoader( getFragmentActivity(),
+      final SelectableTasksLoader loader = new SelectableTasksLoader( getSherlockActivity(),
                                                                       selection,
                                                                       order );
       loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
@@ -533,7 +535,7 @@ public class SelectableTasksListsFragment extends
    @Override
    public ListAdapter createEmptyListAdapter()
    {
-      return new SelectableTasksListFragmentAdapter( getFragmentActivity(),
+      return new SelectableTasksListFragmentAdapter( getSherlockActivity(),
                                                      R.layout.selectmultipletasks_activity_listitem );
    }
    
@@ -543,7 +545,7 @@ public class SelectableTasksListsFragment extends
    public ListAdapter createListAdapterForResult( List< SelectableTask > result,
                                                   IFilter filter )
    {
-      final SelectableTasksListFragmentAdapter adapter = new SelectableTasksListFragmentAdapter( getFragmentActivity(),
+      final SelectableTasksListFragmentAdapter adapter = new SelectableTasksListFragmentAdapter( getSherlockActivity(),
                                                                                                  R.layout.selectmultipletasks_activity_listitem,
                                                                                                  result );
       adapter.setSelectionChangedListener( this );

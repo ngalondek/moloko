@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.support.v4.app.SupportActivity;
+import android.app.Activity;
 import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
 import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener.CloseReason;
 
@@ -34,7 +34,7 @@ public abstract class AbstractPickerDialogFragment extends MolokoDialogFragment
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       

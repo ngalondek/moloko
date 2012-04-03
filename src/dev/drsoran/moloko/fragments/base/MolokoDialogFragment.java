@@ -24,19 +24,20 @@ package dev.drsoran.moloko.fragments.base;
 
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.SupportActivity;
+
+import com.actionbarsherlock.app.SherlockDialogFragment;
+
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.fragments.base.impl.MolokoDialogFragmentImpl;
 
 
-public abstract class MolokoDialogFragment extends DialogFragment implements
-         IConfigurable, IOnSettingsChangedListener
+public abstract class MolokoDialogFragment extends SherlockDialogFragment
+         implements IConfigurable, IOnSettingsChangedListener
 {
    
    private final DialogInterface.OnClickListener genericListener = new OnClickListener()
@@ -69,7 +70,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       impl.onAttach( activity );
@@ -82,13 +83,6 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    {
       impl.onDetach();
       super.onDetach();
-   }
-   
-   
-   
-   public FragmentActivity getFragmentActivity()
-   {
-      return (FragmentActivity) getSupportActivity();
    }
    
    

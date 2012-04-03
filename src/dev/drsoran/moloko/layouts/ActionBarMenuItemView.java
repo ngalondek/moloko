@@ -26,7 +26,6 @@ import android.content.Context;
 import android.graphics.LightingColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v4.view.Menu;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -36,6 +35,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
 import com.actionbarsherlock.internal.view.menu.MenuView;
+import com.actionbarsherlock.view.Menu;
 
 import dev.drsoran.moloko.R;
 

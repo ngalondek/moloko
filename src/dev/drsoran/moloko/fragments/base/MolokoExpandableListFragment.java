@@ -24,15 +24,16 @@ package dev.drsoran.moloko.fragments.base;
 
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+
+import com.actionbarsherlock.app.SherlockListFragment;
+
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
@@ -40,9 +41,10 @@ import dev.drsoran.moloko.fragments.base.impl.LoaderExpandableListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
 
 
-public abstract class MolokoExpandableListFragment< D > extends ListFragment
-         implements IConfigurable, IOnSettingsChangedListener,
-         LoaderCallbacks< D >, LoaderExpandableListFragmentImpl.Support< D >,
+public abstract class MolokoExpandableListFragment< D > extends
+         SherlockListFragment implements IConfigurable,
+         IOnSettingsChangedListener, LoaderCallbacks< D >,
+         LoaderExpandableListFragmentImpl.Support< D >,
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
          ExpandableListView.OnGroupCollapseListener,
@@ -76,12 +78,12 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
-      editImpl.onAttach( activity.asActivity() );
+      editImpl.onAttach( activity );
    }
    
    
@@ -140,13 +142,6 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    public void showListView( boolean show )
    {
       baseImpl.showListView( show );
-   }
-   
-   
-   
-   public FragmentActivity getFragmentActivity()
-   {
-      return (FragmentActivity) getSupportActivity();
    }
    
    
@@ -326,8 +321,8 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    
    protected void invalidateOptionsMenu()
    {
-      if ( getFragmentActivity() != null )
-         getFragmentActivity().invalidateOptionsMenu();
+      if ( getSherlockActivity() != null )
+         getSherlockActivity().invalidateOptionsMenu();
    }
    
    

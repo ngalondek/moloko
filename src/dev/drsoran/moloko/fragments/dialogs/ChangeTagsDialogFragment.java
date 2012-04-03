@@ -35,7 +35,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -129,7 +128,7 @@ public class ChangeTagsDialogFragment extends
    
    
    @Override
-   public void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -196,7 +195,7 @@ public class ChangeTagsDialogFragment extends
    @Override
    protected Dialog createDialog( View view )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       final Context context = new ContextThemeWrapper( activity,
                                                        R.style.Theme_ChangeTagsDialog );
       
@@ -324,7 +323,7 @@ public class ChangeTagsDialogFragment extends
       for ( String tag : unusedTags )
          changeTags.add( new ChangeTag( tag, true ) );
       
-      tagsList.setAdapter( new ChangeTagsAdapter( getFragmentActivity(),
+      tagsList.setAdapter( new ChangeTagsAdapter( getSherlockActivity(),
                                                   R.layout.change_tags_fragment_listitem,
                                                   changeTags ) );
    }
@@ -334,7 +333,7 @@ public class ChangeTagsDialogFragment extends
    @Override
    public Loader< List< Tag > > newLoaderInstance( int id, Bundle args )
    {
-      final TagsLoader loader = new TagsLoader( getFragmentActivity(),
+      final TagsLoader loader = new TagsLoader( getSherlockActivity(),
                                                 null,
                                                 new Tag.ASC_ALPHA(),
                                                 true );

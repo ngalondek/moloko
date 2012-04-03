@@ -28,8 +28,10 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;

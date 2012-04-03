@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Moloko" parent="Theme.Sherlock.Light">
+    <style name="Theme.Moloko" parent="Theme.Sherlock.Light.ForceOverflow">
 
         <!-- Window attributes -->
         <item name="android:windowContentOverlay">@null</item>
@@ -17,15 +17,9 @@
         <item name="android:progressBarStyleSmallInverse">@android:style/Widget.ProgressBar.Small</item>
         <item name="android:progressBarStyleLargeInverse">@android:style/Widget.ProgressBar.Large</item>
 
-        <!-- ActionBar attributes -->
-        <item name="abBackground">@drawable/app_actionbar_bgnd</item>
-        <item name="actionBarSize">@dimen/app_actionbar_height</item>
-        <item name="abTitleTextStyle">@style/ActionBarTextStyle</item>
-        <item name="abSubtitleTextStyle">@style/ActionBarSubtitleTextStyle</item>
-        <item name="actionSpinnerItemStyle">@style/ActionBarSpinnerItemStyle</item>
-        <item name="abDisplayOptions">showHome|showTitle</item>
-        <item name="abIcon">@drawable/ic_title_home</item>
-        <item name="homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_light</item>
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
 
         <!-- Widgets -->
         <item name="android:expandableListViewStyle">@style/ExpandableListViewStyle</item>
@@ -55,10 +49,9 @@
 
     <style name="Theme.Moloko.Home">
 
-        <!-- ActionBar attributes -->
-        <item name="abDisplayOptions">useLogo|showHome|showTitle</item>
-        <item name="abIcon">@null</item>
-        <item name="abLogo">@drawable/ic_title_raw_launcher</item>
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.Home</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.Home</item>        
     </style>
     
     <style name="Theme.Moloko.TasksList">
@@ -69,9 +62,9 @@
 
     <style name="Theme.Moloko.SelectMultipleTasks">
 
-        <!-- ActionBar attributes -->
-        <item name="abDisplayOptions">showHome|homeAsUp|showTitle</item>
-        <item name="abIcon">@drawable/app_actionbar_empty_icon</item>
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
     </style>
 
     <style name="Theme.Moloko.Task">
@@ -79,9 +72,9 @@
         <!-- Window attributes -->
         <item name="android:windowBackground">@color/task_bgnd</item>
 
-        <!-- ActionBar attributes -->
-        <item name="abDisplayOptions">showHome|homeAsUp|showTitle</item>
-        <item name="abIcon">@drawable/app_actionbar_empty_icon</item>
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
 
         <!-- Widgets -->
         <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>

@@ -25,14 +25,11 @@ package dev.drsoran.moloko.activities;
 import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.AttributeSet;
-import android.view.View;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -77,7 +74,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       
       super.onCreate( savedInstanceState );
       
-      requestWindowFeature( Window.FEATURE_INDETERMINATE_PROGRESS );
+      setupActionBar();
       
       configureByIntent( getIntent() );
       
@@ -93,10 +90,10 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    @Override
-   public View onCreateView( String name, Context context, AttributeSet attrs )
+   protected void onResume()
    {
+      super.onResume();
       initializeSyncingProgressIndicator();
-      return super.onCreateView( name, context, attrs );
    }
    
    
@@ -330,11 +327,11 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       switch ( status )
       {
          case Constants.SYNC_STATUS_STARTED:
-            setProgressBarIndeterminateVisibility( Boolean.TRUE );
+            setSupportProgressBarIndeterminateVisibility( true );
             break;
          
          case Constants.SYNC_STATUS_FINISHED:
-            setProgressBarIndeterminateVisibility( Boolean.FALSE );
+            setSupportProgressBarIndeterminateVisibility( false );
             break;
          
          default :
@@ -419,9 +416,17 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
+   protected void setupActionBar()
+   {
+      requestWindowFeature( Window.FEATURE_INDETERMINATE_PROGRESS );
+      getSupportActionBar().setHomeButtonEnabled( true );
+   }
+   
+   
+   
    private void initializeSyncingProgressIndicator()
    {
-      setProgressBarIndeterminateVisibility( SyncUtils.isSyncing( this ) );
+      setSupportProgressBarIndeterminateVisibility( SyncUtils.isSyncing( this ) );
    }
    
    

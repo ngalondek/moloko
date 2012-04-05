@@ -156,14 +156,32 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
       
       timeWheelGroup = new TimeWheelGroup( activity, view, 0, hasDueTime );
       
-      dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
+      dateDayWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
          
          
+         @Override
+         public void onScrollingFinished( WheelView wheel )
+         {
+            updateDueTimeMillis();
+         }
+      } );
+      
+      dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
+      {
+         @Override
+         public void onScrollingStarted( WheelView wheel )
+         {
+         }
+         
+         
+         
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
             updateDueTimeMillis();
@@ -173,12 +191,14 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
       
       dateYearWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
          
          
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
             updateDueTimeMillis();
@@ -201,6 +221,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
                                                 .setPositiveButton( R.string.btn_ok,
                                                                     new OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
@@ -210,6 +231,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
                                                 .setNegativeButton( R.string.btn_cancel,
                                                                     new OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
@@ -385,12 +407,14 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
       
       
       
+      @Override
       public void onScrollingStarted( WheelView wheel )
       {
       }
       
       
       
+      @Override
       public void onScrollingFinished( WheelView wheel )
       {
          if ( !notifying )

@@ -4,9 +4,6 @@
     <style name="Theme.Moloko" parent="Theme.Sherlock.Light.ForceOverflow">
 
         <!-- Window attributes -->
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
-        <item name="android:windowBackground">@color/app_default_bgnd</item>
         <item name="android:textColorPrimary">@color/app_default_text_color</item>
 
         <!-- ProgressBar -->
@@ -41,7 +38,6 @@
     <style name="Theme.Moloko.Preferences">
         <item name="android:windowNoTitle">false</item>
         <item name="android:windowTitleStyle">@style/WindowTitleStyle</item>
-        <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
 
         <!-- Widgets -->
         <item name="android:listViewStyle">@style/ForceWhiteListViewStyle</item>

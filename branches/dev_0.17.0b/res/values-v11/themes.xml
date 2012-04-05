@@ -1,28 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Moloko.Preferences" parent="Theme.Sherlock.Light"></style>
-
-    <style name="Theme.Moloko.TasksList">
-
-        <!-- ActionBar -->
-        <!-- Using windowActionBarOverlay prevents re-layout if we hide the action bar and
-             switch to quick add task input -->
-        <item name="android:windowActionBarOverlay">true</item>
-        
-        <!-- Widgets -->
-        <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>
-    </style>
-    
-    <style name="Theme.Moloko.SelectMultipleTasks">
-
-        <!-- ActionBar attributes -->
-        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
-        <item name="icon">@drawable/app_actionbar_empty_icon</item>
-        <!-- Using windowActionBarOverlay prevents re-layout if we hide the action bar and
-             switch to quick add task input -->
-        <item name="android:windowActionBarOverlay">true</item>
-    </style>
+    <style name="Theme.Moloko.Preferences" parent="Theme.Sherlock.Light"></style>  
 
     <style name="Theme.ChangeTagsDialog" parent="android:style/Theme.Holo.Light.Dialog">
         

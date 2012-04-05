@@ -46,17 +46,14 @@ public final class TaskFragmentFactory extends AbstractFragmentFactory
    }
    
    
-
+   
    public final static Fragment newFragment( Context context,
                                              Intent intent,
                                              Bundle config )
    {
       if ( config != null )
       {
-         if ( intent.getExtras() != null )
-            intent.getExtras().putAll( config );
-         else
-            intent.putExtras( config );
+         intent.putExtras( config );
       }
       
       return resolveIntentToFragment( context, intent, FRAGMENT_CLASSES );

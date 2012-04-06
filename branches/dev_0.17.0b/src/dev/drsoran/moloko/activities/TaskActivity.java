@@ -430,7 +430,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
                                    MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_complete,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS
+                                      | MenuItem.SHOW_AS_ACTION_WITH_TEXT,
                                    !isInEditMode && taskCanBeEdited
                                       && task.getCompleted() == null );
       UIUtils.addOptionalMenuItem( this,
@@ -440,7 +441,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
                                    MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_incomplete,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS
+                                      | MenuItem.SHOW_AS_ACTION_WITH_TEXT,
                                    !isInEditMode && taskCanBeEdited
                                       && task.getCompleted() != null );
       UIUtils.addOptionalMenuItem( this,
@@ -450,7 +452,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
                                    MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_postponed,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM
+                                      | MenuItem.SHOW_AS_ACTION_WITH_TEXT,
                                    !isInEditMode && taskCanBeEdited );
       UIUtils.addOptionalMenuItem( this,
                                    menu,
@@ -498,26 +501,26 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
                                                                                                                            getTaskAssertNotNull(),
                                                                                                                            true );
             applyModifications( modifications );
-         }
             return true;
-            
+         }
+         
          case OptionsMenu.UNCOMPLETE_TASK:
          {
             final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
                                                                                                                            getTaskAssertNotNull(),
                                                                                                                            false );
             applyModifications( modifications );
-         }
             return true;
-            
+         }
+         
          case OptionsMenu.POSTPONE_TASK:
          {
             final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( this,
                                                                                                                       getTaskAssertNotNull() );
             applyModifications( modifications );
-         }
             return true;
-            
+         }
+         
          case OptionsMenu.DELETE_TASK:
             onDeleteTask( getTaskAssertNotNull().getId() );
             return true;

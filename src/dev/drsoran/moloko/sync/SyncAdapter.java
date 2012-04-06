@@ -50,7 +50,6 @@ import android.util.Pair;
 
 import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
@@ -78,13 +77,17 @@ import dev.drsoran.provider.Rtm.Sync;
 /**
  * SyncAdapter implementation for syncing to the platform RTM provider.
  */
-public class SyncAdapter extends AbstractThreadedSyncAdapter
+public final class SyncAdapter extends AbstractThreadedSyncAdapter
 {
    
    private final static String TAG = "Moloko."
       + SyncAdapter.class.getSimpleName();
    
    private final Context context;
+   
+   private SyncResult syncResult;
+   
+   private MolokoSyncResult molokoSyncResult;
    
    
    
@@ -106,197 +109,68 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    {
       if ( shouldProcessRequest( extras ) )
       {
-         RtmProvider contentProvider = null;
-         
-         if ( provider.getLocalContentProvider() instanceof RtmProvider )
-            contentProvider = (RtmProvider) provider.getLocalContentProvider();
-         else
-            throw new IllegalStateException( "no ContentProvider transaction support" );
-         
          Log.i( TAG, "Precessing sync with extras " + extras );
          
-         context.sendBroadcast( Intents.createSyncStartedIntent() );
+         ensureTransactionSupport( provider );
+         this.syncResult = syncResult;
          
          String authToken = null;
-         final AccountManager accountManager = AccountManager.get( context );
-         
-         if ( accountManager != null )
+         Service service = null;
+         try
          {
-            Service service = null;
-            try
+            authToken = checkAccount( account );
+            Log.i( TAG, "Retrieved auth token " + authToken );
+            
+            if ( authToken != null )
             {
-               // use the account manager to request the credentials
-               authToken = accountManager.blockingGetAuthToken( account,
-                                                                Constants.AUTH_TOKEN_TYPE,
-                                                                true /* notifyAuthFailure */);
-               Log.i( TAG, "Retreived auth token " + authToken );
+               service = createService( account, authToken );
+               molokoSyncResult = new MolokoSyncResult( context, syncResult );
                
-               if ( authToken != null )
+               context.sendBroadcast( Intents.createSyncStartedIntent() );
+               
+               if ( isSettingsOnlySync( extras ) )
                {
-                  // Check if we have all account info
-                  final String apiKey = accountManager.getUserData( account,
-                                                                    Constants.FEAT_API_KEY );
-                  final String sharedSecret = accountManager.getUserData( account,
-                                                                          Constants.FEAT_SHARED_SECRET );
-                  
-                  if ( apiKey == null || sharedSecret == null )
-                  {
-                     accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE,
-                                                         authToken );
-                  }
-                  else
-                  {
-                     service = ServiceImpl.getInstance( context,
-                                                        new ApplicationInfo( apiKey,
-                                                                             sharedSecret,
-                                                                             context.getString( R.string.app_name ),
-                                                                             authToken ) );
-                     
-                     final RtmAuth.Perms permission = AccountUtils.getAccessLevel( getContext() );
-                     Log.i( TAG, "Sync with permission " + permission );
-                     
-                     // We can only create a time line with write permission. However, we need delete
-                     // permission to make the server sync transactional. So without delete permissions
-                     // we do only an incoming sync, indicated by timeLine == null.
-                     TimeLineFactory timeLineFactory = null;
-                     if ( permission == Perms.delete )
-                     {
-                        timeLineFactory = new TimeLineFactory( service );
-                     }
-                     
-                     final MolokoSyncResult batch = new MolokoSyncResult( context,
-                                                                          syncResult );
-                     
-                     if ( computeOperationsBatch( service,
-                                                  provider,
-                                                  timeLineFactory,
-                                                  extras,
-                                                  batch ) )
-                     {
-                        final TransactionalAccess transactionalAccess = contentProvider.newTransactionalAccess();
-                        transactionalAccess.beginTransaction();
-                        
-                        try
-                        {
-                           applyLocalOperations( provider,
-                                                 batch.localOps,
-                                                 syncResult );
-                           
-                           transactionalAccess.setTransactionSuccessful();
-                           
-                           // If we synced only the settings, we do not update the
-                           // last sync time cause this was no full sync.
-                           if ( !extras.getBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
-                                                    false ) )
-                              updateSyncTime();
-                           
-                           Log.i( TAG,
-                                  "Applying sync operations batch succeded. "
-                                     + syncResult );
-                        }
-                        // let outer try catch the exception
-                        finally
-                        {
-                           transactionalAccess.endTransaction();
-                        }
-                     }
-                     
-                     // computeOperationsBatch failed
-                     else
-                     {
-                        if ( syncResult.stats.numAuthExceptions > 0 )
-                        {
-                           Log.e( TAG,
-                                  syncResult.stats.numAuthExceptions
-                                     + " authentication exceptions. Invalidating auth token." );
-                           
-                           accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE,
-                                                               authToken );
-                        }
-                        
-                        Log.e( TAG, "Applying sync operations batch failed. "
-                           + syncResult );
-                        clearSyncResult( syncResult );
-                     }
-                  }
+                  performSettingsSync( provider, service );
                }
-               
-               // AuthToken is null
                else
                {
-                  accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE,
-                                                      authToken );
+                  performFullSync( provider, service );
                }
             }
-            catch ( SQLException e )
+            else
             {
-               syncResult.databaseError = true;
-               Log.e( TAG, "SQLException", e );
-            }
-            catch ( IllegalStateException e )
-            {
-               syncResult.databaseError = true;
-               Log.e( TAG, "IllegalStateException", e );
-            }
-            catch ( AuthenticatorException e )
-            {
-               syncResult.stats.numParseExceptions++;
-               Log.e( TAG, "AuthenticatorException", e );
-            }
-            catch ( OperationCanceledException e )
-            {
-               Log.e( TAG, "OperationCanceledExcetpion", e );
-            }
-            catch ( IOException e )
-            {
-               syncResult.stats.numIoExceptions++;
-               Log.e( TAG, "IOException", e );
-            }
-            catch ( ParseException e )
-            {
-               syncResult.stats.numParseExceptions++;
-               Log.e( TAG, "ParseException", e );
-            }
-            catch ( ServiceException e )
-            {
-               if ( e instanceof ServiceInternalException )
-                  SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
-                                                            TAG,
-                                                            syncResult );
-               else
-               {
-                  syncResult.stats.numIoExceptions++;
-                  Log.e( TAG, "ServiceException", e );
-               }
-            }
-            catch ( RemoteException e )
-            {
-               syncResult.stats.numIoExceptions++;
-               Log.e( TAG, "RemoteException", e );
-            }
-            catch ( OperationApplicationException e )
-            {
-               syncResult.databaseError = true;
-               Log.e( TAG, "OperationApplicationException", e );
-            }
-            finally
-            {
-               if ( service != null )
-                  service.shutdown();
-               
-               if ( syncResult.stats.numIoExceptions > 0 )
-                  MolokoApp.get( context.getApplicationContext() )
-                           .getPeriodicSyncHander()
-                           .delayNextSync( syncResult,
-                                           ( 5 * DateUtils.MINUTE_IN_MILLIS ) / 1000 );
+               invalidateAccount( authToken );
             }
          }
-         else
+         catch ( SyncException e )
          {
-            Log.e( TAG, "No AccountManager" );
+            if ( syncResult.stats.numAuthExceptions > 0 )
+            {
+               Log.e( TAG, syncResult.stats.numAuthExceptions
+                  + " authentication exceptions. Invalidating auth token." );
+               
+               invalidateAccount( authToken );
+            }
+            
+            Log.e( TAG, "Applying sync operations batch failed. " + syncResult );
+            clearSyncResult( syncResult );
          }
-         
-         context.sendBroadcast( Intents.createSyncFinishedIntent() );
+         finally
+         {
+            if ( service != null )
+               service.shutdown();
+            
+            if ( syncResult.stats.numIoExceptions > 0 )
+               MolokoApp.get( context.getApplicationContext() )
+                        .getPeriodicSyncHander()
+                        .delayNextSync( syncResult,
+                                        ( 5 * DateUtils.MINUTE_IN_MILLIS ) / 1000 );
+            
+            this.syncResult = null;
+            molokoSyncResult = null;
+            
+            context.sendBroadcast( Intents.createSyncFinishedIntent() );
+         }
       }
       else
       {
@@ -306,14 +180,159 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
    
    
-   private void applyLocalOperations( ContentProviderClient provider,
-                                      List< ? extends IContentProviderSyncOperation > operations,
-                                      SyncResult syncResult ) throws RemoteException,
-                                                             OperationApplicationException
+   private String checkAccount( Account account )
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      
+      final String authToken;
+      try
+      {
+         authToken = accountManager.blockingGetAuthToken( account,
+                                                          Constants.AUTH_TOKEN_TYPE,
+                                                          true /* notifyAuthFailure */);
+      }
+      catch ( OperationCanceledException e )
+      {
+         throw new SyncException( e );
+      }
+      catch ( AuthenticatorException e )
+      {
+         ++syncResult.stats.numAuthExceptions;
+         throw new SyncException( e );
+      }
+      catch ( IOException e )
+      {
+         ++syncResult.stats.numIoExceptions;
+         throw new SyncException( e );
+      }
+      
+      return authToken;
+   }
+   
+   
+   
+   private Service createService( Account account, String authToken )
+   {
+      final Pair< String, String > credentials = getCredentials( account );
+      
+      final Service service;
+      try
+      {
+         service = ServiceImpl.getInstance( context,
+                                            new ApplicationInfo( credentials.first,
+                                                                 credentials.second,
+                                                                 context.getString( R.string.app_name ),
+                                                                 authToken ) );
+      }
+      catch ( ServiceInternalException e )
+      {
+         SyncUtils.handleServiceInternalException( e, TAG, syncResult );
+         throw new SyncException( e );
+      }
+      
+      return service;
+   }
+   
+   
+   
+   private Pair< String, String > getCredentials( Account account )
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      
+      final String apiKey = accountManager.getUserData( account,
+                                                        Constants.FEAT_API_KEY );
+      final String sharedSecret = accountManager.getUserData( account,
+                                                              Constants.FEAT_SHARED_SECRET );
+      
+      return Pair.create( apiKey, sharedSecret );
+   }
+   
+   
+   
+   private void invalidateAccount( String authToken )
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE, authToken );
+   }
+   
+   
+   
+   private static boolean isSettingsOnlySync( Bundle extras )
+   {
+      final boolean isSyncSettingsOnly = extras.getBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
+                                                            false );
+      return isSyncSettingsOnly;
+   }
+   
+   
+   
+   private void performFullSync( ContentProviderClient contentProvider,
+                                 Service service )
+   {
+      try
+      {
+         performElementsSync( contentProvider, service );
+         performSettingsSync( contentProvider, service );
+         
+         updateSyncTime();
+      }
+      catch ( SQLException e )
+      {
+         syncResult.databaseError = true;
+         throw new SyncException( e );
+      }
+      catch ( IllegalStateException e )
+      {
+         syncResult.databaseError = true;
+         throw new SyncException( e );
+      }
+      catch ( ParseException e )
+      {
+         syncResult.stats.numParseExceptions++;
+         throw new SyncException( e );
+      }
+   }
+   
+   
+   
+   private RtmProvider ensureTransactionSupport( ContentProviderClient provider )
+   {
+      if ( provider.getLocalContentProvider() instanceof RtmProvider )
+         return (RtmProvider) provider.getLocalContentProvider();
+      else
+         throw new IllegalStateException( "no ContentProvider transaction support" );
+   }
+   
+   
+   
+   private void applyTransactional( ContentProviderClient contentProvider )
+   {
+      final RtmProvider rtmProvider = ensureTransactionSupport( contentProvider );
+      final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
+      transactionalAccess.beginTransaction();
+      
+      try
+      {
+         applyLocalOperations( contentProvider );
+         
+         transactionalAccess.setTransactionSuccessful();
+         
+         Log.i( TAG, "Applying sync operations batch succeded. " + syncResult );
+      }
+      // let outer try catch the exception
+      finally
+      {
+         transactionalAccess.endTransaction();
+      }
+   }
+   
+   
+   
+   private void applyLocalOperations( ContentProviderClient provider )
    {
       final ArrayList< ContentProviderOperation > contentProviderOperationsBatch = new ArrayList< ContentProviderOperation >();
       
-      for ( IContentProviderSyncOperation contentProviderSyncOperation : operations )
+      for ( IContentProviderSyncOperation contentProviderSyncOperation : molokoSyncResult.localOps )
       {
          final int count = contentProviderSyncOperation.getBatch( contentProviderOperationsBatch );
          ContentProviderSyncOperation.updateSyncResult( syncResult,
@@ -321,76 +340,120 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                         count );
       }
       
-      provider.applyBatch( contentProviderOperationsBatch );
+      try
+      {
+         provider.applyBatch( contentProviderOperationsBatch );
+      }
+      catch ( RemoteException e )
+      {
+         ++syncResult.stats.numIoExceptions;
+         throw new SyncException( e );
+      }
+      catch ( OperationApplicationException e )
+      {
+         syncResult.databaseError = true;
+         throw new SyncException( e );
+      }
    }
    
    
    
-   private boolean computeOperationsBatch( Service service,
-                                           ContentProviderClient provider,
-                                           TimeLineFactory timeLineFactory,
-                                           Bundle extras,
-                                           MolokoSyncResult batch )
+   private void performSettingsSync( ContentProviderClient contentProvider,
+                                     Service service )
+   {
+      final boolean ok = RtmSettingsSync.computeSync( service,
+                                                      contentProvider,
+                                                      molokoSyncResult );
+      logSyncStep( "RtmSettings", ok );
+      if ( !ok )
+      {
+         throw new SyncException();
+      }
+      
+      applyTransactional( contentProvider );
+   }
+   
+   
+   
+   private void performElementsSync( ContentProviderClient contentProvider,
+                                     Service service )
+   {
+      final RtmAuth.Perms permission = AccountUtils.getAccessLevel( context );
+      Log.i( TAG, "Sync with permission " + permission );
+      
+      // We can only create a time line with write permission. However, we need delete
+      // permission to make the server sync transactional. So without delete permissions
+      // we do only an incoming sync, indicated by timeLine == null.
+      TimeLineFactory timeLineFactory = null;
+      if ( permission == Perms.delete )
+      {
+         timeLineFactory = new TimeLineFactory( service );
+      }
+      
+      computeElementsOperationsBatch( contentProvider, service, timeLineFactory );
+      
+      applyTransactional( contentProvider );
+   }
+   
+   
+   
+   private void computeElementsOperationsBatch( ContentProviderClient provider,
+                                                Service service,
+                                                TimeLineFactory timeLineFactory )
    {
       boolean ok = true;
       
-      if ( !extras.getBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
-                               false ) )
+      Date lastSyncOut = null;
+      
       {
-         Date lastSyncOut = null;
-         
-         {
-            final Pair< Long, Long > lastSync = getSyncTime();
-            ok = lastSync != null;
-            if ( ok && lastSync.second != null )
-               lastSyncOut = new Date( lastSync.second );
-         }
-         
-         // Sync RtmList
-         ok = ok
-            && RtmListsSync.computeSync( service,
-                                         provider,
-                                         timeLineFactory,
-                                         lastSyncOut,
-                                         batch );
-         
-         ok = ok && logSyncStep( "RtmLists", ok );
-         
-         // Sync RtmTasks + Notes
-         ok = ok
-            && RtmTasksSync.computeSync( service,
-                                         provider,
-                                         timeLineFactory,
-                                         lastSyncOut,
-                                         batch );
-         
-         ok = ok && logSyncStep( "RtmTasks and Notes", ok );
-         
-         // Sync locations
-         ok = ok
-            && RtmLocationsSync.computeSync( service,
-                                             provider,
-                                             lastSyncOut,
-                                             batch );
-         
-         ok = ok && logSyncStep( "RtmLocations", ok );
-         
-         // Sync contacts
-         ok = ok
-            && RtmContactsSync.computeSync( service,
-                                            provider,
-                                            lastSyncOut,
-                                            batch );
-         
-         ok = ok && logSyncStep( "RtmContacts", ok );
+         final Pair< Long, Long > lastSync = getSyncTime();
+         ok = lastSync != null;
+         if ( ok && lastSync.second != null )
+            lastSyncOut = new Date( lastSync.second );
       }
       
-      // Sync settings
-      ok = ok && RtmSettingsSync.computeSync( service, provider, batch );
+      // Sync RtmList
+      ok = ok
+         && RtmListsSync.computeSync( service,
+                                      provider,
+                                      timeLineFactory,
+                                      lastSyncOut,
+                                      molokoSyncResult );
       
-      ok = ok && logSyncStep( "RtmSettings", ok );
+      ok = ok && logSyncStep( "RtmList", ok );
       
-      return ok;
+      // Sync RtmTasks + Notes
+      ok = ok
+         && RtmTasksSync.computeSync( service,
+                                      provider,
+                                      timeLineFactory,
+                                      lastSyncOut,
+                                      molokoSyncResult );
+      
+      ok = ok && logSyncStep( "RtmTasks and Notes", ok );
+      
+      // Sync locations
+      ok = ok
+         && RtmLocationsSync.computeSync( service,
+                                          provider,
+                                          lastSyncOut,
+                                          molokoSyncResult );
+      
+      ok = ok && logSyncStep( "RtmLocations", ok );
+      
+      // Sync contacts
+      ok = ok
+         && RtmContactsSync.computeSync( service,
+                                         provider,
+                                         lastSyncOut,
+                                         molokoSyncResult );
+      
+      ok = ok && logSyncStep( "RtmContacts", ok );
+      
+      if ( !ok )
+      {
+         throw new SyncException();
+      }
    }
    
    
@@ -425,32 +488,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
       
       return result;
-   }
-   
-   
-   
-   public final static ModificationSet getAllModifications( Context context )
-   {
-      ModificationSet modifications = null;
-      
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Modifications.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final List< Modification > allMods = ModificationsProviderPart.getModifications( client,
-                                                                                          null );
-         client.release();
-         
-         if ( allMods != null )
-            modifications = new ModificationSet( allMods );
-         else
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
-      }
-      else
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
-      
-      return modifications;
    }
    
    

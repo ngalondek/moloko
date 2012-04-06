@@ -23,6 +23,9 @@
         <item name="background">@drawable/actionbar_solid</item>
         <item name="android:background">@drawable/actionbar_solid</item>
         
+        <item name="backgroundSplit">@drawable/actionbar_bottom_solid</item>
+        <item name="android:backgroundSplit">@drawable/actionbar_bottom_solid</item>
+        
         <item name="titleTextStyle">@style/ActionBarTextStyle</item>
         <item name="android:titleTextStyle">@style/ActionBarTextStyle</item>
         
@@ -30,11 +33,6 @@
         <item name="android:subtitleTextStyle">@style/ActionBarSubtitleTextStyle</item>
     </style>
 
-    <style name="ActionBarStyle.Home">
-        <item name="displayOptions">useLogo|showHome|showTitle</item>
-        <item name="android:displayOptions">useLogo|showHome|showTitle</item>
-    </style>
-    
     <style name="ActionBarStyle.HomeAsUp">
         <item name="displayOptions">showHome|homeAsUp|showTitle</item>
         <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>        

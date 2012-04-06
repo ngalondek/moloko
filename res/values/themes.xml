@@ -42,13 +42,6 @@
         <!-- Widgets -->
         <item name="android:listViewStyle">@style/ForceWhiteListViewStyle</item>
     </style>
-
-    <style name="Theme.Moloko.Home">
-
-        <!-- ActionBar -->
-        <item name="actionBarStyle">@style/ActionBarStyle.Home</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle.Home</item>        
-    </style>
     
     <style name="Theme.Moloko.TasksList">
         

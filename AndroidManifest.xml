@@ -79,8 +79,7 @@
       <!-- Activities -->
       <activity
          android:label="@string/app_name"
-         android:name=".activities.StartUpActivity"
-         android:theme="@style/Theme.Moloko.Home">
+         android:name=".activities.StartUpActivity">
          <intent-filter>
             <action
                android:name="android.intent.action.MAIN" />
@@ -91,8 +90,7 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".activities.HomeActivity"
-         android:theme="@style/Theme.Moloko.Home">
+         android:name=".activities.HomeActivity">
       </activity>
 
       <activity
@@ -169,7 +167,8 @@
       <activity
          android:label="@string/app_task"
          android:name=".activities.TaskActivity"
-         android:theme="@style/Theme.Moloko.Task">
+         android:theme="@style/Theme.Moloko.Task"
+         android:uiOptions="splitActionBarWhenNarrow">
          
          <!-- Show a single task -->
          <intent-filter>

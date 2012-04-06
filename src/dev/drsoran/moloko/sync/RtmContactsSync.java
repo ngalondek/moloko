@@ -48,7 +48,7 @@ public final class RtmContactsSync
       + RtmContactsSync.class.getSimpleName();
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       Date lastSync,

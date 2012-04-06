@@ -55,7 +55,6 @@ import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
@@ -230,10 +229,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          
          subMenu.setIcon( R.drawable.ic_menu_sort );
          subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
-         
-         UIUtils.addCompatibilityActionView( getSherlockActivity(),
-                                             menu,
-                                             subMenu.getItem() );
          
          subMenu.add( OptionsMenuGroup.SORT,
                       OptionsMenu.SORT_PRIO,

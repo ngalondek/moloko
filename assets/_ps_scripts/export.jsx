@@ -128,7 +128,7 @@ function exportFolder( folder, prefix )
 					// resolve links
 					else if ( file.alias )
 					{
-                           file = file.resolve();
+                           file = resolveLink( file );
 					}
                 
 					// Export the file
@@ -352,7 +352,7 @@ function resizeImagePx( pixel )
 										   ResampleMethod.BICUBIC );
 }
 
-function resizeImagePx( width, height )
+function resizeImagePx2( width, height )
 {
     var idImgS = charIDToTypeID( "ImgS" );
     var desc2 = new ActionDescriptor();
@@ -972,17 +972,34 @@ function undo()
 
 function resolveLink( file )
 {
-	var fileResolved = null;
-	
-	if ( file instanceof File )
-	{
-	   fileResolved = new File( preProdFolder + "/" + file.name + ".psd" );
-	}
-	
-	if ( fileResolved != null && fileResolved.exists )
+    var fileResolved = resolveLinkFolder(preProdFolder, file);
+
+	if ( fileResolved == null )
+    {
+       var parent = file.parent;
+       while( fileResolved == null && parent != preProdFolder)
+       {
+           fileResolved = resolveLinkFolder(parent, file);
+           parent = parent.parent;
+       }
+    }
+
+    return fileResolved;
+}
+
+function resolveLinkFolder( folder, file )
+{
+    var fileResolved = null;
+    
+    if ( file instanceof File )
+    {
+        fileResolved = new File( folder + "/" + file.name + ".psd" );
+    }
+
+     if ( fileResolved != null && fileResolved.exists )
 		return fileResolved;
-   else
-   	return null;
+     else
+        return null;
 }
 
 function loadMolokoStyles()

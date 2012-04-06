@@ -30,7 +30,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
@@ -57,17 +56,14 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.layouts.ActionBarMenuItemView;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
@@ -682,11 +678,6 @@ public final class UIUtils
          }
          
          item.setShowAsAction( showAsActionFlags );
-         
-         if ( showAsActionFlags != MenuItem.SHOW_AS_ACTION_NEVER )
-         {
-            addCompatibilityActionView( context, menu, item );
-         }
       }
       else
       {
@@ -694,25 +685,6 @@ public final class UIUtils
       }
       
       return item;
-   }
-   
-   
-   
-   public static void addCompatibilityActionView( Context context,
-                                                  Menu menu,
-                                                  MenuItem item )
-   {
-      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) == false )
-      {
-         
-         final ActionBarMenuItemView actionBarMenuItemView = (ActionBarMenuItemView) LayoutInflater.from( context )
-                                                                                                   .inflate( R.layout.app_action_bar_item_view,
-                                                                                                             null );
-         actionBarMenuItemView.initialize( (MenuItemImpl) item, 0 );
-         actionBarMenuItemView.setInvokeTarget( menu, item.getItemId() );
-         
-         item.setActionView( actionBarMenuItemView );
-      }
    }
    
    

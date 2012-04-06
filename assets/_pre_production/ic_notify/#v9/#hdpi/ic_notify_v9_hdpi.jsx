@@ -1,6 +1,6 @@
 ﻿hdpiFolder = preProdFolder + "/../../res/drawable-hdpi-v9";
 
-resizeImagePx( 24, 38 );
+resizeImagePx2( 24, 38 );
 
 if ( selectLayer( activeDocument, "text" ) )
 {

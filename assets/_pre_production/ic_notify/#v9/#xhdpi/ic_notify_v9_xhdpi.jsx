@@ -1,6 +1,6 @@
 ﻿xhdpiFolder = preProdFolder + "/../../res/drawable-xhdpi-v9";
 
-resizeImagePx( 32, 50 );
+resizeImagePx2( 32, 50 );
 
 if ( selectLayer( activeDocument, "text" ) )
 {

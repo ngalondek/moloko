@@ -13,8 +13,8 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"   
-   android:versionName="0.16.2b"
-   android:versionCode="90114"
+   android:versionName="0.16.3b"
+   android:versionCode="90115"
    android:installLocation="internalOnly">
 
    <uses-sdk

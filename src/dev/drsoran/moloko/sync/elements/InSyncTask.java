@@ -32,8 +32,8 @@ import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation.Builder;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -52,28 +52,28 @@ public class InSyncTask extends SyncTaskBase implements
    public final static LessIdComperator< InSyncTask > LESS_ID = new LessIdComperator< InSyncTask >();
    
    
-
+   
    public InSyncTask( RtmTaskSeries taskSeries, RtmTask task )
    {
       super( taskSeries, task );
    }
    
-
-
+   
+   
    public InSyncTask( RtmTaskSeries taskSeries, String taskId )
    {
       super( taskSeries, taskId );
    }
    
-
-
+   
+   
    public InSyncTask( RtmTaskSeries taskSeries )
    {
       super( taskSeries );
    }
    
-
-
+   
+   
    @Override
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
@@ -100,8 +100,8 @@ public class InSyncTask extends SyncTaskBase implements
       return operation.build();
    }
    
-
-
+   
+   
    @Override
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( InSyncTask serverElement )
    {
@@ -111,24 +111,25 @@ public class InSyncTask extends SyncTaskBase implements
       final boolean hasTaskMoved = SyncUtils.hasChanged( serverElement.taskSeries.getId(),
                                                          taskSeries.getId() );
       
-      // Sync task
-      syncTask( serverElement, operations );
-      
       if ( hasTaskMoved )
       {
          // Insert new taskseries
          operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                                 .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
+                                                 .withValues( RtmTaskSeriesProviderPart.getContentValues( serverElement.taskSeries,
                                                                                                           true ) )
                                                  .build() );
          
          // Insert participants
-         final ParticipantList participantList = taskSeries.getParticipants();
+         final ParticipantList participantList = serverElement.taskSeries.getParticipants();
          
          if ( participantList.getCount() > 0 )
             operations.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
       }
-      else
+      
+      // Sync task
+      syncTask( serverElement, operations );
+      
+      if ( !hasTaskMoved )
       {
          // Sync participants
          syncParticipants( serverElement, operations );
@@ -140,8 +141,8 @@ public class InSyncTask extends SyncTaskBase implements
       return operations.build();
    }
    
-
-
+   
+   
    private void syncTask( InSyncTask serverElement, Builder operations )
    {
       final Uri contentUri = Queries.contentUriWithId( RawTasks.CONTENT_URI,
@@ -213,16 +214,16 @@ public class InSyncTask extends SyncTaskBase implements
                                                  .build() );
    }
    
-
-
+   
+   
    private void syncParticipants( InSyncTask serverElement, Builder operations )
    {
       operations.add( taskSeries.getParticipants()
                                 .computeContentProviderUpdateOperation( serverElement.taskSeries.getParticipants() ) );
    }
    
-
-
+   
+   
    private void syncTaskSeries( InSyncTask serverElement, Builder operations )
    {
       final Uri contentUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
@@ -307,8 +308,8 @@ public class InSyncTask extends SyncTaskBase implements
       }
    }
    
-
-
+   
+   
    @Override
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {

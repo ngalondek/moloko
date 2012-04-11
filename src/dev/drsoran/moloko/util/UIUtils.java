@@ -546,8 +546,7 @@ public final class UIUtils
                                                      int menuOrder,
                                                      int showAsActionFlags )
    {
-      final MenuItem menuItem = addOptionalMenuItem( context,
-                                                     menu,
+      final MenuItem menuItem = addOptionalMenuItem( menu,
                                                      R.id.menu_settings,
                                                      context.getString( R.string.phr_settings ),
                                                      menuOrder,
@@ -567,8 +566,7 @@ public final class UIUtils
                                                    int menuOrder,
                                                    int showAsActionFlags )
    {
-      final MenuItem menuItem = addOptionalMenuItem( activity,
-                                                     menu,
+      final MenuItem menuItem = addOptionalMenuItem( menu,
                                                      R.id.menu_search_tasks,
                                                      activity.getString( R.string.search_hint ),
                                                      menuOrder,
@@ -596,8 +594,7 @@ public final class UIUtils
                                                  int menuOrder,
                                                  int showAsActionFlags )
    {
-      final MenuItem menuItem = addOptionalMenuItem( activity,
-                                                     menu,
+      final MenuItem menuItem = addOptionalMenuItem( menu,
                                                      R.id.menu_sync,
                                                      activity.getString( R.string.phr_do_sync ),
                                                      menuOrder,
@@ -621,8 +618,7 @@ public final class UIUtils
    
    
    
-   public final static MenuItem addOptionalMenuItem( Context context,
-                                                     Menu menu,
+   public final static MenuItem addOptionalMenuItem( Menu menu,
                                                      int itemId,
                                                      String title,
                                                      int order,
@@ -631,8 +627,7 @@ public final class UIUtils
                                                      int showAsActionFlags,
                                                      boolean show )
    {
-      return addOptionalMenuItem( context,
-                                  menu,
+      return addOptionalMenuItem( menu,
                                   itemId,
                                   title,
                                   order,
@@ -645,8 +640,7 @@ public final class UIUtils
    
    
    
-   public final static MenuItem addOptionalMenuItem( Context context,
-                                                     Menu menu,
+   public final static MenuItem addOptionalMenuItem( Menu menu,
                                                      int itemId,
                                                      String title,
                                                      int order,

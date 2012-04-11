@@ -72,8 +72,8 @@ import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
@@ -423,68 +423,50 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       final boolean taskCanBeEdited = task != null
          && canEditFragment( R.id.frag_task );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.COMPLETE_TASK,
-                                   getString( R.string.app_task_complete ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_complete,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS
-                                      | MenuItem.SHOW_AS_ACTION_WITH_TEXT,
-                                   !isInEditMode && taskCanBeEdited
-                                      && task.getCompleted() == null );
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.UNCOMPLETE_TASK,
-                                   getString( R.string.app_task_uncomplete ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_incomplete,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS
-                                      | MenuItem.SHOW_AS_ACTION_WITH_TEXT,
-                                   !isInEditMode && taskCanBeEdited
-                                      && task.getCompleted() != null );
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.POSTPONE_TASK,
-                                   getString( R.string.app_task_postpone ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_postponed,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM
-                                      | MenuItem.SHOW_AS_ACTION_WITH_TEXT,
-                                   !isInEditMode && taskCanBeEdited );
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.DELETE_TASK,
-                                   getString( R.string.app_task_delete ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_trash,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   !isInEditMode && taskCanBeEdited );
+      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
+      
+      builder.setItemId( OptionsMenu.COMPLETE_TASK )
+             .setTitle( getString( R.string.app_task_complete ) )
+             .setIconId( R.drawable.ic_menu_complete )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS
+                | MenuItem.SHOW_AS_ACTION_WITH_TEXT )
+             .setShow( !isInEditMode && taskCanBeEdited
+                && task.getCompleted() == null )
+             .build( menu );
+      
+      builder.setItemId( OptionsMenu.UNCOMPLETE_TASK )
+             .setTitle( getString( R.string.app_task_uncomplete ) )
+             .setIconId( R.drawable.ic_menu_incomplete )
+             .build( menu );
+      
+      builder.setItemId( OptionsMenu.COMPLETE_TASK )
+             .setTitle( getString( R.string.app_task_postpone ) )
+             .setIconId( R.drawable.ic_menu_postponed )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS
+                | MenuItem.SHOW_AS_ACTION_WITH_TEXT )
+             .setShow( !isInEditMode && taskCanBeEdited )
+             .build( menu );
+      
+      builder.setItemId( OptionsMenu.DELETE_TASK )
+             .setTitle( getString( R.string.app_task_delete ) )
+             .setIconId( R.drawable.ic_menu_trash )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+             .build( menu );
       
       // Do not check for task != null here cause this is also needed
       // when adding a new task. In this case the task is always null
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.SAVE,
-                                   getString( R.string.app_save ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_disc,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   isInEditMode && hasRtmWriteAccess );
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ABORT,
-                                   getString( R.string.phr_cancel_sync ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_cancel,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   isInEditMode && hasRtmWriteAccess );
+      builder.setItemId( OptionsMenu.SAVE )
+             .setTitle( getString( R.string.app_save ) )
+             .setIconId( R.drawable.ic_menu_disc )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
+             .setShow( isInEditMode && hasRtmWriteAccess )
+             .build( menu );
+      
+      builder.setItemId( OptionsMenu.ABORT )
+             .setTitle( getString( android.R.string.cancel ) )
+             .setIconId( R.drawable.ic_menu_disc )
+             .build( menu );
+      
       return true;
    }
    

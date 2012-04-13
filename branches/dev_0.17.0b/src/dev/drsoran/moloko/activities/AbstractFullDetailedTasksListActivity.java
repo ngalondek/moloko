@@ -44,6 +44,7 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
@@ -98,31 +99,29 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       super.onCreateOptionsMenu( menu );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.QUICK_ADD_TASK,
-                                   getString( R.string.app_task_add ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_task,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   !AccountUtils.isReadOnlyAccess( this ) );
+      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.SHOW_LISTS,
-                                   getString( R.string.taskslist_menu_opt_lists ),
-                                   MenuCategory.ALTERNATIVE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_list,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   Intents.createOpenListOverviewsIntent(),
-                                   !isInDropDownNavigationMode() );
+      builder.setItemId( OptionsMenu.QUICK_ADD_TASK )
+             .setTitle( getString( R.string.app_task_add ) )
+             .setIconId( R.drawable.ic_menu_add_task )
+             .setOrder( MenuCategory.CONTAINER )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
+             .setShow( !AccountUtils.isReadOnlyAccess( this ) )
+             .build( menu );
       
-      UIUtils.addSearchMenuItem( this,
-                                 menu,
-                                 MenuCategory.ALTERNATIVE,
-                                 MenuItem.SHOW_AS_ACTION_IF_ROOM );
+      builder.setItemId( OptionsMenu.SHOW_LISTS )
+             .setTitle( getString( R.string.taskslist_menu_opt_lists ) )
+             .setIconId( R.drawable.ic_menu_list )
+             .setOrder( MenuCategory.ALTERNATIVE )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+             .setShow( !isInDropDownNavigationMode() )
+             .setIntent( Intents.createOpenListOverviewsIntent() )
+             .build( menu );
+      
+      MolokoMenuItemBuilder.newSearchMenuItem( this )
+                           .setOrder( MenuCategory.ALTERNATIVE )
+                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                           .build( menu );
       
       return true;
    }

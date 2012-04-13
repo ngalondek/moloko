@@ -39,6 +39,7 @@ import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
@@ -109,25 +110,23 @@ public class HomeActivity extends MolokoFragmentActivity implements
    {
       super.onCreateOptionsMenu( menu );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ADD_TASK,
-                                   getString( R.string.app_task_add ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_task,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   AccountUtils.isWriteableAccess( this ) );
+      new MolokoMenuItemBuilder().setItemId( OptionsMenu.ADD_TASK )
+                                 .setTitle( getString( R.string.app_task_add ) )
+                                 .setIconId( R.drawable.ic_menu_add_task )
+                                 .setOrder( MenuCategory.CONTAINER )
+                                 .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
+                                 .setShow( AccountUtils.isWriteableAccess( this ) )
+                                 .build( menu );
       
-      UIUtils.addSearchMenuItem( this,
-                                 menu,
-                                 MenuCategory.ALTERNATIVE,
-                                 MenuItem.SHOW_AS_ACTION_ALWAYS );
+      MolokoMenuItemBuilder.newSearchMenuItem( this )
+                           .setOrder( MenuCategory.ALTERNATIVE )
+                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
+                           .build( menu );
       
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               MenuCategory.ALTERNATIVE,
-                               MenuItem.SHOW_AS_ACTION_ALWAYS );
+      MolokoMenuItemBuilder.newSyncMenuItem( this )
+                           .setOrder( MenuCategory.ALTERNATIVE )
+                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
+                           .build( menu );
       
       return true;
    }

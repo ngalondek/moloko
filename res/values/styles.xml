@@ -9,8 +9,7 @@
 	PURPOSE. See the GNU General Public License for more details. You should 
 	have received a copy of the GNU General Public License along with Moloko. 
 	If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-	- implementation
--->
+	- implementation-->
 
 <resources>
 
@@ -31,6 +30,9 @@
         
         <item name="subtitleTextStyle">@style/ActionBarSubtitleTextStyle</item>
         <item name="android:subtitleTextStyle">@style/ActionBarSubtitleTextStyle</item>
+        
+        <item name="actionMenuTextColor">@color/app_actionbar_subtitle_color</item>
+        <item name="android:actionMenuTextColor">@color/app_actionbar_subtitle_color</item>
     </style>
 
     <style name="ActionBarStyle.HomeAsUp">
@@ -38,18 +40,16 @@
         <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>        
     </style>
     
-    <style name="ActionBarTextStyle">
+    <style name="ActionBarTextStyle" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
         <item name="android:textSize">@dimen/app_actionbar_text_size</item>
         <item name="android:textColor">@color/app_actionbar_text_color</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="ActionBarSubtitleTextStyle">
-        <item name="android:textSize">@dimen/app_actionbar_subtitle_size</item>
+    <style name="ActionBarSubtitleTextStyle" parent="TextAppearance.Sherlock.Widget.ActionBar.Subtitle">
         <item name="android:textColor">@color/app_actionbar_subtitle_color</item>
-        <item name="android:textStyle">normal</item>
     </style>
-
+        
     <style name="Tag">
         <item name="android:textColor">@color/app_tag_text</item>
         <item name="android:background">@drawable/app_tag_bgnd</item>

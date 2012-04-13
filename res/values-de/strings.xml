@@ -32,9 +32,9 @@
    <string name="app_task_add">Neue Aufgabe</string>
    <string name="app_task_select_multiple">Aufgaben wählen (%1$d)</string>
    <string name="app_task_complete">Erledigt</string>
-   <string name="app_task_uncomplete">Nicht erledigt</string>
-   <string name="app_task_delete">Aufgabe löschen</string>
-   <string name="app_task_postpone">Aufgabe aufschieben</string>
+   <string name="app_task_uncomplete">Unerledigt</string>
+   <string name="app_task_delete">Löschen</string>
+   <string name="app_task_postpone">Schieben</string>
    <string name="app_change_tags">Tags bearbeiten</string>
 	<string name="app_note">Notiz</string>
 	<string name="app_tagcloud">Tags</string>

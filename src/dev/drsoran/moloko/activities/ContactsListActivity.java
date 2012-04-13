@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -31,18 +31,12 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 
 
 public class ContactsListActivity extends MolokoFragmentActivity implements
          IContactsListFragmentListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + ContactsListActivity.class.getSimpleName();
-   
-   
-   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -56,15 +50,14 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      UIUtils.addSettingsMenuItem( this,
-                                   menu,
-                                   MenuCategory.ALTERNATIVE,
-                                   MenuItem.SHOW_AS_ACTION_NEVER );
+      MolokoMenuItemBuilder.newSettingsMenuItem( this )
+                           .setOrder( MenuCategory.ALTERNATIVE )
+                           .build( menu );
       
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               MenuCategory.NONE,
-                               MenuItem.SHOW_AS_ACTION_IF_ROOM );
+      MolokoMenuItemBuilder.newSyncMenuItem( this )
+                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                           .build( menu );
+      
       return true;
    }
    

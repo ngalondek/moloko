@@ -41,7 +41,7 @@ import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 
 
 public class TaskSearchResultActivity extends
@@ -92,26 +92,25 @@ public class TaskSearchResultActivity extends
    {
       super.onCreateOptionsMenu( menu );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ADD_LIST,
-                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_list,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   lastQuerySucceeded
-                                      && AccountUtils.isWriteableAccess( this ) );
+      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.CLEAR_HISTORY,
-                                   getString( R.string.tasksearchresult_menu_opt_clear_history_title ),
-                                   MenuCategory.ALTERNATIVE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_delete,
-                                   MenuItem.SHOW_AS_ACTION_NEVER,
-                                   true );
+      builder.setItemId( OptionsMenu.ADD_LIST )
+             .setTitle( getString( R.string.tasksearchresult_menu_add_smart_list ) )
+             .setIconId( R.drawable.ic_menu_add_list )
+             .setOrder( MenuCategory.CONTAINER )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+             .setShow( lastQuerySucceeded
+                && AccountUtils.isWriteableAccess( this ) )
+             .build( menu );
+      
+      builder.setItemId( OptionsMenu.CLEAR_HISTORY )
+             .setTitle( getString( R.string.tasksearchresult_menu_opt_clear_history_title ) )
+             .setIconId( R.drawable.ic_menu_delete )
+             .setOrder( MenuCategory.ALTERNATIVE )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_NEVER )
+             .setShow( true )
+             .build( menu );
+      
       return true;
    }
    

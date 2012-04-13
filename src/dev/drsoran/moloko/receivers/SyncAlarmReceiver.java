@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -42,8 +42,7 @@ public class SyncAlarmReceiver extends BroadcastReceiver
       {
          if ( SyncUtils.isReadyToSync( context.getApplicationContext() ) )
          {
-            SyncUtils.requestScheduledSync( context.getApplicationContext(),
-                                            account );
+            SyncUtils.requestScheduledSync( account );
          }
       }
       else

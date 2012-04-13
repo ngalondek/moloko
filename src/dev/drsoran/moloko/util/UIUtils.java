@@ -26,9 +26,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -55,16 +53,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
-
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
@@ -537,172 +528,6 @@ public final class UIUtils
    {
       textView.setMovementMethod( LinkMovementMethod.getInstance() );
       textView.setText( text, BufferType.SPANNABLE );
-   }
-   
-   
-   
-   public final static MenuItem addSettingsMenuItem( final Context context,
-                                                     Menu menu,
-                                                     int menuOrder,
-                                                     int showAsActionFlags )
-   {
-      final MenuItem menuItem = addOptionalMenuItem( menu,
-                                                     R.id.menu_settings,
-                                                     context.getString( R.string.phr_settings ),
-                                                     menuOrder,
-                                                     Menu.NONE,
-                                                     R.drawable.ic_menu_settings,
-                                                     showAsActionFlags,
-                                                     new Intent( context,
-                                                                 MolokoPreferencesActivity.class ),
-                                                     true );
-      return menuItem;
-   }
-   
-   
-   
-   public final static MenuItem addSearchMenuItem( final Activity activity,
-                                                   Menu menu,
-                                                   int menuOrder,
-                                                   int showAsActionFlags )
-   {
-      final MenuItem menuItem = addOptionalMenuItem( menu,
-                                                     R.id.menu_search_tasks,
-                                                     activity.getString( R.string.search_hint ),
-                                                     menuOrder,
-                                                     Menu.NONE,
-                                                     R.drawable.ic_menu_search,
-                                                     showAsActionFlags,
-                                                     true );
-      
-      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
-      {
-         @Override
-         public boolean onMenuItemClick( MenuItem item )
-         {
-            return activity.onSearchRequested();
-         }
-      } );
-      
-      return menuItem;
-   }
-   
-   
-   
-   public final static MenuItem addSyncMenuItem( final FragmentActivity activity,
-                                                 Menu menu,
-                                                 int menuOrder,
-                                                 int showAsActionFlags )
-   {
-      final MenuItem menuItem = addOptionalMenuItem( menu,
-                                                     R.id.menu_sync,
-                                                     activity.getString( R.string.phr_do_sync ),
-                                                     menuOrder,
-                                                     Menu.NONE,
-                                                     R.drawable.ic_menu_refresh,
-                                                     showAsActionFlags,
-                                                     true );
-      
-      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
-      {
-         @Override
-         public boolean onMenuItemClick( MenuItem item )
-         {
-            SyncUtils.requestManualSync( activity );
-            return true;
-         }
-      } );
-      
-      return menuItem;
-   }
-   
-   
-   
-   public final static MenuItem addOptionalMenuItem( Menu menu,
-                                                     int itemId,
-                                                     String title,
-                                                     int order,
-                                                     int groupId,
-                                                     int iconId,
-                                                     int showAsActionFlags,
-                                                     boolean show )
-   {
-      return addOptionalMenuItem( menu,
-                                  itemId,
-                                  title,
-                                  order,
-                                  groupId,
-                                  iconId,
-                                  showAsActionFlags,
-                                  null,
-                                  show );
-   }
-   
-   
-   
-   public final static MenuItem addOptionalMenuItem( Menu menu,
-                                                     int itemId,
-                                                     String title,
-                                                     int order,
-                                                     int groupId,
-                                                     int iconId,
-                                                     int showAsActionFlags,
-                                                     Intent intent,
-                                                     boolean show )
-   {
-      MenuItem item = null;
-      
-      if ( show )
-      {
-         item = menu.findItem( itemId );
-         
-         if ( item == null )
-         {
-            item = menu.add( groupId, itemId, order, title );
-            
-            if ( iconId != -1 )
-               item.setIcon( iconId );
-         }
-         
-         item.setTitle( title );
-         
-         if ( intent != null )
-         {
-            item.setIntent( intent );
-         }
-         
-         item.setShowAsAction( showAsActionFlags );
-      }
-      else
-      {
-         menu.removeItem( itemId );
-      }
-      
-      return item;
-   }
-   
-   
-   
-   public final static void addOptionsMenuIntent( Context context,
-                                                  Menu menu,
-                                                  int id,
-                                                  Class< ? > activityClass )
-   {
-      addOptionsMenuIntent( context, menu, id, new Intent( context,
-                                                           activityClass ) );
-   }
-   
-   
-   
-   public final static void addOptionsMenuIntent( Context context,
-                                                  Menu menu,
-                                                  int id,
-                                                  Intent intent )
-   {
-      final MenuItem item = menu.findItem( id );
-      
-      if ( item != null )
-         item.setIntent( intent );
    }
    
    

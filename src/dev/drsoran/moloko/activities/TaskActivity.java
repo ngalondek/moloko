@@ -437,9 +437,11 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       builder.setItemId( OptionsMenu.UNCOMPLETE_TASK )
              .setTitle( getString( R.string.app_task_uncomplete ) )
              .setIconId( R.drawable.ic_menu_incomplete )
+             .setShow( !isInEditMode && taskCanBeEdited
+                && task.getCompleted() != null )
              .build( menu );
       
-      builder.setItemId( OptionsMenu.COMPLETE_TASK )
+      builder.setItemId( OptionsMenu.POSTPONE_TASK )
              .setTitle( getString( R.string.app_task_postpone ) )
              .setIconId( R.drawable.ic_menu_postponed )
              .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS
@@ -464,7 +466,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       
       builder.setItemId( OptionsMenu.ABORT )
              .setTitle( getString( android.R.string.cancel ) )
-             .setIconId( R.drawable.ic_menu_disc )
+             .setIconId( R.drawable.ic_menu_cancel )
              .build( menu );
       
       return true;

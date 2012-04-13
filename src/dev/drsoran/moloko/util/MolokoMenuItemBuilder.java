@@ -22,10 +22,17 @@
 
 package dev.drsoran.moloko.util;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
+
+import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
 public final class MolokoMenuItemBuilder
@@ -44,7 +51,9 @@ public final class MolokoMenuItemBuilder
    
    private Intent intent;
    
-   private boolean show;
+   private boolean show = true;
+   
+   private OnMenuItemClickListener onClickListener;
    
    
    
@@ -112,6 +121,14 @@ public final class MolokoMenuItemBuilder
    
    
    
+   public MolokoMenuItemBuilder setOnClickListener( OnMenuItemClickListener onClickListener )
+   {
+      this.onClickListener = onClickListener;
+      return this;
+   }
+   
+   
+   
    public void build( Menu menu )
    {
       if ( show )
@@ -127,17 +144,58 @@ public final class MolokoMenuItemBuilder
          }
          
          item.setTitle( title );
-         
-         if ( intent != null )
-         {
-            item.setIntent( intent );
-         }
-         
+         item.setIntent( intent );
+         item.setOnMenuItemClickListener( onClickListener );
          item.setShowAsAction( showAsActionFlags );
       }
       else
       {
          menu.removeItem( itemId );
       }
+   }
+   
+   
+   
+   public final static MolokoMenuItemBuilder newSyncMenuItem( final FragmentActivity activity )
+   {
+      return new MolokoMenuItemBuilder().setItemId( R.id.menu_sync )
+                                        .setTitle( activity.getString( R.string.phr_do_sync ) )
+                                        .setIconId( R.drawable.ic_menu_refresh )
+                                        .setOnClickListener( new OnMenuItemClickListener()
+                                        {
+                                           @Override
+                                           public boolean onMenuItemClick( MenuItem item )
+                                           {
+                                              SyncUtils.requestManualSync( activity );
+                                              return true;
+                                           }
+                                        } );
+   }
+   
+   
+   
+   public final static MolokoMenuItemBuilder newSearchMenuItem( final Activity activity )
+   {
+      return new MolokoMenuItemBuilder().setItemId( R.id.menu_search_tasks )
+                                        .setTitle( activity.getString( R.string.search_hint ) )
+                                        .setIconId( R.drawable.ic_menu_search )
+                                        .setOnClickListener( new OnMenuItemClickListener()
+                                        {
+                                           @Override
+                                           public boolean onMenuItemClick( MenuItem item )
+                                           {
+                                              return activity.onSearchRequested();
+                                           }
+                                        } );
+   }
+   
+   
+   
+   public final static MolokoMenuItemBuilder newSettingsMenuItem( Context context )
+   {
+      return new MolokoMenuItemBuilder().setItemId( R.id.menu_settings )
+                                        .setTitle( context.getString( R.string.phr_settings ) )
+                                        .setIconId( R.drawable.ic_menu_settings )
+                                        .setIntent( Intents.createOpenPreferencesIntent( context ) );
    }
 }

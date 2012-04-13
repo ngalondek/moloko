@@ -37,7 +37,7 @@ import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
@@ -87,24 +87,20 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
       
       final boolean hasRtmWriteAccess = AccountUtils.isWriteableAccess( this );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.SAVE,
-                                   getString( R.string.app_save ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_disc,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   hasRtmWriteAccess );
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ABORT,
-                                   getString( R.string.phr_cancel_sync ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_cancel,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   hasRtmWriteAccess );
+      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
+      
+      builder.setItemId( OptionsMenu.SAVE )
+             .setTitle( getString( R.string.app_save ) )
+             .setIconId( R.drawable.ic_menu_disc )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
+             .setShow( hasRtmWriteAccess )
+             .build( menu );
+      
+      builder.setItemId( OptionsMenu.ABORT )
+             .setTitle( getString( android.R.string.cancel ) )
+             .setIconId( R.drawable.ic_menu_cancel )
+             .build( menu );
+      
       return true;
    }
    

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -37,6 +37,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -78,27 +79,23 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       if ( showAddSmartListMenu == null )
          evaluateAddSmartListMenuVisibility();
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ADD_LIST,
-                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_list,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   showAddSmartListMenu.booleanValue()
-                                      && AccountUtils.isWriteableAccess( this ) );
+      final boolean isWritableAccess = AccountUtils.isWriteableAccess( this );
+      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.DELETE_LIST,
-                                   getString( R.string.taskslist_menu_opt_delete_list ),
-                                   MenuCategory.ALTERNATIVE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_trash,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   !isListLocked() && hasListName()
-                                      && !AccountUtils.isReadOnlyAccess( this ) );
+      builder.setItemId( OptionsMenu.ADD_LIST )
+             .setTitle( getString( R.string.tasksearchresult_menu_add_smart_list ) )
+             .setIconId( R.drawable.ic_menu_add_list )
+             .setOrder( MenuCategory.CONTAINER )
+             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+             .setShow( showAddSmartListMenu.booleanValue() && isWritableAccess )
+             .build( menu );
+      
+      builder.setItemId( OptionsMenu.DELETE_LIST )
+             .setTitle( getString( R.string.taskslist_menu_opt_delete_list ) )
+             .setIconId( R.drawable.ic_menu_trash )
+             .setOrder( MenuCategory.ALTERNATIVE )
+             .setShow( !isListLocked() && hasListName() && isWritableAccess )
+             .build( menu );
       
       return true;
    }

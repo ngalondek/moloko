@@ -16,7 +16,7 @@
 
         <!-- ActionBar -->
         <item name="actionBarStyle">@style/ActionBarStyle</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>        
 
         <!-- Widgets -->
         <item name="android:expandableListViewStyle">@style/ExpandableListViewStyle</item>

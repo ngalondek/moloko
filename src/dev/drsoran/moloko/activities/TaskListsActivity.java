@@ -43,6 +43,7 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
@@ -90,30 +91,28 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      UIUtils.addSettingsMenuItem( this,
-                                   menu,
-                                   MenuCategory.ALTERNATIVE,
-                                   MenuItem.SHOW_AS_ACTION_NEVER );
+      MolokoMenuItemBuilder.newSettingsMenuItem( this )
+                           .setOrder( MenuCategory.ALTERNATIVE )
+                           .build( menu );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ADD_LIST,
-                                   getString( R.string.tasklists_menu_add_list ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_list,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   AccountUtils.isWriteableAccess( this ) );
+      new MolokoMenuItemBuilder().setItemId( OptionsMenu.ADD_LIST )
+                                 .setTitle( getString( R.string.tasklists_menu_add_list ) )
+                                 .setIconId( R.drawable.ic_menu_add_list )
+                                 .setOrder( MenuCategory.CONTAINER )
+                                 .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                                 .setShow( AccountUtils.isWriteableAccess( this ) )
+                                 .build( menu );
       
-      UIUtils.addSearchMenuItem( this,
-                                 menu,
-                                 MenuCategory.ALTERNATIVE,
-                                 MenuItem.SHOW_AS_ACTION_IF_ROOM );
+      MolokoMenuItemBuilder.newSearchMenuItem( this )
+                           .setOrder( MenuCategory.ALTERNATIVE )
+                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                           .build( menu );
       
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               MenuCategory.ALTERNATIVE,
-                               MenuItem.SHOW_AS_ACTION_IF_ROOM );
+      MolokoMenuItemBuilder.newSyncMenuItem( this )
+                           .setOrder( MenuCategory.ALTERNATIVE )
+                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                           .build( menu );
+      
       return true;
    }
    

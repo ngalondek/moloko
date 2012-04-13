@@ -48,8 +48,7 @@ import dev.drsoran.moloko.fragments.listeners.IMinDetailedTasksListFragmentListe
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -148,15 +147,13 @@ public class MinDetailedTasksListFragment extends
    {
       super.onCreateOptionsMenu( menu, inflater );
       
-      UIUtils.addOptionalMenuItem( getSherlockActivity(),
-                                   menu,
-                                   OptionsMenu.EDIT_MULTIPLE_TASKS,
-                                   getString( R.string.abstaskslist_menu_opt_edit_multiple ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_edit_multiple_tasks,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   hasMultipleTasks() && hasRtmWriteAccess() );
+      new MolokoMenuItemBuilder().setItemId( OptionsMenu.EDIT_MULTIPLE_TASKS )
+                                 .setTitle( getString( R.string.abstaskslist_menu_opt_edit_multiple ) )
+                                 .setIconId( R.drawable.ic_menu_edit_multiple_tasks )
+                                 .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                                 .setShow( hasMultipleTasks()
+                                    && hasRtmWriteAccess() )
+                                 .build( menu );
    }
    
    

@@ -56,8 +56,8 @@ import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.SelectableTasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.SelectableTask;
 import dev.drsoran.rtm.Task;
@@ -213,24 +213,6 @@ public class SelectableTasksListsFragment extends
    {
       super.onCreateOptionsMenu( menu, inflater );
       
-      menu.add( Menu.NONE,
-                OptionsMenu.SELECT_ALL,
-                MenuCategory.SECONDARY,
-                R.string.select_multiple_tasks_menu_opt_select_all )
-          .setIcon( R.drawable.ic_menu_select_all_tasks );
-      
-      menu.add( Menu.NONE,
-                OptionsMenu.DESELECT_ALL,
-                MenuCategory.SECONDARY,
-                R.string.select_multiple_tasks_menu_opt_unselect_all )
-          .setIcon( R.drawable.ic_menu_select_no_tasks );
-      
-      menu.add( Menu.NONE,
-                OptionsMenu.INVERT_SELECTION,
-                MenuCategory.SECONDARY,
-                R.string.select_multiple_tasks_menu_opt_inv_selection )
-          .setIcon( R.drawable.ic_menu_select_invert_tasks );
-      
       final SelectableTasksListFragmentAdapter adapter = getListAdapter();
       
       if ( adapter != null )
@@ -240,16 +222,35 @@ public class SelectableTasksListsFragment extends
          final List< SelectableTask > tasks = adapter.getSelectedTasks();
          final int selCnt = tasks.size();
          
-         UIUtils.addOptionalMenuItem( getSherlockActivity(),
-                                      menu,
-                                      OptionsMenu.DO_EDIT,
-                                      getString( R.string.select_multiple_tasks_menu_opt_do_edit,
-                                                 selCnt ),
-                                      MenuCategory.SECONDARY,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_edit,
-                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                      someSelected );
+         final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
+         
+         builder.setItemId( OptionsMenu.SELECT_ALL )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_select_all ) )
+                .setIconId( R.drawable.ic_menu_select_all_tasks )
+                .setOrder( MenuCategory.SECONDARY )
+                .setShow( !allSelected )
+                .build( menu );
+         
+         builder.setItemId( OptionsMenu.DESELECT_ALL )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_unselect_all ) )
+                .setIconId( R.drawable.ic_menu_select_no_tasks )
+                .setShow( someSelected )
+                .build( menu );
+         
+         builder.setItemId( OptionsMenu.INVERT_SELECTION )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_inv_selection ) )
+                .setIconId( R.drawable.ic_menu_select_invert_tasks )
+                .setShow( !allSelected && someSelected )
+                .build( menu );
+         
+         builder.setItemId( OptionsMenu.DO_EDIT )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_do_edit,
+                                      selCnt ) )
+                .setIconId( R.drawable.ic_menu_edit )
+                .setOrder( MenuCategory.SECONDARY )
+                .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                .setShow( someSelected )
+                .build( menu );
          
          int selCompl = 0, selUncompl = 0;
          
@@ -262,59 +263,36 @@ public class SelectableTasksListsFragment extends
          }
          
          // The complete task menu is only shown if all selected tasks are uncompleted
-         UIUtils.addOptionalMenuItem( getSherlockActivity(),
-                                      menu,
-                                      OptionsMenu.COMPLETE,
-                                      getString( R.string.select_multiple_tasks_menu_opt_complete,
-                                                 selCnt ),
-                                      MenuCategory.SECONDARY,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_complete,
-                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                      someSelected && selUncompl == selCnt );
+         builder.setItemId( OptionsMenu.COMPLETE )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_complete,
+                                      selCnt ) )
+                .setIconId( R.drawable.ic_menu_complete )
+                .setOrder( MenuCategory.SECONDARY )
+                .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+                .setShow( someSelected && selUncompl == selCnt )
+                .build( menu );
          
          // The incomplete task menu is only shown if all selected tasks are completed
-         UIUtils.addOptionalMenuItem( getSherlockActivity(),
-                                      menu,
-                                      OptionsMenu.INCOMPLETE,
-                                      getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
-                                                 selCnt ),
-                                      MenuCategory.SECONDARY,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_incomplete,
-                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                      someSelected && selCompl == selCnt );
+         builder.setItemId( OptionsMenu.INCOMPLETE )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
+                                      selCnt ) )
+                .setIconId( R.drawable.ic_menu_incomplete )
+                .setShow( someSelected && selCompl == selCnt )
+                .build( menu );
          
-         UIUtils.addOptionalMenuItem( getSherlockActivity(),
-                                      menu,
-                                      OptionsMenu.POSTPONE,
-                                      getString( R.string.select_multiple_tasks_menu_opt_postpone,
-                                                 selCnt ),
-                                      MenuCategory.SECONDARY,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_postponed,
-                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                      someSelected );
+         builder.setItemId( OptionsMenu.POSTPONE )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_postpone,
+                                      selCnt ) )
+                .setIconId( R.drawable.ic_menu_postponed )
+                .setShow( someSelected )
+                .build( menu );
          
-         UIUtils.addOptionalMenuItem( getSherlockActivity(),
-                                      menu,
-                                      OptionsMenu.DELETE,
-                                      getString( R.string.select_multiple_tasks_menu_opt_delete,
-                                                 selCnt ),
-                                      MenuCategory.SECONDARY,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_trash,
-                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                      someSelected );
-         
-         final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );
-         selAllItem.setEnabled( !allSelected );
-         
-         final MenuItem deselAllItem = menu.findItem( OptionsMenu.DESELECT_ALL );
-         deselAllItem.setEnabled( someSelected );
-         
-         final MenuItem invSelItem = menu.findItem( OptionsMenu.INVERT_SELECTION );
-         invSelItem.setEnabled( !allSelected && someSelected );
+         builder.setItemId( OptionsMenu.DELETE )
+                .setTitle( getString( R.string.select_multiple_tasks_menu_opt_delete,
+                                      selCnt ) )
+                .setIconId( R.drawable.ic_menu_trash )
+                .setShow( someSelected )
+                .build( menu );
       }
    }
    

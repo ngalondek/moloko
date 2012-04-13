@@ -36,8 +36,8 @@
    <string name="app_task_select_multiple">Select tasks (%1$d)</string>
    <string name="app_task_complete">Complete</string>
    <string name="app_task_uncomplete">Incomplete</string>
-   <string name="app_task_delete">Delete Task</string>
-   <string name="app_task_postpone">Postpone Task</string>
+   <string name="app_task_delete">Delete</string>
+   <string name="app_task_postpone">Postpone</string>
    <string name="app_change_tags">Change tags</string>
    <string name="app_note">Note</string>
    <string name="app_tagcloud">Tags</string>

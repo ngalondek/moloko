@@ -101,7 +101,7 @@ public final class SyncUtils
          
          if ( account != null )
          {
-            SyncUtils.requestManualSync( activity, account );
+            SyncUtils.requestManualSync( account );
          }
          else
          {
@@ -116,8 +116,7 @@ public final class SyncUtils
    
    
    
-   public final static void requestManualSync( FragmentActivity activity,
-                                               Account account )
+   public final static void requestManualSync( Account account )
    {
       final Bundle bundle = new Bundle();
       
@@ -152,8 +151,7 @@ public final class SyncUtils
    
    
    
-   public final static void requestScheduledSync( Context context,
-                                                  Account account )
+   public final static void requestScheduledSync( Account account )
    {
       final Bundle bundle = new Bundle();
       

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -34,7 +34,8 @@ import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
 import dev.drsoran.moloko.fragments.TaskSearchResultListFragment;
 
 
-public final class TasksListFragmentFactory extends AbstractFragmentFactory
+public final class TasksListFragmentFactory extends
+         AbstractIntentFragmentFactory
 {
    private final static List< Class< ? extends Fragment > > FRAGMENT_CLASSES = new ArrayList< Class< ? extends Fragment > >();
    
@@ -47,7 +48,7 @@ public final class TasksListFragmentFactory extends AbstractFragmentFactory
    }
    
    
-
+   
    public final static Fragment newFragment( Context context, Intent intent )
    {
       return resolveIntentToFragment( context, intent, FRAGMENT_CLASSES );

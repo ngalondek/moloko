@@ -28,6 +28,7 @@
 	<string name="app_account_preferences">Kontoeinstellungen</string>
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
+	<string name="app_task_edit">Bearbeiten</string>
    <string name="app_task_edit_multiple">%1$d %2$s bearbeiten</string>
    <string name="app_task_add">Neue Aufgabe</string>
    <string name="app_task_select_multiple">Aufgaben wählen (%1$d)</string>

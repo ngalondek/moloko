@@ -452,7 +452,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                            newTaskUri.getLastPathSegment() );
          
          final TaskFragment fragment = TaskFragment.newInstance( config );
-         return fragment;
+         throw new UnsupportedOperationException();
       }
       else
       {

@@ -32,26 +32,32 @@ import android.view.View;
 import android.widget.ListAdapter;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 import dev.drsoran.moloko.util.AccountUtils;
 
 
 public abstract class MolokoListFragment< D > extends SherlockListFragment
          implements IConfigurable, IOnSettingsChangedListener,
-         LoaderCallbacks< D >, LoaderListFragmentImpl.Support< D >
+         LoaderCallbacks< D >, LoaderListFragmentImpl.Support< D >,
+         IRtmAccessLevelAware
 {
    private final MolokoListFragmentImpl baseImpl;
    
    private final LoaderListFragmentImpl< D > loaderImpl;
    
    private final EditFragmentImpl editImpl;
+   
+   private final RtmAccessLevelAwareFragmentImpl accessLevelAwareImpl;
    
    
    
@@ -60,6 +66,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
       baseImpl = new MolokoListFragmentImpl( this, getSettingsMask() );
       loaderImpl = new LoaderListFragmentImpl< D >( this );
       editImpl = new EditFragmentImpl( this );
+      accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
    }
    
    
@@ -81,6 +88,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
       editImpl.onAttach( activity );
+      accessLevelAwareImpl.onAttach( getSherlockActivity() );
    }
    
    
@@ -91,6 +99,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
       baseImpl.onDetach();
       loaderImpl.onDetach();
       editImpl.onDetach();
+      accessLevelAwareImpl.onDetach();
       super.onDetach();
    }
    
@@ -150,6 +159,28 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       super.onSaveInstanceState( outState );
       baseImpl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   @Override
+   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      accessLevelAwareImpl.reEvaluateRtmAccessLevel( currentAccessLevel );
+   }
+   
+   
+   
+   public boolean isReadOnlyAccess()
+   {
+      return accessLevelAwareImpl.isReadOnlyAccess();
+   }
+   
+   
+   
+   public boolean isWritableAccess()
+   {
+      return accessLevelAwareImpl.isWritableAccess();
    }
    
    

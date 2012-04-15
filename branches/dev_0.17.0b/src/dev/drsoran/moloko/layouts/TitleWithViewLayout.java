@@ -97,21 +97,7 @@ public abstract class TitleWithViewLayout extends LinearLayout
       setImage( array.getDrawable( R.styleable.TitleWithView_imageSrc ) );
       
       // Top line
-      {
-         final View topLine = findViewById( R.id.title_with_view_top_line );
-         
-         if ( array.getBoolean( R.styleable.TitleWithView_showTopLine, true ) )
-         {
-            ( (GradientDrawable) topLine.getBackground() ).setColor( array.getColor( R.styleable.TitleWithView_topLineColor,
-                                                                                     R.color.app_default_line ) );
-            topLine.getLayoutParams().height = array.getDimensionPixelSize( R.styleable.TitleWithView_topLineHeight,
-                                                                            1 );
-         }
-         else
-         {
-            topLine.setVisibility( View.GONE );
-         }
-      }
+      setTopLine( array );
       
       final TextView text = (TextView) findViewById( R.id.title_with_view_title );
       
@@ -147,14 +133,39 @@ public abstract class TitleWithViewLayout extends LinearLayout
    {
       final ImageView imageView = (ImageView) findViewById( R.id.title_with_view_image );
       
-      if ( drawable != null )
+      if ( imageView != null )
       {
-         imageView.setVisibility( VISIBLE );
-         imageView.setImageDrawable( drawable );
+         if ( drawable != null )
+         {
+            imageView.setVisibility( VISIBLE );
+            imageView.setImageDrawable( drawable );
+         }
+         else
+         {
+            imageView.setVisibility( GONE );
+         }
       }
-      else
+   }
+   
+   
+   
+   private void setTopLine( TypedArray array )
+   {
+      final View topLine = findViewById( R.id.title_with_view_top_line );
+      
+      if ( topLine != null )
       {
-         imageView.setVisibility( GONE );
+         if ( array.getBoolean( R.styleable.TitleWithView_showTopLine, true ) )
+         {
+            ( (GradientDrawable) topLine.getBackground() ).setColor( array.getColor( R.styleable.TitleWithView_topLineColor,
+                                                                                     R.color.app_default_line ) );
+            topLine.getLayoutParams().height = array.getDimensionPixelSize( R.styleable.TitleWithView_topLineHeight,
+                                                                            1 );
+         }
+         else
+         {
+            topLine.setVisibility( View.GONE );
+         }
       }
    }
    

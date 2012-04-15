@@ -22,40 +22,28 @@
 
 package dev.drsoran.moloko.fragments.factories;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import dev.drsoran.moloko.fragments.TaskAddFragment;
-import dev.drsoran.moloko.fragments.TaskEditFragment;
-import dev.drsoran.moloko.fragments.TaskFragment;
 
 
-public final class TaskFragmentFactory extends AbstractIntentFragmentFactory
+public class DefaultFragmentFactory
 {
-   private final static List< Class< ? extends Fragment > > FRAGMENT_CLASSES = new ArrayList< Class< ? extends Fragment > >();
-   
-   static
+   private DefaultFragmentFactory()
    {
-      FRAGMENT_CLASSES.add( TaskFragment.class );
-      FRAGMENT_CLASSES.add( TaskEditFragment.class );
-      FRAGMENT_CLASSES.add( TaskAddFragment.class );
+      throw new AssertionError();
    }
    
    
    
-   public final static Fragment newFragment( Context context,
-                                             Intent intent,
-                                             Bundle config )
+   public final static Fragment create( Context context,
+                                        Class< ? extends Fragment > clazz,
+                                        Bundle config )
    {
-      if ( config != null )
-      {
-         intent.putExtras( config );
-      }
+      final Fragment fragment = Fragment.instantiate( context,
+                                                      clazz.getName(),
+                                                      config );
       
-      return resolveIntentToFragment( context, intent, FRAGMENT_CLASSES );
+      return fragment;
    }
 }

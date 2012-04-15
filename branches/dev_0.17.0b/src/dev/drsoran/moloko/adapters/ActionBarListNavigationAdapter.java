@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -35,10 +35,10 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class ActionBarNavigationAdapter extends ArrayAdapter< String >
+public class ActionBarListNavigationAdapter extends ArrayAdapter< String >
 {
    
-   public ActionBarNavigationAdapter( Context context, List< String > list )
+   public ActionBarListNavigationAdapter( Context context, List< String > list )
    {
       super( context, 0, list );
    }

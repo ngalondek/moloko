@@ -33,18 +33,21 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderExpandableListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 
 public abstract class MolokoExpandableListFragment< D > extends
          SherlockListFragment implements IConfigurable,
          IOnSettingsChangedListener, LoaderCallbacks< D >,
-         LoaderExpandableListFragmentImpl.Support< D >,
+         LoaderExpandableListFragmentImpl.Support< D >, IRtmAccessLevelAware,
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
          ExpandableListView.OnGroupCollapseListener,
@@ -56,6 +59,8 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    private final EditFragmentImpl editImpl;
    
+   private final RtmAccessLevelAwareFragmentImpl accessLevelAwareImpl;
+   
    
    
    protected MolokoExpandableListFragment()
@@ -63,6 +68,7 @@ public abstract class MolokoExpandableListFragment< D > extends
       baseImpl = new MolokoListFragmentImpl( this, getSettingsMask() );
       loaderImpl = new LoaderExpandableListFragmentImpl< D >( this );
       editImpl = new EditFragmentImpl( this );
+      accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
    }
    
    
@@ -84,6 +90,7 @@ public abstract class MolokoExpandableListFragment< D > extends
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
       editImpl.onAttach( activity );
+      accessLevelAwareImpl.onAttach( getSherlockActivity() );
    }
    
    
@@ -94,6 +101,7 @@ public abstract class MolokoExpandableListFragment< D > extends
       baseImpl.onDetach();
       loaderImpl.onDetach();
       editImpl.onDetach();
+      accessLevelAwareImpl.onDetach();
       super.onDetach();
    }
    
@@ -160,6 +168,28 @@ public abstract class MolokoExpandableListFragment< D > extends
    {
       super.onSaveInstanceState( outState );
       baseImpl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   @Override
+   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      accessLevelAwareImpl.reEvaluateRtmAccessLevel( currentAccessLevel );
+   }
+   
+   
+   
+   public boolean isReadOnlyAccess()
+   {
+      return accessLevelAwareImpl.isReadOnlyAccess();
+   }
+   
+   
+   
+   public boolean isWritableAccess()
+   {
+      return accessLevelAwareImpl.isWritableAccess();
    }
    
    

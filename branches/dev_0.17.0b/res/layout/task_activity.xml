@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
+<!--
+   Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko 
    is free software: you can redistribute it and/or modify it under the terms 
    of the GNU General Public License as published by the Free Software Foundation, 
    either version 3 of the License, or (at your option) any later version. Moloko 
@@ -8,82 +9,16 @@
    PURPOSE. See the GNU General Public License for more details. You should 
    have received a copy of the GNU General Public License along with Moloko. 
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+   - implementation
+-->
 
-<merge
-   xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-   <ScrollView
-      android:id="@android:id/content"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:paddingLeft="10dip"
-      android:paddingTop="8dip">
-
-      <LinearLayout
-         android:id="@+id/fragment_container"
-         android:layout_height="wrap_content"
-         android:layout_width="fill_parent"
-         android:layout_marginRight="?android:attr/scrollbarSize"
-         android:orientation="vertical">
-
-         <RelativeLayout
-            style="@style/Task_Section"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:layout_marginBottom="8dip"
-            android:paddingBottom="@dimen/task_overview_stroke_width">
-
-            <LinearLayout
-               android:id="@id/frag_task"
-               android:layout_height="wrap_content"
-               android:layout_width="fill_parent"
-               android:orientation="vertical">
-
-               <View
-                  android:id="@+id/task_overview_priority_bar"
-                  android:layout_height="@dimen/task_overview_corner_radius"
-                  android:layout_width="fill_parent"
-                  android:background="@drawable/app_simple_line"
-                  android:visibility="gone" />
-            </LinearLayout>
-
-            <RelativeLayout
-               android:id="@+id/task_buttons"
-               style="@style/Task_ButtonBar"
-               android:layout_height="wrap_content"
-               android:layout_width="fill_parent"
-               android:layout_below="@id/frag_task"
-               android:layout_alignParentBottom="true"
-               android:layout_margin="@dimen/task_overview_stroke_width"
-               android:padding="3dip">
-
-               <ImageButton
-                  android:id="@+id/task_buttons_edit"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_alignParentLeft="true"
-                  android:src="@drawable/ic_button_task_edit"
-                  android:scaleType="fitXY"
-                  android:onClick="onEditTask" />
-               <ImageButton
-                  android:id="@+id/task_buttons_add_note"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_toRightOf="@id/task_buttons_edit"
-                  android:src="@drawable/ic_button_task_add_note"
-                  android:scaleType="fitXY"
-                  android:onClick="onAddNote" />
-            </RelativeLayout>
-         </RelativeLayout>
-      </LinearLayout>
-   </ScrollView>
-
-   <include
-      android:id="@+id/loading_spinner"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      layout="@layout/app_loading_spinner"
-      android:visibility="gone" />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
 
 </merge>

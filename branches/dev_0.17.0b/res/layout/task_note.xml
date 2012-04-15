@@ -17,7 +17,6 @@
 <LinearLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:id="@+id/task_note"
-   style="@style/Task_Section"
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
    android:layout_marginTop="10dip"
@@ -31,8 +30,7 @@
    </LinearLayout>
 
    <RelativeLayout
-      android:id="@+id/note_buttons"
-      style="@style/Task_ButtonBar"
+      android:id="@+id/note_buttons"      
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_margin="@dimen/task_overview_stroke_width"

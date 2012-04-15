@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -36,8 +35,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.IEditableFragment;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
@@ -46,8 +48,7 @@ import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuItemPreparer;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -56,8 +57,7 @@ import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskFragment extends MolokoLoaderFragment< Task > implements
-         IEditableFragment< TaskFragment >
+public class TaskFragment extends MolokoLoaderFragment< Task >
 {
    private final static IntentFilter INTENT_FILTER;
    
@@ -73,6 +73,20 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       {
          throw new RuntimeException( e );
       }
+   }
+   
+   
+   private final static class OptionsMenu
+   {
+      public final static int POSTPONE_TASK = R.id.menu_postpone_selected_tasks;
+      
+      public final static int COMPLETE_TASK = R.id.menu_complete_selected_tasks;
+      
+      public final static int UNCOMPLETE_TASK = R.id.menu_uncomplete_selected_tasks;
+      
+      public final static int DELETE_TASK = R.id.menu_delete_selected_tasks;
+      
+      public final static int EDIT_TASK = R.id.menu_edit_selected_tasks;
    }
    
    public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
@@ -91,6 +105,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    private String taskId;
    
    private ViewGroup content;
+   
+   private View priorityBar;
    
    private TextView addedDate;
    
@@ -142,6 +158,15 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      setHasOptionsMenu( true );
+   }
+   
+   
+   
+   @Override
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
@@ -173,6 +198,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                                                   false );
       
       content = (ViewGroup) fragmentView.findViewById( android.R.id.content );
+      priorityBar = content.findViewById( R.id.task_overview_priority_bar );
       addedDate = (TextView) content.findViewById( R.id.task_overview_added_date );
       completedDate = (TextView) content.findViewById( R.id.task_overview_completed_date );
       source = (TextView) content.findViewById( R.id.task_overview_src );
@@ -190,6 +216,71 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
+   @Override
+   public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
+   {
+      super.onCreateOptionsMenu( menu, inflater );
+      
+      final Task task = getLoaderData();
+      if ( task != null && isWritableAccess() )
+      {
+         inflater.inflate( R.menu.task_fragment_rwd, menu );
+      }
+   }
+   
+   
+   
+   @Override
+   public void onPrepareOptionsMenu( Menu menu )
+   {
+      super.onPrepareOptionsMenu( menu );
+      
+      final Task task = getLoaderData();
+      if ( task != null )
+      {
+         final boolean taskIsCompleted = task.getCompleted() != null;
+         final MenuItemPreparer preparer = new MenuItemPreparer( menu );
+         
+         preparer.setVisible( R.id.menu_complete_selected_tasks,
+                              !taskIsCompleted );
+         preparer.setVisible( R.id.menu_uncomplete_selected_tasks,
+                              taskIsCompleted );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case OptionsMenu.COMPLETE_TASK:
+            listener.onCompleteTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case OptionsMenu.UNCOMPLETE_TASK:
+            listener.onIncompleteTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case OptionsMenu.POSTPONE_TASK:
+            listener.onPostponeTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case OptionsMenu.DELETE_TASK:
+            listener.onDeleteTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case OptionsMenu.EDIT_TASK:
+            listener.onEditTask( getLoaderDataAssertNotNull() );
+            
+         default :
+            return super.onOptionsItemSelected( item );
+      }
+   }
+   
+   
+   
    public String getTaskId()
    {
       return taskId;
@@ -201,6 +292,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    public void initContent( ViewGroup container )
    {
       final Task task = getLoaderDataAssertNotNull();
+      
+      UIUtils.setPriorityColor( priorityBar, task );
       
       addedDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                          task.getAdded()
@@ -265,6 +358,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       {
          urlSection.setVisibility( View.GONE );
       }
+      
+      getSherlockActivity().invalidateOptionsMenu();
    }
    
    
@@ -407,7 +502,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                   @Override
                   public void onClick( View widget )
                   {
-                     listener.onOpenLocation( task.getLocationId() );
+                     listener.onOpenLocation( task );
                   }
                }, 0, clickableLocation.length(), 0 );
                
@@ -498,28 +593,5 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
-   }
-   
-   
-   
-   @Override
-   public boolean canBeEdited()
-   {
-      return getLoaderData() != null
-         && AccountUtils.isWriteableAccess( getSherlockActivity() );
-   }
-   
-   
-   
-   @Override
-   public IEditFragment< ? extends Fragment > createEditFragmentInstance()
-   {
-      final Bundle config = new Bundle();
-      
-      config.putParcelable( Intents.Extras.KEY_TASK,
-                            getLoaderDataAssertNotNull() );
-      
-      final TaskEditFragment fragment = TaskEditFragment.newInstance( config );
-      return fragment;
    }
 }

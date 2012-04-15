@@ -39,11 +39,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.annotations.InstanceState;
@@ -60,7 +58,7 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
-         MolokoListFragment< List< T > > implements IRtmAccessLevelAware
+         MolokoListFragment< List< T > >
 {
    protected static class OptionsMenu
    {
@@ -147,15 +145,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    protected CharSequence getEmptyListText()
    {
       return getString( R.string.abstaskslist_no_tasks );
-   }
-   
-   
-   
-   @Override
-   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
-   {
-      if ( getSherlockActivity() != null )
-         getSherlockActivity().invalidateOptionsMenu();
    }
    
    

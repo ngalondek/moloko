@@ -29,6 +29,7 @@
    <string name="app_account_preferences">Paramètres du compte</string>
    <string name="app_tasklists">Listes</string>
    <string name="app_task">Tâche</string>
+   <string name="app_task_edit">Edit</string>
    <string name="app_task_edit_multiple">Modifier %1$d %2$s</string>
    <string name="app_task_add">Nouvelle Tâche</string>
    <string name="app_task_select_multiple">Selectionner des tâches (%1$d)</string>

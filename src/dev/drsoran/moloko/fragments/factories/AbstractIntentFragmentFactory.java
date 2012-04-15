@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,21 +28,20 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import dev.drsoran.moloko.util.LogUtils;
 
 
-abstract class AbstractFragmentFactory
+abstract class AbstractIntentFragmentFactory
 {
-   protected AbstractFragmentFactory()
+   protected AbstractIntentFragmentFactory()
    {
       throw new AssertionError();
    }
    
-
-
+   
+   
    protected final static Fragment resolveIntentToFragment( Context context,
                                                             Intent intent,
                                                             List< Class< ? extends Fragment > > fragmentClasses )
@@ -64,15 +63,15 @@ abstract class AbstractFragmentFactory
                                     intent.getScheme(),
                                     intent.getData() ) > 0 )
             {
-               fragment = (Fragment) entry.getMethod( "newInstance",
-                                                      Bundle.class )
-                                          .invoke( null, intent.getExtras() );
+               fragment = DefaultFragmentFactory.create( context,
+                                                         entry,
+                                                         intent.getExtras() );
             }
          }
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( AbstractFragmentFactory.class ),
+         Log.e( LogUtils.toTag( AbstractIntentFragmentFactory.class ),
                 "Unable to instantiate new fragment by Intent " + intent,
                 e );
       }

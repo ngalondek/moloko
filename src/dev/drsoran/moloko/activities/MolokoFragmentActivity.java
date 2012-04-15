@@ -36,6 +36,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.AnnotatedConfigurationSupport;
 import dev.drsoran.moloko.IConfigurable;
@@ -52,7 +53,7 @@ import dev.drsoran.moloko.util.Intents;
 
 public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
          implements IConfigurable, IAlertDialogFragmentListener,
-         ISyncStatusListener, OnAccountsUpdateListener
+         ISyncStatusListener, OnAccountsUpdateListener, IRtmAccessLevelAware
 {
    public final static class StartActivityRequestCode
    {
@@ -162,6 +163,28 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    {
       annotatedConfigSupport.onRestoreInstanceStates( state );
       super.onRestoreInstanceState( state );
+   }
+   
+   
+   
+   @Override
+   public void reEvaluateRtmAccessLevel( Perms currentAccessLevel )
+   {
+      invalidateOptionsMenu();
+   }
+   
+   
+   
+   public boolean isReadOnlyAccess()
+   {
+      return AccountUtils.isReadOnlyAccess( this );
+   }
+   
+   
+   
+   public boolean isWritableAccess()
+   {
+      return AccountUtils.isWriteableAccess( this );
    }
    
    

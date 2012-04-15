@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Moloko" parent="Theme.Sherlock.Light.ForceOverflow">
+    <style name="Theme.Moloko" parent="Theme.Sherlock.Light.DarkActionBar.ForceOverflow">
 
         <!-- Window attributes -->
         <item name="android:textColorPrimary">@color/app_default_text_color</item>
@@ -58,12 +58,9 @@
 
     <style name="Theme.Moloko.Task">
 
-        <!-- Window attributes -->
-        <item name="android:windowBackground">@color/task_bgnd</item>
-
         <!-- ActionBar -->
-        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+        <item name="actionBarStyle">@style/ActionBarStyle.Tab.Collapsed</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.Tab.Collapsed</item>
 
         <!-- Widgets -->
         <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>

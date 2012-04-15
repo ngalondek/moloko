@@ -29,22 +29,28 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 
 public abstract class MolokoFragment extends SherlockFragment implements
-         IConfigurable, IOnSettingsChangedListener
+         IConfigurable, IOnSettingsChangedListener, IRtmAccessLevelAware
 {
    private final ConfigurableFragmentImpl impl;
+   
+   private final RtmAccessLevelAwareFragmentImpl accessLevelAwareImpl;
    
    
    
    protected MolokoFragment()
    {
       impl = new ConfigurableFragmentImpl( this, getSettingsMask() );
+      accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
    }
    
    
@@ -54,6 +60,7 @@ public abstract class MolokoFragment extends SherlockFragment implements
    {
       super.onAttach( activity );
       impl.onAttach( activity );
+      accessLevelAwareImpl.onAttach( getSherlockActivity() );
    }
    
    
@@ -71,6 +78,7 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public void onDetach()
    {
       impl.onDetach();
+      accessLevelAwareImpl.onDetach();
       super.onDetach();
    }
    
@@ -90,6 +98,28 @@ public abstract class MolokoFragment extends SherlockFragment implements
    {
       super.onSaveInstanceState( outState );
       impl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   @Override
+   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      accessLevelAwareImpl.reEvaluateRtmAccessLevel( currentAccessLevel );
+   }
+   
+   
+   
+   public boolean isReadOnlyAccess()
+   {
+      return accessLevelAwareImpl.isReadOnlyAccess();
+   }
+   
+   
+   
+   public boolean isWritableAccess()
+   {
+      return accessLevelAwareImpl.isWritableAccess();
    }
    
    

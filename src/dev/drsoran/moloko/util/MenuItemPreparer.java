@@ -20,58 +20,33 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko.util;
 
-import dev.drsoran.rtm.Task;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 
-public class NullTaskFragmentListener implements ITaskFragmentListener
+public final class MenuItemPreparer
 {
+   private final Menu menu;
    
-   @Override
-   public void onOpenLocation( Task task )
+   
+   
+   public MenuItemPreparer( Menu menu )
    {
+      this.menu = menu;
    }
    
    
    
-   @Override
-   public void onOpenContact( String fullname, String username )
+   public MenuItemPreparer setVisible( int itemId, boolean visible )
    {
-   }
-   
-   
-   
-   @Override
-   public void onCompleteTask( Task task )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onIncompleteTask( Task task )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onPostponeTask( Task task )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onDeleteTask( Task task )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onEditTask( Task task )
-   {
+      final MenuItem item = menu.findItem( itemId );
+      if ( item != null )
+      {
+         item.setVisible( visible );
+      }
+      
+      return this;
    }
 }

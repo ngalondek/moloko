@@ -192,6 +192,6 @@ public class TaskEditFragment extends
                         getTaskAssertNotNull().getId() );
       
       final TaskFragment fragment = TaskFragment.newInstance( config );
-      return fragment;
+      throw new UnsupportedOperationException();
    }
 }

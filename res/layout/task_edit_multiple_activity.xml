@@ -27,7 +27,6 @@
 
         <LinearLayout
             android:id="@id/frag_task_edit_multiple"
-            style="@style/Task_Section"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />

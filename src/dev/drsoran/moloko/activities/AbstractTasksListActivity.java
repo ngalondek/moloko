@@ -40,7 +40,7 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.QuickAddTaskActionBarSwitcher;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
+import dev.drsoran.moloko.adapters.ActionBarListNavigationAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
@@ -349,7 +349,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          items.add( rtmListWithTaskCount.getName() );
       }
       
-      actionBarNavigationAdapter = new ActionBarNavigationAdapter( this, items );
+      actionBarNavigationAdapter = new ActionBarListNavigationAdapter( this, items );
       return actionBarNavigationAdapter;
    }
    

@@ -17,5 +17,10 @@
         android:id="@id/menu_save"        
         android:showAsAction="always|withText"
         android:title="@string/app_save"/>
+    
+    <item
+        android:id="@id/menu_abort_edit"        
+        android:showAsAction="always|withText"
+        android:title="@string/btn_cancel"/>
 
 </menu>

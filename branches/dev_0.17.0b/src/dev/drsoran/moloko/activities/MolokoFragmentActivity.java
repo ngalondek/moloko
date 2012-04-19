@@ -197,10 +197,12 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       switch ( item.getItemId() )
       {
          case android.R.id.home:
-            if ( IsShowHomeAsUp() )
+            if ( isShowHomeAsUp() )
             {
                if ( onFinishActivityByHome() )
+               {
                   finish();
+               }
             }
             else
             {
@@ -218,7 +220,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
-   protected boolean IsShowHomeAsUp()
+   protected boolean isShowHomeAsUp()
    {
       return ( getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP;
    }
@@ -307,6 +309,13 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
          default :
             break;
       }
+   }
+   
+   
+   
+   public void execute( Runnable runnable )
+   {
+      getHandler().post( runnable );
    }
    
    

@@ -28,14 +28,12 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Pair;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
@@ -174,10 +172,10 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    public void onCompleteTask( int pos )
    {
       final Task task = getTask( pos );
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                                                     task,
-                                                                                                                     true );
-      applyModifications( modifications.first, modifications.second );
+      final ApplyChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                              task,
+                                                                              true );
+      applyModifications( modifications );
    }
    
    
@@ -186,10 +184,10 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    public void onIncompleteTask( int pos )
    {
       final Task task = getTask( pos );
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                                                     task,
-                                                                                                                     false );
-      applyModifications( modifications.first, modifications.second );
+      final ApplyChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                              task,
+                                                                              false );
+      applyModifications( modifications );
    }
    
    
@@ -198,9 +196,9 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    public void onPostponeTask( int pos )
    {
       final Task task = getTask( pos );
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( this,
-                                                                                                                task );
-      applyModifications( modifications.first, modifications.second );
+      final ApplyChangesInfo modifications = TaskEditUtils.postponeTask( this,
+                                                                         task );
+      applyModifications( modifications );
    }
    
    
@@ -296,9 +294,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private void deleteTaskImpl( String taskId )
    {
       final Task task = getTask( taskId );
-      
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( this,
-                                                                                                              task );
+      final ApplyChangesInfo modifications = TaskEditUtils.deleteTask( this,
+                                                                       task );
       applyModifications( modifications );
       
    }

@@ -31,18 +31,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
@@ -52,44 +49,30 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.actionmodes.TaskEditActionMode;
 import dev.drsoran.moloko.adapters.ActionBarTabsAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
 import dev.drsoran.moloko.fragments.NoteAddFragment;
 import dev.drsoran.moloko.fragments.NoteEditFragment;
 import dev.drsoran.moloko.fragments.NoteFragment;
 import dev.drsoran.moloko.fragments.TagCloudFragment;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
-import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.DuePickerDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.EstimatePickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.RecurrPickerDialogFragment;
 import dev.drsoran.moloko.fragments.factories.TaskFragmentFactory;
-import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
-import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.NoteEditUtils;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
 
 public class TaskActivity extends MolokoEditFragmentActivity implements
-         ITaskFragmentListener, ITaskEditFragmentListener,
-         ILoaderFragmentListener, IChangeTagsFragmentListener,
-         IPickerDialogListener
+         ITaskFragmentListener, ILoaderFragmentListener
+
 {
    public static class Config
    {
@@ -98,8 +81,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       private final static String NOTE_FRAGMENT_CONTAINERS = "note_fragment_containers";
       
       private final static String NOTE_ID_TO_DELETE = "note_id_to_delete";
-      
-      private final static String ACTIVE_TAB = "active_tab";
    }
    
    
@@ -111,7 +92,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    }
    
    
-   private enum FinishEditMode
+   public enum FinishEditMode
    {
       SAVE, CANCELED, FORCE_CANCELED
    }
@@ -192,9 +173,11 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private final static String FINISH_EDIT_W_CHANGES_FINISH_ACTIVITY = "finish_w_changes_finish_activity";
    
-   private final static int TASK_TAB_POSITION = 0;
+   private final static String TABS_ADAPTER_STATE = "tabs_adapter_state";
    
-   private final static int NOTES_TAB_POSITION = 1;
+   public final static int TASK_TAB_POSITION = 0;
+   
+   public final static int NOTES_TAB_POSITION = 1;
    
    @InstanceState( key = Config.EDIT_MODE_FRAG_ID, defaultValue = "0" )
    private int editModeFragmentId;
@@ -212,8 +195,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private boolean showHomeButton;
    
    private ActionBarTabsAdapter tabsAdapter;
-   
-   private ActionMode activeActionMode;
    
    
    
@@ -239,8 +220,13 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       // onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
       
       // setActivityInEditMode( getEditModeFragmentId() );
-      
-      restoreActiveTabNumber( savedInstanceState );
+   }
+   
+   
+   
+   public ActionBarTabsAdapter getTabsAdapter()
+   {
+      return tabsAdapter;
    }
    
    
@@ -248,23 +234,38 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
-      // saveNoteFragmentContainers();
-      saveActiveTabNumber( outState );
-      
+      saveTabsAdapterState( outState );
       super.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   @Override
+   protected void onRestoreInstanceState( Bundle state )
+   {
+      super.onRestoreInstanceState( state );
+      restoreTabsAdapterState( state );
    }
    
    
    
    private void createTabs()
    {
-      tabsAdapter = new ActionBarTabsAdapter( this,
-                                              (ViewPager) findViewById( R.id.pager ) );
+      createTabsAdapter();
+      
       createTab( R.string.app_task,
                  TaskFragment.class,
                  createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
       
       createTab( R.string.app_note, TagCloudFragment.class, null );
+   }
+   
+   
+   
+   private void createTabsAdapter()
+   {
+      tabsAdapter = new ActionBarTabsAdapter( this,
+                                              (ViewPager) findViewById( R.id.pager ) );
    }
    
    
@@ -282,19 +283,21 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private void restoreActiveTabNumber( Bundle savedInstanceState )
+   private void saveTabsAdapterState( Bundle outState )
    {
-      if ( savedInstanceState != null )
-      {
-         setActiveTabPosition( savedInstanceState.getInt( Config.ACTIVE_TAB, 0 ) );
-      }
+      outState.putInt( TABS_ADAPTER_STATE,
+                       getSupportActionBar().getSelectedNavigationIndex() );
    }
    
    
    
-   private void saveActiveTabNumber( Bundle outState )
+   private void restoreTabsAdapterState( Bundle savedInstanceState )
    {
-      outState.putInt( Config.ACTIVE_TAB, getActiveTabPosition() );
+      if ( savedInstanceState != null )
+      {
+         getSupportActionBar().setSelectedNavigationItem( savedInstanceState.getInt( TABS_ADAPTER_STATE,
+                                                                                     TASK_TAB_POSITION ) );
+      }
    }
    
    
@@ -309,6 +312,24 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private int getActiveTabPosition()
    {
       return getSupportActionBar().getSelectedNavigationIndex();
+   }
+   
+   
+   
+   public void finishTaskEditing( Task task, FinishEditMode how )
+   {
+      finishEditing( how );
+   }
+   
+   
+   
+   private Bundle getTaskEditFragmentConfig( Task task )
+   {
+      final Bundle config = new Bundle();
+      
+      config.putParcelable( Intents.Extras.KEY_TASK, task );
+      
+      return config;
    }
    
    
@@ -499,55 +520,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   @Override
-   public void onChangeTags( List< String > tags )
-   {
-      showChangeTagsDialog( createTaskEditChangeTagsConfiguration( tags ) );
-   }
-   
-   
-   
-   @Override
-   public void onEditDueByPicker()
-   {
-      MolokoCalendar due = getTaskEditFragment().getDue();
-      
-      if ( due == null || !due.hasDate() )
-      {
-         due = MolokoCalendar.getInstance();
-         due.setHasTime( false );
-      }
-      
-      DuePickerDialogFragment.show( this, due.getTimeInMillis(), due.hasTime() );
-   }
-   
-   
-   
-   @Override
-   public void onEditRecurrenceByPicker()
-   {
-      Pair< String, Boolean > recurrencePattern = getTaskEditFragment().getRecurrencePattern();
-      
-      if ( recurrencePattern == null )
-         recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
-      
-      RecurrPickerDialogFragment.show( this,
-                                       recurrencePattern.first,
-                                       recurrencePattern.second );
-   }
-   
-   
-   
-   @Override
-   public void onEditEstimateByPicker()
-   {
-      final long estimateMillis = getTaskEditFragment().getEstimateMillis();
-      
-      EstimatePickerDialogFragment.show( this, estimateMillis );
-   }
-   
-   
-   
    public void onAddNote( View addNoteButton )
    {
       setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( getTaskAssertNotNull().getTaskSeriesId() ) ) );
@@ -589,17 +561,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    @Override
-   public void onBackPressed()
-   {
-      if ( IsActivityInEditMode() )
-         finishEditing( FinishEditMode.CANCELED );
-      else
-         super.onBackPressed();
-   }
-   
-   
-   
-   @Override
    protected boolean onFinishActivityByHome()
    {
       boolean finish = super.onFinishActivityByHome();
@@ -615,9 +576,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onCompleteTask( Task task )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                                                     task,
-                                                                                                                     true );
+      final ApplyChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                              task,
+                                                                              true );
       applyModifications( modifications );
    }
    
@@ -626,9 +587,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onIncompleteTask( Task task )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                                                     task,
-                                                                                                                     false );
+      final ApplyChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                              task,
+                                                                              false );
       applyModifications( modifications );
    }
    
@@ -637,8 +598,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onPostponeTask( Task task )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( this,
-                                                                                                                task );
+      final ApplyChangesInfo modifications = TaskEditUtils.postponeTask( this,
+                                                                         task );
       applyModifications( modifications );
    }
    
@@ -657,8 +618,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onEditTask( Task task )
    {
-      activeActionMode = startActionMode( new TaskEditActionMode( task,
-                                                                  tabsAdapter ) );
+      startActivity( Intents.createEditTaskIntent( this, task ) );
    }
    
    
@@ -751,32 +711,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   @Override
-   public void onPickerDialogClosed( AbstractPickerDialogFragment dialog,
-                                     CloseReason reason )
-   {
-      if ( reason == CloseReason.OK )
-      {
-         if ( dialog instanceof DuePickerDialogFragment )
-         {
-            final DuePickerDialogFragment frag = (DuePickerDialogFragment) dialog;
-            getTaskEditFragment().setDue( frag.getCalendar() );
-         }
-         else if ( dialog instanceof RecurrPickerDialogFragment )
-         {
-            final RecurrPickerDialogFragment frag = (RecurrPickerDialogFragment) dialog;
-            getTaskEditFragment().setRecurrencePattern( frag.getPattern() );
-         }
-         else if ( dialog instanceof EstimatePickerDialogFragment )
-         {
-            final EstimatePickerDialogFragment frag = (EstimatePickerDialogFragment) dialog;
-            getTaskEditFragment().setEstimateMillis( frag.getMillis() );
-         }
-      }
-   }
-   
-   
-   
    private void setHomeNavigationBehaviour()
    {
       if ( showHomeButton )
@@ -790,8 +724,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private void deleteTaskImpl()
    {
       final Task task = getTaskAssertNotNull();
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( TaskActivity.this,
-                                                                                                              task );
+      final ApplyChangesInfo modifications = TaskEditUtils.deleteTask( TaskActivity.this,
+                                                                       task );
       if ( applyModifications( modifications ) )
       {
          finish();
@@ -802,8 +736,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private void deleteNoteImpl( String noteId )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.deleteNote( this,
-                                                                                                              noteId );
+      final ApplyChangesInfo modifications = NoteEditUtils.deleteNote( this,
+                                                                       noteId );
       if ( applyModifications( modifications ) )
       {
          removeNoteFragmentByNoteId( noteId,
@@ -823,7 +757,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private boolean IsActivityInEditMode()
    {
-      return activeActionMode != null;
+      return false;
    }
    
    
@@ -887,9 +821,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private boolean setFragmentInEditMode( Fragment fragment )
    {
-      if ( fragment instanceof IEditableFragment< ? > )
+      if ( fragment instanceof IEditableFragment )
       {
-         final IEditableFragment< ? > editableFragment = (IEditableFragment< ? >) fragment;
+         final IEditableFragment editableFragment = (IEditableFragment) fragment;
          
          final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
          
@@ -914,9 +848,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       
       final Fragment fragment = findAddedFragmentById( fragmentId );
       
-      if ( fragment instanceof IEditFragment< ? > )
+      if ( fragment instanceof IEditFragment )
       {
-         final IEditFragment< ? > editFragment = (IEditFragment< ? >) fragment;
+         final IEditFragment editFragment = (IEditFragment) fragment;
          hasChanges = editFragment.hasChanges();
       }
       
@@ -943,12 +877,12 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       
       final Fragment fragment = findAddedFragmentById( fragmentContainerId );
       
-      if ( fragment instanceof IEditFragment< ? > )
+      if ( fragment instanceof IEditFragment )
       {
-         final IEditFragment< ? > editFragment = (IEditFragment< ? >) fragment;
+         final IEditFragment editFragment = (IEditFragment) fragment;
          
          if ( how == FinishEditMode.SAVE )
-            finished = editFragment.onFinishEditing();
+            finished = editFragment.onFinishEditing() != null;
          else
             editFragment.onCancelEditing();
          
@@ -1038,7 +972,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
          
          transaction.commit();
          
-         if ( fragment instanceof IEditFragment< ? > )
+         if ( fragment instanceof IEditFragment )
             setEditModeFragmentId( R.id.frag_task );
       }
    }
@@ -1094,18 +1028,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private String createTaskFragmentTag()
    {
       return String.valueOf( R.id.frag_task );
-   }
-   
-   
-   
-   private Bundle createTaskEditChangeTagsConfiguration( List< String > tags )
-   {
-      final Bundle config = new Bundle( 2 );
-      
-      config.putStringArrayList( ChangeTagsDialogFragment.Config.TAGS,
-                                 new ArrayList< String >( tags ) );
-      
-      return config;
    }
    
    
@@ -1313,12 +1235,12 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private boolean finishAddingNewNote( FinishEditMode how )
    {
-      final IEditFragment< ? > addNewNoteFragment = (IEditFragment< ? >) findAddedFragmentByTag( NEW_NOTE_TEMPORARY_ID );
+      final IEditFragment addNewNoteFragment = (IEditFragment) findAddedFragmentByTag( NEW_NOTE_TEMPORARY_ID );
       
       boolean ok = true;
       
       if ( how == FinishEditMode.SAVE )
-         ok = addNewNoteFragment.onFinishEditing();
+         ok = addNewNoteFragment.onFinishEditing() != null;
       else
          addNewNoteFragment.onCancelEditing();
       
@@ -1409,26 +1331,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private void showChangeTagsDialog( Bundle config )
-   {
-      final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-      final DialogFragment newFragment = ChangeTagsDialogFragment.newInstance( config );
-      
-      newFragment.show( fragmentTransaction,
-                        String.valueOf( R.id.frag_change_tags ) );
-   }
-   
-   
-   
-   @Override
-   public void onTagsChanged( List< String > tags )
-   {
-      final AbstractTaskEditFragment< ? > taskEditFragment = getTaskEditFragment();
-      taskEditFragment.setTags( tags );
-   }
-   
-   
-   
    private ViewGroup getFragmentContainer()
    {
       throw new UnsupportedOperationException();
@@ -1442,8 +1344,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       boolean canEdit = false;
       
       final Fragment fragment = findAddedFragmentById( fragId );
-      canEdit = ( fragment instanceof IEditableFragment< ? > )
-         && ( (IEditableFragment< ? >) fragment ).canBeEdited();
+      canEdit = ( fragment instanceof IEditableFragment )
+         && ( (IEditableFragment) fragment ).canBeEdited();
       
       return canEdit;
    }
@@ -1455,21 +1357,10 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       boolean canEdit = false;
       
       final Fragment fragment = findAddedFragmentByTag( fragmentTag );
-      canEdit = ( fragment instanceof IEditableFragment< ? > )
-         && ( (IEditableFragment< ? >) fragment ).canBeEdited();
+      canEdit = ( fragment instanceof IEditableFragment )
+         && ( (IEditableFragment) fragment ).canBeEdited();
       
       return canEdit;
-   }
-   
-   
-   
-   private AbstractTaskEditFragment< ? > getTaskEditFragment() throws AssertionError
-   {
-      if ( getEditModeFragmentId() != R.id.frag_task )
-         throw new AssertionError( "expected to be in task editing mode" );
-      
-      final AbstractTaskEditFragment< ? > taskEditFragment = (AbstractTaskEditFragment< ? >) findAddedFragmentById( R.id.frag_task );
-      return taskEditFragment;
    }
    
    
@@ -1494,6 +1385,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
                                        String fragmentTag,
                                        boolean success )
    {
-      invalidateOptionsMenu();
+      // invalidateOptionsMenu();
    }
 }

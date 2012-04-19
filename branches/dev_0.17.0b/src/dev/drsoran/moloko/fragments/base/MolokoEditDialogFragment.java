@@ -23,18 +23,15 @@
 package dev.drsoran.moloko.fragments.base;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
-public abstract class MolokoEditDialogFragment< T extends Fragment > extends
-         MolokoContentDialogFragment implements IEditFragment< T >
+public abstract class MolokoEditDialogFragment extends
+         MolokoContentDialogFragment implements IEditFragment
 {
    private final EditFragmentImpl impl;
    
@@ -75,21 +72,23 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    
    
    @Override
-   public final boolean onFinishEditing()
+   public final ApplyChangesInfo onFinishEditing()
    {
-      boolean ok = validateInput();
+      ApplyChangesInfo changes = null;
       
-      if ( ok && hasChanges() )
-      {
-         ok = saveChanges();
-      }
+      boolean ok = validateInput();
       
       if ( ok )
       {
+         if ( hasChanges() )
+         {
+            changes = getChanges();
+         }
+         
          getDialog().dismiss();
       }
       
-      return ok;
+      return changes;
    }
    
    
@@ -97,14 +96,6 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    @Override
    public final void onCancelEditing()
    {
-      if ( hasChanges() )
-      {
-         requestCancelEditing();
-      }
-      else
-      {
-         getDialog().cancel();
-      }
    }
    
    
@@ -123,28 +114,6 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    
    
    
-   protected boolean applyModifications( ContentProviderActionItemList actionItemList,
-                                         ApplyChangesInfo applyChangesInfo )
-   {
-      return impl.applyModifications( actionItemList, applyChangesInfo );
-   }
-   
-   
-   
-   protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
-   {
-      return impl.applyModifications( modifications.first, modifications.second );
-   }
-   
-   
-   
-   protected void requestCancelEditing()
-   {
-      impl.requestCancelEditing( getTag() );
-   }
-   
-   
-   
    @Override
    protected void onDialogViewCreated( ViewGroup dialogView )
    {
@@ -153,5 +122,5 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    
    
    
-   protected abstract boolean saveChanges();
+   protected abstract ApplyChangesInfo getChanges();
 }

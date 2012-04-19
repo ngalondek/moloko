@@ -22,12 +22,11 @@
 
 package dev.drsoran.moloko;
 
-import android.support.v4.app.Fragment;
 
 
-public interface IEditFragment< T >
+public interface IEditFragment
 {
-   boolean onFinishEditing();
+   ApplyChangesInfo onFinishEditing();
    
    
    
@@ -39,5 +38,6 @@ public interface IEditFragment< T >
    
    
    
-   IEditableFragment< ? extends Fragment > createEditableFragmentInstance();
+   @Deprecated
+   IEditableFragment createEditableFragmentInstance();
 }

@@ -67,6 +67,13 @@
         <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>
         <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
     </style>
+    
+    <style name="Theme.Moloko.Task.Edit">
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
+    </style>
 
     <style name="Theme.Moloko.Task.EditMultiple">
 

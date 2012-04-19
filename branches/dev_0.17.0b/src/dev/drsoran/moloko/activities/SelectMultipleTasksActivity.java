@@ -26,10 +26,8 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Pair;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
@@ -187,9 +185,9 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                                                                      tasks,
-                                                                                                                      true );
+      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                               tasks,
+                                                                               true );
       applyModifications( modifications );
    }
    
@@ -197,9 +195,9 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
    private void incompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                                                                      tasks,
-                                                                                                                      false );
+      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                               tasks,
+                                                                               false );
       applyModifications( modifications );
    }
    
@@ -207,8 +205,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
    private void postponeSelectedTasks( List< ? extends Task > tasks )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.postponeTasks( this,
-                                                                                                                 tasks );
+      final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
+                                                                          tasks );
       applyModifications( modifications );
    }
    
@@ -216,8 +214,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
    private void deleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.deleteTasks( this,
-                                                                                                               tasks );
+      final ApplyChangesInfo modifications = TaskEditUtils.deleteTasks( this,
+                                                                        tasks );
       applyModifications( modifications );
    }
    

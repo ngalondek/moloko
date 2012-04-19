@@ -192,7 +192,7 @@ public class FullDetailedTasksListFragment extends
                                  .setIconId( R.drawable.ic_menu_edit_multiple_tasks )
                                  .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
                                  .setShow( hasMultipleTasks()
-                                    && hasRtmWriteAccess() )
+                                    && isWritableAccess() )
                                  .build( menu );
       
       MolokoMenuItemBuilder.newSyncMenuItem( getSherlockActivity() )
@@ -234,7 +234,7 @@ public class FullDetailedTasksListFragment extends
                 Menu.NONE,
                 getString( R.string.phr_open_with_name, task.getName() ) );
       
-      if ( hasRtmWriteAccess() )
+      if ( isWritableAccess() )
       {
          menu.add( Menu.NONE,
                    CtxtMenu.EDIT_TASK,

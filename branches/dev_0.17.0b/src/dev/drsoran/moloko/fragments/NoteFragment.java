@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +44,7 @@ import dev.drsoran.moloko.util.UIUtils;
 
 
 public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
-         IEditableFragment< NoteFragment >
+         IEditableFragment
 {
    private final static int NOTE_LOADER_ID = 1;
    
@@ -160,7 +159,7 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    
    
    @Override
-   public IEditFragment< ? extends Fragment > createEditFragmentInstance()
+   public IEditFragment createEditFragmentInstance()
    {
       if ( getLoaderData() != null )
       {

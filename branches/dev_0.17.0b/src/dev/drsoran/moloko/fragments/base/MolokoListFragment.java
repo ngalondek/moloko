@@ -34,16 +34,13 @@ import android.widget.ListAdapter;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.mdt.rtm.data.RtmAuth;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
-import dev.drsoran.moloko.util.AccountUtils;
 
 
 public abstract class MolokoListFragment< D > extends SherlockListFragment
@@ -259,21 +256,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       if ( getSherlockActivity() != null )
          getSherlockActivity().invalidateOptionsMenu();
-   }
-   
-   
-   
-   protected void applyModifications( ContentProviderActionItemList actionItemList,
-                                      ApplyChangesInfo applyChangesInfo )
-   {
-      editImpl.applyModifications( actionItemList, applyChangesInfo );
-   }
-   
-   
-   
-   public boolean hasRtmWriteAccess()
-   {
-      return AccountUtils.isWriteableAccess( getSherlockActivity() );
    }
    
    

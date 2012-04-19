@@ -27,11 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.util.Pair;
 import android.view.View;
-import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -42,8 +38,6 @@ public class EditFragmentImpl
    private final Handler handler = new Handler();
    
    private IBinder windowToken;
-   
-   private IEditFragmentListener listener;
    
    private Context context;
    
@@ -58,11 +52,6 @@ public class EditFragmentImpl
    
    public void onAttach( Context context )
    {
-      if ( context instanceof IEditFragmentListener )
-         listener = (IEditFragmentListener) context;
-      else
-         listener = null;
-      
       this.context = context;
    }
    
@@ -70,7 +59,6 @@ public class EditFragmentImpl
    
    public void onDetach()
    {
-      listener = null;
       context = null;
    }
    
@@ -119,31 +107,6 @@ public class EditFragmentImpl
             }
          } );
       }
-   }
-   
-   
-   
-   public void requestCancelEditing( String fragmentTag )
-   {
-      if ( listener != null )
-         listener.requestCancelEditing( fragmentTag );
-   }
-   
-   
-   
-   public boolean applyModifications( ContentProviderActionItemList actionItemList,
-                                      ApplyChangesInfo applyChangesInfo )
-   {
-      boolean ok = listener != null;
-      return ok
-         && listener.applyModifications( actionItemList, applyChangesInfo );
-   }
-   
-   
-   
-   public boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
-   {
-      return applyModifications( modifications.first, modifications.second );
    }
    
    

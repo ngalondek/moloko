@@ -23,9 +23,7 @@
 package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +37,6 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -48,7 +45,7 @@ import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
+public class NoteEditFragment extends MolokoEditFragment
 {
    public static class Config
    {
@@ -161,16 +158,14 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    
    
    @Override
-   protected boolean saveChanges()
+   protected ApplyChangesInfo getChanges()
    {
-      boolean ok = true;
+      ApplyChangesInfo modifications = null;
       
       final String title = UIUtils.getTrimmedText( this.title );
       final String text = UIUtils.getTrimmedText( this.text );
       
-      ok = !TextUtils.isEmpty( title ) || !TextUtils.isEmpty( text );
-      
-      if ( !ok )
+      if ( TextUtils.isEmpty( title ) && TextUtils.isEmpty( text ) )
       {
          this.text.requestFocus();
          Toast.makeText( getSherlockActivity(),
@@ -180,20 +175,19 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       else
       {
          final RtmTaskNote note = getNoteAssertNotNull();
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.setNoteTitleAndText( getSherlockActivity(),
-                                                                                                                          note.getId(),
-                                                                                                                          title,
-                                                                                                                          text );
-         applyModifications( modifications );
+         modifications = NoteEditUtils.setNoteTitleAndText( getSherlockActivity(),
+                                                            note.getId(),
+                                                            title,
+                                                            text );
       }
       
-      return ok;
+      return modifications;
    }
    
    
    
    @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   public IEditableFragment createEditableFragmentInstance()
    {
       final Bundle config = new Bundle();
       

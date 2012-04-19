@@ -22,14 +22,14 @@
 
 package dev.drsoran.moloko;
 
-import android.support.v4.app.Fragment;
 
 
-public interface IEditableFragment< T extends Fragment >
+public interface IEditableFragment
 {
    boolean canBeEdited();
    
-
-
-   IEditFragment< ? extends Fragment > createEditFragmentInstance();
+   
+   
+   @Deprecated
+   IEditFragment createEditFragmentInstance();
 }

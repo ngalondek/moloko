@@ -26,7 +26,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Pair;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -35,7 +34,6 @@ import com.mdt.rtm.data.RtmList;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
@@ -248,8 +246,8 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    {
       if ( which == Dialog.BUTTON_POSITIVE )
       {
-         Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.deleteList( this,
-                                                                                                              getListToDelete() );
+         final ApplyChangesInfo modifications = RtmListEditUtils.deleteList( this,
+                                                                             getListToDelete() );
          applyModifications( modifications );
       }
       

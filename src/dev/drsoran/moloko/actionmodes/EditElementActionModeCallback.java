@@ -22,32 +22,29 @@
 
 package dev.drsoran.moloko.actionmodes;
 
-import android.os.Bundle;
-
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.adapters.ActionBarTabsAdapter;
-import dev.drsoran.moloko.fragments.TaskEditFragment;
-import dev.drsoran.moloko.fragments.TaskFragment;
-import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.activities.MolokoEditFragmentActivity;
 
 
-public class TaskEditActionMode implements ActionMode.Callback
+public class EditElementActionModeCallback implements ActionMode.Callback
 {
-   private final Task task;
+   private final MolokoEditFragmentActivity activity;
    
-   private final ActionBarTabsAdapter tabsAdapter;
+   private final IEditFragment editFragment;
    
    
    
-   public TaskEditActionMode( Task task, ActionBarTabsAdapter tabsAdapter )
+   public EditElementActionModeCallback( MolokoEditFragmentActivity activity,
+      IEditFragment editFragment )
    {
-      this.task = task;
-      this.tabsAdapter = tabsAdapter;
+      this.activity = activity;
+      this.editFragment = editFragment;
    }
    
    
@@ -64,11 +61,7 @@ public class TaskEditActionMode implements ActionMode.Callback
    @Override
    public boolean onPrepareActionMode( ActionMode mode, Menu menu )
    {
-      mode.setTitle( R.string.app_task_edit );
-      tabsAdapter.setTabFragment( 0,
-                                  TaskEditFragment.class,
-                                  getTaskEditFragmentConfig() );
-      return true;
+      return false;
    }
    
    
@@ -76,7 +69,18 @@ public class TaskEditActionMode implements ActionMode.Callback
    @Override
    public boolean onActionItemClicked( ActionMode mode, MenuItem item )
    {
-      return false;
+      switch ( item.getItemId() )
+      {
+         case R.id.menu_save:
+            if ( saveChanges() )
+            {
+               mode.finish();
+            }
+            return true;
+            
+         default :
+            return false;
+      }
    }
    
    
@@ -84,30 +88,13 @@ public class TaskEditActionMode implements ActionMode.Callback
    @Override
    public void onDestroyActionMode( ActionMode mode )
    {
-      tabsAdapter.setTabFragment( 0,
-                                  TaskFragment.class,
-                                  getTaskFragmentConfiguration() );
    }
    
    
    
-   private Bundle getTaskFragmentConfiguration()
+   private boolean saveChanges()
    {
-      final Bundle config = new Bundle();
-      
-      config.putString( TaskFragment.Config.TASK_ID, task.getId() );
-      
-      return config;
-   }
-   
-   
-   
-   private Bundle getTaskEditFragmentConfig()
-   {
-      final Bundle config = new Bundle();
-      
-      config.putParcelable( Intents.Extras.KEY_TASK, task );
-      
-      return config;
+      final ApplyChangesInfo changes = editFragment.onFinishEditing();
+      return changes != null && activity.applyModifications( changes );
    }
 }

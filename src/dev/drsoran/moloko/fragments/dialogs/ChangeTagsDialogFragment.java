@@ -34,7 +34,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -46,11 +45,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.base.MolokoLoaderEditDialogFragment;
+import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.loaders.TagsLoader;
 import dev.drsoran.moloko.util.Strings;
@@ -60,7 +58,7 @@ import dev.drsoran.rtm.Tag;
 
 
 public class ChangeTagsDialogFragment extends
-         MolokoLoaderEditDialogFragment< ChangeTagsDialogFragment, List< Tag > >
+         MolokoLoaderDialogFragment< List< Tag > >
 {
    public static class ChangeTag
    {
@@ -209,7 +207,7 @@ public class ChangeTagsDialogFragment extends
                                                                       public void onClick( DialogInterface dialog,
                                                                                            int which )
                                                                       {
-                                                                         ChangeTagsDialogFragment.this.onFinishEditing();
+                                                                         listener.onTagsChanged( new ArrayList< String >( chosenTags ) );
                                                                       }
                                                                    } )
                                                .setNegativeButton( R.string.btn_cancel,
@@ -356,32 +354,5 @@ public class ChangeTagsDialogFragment extends
    public int getLoaderId()
    {
       return TAGS_LOADER_ID;
-   }
-   
-   
-   
-   @Override
-   protected boolean saveChanges()
-   {
-      if ( listener != null )
-         listener.onTagsChanged( new ArrayList< String >( chosenTags ) );
-      
-      return true;
-   }
-   
-   
-   
-   @Override
-   public boolean hasChanges()
-   {
-      return true;
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
-   {
-      return null;
    }
 }

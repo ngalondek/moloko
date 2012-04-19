@@ -24,17 +24,14 @@ package dev.drsoran.moloko.fragments.base;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Pair;
 import android.view.View;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
-public abstract class MolokoEditFragment< T extends Fragment > extends
-         MolokoFragment implements IEditFragment< T >
+public abstract class MolokoEditFragment extends MolokoFragment implements
+         IEditFragment
 {
    private final EditFragmentImpl impl;
    
@@ -84,16 +81,14 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
    
    
    @Override
-   public final boolean onFinishEditing()
+   public final ApplyChangesInfo onFinishEditing()
    {
-      boolean ok = true;
-      
       if ( hasChanges() )
       {
-         ok = saveChanges();
+         return getChanges();
       }
       
-      return ok;
+      return null;
    }
    
    
@@ -105,20 +100,5 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
    
    
    
-   protected boolean applyModifications( ContentProviderActionItemList actionItemList,
-                                         ApplyChangesInfo applyChangesInfo )
-   {
-      return impl.applyModifications( actionItemList, applyChangesInfo );
-   }
-   
-   
-   
-   protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
-   {
-      return impl.applyModifications( modifications.first, modifications.second );
-   }
-   
-   
-   
-   protected abstract boolean saveChanges();
+   protected abstract ApplyChangesInfo getChanges();
 }

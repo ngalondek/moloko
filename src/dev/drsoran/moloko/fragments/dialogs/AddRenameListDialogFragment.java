@@ -29,9 +29,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +43,6 @@ import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmListsProviderPart.NewRtmListId;
 import dev.drsoran.moloko.fragments.base.MolokoEditDialogFragment;
@@ -55,8 +52,7 @@ import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class AddRenameListDialogFragment extends
-         MolokoEditDialogFragment< AddRenameListDialogFragment >
+public class AddRenameListDialogFragment extends MolokoEditDialogFragment
 {
    public static class Config
    {
@@ -229,7 +225,7 @@ public class AddRenameListDialogFragment extends
    
    
    @Override
-   protected boolean saveChanges()
+   protected ApplyChangesInfo getChanges()
    {
       final RtmList list = getList();
       
@@ -310,10 +306,8 @@ public class AddRenameListDialogFragment extends
    
    
    
-   private boolean createNewList()
+   private ApplyChangesInfo createNewList()
    {
-      boolean ok = true;
-      
       final NewRtmListId newListId = createNewListId();
       final Date createdDate = new Date();
       
@@ -327,11 +321,7 @@ public class AddRenameListDialogFragment extends
                                            0,
                                            getEnteredSmartFilter() );
       
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.insertList( getSherlockActivity(),
-                                                                                                                 newList );
-      ok = applyModifications( modifications );
-      
-      return ok;
+      return RtmListEditUtils.insertList( getSherlockActivity(), newList );
    }
    
    
@@ -344,12 +334,11 @@ public class AddRenameListDialogFragment extends
    
    
    
-   private boolean renameList( RtmList list )
+   private ApplyChangesInfo renameList( RtmList list )
    {
-      final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = RtmListEditUtils.setListName( getSherlockActivity(),
-                                                                                                                  list.getId(),
-                                                                                                                  UIUtils.getTrimmedText( listNameEdit ) );
-      return applyModifications( modifications );
+      return RtmListEditUtils.setListName( getSherlockActivity(),
+                                           list.getId(),
+                                           UIUtils.getTrimmedText( listNameEdit ) );
    }
    
    
@@ -372,7 +361,7 @@ public class AddRenameListDialogFragment extends
    
    
    @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   public IEditableFragment createEditableFragmentInstance()
    {
       return null;
    }

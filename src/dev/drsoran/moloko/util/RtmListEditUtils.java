@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -24,10 +24,9 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.support.v4.app.FragmentActivity;
-import android.util.Pair;
 
 import com.mdt.rtm.data.RtmList;
 
@@ -54,9 +53,9 @@ public final class RtmListEditUtils
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > setListName( FragmentActivity activity,
-                                                                                            String listId,
-                                                                                            String name )
+   public final static ApplyChangesInfo setListName( Activity activity,
+                                                     String listId,
+                                                     String name )
    {
       final ModificationSet modifications = new ModificationSet();
       
@@ -66,16 +65,16 @@ public final class RtmListEditUtils
                                                        name ) );
       modifications.add( Modification.newListModified( listId ) );
       
-      return Pair.create( modifications.toContentProviderActionItemList(),
-                          new ApplyChangesInfo( activity.getString( R.string.toast_save_list ),
-                                                activity.getString( R.string.toast_save_list_ok ),
-                                                activity.getString( R.string.toast_save_list_failed ) ) );
+      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+                                   activity.getString( R.string.toast_save_list ),
+                                   activity.getString( R.string.toast_save_list_ok ),
+                                   activity.getString( R.string.toast_save_list_failed ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteListByName( FragmentActivity activity,
-                                                                                                 String listName )
+   public final static ApplyChangesInfo deleteListByName( Activity activity,
+                                                          String listName )
    {
       final ContentProviderClient client = activity.getContentResolver()
                                                    .acquireContentProviderClient( Lists.CONTENT_URI );
@@ -90,13 +89,16 @@ public final class RtmListEditUtils
             return deleteList( activity, list );
       }
       
-      return null;
+      return new ApplyChangesInfo( null,
+                                   activity.getString( R.string.toast_delete_list ),
+                                   activity.getString( R.string.toast_delete_list_ok ),
+                                   activity.getString( R.string.toast_delete_list_failed ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > insertList( FragmentActivity activity,
-                                                                                           RtmList list )
+   public final static ApplyChangesInfo insertList( Activity activity,
+                                                    RtmList list )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
@@ -111,16 +113,16 @@ public final class RtmListEditUtils
       if ( !ok )
          actionItemList = null;
       
-      return Pair.create( actionItemList,
-                          new ApplyChangesInfo( activity.getString( R.string.toast_insert_list ),
-                                                activity.getString( R.string.toast_insert_list_ok ),
-                                                activity.getString( R.string.toast_insert_list_fail ) ) );
+      return new ApplyChangesInfo( actionItemList,
+                                   activity.getString( R.string.toast_insert_list ),
+                                   activity.getString( R.string.toast_insert_list_ok ),
+                                   activity.getString( R.string.toast_insert_list_fail ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteList( FragmentActivity activity,
-                                                                                           RtmList list )
+   public final static ApplyChangesInfo deleteList( Activity activity,
+                                                    RtmList list )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       ApplyChangesInfo applyChangesInfo;
@@ -174,17 +176,19 @@ public final class RtmListEditUtils
             actionItemList = null;
          }
          
-         applyChangesInfo = new ApplyChangesInfo( activity.getString( R.string.toast_delete_list ),
+         applyChangesInfo = new ApplyChangesInfo( actionItemList,
+                                                  activity.getString( R.string.toast_delete_list ),
                                                   activity.getString( R.string.toast_delete_list_ok ),
                                                   activity.getString( R.string.toast_delete_list_failed ) );
       }
       else
       {
-         applyChangesInfo = new ApplyChangesInfo( activity.getString( R.string.toast_delete_list ),
+         applyChangesInfo = new ApplyChangesInfo( actionItemList,
+                                                  activity.getString( R.string.toast_delete_list ),
                                                   activity.getString( R.string.toast_delete_list_ok ),
                                                   activity.getString( R.string.toast_delete_locked_list ) );
       }
       
-      return Pair.create( actionItemList, applyChangesInfo );
+      return applyChangesInfo;
    }
 }

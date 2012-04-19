@@ -201,7 +201,7 @@ public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
    private boolean saveChanges()
    {
       final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
-      return taskEditMultipleFragment.onFinishEditing();
+      return applyModifications( taskEditMultipleFragment.onFinishEditing() );
    }
    
    

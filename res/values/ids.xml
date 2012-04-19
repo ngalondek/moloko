@@ -46,6 +46,9 @@
       name="frag_task" />
    <item
       type="id"
+      name="frag_task_edit" />
+   <item
+      type="id"
       name="frag_task_edit_multiple" />
    <item
       type="id"

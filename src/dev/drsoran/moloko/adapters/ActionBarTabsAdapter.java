@@ -25,7 +25,6 @@ package dev.drsoran.moloko.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -34,8 +33,8 @@ import android.support.v4.view.ViewPager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
+import dev.drsoran.moloko.activities.MolokoFragmentActivity;
 import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
 
 
@@ -59,7 +58,7 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
       }
    }
    
-   private final Context context;
+   private final MolokoFragmentActivity context;
    
    private final ActionBar actionBar;
    
@@ -69,8 +68,7 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    
    
    
-   public ActionBarTabsAdapter( SherlockFragmentActivity activity,
-      ViewPager pager )
+   public ActionBarTabsAdapter( MolokoFragmentActivity activity, ViewPager pager )
    {
       super( activity.getSupportFragmentManager() );
       
@@ -100,17 +98,26 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    
    
    
-   public void setTabFragment( int position,
-                               Class< ? extends Fragment > clazz,
-                               Bundle args )
+   public void replaceTabFragment( int position,
+                                   Class< ? extends Fragment > clazz,
+                                   Bundle args )
    {
       final TabInfo info = tabs.get( position );
       info.clazz = clazz;
       info.args = args;
+      
+      final Fragment oldFragment = info.fragment;
       info.fragment = null;
       
-      notifyDataSetChanged();
-      viewPager.invalidate();
+      if ( oldFragment != null )
+      {
+         context.getSupportFragmentManager()
+                .beginTransaction()
+                .remove( oldFragment )
+                .commit();
+         
+         notifyDataSetChanged();
+      }
    }
    
    
@@ -177,6 +184,20 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
                                                      info.args );
       
       return info.fragment;
+   }
+   
+   
+   
+   @Override
+   public int getItemPosition( Object object )
+   {
+      boolean found = false;
+      for ( int i = 0; i < tabs.size() && !found; i++ )
+      {
+         found = tabs.get( i ).fragment == object;
+      }
+      
+      return found ? POSITION_UNCHANGED : POSITION_NONE;
    }
    
    

@@ -23,6 +23,7 @@
 package dev.drsoran.moloko;
 
 import android.content.Context;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -34,39 +35,50 @@ public final class ApplyChangesInfo
    
    private final String applyFailedMessage;
    
+   private final ContentProviderActionItemList actionItems;
    
-
-   public ApplyChangesInfo( String progressMessage, String applySuccessMessage,
+   
+   
+   public ApplyChangesInfo( ContentProviderActionItemList actionItems,
+      String progressMessage, String applySuccessMessage,
       String applyFailedMessage )
    {
+      this.actionItems = actionItems;
       this.progressMessage = progressMessage;
       this.applySuccessMessage = applySuccessMessage;
       this.applyFailedMessage = applyFailedMessage;
    }
    
-
-
+   
+   
    public String getProgressMessage()
    {
       return progressMessage;
    }
    
-
-
+   
+   
    public String getApplySuccessMessage()
    {
       return applySuccessMessage;
    }
    
-
-
+   
+   
    public String getApplyFailedMessage()
    {
       return applyFailedMessage;
    }
    
-
-
+   
+   
+   public ContentProviderActionItemList getActionItems()
+   {
+      return actionItems;
+   }
+   
+   
+   
    public void showApplyResultToast( Context context, boolean result )
    {
       UIUtils.reportStatus( context,

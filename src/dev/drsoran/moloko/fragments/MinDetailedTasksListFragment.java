@@ -152,7 +152,7 @@ public class MinDetailedTasksListFragment extends
                                  .setIconId( R.drawable.ic_menu_edit_multiple_tasks )
                                  .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
                                  .setShow( hasMultipleTasks()
-                                    && hasRtmWriteAccess() )
+                                    && isWritableAccess() )
                                  .build( menu );
    }
    

@@ -26,7 +26,6 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.util.Pair;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -34,7 +33,6 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
@@ -129,9 +127,8 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       if ( which == Dialog.BUTTON_POSITIVE )
       {
          final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-         
-         Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteListActions = RtmListEditUtils.deleteListByName( TasksListActivity.this,
-                                                                                                                        listName );
+         final ApplyChangesInfo deleteListActions = RtmListEditUtils.deleteListByName( TasksListActivity.this,
+                                                                                       listName );
          applyModifications( deleteListActions );
          
          finish();

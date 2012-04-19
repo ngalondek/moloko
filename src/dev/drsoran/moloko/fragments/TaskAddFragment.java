@@ -28,12 +28,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
@@ -45,7 +41,6 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -58,25 +53,8 @@ import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
+public class TaskAddFragment extends AbstractTaskEditFragment
 {
-   private final static IntentFilter INTENT_FILTER;
-   
-   static
-   {
-      try
-      {
-         INTENT_FILTER = new IntentFilter( Intent.ACTION_INSERT,
-                                           "vnd.android.cursor.dir/vnd.rtm.task" );
-         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
-      }
-      catch ( MalformedMimeTypeException e )
-      {
-         throw new RuntimeException( e );
-      }
-   }
-   
-   
    public final static class Config
    {
       public final static String TASK_NAME = Tasks.TASKSERIES_NAME;
@@ -171,13 +149,6 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    public TaskAddFragment()
    {
       registerAnnotatedConfiguredInstance( this, TaskAddFragment.class );
-   }
-   
-   
-   
-   public static IntentFilter getIntentFilter()
-   {
-      return INTENT_FILTER;
    }
    
    
@@ -367,24 +338,27 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    
    
    @Override
-   protected boolean saveChanges()
+   protected ApplyChangesInfo getChanges()
    {
-      boolean ok = super.saveChanges();
-      
-      if ( ok )
+      final Task newTask = newTask();
+      final ApplyChangesInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
+                                                                       newTask );
+      if ( modifications.getActionItems() != null )
       {
-         final Task newTask = newTask();
-         
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = TaskEditUtils.insertTask( getSherlockActivity(),
-                                                                                                                 newTask );
-         ok = applyModifications( modifications );
-         
-         if ( ok )
-            setNewTaskUri( Queries.contentUriWithId( Tasks.CONTENT_URI,
-                                                     newTask.getId() ) );
+         setNewTaskUri( Queries.contentUriWithId( Tasks.CONTENT_URI,
+                                                  newTask.getId() ) );
       }
       
-      return ok;
+      return modifications;
+   }
+   
+   
+   
+   @Override
+   protected List< Task > getEditedTasks()
+   {
+      // this is not supported since we add a new task
+      throw new UnsupportedOperationException();
    }
    
    
@@ -440,7 +414,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    
    
    @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   public IEditableFragment createEditableFragmentInstance()
    {
       final Uri newTaskUri = getNewTaskUri();
       

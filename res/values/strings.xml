@@ -46,7 +46,7 @@
    <string name="app_sort_alpha">Task Name</string>
    <string name="app_sort_prio">Priority</string>
    <string name="app_sort_due_date">Due Date</string>
-   <string name="app_save">Save changes</string>
+   <string name="app_save">Save</string>
    <string name="app_startup">Launching Moloko &#8230;</string>
 
    <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>

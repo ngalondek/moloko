@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,15 +42,13 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditMultipleFragment extends
-         AbstractTaskEditFragment< TaskEditMultipleFragment >
+public class TaskEditMultipleFragment extends AbstractTaskEditFragment
 {
    private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
    
@@ -367,27 +364,15 @@ public class TaskEditMultipleFragment extends
    
    
    @Override
-   protected boolean saveChanges()
+   protected List< Task > getEditedTasks()
    {
-      boolean ok = super.saveChanges();
-      
-      if ( ok )
-      {
-         final ModificationSet modifications = createModificationSet( getTasksAssertNotNull() );
-         
-         if ( modifications != null && modifications.size() > 0 )
-         {
-            applyModifications( modifications );
-         }
-      }
-      
-      return ok;
+      return getTasksAssertNotNull();
    }
    
    
    
    @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   public IEditableFragment createEditableFragmentInstance()
    {
       return null;
    }

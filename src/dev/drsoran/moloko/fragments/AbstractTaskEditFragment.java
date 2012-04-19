@@ -29,7 +29,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -80,9 +79,9 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public abstract class AbstractTaskEditFragment< T extends Fragment >
+public abstract class AbstractTaskEditFragment
          extends
-         MolokoLoaderEditFragment< T, AbstractTaskEditFragment.TaskEditDatabaseData >
+         MolokoLoaderEditFragment< AbstractTaskEditFragment.TaskEditDatabaseData >
          implements IChangesTarget
 {
    protected final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
@@ -281,15 +280,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       final View fragmentView = inflater.inflate( R.layout.task_edit_fragment,
                                                   container,
                                                   false );
-      return fragmentView;
-   }
-   
-   
-   
-   @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
-   {
-      final View content = view.findViewById( android.R.id.content );
+      
+      final View content = fragmentView.findViewById( android.R.id.content );
       addedDate = (TextView) content.findViewById( R.id.task_edit_added_date );
       completedDate = (TextView) content.findViewById( R.id.task_edit_completed_date );
       source = (TextView) content.findViewById( R.id.task_edit_src );
@@ -310,7 +302,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       locationSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_location );
       urlEditText = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
       
-      super.onViewCreated( view, savedInstanceState );
+      return fragmentView;
    }
    
    
@@ -949,22 +941,29 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   protected boolean saveChanges()
+   protected ApplyChangesInfo getChanges()
    {
       commitEditDue();
       commitEditRecurrence();
       commitEditEstimate();
       
       boolean ok = validateInput();
-      
+      ModificationSet modificationSet = null;
       if ( ok )
       {
          saveDueChanges();
          saveRecurrenceChanges();
          saveEstimateChanges();
+         
+         modificationSet = createModificationSet( getEditedTasks() );
       }
       
-      return ok;
+      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( modificationSet.toContentProviderActionItemList(),
+                                                                      getString( R.string.toast_save_task ),
+                                                                      getString( R.string.toast_save_task_ok ),
+                                                                      getString( R.string.toast_save_task_failed ) );
+      
+      return applyChangesInfo;
    }
    
    
@@ -1214,17 +1213,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected boolean applyModifications( ModificationSet modificationSet )
-   {
-      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( getString( R.string.toast_save_task ),
-                                                                      getString( R.string.toast_save_task_ok ),
-                                                                      getString( R.string.toast_save_task_failed ) );
-      return applyModifications( modificationSet.toContentProviderActionItemList(),
-                                 applyChangesInfo );
-   }
-   
-   
-   
    @Override
    public String getLoaderDataName()
    {
@@ -1250,4 +1238,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    protected abstract Bundle getInitialValues();
+   
+   
+   
+   protected abstract List< Task > getEditedTasks();
 }

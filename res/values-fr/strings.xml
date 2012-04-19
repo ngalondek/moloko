@@ -44,7 +44,7 @@
    <string name="app_sort_alpha">Nom de la Tâche</string>
    <string name="app_sort_prio">Priorité</string>
    <string name="app_sort_due_date">Échéance</string>
-   <string name="app_save">Enregistrer les modifications</string>
+   <string name="app_save">Save</string>
    <string name="app_startup">Démarrage de Moloko &#8230;</string>
 
    <string name="svc_sync">Synchronisation RTM</string>

@@ -22,56 +22,23 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
-
 import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.fragments.base.impl.LoaderFragmentImpl;
+import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IEditFragment;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
-public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
-         extends MolokoEditDialogFragment< T > implements LoaderCallbacks< D >,
-         LoaderFragmentImpl.Support< D >
+public abstract class MolokoLoaderEditDialogFragment< D > extends
+         MolokoLoaderDialogFragment< D > implements IEditFragment
 {
-   private final LoaderFragmentImpl< D > loaderImpl;
+   private final EditFragmentImpl impl;
    
    
    
    public MolokoLoaderEditDialogFragment()
    {
-      loaderImpl = new LoaderFragmentImpl< D >( this, this, this );
-   }
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      loaderImpl.onCreate( savedInstanceState );
-   }
-   
-   
-   
-   @Override
-   public void onAttach( Activity activity )
-   {
-      super.onAttach( activity );
-      loaderImpl.onAttach( activity );
-   }
-   
-   
-   
-   @Override
-   public void onDetach()
-   {
-      loaderImpl.onDetach();
-      super.onDetach();
+      impl = new EditFragmentImpl( this );
    }
    
    
@@ -80,118 +47,57 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    public void onDialogViewCreated( ViewGroup dialogView )
    {
       super.onDialogViewCreated( dialogView );
-      loaderImpl.onViewCreated( dialogView, null );
+      impl.onViewCreated( dialogView, null );
    }
    
    
    
    @Override
-   public View getRootView()
+   public void onDestroyView()
    {
-      return getDialogView();
+      impl.onDestroyView();
+      super.onDestroyView();
    }
    
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onAttach( Activity activity )
    {
-      loaderImpl.onSettingsChanged( which, oldValues );
-   }
-   
-   
-   
-   public final void setRespectContentChanges( boolean respect )
-   {
-      loaderImpl.setRespectContentChanges( respect );
-   }
-   
-   
-   
-   public final boolean isRespectingContentChanges()
-   {
-      return loaderImpl.isRespectingContentChanges();
-   }
-   
-   
-   
-   public D getLoaderData()
-   {
-      return loaderImpl.getLoaderData();
-   }
-   
-   
-   
-   public D getLoaderDataAssertNotNull()
-   {
-      return loaderImpl.getLoaderDataAssertNotNull();
-   }
-   
-   
-   
-   public boolean isLoaderDataFound()
-   {
-      return loaderImpl.isLoaderDataFound();
+      super.onAttach( activity );
+      impl.onAttach( activity );
    }
    
    
    
    @Override
-   public boolean isReadyToStartLoader()
+   public void onDetach()
    {
-      return true;
+      impl.onDetach();
+      super.onDetach();
    }
    
    
    
    @Override
-   public Bundle getLoaderConfig()
+   public final ApplyChangesInfo onFinishEditing()
    {
-      return getConfiguration();
+      if ( hasChanges() )
+      {
+         return getChanges();
+      }
+      
+      return null;
    }
    
    
    
    @Override
-   public Loader< D > onCreateLoader( int id, Bundle args )
+   public void onCancelEditing()
    {
-      return loaderImpl.onCreateLoader( id, args );
    }
    
    
    
-   @Override
-   public void onLoadFinished( Loader< D > loader, D data )
-   {
-      loaderImpl.onLoadFinished( loader, data );
-   }
-   
-   
-   
-   @Override
-   public void onLoaderReset( Loader< D > loader )
-   {
-      loaderImpl.onLoaderReset( loader );
-   }
-   
-   
-   
-   @Override
-   public abstract void initContent( ViewGroup content );
-   
-   
-   
-   @Override
-   public abstract Loader< D > newLoaderInstance( int id, Bundle args );
-   
-   
-   
-   @Override
-   public abstract String getLoaderDataName();
-   
-   
-   
-   @Override
-   public abstract int getLoaderId();
+   protected abstract ApplyChangesInfo getChanges();
 }

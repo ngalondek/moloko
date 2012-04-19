@@ -25,10 +25,8 @@ package dev.drsoran.moloko.fragments;
 import java.util.Date;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.format.Time;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +39,6 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
 import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
@@ -52,7 +49,7 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
 
-public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
+public class NoteAddFragment extends MolokoEditFragment
 {
    public static class Config
    {
@@ -67,7 +64,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    private final Time created = MolokoDateUtils.newTime();
    
-   @InstanceState( key = Notes.TASKSERIES_ID, defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = Notes.TASKSERIES_ID,
+                   defaultValue = Strings.EMPTY_STRING )
    private String taskSeriesId;
    
    @InstanceState( key = Notes.NOTE_TITLE, defaultValue = Strings.EMPTY_STRING )
@@ -76,7 +74,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    @InstanceState( key = Notes.NOTE_TEXT, defaultValue = Strings.EMPTY_STRING )
    private String newText;
    
-   @InstanceState( key = Config.NEW_NOTE_ID, defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = Config.NEW_NOTE_ID,
+                   defaultValue = Strings.EMPTY_STRING )
    private String newNoteId;
    
    private EditText title;
@@ -196,32 +195,25 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    
    @Override
-   protected boolean saveChanges()
+   protected ApplyChangesInfo getChanges()
    {
-      boolean ok = true;
+      final NewNoteId newNoteId = createNewNoteId();
+      final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
+                                                   getTaskSeriesId(),
+                                                   new Date( created.toMillis( true ) ),
+                                                   new Date( created.toMillis( true ) ),
+                                                   null,
+                                                   Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
+                                                   Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
       
-      if ( getView() != null )
+      final ApplyChangesInfo modifications = NoteEditUtils.insertNote( getSherlockActivity(),
+                                                                       newNote );
+      if ( modifications.getActionItems() != null )
       {
-         final NewNoteId newNoteId = createNewNoteId();
-         final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
-                                                      getTaskSeriesId(),
-                                                      new Date( created.toMillis( true ) ),
-                                                      new Date( created.toMillis( true ) ),
-                                                      null,
-                                                      Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
-                                                      Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
-         
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.insertNote( getSherlockActivity(),
-                                                                                                                 newNote );
-         ok = applyModifications( modifications );
-         
-         if ( ok )
-         {
-            setNewNoteId( newNote.getId() );
-         }
+         setNewNoteId( newNote.getId() );
       }
       
-      return ok;
+      return modifications;
    }
    
    
@@ -235,7 +227,7 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    
    @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   public IEditableFragment createEditableFragmentInstance()
    {
       NoteFragment fragment = null;
       final String newNoteId = getNewNoteId();

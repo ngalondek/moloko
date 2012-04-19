@@ -23,12 +23,9 @@
 package dev.drsoran.moloko.fragments;
 
 import java.util.Collections;
+import java.util.List;
 
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,33 +35,14 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditFragment extends
-         AbstractTaskEditFragment< TaskEditFragment >
+public class TaskEditFragment extends AbstractTaskEditFragment
 {
-   private final static IntentFilter INTENT_FILTER;
-   
-   static
-   {
-      try
-      {
-         INTENT_FILTER = new IntentFilter( Intent.ACTION_EDIT,
-                                           "vnd.android.cursor.item/vnd.rtm.task" );
-         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
-      }
-      catch ( MalformedMimeTypeException e )
-      {
-         throw new RuntimeException( e );
-      }
-   }
-   
-   
    
    public final static TaskEditFragment newInstance( Bundle config )
    {
@@ -83,13 +61,6 @@ public class TaskEditFragment extends
    public TaskEditFragment()
    {
       registerAnnotatedConfiguredInstance( this, TaskEditFragment.class );
-   }
-   
-   
-   
-   public static IntentFilter getIntentFilter()
-   {
-      return INTENT_FILTER;
    }
    
    
@@ -129,7 +100,6 @@ public class TaskEditFragment extends
    protected void initializeHeadSection()
    {
       final Task task = getTaskAssertNotNull();
-      
       defaultInitializeHeadSectionImpl( task );
    }
    
@@ -164,27 +134,15 @@ public class TaskEditFragment extends
    
    
    @Override
-   protected boolean saveChanges()
+   protected List< Task > getEditedTasks()
    {
-      boolean ok = super.saveChanges();
-      
-      if ( ok )
-      {
-         final ModificationSet modifications = createModificationSet( Collections.singletonList( getTaskAssertNotNull() ) );
-         
-         if ( modifications != null && modifications.size() > 0 )
-         {
-            ok = applyModifications( modifications );
-         }
-      }
-      
-      return ok;
+      return Collections.singletonList( getTaskAssertNotNull() );
    }
    
    
    
    @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   public IEditableFragment createEditableFragmentInstance()
    {
       final Bundle config = new Bundle();
       

@@ -45,6 +45,7 @@
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
    <string name="app_save">Speichern</string>
    <string name="app_startup">Starte Moloko &#8230;</string>
+   <string name="app_selected_count">%1$d ausgewählt</string>
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>
@@ -147,6 +148,13 @@
    <string name="btn_postpone">Aufschieben</string>
    <string name="btn_delete">Löschen</string>
    <string name="btn_back">Zurück</string>
+   
+   <!-- Global menus -->
+   <string name="menu_opt_select_all_male">Alle</string>
+   <string name="menu_opt_deselect_all_male">Keiner</string>
+   <string name="menu_opt_deselect_all_female">Keine</string>
+   <string name="menu_opt_deselect_all_mainly">Keines</string>
+   <string name="menu_opt_inv_selection">Umkehren</string>
 
    <!-- Global Dialogs -->   
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
@@ -187,32 +195,35 @@
       <string name="toast_delete_list_failed">Liste konnte nicht gelöscht werden</string>
       <string name="toast_delete_locked_list">Die Liste \'%1$s\' ist gesperrt and kann nicht gelöscht werden</string>
       
-   <!-- Add/Rename list dialog -->
+   <!-- Add/Rename list dialog fragment -->
    <string name="dlg_add_list_title">Neue Liste</string>
-   <string name="dlg_add_smart_list_title">Neue Smart List</string>
+   <string name="dlg_add_smart_list_title">Neue Smartlist</string>
    <string name="dlg_rename_list_title">Liste umbenennen</string>
    <string name="dlg_add_rename_list_list_name_hint">Name der Liste</string>
-   <string name="dlg_add_rename_list_smart_filter_hint">Smart List Filter</string>
+   <string name="dlg_add_rename_list_smart_filter_hint">Smartlist Filter</string>
       <!-- Toasts -->
       <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste darf nicht leer sein</string>
       <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste darf nicht \'Inbox\' oder \'Sent\' sein</string>
       <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' ist kein gültiger Smart Filter</string>
    
-   <!-- No account dialog -->
+   <!-- No account dialog fragment -->
    <string name="dlg_no_account_title">Neues Remember The Milk Konto</string>
    <string name="dlg_no_account_text">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
    
-   <!-- Missing default list dialog -->
+   <!-- Missing default list dialog fragment -->
    <string name="dlg_missing_def_list_title">Fehlende Standardliste</string>
    <string name="dlg_missing_def_list_text">Es kann nicht mit der Standardliste gestartet werden, da diese nicht existiert.\n\nEs wird mit der Standardansicht gestartet.</string>   
    
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
-	<!-- Home activity -->
-	<string name="home_label_overdue">Überfällig</string>
+	<!-- Home fragment -->
+	<string name="home_label_overdue">Überfällig</string>	
 	
 	<!-- Task activity -->
+	<string name="taskactivity_tab_notes">Notizen</string>
+	
+	<!-- Task fragment -->
 	<string name="task_source">von %1$s</string>
 	<string name="task_datetime_title_due">Wann</string>
 	<string name="task_datetime_title_estimate">Dauer</string>
@@ -226,7 +237,7 @@
       <string name="task_dlg_choose_location_app">Öffne Ort mit&#8230;</string>
       <string name="task_dlg_removing_editing_note">Die Notiz in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt. Wenn Sie die Bearbeitung fortsetzen, wird eine neue Notiz mit Ihren Änderungen eingefügt.</string>         
         
-   <!-- Task Edit activity -->
+   <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
    <string name="task_edit_list">Liste</string>
    <string name="task_edit_priority">Priorität</string>
@@ -253,11 +264,11 @@
    <string name="edit_multiple_tasks_different_locations">Unterschiedliche Orte</string>
    <string name="edit_multiple_tasks_different_urls">Unterschiedliche URLs</string>
       
-   <!-- Change Tags Activity -->
+   <!-- Change Tags dialog fragment -->
    <string name="change_tags_edit_hint">Komma getrennte Tags</string>
    <string name="change_tags_empty">Diese Aufgabe hat keine Tags</string>
 		
-   <!-- TaskLists activity -->
+   <!-- TaskLists fragment -->
    <string name="tasklists_no_lists">Es existieren keine Listen</string>
      <!-- Menus -->     
      <string name="tasklists_menu_ctx_expand">Erweitere \'%1$s\'</string>
@@ -281,7 +292,7 @@
    <string name="notification_due">fällig um %1$s</string>
    <string name="notification_due_tasks_list_title">Fällige Aufgaben</string>
    
-	<!-- AbstractTasksList -->
+	<!-- AbstractTasksList fragment -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
@@ -295,7 +306,7 @@
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      
-   <!-- TasksList activity -->
+   <!-- TasksList fragment -->
    <string name="taskslist_actionbar_subtitle_due_today">Heute fällig</string>
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Morgen fällig</string>
    <string name="taskslist_actionbar_subtitle_overdue">Überfällig</string>
@@ -303,7 +314,7 @@
      <!-- Menus -->
      <string name="taskslist_menu_opt_delete_list">Liste löschen</string>
 	
-   <!-- TaskSearchResultActivity -->
+   <!-- TaskSearchResult fragment -->
    <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Neue Smart List</string>
@@ -311,12 +322,9 @@
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Der Suchverlauf wurde gelöscht</string>
      
-   <!-- SelectMultipleTasks activity -->
+   <!-- SelectMultipleTasks fragment -->
       <string name="select_multiple_tasks_sort_selection">Auswahl</string>
       <!-- Menus -->
-      <string name="select_multiple_tasks_menu_opt_select_all">Alle</string>
-      <string name="select_multiple_tasks_menu_opt_unselect_all">Keine</string>
-      <string name="select_multiple_tasks_menu_opt_inv_selection">Umkehren</string>
       <string name="select_multiple_tasks_menu_opt_do_edit">%1$d bearbeiten</string>
       <string name="select_multiple_tasks_menu_opt_complete">%1$d erledigt</string>
       <string name="select_multiple_tasks_menu_opt_uncomplete">%1$d unerledigt</string>
@@ -331,7 +339,12 @@
       <!-- Toasts -->
       <string name="note_edit_toast_title_and_text_empty">Bitte geben Sie einen Notiztitel oder einen Notitztext ein</string>
       
-   <!-- ContactsList activity -->
+   <!-- NotesList fragment -->
+   <string name="noteslist_no_notes">Keine Notizen</string>
+      <!-- Menus -->
+      <string name="noteslist_menu_add_note">Neue Notiz</string>
+      
+   <!-- ContactsList fragment -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>
       <!-- Menus -->
       <string name="contactslist_listitem_show_phonebook_contact">Details von %1$s</string>

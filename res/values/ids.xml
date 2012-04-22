@@ -247,12 +247,47 @@
       type="id"
       name="ctx_menu_unset_default_list" />
    
-   <!-- Notificatin IDs -->
+   <!-- Notification IDs -->
    <item
       type="id"
       name="notification_permanent" />
    <item
       type="id"
       name="notification_due_tasks_stacked" />
+   
+   <!-- Loader IDs -->
+   <item
+      type="id"
+      name="loader_task" />
+   <item
+      type="id"
+      name="loader_tasks" />
+   <item
+      type="id"
+      name="loader_selectable_tasks" />
+   <item
+      type="id"
+      name="loader_lists" />
+   <item
+      type="id"
+      name="loader_lists_with_task_count" />
+   <item
+      type="id"
+      name="loader_note" />
+   <item
+      type="id"
+      name="loader_notes" />
+   <item
+      type="id"
+      name="loader_contacts" />
+   <item
+      type="id"
+      name="loader_tags" />
+   <item
+      type="id"
+      name="loader_tag_cloud_entry" />
+   <item
+      type="id"
+      name="loader_taskedit_data" />
 
 </resources>

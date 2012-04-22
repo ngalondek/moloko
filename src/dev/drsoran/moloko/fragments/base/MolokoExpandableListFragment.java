@@ -28,7 +28,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
@@ -111,6 +113,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
+      baseImpl.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
       editImpl.onViewCreated( view, savedInstanceState );
       
@@ -349,11 +352,39 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
+   public D getLoaderData()
+   {
+      return loaderImpl.getLoaderData();
+   }
+   
+   
+   
+   public D getLoaderDataAssertNotNull()
+   {
+      return loaderImpl.getLoaderDataAssertNotNull();
+   }
+   
+   
+   
+   public boolean isLoaderDataFound()
+   {
+      return loaderImpl.isLoaderDataFound();
+   }
+   
+   
+   
    protected void invalidateOptionsMenu()
    {
       if ( getSherlockActivity() != null )
          getSherlockActivity().invalidateOptionsMenu();
    }
+   
+   
+   
+   @Override
+   public abstract View onCreateView( LayoutInflater inflater,
+                                      ViewGroup container,
+                                      Bundle savedInstanceState );
    
    
    

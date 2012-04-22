@@ -54,8 +54,6 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       public final static int SHOW_PHONEBOOK_CONTACT = R.id.ctx_menu_show_phonebook_contact;
    }
    
-   private final static int CONTACTS_LOADER_ID = 1;
-   
    private IContactsListFragmentListener listener;
    
    
@@ -214,7 +212,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    @Override
    public int getLoaderId()
    {
-      return CONTACTS_LOADER_ID;
+      return ContactsLoader.ID;
    }
    
    

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,6 +29,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.content.LocationOverviewsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
@@ -43,13 +44,17 @@ import dev.drsoran.rtm.TagWithTaskCount;
 
 public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
 {
+   public final static int ID = R.id.loader_tag_cloud_entry;
+   
+   
+   
    public TagCloudEntryLoader( Context context )
    {
       super( context );
    }
    
-
-
+   
+   
    @Override
    protected List< TagCloudEntry > queryResultInBackground( ContentProviderClient client )
    {
@@ -128,16 +133,16 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
       return cloudEntries;
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Uri.EMPTY;
    }
    
-
-
+   
+   
    @Override
    protected ContentProviderClient getContentProviderClient()
    {
@@ -145,8 +150,8 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                          .acquireContentProviderClient( Rtm.AUTHORITY );
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
@@ -156,8 +161,8 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                                                              observer );
    }
    
-
-
+   
+   
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {

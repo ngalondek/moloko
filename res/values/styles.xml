@@ -152,7 +152,7 @@
         <item name="drawableUnpressed">@drawable/ic_button_edittext_pressed_delete</item>
         <item name="drawablePressed">@drawable/ic_button_edittext_delete</item>
     </style>
-
+    
     <!-- Take preferences from RTM checkbox style -->
 
     <style name="TakePrefsFromRtmCheckboxStyle" parent="TextViewStyle">
@@ -296,13 +296,23 @@
     <!-- ********* -->
     <!-- Note -->
 
-    <style name="Note_Created_Date_Text" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">@color/app_note_created_date_text</item>
-        <item name="android:textStyle">normal</item>
+    <style name="Note_Title" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/note_title</item>
         <item name="android:textSize">12sp</item>
     </style>
-
-    <style name="Note_TitleWithText" parent="@style/TitleWithViewStyle.Text.NoLine"></style>
+    
+    <style name="Note_Text" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">14sp</item>
+    </style>
+    
+    <style name="Note_Created_Date_Text" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/note_created_date_text</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    
+    <style name="Note_Line_Style">
+        <item name="lineColor">@color/note_header_line</item>
+    </style>
 
     <!-- ************ -->
     <!-- Notification -->

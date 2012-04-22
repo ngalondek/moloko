@@ -169,8 +169,6 @@ public class TagCloudFragment extends
       MAGNIFY_LOOKUP.put( 20, 1.6f );
    }
    
-   private final static int TAG_CLOUD_ENTRY_LOADER_ID = 1;
-   
    private ITagCloudFragmentListener listener;
    
    
@@ -311,7 +309,7 @@ public class TagCloudFragment extends
    @Override
    public int getLoaderId()
    {
-      return TAG_CLOUD_ENTRY_LOADER_ID;
+      return TagCloudEntryLoader.ID;
    }
    
    

@@ -21,8 +21,7 @@
    <color name="app_holo_gray">#FFCCCCCC</color>
    <color name="app_light_gray">#FFC9C9C9</color>
    <color name="app_darker_gray">#FF858585</color>
-   <color name="app_icon_black_fill">#FF474747</color>
-   <color name="app_note_created_date_text">@color/app_light_gray</color>
+   <color name="app_icon_black_fill">#FF474747</color>   
    <color name="app_buttonbar_bgnd">@color/app_light_gray</color>
    
    <color name="app_actionbar_bgnd_start">@color/priority_3</color>
@@ -53,7 +52,9 @@
 	<color name="task_overview_bgnd_stroke">#FFA6A6A6</color>
    <color name="task_activity_button_bar_bgnd_fill">#FFE3E1E1</color>   
    
-	<color name="note_bgnd">@color/app_default_bgnd</color>
+	<color name="note_created_date_text">@color/app_light_gray</color>
+	<color name="note_title">@color/priority_3</color>
+	<color name="note_header_line">@color/app_holo_gray</color>
 
 	<color name="error_bgnd">@color/app_default_bgnd</color>
    

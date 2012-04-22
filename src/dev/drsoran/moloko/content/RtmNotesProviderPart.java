@@ -121,20 +121,9 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       {
          c = client.query( Notes.CONTENT_URI, PROJECTION, null, null, null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
          {
-            notes = new ArrayList< RtmTaskNote >( c.getCount() );
-            
-            if ( c.getCount() > 0 )
-            {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final RtmTaskNote taskNote = createNote( c );
-                  notes.add( taskNote );
-               }
-            }
+            notes = fromCursor( c );
          }
       }
       catch ( RemoteException e )
@@ -173,23 +162,10 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
          {
-            final ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
-            
-            if ( c.getCount() > 0 )
-            {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final RtmTaskNote taskNote = createNote( c );
-                  taskNotes.add( taskNote );
-               }
-            }
-            
-            if ( ok )
-               notes = new RtmTaskNotes( taskNotes );
+            final List< RtmTaskNote > taskNotes = fromCursor( c );
+            notes = new RtmTaskNotes( taskNotes );
          }
       }
       catch ( RemoteException e )
@@ -228,9 +204,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c != null && c.moveToFirst();
-         
-         if ( ok )
+         if ( c != null && c.moveToFirst() )
          {
             note = createNote( c );
          }
@@ -277,23 +251,9 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
                                  null,
                                  null );
                
-               boolean ok = c != null;
-               
-               if ( ok )
+               if ( c != null )
                {
-                  notes = new ArrayList< RtmTaskNote >( c.getCount() );
-                  
-                  if ( c.getCount() > 0 )
-                  {
-                     for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-                     {
-                        final RtmTaskNote note = createNote( c );
-                        ok = note != null;
-                        
-                        if ( ok )
-                           notes.add( note );
-                     }
-                  }
+                  notes = fromCursor( c );
                }
             }
             catch ( final RemoteException e )
@@ -325,9 +285,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
          c = client.query( Notes.CONTENT_URI, new String[]
          { Notes._ID }, Notes.NOTE_DELETED + " IS NOT NULL", null, null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
             cnt = c.getCount();
       }
       catch ( final RemoteException e )
@@ -356,23 +314,9 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
          c = client.query( Notes.CONTENT_URI, PROJECTION, Notes.NOTE_DELETED
             + " IS NOT NULL", null, null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
          {
-            notes = new ArrayList< RtmTaskNote >( c.getCount() );
-            
-            if ( c.getCount() > 0 )
-            {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final RtmTaskNote note = createNote( c );
-                  ok = note != null;
-                  
-                  if ( ok )
-                     notes.add( note );
-               }
-            }
+            notes = fromCursor( c );
          }
       }
       catch ( final RemoteException e )
@@ -383,6 +327,29 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       {
          if ( c != null )
             c.close();
+      }
+      
+      return notes;
+   }
+   
+   
+   
+   public final static List< RtmTaskNote > fromCursor( Cursor cursor )
+   {
+      final List< RtmTaskNote > notes = new ArrayList< RtmTaskNote >( cursor.getCount() );
+      
+      if ( cursor.getCount() > 0 )
+      {
+         for ( boolean ok = cursor.moveToFirst(); ok && !cursor.isAfterLast(); cursor.moveToNext() )
+         {
+            final RtmTaskNote note = createNote( cursor );
+            ok = note != null;
+            
+            if ( ok )
+            {
+               notes.add( note );
+            }
+         }
       }
       
       return notes;

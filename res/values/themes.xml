@@ -81,13 +81,6 @@
         <item name="android:windowBackground">@color/app_default_bgnd</item> -->
     </style>
 
-    <style name="Theme.Moloko.Note">
-
-        <!-- Window attributes -->
-        <item name="android:windowBackground">@color/note_bgnd</item>
-        <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>
-    </style>
-
     <style name="Theme.ChangeTagsDialog" parent="android:style/Theme.Dialog">
         
         <!-- Window attributes -->

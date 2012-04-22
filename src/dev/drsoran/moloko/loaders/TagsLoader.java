@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,6 +29,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -37,6 +38,9 @@ import dev.drsoran.rtm.Tag;
 
 public class TagsLoader extends AbstractLoader< List< Tag > >
 {
+   public final static int ID = R.id.loader_tags;
+   
+   
    public final static class Config
    {
       public final static String TASKSERIES_ID = Tasks.TASKSERIES_ID;
@@ -53,14 +57,14 @@ public class TagsLoader extends AbstractLoader< List< Tag > >
    private final boolean distinct;
    
    
-
+   
    public TagsLoader( Context context )
    {
       this( context, null, null, true );
    }
    
-
-
+   
+   
    public TagsLoader( Context context, String taskSeriesId,
       Comparator< Tag > comparator, boolean distinct )
    {
@@ -70,8 +74,8 @@ public class TagsLoader extends AbstractLoader< List< Tag > >
       this.distinct = distinct;
    }
    
-
-
+   
+   
    @Override
    protected List< Tag > queryResultInBackground( ContentProviderClient client )
    {
@@ -81,24 +85,24 @@ public class TagsLoader extends AbstractLoader< List< Tag > >
                                           distinct );
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Tags.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
       TagsProviderPart.registerContentObserver( getContext(), observer );
    }
    
-
-
+   
+   
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {

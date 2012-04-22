@@ -47,6 +47,7 @@ import dev.drsoran.moloko.adapters.TaskListsAdapter.IOnGroupIndicatorClickedList
 import dev.drsoran.moloko.fragments.base.MolokoExpandableListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
+import dev.drsoran.moloko.loaders.RtmListsLoader;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
@@ -71,8 +72,6 @@ public class TaskListsFragment extends
       
       public final static int REMOVE_DEFAULT_LIST = R.id.ctx_menu_unset_default_list;
    }
-   
-   private final static int LISTS_LOADER_ID = 1;
    
    private ITaskListsFragmentListener listener;
    
@@ -352,7 +351,7 @@ public class TaskListsFragment extends
    @Override
    public int getLoaderId()
    {
-      return LISTS_LOADER_ID;
+      return RtmListsLoader.ID;
    }
    
    

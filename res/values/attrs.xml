@@ -73,6 +73,10 @@
        <attr name="drawableUnpressed" format="reference"/>       
    </declare-styleable>
    
+   <declare-styleable name="SimpleLine">
+       <attr name="lineColor" format="reference|color" />
+   </declare-styleable>
+   
    <declare-styleable name="BottomButtonBarLayout">
       <attr name="bottomButtonBarStyle" format="reference" />
       <attr name="stretchSingleButton" format="boolean" />

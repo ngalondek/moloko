@@ -73,6 +73,10 @@ abstract class LoaderFragmentImplBase< D >
    
    private ILoaderFragmentListener loaderListener;
    
+   private D loaderData;
+   
+   private boolean loaderNotDataFound;
+   
    @InstanceState( key = Config.RESPECT_CONTENT_CHANGES, defaultValue = "true" )
    private boolean respectContentChanges = true;
    
@@ -128,6 +132,30 @@ abstract class LoaderFragmentImplBase< D >
    
    
    
+   public D getLoaderData()
+   {
+      return loaderData;
+   }
+   
+   
+   
+   public D getLoaderDataAssertNotNull()
+   {
+      if ( getLoaderData() == null )
+         throw new IllegalStateException( "loader data must not be null" );
+      
+      return getLoaderData();
+   }
+   
+   
+   
+   public boolean isLoaderDataFound()
+   {
+      return !loaderNotDataFound;
+   }
+   
+   
+   
    public void setRespectContentChanges( boolean respect )
    {
       respectContentChanges = respect;
@@ -167,15 +195,20 @@ abstract class LoaderFragmentImplBase< D >
    
    public void onLoadFinished( Loader< D > loader, D data )
    {
+      loaderData = data;
+      loaderNotDataFound = loaderData == null;
+      
       loaderListener.onFragmentLoadFinished( fragment.getId(),
                                              fragment.getTag(),
-                                             data != null );
+                                             isLoaderDataFound() );
    }
    
    
    
    public void onLoaderReset( Loader< D > loader )
    {
+      loaderData = null;
+      loaderNotDataFound = false;
    }
    
    

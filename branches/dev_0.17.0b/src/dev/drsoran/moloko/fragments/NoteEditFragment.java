@@ -189,12 +189,6 @@ public class NoteEditFragment extends MolokoEditFragment
    @Override
    public IEditableFragment createEditableFragmentInstance()
    {
-      final Bundle config = new Bundle();
-      
-      config.putString( NoteFragment.Config.NOTE_ID,
-                        getNoteAssertNotNull().getId() );
-      
-      final NoteFragment fragment = NoteFragment.newInstance( config );
-      return fragment;
+      throw new UnsupportedOperationException();
    }
 }

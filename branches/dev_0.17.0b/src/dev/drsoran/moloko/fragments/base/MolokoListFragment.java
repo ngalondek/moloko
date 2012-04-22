@@ -28,7 +28,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -106,6 +108,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
+      baseImpl.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
       editImpl.onViewCreated( view, savedInstanceState );
    }
@@ -300,26 +303,54 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
-   @Override
-   abstract public Loader< D > newLoaderInstance( int id, Bundle config );
+   public D getLoaderData()
+   {
+      return loaderImpl.getLoaderData();
+   }
+   
+   
+   
+   public D getLoaderDataAssertNotNull()
+   {
+      return loaderImpl.getLoaderDataAssertNotNull();
+   }
+   
+   
+   
+   public boolean isLoaderDataFound()
+   {
+      return loaderImpl.isLoaderDataFound();
+   }
    
    
    
    @Override
-   abstract public String getLoaderDataName();
+   public abstract View onCreateView( LayoutInflater inflater,
+                                      ViewGroup container,
+                                      Bundle savedInstanceState );
    
    
    
    @Override
-   abstract public int getLoaderId();
+   public abstract Loader< D > newLoaderInstance( int id, Bundle config );
    
    
    
    @Override
-   abstract public ListAdapter createEmptyListAdapter();
+   public abstract String getLoaderDataName();
    
    
    
    @Override
-   abstract public ListAdapter createListAdapterForResult( D result );
+   public abstract int getLoaderId();
+   
+   
+   
+   @Override
+   public abstract ListAdapter createEmptyListAdapter();
+   
+   
+   
+   @Override
+   public abstract ListAdapter createListAdapterForResult( D result );
 }

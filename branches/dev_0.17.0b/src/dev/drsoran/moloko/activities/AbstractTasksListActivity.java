@@ -72,8 +72,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       public final static String LIST_NAME = Lists.LIST_NAME;
    }
    
-   private final static int LISTS_LOADER_ID = 1;
-   
    private QuickAddTaskActionBarSwitcher quickAddTaskActionBarSwitcher;
    
    private SpinnerAdapter actionBarNavigationAdapter;
@@ -178,7 +176,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       // alternative
       if ( hasListName() )
       {
-         getSupportLoaderManager().initLoader( LISTS_LOADER_ID,
+         getSupportLoaderManager().initLoader( RtmListWithTaskCountLoader.ID,
                                                Bundle.EMPTY,
                                                this );
       }
@@ -349,7 +347,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          items.add( rtmListWithTaskCount.getName() );
       }
       
-      actionBarNavigationAdapter = new ActionBarListNavigationAdapter( this, items );
+      actionBarNavigationAdapter = new ActionBarListNavigationAdapter( this,
+                                                                       items );
       return actionBarNavigationAdapter;
    }
    

@@ -63,10 +63,6 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private final Handler handler = new Handler();
    
-   private D loaderData;
-   
-   private boolean loaderNotDataFound;
-   
    
    
    @SuppressWarnings( "unchecked" )
@@ -96,7 +92,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      if ( loaderNotDataFound )
+      if ( !isLoaderDataFound() )
          showElementNotFoundError();
       else if ( getLoaderData() != null )
          showContent();
@@ -106,34 +102,10 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
-   public D getLoaderData()
-   {
-      return loaderData;
-   }
-   
-   
-   
-   public D getLoaderDataAssertNotNull()
-   {
-      if ( getLoaderData() == null )
-         throw new IllegalStateException( "loader data must not be null" );
-      
-      return getLoaderData();
-   }
-   
-   
-   
-   public boolean isLoaderDataFound()
-   {
-      return !loaderNotDataFound;
-   }
-   
-   
-   
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      if ( !loaderNotDataFound && support.getContentView() != null )
+      if ( isLoaderDataFound() && support.getContentView() != null )
          support.initContent( support.getContentView() );
    }
    
@@ -151,26 +123,12 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
-      loaderData = data;
-      loaderNotDataFound = loaderData == null;
+      super.onLoadFinished( loader, data );
       
-      if ( loaderNotDataFound )
+      if ( !isLoaderDataFound() )
          showElementNotFoundError();
       else
          showContentAsync();
-      
-      super.onLoadFinished( loader, data );
-   }
-   
-   
-   
-   @Override
-   public void onLoaderReset( Loader< D > loader )
-   {
-      loaderData = null;
-      loaderNotDataFound = false;
-      
-      super.onLoaderReset( loader );
    }
    
    

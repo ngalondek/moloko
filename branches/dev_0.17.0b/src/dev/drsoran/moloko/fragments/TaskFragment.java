@@ -23,9 +23,6 @@
 package dev.drsoran.moloko.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
@@ -59,20 +56,12 @@ import dev.drsoran.rtm.Task;
 
 public class TaskFragment extends MolokoLoaderFragment< Task >
 {
-   private final static IntentFilter INTENT_FILTER;
+   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
-   static
+   
+   public static class Config
    {
-      try
-      {
-         INTENT_FILTER = new IntentFilter( Intent.ACTION_VIEW,
-                                           "vnd.android.cursor.item/vnd.rtm.task" );
-         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
-      }
-      catch ( MalformedMimeTypeException e )
-      {
-         throw new RuntimeException( e );
-      }
+      public final static String TASK_ID = "task_id";
    }
    
    
@@ -88,16 +77,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       
       public final static int EDIT_TASK = R.id.menu_edit_selected_tasks;
    }
-   
-   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
-   
-   
-   public static class Config
-   {
-      public final static String TASK_ID = "task_id";
-   }
-   
-   private final static int TASK_LOADER_ID = 1;
    
    private ITaskFragmentListener listener;
    
@@ -139,13 +118,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       fragment.setArguments( config );
       
       return fragment;
-   }
-   
-   
-   
-   public static IntentFilter getIntentFilter()
-   {
-      return INTENT_FILTER;
    }
    
    
@@ -584,7 +556,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    @Override
    public int getLoaderId()
    {
-      return TASK_LOADER_ID;
+      return TaskLoader.ID;
    }
    
    

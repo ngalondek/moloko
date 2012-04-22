@@ -46,6 +46,7 @@
    <string name="app_sort_due_date">Échéance</string>
    <string name="app_save">Save</string>
    <string name="app_startup">Démarrage de Moloko &#8230;</string>
+   <string name="app_selected_count">%1$d selected</string>
 
    <string name="svc_sync">Synchronisation RTM</string>
    <string name="svc_auth">Authentification RTM</string>
@@ -142,6 +143,15 @@
    <string name="btn_postpone">Reporter</string>
    <string name="btn_delete">Supprimer</string>   
    <string name="btn_back">Retour</string>
+   
+   <!-- Global menus -->
+   <string name="menu_opt_select_all_male">Toutes</string>
+   <string name="menu_opt_select_all_female">@string/menu_opt_select_all_male</string>
+   <string name="menu_opt_select_all_mainly">@string/menu_opt_select_all_male</string>
+   <string name="menu_opt_deselect_all_male">Aucunne</string>
+   <string name="menu_opt_deselect_all_female">@string/menu_opt_deselect_all_male</string>
+   <string name="menu_opt_deselect_all_mainly">@string/menu_opt_deselect_all_male</string>
+   <string name="menu_opt_inv_selection">Inverser</string>
 
    <!-- Global Dialogs -->
    <string name="dlg_estimate_picker_title">Durée estimée ?</string>
@@ -205,10 +215,13 @@
    <string name="search_label">@string/app_name</string>
    <string name="search_hint">Chercher des tâches</string>
 
-   <!-- Home activity -->
+   <!-- Home fragment -->
    <string name="home_label_overdue">En Retard</string>
+   
+   <!-- Task activity -->   
+   <string name="taskactivity_tab_notes">Notes</string>
 
-   <!-- Task activity -->
+   <!-- Task fragment -->
    <string name="task_source">source : %1$s</string>
    <string name="task_postponed">%1$dx,</string>
    <string name="task_datetime_title_due">Quand</string>
@@ -223,7 +236,7 @@
       <string name="task_dlg_choose_location_app">Afficher le lieu avec&#8230;</string>
       <string name="task_dlg_removing_editing_note">La note que vous modifiez a été supprimée par une mise à jour en tâche de fond. Si vous continuez l\'édition, une nouvelle note sera créée avec vos modifications.</string>
 
-   <!-- Task Edit activity -->
+   <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Nom de la tâche</string>
    <string name="task_edit_list">Liste</string>
    <string name="task_edit_priority">Priorité</string>
@@ -251,11 +264,11 @@
    <string name="edit_multiple_tasks_different_locations">Lieux différents</string>
    <string name="edit_multiple_tasks_different_urls">URLs différentes</string>
 
-   <!-- Change Tags Activity -->
+   <!-- Change Tags fragment -->
    <string name="change_tags_edit_hint">Mots Clés séparés par des virgules</string>
    <string name="change_tags_empty">Cette tâche n\'a pas de mots clés</string>
 
-   <!-- TaskLists activity -->
+   <!-- TaskLists fragment -->
    <string name="tasklists_no_lists">Aucune liste</string>
      <!-- Menus -->
      <string name="tasklists_menu_ctx_expand">Replier \'%1$s\'</string>
@@ -293,7 +306,7 @@
      <string name="abstaskslist_dlg_show_tags_and">et</string>
      <string name="abstaskslist_dlg_show_tags_or">ou</string>
 
-   <!-- TasksList activity -->
+   <!-- TasksList fragment -->
    <string name="taskslist_actionbar_subtitle_due_today">Aujourd\'hui</string>
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Demain</string>
    <string name="taskslist_actionbar_subtitle_overdue">En retard</string>
@@ -301,7 +314,7 @@
      <!-- Menus -->
      <string name="taskslist_menu_opt_delete_list">Supprimer la liste</string>
 
-   <!-- TaskSearchResultActivity -->
+   <!-- TaskSearchResult fragment -->
    <string name="tasksearchresult_wrong_syntax_html">La recherche de :&lt;b>\'%1$s\'&lt;/b> ne peut pas être réalisée. Vérifier la requête.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Ajouter une liste intelligente</string>
@@ -309,12 +322,9 @@
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Historique de recherche effacé</string>
 
-   <!-- SelectMultipleTasks activity -->
+   <!-- SelectMultipleTasks fragment -->
    <string name="select_multiple_tasks_sort_selection">Sélectionnées ou pas</string>
       <!-- Menus -->
-      <string name="select_multiple_tasks_menu_opt_select_all">Toutes</string>
-      <string name="select_multiple_tasks_menu_opt_unselect_all">Aucunne</string>
-      <string name="select_multiple_tasks_menu_opt_inv_selection">Inverser</string>
       <string name="select_multiple_tasks_menu_opt_do_edit">Modifier %1$d tâches</string>
       <string name="select_multiple_tasks_menu_opt_complete">Marquer %1$d tâches faites</string>
       <string name="select_multiple_tasks_menu_opt_uncomplete">Marquer %1$d tâches à faire</string>
@@ -323,7 +333,7 @@
       <string name="select_multiple_tasks_menu_ctx_select">Selectionner %1$s tâches</string>
       <string name="select_multiple_tasks_menu_ctx_deselect">Déselectionner %1$s tâches</string>
 
-   <!-- ContactsList activity -->
+   <!-- ContactsList fragment -->
    <string name="contactslist_no_contacts">Aucun contact</string>
       <!-- Menus -->
       <string name="contactslist_listitem_show_phonebook_contact">Détails de %1$s</string>
@@ -333,8 +343,13 @@
    <string name="note_edit_text_hint">Rédigez la note ici</string>
       <!-- Toasts -->
       <string name="note_edit_toast_title_and_text_empty">Veuiller entrer un titre ou un corps pour la note</string>
+      
+   <!-- NotesList fragment -->
+   <string name="noteslist_no_notes">No notes</string>
+      <!-- Menus -->
+      <string name="noteslist_menu_add_note">New note</string>
 
-   <!-- Authenticator activity -->
+   <!-- Authenticator fragment -->
    <string name="auth_permission_label">Permission</string>
    <string name="auth_info_text">Après l\'appui sur Continuer, vous allez être redirigés sur ls site web de Remember The Milk. Là, vous pourrez vous connecter et confirmer le niveau d\'accréditation du certificat utilisé par Moloko.\n\nVotre nom d\'utilisatur et votre mot de passe ne seront pas enregistrés localement.</string>
    <string name="auth_missing_credential">Une information importante de votre profil RTM manque. Merci de le compléter.</string>

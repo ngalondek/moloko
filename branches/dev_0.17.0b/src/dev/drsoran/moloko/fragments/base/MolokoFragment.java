@@ -26,6 +26,8 @@ import java.util.HashMap;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -176,4 +178,11 @@ public abstract class MolokoFragment extends SherlockFragment implements
    {
       return 0;
    }
+   
+   
+   
+   @Override
+   public abstract View onCreateView( LayoutInflater inflater,
+                                      ViewGroup container,
+                                      Bundle savedInstanceState );
 }

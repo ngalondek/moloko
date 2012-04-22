@@ -48,6 +48,7 @@
    <string name="app_sort_due_date">Due Date</string>
    <string name="app_save">Save</string>
    <string name="app_startup">Launching Moloko &#8230;</string>
+   <string name="app_selected_count">%1$d selected</string>
 
    <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
    <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>
@@ -159,6 +160,15 @@
    <string name="btn_postpone">Postpone</string>
    <string name="btn_delete">Delete</string>
    <string name="btn_back">Back</string>
+   
+   <!-- Global menus -->
+   <string name="menu_opt_select_all_male">All</string>
+   <string name="menu_opt_select_all_female">@string/menu_opt_select_all_male</string>
+   <string name="menu_opt_select_all_mainly">@string/menu_opt_select_all_male</string>
+   <string name="menu_opt_deselect_all_male">None</string>
+   <string name="menu_opt_deselect_all_female">@string/menu_opt_deselect_all_male</string>
+   <string name="menu_opt_deselect_all_mainly">@string/menu_opt_deselect_all_male</string>
+   <string name="menu_opt_inv_selection">Invert</string>
 
    <!-- Global Dialogs -->
    <string name="dlg_estimate_picker_title">How long does it take?</string>
@@ -223,12 +233,16 @@
    <string name="search_label">@string/app_name</string>
    <string name="search_hint">Search for tasks</string>
 
-   <!-- Home activity -->
+   <!-- Home fragment -->
    <string name="home_label_today">@string/phr_today</string>
    <string name="home_label_tomorrow">@string/phr_tomorrow</string>
    <string name="home_label_overdue">Overdue</string>
-
+   
    <!-- Task activity -->
+   <string name="taskactivity_tab_task">@string/app_task</string>
+   <string name="taskactivity_tab_notes">Notes</string>
+
+   <!-- Task fragment -->
    <string name="task_source">from %1$s</string>
    <string name="task_postponed">%1$dx,</string>
    <string name="task_datetime_title_due">When</string>
@@ -244,7 +258,7 @@
       <string name="task_dlg_choose_location_app">Open location with&#8230;</string>
       <string name="task_dlg_removing_editing_note">The note you are editing is removed by processing a background sync. If you continue editing, a new note is inserted with your changes.</string>
 
-   <!-- Task Edit activity -->
+   <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Task Name</string>
    <string name="task_edit_list">List</string>
    <string name="task_edit_priority">Priority</string>
@@ -274,11 +288,11 @@
    <string name="edit_multiple_tasks_different_urls">Different URLs</string>
    <string name="edit_multiple_tasks_entry_with_count">%1$s (%2$d)</string>
 
-   <!-- Change Tags Activity -->
+   <!-- Change Tags fragment -->
    <string name="change_tags_edit_hint">Comma separated tags</string>
    <string name="change_tags_empty">This task has no tags</string>
 
-   <!-- TaskLists activity -->
+   <!-- TaskLists fragment -->
    <string name="tasklists_no_lists">There are no lists</string>
      <!-- Menus -->
      <string name="tasklists_menu_add_list">@string/dlg_add_list_title</string>
@@ -319,7 +333,7 @@
      <string name="abstaskslist_dlg_show_tags_and">and</string>
      <string name="abstaskslist_dlg_show_tags_or">or</string>
 
-   <!-- TasksList activity -->
+   <!-- TasksList fragment -->
    <string name="taskslist_actionbar">%1$s</string>
    <string name="taskslist_actionbar_subtitle_due_today">Due today</string>
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Due tomorrow</string>
@@ -329,7 +343,7 @@
      <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
      <string name="taskslist_menu_opt_delete_list">Delete list</string>
 
-   <!-- TaskSearchResultActivity -->
+   <!-- TaskSearchResult fragment -->
    <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the search syntax.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Add smart list</string>
@@ -337,13 +351,13 @@
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Search history has been cleared</string>
 
-   <!-- SelectMultipleTasks activity -->
+   <!-- SelectMultipleTasks fragment -->
    <string name="select_multiple_tasks_titlebar">@string/app_task_select_multiple</string>
    <string name="select_multiple_tasks_sort_selection">Selection</string>
       <!-- Menus -->
-      <string name="select_multiple_tasks_menu_opt_select_all">All</string>
-      <string name="select_multiple_tasks_menu_opt_unselect_all">None</string>
-      <string name="select_multiple_tasks_menu_opt_inv_selection">Invert</string>
+      <string name="select_multiple_tasks_menu_opt_select_all">@string/menu_opt_select_all_female</string>
+      <string name="select_multiple_tasks_menu_opt_unselect_all">@string/menu_opt_deselect_all_female</string>
+      <string name="select_multiple_tasks_menu_opt_inv_selection">@string/menu_opt_inv_selection</string>      
       <string name="select_multiple_tasks_menu_opt_do_edit">Edit %1$d</string>
       <string name="select_multiple_tasks_menu_opt_complete">Complete %1$d</string>
       <string name="select_multiple_tasks_menu_opt_uncomplete">Incomplete %1$d</string>
@@ -352,7 +366,7 @@
       <string name="select_multiple_tasks_menu_ctx_select">Select %1$s</string>
       <string name="select_multiple_tasks_menu_ctx_deselect">Deselect %1$s</string>
 
-   <!-- ContactsList activity -->
+   <!-- ContactsList fragment -->
    <string name="contactslist_no_contacts">No contacts</string>
    <string name="contactslist_listitem_num_tasks">%1$d %2$s</string>
       <!-- Menus -->
@@ -363,6 +377,11 @@
    <string name="note_edit_text_hint">Enter note here</string>
       <!-- Toasts -->
       <string name="note_edit_toast_title_and_text_empty">Please enter a note title or a note text</string>
+      
+   <!-- NotesList fragment -->
+   <string name="noteslist_no_notes">No notes</string>
+      <!-- Menus -->
+      <string name="noteslist_menu_add_note">New note</string>
 
    <!-- Quick add task fragment -->
    <string name="quick_add_task_hint">@string/app_task_add</string>

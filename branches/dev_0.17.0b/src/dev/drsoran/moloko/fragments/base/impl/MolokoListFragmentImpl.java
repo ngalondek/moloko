@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
+import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 
@@ -32,6 +33,15 @@ public class MolokoListFragmentImpl extends ConfigurableFragmentImpl
    public MolokoListFragmentImpl( ListFragment fragment, int settingsMask )
    {
       super( fragment, settingsMask );
+   }
+   
+   
+   
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      final View emptyListView = view.findViewById( android.R.id.empty );
+      ( (ListFragment) getFragment() ).getListView()
+                                      .setEmptyView( emptyListView );
    }
    
    

@@ -49,6 +49,7 @@ import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.layouts.TitleWithTextLayout;
+import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.Queries;
@@ -80,8 +81,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    }
    
    protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
-   
-   private final static int TASKS_LOADER_ID = 1;
    
    private ITasksListFragmentListener listener;
    
@@ -367,9 +366,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    public void reload()
    {
-      getLoaderManager().restartLoader( TASKS_LOADER_ID,
-                                        getConfiguration(),
-                                        this );
+      getLoaderManager().restartLoader( getLoaderId(), getConfiguration(), this );
    }
    
    
@@ -401,7 +398,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       if ( errorTextView != null )
          errorTextView.setText( errorMessage );
       
-      getLoaderManager().destroyLoader( TASKS_LOADER_ID );
+      getLoaderManager().destroyLoader( getLoaderId() );
    }
    
    
@@ -412,7 +409,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       if ( errorTextView != null )
          errorTextView.setText( errorMessage );
       
-      getLoaderManager().destroyLoader( TASKS_LOADER_ID );
+      getLoaderManager().destroyLoader( getLoaderId() );
    }
    
    
@@ -438,13 +435,13 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public int getLoaderId()
    {
-      return TASKS_LOADER_ID;
+      return TasksLoader.ID;
    }
    
    
    
    @Override
-   public int getSettingsMask()
+   protected int getSettingsMask()
    {
       return super.getSettingsMask()
          | IOnSettingsChangedListener.DATE_TIME_RELATED;

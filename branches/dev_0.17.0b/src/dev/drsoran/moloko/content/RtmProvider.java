@@ -144,6 +144,13 @@ public class RtmProvider extends ContentProvider
    
    
    
+   public Cursor querySql( String sqlString )
+   {
+      return dbHelper.getReadableDatabase().rawQuery( sqlString, null );
+   }
+   
+   
+   
    @Override
    public Cursor query( Uri uri,
                         String[] projection,

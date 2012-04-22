@@ -81,8 +81,6 @@ public class ChangeTagsDialogFragment extends
       public final static String TAGS = Tasks.TAGS;
    }
    
-   private final static int TAGS_LOADER_ID = 1;
-   
    private final MultiAutoCompleteTextView.Tokenizer tokenizer = new MultiAutoCompleteTextView.CommaTokenizer();
    
    @InstanceState( key = Config.TAGS )
@@ -353,6 +351,6 @@ public class ChangeTagsDialogFragment extends
    @Override
    public int getLoaderId()
    {
-      return TAGS_LOADER_ID;
+      return TagsLoader.ID;
    }
 }

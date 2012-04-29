@@ -42,7 +42,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -53,6 +52,7 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment;
@@ -696,38 +696,17 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   protected boolean validateInput()
-   {
-      // Task name
-      boolean ok = validateName();
-      
-      // Due
-      ok = ok && validateDue();
-      
-      // Recurrence
-      ok = ok && validateRecurrence();
-      
-      // Estimate
-      ok = ok && validateEstimate();
-      
-      return ok;
-   }
-   
-   
-   
-   protected boolean validateName()
+   protected ValidationResult validateName()
    {
       final boolean ok = !TextUtils.isEmpty( getCurrentValue( Tasks.TASKSERIES_NAME,
                                                               String.class ) );
       if ( !ok )
       {
-         Toast.makeText( getSherlockActivity(),
-                         R.string.task_edit_validate_empty_name,
-                         Toast.LENGTH_LONG ).show();
-         nameEditText.requestFocus();
+         return new ValidationResult( getString( R.string.task_edit_validate_empty_name ),
+                                      nameEditText );
       }
       
-      return ok;
+      return ValidationResult.OK;
    }
    
    
@@ -748,7 +727,7 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   protected boolean validateDue()
+   protected ValidationResult validateDue()
    {
       return dueEditText.validate();
    }
@@ -806,7 +785,7 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   protected boolean validateRecurrence()
+   protected ValidationResult validateRecurrence()
    {
       return recurrEditText.validate();
    }
@@ -860,7 +839,7 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   protected boolean validateEstimate()
+   protected ValidationResult validateEstimate()
    {
       return estimateEditText.validate();
    }
@@ -943,20 +922,11 @@ public abstract class AbstractTaskEditFragment
    @Override
    protected ApplyChangesInfo getChanges()
    {
-      commitEditDue();
-      commitEditRecurrence();
-      commitEditEstimate();
+      saveDueChanges();
+      saveRecurrenceChanges();
+      saveEstimateChanges();
       
-      boolean ok = validateInput();
-      ModificationSet modificationSet = null;
-      if ( ok )
-      {
-         saveDueChanges();
-         saveRecurrenceChanges();
-         saveEstimateChanges();
-         
-         modificationSet = createModificationSet( getEditedTasks() );
-      }
+      final ModificationSet modificationSet = createModificationSet( getEditedTasks() );
       
       final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( modificationSet.toContentProviderActionItemList(),
                                                                       getString( R.string.toast_save_task ),
@@ -964,6 +934,30 @@ public abstract class AbstractTaskEditFragment
                                                                       getString( R.string.toast_save_task_failed ) );
       
       return applyChangesInfo;
+   }
+   
+   
+   
+   @Override
+   public ValidationResult validate()
+   {
+      commitEditDue();
+      commitEditRecurrence();
+      commitEditEstimate();
+      
+      // Task name
+      ValidationResult validationResult = validateName();
+      
+      // Due
+      validationResult = validationResult.and( validateDue() );
+      
+      // Recurrence
+      validationResult = validationResult.and( validateRecurrence() );
+      
+      // Estimate
+      validationResult = validationResult.and( validateEstimate() );
+      
+      return validationResult;
    }
    
    

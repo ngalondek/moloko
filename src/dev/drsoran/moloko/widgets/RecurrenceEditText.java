@@ -29,10 +29,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Pair;
-import android.widget.Toast;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserFactory;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
@@ -105,7 +105,7 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   public boolean validate()
+   public ValidationResult validate()
    {
       if ( isSupportingFreeTextInput )
       {
@@ -114,7 +114,7 @@ public class RecurrenceEditText extends ClearableEditText
       }
       else
       {
-         return true;
+         return ValidationResult.OK;
       }
    }
    
@@ -137,7 +137,7 @@ public class RecurrenceEditText extends ClearableEditText
       {
          setRecurrenceBySentence( getTextTrimmed() );
          
-         final boolean inputValid = validateRecurrence( recurrencePattern );
+         final boolean inputValid = validateRecurrence( recurrencePattern ).isOk();
          stayInEditText = !inputValid;
          
          if ( inputValid )
@@ -234,21 +234,17 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   private boolean validateRecurrence( Pair< String, Boolean > recurrencePattern )
+   private ValidationResult validateRecurrence( Pair< String, Boolean > recurrencePattern )
    {
       final boolean valid = recurrencePattern != null;
       if ( !valid )
       {
-         Toast.makeText( getContext(),
-                         getContext().getString( R.string.task_edit_validate_recurrence,
-                                                 getTextTrimmed() ),
-                         Toast.LENGTH_LONG )
-              .show();
-         
-         requestFocus();
+         return new ValidationResult( getContext().getString( R.string.task_edit_validate_recurrence,
+                                                              getTextTrimmed() ),
+                                      this );
       }
       
-      return valid;
+      return ValidationResult.OK;
    }
    
    

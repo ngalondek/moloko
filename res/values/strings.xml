@@ -31,13 +31,11 @@
    <string name="app_account_preferences">Account Preferences</string>
    <string name="app_tasklists">Lists</string>
    <string name="app_task">Task</string>
-   <string name="app_task_edit">Edit</string>
    <string name="app_task_edit_multiple">Edit %1$d %2$s</string>
    <string name="app_task_add">New Task</string>
    <string name="app_task_select_multiple">Select tasks (%1$d)</string>
    <string name="app_task_complete">Complete</string>
-   <string name="app_task_uncomplete">Incomplete</string>
-   <string name="app_task_delete">Delete</string>
+   <string name="app_task_uncomplete">Incomplete</string>   
    <string name="app_task_postpone">Postpone</string>
    <string name="app_change_tags">Change tags</string>
    <string name="app_note">Note</string>
@@ -49,7 +47,7 @@
    <string name="app_save">Save</string>
    <string name="app_startup">Launching Moloko &#8230;</string>
    <string name="app_selected_count">%1$d selected</string>
-
+   
    <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
    <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>
    <string name="app_list_name_inbox">Inbox</string>
@@ -162,6 +160,9 @@
    <string name="btn_back">Back</string>
    
    <!-- Global menus -->
+   <string name="menu_opt_edit">Edit</string>
+   <string name="menu_opt_delete">Delete</string>
+   <string name="menu_opt_selection">Selection</string>
    <string name="menu_opt_select_all_male">All</string>
    <string name="menu_opt_select_all_female">@string/menu_opt_select_all_male</string>
    <string name="menu_opt_select_all_mainly">@string/menu_opt_select_all_male</string>
@@ -227,7 +228,7 @@
 
    <!-- Missing default list dialog -->
    <string name="dlg_missing_def_list_title">Missing default list</string>
-   <string name="dlg_missing_def_list_text">It can not be started with the standard list because it does not exist.\n\nIt will be started with the default view.</string>
+   <string name="dlg_missing_def_list_text">It can not be started with the default list because it does not exist.\n\nIt will be started with the home view.</string>
 
    <!-- Searchable -->
    <string name="search_label">@string/app_name</string>

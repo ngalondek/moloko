@@ -117,10 +117,9 @@ public final class Queries
    
    public final static Uri contentUriWithId( Uri contentUri, String id )
    {
-      
       return ( !TextUtils.isEmpty( id ) ) ? contentUri.buildUpon()
                                                       .appendEncodedPath( id )
-                                                      .build() : null;
+                                                      .build() : contentUri;
    }
    
    

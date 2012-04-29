@@ -20,21 +20,18 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.actionmodes.listener;
 
-public interface IEditFragment
+import java.util.Collection;
+
+import com.mdt.rtm.data.RtmTaskNote;
+
+
+public interface INotesListActionModeListener
 {
-   ApplyChangesInfo onFinishEditing();
+   void onDeleteNotes( Collection< RtmTaskNote > notes );
    
    
    
-   ValidationResult validate();
-   
-   
-   
-   boolean hasChanges();
-   
-   
-   
-   void onCancelEditing();
+   void onFinishingActionMode();
 }

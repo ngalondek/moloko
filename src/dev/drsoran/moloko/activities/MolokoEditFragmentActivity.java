@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,8 +25,11 @@ package dev.drsoran.moloko.activities;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
@@ -66,13 +69,6 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    
    
-   public void requestCancelEditing( String fragmentTag )
-   {
-      UIUtils.showCancelWithChangesDialog( this, fragmentTag );
-   }
-   
-   
-   
    public boolean applyModifications( ApplyChangesInfo applyInfo )
    {
       boolean ok = true;
@@ -84,24 +80,20 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
       }
       else
       {
-         if ( applyInfo == null || applyInfo.getActionItems() == null )
+         if ( applyInfo == null || applyInfo.hasDatabaseError() )
          {
             ok = false;
             showApplyChangesInfoAsToast( applyInfo, false );
          }
-         else
+         else if ( applyInfo.hasChanges() )
          {
             final ContentProviderActionItemList actionItemList = applyInfo.getActionItems();
-            if ( actionItemList.size() > 0 )
-            {
-               final String progressMessage = applyInfo != null
-                                                               ? applyInfo.getProgressMessage()
-                                                               : null;
-               ok = Queries.applyActionItemList( this,
-                                                 actionItemList,
-                                                 progressMessage );
-               showApplyChangesInfoAsToast( applyInfo, ok );
-            }
+            final String progressMessage = applyInfo.getProgressMessage();
+            
+            ok = Queries.applyActionItemList( this,
+                                              actionItemList,
+                                              progressMessage );
+            showApplyChangesInfoAsToast( applyInfo, ok );
          }
       }
       
@@ -110,13 +102,66 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    
    
-   private void showApplyChangesInfoAsToast( ApplyChangesInfo applyChangesInfo,
+   private void showApplyChangesInfoAsToast( ApplyChangesInfo applyInfo,
                                              boolean success )
    {
-      if ( applyChangesInfo != null )
+      UIUtils.reportStatus( this,
+                            applyInfo.getApplySuccessMessage(),
+                            applyInfo.getApplyFailedMessage(),
+                            success );
+   }
+   
+   
+   
+   public boolean validateFragment( IEditFragment fragment )
+   {
+      final ValidationResult validationResult = fragment.validate();
+      final boolean valid = validationResult.isOk();
+      if ( !valid )
       {
-         applyChangesInfo.showApplyResultToast( this, success );
+         showValidationErrorAsToast( validationResult );
       }
+      
+      return valid;
+   }
+   
+   
+   
+   private void showValidationErrorAsToast( ValidationResult validationResult )
+   {
+      Toast.makeText( this,
+                      validationResult.getValidationErrorMessage(),
+                      Toast.LENGTH_LONG ).show();
+      
+      if ( validationResult.getRequestFocusOnValidationError() != null )
+      {
+         validationResult.getRequestFocusOnValidationError().requestFocus();
+      }
+   }
+   
+   
+   
+   public boolean finishFragmentEditing( IEditFragment editFragment )
+   {
+      boolean ok = validateFragment( editFragment );
+      
+      ok = ok && applyModifications( editFragment.onFinishEditing() );
+      
+      return ok;
+   }
+   
+   
+   
+   public boolean cancelFragmentEditing( IEditFragment editFragment )
+   {
+      boolean canceled = !editFragment.hasChanges();
+      
+      if ( !canceled )
+      {
+         UIUtils.showCancelWithChangesDialog( this );
+      }
+      
+      return canceled;
    }
    
    
@@ -146,6 +191,10 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    protected void handleCancelWithChangesDialogClick( String tag, int which )
    {
+      if ( which == Dialog.BUTTON_POSITIVE )
+      {
+         finish();
+      }
    }
    
    

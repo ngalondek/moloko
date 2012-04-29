@@ -88,7 +88,7 @@ public abstract class MolokoLoaderEditFragment< D > extends
          return getChanges();
       }
       
-      return null;
+      return ApplyChangesInfo.EMPTY;
    }
    
    

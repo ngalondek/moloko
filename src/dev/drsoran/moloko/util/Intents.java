@@ -35,6 +35,9 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
+
+import com.mdt.rtm.data.RtmTaskNote;
+
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -49,6 +52,7 @@ import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -90,6 +94,12 @@ public final class Intents
       public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
          + "tasks";
       
+      public final static String KEY_NOTE = "note";
+      
+      public final static String KEY_NOTE_TITLE = "note_title";
+      
+      public final static String KEY_NOTE_TEXT = "note_text";
+      
       public final static String KEY_FILTER = "filter";
       
       public final static String KEY_TASK_SORT_ORDER = "tasks_sort_order";
@@ -118,6 +128,36 @@ public final class Intents
          final Bundle bundle = new Bundle( 1 );
          
          bundle.putParcelable( Extras.KEY_TASK, task );
+         
+         return bundle;
+      }
+      
+      
+      
+      public final static Bundle createEditNoteExtras( RtmTaskNote note )
+      {
+         final Bundle bundle = new Bundle( 1 );
+         
+         bundle.putParcelable( Extras.KEY_NOTE, note );
+         
+         return bundle;
+      }
+      
+      
+      
+      public final static Bundle createAddNoteExtras( Task task,
+                                                      String title,
+                                                      String text )
+      {
+         final Bundle bundle = new Bundle( 3 );
+         
+         bundle.putParcelable( Extras.KEY_TASK, task );
+         
+         if ( !TextUtils.isEmpty( title ) )
+            bundle.putString( Extras.KEY_NOTE_TITLE, title );
+         
+         if ( !TextUtils.isEmpty( text ) )
+            bundle.putString( Extras.KEY_NOTE_TEXT, text );
          
          return bundle;
       }
@@ -645,6 +685,34 @@ public final class Intents
       
       if ( initialValues != null )
          intent.putExtras( initialValues );
+      
+      return intent;
+   }
+   
+   
+   
+   public final static Intent createEditNoteIntent( Context context,
+                                                    RtmTaskNote note )
+   {
+      final Intent intent = new Intent( Intent.ACTION_EDIT,
+                                        Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                  note.getId() ) );
+      
+      intent.putExtras( Extras.createEditNoteExtras( note ) );
+      
+      return intent;
+   }
+   
+   
+   
+   public final static Intent createAddNoteIntent( Context context,
+                                                   Task task,
+                                                   String title,
+                                                   String text )
+   {
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Notes.CONTENT_URI );
+      
+      intent.putExtras( Extras.createAddNoteExtras( task, title, text ) );
       
       return intent;
    }

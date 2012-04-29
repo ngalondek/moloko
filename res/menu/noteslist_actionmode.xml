@@ -15,29 +15,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@id/menu_complete_selected_tasks"
-        android:icon="@drawable/ic_menu_complete"
-        android:showAsAction="always|withText"
-        android:title="@string/app_task_complete"/>
-    <item
-        android:id="@id/menu_uncomplete_selected_tasks"
-        android:icon="@drawable/ic_menu_incomplete"
-        android:showAsAction="always|withText"
-        android:title="@string/app_task_uncomplete"/>
-    <item
-        android:id="@id/menu_postpone_selected_tasks"
-        android:icon="@drawable/ic_menu_postponed"
-        android:showAsAction="always|withText"
-        android:title="@string/app_task_postpone"/>
-    <item
         android:id="@id/menu_delete_selected"
         android:icon="@drawable/ic_menu_trash"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="always|withText"
         android:title="@string/menu_opt_delete"/>
-    <item
-        android:id="@id/menu_edit_selected"
-        android:icon="@drawable/ic_menu_edit"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_opt_edit"/>
 
 </menu>

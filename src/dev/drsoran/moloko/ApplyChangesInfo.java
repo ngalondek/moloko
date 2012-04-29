@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,20 +22,24 @@
 
 package dev.drsoran.moloko;
 
-import android.content.Context;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.Strings;
 
 
 public final class ApplyChangesInfo
 {
+   private final ContentProviderActionItemList actionItems;
+   
    private final String progressMessage;
    
    private final String applySuccessMessage;
    
    private final String applyFailedMessage;
    
-   private final ContentProviderActionItemList actionItems;
+   public final static ApplyChangesInfo EMPTY = new ApplyChangesInfo( new ContentProviderActionItemList( 0 ),
+                                                                      Strings.EMPTY_STRING,
+                                                                      Strings.EMPTY_STRING,
+                                                                      Strings.EMPTY_STRING );
    
    
    
@@ -79,11 +83,15 @@ public final class ApplyChangesInfo
    
    
    
-   public void showApplyResultToast( Context context, boolean result )
+   public boolean hasDatabaseError()
    {
-      UIUtils.reportStatus( context,
-                            getApplySuccessMessage(),
-                            getApplyFailedMessage(),
-                            result );
+      return actionItems == null;
+   }
+   
+   
+   
+   public boolean hasChanges()
+   {
+      return actionItems != null && actionItems.size() > 0;
    }
 }

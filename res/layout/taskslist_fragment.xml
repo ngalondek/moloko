@@ -10,16 +10,16 @@
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
    - implementation -->
 
-<LinearLayout
+<FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
    <ListView
       android:id="@android:id/list"
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent" >
+      android:layout_height="fill_parent"
+       >
        <!-- Preview: 
            listitem=@layout/fulldetailed_taskslist_listitem
         -->
@@ -30,7 +30,8 @@
       style="@style/No_List_Elements_Text"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:text="@string/abstaskslist_no_tasks" />
+      android:text="@string/abstaskslist_no_tasks"
+      android:visibility="gone" />
 
    <include
       android:id="@+id/loading_spinner"
@@ -43,4 +44,4 @@
       android:id="@+id/error"
       style="@style/Error"
       android:visibility="gone" />
-</LinearLayout>
+</FrameLayout>

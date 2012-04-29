@@ -30,6 +30,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.actionmodes.listener.INotesListActionModeListener;
 import dev.drsoran.moloko.adapters.ISelectableAdapter;
 import dev.drsoran.moloko.util.Strings;
 
@@ -38,7 +39,9 @@ public class NotesListActionModeCallback implements ActionMode.Callback
 {
    private final Context context;
    
-   private final ISelectableAdapter< RtmTaskNote > adapter;
+   private ISelectableAdapter< RtmTaskNote > adapter;
+   
+   private INotesListActionModeListener listener;
    
    
    
@@ -51,10 +54,25 @@ public class NotesListActionModeCallback implements ActionMode.Callback
    
    
    
+   public void setNotesListActionModeListener( INotesListActionModeListener listener )
+   {
+      this.listener = listener;
+   }
+   
+   
+   
+   public void attachAdapter( ISelectableAdapter< RtmTaskNote > adapter )
+   {
+      this.adapter = adapter;
+   }
+   
+   
+   
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
       mode.getMenuInflater().inflate( R.menu.selection_mode_female, menu );
+      mode.getMenuInflater().inflate( R.menu.noteslist_actionmode, menu );
       return true;
    }
    
@@ -64,20 +82,18 @@ public class NotesListActionModeCallback implements ActionMode.Callback
    public boolean onPrepareActionMode( ActionMode mode, Menu menu )
    {
       final int selectedCnt = adapter.getSelectedCount();
-      final CharSequence title;
-      if ( selectedCnt > 0 )
-      {
-         title = context.getResources().getString( R.string.app_selected_count,
-                                                   adapter.getSelectedCount() );
-      }
-      else
-      {
-         title = Strings.EMPTY_STRING;
-      }
       
-      mode.setTitle( title );
+      setTitle( mode, selectedCnt );
+      setMenuItemsVisibility( menu, selectedCnt );
       
       return true;
+   }
+   
+   
+   
+   private void setMenuItemsVisibility( Menu menu, int selectedCnt )
+   {
+      menu.findItem( R.id.menu_delete_selected ).setVisible( selectedCnt > 0 );
    }
    
    
@@ -99,6 +115,14 @@ public class NotesListActionModeCallback implements ActionMode.Callback
             adapter.invertSelection();
             return true;
             
+         case R.id.menu_delete_selected:
+            if ( listener != null )
+            {
+               listener.onDeleteNotes( adapter.getSelectedItems() );
+               return true;
+            }
+            return false;
+            
          default :
             return false;
       }
@@ -109,5 +133,27 @@ public class NotesListActionModeCallback implements ActionMode.Callback
    @Override
    public void onDestroyActionMode( ActionMode mode )
    {
+      if ( listener != null )
+      {
+         listener.onFinishingActionMode();
+      }
+   }
+   
+   
+   
+   private void setTitle( ActionMode mode, final int selectedCnt )
+   {
+      final CharSequence title;
+      if ( selectedCnt > 0 )
+      {
+         title = context.getResources().getString( R.string.app_selected_count,
+                                                   adapter.getSelectedCount() );
+      }
+      else
+      {
+         title = Strings.EMPTY_STRING;
+      }
+      
+      mode.setTitle( title );
    }
 }

@@ -32,7 +32,6 @@ import android.view.View.OnClickListener;
 
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.util.Intents;
@@ -137,19 +136,5 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    protected List< Task > getEditedTasks()
    {
       return Collections.singletonList( getTaskAssertNotNull() );
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment createEditableFragmentInstance()
-   {
-      final Bundle config = new Bundle();
-      
-      config.putString( TaskFragment.Config.TASK_ID,
-                        getTaskAssertNotNull().getId() );
-      
-      final TaskFragment fragment = TaskFragment.newInstance( config );
-      throw new UnsupportedOperationException();
    }
 }

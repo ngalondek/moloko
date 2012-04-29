@@ -43,6 +43,26 @@
       <item quantity="one">task</item>
       <item quantity="other">tasks</item>
    </plurals>
+   <plurals name="tasks_complete">
+      <item quantity="one">Complete task?</item>
+      <item quantity="other">Complete %1$d tasks?</item>
+   </plurals>
+   <plurals name="tasks_incomplete">
+      <item quantity="one">Incomplete task?</item>
+      <item quantity="other">Incomplete %1$d tasks?</item>
+   </plurals>
+   <plurals name="tasks_postpone">
+      <item quantity="one">Postpone task?</item>
+      <item quantity="other">Postpone %1$d tasks?</item>
+   </plurals>
+   <plurals name="tasks_delete">
+      <item quantity="one">Delete task?</item>
+      <item quantity="other">Delete %1$d tasks?</item>
+   </plurals>
+   <plurals name="notes_delete">
+      <item quantity="one">Delete note?</item>
+      <item quantity="other">Delete %1$d notes?</item>
+   </plurals>
    
    <!-- Global Toasts -->
       <!-- Task -->
@@ -81,26 +101,7 @@
       <item quantity="other">%1$d completed</item>
    </plurals>
    
-   <!-- SelectMultipleTasks fragment -->
-      <!-- Dialogs -->
-      <plurals name="select_multiple_tasks_dlg_complete">
-         <item quantity="one">Complete 1 task?</item>
-         <item quantity="other">Complete %1$d tasks?</item>
-      </plurals>
-      <plurals name="select_multiple_tasks_dlg_incomplete">
-         <item quantity="one">Incomplete 1 task?</item>
-         <item quantity="other">Incomplete %1$d tasks?</item>
-      </plurals>
-      <plurals name="select_multiple_tasks_dlg_postpone">
-         <item quantity="one">Postpone 1 task?</item>
-         <item quantity="other">Postpone %1$d tasks?</item>
-      </plurals>
-      <plurals name="select_multiple_tasks_dlg_delete">
-         <item quantity="one">Delete 1 task?</item>
-         <item quantity="other">Delete %1$d tasks?</item>
-      </plurals>
-
-	<!-- TasksList activity -->
+   <!-- TasksList activity -->
    	<!-- Menus -->
    	<plurals name="taskslist_listitem_ctx_tags">
    		<item quantity="one">Show tasks with \'%1$s\'</item>

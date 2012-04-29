@@ -82,7 +82,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    @Override
    public void onCompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_complete,
+      final String message = getResources().getQuantityString( R.plurals.tasks_complete,
                                                                tasks.size(),
                                                                tasks.size() );
       new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_complete ).setMessage( message )
@@ -96,7 +96,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    @Override
    public void onIncompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_incomplete,
+      final String message = getResources().getQuantityString( R.plurals.tasks_incomplete,
                                                                tasks.size(),
                                                                tasks.size() );
       new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_incomplete ).setMessage( message )
@@ -110,7 +110,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    @Override
    public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
-      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_postpone,
+      final String message = getResources().getQuantityString( R.plurals.tasks_postpone,
                                                                tasks.size(),
                                                                tasks.size() );
       new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_postpone ).setMessage( message )
@@ -124,7 +124,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    @Override
    public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final String message = getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_delete,
+      final String message = getResources().getQuantityString( R.plurals.tasks_delete,
                                                                tasks.size(),
                                                                tasks.size() );
       new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_delete ).setMessage( message )

@@ -88,7 +88,7 @@ public abstract class MolokoEditFragment extends MolokoFragment implements
          return getChanges();
       }
       
-      return null;
+      return ApplyChangesInfo.EMPTY;
    }
    
    

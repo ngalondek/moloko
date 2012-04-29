@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,9 +41,9 @@ import com.mdt.rtm.data.RtmAuth;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderExpandableListFragmentImpl;
-import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 
@@ -55,7 +56,7 @@ public abstract class MolokoExpandableListFragment< D > extends
          ExpandableListView.OnGroupCollapseListener,
          ExpandableListView.OnGroupExpandListener
 {
-   private final MolokoListFragmentImpl baseImpl;
+   private final ConfigurableFragmentImpl baseImpl;
    
    private final LoaderExpandableListFragmentImpl< D > loaderImpl;
    
@@ -67,7 +68,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    protected MolokoExpandableListFragment()
    {
-      baseImpl = new MolokoListFragmentImpl( this, getSettingsMask() );
+      baseImpl = new ConfigurableFragmentImpl( this, getSettingsMask() );
       loaderImpl = new LoaderExpandableListFragmentImpl< D >( this );
       editImpl = new EditFragmentImpl( this );
       accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
@@ -113,7 +114,6 @@ public abstract class MolokoExpandableListFragment< D > extends
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      baseImpl.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
       editImpl.onViewCreated( view, savedInstanceState );
       
@@ -132,27 +132,6 @@ public abstract class MolokoExpandableListFragment< D > extends
    {
       super.onDestroyView();
       editImpl.onDestroyView();
-   }
-   
-   
-   
-   public View getEmptyView()
-   {
-      return baseImpl.getEmptyView();
-   }
-   
-   
-   
-   public void showEmptyView( boolean show )
-   {
-      baseImpl.showEmptyView( show );
-   }
-   
-   
-   
-   public void showListView( boolean show )
-   {
-      baseImpl.showListView( show );
    }
    
    
@@ -373,6 +352,20 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
+   public final void setRespectContentChanges( boolean respect )
+   {
+      loaderImpl.setRespectContentChanges( respect );
+   }
+   
+   
+   
+   public final boolean isRespectingContentChanges()
+   {
+      return loaderImpl.isRespectingContentChanges();
+   }
+   
+   
+   
    protected void invalidateOptionsMenu()
    {
       if ( getSherlockActivity() != null )
@@ -381,15 +374,44 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
+   public void showError( int messageResId )
+   {
+      loaderImpl.showError( messageResId );
+   }
+   
+   
+   
+   public void showError( CharSequence message )
+   {
+      loaderImpl.showError( message );
+   }
+   
+   
+   
+   public void showError( Spanned message )
+   {
+      loaderImpl.showError( message );
+   }
+   
+   
+   
+   public void onExpandableListAdapterCreated( ExpandableListAdapter listAdapter,
+                                               D result )
+   {
+   }
+   
+   
+   
+   public void onListAdapterDestroyed()
+   {
+   }
+   
+   
+   
    @Override
    public abstract View onCreateView( LayoutInflater inflater,
                                       ViewGroup container,
                                       Bundle savedInstanceState );
-   
-   
-   
-   @Override
-   public abstract ExpandableListAdapter createEmptyExpandableListAdapter();
    
    
    

@@ -361,6 +361,8 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    private void performSettingsSync( ContentProviderClient contentProvider,
                                      Service service )
    {
+      molokoSyncResult.localOps.clear();
+      
       final boolean ok = RtmSettingsSync.computeSync( service,
                                                       contentProvider,
                                                       molokoSyncResult );
@@ -403,6 +405,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    {
       boolean ok = true;
       
+      molokoSyncResult.localOps.clear();
       Date lastSyncOut = null;
       
       {

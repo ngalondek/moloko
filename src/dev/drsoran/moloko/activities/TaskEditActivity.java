@@ -35,7 +35,6 @@ import android.util.Pair;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
@@ -52,7 +51,6 @@ import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
 
@@ -103,7 +101,7 @@ public class TaskEditActivity extends MolokoEditFragmentActivity implements
             return true;
             
          case R.id.menu_abort_edit:
-            onCancelEditingAndFinish();
+            cancelEditingAndFinish();
             return true;
             
          default :
@@ -116,7 +114,7 @@ public class TaskEditActivity extends MolokoEditFragmentActivity implements
    @Override
    protected boolean onFinishActivityByHome()
    {
-      return onCancelEditing();
+      return cancelFragmentEditing( getTaskEditFragment() );
    }
    
    
@@ -124,7 +122,7 @@ public class TaskEditActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onBackPressed()
    {
-      if ( onCancelEditing() )
+      if ( cancelFragmentEditing( getTaskEditFragment() ) )
       {
          super.onBackPressed();
       }
@@ -250,16 +248,7 @@ public class TaskEditActivity extends MolokoEditFragmentActivity implements
    
    private void saveChangesAndFinish()
    {
-      final AbstractTaskEditFragment taskEditFragment = getTaskEditFragment();
-      final ApplyChangesInfo changes = taskEditFragment.onFinishEditing();
-      
-      boolean ok = true;
-      if ( changes != null )
-      {
-         ok = applyModifications( changes );
-      }
-      
-      if ( ok )
+      if ( finishFragmentEditing( getTaskEditFragment() ) )
       {
          finish();
       }
@@ -267,35 +256,12 @@ public class TaskEditActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private boolean onCancelEditing()
+   private void cancelEditingAndFinish()
    {
-      if ( isTaskChanged() )
-      {
-         UIUtils.showCancelWithChangesDialog( this );
-         return false;
-      }
-      else
-      {
-         return true;
-      }
-   }
-   
-   
-   
-   private void onCancelEditingAndFinish()
-   {
-      if ( onCancelEditing() )
+      if ( cancelFragmentEditing( getTaskEditFragment() ) )
       {
          finish();
       }
-   }
-   
-   
-   
-   private boolean isTaskChanged()
-   {
-      final AbstractTaskEditFragment taskEditFragment = getTaskEditFragment();
-      return taskEditFragment.hasChanges();
    }
    
    

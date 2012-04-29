@@ -415,15 +415,6 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public ListAdapter createEmptyListAdapter()
-   {
-      return new FullDetailedTasksListFragmentAdapter( getSherlockActivity(),
-                                                       R.layout.fulldetailed_taskslist_listitem );
-   }
-   
-   
-   
-   @Override
    public ListAdapter createListAdapterForResult( List< Task > result,
                                                   IFilter filter )
    {

@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -169,16 +168,6 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
          listener.onShowTasksOfContact( contact.getFullname(),
                                         contact.getUsername() );
       }
-   }
-   
-   
-   
-   @Override
-   public ListAdapter createEmptyListAdapter()
-   {
-      return new ContactsListAdapter( getSherlockActivity(),
-                                      R.layout.contactslist_activity_listitem,
-                                      Collections.< Contact > emptyList() );
    }
    
    

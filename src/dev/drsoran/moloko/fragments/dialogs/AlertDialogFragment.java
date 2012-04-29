@@ -244,7 +244,7 @@ public class AlertDialogFragment extends MolokoDialogFragment
                                     getGenericOnClickListener() );
       
       if ( neutralButtonTextId != -1 )
-         builder.setNeutralButton( negativeButtonTextId,
+         builder.setNeutralButton( neutralButtonTextId,
                                    getGenericOnClickListener() );
       
       return builder.create();

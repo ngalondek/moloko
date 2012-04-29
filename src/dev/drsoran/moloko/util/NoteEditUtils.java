@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.util;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import android.app.Activity;
 
 import com.mdt.rtm.data.RtmTaskNote;
@@ -96,24 +99,28 @@ public final class NoteEditUtils
    
    
    
-   public final static ApplyChangesInfo deleteNote( Activity activity,
-                                                    String noteId )
+   public final static ApplyChangesInfo deleteNotes( Activity activity,
+                                                     Collection< RtmTaskNote > notes )
    {
       boolean ok = true;
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
-      final ModificationSet modifications = new ModificationSet();
-      
-      modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                                              noteId ),
-                                                                    Notes.NOTE_DELETED,
-                                                                    System.currentTimeMillis() ) );
-      modifications.add( Modification.newNoteModified( noteId ) );
-      
-      ok = actionItemList.add( ContentProviderAction.Type.DELETE,
-                               CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                                               noteId ) ) );
-      actionItemList.add( 0, modifications );
+      for ( Iterator< RtmTaskNote > i = notes.iterator(); ok && i.hasNext(); )
+      {
+         final String noteId = i.next().getId();
+         final ModificationSet modifications = new ModificationSet();
+         
+         modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                 noteId ),
+                                                                       Notes.NOTE_DELETED,
+                                                                       System.currentTimeMillis() ) );
+         modifications.add( Modification.newNoteModified( noteId ) );
+         
+         ok = actionItemList.add( ContentProviderAction.Type.DELETE,
+                                  CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                  noteId ) ) );
+         actionItemList.add( modifications );
+      }
       
       if ( !ok )
          actionItemList = null;

@@ -109,6 +109,9 @@
    <item
       type="id"
       name="dlg_startup_default_list_not_exists" />
+   <item
+      type="id"
+      name="dlg_delete_notes" />
 
    <!-- Menu group IDs -->
    <item
@@ -149,6 +152,9 @@
       name="menu_edit_multiple_tasks" />
    <item
       type="id"
+      name="menu_selection" />
+   <item
+      type="id"
       name="menu_select_all" />
    <item
       type="id"
@@ -156,9 +162,6 @@
    <item
       type="id"
       name="menu_invert_selection" />
-   <item
-      type="id"
-      name="menu_edit_selected_tasks" />
    <item
       type="id"
       name="menu_complete_selected_tasks" />
@@ -170,7 +173,10 @@
       name="menu_postpone_selected_tasks" />
    <item
       type="id"
-      name="menu_delete_selected_tasks" />
+      name="menu_edit_selected" />   
+   <item
+      type="id"
+      name="menu_delete_selected" />
    <item
       type="id"
       name="menu_search_tasks" />

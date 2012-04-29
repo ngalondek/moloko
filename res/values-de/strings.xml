@@ -28,13 +28,11 @@
 	<string name="app_account_preferences">Kontoeinstellungen</string>
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
-	<string name="app_task_edit">Bearbeiten</string>
    <string name="app_task_edit_multiple">%1$d %2$s bearbeiten</string>
    <string name="app_task_add">Neue Aufgabe</string>
    <string name="app_task_select_multiple">Aufgaben wählen (%1$d)</string>
    <string name="app_task_complete">Erledigt</string>
    <string name="app_task_uncomplete">Unerledigt</string>
-   <string name="app_task_delete">Löschen</string>
    <string name="app_task_postpone">Schieben</string>
    <string name="app_change_tags">Tags bearbeiten</string>
 	<string name="app_note">Notiz</string>
@@ -150,6 +148,9 @@
    <string name="btn_back">Zurück</string>
    
    <!-- Global menus -->
+   <string name="menu_opt_edit">Bearbeiten</string>
+   <string name="menu_opt_delete">Löschen</string>
+   <string name="menu_opt_selection">Auswahl</string>
    <string name="menu_opt_select_all_male">Alle</string>
    <string name="menu_opt_deselect_all_male">Keiner</string>
    <string name="menu_opt_deselect_all_female">Keine</string>
@@ -342,7 +343,7 @@
    <!-- NotesList fragment -->
    <string name="noteslist_no_notes">Keine Notizen</string>
       <!-- Menus -->
-      <string name="noteslist_menu_add_note">Neue Notiz</string>
+      <string name="noteslist_menu_add_note">Neue Notiz</string>      
       
    <!-- ContactsList fragment -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>

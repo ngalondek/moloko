@@ -35,16 +35,13 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -474,6 +471,7 @@ public final class UIUtils
                                                   text.toString() );
       
       if ( ok && text != null )
+      {
          try
          {
             final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
@@ -483,43 +481,9 @@ public final class UIUtils
          {
             ok = false;
          }
+      }
       
       return ok;
-   }
-   
-   
-   
-   public final static void inflateErrorWithIcon( Context context,
-                                                  ViewGroup container,
-                                                  int errorMsgResId,
-                                                  Object... params )
-   {
-      final View view = LayoutInflater.from( context )
-                                      .inflate( R.layout.error_with_icon,
-                                                container,
-                                                true );
-      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
-      final String msg = context.getResources().getString( errorMsgResId,
-                                                           params );
-      text.setText( msg );
-      
-      Log.e( LogUtils.toTag( Context.class ), msg );
-   }
-   
-   
-   
-   public final static void inflateErrorWithIcon( Context context,
-                                                  ViewGroup container,
-                                                  Spanned errorText )
-   {
-      final View view = LayoutInflater.from( context )
-                                      .inflate( R.layout.error_with_icon,
-                                                container,
-                                                true );
-      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
-      text.setText( errorText );
-      
-      Log.e( LogUtils.toTag( Context.class ), errorText.toString() );
    }
    
    
@@ -634,6 +598,7 @@ public final class UIUtils
    
    
    
+   @Deprecated
    public final static void showCancelWithChangesDialog( FragmentActivity activity,
                                                          String tag )
    {

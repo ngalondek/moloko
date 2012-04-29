@@ -34,14 +34,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmListsProviderPart.NewRtmListId;
@@ -147,6 +146,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
+                                                                          // TODO: Where are going the changes to?
                                                                           AddRenameListDialogFragment.this.onFinishEditing();
                                                                        }
                                                                     } )
@@ -238,29 +238,26 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    @Override
-   protected boolean validateInput()
+   public ValidationResult validate()
    {
-      boolean ok = validateListName();
+      ValidationResult result = validateListName();
       
-      if ( ok && getList() == null )
-         ok = validateSmartFilter();
+      if ( result.isOk() && getList() == null )
+         result = validateSmartFilter();
       
-      return ok;
+      return result;
    }
    
    
    
-   private boolean validateListName()
+   private ValidationResult validateListName()
    {
       final String text = UIUtils.getTrimmedText( listNameEdit );
       
       if ( TextUtils.isEmpty( text ) )
       {
-         Toast.makeText( getSherlockActivity(),
-                         R.string.dlg_add_rename_list_toast_empty_list_name,
-                         Toast.LENGTH_LONG ).show();
-         listNameEdit.requestFocus();
-         return false;
+         return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_empty_list_name ),
+                                      listNameEdit );
       }
       else
       {
@@ -269,39 +266,29 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
          if ( trimmedText.equalsIgnoreCase( getString( R.string.app_list_name_inbox ) )
             || trimmedText.equalsIgnoreCase( getString( R.string.app_list_name_sent ) ) )
          {
-            Toast.makeText( getSherlockActivity(),
-                            R.string.dlg_add_rename_list_toast_invalid_list_name,
-                            Toast.LENGTH_LONG )
-                 .show();
-            listNameEdit.requestFocus();
-            return false;
+            return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_list_name ),
+                                         listNameEdit );
          }
       }
       
-      return true;
+      return ValidationResult.OK;
    }
    
    
    
-   private boolean validateSmartFilter()
+   private ValidationResult validateSmartFilter()
    {
       final String text = UIUtils.getTrimmedText( filterEdit );
       
-      if ( !TextUtils.isEmpty( text ) )
+      if ( !TextUtils.isEmpty( text )
+         && RtmSmartFilter.evaluate( text.toString(), false ) == null )
       {
-         if ( RtmSmartFilter.evaluate( text.toString(), false ) == null )
-         {
-            Toast.makeText( getSherlockActivity(),
-                            getString( R.string.dlg_add_rename_list_toast_invalid_filter,
-                                       text ),
-                            Toast.LENGTH_LONG )
-                 .show();
-            filterEdit.requestFocus();
-            return false;
-         }
+         return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_filter,
+                                                 text ),
+                                      filterEdit );
       }
       
-      return true;
+      return ValidationResult.OK;
    }
    
    
@@ -356,13 +343,5 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       }
       
       return filter;
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment createEditableFragmentInstance()
-   {
-      return null;
    }
 }

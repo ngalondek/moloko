@@ -95,7 +95,7 @@ public class SelectableTasksListsFragment extends
       
       public final static int INVERT_SELECTION = R.id.menu_invert_selection;
       
-      public final static int DO_EDIT = R.id.menu_edit_selected_tasks;
+      public final static int DO_EDIT = R.id.menu_edit_selected;
       
       public final static int COMPLETE = R.id.menu_complete_selected_tasks;
       
@@ -103,7 +103,7 @@ public class SelectableTasksListsFragment extends
       
       public final static int POSTPONE = R.id.menu_postpone_selected_tasks;
       
-      public final static int DELETE = R.id.menu_delete_selected_tasks;
+      public final static int DELETE = R.id.menu_delete_selected;
    }
    
    
@@ -506,15 +506,6 @@ public class SelectableTasksListsFragment extends
    {
       super.onLoadFinished( loader, data );
       notifyListenerSelectionChanged();
-   }
-   
-   
-   
-   @Override
-   public ListAdapter createEmptyListAdapter()
-   {
-      return new SelectableTasksListFragmentAdapter( getSherlockActivity(),
-                                                     R.layout.selectmultipletasks_activity_listitem );
    }
    
    

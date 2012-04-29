@@ -200,15 +200,6 @@ public class MinDetailedTasksListFragment extends
    
    
    @Override
-   public ListAdapter createEmptyListAdapter()
-   {
-      return new MinDetailedTasksListFragmentAdapter( getSherlockActivity(),
-                                                      R.layout.mindetailed_taskslist_listitem );
-   }
-   
-   
-   
-   @Override
    public ListAdapter createListAdapterForResult( List< Task > result,
                                                   IFilter filter )
    {

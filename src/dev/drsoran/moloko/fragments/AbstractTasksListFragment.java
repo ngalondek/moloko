@@ -33,7 +33,6 @@ import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -48,7 +47,6 @@ import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
-import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
@@ -392,23 +390,19 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public void showError( CharSequence errorMessage )
    {
-      final TextView errorTextView = prepareErrorViewAndGetMessageView();
-      if ( errorTextView != null )
-         errorTextView.setText( errorMessage );
-      
+      showError( errorMessage );
       getLoaderManager().destroyLoader( getLoaderId() );
    }
    
    
    
+   @Override
    public void showError( Spanned errorMessage )
    {
-      final TextView errorTextView = prepareErrorViewAndGetMessageView();
-      if ( errorTextView != null )
-         errorTextView.setText( errorMessage );
-      
+      showError( errorMessage );
       getLoaderManager().destroyLoader( getLoaderId() );
    }
    
@@ -461,47 +455,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public ListAdapter createListAdapterForResult( List< T > result )
    {
       return createListAdapterForResult( result, getFilter() );
-   }
-   
-   
-   
-   private TitleWithTextLayout getErrorView()
-   {
-      View errorView = null;
-      
-      if ( getView() != null )
-         errorView = getView().findViewById( R.id.error );
-      
-      return (TitleWithTextLayout) errorView;
-   }
-   
-   
-   
-   private void showErrorView( boolean show )
-   {
-      final View errorView = getErrorView();
-      if ( errorView != null )
-         errorView.setVisibility( show ? View.VISIBLE : View.GONE );
-   }
-   
-   
-   
-   private TextView prepareErrorViewAndGetMessageView()
-   {
-      TextView errorTextView = null;
-      final TitleWithTextLayout errorView = getErrorView();
-      
-      if ( errorView != null )
-      {
-         showEmptyView( false );
-         showListView( false );
-         showLoadingSpinner( false );
-         showErrorView( true );
-         
-         errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
-      }
-      
-      return errorTextView;
    }
    
    

@@ -10,7 +10,7 @@
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
    - implementation -->
 
-<LinearLayout
+<FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:orientation="vertical"
    android:layout_width="fill_parent"
@@ -42,4 +42,4 @@
       android:id="@+id/error"
       style="@style/Error"
       android:visibility="gone" />
-</LinearLayout>
+</FrameLayout>

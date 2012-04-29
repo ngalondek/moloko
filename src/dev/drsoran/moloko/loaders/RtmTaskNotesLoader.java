@@ -30,15 +30,19 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.RemoteException;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
@@ -60,21 +64,35 @@ public class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
    @Override
    protected List< RtmTaskNote > queryResultInBackground( ContentProviderClient client )
    {
-      final String query = buildQuery();
-      final RtmProvider rtmProvider = (RtmProvider) client.getLocalContentProvider();
-      final Cursor notesCursor = rtmProvider.querySql( query );
-      
       List< RtmTaskNote > taskNotes = null;
-      if ( notesCursor != null )
+      
+      try
       {
-         try
+         if ( Queries.exists( client, Tasks.CONTENT_URI, taskId ) )
          {
-            taskNotes = RtmNotesProviderPart.fromCursor( notesCursor );
+            final String query = buildQuery();
+            final RtmProvider rtmProvider = (RtmProvider) client.getLocalContentProvider();
+            final Cursor notesCursor = rtmProvider.querySql( query );
+            
+            if ( notesCursor != null )
+            {
+               try
+               {
+                  taskNotes = RtmNotesProviderPart.fromCursor( notesCursor );
+               }
+               finally
+               {
+                  notesCursor.close();
+               }
+            }
          }
-         finally
-         {
-            notesCursor.close();
-         }
+      }
+      catch ( RemoteException e )
+      {
+         LogUtils.logDBError( getContext(),
+                              LogUtils.toTag( RtmTaskNoteLoader.class ),
+                              "Note",
+                              e );
       }
       
       return taskNotes;
@@ -129,7 +147,10 @@ public class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
                                                                 "subQuery.series_id ="
                                                                    + Notes.PATH
                                                                    + "."
-                                                                   + Notes.TASKSERIES_ID,
+                                                                   + Notes.TASKSERIES_ID
+                                                                   + " AND "
+                                                                   + Notes.NOTE_DELETED
+                                                                   + " IS NULL",
                                                                 null,
                                                                 null,
                                                                 null,

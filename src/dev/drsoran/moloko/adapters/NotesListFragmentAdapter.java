@@ -22,14 +22,15 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
@@ -39,19 +40,14 @@ import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
-public class NotesListFragmentAdapter extends ArrayAdapter< RtmTaskNote >
+public class NotesListFragmentAdapter extends
+         SelectableArrayAdapter< RtmTaskNote >
 {
    private final MolokoListFragment< List< RtmTaskNote > > fragment;
    
    private final int resourceId;
    
-   
-   
-   public NotesListFragmentAdapter(
-      MolokoListFragment< List< RtmTaskNote > > fragment, int resourceId )
-   {
-      this( fragment, resourceId, Collections.< RtmTaskNote > emptyList() );
-   }
+   private boolean isCheckable;
    
    
    
@@ -67,6 +63,22 @@ public class NotesListFragmentAdapter extends ArrayAdapter< RtmTaskNote >
    
    
    
+   public boolean isCheckable()
+   {
+      return isCheckable;
+   }
+   
+   
+   
+   public void setCheckable( boolean isCheckable )
+   {
+      this.isCheckable = isCheckable;
+      notifyDataSetChanged();
+   }
+   
+   
+   
+   @Override
    public int getLayoutRessource()
    {
       return resourceId;
@@ -99,8 +111,7 @@ public class NotesListFragmentAdapter extends ArrayAdapter< RtmTaskNote >
                                                            MolokoDateUtils.FORMAT_ABR_MONTH
                                                               | DateUtils.FORMAT_SHOW_YEAR ) );
       
-      final View checkBox = listItemView.findViewById( android.R.id.checkbox );
-      checkBox.setVisibility( View.GONE );
+      initCheckBox( note, listItemView );
       
       final TextView titleView = (TextView) listItemView.findViewById( R.id.note_title );
       if ( !TextUtils.isEmpty( note.getTitle() ) )
@@ -122,6 +133,42 @@ public class NotesListFragmentAdapter extends ArrayAdapter< RtmTaskNote >
       else
       {
          noteTextView.setVisibility( View.GONE );
+      }
+   }
+   
+   
+   
+   private void initCheckBox( final RtmTaskNote note, ViewGroup listItemView )
+   {
+      final CheckBox checkBoxView = (CheckBox) listItemView.findViewById( android.R.id.checkbox );
+      checkBoxView.setVisibility( isCheckable ? View.VISIBLE : View.GONE );
+      
+      if ( isCheckable )
+      {
+         // Note: Setting the checkChangedListener to null before initializing
+         // the checked mark prevents notification from recycled convert views.
+         checkBoxView.setOnCheckedChangeListener( null );
+         checkBoxView.setChecked( isSelected( note ) );
+         checkBoxView.setOnCheckedChangeListener( new OnCheckedChangeListener()
+         {
+            @Override
+            public void onCheckedChanged( CompoundButton buttonView,
+                                          boolean isChecked )
+            {
+               if ( isChecked )
+               {
+                  select( note );
+               }
+               else
+               {
+                  deselect( note );
+               }
+            }
+         } );
+      }
+      else
+      {
+         checkBoxView.setOnCheckedChangeListener( null );
       }
    }
 }

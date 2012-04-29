@@ -37,11 +37,19 @@ public interface ISelectableAdapter< T >
    
    
    
+   Collection< T > getSelectedItems();
+   
+   
+   
    void deselect( T item );
    
    
    
    void deselectBulk( Collection< ? extends T > items );
+   
+   
+   
+   Collection< T > getUnselectedItems();
    
    
    

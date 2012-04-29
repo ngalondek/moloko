@@ -10,25 +10,28 @@
       for more details. You should have received a copy of the GNU General
       Public License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation-->
+      implementation
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item
-        android:id="@id/menu_select_all"
-        android:icon="@drawable/ic_menu_select_all_tasks"
+    <item android:id="@id/menu_selection"        
         android:showAsAction="always|withText"
-        android:title="@string/menu_opt_select_all_female"/>
-    
-    <item
-        android:id="@id/menu_deselect_all"
-        android:icon="@drawable/ic_menu_select_no_tasks"    
-        android:showAsAction="always|withText"
-        android:title="@string/menu_opt_deselect_all_female"/>
-    
-    <item
-        android:id="@id/menu_invert_selection"
-        android:icon="@drawable/ic_menu_select_invert_tasks"        
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_opt_inv_selection"/>
-
+        android:title="@string/menu_opt_selection">
+        <menu>
+            <item
+                android:id="@id/menu_select_all"
+                android:icon="@drawable/ic_menu_select_all_tasks"
+                android:showAsAction="always|withText"
+                android:title="@string/menu_opt_select_all_female"/>
+            <item
+                android:id="@id/menu_deselect_all"
+                android:icon="@drawable/ic_menu_select_no_tasks"
+                android:showAsAction="always|withText"
+                android:title="@string/menu_opt_deselect_all_female"/>
+            <item
+                android:id="@id/menu_invert_selection"
+                android:icon="@drawable/ic_menu_select_invert_tasks"
+                android:showAsAction="ifRoom|withText"
+                android:title="@string/menu_opt_inv_selection"/>
+        </menu>
+    </item>
 </menu>

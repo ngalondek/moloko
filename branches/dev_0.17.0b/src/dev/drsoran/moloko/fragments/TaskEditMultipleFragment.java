@@ -39,8 +39,8 @@ import android.widget.AutoCompleteTextView;
 
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
@@ -353,12 +353,12 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected boolean validateName()
+   protected ValidationResult validateName()
    {
       if ( hasChange( Tasks.TASKSERIES_NAME ) )
          return super.validateName();
       else
-         return true;
+         return ValidationResult.OK;
    }
    
    
@@ -367,14 +367,6 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    protected List< Task > getEditedTasks()
    {
       return getTasksAssertNotNull();
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment createEditableFragmentInstance()
-   {
-      return null;
    }
    
    

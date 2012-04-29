@@ -29,13 +29,11 @@
    <string name="app_account_preferences">Paramètres du compte</string>
    <string name="app_tasklists">Listes</string>
    <string name="app_task">Tâche</string>
-   <string name="app_task_edit">Edit</string>
    <string name="app_task_edit_multiple">Modifier %1$d %2$s</string>
    <string name="app_task_add">Nouvelle Tâche</string>
    <string name="app_task_select_multiple">Selectionner des tâches (%1$d)</string>
    <string name="app_task_complete">Marquer faite</string>
    <string name="app_task_uncomplete">Marquer à faire</string>
-   <string name="app_task_delete">Supprimer la tâche</string>
    <string name="app_task_postpone">Reporter la tâche</string>
    <string name="app_change_tags">Changer les mots clés</string>
    <string name="app_note">Note</string>
@@ -145,6 +143,9 @@
    <string name="btn_back">Retour</string>
    
    <!-- Global menus -->
+   <string name="menu_opt_edit">Edit</string>
+   <string name="menu_opt_delete">Delete</string>
+   <string name="menu_opt_selection">Selection</string>
    <string name="menu_opt_select_all_male">Toutes</string>
    <string name="menu_opt_select_all_female">@string/menu_opt_select_all_male</string>
    <string name="menu_opt_select_all_mainly">@string/menu_opt_select_all_male</string>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko is free 
+<!-- Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is free 
    software: you can redistribute it and/or modify it under the terms of the GNU General 
    Public License as published by the Free Software Foundation, either version 3 of 
    the License, or (at your option) any later version. Moloko is distributed in the 
@@ -21,11 +21,11 @@
       style="@style/Note_Created_Date_Text"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_alignRight="@+id/note_edit_title"
+      android:layout_alignRight="@+id/note_title"
       android:text="Created_Date" />
 
    <dev.drsoran.moloko.widgets.ClearableEditText
-      android:id="@+id/note_edit_title"
+      android:id="@+id/note_title"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_below="@+id/note_created_date"
@@ -35,12 +35,13 @@
       android:inputType="text" />
 
    <dev.drsoran.moloko.widgets.ClearableEditText
-      android:id="@+id/note_edit_text"
+      android:id="@+id/note_text"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/note_edit_title"
-      android:layout_alignLeft="@+id/note_edit_title"
-      android:layout_alignRight="@+id/note_edit_title"
+      android:layout_below="@+id/note_title"
+      android:layout_alignLeft="@+id/note_title"
+      android:layout_alignRight="@+id/note_title"
+      android:layout_alignParentBottom="true"
       android:gravity="top|left"
       android:hint="@string/note_edit_text_hint"
       android:inputType="textMultiLine" />

@@ -26,7 +26,6 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoEditFragmentActivity;
@@ -94,7 +93,6 @@ public class EditElementActionModeCallback implements ActionMode.Callback
    
    private boolean saveChanges()
    {
-      final ApplyChangesInfo changes = editFragment.onFinishEditing();
-      return changes != null && activity.applyModifications( changes );
+      return activity.finishFragmentEditing( editFragment );
    }
 }

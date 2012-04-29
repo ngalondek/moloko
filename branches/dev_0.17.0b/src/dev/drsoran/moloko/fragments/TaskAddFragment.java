@@ -38,7 +38,6 @@ import android.view.View.OnClickListener;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -409,28 +408,5 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    {
       return TasksProviderPart.createNewTaskIds( getSherlockActivity().getContentResolver()
                                                                       .acquireContentProviderClient( Tasks.CONTENT_URI ) );
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment createEditableFragmentInstance()
-   {
-      final Uri newTaskUri = getNewTaskUri();
-      
-      if ( newTaskUri != null )
-      {
-         final Bundle config = new Bundle();
-         
-         config.putString( TaskFragment.Config.TASK_ID,
-                           newTaskUri.getLastPathSegment() );
-         
-         final TaskFragment fragment = TaskFragment.newInstance( config );
-         throw new UnsupportedOperationException();
-      }
-      else
-      {
-         return null;
-      }
    }
 }

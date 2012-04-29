@@ -24,17 +24,21 @@ package dev.drsoran.moloko.fragments.base.impl;
 
 import java.util.HashMap;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.LogUtils;
 
 
 public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
@@ -208,12 +212,31 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
          {
             content.removeAllViews();
             
-            UIUtils.inflateErrorWithIcon( support.getSherlockActivity(),
-                                          content,
-                                          R.string.err_entity_not_found,
-                                          support.getLoaderDataName() );
+            inflateErrorWithIcon( content,
+                                  R.string.err_entity_not_found,
+                                  support.getLoaderDataName() );
             content.setVisibility( View.VISIBLE );
          }
       }
    }
+   
+   
+   
+   private void inflateErrorWithIcon( ViewGroup container,
+                                      int errorMsgResId,
+                                      Object... params )
+   {
+      final View view = LayoutInflater.from( support.getSherlockActivity() )
+                                      .inflate( R.layout.error_with_icon,
+                                                container,
+                                                true );
+      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
+      final String msg = support.getSherlockActivity()
+                                .getResources()
+                                .getString( errorMsgResId, params );
+      text.setText( msg );
+      
+      Log.e( LogUtils.toTag( Context.class ), msg );
+   }
+   
 }

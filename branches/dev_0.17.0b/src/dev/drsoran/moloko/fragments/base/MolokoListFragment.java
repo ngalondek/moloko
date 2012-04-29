@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +40,9 @@ import com.mdt.rtm.data.RtmAuth;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderListFragmentImpl;
-import dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 
@@ -50,7 +51,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
          LoaderCallbacks< D >, LoaderListFragmentImpl.Support< D >,
          IRtmAccessLevelAware
 {
-   private final MolokoListFragmentImpl baseImpl;
+   private final ConfigurableFragmentImpl baseImpl;
    
    private final LoaderListFragmentImpl< D > loaderImpl;
    
@@ -62,7 +63,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    protected MolokoListFragment()
    {
-      baseImpl = new MolokoListFragmentImpl( this, getSettingsMask() );
+      baseImpl = new ConfigurableFragmentImpl( this, getSettingsMask() );
       loaderImpl = new LoaderListFragmentImpl< D >( this );
       editImpl = new EditFragmentImpl( this );
       accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
@@ -108,7 +109,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      baseImpl.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
       editImpl.onViewCreated( view, savedInstanceState );
    }
@@ -120,27 +120,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       super.onDestroyView();
       editImpl.onDestroyView();
-   }
-   
-   
-   
-   public View getEmptyView()
-   {
-      return baseImpl.getEmptyView();
-   }
-   
-   
-   
-   public void showEmptyView( boolean show )
-   {
-      baseImpl.showEmptyView( show );
-   }
-   
-   
-   
-   public void showListView( boolean show )
-   {
-      baseImpl.showListView( show );
    }
    
    
@@ -218,13 +197,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
-   protected void showLoadingSpinner( boolean show )
-   {
-      loaderImpl.showLoadingSpinner( show );
-   }
-   
-   
-   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -244,6 +216,13 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    public boolean hasListAdapter()
    {
       return getListAdapter() != null;
+   }
+   
+   
+   
+   public final void setRespectContentChanges( boolean respect )
+   {
+      loaderImpl.setRespectContentChanges( respect );
    }
    
    
@@ -324,6 +303,39 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
+   public void showError( int messageResId )
+   {
+      loaderImpl.showError( messageResId );
+   }
+   
+   
+   
+   public void showError( CharSequence message )
+   {
+      loaderImpl.showError( message );
+   }
+   
+   
+   
+   public void showError( Spanned message )
+   {
+      loaderImpl.showError( message );
+   }
+   
+   
+   
+   public void onListAdapterCreated( ListAdapter listAdapter, D result )
+   {
+   }
+   
+   
+   
+   public void onListAdapterDestroyed()
+   {
+   }
+   
+   
+   
    @Override
    public abstract View onCreateView( LayoutInflater inflater,
                                       ViewGroup container,
@@ -343,11 +355,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    @Override
    public abstract int getLoaderId();
-   
-   
-   
-   @Override
-   public abstract ListAdapter createEmptyListAdapter();
    
    
    

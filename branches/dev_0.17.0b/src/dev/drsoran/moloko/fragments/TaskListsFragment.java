@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -302,17 +301,6 @@ public class TaskListsFragment extends
    {
       return super.getSettingsMask()
          | IOnSettingsChangedListener.RTM_DEFAULTLIST;
-   }
-   
-   
-   
-   @Override
-   public ExpandableListAdapter createEmptyExpandableListAdapter()
-   {
-      return new TaskListsAdapter( getSherlockActivity(),
-                                   R.layout.tasklists_fragment_group,
-                                   R.layout.tasklists_fragment_child,
-                                   Collections.< RtmListWithTaskCount > emptyList() );
    }
    
    

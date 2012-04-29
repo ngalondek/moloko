@@ -30,57 +30,44 @@ import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
-import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.rtm.Task;
 
 
-public class NoteAddFragment extends MolokoEditFragment
+public class NoteAddFragment extends AbstractNoteEditFragment
 {
-   public static class Config
-   {
-      public final static String TASKSERIES_ID = Notes.TASKSERIES_ID;
-      
-      public final static String NEW_NOTE_TITLE = Notes.NOTE_TITLE;
-      
-      public final static String NEW_NOTE_TEXT = Notes.NOTE_TEXT;
-      
-      private final static String NEW_NOTE_ID = "new_note_id";
-   }
+   private final static String NEW_NOTE_ID = "new_note_id";
    
    private final Time created = MolokoDateUtils.newTime();
    
-   @InstanceState( key = Notes.TASKSERIES_ID,
-                   defaultValue = Strings.EMPTY_STRING )
-   private String taskSeriesId;
+   @InstanceState( key = Intents.Extras.KEY_TASK,
+                   defaultValue = InstanceState.NO_DEFAULT )
+   private Task task;
    
-   @InstanceState( key = Notes.NOTE_TITLE, defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = Intents.Extras.KEY_NOTE_TITLE,
+                   defaultValue = Strings.EMPTY_STRING )
    private String newTitle;
    
-   @InstanceState( key = Notes.NOTE_TEXT, defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = Intents.Extras.KEY_NOTE_TEXT,
+                   defaultValue = Strings.EMPTY_STRING )
    private String newText;
    
-   @InstanceState( key = Config.NEW_NOTE_ID,
-                   defaultValue = Strings.EMPTY_STRING )
+   @InstanceState( key = NEW_NOTE_ID, defaultValue = Strings.EMPTY_STRING )
    private String newNoteId;
-   
-   private EditText title;
-   
-   private EditText text;
    
    
    
@@ -107,51 +94,23 @@ public class NoteAddFragment extends MolokoEditFragment
                              ViewGroup container,
                              Bundle savedInstanceState )
    {
-      final View fragmentView = createFragmentView( inflater,
+      final View fragmentView = super.onCreateView( inflater,
                                                     container,
                                                     savedInstanceState );
+      
+      showNote( fragmentView );
+      
       return fragmentView;
    }
    
    
    
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   private void showNote( View content )
    {
-      final View fragmentView = inflater.inflate( R.layout.note_edit_fragment,
-                                                  container,
-                                                  false );
-      
-      final TextView createdDate = (TextView) fragmentView.findViewById( R.id.note_created_date );
+      final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
       createdDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
                                                            created.toMillis( true ),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
-      
-      title = (EditText) fragmentView.findViewById( R.id.note_edit_title );
-      text = (EditText) fragmentView.findViewById( R.id.note_edit_text );
-      
-      return fragmentView;
-   }
-   
-   
-   
-   @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
-   {
-      super.onViewCreated( view, savedInstanceState );
-      
-      final Bundle configuration = getConfiguration();
-      
-      if ( configuration.containsKey( Config.NEW_NOTE_TITLE ) )
-      {
-         configuration.remove( Config.NEW_NOTE_TITLE );
-      }
-      
-      if ( configuration.containsKey( Config.NEW_NOTE_TEXT ) )
-      {
-         configuration.remove( Config.NEW_NOTE_TEXT );
-      }
       
       title.setText( newTitle );
       text.setText( newText );
@@ -161,9 +120,23 @@ public class NoteAddFragment extends MolokoEditFragment
    
    
    
-   public String getTaskSeriesId()
+   @Override
+   public void onSaveInstanceState( Bundle outState )
    {
-      return taskSeriesId;
+      newTitle = getNoteTitle();
+      newText = getNoteText();
+      
+      super.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   public Task getTaskAssertNotNull()
+   {
+      if ( task == null )
+         throw new AssertionError( "Expected task to be not null." );
+      
+      return task;
    }
    
    
@@ -185,11 +158,8 @@ public class NoteAddFragment extends MolokoEditFragment
    @Override
    public boolean hasChanges()
    {
-      if ( getView() != null )
-         return !TextUtils.isEmpty( UIUtils.getTrimmedText( title ) )
-            || !TextUtils.isEmpty( UIUtils.getTrimmedText( text ) );
-      else
-         return false;
+      return !TextUtils.isEmpty( UIUtils.getTrimmedText( title ) )
+         || !TextUtils.isEmpty( UIUtils.getTrimmedText( text ) );
    }
    
    
@@ -199,7 +169,7 @@ public class NoteAddFragment extends MolokoEditFragment
    {
       final NewNoteId newNoteId = createNewNoteId();
       final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
-                                                   getTaskSeriesId(),
+                                                   getTaskAssertNotNull().getTaskSeriesId(),
                                                    new Date( created.toMillis( true ) ),
                                                    new Date( created.toMillis( true ) ),
                                                    null,
@@ -222,13 +192,5 @@ public class NoteAddFragment extends MolokoEditFragment
    {
       return RtmNotesProviderPart.createNewNoteId( getSherlockActivity().getContentResolver()
                                                                         .acquireContentProviderClient( Notes.CONTENT_URI ) );
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment createEditableFragmentInstance()
-   {
-      throw new UnsupportedOperationException();
    }
 }

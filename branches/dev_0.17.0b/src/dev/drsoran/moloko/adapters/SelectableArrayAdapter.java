@@ -118,6 +118,14 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    
    
    @Override
+   public Collection< T > getSelectedItems()
+   {
+      return selectedItems;
+   }
+   
+   
+   
+   @Override
    public void deselect( T item )
    {
       if ( selectedItems.remove( item ) )
@@ -139,6 +147,14 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
          notifyBulk( items, true );
          notifyDataSetChanged();
       }
+   }
+   
+   
+   
+   @Override
+   public Collection< T > getUnselectedItems()
+   {
+      return unselectedItems;
    }
    
    
@@ -208,10 +224,7 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    
    private void notifyItem( T item, boolean isSelected )
    {
-      if ( listener != null )
-      {
-         listener.onSelectionChanged( item, isSelected );
-      }
+      notifyBulk( Collections.singletonList( item ), isSelected );
    }
    
    
@@ -220,7 +233,7 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    {
       if ( listener != null )
       {
-         listener.onSelectionsChanged( items, isSelected );
+         listener.onSelectionChanged( items, isSelected );
       }
    }
 }

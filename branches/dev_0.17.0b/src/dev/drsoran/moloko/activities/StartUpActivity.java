@@ -120,7 +120,7 @@ public class StartUpActivity extends MolokoFragmentActivity
          switchToNextState();
       }
       else if ( dialogId == R.id.dlg_startup_default_list_not_exists
-         && which == Dialog.BUTTON_POSITIVE )
+         && which == Dialog.BUTTON_NEUTRAL )
       {
          final Settings settings = MolokoApp.getSettings( this );
          
@@ -188,16 +188,23 @@ public class StartUpActivity extends MolokoFragmentActivity
                                                                                              .setNeutralButton( R.string.btn_continue )
                                                                                              .show( this );
                }
+               else
+               {
+                  switchToNextState();
+               }
             }
             catch ( RemoteException e )
             {
                // We simply ignore the exception and start with default view.
                // Perhaps next time it works again.
                settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
+               switchToNextState();
             }
          }
-         
-         switchToNextState();
+         else
+         {
+            switchToNextState();
+         }
       }
       else
       {
@@ -270,8 +277,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       {
          final RtmList list = RtmListsProviderPart.getList( client, id );
          exists = list != null;
-         exists &= list.getArchived() == 0;
-         exists &= list.getDeletedDate() == null;
+         exists = exists && list.getArchived() == 0;
+         exists = exists && list.getDeletedDate() == null;
       }
       
       if ( client != null )

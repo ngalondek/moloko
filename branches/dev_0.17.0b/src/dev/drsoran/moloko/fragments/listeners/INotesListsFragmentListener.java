@@ -22,13 +22,20 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
+import java.util.Collection;
+
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.IOnSelectionChangesListener;
 
-
-public interface INotesListsFragmentListener extends
-         IOnSelectionChangesListener< RtmTaskNote >
+public interface INotesListsFragmentListener
 {
    void onOpenNote( RtmTaskNote note, int position );
+   
+   
+   
+   void onAddNote();
+   
+   
+   
+   void onDeleteNotes( Collection< RtmTaskNote > notes );
 }

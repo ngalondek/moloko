@@ -73,9 +73,9 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       
       public final static int UNCOMPLETE_TASK = R.id.menu_uncomplete_selected_tasks;
       
-      public final static int DELETE_TASK = R.id.menu_delete_selected_tasks;
+      public final static int DELETE_TASK = R.id.menu_delete_selected;
       
-      public final static int EDIT_TASK = R.id.menu_edit_selected_tasks;
+      public final static int EDIT_TASK = R.id.menu_edit_selected;
    }
    
    private ITaskFragmentListener listener;
@@ -565,5 +565,19 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
+   }
+   
+   
+   
+   public Task getTask()
+   {
+      return getLoaderData();
+   }
+   
+   
+   
+   public Task getTaskAssertNotNull()
+   {
+      return getLoaderDataAssertNotNull();
    }
 }

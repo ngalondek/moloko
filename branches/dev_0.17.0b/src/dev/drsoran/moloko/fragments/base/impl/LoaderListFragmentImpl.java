@@ -26,10 +26,10 @@ import java.util.HashMap;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
-import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 
 
@@ -42,14 +42,12 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
       
       
       
-      ListAdapter createEmptyListAdapter();
-      
-      
-      
       ListAdapter createListAdapterForResult( D result );
    }
    
    private final MolokoListFragment< D > fragment;
+   
+   private final LoaderListFragmentViewManager viewManager;
    
    private final Support< D > support;
    
@@ -60,6 +58,7 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
       super( fragment, fragment, fragment );
       
       this.fragment = fragment;
+      this.viewManager = new LoaderListFragmentViewManager( fragment );
       this.support = fragment;
    }
    
@@ -70,7 +69,6 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
       if ( support.getListAdapter() == null && support.isReadyToStartLoader() )
       {
          startLoader();
-         showLoadingSpinner( true );
       }
    }
    
@@ -87,7 +85,7 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    @Override
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
-      showLoadingSpinner( true );
+      viewManager.onCreateLoader();
       return super.onCreateLoader( id, args );
    }
    
@@ -97,22 +95,43 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    public void onLoadFinished( Loader< D > loader, D data )
    {
       if ( data != null )
-         fragment.setListAdapter( support.createListAdapterForResult( data ) );
+      {
+         final ListAdapter adapter = support.createListAdapterForResult( data );
+         
+         fragment.setListAdapter( adapter );
+         fragment.onListAdapterCreated( adapter, data );
+      }
       else
+      {
+         fragment.setListAdapter( null );
+         fragment.onListAdapterDestroyed();
          fragment.getLoaderManager().destroyLoader( support.getLoaderId() );
+      }
       
       super.onLoadFinished( loader, data );
+      
+      viewManager.onLoadFinished( isLoaderDataFound() );
    }
    
    
    
-   public void showLoadingSpinner( boolean show )
+   public void showError( int messageResId )
    {
-      fragment.showEmptyView( false );
-      
-      final View spinner = getLoadingSpinnerView();
-      if ( spinner != null )
-         spinner.setVisibility( show ? View.VISIBLE : View.GONE );
+      viewManager.showError( messageResId );
+   }
+   
+   
+   
+   public void showError( CharSequence message )
+   {
+      viewManager.showError( message );
+   }
+   
+   
+   
+   public void showError( Spanned message )
+   {
+      viewManager.showError( message );
    }
    
    
@@ -121,17 +140,5 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    {
       if ( fragment.getListAdapter() instanceof BaseAdapter )
          ( (BaseAdapter) fragment.getListAdapter() ).notifyDataSetChanged();
-   }
-   
-   
-   
-   private View getLoadingSpinnerView()
-   {
-      View loadView = null;
-      
-      if ( fragment.getView() != null )
-         loadView = fragment.getView().findViewById( R.id.loading_spinner );
-      
-      return loadView;
    }
 }

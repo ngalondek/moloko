@@ -27,9 +27,5 @@ import java.util.Collection;
 
 public interface IOnSelectionChangesListener< T >
 {
-   void onSelectionChanged( T item, boolean isSelected );
-   
-   
-   
-   void onSelectionsChanged( Collection< ? extends T > items, boolean isSelected );
+   void onSelectionChanged( Collection< ? extends T > items, boolean isSelected );
 }

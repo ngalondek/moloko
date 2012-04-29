@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
+import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
@@ -74,21 +75,24 @@ public abstract class MolokoEditDialogFragment extends
    @Override
    public final ApplyChangesInfo onFinishEditing()
    {
-      ApplyChangesInfo changes = null;
+      ApplyChangesInfo changes = ApplyChangesInfo.EMPTY;
       
-      boolean ok = validateInput();
-      
-      if ( ok )
+      if ( hasChanges() )
       {
-         if ( hasChanges() )
-         {
-            changes = getChanges();
-         }
-         
-         getDialog().dismiss();
+         changes = getChanges();
       }
       
+      getDialog().dismiss();
+      
       return changes;
+   }
+   
+   
+   
+   @Override
+   public ValidationResult validate()
+   {
+      return ValidationResult.OK;
    }
    
    
@@ -103,13 +107,6 @@ public abstract class MolokoEditDialogFragment extends
    public void showShoftInput( View view )
    {
       impl.showShoftInput( view );
-   }
-   
-   
-   
-   protected boolean validateInput()
-   {
-      return true;
    }
    
    

@@ -36,8 +36,8 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterReturn;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.provider.Rtm.RawTasks;
 
 
@@ -50,13 +50,15 @@ public class RtmSmartFilter extends RtmData implements IFilter
    public static final Parcelable.Creator< RtmSmartFilter > CREATOR = new Parcelable.Creator< RtmSmartFilter >()
    {
       
+      @Override
       public RtmSmartFilter createFromParcel( Parcel source )
       {
          return new RtmSmartFilter( source );
       }
       
-
-
+      
+      
+      @Override
       public RtmSmartFilter[] newArray( int size )
       {
          return new RtmSmartFilter[ size ];
@@ -71,7 +73,14 @@ public class RtmSmartFilter extends RtmData implements IFilter
    private ArrayList< RtmSmartFilterToken > tokens;
    
    
-
+   
+   public RtmSmartFilter()
+   {
+      this( Strings.EMPTY_STRING );
+   }
+   
+   
+   
    public RtmSmartFilter( String filter )
    {
       this.filter = transformFilter( filter );
@@ -79,8 +88,8 @@ public class RtmSmartFilter extends RtmData implements IFilter
       this.tokens = null;
    }
    
-
-
+   
+   
    public RtmSmartFilter( Element elt )
    {
       if ( elt.getChildNodes().getLength() > 0 )
@@ -97,8 +106,8 @@ public class RtmSmartFilter extends RtmData implements IFilter
       this.tokens = null;
    }
    
-
-
+   
+   
    public RtmSmartFilter( Parcel source )
    {
       this.filter = source.readString();
@@ -106,15 +115,15 @@ public class RtmSmartFilter extends RtmData implements IFilter
       this.tokens = source.createTypedArrayList( RtmSmartFilterToken.CREATOR );
    }
    
-
-
+   
+   
    public String getFilterString()
    {
       return filter;
    }
    
-
-
+   
+   
    public String getEvaluatedFilterString( boolean collectTokens )
    {
       if ( !isEvaluated() && filter != null || collectTokens && tokens == null )
@@ -128,15 +137,15 @@ public class RtmSmartFilter extends RtmData implements IFilter
       return evalFilter;
    }
    
-
-
+   
+   
    public boolean isEvaluated()
    {
       return evalFilter != null;
    }
    
-
-
+   
+   
    public ArrayList< RtmSmartFilterToken > getTokens()
    {
       if ( tokens == null )
@@ -150,15 +159,15 @@ public class RtmSmartFilter extends RtmData implements IFilter
       return tokens;
    }
    
-
-
+   
+   
    public static final String evaluate( String filter, boolean excludeCompleted )
    {
       return evaluate( transformFilter( filter ), null, excludeCompleted );
    }
    
-
-
+   
+   
    public static final String evaluate( String filter,
                                         ArrayList< RtmSmartFilterToken > tokens,
                                         boolean excludeCompleted )
@@ -216,15 +225,16 @@ public class RtmSmartFilter extends RtmData implements IFilter
       return evalFilter.toString();
    }
    
-
-
+   
+   
+   @Override
    public String getSqlSelection()
    {
       return getEvaluatedFilterString( true );
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {
@@ -237,15 +247,17 @@ public class RtmSmartFilter extends RtmData implements IFilter
                                      .toString();
    }
    
-
-
+   
+   
+   @Override
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( filter );
@@ -253,8 +265,8 @@ public class RtmSmartFilter extends RtmData implements IFilter
       dest.writeTypedList( tokens );
    }
    
-
-
+   
+   
    private final static String transformFilter( String filter )
    {
       if ( filter.length() > 0 && !filter.contains( ":" ) )

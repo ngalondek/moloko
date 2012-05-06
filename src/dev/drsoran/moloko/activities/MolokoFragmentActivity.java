@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -65,6 +66,8 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    private final Handler handler = new Handler();
    
    private boolean ignoreAccountListenerAfterRegister = true;
+   
+   private Class< ? extends Activity > homeAsUpTargetActivity = HomeActivity.class;
    
    
    
@@ -201,12 +204,14 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
             {
                if ( onFinishActivityByHome() )
                {
-                  finish();
+                  startActivity( Intents.createHomeAsUpIntent( this,
+                                                               homeAsUpTargetActivity ) );
                }
             }
             else
             {
-               startActivity( Intents.createOpenHomeIntent( this ) );
+               startActivity( Intents.createHomeAsUpIntent( this,
+                                                            HomeActivity.class ) );
             }
             
             handled = true;
@@ -216,6 +221,13 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       }
       
       return handled || super.onOptionsItemSelected( item );
+   }
+   
+   
+   
+   public void setHomeAsUpTargetActivity( Class< ? extends Activity > target )
+   {
+      homeAsUpTargetActivity = target;
    }
    
    

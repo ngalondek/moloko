@@ -45,6 +45,10 @@
     
     <style name="Theme.Moloko.TasksList">
         
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+        
         <!-- Widgets -->
         <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>
     </style>

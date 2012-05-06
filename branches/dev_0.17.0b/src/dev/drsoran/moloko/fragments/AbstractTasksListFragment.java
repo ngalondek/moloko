@@ -25,7 +25,6 @@ package dev.drsoran.moloko.fragments;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Spanned;
@@ -418,15 +417,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public void onLoaderReset( Loader< List< T >> loader )
-   {
-      super.onLoaderReset( loader );
-      invalidateOptionsMenu();
-   }
-   
-   
-   
-   @Override
    public int getLoaderId()
    {
       return TasksLoader.ID;
@@ -456,10 +446,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       return createListAdapterForResult( result, getFilter() );
    }
-   
-   
-   
-   public abstract Intent newDefaultIntent();
    
    
    

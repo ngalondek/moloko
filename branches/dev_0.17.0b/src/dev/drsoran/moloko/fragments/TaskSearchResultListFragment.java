@@ -132,14 +132,6 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    
    
    @Override
-   public Intent newDefaultIntent()
-   {
-      return new Intent( INTENT_FILTER.getAction( 0 ) );
-   }
-   
-   
-   
-   @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState )

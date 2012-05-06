@@ -190,7 +190,8 @@ public class TaskSearchResultActivity extends
    {
       if ( !TextUtils.isEmpty( lastQuery ) )
       {
-         setActivityTitle( lastQuery );
+         // TODO:
+         // setActivityTitle( lastQuery );
       }
    }
    

@@ -88,12 +88,13 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
              .setShow( showAddSmartListMenu.booleanValue() && isWritableAccess )
              .build( menu );
       
-      builder.setItemId( OptionsMenu.DELETE_LIST )
-             .setTitle( getString( R.string.taskslist_menu_opt_delete_list ) )
-             .setIconId( R.drawable.ic_menu_trash )
-             .setOrder( MenuCategory.ALTERNATIVE )
-             .setShow( !isListLocked() && hasListName() && isWritableAccess )
-             .build( menu );
+      // TODO: list deletion no longer supported
+      // builder.setItemId( OptionsMenu.DELETE_LIST )
+      // .setTitle( getString( R.string.taskslist_menu_opt_delete_list ) )
+      // .setIconId( R.drawable.ic_menu_trash )
+      // .setOrder( MenuCategory.ALTERNATIVE )
+      // .setShow( !isListLocked() && hasListName() && isWritableAccess )
+      // .build( menu );
       
       return true;
    }
@@ -144,7 +145,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       
       // if we are configured with a list name then we already are in a list
       // and do not need to add a new one.
-      show = show && !hasListName();
+      show = show && !hasListNameInIntent();
       
       if ( show )
       {

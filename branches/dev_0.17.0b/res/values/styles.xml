@@ -188,6 +188,14 @@
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
     </style>
+    
+    <style name="TasksListSpinnerItem" parent="TextAppearance.Sherlock.Widget.TextView.SpinnerItem">
+    </style>
+    
+    <style name="TasksListSpinnerItem.Active">
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
     <!-- ********* -->
     <!-- TaskList -->

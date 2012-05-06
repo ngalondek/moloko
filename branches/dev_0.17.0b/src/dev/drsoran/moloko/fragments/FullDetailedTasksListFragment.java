@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -57,7 +54,6 @@ import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
@@ -65,22 +61,6 @@ import dev.drsoran.rtm.Task;
 public class FullDetailedTasksListFragment extends
          AbstractTasksListFragment< Task > implements View.OnClickListener
 {
-   private final static IntentFilter INTENT_FILTER;
-   
-   static
-   {
-      try
-      {
-         INTENT_FILTER = new IntentFilter( Intent.ACTION_VIEW,
-                                           "vnd.android.cursor.dir/vnd.rtm.task" );
-         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
-      }
-      catch ( MalformedMimeTypeException e )
-      {
-         throw new RuntimeException( e );
-      }
-   }
-   
    
    protected static class OptionsMenu extends
             AbstractTasksListFragment.OptionsMenu
@@ -125,21 +105,6 @@ public class FullDetailedTasksListFragment extends
    
    
    
-   public static IntentFilter getIntentFilter()
-   {
-      return INTENT_FILTER;
-   }
-   
-   
-   
-   @Override
-   public Intent newDefaultIntent()
-   {
-      return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
-   }
-   
-   
-   
    @Override
    public void onAttach( Activity activity )
    {
@@ -156,8 +121,8 @@ public class FullDetailedTasksListFragment extends
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
@@ -166,7 +131,6 @@ public class FullDetailedTasksListFragment extends
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
-      
       registerForContextMenu( getListView() );
    }
    

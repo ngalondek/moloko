@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -42,7 +43,6 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
-import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
@@ -51,7 +51,6 @@ import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -93,6 +92,10 @@ public final class Intents
       
       public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
          + "tasks";
+      
+      public final static String KEY_LIST_NAME = "list_name";
+      
+      public final static String KEY_LIST_ID = "list_id";
       
       public final static String KEY_NOTE = "note";
       
@@ -251,7 +254,9 @@ public final class Intents
                                                         new RtmSmartFilter( filterString ),
                                                         context.getString( R.string.taskslist_actionbar,
                                                                            list.getName() ) );
-         extras.putString( Lists.LIST_NAME, list.getName() );
+         extras.putString( Intents.Extras.KEY_LIST_NAME, list.getName() );
+         extras.putString( Intents.Extras.KEY_LIST_ID, list.getId() );
+         
          return extras;
       }
       
@@ -458,9 +463,10 @@ public final class Intents
    
    
    
-   public final static Intent createOpenHomeIntent( Context context )
+   public final static Intent createHomeAsUpIntent( Context context,
+                                                    Class< ? extends Activity > target )
    {
-      return new Intent( context, HomeActivity.class ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+      return new Intent( context, target ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
    }
    
    

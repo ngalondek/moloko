@@ -36,7 +36,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.TasksListActivity;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.util.Intents;
@@ -192,10 +191,6 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          default :
             break;
       }
-      
-      if ( intent != null )
-         // We have to remove the list name cause we want prevent the list navigation mode
-         intent.removeExtra( TasksListActivity.Config.LIST_NAME );
       
       return intent;
    }

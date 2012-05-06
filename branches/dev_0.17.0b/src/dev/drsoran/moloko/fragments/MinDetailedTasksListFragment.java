@@ -49,7 +49,6 @@ import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
@@ -91,21 +90,6 @@ public class MinDetailedTasksListFragment extends
       fragment.setArguments( configuration );
       
       return fragment;
-   }
-   
-   
-   
-   public static IntentFilter getIntentFilter()
-   {
-      return INTENT_FILTER;
-   }
-   
-   
-   
-   @Override
-   public Intent newDefaultIntent()
-   {
-      return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
    

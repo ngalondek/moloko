@@ -25,7 +25,6 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -55,39 +54,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private static class OptionsMenu
    {
       public final static int QUICK_ADD_TASK = R.id.menu_quick_add_task;
-      
-      public final static int SHOW_LISTS = R.id.menu_show_lists;
-   }
-   
-   /**
-    * This flag indicates that a new Intent has been received. Activities which are singleTop are paused before the new
-    * Intent is delivered. So replacing the fragment directly in onNewIntent can cause a state loss exception due to
-    * pause. So we store the state and reload in onResume().
-    */
-   private boolean newTasksListFragmentbyIntent = false;
-   
-   
-   
-   @Override
-   protected void onNewIntent( Intent intent )
-   {
-      super.onNewIntent( intent );
-      
-      newTasksListFragmentbyIntent = true;
-   }
-   
-   
-   
-   @Override
-   protected void onResume()
-   {
-      super.onResume();
-      
-      if ( newTasksListFragmentbyIntent )
-      {
-         newTasksListFragmentbyIntent( getIntent() );
-         newTasksListFragmentbyIntent = false;
-      }
    }
    
    
@@ -105,15 +71,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
              .setOrder( MenuCategory.CONTAINER )
              .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
              .setShow( !AccountUtils.isReadOnlyAccess( this ) )
-             .build( menu );
-      
-      builder.setItemId( OptionsMenu.SHOW_LISTS )
-             .setTitle( getString( R.string.taskslist_menu_opt_lists ) )
-             .setIconId( R.drawable.ic_menu_list )
-             .setOrder( MenuCategory.ALTERNATIVE )
-             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-             .setShow( !isInDropDownNavigationMode() )
-             .setIntent( Intents.createOpenListOverviewsIntent() )
              .build( menu );
       
       MolokoMenuItemBuilder.newSearchMenuItem( this )
@@ -215,9 +172,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    @Override
    public void onOpenList( int pos, String listId )
    {
-      reloadTasksListWithConfiguration( Intents.Extras.createOpenListExtrasById( this,
-                                                                                 listId,
-                                                                                 null ) );
+      startActivity( Intents.createOpenListIntentById( this, listId, null ) );
    }
    
    
@@ -225,8 +180,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
-      reloadTasksListWithConfiguration( Intents.Extras.createOpenLocationExtras( this,
-                                                                                 getTask( pos ).getLocationName() ) );
+      startActivity( Intents.createOpenLocationIntentByName( this,
+                                                             getTask( pos ).getLocationName() ) );
    }
    
    
@@ -280,13 +235,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    protected void onOpenChoosenTags( List< String > tags,
                                      String logicalOperation )
    {
-      if ( tags.size() == 1 )
-         reloadTasksListWithConfiguration( Intents.Extras.createOpenTagExtras( this,
-                                                                               tags.get( 0 ) ) );
-      else
-         reloadTasksListWithConfiguration( Intents.Extras.createOpenTagsExtras( this,
-                                                                                tags,
-                                                                                logicalOperation ) );
+      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
    }
    
    

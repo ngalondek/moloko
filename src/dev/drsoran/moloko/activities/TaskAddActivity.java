@@ -25,24 +25,15 @@ package dev.drsoran.moloko.activities;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.TaskEditFragment;
+import dev.drsoran.moloko.fragments.TaskAddFragment;
 import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
-import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.rtm.Task;
 
 
-public class TaskEditActivity extends AbstractTaskEditActivity
+public class TaskAddActivity extends AbstractTaskEditActivity
 {
-   @InstanceState( key = Intents.Extras.KEY_TASK,
-                   defaultValue = InstanceState.NULL )
-   private Task task;
-   
-   
-   
-   public TaskEditActivity()
+   public TaskAddActivity()
    {
-      registerAnnotatedConfiguredInstance( this, TaskEditActivity.class );
+      registerAnnotatedConfiguredInstance( this, TaskAddActivity.class );
    }
    
    
@@ -51,8 +42,8 @@ public class TaskEditActivity extends AbstractTaskEditActivity
    protected void createTaskEditFragment()
    {
       final Fragment fragment = DefaultFragmentFactory.create( this,
-                                                               TaskEditFragment.class,
-                                                               createTaskEditFragmentConfig() );
+                                                               TaskAddFragment.class,
+                                                               createTaskAddFragmentConfig() );
       getSupportFragmentManager().beginTransaction()
                                  .add( R.id.frag_task_edit, fragment )
                                  .commit();
@@ -60,11 +51,11 @@ public class TaskEditActivity extends AbstractTaskEditActivity
    
    
    
-   private Bundle createTaskEditFragmentConfig()
+   private Bundle createTaskAddFragmentConfig()
    {
       final Bundle config = new Bundle();
       
-      config.putParcelable( Intents.Extras.KEY_TASK, task );
+      config.putAll( getIntent().getExtras() );
       
       return config;
    }

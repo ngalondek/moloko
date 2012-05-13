@@ -39,17 +39,13 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 
 import dev.drsoran.moloko.IFilter;
-import dev.drsoran.moloko.QuickAddTaskActionBarSwitcher;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.TasksListNavigationAdapter;
 import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
-import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
 import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
-import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskActionBarFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
@@ -58,19 +54,17 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
 
-abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
-         implements ITasksListFragmentListener, OnNavigationListener,
-         OnBackStackChangedListener, IQuickAddTaskActionBarFragmentListener,
-         IQuickAddTaskButtonBarFragmentListener,
+public abstract class AbstractTasksListActivity extends
+         MolokoEditFragmentActivity implements ITasksListFragmentListener,
+         OnNavigationListener, OnBackStackChangedListener,
          LoaderCallbacks< List< RtmListWithTaskCount > >
 {
    private final static int[] FRAGMENT_IDS =
-   { R.id.frag_quick_add_task_action_bar, R.id.frag_taskslist,
-    R.id.frag_quick_add_task_button_bar };
-   
-   private final static String CUSTOM_NAVIGATION_ITEM_ID = "0";
+   { R.id.frag_taskslist };
    
    private final static String SELECTED_NAVIGATION_ID = "sel_nav_id";
+   
+   protected final static String CUSTOM_NAVIGATION_ITEM_ID = "0";
    
    @InstanceState( key = Intents.Extras.KEY_ACTIVITY_TITLE,
                    defaultValue = Strings.EMPTY_STRING )
@@ -83,8 +77,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    @InstanceState( key = SELECTED_NAVIGATION_ID,
                    defaultValue = InstanceState.NULL )
    private String selectedNavigationItemId;
-   
-   private QuickAddTaskActionBarSwitcher quickAddTaskActionBarSwitcher;
    
    private TasksListNavigationAdapter actionBarNavigationAdapter;
    
@@ -104,33 +96,12 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       super.onCreate( savedInstanceState );
       setContentView( R.layout.taskslist_activity );
       
-      quickAddTaskActionBarSwitcher = new QuickAddTaskActionBarSwitcher( this,
-                                                                         savedInstanceState );
-      
       initializeTitle();
       initializeSelectedNavigationItemId();
       initializeActionBar();
       initializeTasksListFragment();
       
       getSupportFragmentManager().addOnBackStackChangedListener( this );
-   }
-   
-   
-   
-   @Override
-   protected void onSaveInstanceState( Bundle outState )
-   {
-      super.onSaveInstanceState( outState );
-      quickAddTaskActionBarSwitcher.saveInstanceState( outState );
-   }
-   
-   
-   
-   @Override
-   protected void onRestoreInstanceState( Bundle state )
-   {
-      super.onRestoreInstanceState( state );
-      quickAddTaskActionBarSwitcher.restoreInstanceState( state );
    }
    
    
@@ -164,21 +135,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private void initializeActionBar()
    {
-      quickAddTaskActionBarSwitcher.showInLastState();
-      
       setStandardNavigationMode();
       startLoadingRtmLists();
-   }
-   
-   
-   
-   @Override
-   public void onBackPressed()
-   {
-      if ( isQuickAddTaskFragmentOpen() )
-         showQuickAddTaskActionBarFragment( false );
-      else
-         super.onBackPressed();
    }
    
    
@@ -247,7 +205,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   protected IFilter getConfiguredFilter()
+   public IFilter getConfiguredFilter()
    {
       return getTasksListFragment().getFilter();
    }
@@ -275,6 +233,13 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       final String listId = getIntent().getExtras()
                                        .getString( Intents.Extras.KEY_LIST_ID );
       return listId;
+   }
+   
+   
+   
+   protected IItem getNavigationItem( int position )
+   {
+      return actionBarNavigationAdapter.getItem( position );
    }
    
    
@@ -364,7 +329,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       {
          createNavigationAdapterForResult( data );
          setListNavigationMode();
-         initializeTasksListFragment();
       }
    }
    
@@ -408,63 +372,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
       
       return handled;
-   }
-   
-   
-   
-   protected void showQuickAddTaskActionBarFragment( boolean show )
-   {
-      if ( show )
-      {
-         quickAddTaskActionBarSwitcher.showSwitched( createQuickAddTaskActionBarFragmentConfiguration() );
-      }
-      else
-      {
-         quickAddTaskActionBarSwitcher.showUnswitched();
-      }
-   }
-   
-   
-   
-   @Override
-   public void onCloseQuickAddTaskFragment()
-   {
-      showQuickAddTaskActionBarFragment( false );
-   }
-   
-   
-   
-   protected boolean isQuickAddTaskFragmentOpen()
-   {
-      return quickAddTaskActionBarSwitcher.isSwitched();
-   }
-   
-   
-   
-   protected Bundle createQuickAddTaskActionBarFragmentConfiguration()
-   {
-      final Bundle config = new Bundle();
-      
-      config.putParcelable( QuickAddTaskActionBarFragment.Config.FILTER,
-                            getConfiguredFilter() );
-      return config;
-   }
-   
-   
-   
-   @Override
-   public void onQuickAddAddNewTask( Bundle parsedValues )
-   {
-      showQuickAddTaskActionBarFragment( false );
-      startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
-   }
-   
-   
-   
-   @Override
-   public void onQuickAddTaskOperatorSelected( char operator )
-   {
-      quickAddTaskActionBarSwitcher.insertOperator( operator );
    }
    
    

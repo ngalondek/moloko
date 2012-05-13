@@ -43,7 +43,6 @@ import android.widget.ListAdapter;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
@@ -290,33 +289,31 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   protected SubMenu createTasksSortSubMenu( Menu menu )
+   protected void createTasksSortSubMenu( Menu menu, MenuInflater inflater )
    {
-      final SubMenu subMenu = super.createTasksSortSubMenu( menu );
+      super.createTasksSortSubMenu( menu, inflater );
       
-      if ( subMenu != null && getListAdapter() != null )
-      {
-         final int selCnt = getListAdapter().getSelectedCount();
-         final boolean moreThanOneSelected = selCnt > 1;
-         final boolean allSelected = getListAdapter().areAllSelected();
-         
-         if ( !allSelected && moreThanOneSelected )
-         {
-            subMenu.add( OptionsMenuGroup.SORT,
-                         OptionsMenu.SORT_SELECTION,
-                         Menu.NONE,
-                         R.string.select_multiple_tasks_sort_selection );
-         }
-      }
-      
-      return subMenu;
+      // TODO: Repair
+      // if ( subMenu != null && getListAdapter() != null )
+      // {
+      // final int selCnt = getListAdapter().getSelectedCount();
+      // final boolean moreThanOneSelected = selCnt > 1;
+      // final boolean allSelected = getListAdapter().areAllSelected();
+      //
+      // if ( !allSelected && moreThanOneSelected )
+      // {
+      // subMenu.add( OptionsMenuGroup.SORT,
+      // OptionsMenu.SORT_SELECTION,
+      // Menu.NONE,
+      // R.string.select_multiple_tasks_sort_selection );
+      // }
+      // }
    }
    
    
    
    @Override
-   protected void initializeTasksSortSubMenu( SubMenu subMenu,
-                                              int currentTaskSort )
+   protected void initializeTasksSortSubMenu( Menu menu, int currentTaskSort )
    {
       // INFO: These items are exclusive checkable. Setting one will reset the other.
       // The setChecked() call parameter gets ignored. Only the call matters and
@@ -324,11 +321,11 @@ public class SelectableTasksListsFragment extends
       switch ( currentTaskSort )
       {
          case TASK_SORT_SELECTION:
-            subMenu.findItem( OptionsMenu.SORT_SELECTION ).setChecked( true );
+            menu.findItem( OptionsMenu.SORT_SELECTION ).setChecked( true );
             break;
          
          default :
-            super.initializeTasksSortSubMenu( subMenu, currentTaskSort );
+            super.initializeTasksSortSubMenu( menu, currentTaskSort );
             break;
       }
    }

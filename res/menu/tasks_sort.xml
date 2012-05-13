@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@id/menu_sort"
+        android:icon="@drawable/ic_menu_sort"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"
+        android:title="@string/abstaskslist_menu_opt_sort">
+        <menu>
+            <group
+                android:id="@id/menu_group_sort"
+                android:checkableBehavior="single" >
+                <item
+                    android:id="@id/menu_sort_priority"
+                    android:title="@string/app_sort_prio"/>
+                <item
+                    android:id="@id/menu_sort_due"
+                    android:title="@string/app_sort_due_date"/>
+                <item
+                    android:id="@id/menu_sort_task_name"
+                    android:title="@string/app_sort_alpha"/>
+            </group>
+        </menu>
+    </item>
+</menu>

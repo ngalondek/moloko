@@ -224,7 +224,7 @@ public final class Intents
       
       public final static Bundle createOpenListExtras( Context context,
                                                        RtmListWithTaskCount list,
-                                                       String additionalFilter )
+                                                       String additionalSmartFilter )
       {
          String filterString = Strings.EMPTY_STRING;
          
@@ -241,13 +241,13 @@ public final class Intents
             filterString = list.getSmartFilter().getFilterString();
          }
          
-         if ( additionalFilter != null )
+         if ( additionalSmartFilter != null )
          {
             if ( filterString.length() > 0 )
                filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " ("
-                  + additionalFilter + ")" );
+                  + additionalSmartFilter + ")" );
             else
-               filterString = additionalFilter;
+               filterString = additionalSmartFilter;
          }
          
          final Bundle extras = createSmartFilterExtras( context,
@@ -560,11 +560,11 @@ public final class Intents
    
    public final static Intent createOpenListIntent( Context context,
                                                     RtmListWithTaskCount list,
-                                                    String filter )
+                                                    String additionalSmartFilter )
    {
       return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenListExtras( context,
                                                                                                          list,
-                                                                                                         filter ) );
+                                                                                                         additionalSmartFilter ) );
    }
    
    
@@ -687,10 +687,9 @@ public final class Intents
    public final static Intent createAddTaskIntent( Context context,
                                                    Bundle initialValues )
    {
-      final Intent intent = new Intent( Intent.ACTION_INSERT, Tasks.CONTENT_URI );
-      
-      if ( initialValues != null )
-         intent.putExtras( initialValues );
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Tasks.CONTENT_URI ).putExtras( initialValues != null
+                                                                                                                  ? initialValues
+                                                                                                                  : Bundle.EMPTY );
       
       return intent;
    }

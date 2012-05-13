@@ -36,7 +36,6 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
@@ -48,7 +47,6 @@ import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -67,8 +65,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       public final static int SORT_DUE = R.id.menu_sort_due;
       
       public final static int SORT_NAME = R.id.menu_sort_task_name;
-      
-      public final static int SETTINGS = R.id.menu_settings;
    }
    
    
@@ -148,14 +144,10 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      final SubMenu subMenu = createTasksSortSubMenu( menu );
-      if ( subMenu != null )
-      {
-         subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
-         
-         final int currentTaskSort = getTaskSort();
-         initializeTasksSortSubMenu( subMenu, currentTaskSort );
-      }
+      createTasksSortSubMenu( menu, inflater );
+      
+      final int currentTaskSort = getTaskSort();
+      initializeTasksSortSubMenu( menu, currentTaskSort );
    }
    
    
@@ -167,8 +159,16 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       
       if ( sortMenuItem != null )
       {
-         final int currentTaskSort = getTaskSort();
-         initializeTasksSortSubMenu( sortMenuItem.getSubMenu(), currentTaskSort );
+         if ( hasMultipleTasks() )
+         {
+            final int currentTaskSort = getTaskSort();
+            initializeTasksSortSubMenu( sortMenuItem.getSubMenu(),
+                                        currentTaskSort );
+         }
+         else
+         {
+            sortMenuItem.setVisible( false );
+         }
       }
    }
    
@@ -201,43 +201,14 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected SubMenu createTasksSortSubMenu( Menu menu )
+   protected void createTasksSortSubMenu( Menu menu, MenuInflater inflater )
    {
-      SubMenu subMenu = null;
-      
-      if ( hasMultipleTasks() )
-      {
-         subMenu = menu.addSubMenu( OptionsMenuGroup.SORT,
-                                    OptionsMenu.SORT,
-                                    MenuCategory.SECONDARY,
-                                    R.string.abstaskslist_menu_opt_sort );
-         
-         subMenu.setIcon( R.drawable.ic_menu_sort );
-         subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
-         
-         subMenu.add( OptionsMenuGroup.SORT,
-                      OptionsMenu.SORT_PRIO,
-                      Menu.NONE,
-                      R.string.app_sort_prio );
-         
-         subMenu.add( OptionsMenuGroup.SORT,
-                      OptionsMenu.SORT_DUE,
-                      Menu.NONE,
-                      R.string.app_sort_due_date );
-         
-         subMenu.add( OptionsMenuGroup.SORT,
-                      OptionsMenu.SORT_NAME,
-                      Menu.NONE,
-                      R.string.app_sort_alpha );
-      }
-      
-      return subMenu;
+      inflater.inflate( R.menu.tasks_sort, menu );
    }
    
    
    
-   protected void initializeTasksSortSubMenu( SubMenu subMenu,
-                                              int currentTaskSort )
+   protected void initializeTasksSortSubMenu( Menu menu, int currentTaskSort )
    {
       // INFO: These items are exclusive checkable. Setting one will reset the other.
       // The setChecked() call parameter gets ignored. Only the call matters and
@@ -245,15 +216,15 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       switch ( currentTaskSort )
       {
          case Settings.TASK_SORT_PRIORITY:
-            subMenu.findItem( OptionsMenu.SORT_PRIO ).setChecked( true );
+            menu.findItem( OptionsMenu.SORT_PRIO ).setChecked( true );
             break;
          
          case Settings.TASK_SORT_DUE_DATE:
-            subMenu.findItem( OptionsMenu.SORT_DUE ).setChecked( true );
+            menu.findItem( OptionsMenu.SORT_DUE ).setChecked( true );
             break;
          
          case Settings.TASK_SORT_NAME:
-            subMenu.findItem( OptionsMenu.SORT_NAME ).setChecked( true );
+            menu.findItem( OptionsMenu.SORT_NAME ).setChecked( true );
             break;
          
          default :

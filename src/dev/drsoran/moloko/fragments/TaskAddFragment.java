@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -43,7 +42,6 @@ import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -54,7 +52,7 @@ import dev.drsoran.rtm.Task;
 
 public class TaskAddFragment extends AbstractTaskEditFragment
 {
-   public final static class Config
+   private final static class Config
    {
       public final static String TASK_NAME = Tasks.TASKSERIES_NAME;
       
@@ -81,11 +79,9 @@ public class TaskAddFragment extends AbstractTaskEditFragment
       public final static String ESTIMATE = Tasks.ESTIMATE;
       
       public final static String ESTIMATE_MILLIS = Tasks.ESTIMATE_MILLIS;
-      
-      private final static String NEW_TASK_URI = "new_task_uri";
-      
-      private final static String CREATED_DATE = "created_date";
    }
+   
+   private final static String CREATED_DATE = "created_date";
    
    @InstanceState( key = Config.TASK_NAME )
    private String taskName;
@@ -126,10 +122,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    @InstanceState( key = Config.ESTIMATE_MILLIS, defaultValue = "-1" )
    private long estimateMillis;
    
-   @InstanceState( key = Config.NEW_TASK_URI, defaultValue = InstanceState.NULL )
-   private Uri newTaskUri;
-   
-   @InstanceState( key = Config.CREATED_DATE, defaultValue = "-1" )
+   @InstanceState( key = CREATED_DATE, defaultValue = "-1" )
    private long created;
    
    
@@ -233,20 +226,6 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    
    
    
-   private Uri getNewTaskUri()
-   {
-      return newTaskUri;
-   }
-   
-   
-   
-   private void setNewTaskUri( Uri newTaskUri )
-   {
-      this.newTaskUri = newTaskUri;
-   }
-   
-   
-   
    private void checkCreatedDate()
    {
       if ( created == -1 )
@@ -342,12 +321,6 @@ public class TaskAddFragment extends AbstractTaskEditFragment
       final Task newTask = newTask();
       final ApplyChangesInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
                                                                        newTask );
-      if ( modifications.getActionItems() != null )
-      {
-         setNewTaskUri( Queries.contentUriWithId( Tasks.CONTENT_URI,
-                                                  newTask.getId() ) );
-      }
-      
       return modifications;
    }
    

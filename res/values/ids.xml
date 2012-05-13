@@ -37,9 +37,6 @@
       name="frag_taskslist" />
    <item
       type="id"
-      name="frag_quick_add_task_action_bar" />
-   <item
-      type="id"
       name="frag_quick_add_task_button_bar" />
    <item
       type="id"
@@ -198,6 +195,24 @@
    <item
       type="id"
       name="menu_add_list" />
+   <item
+      type="id"
+      name="menu_quick_add_task_due_date" />
+   <item
+      type="id"
+      name="menu_quick_add_task_prio" />
+   <item
+      type="id"
+      name="menu_quick_add_task_tags" />
+   <item
+      type="id"
+      name="menu_quick_add_task_location" />
+   <item
+      type="id"
+      name="menu_quick_add_task_repeat" />
+   <item
+      type="id"
+      name="menu_quick_add_task_estimate" />
 
 
    <!-- ContextMenuItem IDs -->

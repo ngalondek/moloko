@@ -28,32 +28,57 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.actionmodes.QuickAddTaskActionModeCallback;
+import dev.drsoran.moloko.actionmodes.listener.IQuickAddTaskActionModeListener;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractFullDetailedTasksListActivity extends
          AbstractTasksListActivity implements
-         IFullDetailedTasksListFragmentListener, IShowTasksWithTagsListener
+         IFullDetailedTasksListFragmentListener,
+         IQuickAddTaskActionModeListener, IShowTasksWithTagsListener
 {
-   private static class OptionsMenu
+   @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
+   private boolean quickAddTaskActionModeActive;
+   
+   private ActionMode activeActionMode;
+   
+   
+   
+   protected AbstractFullDetailedTasksListActivity()
    {
-      public final static int QUICK_ADD_TASK = R.id.menu_quick_add_task;
+      registerAnnotatedConfiguredInstance( this,
+                                           AbstractFullDetailedTasksListActivity.class );
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      if ( quickAddTaskActionModeActive )
+      {
+         showQuickAddTaskInput();
+      }
    }
    
    
@@ -63,20 +88,15 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       super.onCreateOptionsMenu( menu );
       
-      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
+      final MenuInflater inflater = getSupportMenuInflater();
       
-      builder.setItemId( OptionsMenu.QUICK_ADD_TASK )
-             .setTitle( getString( R.string.app_task_add ) )
-             .setIconId( R.drawable.ic_menu_add_task )
-             .setOrder( MenuCategory.CONTAINER )
-             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
-             .setShow( !AccountUtils.isReadOnlyAccess( this ) )
-             .build( menu );
+      if ( isWritableAccess() )
+      {
+         inflater.inflate( R.menu.taskslist_activity_rwd, menu );
+      }
       
-      MolokoMenuItemBuilder.newSearchMenuItem( this )
-                           .setOrder( MenuCategory.ALTERNATIVE )
-                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-                           .build( menu );
+      inflater.inflate( R.menu.sync, menu );
+      inflater.inflate( R.menu.search, menu );
       
       return true;
    }
@@ -88,13 +108,41 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.QUICK_ADD_TASK:
+         case R.id.menu_quick_add_task:
             showQuickAddTaskInput();
             return true;
             
          default :
             return super.onOptionsItemSelected( item );
       }
+   }
+   
+   
+   
+   @Override
+   public void onActionModeStarted( ActionMode mode )
+   {
+      activeActionMode = mode;
+      super.onActionModeStarted( mode );
+   }
+   
+   
+   
+   @Override
+   public void onActionModeFinished( ActionMode mode )
+   {
+      activeActionMode = null;
+      quickAddTaskActionModeActive = false;
+      super.onActionModeFinished( mode );
+   }
+   
+   
+   
+   @Override
+   public void onQuickAddAddNewTask( Bundle parsedValues )
+   {
+      activeActionMode.finish();
+      startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
    }
    
    
@@ -253,7 +301,20 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void showQuickAddTaskInput()
    {
-      showQuickAddTaskActionBarFragment( !isQuickAddTaskFragmentOpen() );
+      if ( activeActionMode != null )
+      {
+         throw new IllegalStateException( "ActionMode already started." );
+      }
+      
+      IFilter filter = getConfiguredFilter();
+      if ( !( filter instanceof RtmSmartFilter ) )
+      {
+         filter = null;
+      }
+      
+      startActionMode( new QuickAddTaskActionModeCallback( this,
+                                                           (RtmSmartFilter) filter ) );
+      quickAddTaskActionModeActive = true;
    }
    
    

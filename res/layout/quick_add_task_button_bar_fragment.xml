@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-      Copyright (c) 2011 Ronny Röhricht This file is part of Moloko.
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko.
       Moloko is free software: you can redistribute it and/or modify it
       under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
@@ -18,14 +18,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Quick_Add_Task_Button_Bar_Fragment"
     android:layout_width="fill_parent"
-    android:layout_height="@dimen/app_actionbar_height"
-    android:padding="5dip"
+    android:layout_height="?attr/actionBarSize"
     android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_due_date"
         android:layout_width="0dip"
-        android:layout_height="40dip"
+        android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
@@ -35,7 +34,7 @@
     <ImageButton
         android:id="@+id/quick_add_task_btn_prio"
         android:layout_width="0dip"
-        android:layout_height="40dip"
+        android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
@@ -45,7 +44,7 @@
     <ImageButton
         android:id="@+id/quick_add_task_btn_list_tags"
         android:layout_width="0dip"
-        android:layout_height="40dip"
+        android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
@@ -55,7 +54,7 @@
     <ImageButton
         android:id="@+id/quick_add_task_btn_location"
         android:layout_width="0dip"
-        android:layout_height="40dip"
+        android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
@@ -65,7 +64,7 @@
     <ImageButton
         android:id="@+id/quick_add_task_btn_repeat"
         android:layout_width="0dip"
-        android:layout_height="40dip"
+        android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
@@ -75,7 +74,7 @@
     <ImageButton
         android:id="@+id/quick_add_task_btn_estimate"
         android:layout_width="0dip"
-        android:layout_height="40dip"
+        android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"

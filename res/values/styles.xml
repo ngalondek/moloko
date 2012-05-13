@@ -232,15 +232,9 @@
     <!-- ************** -->
     <!-- Quick add task -->
 
-    <style name="Quick_Add_Task_Action_Bar_Fragment">
-        <item name="android:background">@drawable/quick_add_task_bar_bgnd</item>
+    <style name="Quick_Add_Task_Button_Bar_Fragment" parent="Widget.Sherlock.Light.ActionMode">
+        <item name="android:background">?attr/actionModeSplitBackground</item>        
     </style>
-
-    <style name="Quick_Add_Task_Action_Bar_Fragment_Text">
-        <item name="android:textColorHint">@color/app_light_gray</item>
-    </style>
-
-    <style name="Quick_Add_Task_Button_Bar_Fragment" parent="Quick_Add_Task_Action_Bar_Fragment"></style>
 
     <!-- ************ -->
     <!-- Dialogs -->

@@ -1,8 +1,7 @@
 if ( selectLayer( activeDocument, "shape" ) )
 {
-   resizeImagePx( 28 );
-   setForegroundColor(71, 71, 71);
-   fillLayerWithForegroundColor();
+   resizeImagePx( 24 );
+   fillLayerGradientWhite();
 }
 else
 {

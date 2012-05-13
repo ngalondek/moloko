@@ -37,17 +37,13 @@ import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TaskListsActivity extends MolokoEditFragmentActivity implements
@@ -141,26 +137,9 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       // we do not fire the intent.
       if ( rtmList.isSmartFilterValid() )
       {
-         final String listName = rtmList.getName();
-         
-         final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                           Tasks.CONTENT_URI );
-         
-         intent.putExtra( Intents.Extras.KEY_ACTIVITY_TITLE,
-                          getString( R.string.taskslist_actionbar, listName ) );
-         
-         RtmSmartFilter filter = rtmList.getSmartFilter();
-         
-         // If we have no smart filter we use the list name as "list:" filter
-         if ( filter == null )
-         {
-            filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_LIST_LIT
-               + RtmSmartFilterLexer.quotify( listName ) );
-         }
-         
-         intent.putExtra( Lists.LIST_NAME, rtmList.getName() );
-         intent.putExtra( Intents.Extras.KEY_FILTER, filter );
-         
+         final Intent intent = Intents.createOpenListIntent( this,
+                                                             rtmList,
+                                                             null );
          startActivity( intent );
       }
    }

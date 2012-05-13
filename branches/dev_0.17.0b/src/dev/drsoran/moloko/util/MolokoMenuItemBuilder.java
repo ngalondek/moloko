@@ -156,6 +156,7 @@ public final class MolokoMenuItemBuilder
    
    
    
+   @Deprecated
    public final static MolokoMenuItemBuilder newSyncMenuItem( final FragmentActivity activity )
    {
       return new MolokoMenuItemBuilder().setItemId( R.id.menu_sync )
@@ -174,6 +175,7 @@ public final class MolokoMenuItemBuilder
    
    
    
+   @Deprecated
    public final static MolokoMenuItemBuilder newSearchMenuItem( final Activity activity )
    {
       return new MolokoMenuItemBuilder().setItemId( R.id.menu_search_tasks )
@@ -191,6 +193,7 @@ public final class MolokoMenuItemBuilder
    
    
    
+   @Deprecated
    public final static MolokoMenuItemBuilder newSettingsMenuItem( Context context )
    {
       return new MolokoMenuItemBuilder().setItemId( R.id.menu_settings )

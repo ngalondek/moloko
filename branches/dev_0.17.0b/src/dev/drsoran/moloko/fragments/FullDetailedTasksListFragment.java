@@ -51,7 +51,6 @@ import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -158,10 +157,6 @@ public class FullDetailedTasksListFragment extends
                                  .setShow( hasMultipleTasks()
                                     && isWritableAccess() )
                                  .build( menu );
-      
-      MolokoMenuItemBuilder.newSyncMenuItem( getSherlockActivity() )
-                           .setOrder( MenuCategory.SECONDARY )
-                           .build( menu );
    }
    
    

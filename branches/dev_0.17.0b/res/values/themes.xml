@@ -48,6 +48,8 @@
         <!-- ActionBar -->
         <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
         <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+        <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
+        <item name="android:actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
         
         <!-- Widgets -->
         <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>

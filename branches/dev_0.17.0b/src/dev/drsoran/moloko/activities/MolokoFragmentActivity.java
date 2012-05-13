@@ -195,27 +195,26 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
-      boolean handled = false;
+      boolean handled = true;
       
       switch ( item.getItemId() )
       {
          case android.R.id.home:
-            if ( isShowHomeAsUp() )
-            {
-               if ( onFinishActivityByHome() )
-               {
-                  startActivity( Intents.createHomeAsUpIntent( this,
-                                                               homeAsUpTargetActivity ) );
-               }
-            }
-            else
-            {
-               startActivity( Intents.createHomeAsUpIntent( this,
-                                                            HomeActivity.class ) );
-            }
-            
-            handled = true;
-            
+            onActionBarHome();
+            break;
+         
+         case R.id.menu_sync:
+            onMenuSync();
+            break;
+         
+         case R.id.menu_search_tasks:
+            onMenuSearch();
+            break;
+         
+         case R.id.menu_settings:
+            onMenuSettings();
+            break;
+         
          default :
             handled = false;
       }
@@ -436,7 +435,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
-   protected Fragment findAddedFragmentById( int fragmentId )
+   public Fragment findAddedFragmentById( int fragmentId )
    {
       Fragment fragment = getSupportFragmentManager().findFragmentById( fragmentId );
       
@@ -448,7 +447,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
-   protected Fragment findAddedFragmentByTag( String fragmentTag )
+   public Fragment findAddedFragmentByTag( String fragmentTag )
    {
       Fragment fragment = getSupportFragmentManager().findFragmentByTag( fragmentTag );
       
@@ -471,6 +470,45 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    private void initializeSyncingProgressIndicator()
    {
       setSupportProgressBarIndeterminateVisibility( SyncUtils.isSyncing( this ) );
+   }
+   
+   
+   
+   private void onActionBarHome()
+   {
+      if ( isShowHomeAsUp() )
+      {
+         if ( onFinishActivityByHome() )
+         {
+            startActivity( Intents.createHomeAsUpIntent( this,
+                                                         homeAsUpTargetActivity ) );
+         }
+      }
+      else
+      {
+         startActivity( Intents.createHomeAsUpIntent( this, HomeActivity.class ) );
+      }
+   }
+   
+   
+   
+   private void onMenuSync()
+   {
+      SyncUtils.requestManualSync( this );
+   }
+   
+   
+   
+   private void onMenuSearch()
+   {
+      onSearchRequested();
+   }
+   
+   
+   
+   private void onMenuSettings()
+   {
+      startActivity( Intents.createOpenPreferencesIntent( this ) );
    }
    
    

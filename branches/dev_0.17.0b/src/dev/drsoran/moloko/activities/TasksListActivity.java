@@ -25,19 +25,18 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.app.Dialog;
-import android.content.Intent;
 
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
+import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.RtmListEditUtils;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.provider.Rtm.Lists;
@@ -49,23 +48,10 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    private static class OptionsMenu
    {
       public final static int ADD_LIST = R.id.menu_add_list;
-      
-      public final static int DELETE_LIST = R.id.menu_delete_list;
    }
    
-   private Boolean showAddSmartListMenu;
-   
-   
-   
-   @Override
-   protected void onNewIntent( Intent intent )
-   {
-      super.onNewIntent( intent );
-      
-      // if we receive a new intent then we have to re-evaluate the
-      // condition.
-      showAddSmartListMenu = null;
-   }
+   @InstanceState( key = "SHOW_ADD_SMART_LIST" )
+   private boolean showAddSmartListMenu;
    
    
    
@@ -74,27 +60,12 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    {
       super.onCreateOptionsMenu( menu );
       
-      if ( showAddSmartListMenu == null )
-         evaluateAddSmartListMenuVisibility();
+      final MenuInflater inflater = getSupportMenuInflater();
       
-      final boolean isWritableAccess = AccountUtils.isWriteableAccess( this );
-      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
-      
-      builder.setItemId( OptionsMenu.ADD_LIST )
-             .setTitle( getString( R.string.tasksearchresult_menu_add_smart_list ) )
-             .setIconId( R.drawable.ic_menu_add_list )
-             .setOrder( MenuCategory.CONTAINER )
-             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-             .setShow( showAddSmartListMenu.booleanValue() && isWritableAccess )
-             .build( menu );
-      
-      // TODO: list deletion no longer supported
-      // builder.setItemId( OptionsMenu.DELETE_LIST )
-      // .setTitle( getString( R.string.taskslist_menu_opt_delete_list ) )
-      // .setIconId( R.drawable.ic_menu_trash )
-      // .setOrder( MenuCategory.ALTERNATIVE )
-      // .setShow( !isListLocked() && hasListName() && isWritableAccess )
-      // .build( menu );
+      if ( showAddSmartListMenu && isWritableAccess() )
+      {
+         inflater.inflate( R.menu.add_smart_list, menu );
+      }
       
       return true;
    }
@@ -106,11 +77,6 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.DELETE_LIST:
-            final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-            UIUtils.showDeleteElementDialog( this, listName );
-            return true;
-            
          case OptionsMenu.ADD_LIST:
             showAddListDialog();
             return true;
@@ -138,14 +104,34 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    
    
-   private void evaluateAddSmartListMenuVisibility()
+   @Override
+   public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
-      final IFilter filter = getConfiguredFilter();
+      final IItem selectedItem = getNavigationItem( itemPosition );
+      if ( selectedItem != null )
+      {
+         final boolean show = evaluateAddSmartListMenuVisibility( selectedItem );
+         if ( show != showAddSmartListMenu )
+         {
+            showAddSmartListMenu = show;
+            invalidateOptionsMenu();
+         }
+      }
+      
+      return super.onNavigationItemSelected( itemPosition, itemId );
+   }
+   
+   
+   
+   private boolean evaluateAddSmartListMenuVisibility( IItem selectedItem )
+   {
+      final IFilter filter = selectedItem.getTasksListConfig()
+                                         .getParcelable( Intents.Extras.KEY_FILTER );
       boolean show = filter instanceof RtmSmartFilter;
       
       // if we are configured with a list name then we already are in a list
       // and do not need to add a new one.
-      show = show && !hasListNameInIntent();
+      show = show && selectedItem.getId().equals( CUSTOM_NAVIGATION_ITEM_ID );
       
       if ( show )
       {
@@ -154,6 +140,6 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
          show = unAmbigiousTokens.size() > 0;
       }
       
-      showAddSmartListMenu = Boolean.valueOf( show );
+      return show;
    }
 }

@@ -178,16 +178,6 @@
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
-         
-         <!-- Insert a new task -->      
-         <intent-filter>
-            <action
-               android:name="android.intent.action.INSERT" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
-         </intent-filter>
       </activity>
       
       <activity
@@ -204,6 +194,22 @@
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>         
+      </activity>
+      
+      <activity
+         android:name=".activities.TaskAddActivity"
+         android:theme="@style/Theme.Moloko.Task.Edit"
+         android:uiOptions="splitActionBarWhenNarrow">
+         
+         <!-- Insert a new task -->      
+         <intent-filter>
+            <action
+               android:name="android.intent.action.INSERT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
+         </intent-filter>
       </activity>
 
       <activity

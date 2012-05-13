@@ -230,10 +230,10 @@ public abstract class AbstractTaskEditFragment
    {
       super.onCreate( savedInstanceState );
       
-      if ( savedInstanceState != null )
+      if ( savedInstanceState != null
+         && savedInstanceState.containsKey( KEY_CHANGES ) )
       {
-         if ( savedInstanceState.containsKey( KEY_CHANGES ) )
-            changes = savedInstanceState.getBundle( KEY_CHANGES );
+         changes = savedInstanceState.getBundle( KEY_CHANGES );
       }
    }
    

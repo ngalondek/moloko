@@ -43,22 +43,17 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 public class NotesListFragmentAdapter extends
          SelectableArrayAdapter< RtmTaskNote >
 {
-   private final MolokoListFragment< List< RtmTaskNote > > fragment;
-   
-   private final int resourceId;
+   private final MolokoListFragment< RtmTaskNote > fragment;
    
    private boolean isCheckable;
    
    
    
-   public NotesListFragmentAdapter(
-      MolokoListFragment< List< RtmTaskNote > > fragment, int resourceId,
+   public NotesListFragmentAdapter( MolokoListFragment< RtmTaskNote > fragment,
       List< RtmTaskNote > notes )
    {
       super( fragment.getSherlockActivity(), View.NO_ID, notes );
-      
       this.fragment = fragment;
-      this.resourceId = resourceId;
    }
    
    
@@ -79,20 +74,15 @@ public class NotesListFragmentAdapter extends
    
    
    @Override
-   public int getLayoutRessource()
-   {
-      return resourceId;
-   }
-   
-   
-   
-   @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
-         convertView = fragment.getLayoutInflater( null ).inflate( resourceId,
-                                                                   parent,
-                                                                   false );
+      {
+         convertView = fragment.getLayoutInflater( null )
+                               .inflate( R.layout.noteslist_listitem,
+                                         parent,
+                                         false );
+      }
       
       final RtmTaskNote note = getItem( position );
       initNoteListItem( note, (ViewGroup) convertView );

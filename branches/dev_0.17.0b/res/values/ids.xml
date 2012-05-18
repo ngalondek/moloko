@@ -114,7 +114,9 @@
    <item
       type="id"
       name="menu_group_sort" />
-
+   <item
+      type="id"
+      name="menu_group_taskslist_actionmode" />
 
    <!-- MenuItem IDs -->
    <item

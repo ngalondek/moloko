@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.Collection;
 import java.util.List;
 
 import android.app.Dialog;
@@ -38,6 +39,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.QuickAddTaskActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.IQuickAddTaskActionModeListener;
+import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
@@ -53,8 +55,8 @@ import dev.drsoran.rtm.Task;
 
 public abstract class AbstractFullDetailedTasksListActivity extends
          AbstractTasksListActivity implements
-         IFullDetailedTasksListFragmentListener,
-         IQuickAddTaskActionModeListener, IShowTasksWithTagsListener
+         IFullDetailedTasksListFragmentListener, IShowTasksWithTagsListener,
+         IQuickAddTaskActionModeListener, ITasksListActionModeListener
 {
    @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
    private boolean quickAddTaskActionModeActive;
@@ -258,6 +260,60 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       final String logOpString = determineLogicalOperationString( operation );
       onOpenChoosenTags( tags, logOpString );
+   }
+   
+   
+   
+   @Override
+   public void onEditTasks( Collection< ? extends Task > tasks )
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+   
+   
+   @Override
+   public void onCompleteTasks( Collection< ? extends Task > tasks )
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+   
+   
+   @Override
+   public void onIncompleteTasks( Collection< ? extends Task > tasks )
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+   
+   
+   @Override
+   public void onPostponeTasks( Collection< ? extends Task > tasks )
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+   
+   
+   @Override
+   public void onDeleteTasks( Collection< ? extends Task > tasks )
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+   
+   
+   @Override
+   public void onFinishingActionMode()
+   {
+      // TODO Auto-generated method stub
+      
    }
    
    

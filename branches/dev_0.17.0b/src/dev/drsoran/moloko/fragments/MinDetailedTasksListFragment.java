@@ -73,8 +73,7 @@ public class MinDetailedTasksListFragment extends
    }
    
    
-   protected static class OptionsMenu extends
-            AbstractTasksListFragment.OptionsMenu
+   protected static class OptionsMenu
    {
       public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
    }

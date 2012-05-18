@@ -138,6 +138,13 @@ public abstract class MolokoDialogFragment extends SherlockDialogFragment
    
    
    
+   public Bundle getDefaultConfiguration()
+   {
+      return impl.getDefaultConfiguration();
+   }
+   
+   
+   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )

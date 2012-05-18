@@ -38,20 +38,21 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
+import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
 import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
+import dev.drsoran.moloko.adapters.ISelectableAdapter;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -61,25 +62,8 @@ public class FullDetailedTasksListFragment extends
          AbstractTasksListFragment< Task > implements View.OnClickListener
 {
    
-   protected static class OptionsMenu extends
-            AbstractTasksListFragment.OptionsMenu
-   {
-      public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
-   }
-   
-   
    private final static class CtxtMenu
    {
-      public final static int OPEN_TASK = R.id.ctx_menu_open_task;
-      
-      public final static int EDIT_TASK = R.id.ctx_menu_edit_task;
-      
-      public final static int COMPLETE_TASK = R.id.ctx_menu_complete_task;
-      
-      public final static int POSTPONE_TASK = R.id.ctx_menu_postpone_task;
-      
-      public final static int DELETE_TASK = R.id.ctx_menu_delete_task;
-      
       public final static int OPEN_LIST = R.id.ctx_menu_open_list;
       
       public final static int TAG = R.id.ctx_menu_open_tag;
@@ -127,52 +111,11 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public void onActivityCreated( Bundle savedInstanceState )
-   {
-      super.onActivityCreated( savedInstanceState );
-      registerForContextMenu( getListView() );
-   }
-   
-   
-   
-   @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState )
    {
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
-   }
-   
-   
-   
-   @Override
-   public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
-   {
-      super.onCreateOptionsMenu( menu, inflater );
-      
-      new MolokoMenuItemBuilder().setItemId( OptionsMenu.EDIT_MULTIPLE_TASKS )
-                                 .setTitle( getString( R.string.abstaskslist_menu_opt_edit_multiple ) )
-                                 .setIconId( R.drawable.ic_menu_edit_multiple_tasks )
-                                 .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-                                 .setShow( hasMultipleTasks()
-                                    && isWritableAccess() )
-                                 .build( menu );
-   }
-   
-   
-   
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
-   {
-      switch ( item.getItemId() )
-      {
-         case OptionsMenu.EDIT_MULTIPLE_TASKS:
-            listener.onSelectTasks();
-            return true;
-            
-         default :
-            return super.onOptionsItemSelected( item );
-      }
    }
    
    
@@ -185,38 +128,7 @@ public class FullDetailedTasksListFragment extends
       super.onCreateContextMenu( menu, v, menuInfo );
       
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-      
       final Task task = getTask( info.position );
-      
-      menu.add( Menu.NONE,
-                CtxtMenu.OPEN_TASK,
-                Menu.NONE,
-                getString( R.string.phr_open_with_name, task.getName() ) );
-      
-      if ( isWritableAccess() )
-      {
-         menu.add( Menu.NONE,
-                   CtxtMenu.EDIT_TASK,
-                   Menu.NONE,
-                   getString( R.string.phr_edit_with_name, task.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.COMPLETE_TASK,
-                   Menu.NONE,
-                   getString( task.getCompleted() == null
-                                                         ? R.string.abstaskslist_listitem_ctx_complete_task
-                                                         : R.string.abstaskslist_listitem_ctx_uncomplete_task,
-                              task.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.POSTPONE_TASK,
-                   Menu.NONE,
-                   getString( R.string.abstaskslist_listitem_ctx_postpone_task,
-                              task.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.DELETE_TASK,
-                   Menu.NONE,
-                   getString( R.string.phr_delete_with_name, task.getName() ) );
-      }
-      
       final RtmSmartFilter filter = getRtmSmartFilter();
       
       // If the list name was in the filter then we are in one list only. So no need to
@@ -273,32 +185,6 @@ public class FullDetailedTasksListFragment extends
       
       switch ( item.getItemId() )
       {
-         case CtxtMenu.OPEN_TASK:
-            listener.onOpenTask( info.position );
-            return true;
-            
-         case CtxtMenu.EDIT_TASK:
-            listener.onEditTask( info.position );
-            return true;
-            
-         case CtxtMenu.COMPLETE_TASK:
-         {
-            final Task task = getTask( info.position );
-            if ( task.getCompleted() == null )
-               listener.onCompleteTask( info.position );
-            else
-               listener.onIncompleteTask( info.position );
-         }
-            return true;
-            
-         case CtxtMenu.POSTPONE_TASK:
-            listener.onPostponeTask( info.position );
-            return true;
-            
-         case CtxtMenu.DELETE_TASK:
-            listener.onDeleteTask( info.position );
-            return true;
-            
          case CtxtMenu.OPEN_LIST:
             listener.onOpenList( info.position,
                                  getTask( info.position ).getListId() );
@@ -392,5 +278,39 @@ public class FullDetailedTasksListFragment extends
    public FullDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (FullDetailedTasksListFragmentAdapter) super.getListAdapter();
+   }
+   
+   
+   
+   @Override
+   protected BaseSelectableActionModeCallback< Task > createActionModeCallback()
+   {
+      return new TasksListActionModeCallback( getSherlockActivity(),
+                                              getListAdapter() );
+   }
+   
+   
+   
+   @Override
+   protected void configureListAdapterForSelectionMode()
+   {
+      super.configureListAdapterForSelectionMode();
+   }
+   
+   
+   
+   @Override
+   protected void onSelectionModeStopped( ActionMode mode,
+                                          BaseSelectableActionModeCallback< Task > callback )
+   {
+      super.onSelectionModeStopped( mode, callback );
+   }
+   
+   
+   
+   @Override
+   protected ISelectableAdapter< Task > getSelectableListAdapter()
+   {
+      return getListAdapter();
    }
 }

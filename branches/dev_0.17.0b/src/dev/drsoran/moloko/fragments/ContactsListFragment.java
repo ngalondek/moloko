@@ -46,7 +46,7 @@ import dev.drsoran.moloko.loaders.ContactsLoader;
 import dev.drsoran.rtm.Contact;
 
 
-public class ContactsListFragment extends MolokoListFragment< List< Contact > >
+public class ContactsListFragment extends MolokoListFragment< Contact >
 {
    private static class CtxtMenu
    {

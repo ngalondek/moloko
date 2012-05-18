@@ -312,6 +312,8 @@ public abstract class AbstractTaskEditFragment
    {
       initialValues = getInitialValues();
       
+      getInitialChanges();
+      
       if ( initialValues != null )
       {
          initializeHeadSection();
@@ -336,6 +338,12 @@ public abstract class AbstractTaskEditFragment
          
          putExtaInitialValues();
       }
+   }
+   
+   
+   
+   protected void getInitialChanges()
+   {
    }
    
    

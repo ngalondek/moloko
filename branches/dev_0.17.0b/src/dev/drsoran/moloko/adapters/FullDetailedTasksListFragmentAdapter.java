@@ -23,13 +23,11 @@
 package dev.drsoran.moloko.adapters;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -47,11 +45,8 @@ import dev.drsoran.rtm.Task;
 
 
 public class FullDetailedTasksListFragmentAdapter extends
-         MinDetailedTasksListFragmentAdapter
+         AbstractTasksListFragmentAdapter
 {
-   private final static String TAG = "Moloko."
-      + FullDetailedTasksListFragmentAdapter.class.getName();
-   
    public final static int FLAG_SHOW_ALL = 1 << 0;
    
    public final static int FLAG_NO_CLICKABLES = 1 << 1;
@@ -66,23 +61,14 @@ public class FullDetailedTasksListFragmentAdapter extends
    
    
    
-   public FullDetailedTasksListFragmentAdapter( Context context, int resourceId )
-   {
-      this( context,
-            resourceId,
-            Collections.< Task > emptyList(),
-            null,
-            0,
-            null );
-   }
-   
-   
-   
    public FullDetailedTasksListFragmentAdapter( Context context,
-      int resourceId, List< Task > tasks, IFilter filter, int flags,
+      List< Task > tasks, IFilter filter, int flags,
       OnClickListener onClickListener )
    {
-      super( context, resourceId, tasks );
+      super( context,
+             R.layout.fulldetailed_taskslist_listitem,
+             R.layout.fulldetailed_selectable_taskslist_listitem,
+             tasks );
       
       this.flags = flags;
       this.filter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
@@ -121,27 +107,12 @@ public class FullDetailedTasksListFragmentAdapter extends
    {
       convertView = super.getView( position, convertView, parent );
       
-      ViewGroup additionalsLayout;
-      TextView listName;
-      TextView location;
-      ImageView recurrent;
-      ImageView hasNotes;
-      ImageView postponed;
-      
-      try
-      {
-         additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
-         listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
-         location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
-         recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
-         hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
-         postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
-      }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
-      }
+      final ViewGroup additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
+      final TextView listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
+      final TextView location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
+      final ImageView recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
+      final ImageView hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
+      final ImageView postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
       
       final Task task = getItem( position );
       
@@ -233,5 +204,20 @@ public class FullDetailedTasksListFragmentAdapter extends
                            task.getTags(),
                            tagsConfig,
                            onClickListener );
+   }
+   
+   
+   
+   @Override
+   protected boolean mustSwitchLayout( View convertView )
+   {
+      if ( isCheckable() )
+      {
+         return convertView.findViewById( R.id.taskslist_selectable_fulldetailed_listitem ) == null;
+      }
+      else
+      {
+         return convertView.findViewById( R.id.taskslist_fulldetailed_listitem ) == null;
+      }
    }
 }

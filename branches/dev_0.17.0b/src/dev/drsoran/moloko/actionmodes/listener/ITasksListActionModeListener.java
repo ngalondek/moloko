@@ -24,10 +24,26 @@ package dev.drsoran.moloko.actionmodes.listener;
 
 import java.util.Collection;
 
-import com.mdt.rtm.data.RtmTaskNote;
+import dev.drsoran.rtm.Task;
 
 
-public interface INotesListActionModeListener
+public interface ITasksListActionModeListener
 {
-   void onDeleteNotes( Collection< RtmTaskNote > notes );
+   void onEditTasks( Collection< ? extends Task > tasks );
+   
+   
+   
+   void onCompleteTasks( Collection< ? extends Task > tasks );
+   
+   
+   
+   void onIncompleteTasks( Collection< ? extends Task > tasks );
+   
+   
+   
+   void onPostponeTasks( Collection< ? extends Task > tasks );
+   
+   
+   
+   void onDeleteTasks( Collection< ? extends Task > tasks );
 }

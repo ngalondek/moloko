@@ -22,12 +22,7 @@
 
 package dev.drsoran.moloko.actionmodes.listener;
 
-import java.util.Collection;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
-
-public interface INotesListActionModeListener
+public interface IBaseSelectableActionModeListener
 {
-   void onDeleteNotes( Collection< RtmTaskNote > notes );
+   void onFinishActionMode();
 }

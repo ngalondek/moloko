@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.fragments.base.impl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
@@ -34,16 +35,16 @@ import dev.drsoran.moloko.fragments.base.MolokoExpandableListFragment;
 
 
 public class LoaderExpandableListFragmentImpl< D > extends
-         LoaderFragmentImplBase< D >
+         LoaderFragmentImplBase< List< D > >
 {
    public static interface Support< D > extends
-            LoaderFragmentImplBase.Support< D >
+            LoaderFragmentImplBase.Support< List< D > >
    {
       ExpandableListAdapter getExpandableListAdapter();
       
       
       
-      ExpandableListAdapter createExpandableListAdapterForResult( D result );
+      ExpandableListAdapter createExpandableListAdapterForResult( List< D > result );
    }
    
    private final MolokoExpandableListFragment< D > fragment;
@@ -86,7 +87,7 @@ public class LoaderExpandableListFragmentImpl< D > extends
    
    
    @Override
-   public Loader< D > onCreateLoader( int id, Bundle args )
+   public Loader< List< D > > onCreateLoader( int id, Bundle args )
    {
       viewManager.onCreateLoader();
       return super.onCreateLoader( id, args );
@@ -95,7 +96,7 @@ public class LoaderExpandableListFragmentImpl< D > extends
    
    
    @Override
-   public void onLoadFinished( Loader< D > loader, D data )
+   public void onLoadFinished( Loader< List< D > > loader, List< D > data )
    {
       if ( data != null )
       {

@@ -22,9 +22,7 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -33,8 +31,6 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -44,31 +40,27 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.IOnSelectionChangesListener;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
 import dev.drsoran.moloko.actionmodes.NotesListActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.INotesListActionModeListener;
+import dev.drsoran.moloko.adapters.ISelectableAdapter;
 import dev.drsoran.moloko.adapters.NotesListFragmentAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.base.MolokoListFragment;
+import dev.drsoran.moloko.fragments.base.MolokoSelectableListFragment;
 import dev.drsoran.moloko.fragments.listeners.INotesListsFragmentListener;
 import dev.drsoran.moloko.loaders.RtmTaskNotesLoader;
 
 
-public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
-         implements OnItemLongClickListener,
-         IOnSelectionChangesListener< RtmTaskNote >,
+public class NotesListFragment extends
+         MolokoSelectableListFragment< RtmTaskNote > implements
          INotesListActionModeListener
 {
    
    public static class Config
    {
       public final static String TASK_ID = "task_id";
-      
-      private final static String IS_SELECTION_MODE = "is_selection_mode";
-      
-      private final static String SELECTED_ITEMS = "selected_items";
    }
    
    
@@ -84,18 +76,6 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
    
    @InstanceState( key = Config.TASK_ID )
    private String taskId;
-   
-   @InstanceState( key = Config.IS_SELECTION_MODE,
-                   defaultValue = InstanceState.NO_DEFAULT )
-   private boolean isSelectionMode;
-   
-   @InstanceState( key = Config.SELECTED_ITEMS,
-                   defaultValue = InstanceState.NEW )
-   private ArrayList< RtmTaskNote > selectedNotes;
-   
-   private ActionMode activeActionMode;
-   
-   private NotesListActionModeCallback actionModeCallback;
    
    private INotesListsFragmentListener listener;
    
@@ -147,7 +127,6 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      
       getListView().setOnItemLongClickListener( this );
    }
    
@@ -158,12 +137,9 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
    {
       super.onCreateOptionsMenu( menu, inflater );
       
-      if ( getListAdapter() != null && isWritableAccess() )
+      if ( getListAdapter() != null && !isSelectionMode() && isWritableAccess() )
       {
-         if ( !isSelectionMode )
-         {
-            inflater.inflate( R.menu.noteslist_fragment_rwd, menu );
-         }
+         inflater.inflate( R.menu.noteslist_fragment_rwd, menu );
       }
    }
    
@@ -193,39 +169,9 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
    {
       super.onListItemClick( l, v, position, id );
       
-      if ( !isSelectionMode && listener != null )
+      if ( listener != null && !isSelectionMode() )
       {
          listener.onOpenNote( getListAdapter().getItem( position ), position );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean onItemLongClick( AdapterView< ? > parent,
-                                   View view,
-                                   int position,
-                                   long id )
-   {
-      final RtmTaskNote note = getListAdapter().getItem( position );
-      final List< RtmTaskNote > selectedNotes = Collections.singletonList( note );
-      
-      startSelectionMode( selectedNotes );
-      
-      return true;
-   }
-   
-   
-   
-   @Override
-   public void onSelectionChanged( Collection< ? extends RtmTaskNote > notes,
-                                   boolean isSelected )
-   {
-      updateSelectedNotes();
-      
-      if ( activeActionMode != null )
-      {
-         activeActionMode.invalidate();
       }
    }
    
@@ -239,35 +185,7 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
          listener.onDeleteNotes( getListAdapter().getSelectedItems() );
       }
       
-      deactivateSelectionMode();
-   }
-   
-   
-   
-   public void startSelectionMode( List< RtmTaskNote > preselectedNotes )
-   {
-      if ( !isSelectionMode && isWritableAccess() )
-      {
-         activateSelectionMode( preselectedNotes );
-      }
-   }
-   
-   
-   
-   public void stopSelectionMode()
-   {
-      if ( isSelectionMode )
-      {
-         deactivateSelectionMode();
-      }
-   }
-   
-   
-   
-   @Override
-   public void onFinishingActionMode()
-   {
-      deactivateSelectionMode();
+      stopSelectionMode();
    }
    
    
@@ -317,29 +235,6 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
    
    
    @Override
-   public void onListAdapterCreated( ListAdapter listAdapter,
-                                     List< RtmTaskNote > result )
-   {
-      super.onListAdapterCreated( listAdapter, result );
-      
-      if ( isSelectionMode )
-      {
-         if ( activeActionMode == null )
-         {
-            activateSelectionMode( selectedNotes );
-         }
-         else
-         {
-            configureListAdapterForSelectionMode();
-            actionModeCallback.attachAdapter( getListAdapter() );
-            activeActionMode.invalidate();
-         }
-      }
-   }
-   
-   
-   
-   @Override
    public NotesListFragmentAdapter getListAdapter()
    {
       return (NotesListFragmentAdapter) super.getListAdapter();
@@ -347,49 +242,42 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
    
    
    
-   private void activateSelectionMode( List< RtmTaskNote > preselectedNotes )
+   @Override
+   protected BaseSelectableActionModeCallback< RtmTaskNote > createActionModeCallback()
    {
-      isSelectionMode = true;
-      selectedNotes = new ArrayList< RtmTaskNote >( preselectedNotes );
-      
-      configureListAdapterForSelectionMode();
-      
-      actionModeCallback = new NotesListActionModeCallback( getSherlockActivity(),
-                                                            getListAdapter() );
-      actionModeCallback.setNotesListActionModeListener( this );
-      
-      activeActionMode = getSherlockActivity().startActionMode( actionModeCallback );
+      final NotesListActionModeCallback callback = new NotesListActionModeCallback( getSherlockActivity(),
+                                                                                    getListAdapter() );
+      callback.setNotesListActionModeListener( this );
+      return callback;
    }
    
    
    
-   private void deactivateSelectionMode()
+   @Override
+   protected ISelectableAdapter< RtmTaskNote > getSelectableListAdapter()
    {
-      isSelectionMode = false;
-      selectedNotes.clear();
-      
+      return getListAdapter();
+   }
+   
+   
+   
+   @Override
+   protected void onSelectionModeStopped( ActionMode mode,
+                                          BaseSelectableActionModeCallback< RtmTaskNote > callback )
+   {
+      super.onSelectionModeStopped( mode, callback );
       configureListAdapterForDefaultMode();
+   }
+   
+   
+   
+   @Override
+   protected void configureListAdapterForSelectionMode()
+   {
+      super.configureListAdapterForSelectionMode();
       
-      actionModeCallback = null;
-      activeActionMode = null;
-   }
-   
-   
-   
-   private void updateSelectedNotes()
-   {
-      selectedNotes = new ArrayList< RtmTaskNote >( getListAdapter().getSelectedItems() );
-   }
-   
-   
-   
-   private void configureListAdapterForSelectionMode()
-   {
       final NotesListFragmentAdapter adapter = getListAdapter();
-      
       adapter.setCheckable( true );
-      adapter.selectBulk( selectedNotes );
-      adapter.setOnSelectionChangesListener( this );
    }
    
    
@@ -397,9 +285,6 @@ public class NotesListFragment extends MolokoListFragment< List< RtmTaskNote > >
    private void configureListAdapterForDefaultMode()
    {
       final NotesListFragmentAdapter adapter = getListAdapter();
-      
-      adapter.setOnSelectionChangesListener( null );
-      adapter.deselectAll();
       adapter.setCheckable( false );
    }
 }

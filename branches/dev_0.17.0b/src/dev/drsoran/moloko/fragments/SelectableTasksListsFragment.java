@@ -82,8 +82,7 @@ public class SelectableTasksListsFragment extends
    }
    
    
-   protected static class OptionsMenu extends
-            AbstractTasksListFragment.OptionsMenu
+   protected static class OptionsMenu
    {
       public final static int SORT_SELECTION = R.id.menu_sort_selection;
       

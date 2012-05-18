@@ -29,6 +29,10 @@ import dev.drsoran.moloko.IOnSelectionChangesListener;
 
 public interface ISelectableAdapter< T >
 {
+   T getItem( int position );
+   
+   
+   
    void select( T item );
    
    

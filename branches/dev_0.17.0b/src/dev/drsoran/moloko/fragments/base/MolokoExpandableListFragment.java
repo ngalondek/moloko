@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.fragments.base;
 
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -49,7 +50,7 @@ import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 public abstract class MolokoExpandableListFragment< D > extends
          SherlockListFragment implements IConfigurable,
-         IOnSettingsChangedListener, LoaderCallbacks< D >,
+         IOnSettingsChangedListener, LoaderCallbacks< List< D > >,
          LoaderExpandableListFragmentImpl.Support< D >, IRtmAccessLevelAware,
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
@@ -209,6 +210,13 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
+   public Bundle getDefaultConfiguration()
+   {
+      return baseImpl.getDefaultConfiguration();
+   }
+   
+   
+   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -292,7 +300,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    @Override
-   public Loader< D > onCreateLoader( int id, Bundle args )
+   public Loader< List< D > > onCreateLoader( int id, Bundle args )
    {
       return loaderImpl.onCreateLoader( id, args );
    }
@@ -300,7 +308,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    @Override
-   public void onLoadFinished( Loader< D > loader, D data )
+   public void onLoadFinished( Loader< List< D > > loader, List< D > data )
    {
       loaderImpl.onLoadFinished( loader, data );
    }
@@ -308,7 +316,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    @Override
-   public void onLoaderReset( Loader< D > loader )
+   public void onLoaderReset( Loader< List< D > > loader )
    {
       loaderImpl.onLoaderReset( loader );
    }
@@ -331,14 +339,14 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
-   public D getLoaderData()
+   public List< D > getLoaderData()
    {
       return loaderImpl.getLoaderData();
    }
    
    
    
-   public D getLoaderDataAssertNotNull()
+   public List< D > getLoaderDataAssertNotNull()
    {
       return loaderImpl.getLoaderDataAssertNotNull();
    }
@@ -396,7 +404,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    public void onExpandableListAdapterCreated( ExpandableListAdapter listAdapter,
-                                               D result )
+                                               List< D > result )
    {
    }
    
@@ -416,5 +424,5 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    @Override
-   public abstract ExpandableListAdapter createExpandableListAdapterForResult( D result );
+   public abstract ExpandableListAdapter createExpandableListAdapterForResult( List< D > result );
 }

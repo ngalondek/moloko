@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -24,21 +24,11 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
-import dev.drsoran.rtm.Task;
-
 
 public class NullTasksListFragmentListener implements
          IFullDetailedTasksListFragmentListener,
-         IMinDetailedTasksListFragmentListener,
-         ISelectableTasksListFragmentListener
+         IMinDetailedTasksListFragmentListener
 {
-   
-   @Override
-   public void onSelectionChanged( List< ? extends Task > selectedTasks )
-   {
-   }
-   
-   
    
    @Override
    public void onShowTasksWithTags( List< String > tags )
@@ -58,30 +48,30 @@ public class NullTasksListFragmentListener implements
    public void onCompleteTask( int pos )
    {
    }
-
-
-
+   
+   
+   
    @Override
    public void onIncompleteTask( int pos )
    {
    }
-
-
-
+   
+   
+   
    @Override
    public void onPostponeTask( int pos )
    {
    }
-
-
-
+   
+   
+   
    @Override
    public void onDeleteTask( int pos )
    {
    }
-
-
-
+   
+   
+   
    @Override
    public void onOpenList( int pos, String listId )
    {
@@ -112,41 +102,6 @@ public class NullTasksListFragmentListener implements
    
    @Override
    public void onTaskSortChanged( int newTaskSort )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onEditSelectedTasks( List< ? extends Task > tasks )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onCompleteSelectedTasks( List< ? extends Task > tasks )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onIncompleteSelectedTasks( List< ? extends Task > tasks )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onPostponeSelectedTasks( List< ? extends Task > tasks )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
    }
 }

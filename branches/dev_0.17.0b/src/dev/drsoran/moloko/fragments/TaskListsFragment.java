@@ -52,7 +52,7 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TaskListsFragment extends
-         MolokoExpandableListFragment< List< RtmListWithTaskCount > > implements
+         MolokoExpandableListFragment< RtmListWithTaskCount > implements
          IOnGroupIndicatorClickedListener
 {
    private static class CtxtMenu

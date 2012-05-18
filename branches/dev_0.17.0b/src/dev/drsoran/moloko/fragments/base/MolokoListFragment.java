@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.fragments.base;
 
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -48,7 +49,7 @@ import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 public abstract class MolokoListFragment< D > extends SherlockListFragment
          implements IConfigurable, IOnSettingsChangedListener,
-         LoaderCallbacks< D >, LoaderListFragmentImpl.Support< D >,
+         LoaderCallbacks< List< D > >, LoaderListFragmentImpl.Support< D >,
          IRtmAccessLevelAware
 {
    private final ConfigurableFragmentImpl baseImpl;
@@ -197,6 +198,13 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
+   public Bundle getDefaultConfiguration()
+   {
+      return baseImpl.getDefaultConfiguration();
+   }
+   
+   
+   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -243,7 +251,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
-   public Loader< D > onCreateLoader( int id, Bundle args )
+   public Loader< List< D > > onCreateLoader( int id, Bundle args )
    {
       return loaderImpl.onCreateLoader( id, args );
    }
@@ -251,7 +259,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
-   public void onLoadFinished( Loader< D > loader, D data )
+   public void onLoadFinished( Loader< List< D > > loader, List< D > data )
    {
       loaderImpl.onLoadFinished( loader, data );
    }
@@ -259,7 +267,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
-   public void onLoaderReset( Loader< D > loader )
+   public void onLoaderReset( Loader< List< D > > loader )
    {
       loaderImpl.onLoaderReset( loader );
    }
@@ -282,14 +290,14 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
-   public D getLoaderData()
+   public List< D > getLoaderData()
    {
       return loaderImpl.getLoaderData();
    }
    
    
    
-   public D getLoaderDataAssertNotNull()
+   public List< D > getLoaderDataAssertNotNull()
    {
       return loaderImpl.getLoaderDataAssertNotNull();
    }
@@ -324,7 +332,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
-   public void onListAdapterCreated( ListAdapter listAdapter, D result )
+   public void onListAdapterCreated( ListAdapter listAdapter, List< D > result )
    {
    }
    
@@ -344,7 +352,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
-   public abstract Loader< D > newLoaderInstance( int id, Bundle config );
+   public abstract Loader< List< D > > newLoaderInstance( int id, Bundle config );
    
    
    
@@ -359,5 +367,5 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
-   public abstract ListAdapter createListAdapterForResult( D result );
+   public abstract ListAdapter createListAdapterForResult( List< D > result );
 }

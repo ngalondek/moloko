@@ -83,16 +83,16 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    
    private final static String CREATED_DATE = "created_date";
    
-   @InstanceState( key = Config.TASK_NAME )
+   @InstanceState( key = Config.TASK_NAME, defaultValue = InstanceState.NULL )
    private String taskName;
    
-   @InstanceState( key = Config.LIST_ID )
+   @InstanceState( key = Config.LIST_ID, defaultValue = InstanceState.NULL )
    private String listId;
    
    @InstanceState( key = Config.LIST_NAME )
    private String listName;
    
-   @InstanceState( key = Config.LOCATION_ID )
+   @InstanceState( key = Config.LOCATION_ID, defaultValue = InstanceState.NULL )
    private String locationId;
    
    @InstanceState( key = Config.LOCATION_NAME )
@@ -101,7 +101,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    @InstanceState( key = Config.PRIORITY, defaultValue = "n" )
    private String priority;
    
-   @InstanceState( key = Config.TAGS )
+   @InstanceState( key = Config.TAGS, defaultValue = Strings.EMPTY_STRING )
    private String tags;
    
    @InstanceState( key = Config.DUE_DATE, defaultValue = "-1" )
@@ -110,13 +110,13 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    @InstanceState( key = Config.HAS_DUE_TIME, defaultValue = "false" )
    private boolean hasDueTime;
    
-   @InstanceState( key = Config.RECURRENCE )
+   @InstanceState( key = Config.RECURRENCE, defaultValue = InstanceState.NULL )
    private String recurrence;
    
    @InstanceState( key = Config.RECURRENCE_EVERY, defaultValue = "false" )
    private boolean recurrenceEvery;
    
-   @InstanceState( key = Config.ESTIMATE )
+   @InstanceState( key = Config.ESTIMATE, defaultValue = InstanceState.NULL )
    private String estimate;
    
    @InstanceState( key = Config.ESTIMATE_MILLIS, defaultValue = "-1" )
@@ -157,38 +157,40 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    @Override
    protected Bundle getInitialValues()
    {
-      determineListId();
-      determineLocationId();
+      final Bundle initialValues = getDefaultConfiguration();
       
-      final List< String > tags = getTagsList();
-      // Check if a list name is part of the tags. This can happen
-      // if a list name has been entered w/o taken the suggestion.
-      // So it has been parsed as a tag since the operator (#) is the
-      // same.
+      determineListId();
+      if ( listId != null )
       {
-         final String lastRemovedListId = removeListsFromTags( tags );
-         if ( listId == null )
-            listId = lastRemovedListId;
+         initialValues.putString( Config.LIST_ID, listId );
       }
       
-      final Bundle initialValues = new Bundle();
-      
-      initialValues.putString( Tasks.TASKSERIES_NAME, taskName );
-      initialValues.putString( Tasks.LIST_ID, listId );
-      initialValues.putString( Tasks.PRIORITY, priority );
-      initialValues.putString( Tasks.TAGS,
-                               TextUtils.join( Tasks.TAGS_SEPARATOR,
-                                               getTagsList() ) );
-      initialValues.putLong( Tasks.DUE_DATE, dueDate );
-      initialValues.putBoolean( Tasks.HAS_DUE_TIME, hasDueTime );
-      initialValues.putString( Tasks.RECURRENCE, recurrence );
-      initialValues.putBoolean( Tasks.RECURRENCE_EVERY, recurrenceEvery );
-      initialValues.putString( Tasks.ESTIMATE, estimate );
-      initialValues.putLong( Tasks.ESTIMATE_MILLIS, estimateMillis );
-      initialValues.putString( Tasks.LOCATION_ID, locationId );
-      initialValues.putString( Tasks.URL, null );
+      determineLocationId();
       
       return initialValues;
+   }
+   
+   
+   
+   @Override
+   protected void getInitialChanges()
+   {
+      super.getInitialChanges();
+      
+      putChange( Tasks.TASKSERIES_NAME, taskName, String.class );
+      putChange( Tasks.LIST_ID, listId, String.class );
+      putChange( Tasks.PRIORITY, priority, String.class );
+      putChange( Tasks.TAGS,
+                 TextUtils.join( Tasks.TAGS_SEPARATOR, getTagsList() ),
+                 String.class );
+      putChange( Tasks.DUE_DATE, dueDate, Long.class );
+      putChange( Tasks.HAS_DUE_TIME, hasDueTime, Boolean.class );
+      putChange( Tasks.RECURRENCE, recurrence, String.class );
+      putChange( Tasks.RECURRENCE_EVERY, recurrenceEvery, Boolean.class );
+      putChange( Tasks.ESTIMATE, estimate, String.class );
+      putChange( Tasks.ESTIMATE_MILLIS, estimateMillis, Long.class );
+      putChange( Tasks.LOCATION_ID, locationId, String.class );
+      putChange( Tasks.URL, null, String.class );
    }
    
    
@@ -242,6 +244,23 @@ public class TaskAddFragment extends AbstractTaskEditFragment
          {
             listId = getIdByName( getLoaderDataAssertNotNull().getListIdsToListNames(),
                                   listName );
+         }
+         
+         if ( TextUtils.isEmpty( listId ) )
+         {
+            final List< String > tags = getTagsList();
+            // Check if a list name is part of the tags. This can happen
+            // if a list name has been entered w/o taken the suggestion.
+            // So it has been parsed as a tag since the operator (#) is the
+            // same.
+            final String lastRemovedListId = removeListsFromTags( tags );
+            listId = lastRemovedListId;
+         }
+         
+         if ( TextUtils.isEmpty( listId ) )
+         {
+            listId = getIdByName( getLoaderDataAssertNotNull().getListIdsToListNames(),
+                                  getString( R.string.app_list_name_inbox ) );
          }
       }
    }

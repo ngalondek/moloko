@@ -38,8 +38,6 @@ import dev.drsoran.moloko.IOnSelectionChangesListener;
 abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
          ISelectableAdapter< T >
 {
-   private final int resourceId;
-   
    private IOnSelectionChangesListener< T > listener;
    
    private Set< T > selectedItems;
@@ -48,29 +46,13 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    
    
    
-   protected SelectableArrayAdapter( Context context, int resourceId )
-   {
-      this( context, resourceId, Collections.< T > emptyList() );
-   }
-   
-   
-   
    protected SelectableArrayAdapter( Context context, int resourceId,
       List< T > items )
    {
       super( context, View.NO_ID, items );
       
-      this.resourceId = resourceId;
-      
       selectedItems = new HashSet< T >();
       unselectedItems = new HashSet< T >( items );
-   }
-   
-   
-   
-   public int getLayoutRessource()
-   {
-      return resourceId;
    }
    
    

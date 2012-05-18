@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group
+        android:id="@id/menu_group_taskslist_actionmode"
+        android:menuCategory="secondary" >
+        <item
+            android:id="@id/menu_complete_selected_tasks"
+            android:icon="@drawable/ic_menu_complete"
+            android:showAsAction="always"
+            android:title="@string/select_multiple_tasks_menu_opt_complete"/>
+        <item
+            android:id="@id/menu_uncomplete_selected_tasks"
+            android:icon="@drawable/ic_menu_incomplete"
+            android:showAsAction="always"
+            android:title="@string/select_multiple_tasks_menu_opt_uncomplete"/>
+        <item
+            android:id="@id/menu_edit_selected"
+            android:icon="@drawable/ic_menu_edit"
+            android:showAsAction="ifRoom"
+            android:title="@string/select_multiple_tasks_menu_opt_do_edit"/>
+        <item
+            android:id="@id/menu_postpone_selected_tasks"
+            android:icon="@drawable/ic_menu_postponed"
+            android:showAsAction="ifRoom"
+            android:title="@string/select_multiple_tasks_menu_opt_postpone"/>
+        <item
+            android:id="@id/menu_delete_selected"
+            android:icon="@drawable/ic_menu_trash"
+            android:showAsAction="ifRoom"
+            android:title="@string/select_multiple_tasks_menu_opt_delete"/>
+    </group>
+
+</menu>

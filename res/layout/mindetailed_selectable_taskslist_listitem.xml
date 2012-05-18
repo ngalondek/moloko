@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is free 
+<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko is free 
    software: you can redistribute it and/or modify it under the terms of the GNU General 
    Public License as published by the Free Software Foundation, either version 3 of 
    the License, or (at your option) any later version. Moloko is distributed in the 
@@ -11,21 +11,22 @@
 
 <LinearLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
-   android:id="@+id/taskslist_mindetailed_listitem"
+   android:id="@+id/taskslist_selectable_mindetailed_listitem"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
-   <Button
-      android:id="@+id/taskslist_listitem_priority"
-      android:background="@android:color/transparent"
-      android:layout_width="wrap_content"
-      android:layout_height="fill_parent"
-      android:layout_marginTop="1dip"
-      android:layout_marginBottom="1dip"
-      android:minWidth="5dip"
-      android:maxWidth="5dip"
-      android:enabled="false"
-      android:focusable="false" />
+   <LinearLayout
+        android:id="@+id/animation"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"        
+        android:animateLayoutChanges="true"
+        android:layoutAnimation="@anim/layout_slide_in_left" >
+
+        <CheckBox
+            android:id="@android:id/checkbox"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+   </LinearLayout>
 
    <include
       android:id="@+id/taskslist_listitem_base"

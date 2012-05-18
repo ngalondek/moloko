@@ -236,12 +236,88 @@ public class AnnotatedConfigurationSupport
    
    
    
+   public Bundle getDefaultInstanceStates()
+   {
+      final Bundle defaultInstanceStates = new Bundle();
+      
+      if ( registeredInstances != null )
+      {
+         for ( Object instance : registeredInstances.keySet() )
+         {
+            final Bundle defaultInstanceState = getDefaultInstanceState( instance );
+            defaultInstanceStates.putAll( defaultInstanceState );
+         }
+      }
+      
+      return defaultInstanceStates;
+   }
+   
+   
+   
+   public Bundle getDefaultInstanceState( Object instance )
+   {
+      final Bundle defaultInstanceState = new Bundle();
+      
+      if ( registeredInstances != null )
+      {
+         final List< Pair< Field, InstanceState >> annotatedFields = getAnnotatedInstanceStateFor( instance );
+         
+         for ( Pair< Field, InstanceState > annotatedField : annotatedFields )
+         {
+            Pair< String, Object > defaultValueWithKey = getDefaultFromSettings( instance,
+                                                                                 annotatedField.first,
+                                                                                 annotatedField.second );
+            if ( defaultValueWithKey == null
+               && !annotatedField.second.defaultValue()
+                                        .equalsIgnoreCase( InstanceState.NO_DEFAULT ) )
+            {
+               final Object defaultValue = getDefaultFromDefaultValue( annotatedField.first,
+                                                                       annotatedField.second );
+               defaultValueWithKey = Pair.create( annotatedField.second.key(),
+                                                  defaultValue );
+            }
+            
+            if ( defaultValueWithKey != null )
+            {
+               Bundles.put( defaultInstanceState,
+                            defaultValueWithKey.first,
+                            defaultValueWithKey.second,
+                            annotatedField.first.getType() );
+            }
+         }
+      }
+      
+      return defaultInstanceState;
+   }
+   
+   
+   
    private boolean setDefaultFromSettings( Object instance,
                                            Field field,
                                            InstanceState instanceState )
    {
+      final Pair< String, Object > defaultInstanceState = getDefaultFromSettings( instance,
+                                                                                  field,
+                                                                                  instanceState );
+      final boolean hasSet = defaultInstanceState != null;
+      
+      if ( hasSet )
+      {
+         setInstaceFieldValue( instance, field, defaultInstanceState.second );
+      }
+      
+      return hasSet;
+   }
+   
+   
+   
+   private Pair< String, Object > getDefaultFromSettings( Object instance,
+                                                          Field field,
+                                                          InstanceState instanceState )
+   {
+      Pair< String, Object > defaultInstanceState = null;
+      
       final String settingsMethod = instanceState.settingsValue();
-      boolean hasSet = false;
       
       if ( !settingsMethod.equals( InstanceState.NULL ) )
       {
@@ -250,7 +326,8 @@ public class AnnotatedConfigurationSupport
          try
          {
             final Object defaultValue = method.invoke( MolokoApp.getSettings( context ) );
-            setInstaceFieldValue( instance, field, defaultValue );
+            defaultInstanceState = Pair.create( instanceState.key(),
+                                                defaultValue );
          }
          catch ( IllegalArgumentException e )
          {
@@ -272,7 +349,7 @@ public class AnnotatedConfigurationSupport
          }
       }
       
-      return hasSet;
+      return defaultInstanceState;
    }
    
    
@@ -284,10 +361,26 @@ public class AnnotatedConfigurationSupport
       if ( !instanceState.defaultValue()
                          .equalsIgnoreCase( InstanceState.NO_DEFAULT ) )
       {
-         final Object defaultValue = getDefaultValueInstance( field,
-                                                              instanceState );
+         final Object defaultValue = getDefaultFromDefaultValue( field,
+                                                                 instanceState );
          setInstaceFieldValue( instance, field, defaultValue );
       }
+   }
+   
+   
+   
+   private Object getDefaultFromDefaultValue( Field field,
+                                              InstanceState instanceState )
+   {
+      Object defaultValue = null;
+      
+      if ( !instanceState.defaultValue()
+                         .equalsIgnoreCase( InstanceState.NO_DEFAULT ) )
+      {
+         defaultValue = getDefaultValueInstance( field, instanceState );
+      }
+      
+      return defaultValue;
    }
    
    
@@ -369,7 +462,7 @@ public class AnnotatedConfigurationSupport
                           String key )
    {
       final Object currentValue = getInstanceFieldValue( instance, field );
-      Bundles.put( instanceState, key, currentValue );
+      Bundles.put( instanceState, key, currentValue, field.getType() );
    }
    
    

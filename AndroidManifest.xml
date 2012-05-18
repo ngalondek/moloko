@@ -107,6 +107,15 @@
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
+         <intent-filter>
+            <!-- Choose multiple tasks from a list of tasks -->
+            <action
+               android:name="android.intent.action.PICK" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
+         </intent-filter>
       </activity>
 
       <activity
@@ -148,21 +157,6 @@
             android:resource="@xml/searchable" />
       </activity>
       
-      <activity
-         android:label="@string/app_task_select_multiple"
-         android:name=".activities.SelectMultipleTasksActivity"
-         android:theme="@style/Theme.Moloko.SelectMultipleTasks">
-         <intent-filter>
-            <!-- Choose multiple tasks from a list of tasks -->
-            <action
-               android:name="android.intent.action.PICK" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
-         </intent-filter>
-      </activity>
-
       <activity
          android:label="@string/app_task"
          android:name=".activities.TaskActivity"

@@ -42,7 +42,7 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.base.MolokoListFragment;
+import dev.drsoran.moloko.fragments.base.MolokoSelectableListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
@@ -54,25 +54,8 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
-         MolokoListFragment< List< T > >
+         MolokoSelectableListFragment< T >
 {
-   protected static class OptionsMenu
-   {
-      public final static int SORT = R.id.menu_sort;
-      
-      public final static int SORT_PRIO = R.id.menu_sort_priority;
-      
-      public final static int SORT_DUE = R.id.menu_sort_due;
-      
-      public final static int SORT_NAME = R.id.menu_sort_task_name;
-   }
-   
-   
-   protected static class OptionsMenuGroup
-   {
-      public final static int SORT = R.id.menu_group_sort;
-   }
-   
    protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
    
    private ITasksListFragmentListener listener;
@@ -155,7 +138,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public final void onPrepareOptionsMenu( Menu menu )
    {
-      final MenuItem sortMenuItem = menu.findItem( OptionsMenu.SORT );
+      final MenuItem sortMenuItem = menu.findItem( R.id.menu_sort );
       
       if ( sortMenuItem != null )
       {
@@ -179,17 +162,17 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.SORT_PRIO:
+         case R.id.menu_sort_priority:
             resortTasks( Settings.TASK_SORT_PRIORITY );
             item.setChecked( true );
             return true;
             
-         case OptionsMenu.SORT_DUE:
+         case R.id.menu_sort_due:
             resortTasks( Settings.TASK_SORT_DUE_DATE );
             item.setChecked( true );
             return true;
             
-         case OptionsMenu.SORT_NAME:
+         case R.id.menu_sort_task_name:
             resortTasks( Settings.TASK_SORT_NAME );
             item.setChecked( true );
             return true;
@@ -216,15 +199,15 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       switch ( currentTaskSort )
       {
          case Settings.TASK_SORT_PRIORITY:
-            menu.findItem( OptionsMenu.SORT_PRIO ).setChecked( true );
+            menu.findItem( R.id.menu_sort_priority ).setChecked( true );
             break;
          
          case Settings.TASK_SORT_DUE_DATE:
-            menu.findItem( OptionsMenu.SORT_DUE ).setChecked( true );
+            menu.findItem( R.id.menu_sort_due ).setChecked( true );
             break;
          
          case Settings.TASK_SORT_NAME:
-            menu.findItem( OptionsMenu.SORT_NAME ).setChecked( true );
+            menu.findItem( R.id.menu_sort_task_name ).setChecked( true );
             break;
          
          default :
@@ -238,14 +221,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onListItemClick( ListView l, View v, int position, long id )
    {
       listener.onOpenTask( position );
-   }
-   
-   
-   
-   protected void resortTasks( int newTaskSort )
-   {
-      if ( shouldResortTasks( newTaskSort ) )
-         listener.onTaskSortChanged( newTaskSort );
    }
    
    
@@ -332,13 +307,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public void reload()
-   {
-      getLoaderManager().restartLoader( getLoaderId(), getConfiguration(), this );
-   }
-   
-   
-   
    public int getTaskSort()
    {
       return tasksSort;
@@ -349,6 +317,14 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public boolean shouldResortTasks( int taskSort )
    {
       return getTaskSort() != taskSort;
+   }
+   
+   
+   
+   protected void resortTasks( int newTaskSort )
+   {
+      if ( shouldResortTasks( newTaskSort ) )
+         listener.onTaskSortChanged( newTaskSort );
    }
    
    

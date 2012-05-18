@@ -32,24 +32,19 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.listener.INotesListActionModeListener;
 import dev.drsoran.moloko.adapters.ISelectableAdapter;
-import dev.drsoran.moloko.util.Strings;
 
 
-public class NotesListActionModeCallback implements ActionMode.Callback
+public class NotesListActionModeCallback extends
+         BaseSelectableActionModeCallback< RtmTaskNote >
 {
-   private final Context context;
-   
-   private ISelectableAdapter< RtmTaskNote > adapter;
-   
-   private INotesListActionModeListener listener;
+   INotesListActionModeListener listener;
    
    
    
    public NotesListActionModeCallback( Context context,
       ISelectableAdapter< RtmTaskNote > adapter )
    {
-      this.context = context;
-      this.adapter = adapter;
+      super( context, adapter );
    }
    
    
@@ -61,39 +56,13 @@ public class NotesListActionModeCallback implements ActionMode.Callback
    
    
    
-   public void attachAdapter( ISelectableAdapter< RtmTaskNote > adapter )
-   {
-      this.adapter = adapter;
-   }
-   
-   
-   
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      mode.getMenuInflater().inflate( R.menu.selection_mode_female, menu );
+      super.onCreateActionMode( mode, menu );
       mode.getMenuInflater().inflate( R.menu.noteslist_actionmode, menu );
-      return true;
-   }
-   
-   
-   
-   @Override
-   public boolean onPrepareActionMode( ActionMode mode, Menu menu )
-   {
-      final int selectedCnt = adapter.getSelectedCount();
-      
-      setTitle( mode, selectedCnt );
-      setMenuItemsVisibility( menu, selectedCnt );
       
       return true;
-   }
-   
-   
-   
-   private void setMenuItemsVisibility( Menu menu, int selectedCnt )
-   {
-      menu.findItem( R.id.menu_delete_selected ).setVisible( selectedCnt > 0 );
    }
    
    
@@ -103,57 +72,16 @@ public class NotesListActionModeCallback implements ActionMode.Callback
    {
       switch ( item.getItemId() )
       {
-         case R.id.menu_select_all:
-            adapter.selectAll();
-            return true;
-            
-         case R.id.menu_deselect_all:
-            adapter.deselectAll();
-            return true;
-            
-         case R.id.menu_invert_selection:
-            adapter.invertSelection();
-            return true;
-            
          case R.id.menu_delete_selected:
             if ( listener != null )
             {
-               listener.onDeleteNotes( adapter.getSelectedItems() );
+               listener.onDeleteNotes( getAdapter().getSelectedItems() );
                return true;
             }
             return false;
             
          default :
-            return false;
+            return super.onActionItemClicked( mode, item );
       }
-   }
-   
-   
-   
-   @Override
-   public void onDestroyActionMode( ActionMode mode )
-   {
-      if ( listener != null )
-      {
-         listener.onFinishingActionMode();
-      }
-   }
-   
-   
-   
-   private void setTitle( ActionMode mode, final int selectedCnt )
-   {
-      final CharSequence title;
-      if ( selectedCnt > 0 )
-      {
-         title = context.getResources().getString( R.string.app_selected_count,
-                                                   adapter.getSelectedCount() );
-      }
-      else
-      {
-         title = Strings.EMPTY_STRING;
-      }
-      
-      mode.setTitle( title );
    }
 }

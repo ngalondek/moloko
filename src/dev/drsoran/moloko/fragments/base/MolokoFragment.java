@@ -159,6 +159,13 @@ public abstract class MolokoFragment extends SherlockFragment implements
    
    
    
+   public Bundle getDefaultConfiguration()
+   {
+      return impl.getDefaultConfiguration();
+   }
+   
+   
+   
    public final ViewGroup getContentView()
    {
       return impl.getContentView();

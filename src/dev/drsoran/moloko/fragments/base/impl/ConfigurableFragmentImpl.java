@@ -125,6 +125,20 @@ public class ConfigurableFragmentImpl
    
    
    
+   public Bundle getDefaultConfiguration()
+   {
+      return annotatedConfigSupport.getDefaultInstanceStates();
+   }
+   
+   
+   
+   public < T > Bundle getDefaultConfiguration( T instance, Class< T > clazz )
+   {
+      return annotatedConfigSupport.getDefaultInstanceState( instance );
+   }
+   
+   
+   
    public < T > void registerAnnotatedConfiguredInstance( T instance,
                                                           Class< T > clazz )
    {

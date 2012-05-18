@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.fragments.base.impl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
@@ -33,16 +34,17 @@ import android.widget.ListAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 
 
-public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
+public class LoaderListFragmentImpl< D > extends
+         LoaderFragmentImplBase< List< D > >
 {
    public static interface Support< D > extends
-            LoaderFragmentImplBase.Support< D >
+            LoaderFragmentImplBase.Support< List< D > >
    {
       ListAdapter getListAdapter();
       
       
       
-      ListAdapter createListAdapterForResult( D result );
+      ListAdapter createListAdapterForResult( List< D > result );
    }
    
    private final MolokoListFragment< D > fragment;
@@ -83,7 +85,7 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    @Override
-   public Loader< D > onCreateLoader( int id, Bundle args )
+   public Loader< List< D > > onCreateLoader( int id, Bundle args )
    {
       viewManager.onCreateLoader();
       return super.onCreateLoader( id, args );
@@ -92,7 +94,7 @@ public class LoaderListFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    @Override
-   public void onLoadFinished( Loader< D > loader, D data )
+   public void onLoadFinished( Loader< List< D > > loader, List< D > data )
    {
       if ( data != null )
       {

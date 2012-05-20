@@ -46,8 +46,7 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    
    
    
-   protected SelectableArrayAdapter( Context context, int resourceId,
-      List< T > items )
+   protected SelectableArrayAdapter( Context context, List< T > items )
    {
       super( context, View.NO_ID, items );
       

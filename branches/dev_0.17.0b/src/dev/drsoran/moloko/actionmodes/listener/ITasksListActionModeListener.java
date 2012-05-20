@@ -22,28 +22,28 @@
 
 package dev.drsoran.moloko.actionmodes.listener;
 
-import java.util.Collection;
+import java.util.List;
 
 import dev.drsoran.rtm.Task;
 
 
 public interface ITasksListActionModeListener
 {
-   void onEditTasks( Collection< ? extends Task > tasks );
+   void onEditTasks( List< ? extends Task > tasks );
    
    
    
-   void onCompleteTasks( Collection< ? extends Task > tasks );
+   void onCompleteTasks( List< ? extends Task > tasks );
    
    
    
-   void onIncompleteTasks( Collection< ? extends Task > tasks );
+   void onIncompleteTasks( List< ? extends Task > tasks );
    
    
    
-   void onPostponeTasks( Collection< ? extends Task > tasks );
+   void onPostponeTasks( List< ? extends Task > tasks );
    
    
    
-   void onDeleteTasks( Collection< ? extends Task > tasks );
+   void onDeleteTasks( List< ? extends Task > tasks );
 }

@@ -67,7 +67,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    {
       super( context,
              R.layout.fulldetailed_taskslist_listitem,
-             R.layout.fulldetailed_selectable_taskslist_listitem,
+             R.layout.mindetailed_selectable_taskslist_listitem,
              tasks );
       
       this.flags = flags;
@@ -107,35 +107,41 @@ public class FullDetailedTasksListFragmentAdapter extends
    {
       convertView = super.getView( position, convertView, parent );
       
-      final ViewGroup additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
-      final TextView listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
-      final TextView location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
-      final ImageView recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
-      final ImageView hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
-      final ImageView postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
-      
-      final Task task = getItem( position );
-      
-      if ( task.getRecurrence() != null )
-         recurrent.setVisibility( View.VISIBLE );
-      else
-         recurrent.setVisibility( View.GONE );
-      
-      if ( task.getNumberOfNotes() > 0 )
-         hasNotes.setVisibility( View.VISIBLE );
-      else
-         hasNotes.setVisibility( View.GONE );
-      
-      if ( task.getPosponed() > 0 )
-         postponed.setVisibility( View.VISIBLE );
-      else
-         postponed.setVisibility( View.GONE );
-      
-      setListName( listName, task );
-      
-      setTags( additionalsLayout, task );
-      
-      setLocation( location, task );
+      if ( !isSelectable() )
+      {
+         final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
+         final ViewGroup additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
+         final TextView listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
+         final TextView location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
+         final ImageView recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
+         final ImageView hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
+         final ImageView postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
+         
+         final Task task = getItem( position );
+         
+         UIUtils.setPriorityColor( priority, task );
+         
+         if ( task.getRecurrence() != null )
+            recurrent.setVisibility( View.VISIBLE );
+         else
+            recurrent.setVisibility( View.GONE );
+         
+         if ( task.getNumberOfNotes() > 0 )
+            hasNotes.setVisibility( View.VISIBLE );
+         else
+            hasNotes.setVisibility( View.GONE );
+         
+         if ( task.getPosponed() > 0 )
+            postponed.setVisibility( View.VISIBLE );
+         else
+            postponed.setVisibility( View.GONE );
+         
+         setListName( listName, task );
+         
+         setTags( additionalsLayout, task );
+         
+         setLocation( location, task );
+      }
       
       return convertView;
    }
@@ -211,9 +217,9 @@ public class FullDetailedTasksListFragmentAdapter extends
    @Override
    protected boolean mustSwitchLayout( View convertView )
    {
-      if ( isCheckable() )
+      if ( isSelectable() )
       {
-         return convertView.findViewById( R.id.taskslist_selectable_fulldetailed_listitem ) == null;
+         return convertView.findViewById( R.id.taskslist_selectable_mindetailed_listitem ) == null;
       }
       else
       {

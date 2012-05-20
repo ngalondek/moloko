@@ -24,49 +24,15 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
+import dev.drsoran.rtm.Task;
+
 
 public class NullTasksListFragmentListener implements
-         IFullDetailedTasksListFragmentListener,
-         IMinDetailedTasksListFragmentListener
+         IFullDetailedTasksListFragmentListener
 {
    
    @Override
    public void onShowTasksWithTags( List< String > tags )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onEditTask( int pos )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onCompleteTask( int pos )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onIncompleteTask( int pos )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onPostponeTask( int pos )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onDeleteTask( int pos )
    {
    }
    
@@ -87,13 +53,6 @@ public class NullTasksListFragmentListener implements
    
    
    @Override
-   public void onSelectTasks()
-   {
-   }
-   
-   
-   
-   @Override
    public void onOpenTask( int pos )
    {
    }
@@ -102,6 +61,41 @@ public class NullTasksListFragmentListener implements
    
    @Override
    public void onTaskSortChanged( int newTaskSort )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onEditTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onCompleteTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onIncompleteTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onPostponeTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onDeleteTasks( List< ? extends Task > tasks )
    {
    }
 }

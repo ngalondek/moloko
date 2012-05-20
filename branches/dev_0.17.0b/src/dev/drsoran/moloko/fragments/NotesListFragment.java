@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.Collection;
 import java.util.List;
 
 import android.app.Activity;
@@ -44,7 +43,6 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
 import dev.drsoran.moloko.actionmodes.NotesListActionModeCallback;
-import dev.drsoran.moloko.actionmodes.listener.INotesListActionModeListener;
 import dev.drsoran.moloko.adapters.ISelectableAdapter;
 import dev.drsoran.moloko.adapters.NotesListFragmentAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
@@ -54,8 +52,7 @@ import dev.drsoran.moloko.loaders.RtmTaskNotesLoader;
 
 
 public class NotesListFragment extends
-         MolokoSelectableListFragment< RtmTaskNote > implements
-         INotesListActionModeListener
+         MolokoSelectableListFragment< RtmTaskNote >
 {
    
    public static class Config
@@ -124,15 +121,6 @@ public class NotesListFragment extends
    
    
    @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
-   {
-      super.onViewCreated( view, savedInstanceState );
-      getListView().setOnItemLongClickListener( this );
-   }
-   
-   
-   
-   @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
       super.onCreateOptionsMenu( menu, inflater );
@@ -178,19 +166,6 @@ public class NotesListFragment extends
    
    
    @Override
-   public void onDeleteNotes( Collection< RtmTaskNote > notes )
-   {
-      if ( listener != null )
-      {
-         listener.onDeleteNotes( getListAdapter().getSelectedItems() );
-      }
-      
-      stopSelectionMode();
-   }
-   
-   
-   
-   @Override
    protected int getSettingsMask()
    {
       return super.getSettingsMask()
@@ -227,7 +202,6 @@ public class NotesListFragment extends
    public ListAdapter createListAdapterForResult( List< RtmTaskNote > result )
    {
       final NotesListFragmentAdapter adapter = new NotesListFragmentAdapter( this,
-                                                                             R.layout.notelist_listitem,
                                                                              result );
       return adapter;
    }
@@ -247,7 +221,7 @@ public class NotesListFragment extends
    {
       final NotesListActionModeCallback callback = new NotesListActionModeCallback( getSherlockActivity(),
                                                                                     getListAdapter() );
-      callback.setNotesListActionModeListener( this );
+      callback.setNotesListActionModeListener( listener );
       return callback;
    }
    
@@ -277,7 +251,7 @@ public class NotesListFragment extends
       super.configureListAdapterForSelectionMode();
       
       final NotesListFragmentAdapter adapter = getListAdapter();
-      adapter.setCheckable( true );
+      adapter.setSelectable( true );
    }
    
    
@@ -285,6 +259,6 @@ public class NotesListFragment extends
    private void configureListAdapterForDefaultMode()
    {
       final NotesListFragmentAdapter adapter = getListAdapter();
-      adapter.setCheckable( false );
+      adapter.setSelectable( false );
    }
 }

@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collection;
 import java.util.List;
 
 import android.app.Dialog;
@@ -39,9 +38,9 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.QuickAddTaskActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.IQuickAddTaskActionModeListener;
-import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
@@ -56,7 +55,7 @@ import dev.drsoran.rtm.Task;
 public abstract class AbstractFullDetailedTasksListActivity extends
          AbstractTasksListActivity implements
          IFullDetailedTasksListFragmentListener, IShowTasksWithTagsListener,
-         IQuickAddTaskActionModeListener, ITasksListActionModeListener
+         IQuickAddTaskActionModeListener
 {
    @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
    private boolean quickAddTaskActionModeActive;
@@ -158,68 +157,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    @Override
-   public void onSelectTasks()
-   {
-      startActivity( Intents.createSelectMultipleTasksIntent( this,
-                                                              getConfiguredFilter(),
-                                                              getTaskSort() ) );
-   }
-   
-   
-   
-   @Override
-   public void onEditTask( int pos )
-   {
-      startActivity( Intents.createEditTaskIntent( this, getTask( pos ) ) );
-   }
-   
-   
-   
-   @Override
-   public void onCompleteTask( int pos )
-   {
-      final Task task = getTask( pos );
-      final ApplyChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                              task,
-                                                                              true );
-      applyModifications( modifications );
-   }
-   
-   
-   
-   @Override
-   public void onIncompleteTask( int pos )
-   {
-      final Task task = getTask( pos );
-      final ApplyChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                              task,
-                                                                              false );
-      applyModifications( modifications );
-   }
-   
-   
-   
-   @Override
-   public void onPostponeTask( int pos )
-   {
-      final Task task = getTask( pos );
-      final ApplyChangesInfo modifications = TaskEditUtils.postponeTask( this,
-                                                                         task );
-      applyModifications( modifications );
-   }
-   
-   
-   
-   @Override
-   public void onDeleteTask( int pos )
-   {
-      final Task task = getTask( pos );
-      UIUtils.showDeleteElementDialog( this, task.getName(), task.getId() );
-   }
-   
-   
-   
-   @Override
    public void onOpenList( int pos, String listId )
    {
       startActivity( Intents.createOpenListIntentById( this, listId, null ) );
@@ -265,55 +202,109 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    @Override
-   public void onEditTasks( Collection< ? extends Task > tasks )
+   public void onEditTasks( List< ? extends Task > tasks )
    {
-      // TODO Auto-generated method stub
-      
+      if ( tasks.size() == 1 )
+      {
+         startActivity( Intents.createEditTaskIntent( this, tasks.get( 0 ) ) );
+      }
+      else
+      {
+         startActivity( Intents.createEditMultipleTasksIntent( this, tasks ) );
+      }
    }
    
    
    
    @Override
-   public void onCompleteTasks( Collection< ? extends Task > tasks )
+   public void onCompleteTasks( List< ? extends Task > tasks )
    {
-      // TODO Auto-generated method stub
-      
+      if ( tasks.size() == 1 )
+      {
+         final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                  tasks,
+                                                                                  true );
+         applyModifications( modifications );
+      }
+      else
+      {
+         final String message = getResources().getQuantityString( R.plurals.tasks_complete,
+                                                                  tasks.size(),
+                                                                  tasks.size() );
+         new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_complete ).setMessage( message )
+                                                                                 .setPositiveButton( R.string.btn_complete )
+                                                                                 .setNegativeButton( R.string.btn_cancel )
+                                                                                 .show( this );
+      }
    }
    
    
    
    @Override
-   public void onIncompleteTasks( Collection< ? extends Task > tasks )
+   public void onIncompleteTasks( List< ? extends Task > tasks )
    {
-      // TODO Auto-generated method stub
-      
+      if ( tasks.size() == 1 )
+      {
+         final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                  tasks,
+                                                                                  false );
+         applyModifications( modifications );
+      }
+      else
+      {
+         final String message = getResources().getQuantityString( R.plurals.tasks_incomplete,
+                                                                  tasks.size(),
+                                                                  tasks.size() );
+         new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_incomplete ).setMessage( message )
+                                                                                   .setPositiveButton( R.string.btn_uncomplete )
+                                                                                   .setNegativeButton( R.string.btn_cancel )
+                                                                                   .show( this );
+      }
    }
    
    
    
    @Override
-   public void onPostponeTasks( Collection< ? extends Task > tasks )
+   public void onPostponeTasks( List< ? extends Task > tasks )
    {
-      // TODO Auto-generated method stub
-      
+      if ( tasks.size() == 1 )
+      {
+         final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
+                                                                             tasks );
+         applyModifications( modifications );
+      }
+      else
+      {
+         final String message = getResources().getQuantityString( R.plurals.tasks_postpone,
+                                                                  tasks.size(),
+                                                                  tasks.size() );
+         new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_postpone ).setMessage( message )
+                                                                                 .setPositiveButton( R.string.btn_postpone )
+                                                                                 .setNegativeButton( R.string.btn_cancel )
+                                                                                 .show( this );
+      }
    }
    
    
    
    @Override
-   public void onDeleteTasks( Collection< ? extends Task > tasks )
+   public void onDeleteTasks( List< ? extends Task > tasks )
    {
-      // TODO Auto-generated method stub
-      
-   }
-   
-   
-   
-   @Override
-   public void onFinishingActionMode()
-   {
-      // TODO Auto-generated method stub
-      
+      if ( tasks.size() == 1 )
+      {
+         final Task task = tasks.get( 0 );
+         UIUtils.showDeleteElementDialog( this, task.getName(), task.getId() );
+      }
+      else
+      {
+         final String message = getResources().getQuantityString( R.plurals.tasks_delete,
+                                                                  tasks.size(),
+                                                                  tasks.size() );
+         new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_delete ).setMessage( message )
+                                                                               .setPositiveButton( R.string.btn_delete )
+                                                                               .setNegativeButton( R.string.btn_cancel )
+                                                                               .show( this );
+      }
    }
    
    
@@ -323,9 +314,25 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       switch ( dialogId )
       {
-         case R.id.dlg_delete_element:
+      
+         case R.id.dlg_selectmultipletasks_complete:
             if ( which == Dialog.BUTTON_POSITIVE )
-               deleteTaskImpl( tag );
+               completeSelectedTasks( getTasksListFragment().getSelectedItems() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_incomplete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               incompleteSelectedTasks( getTasksListFragment().getSelectedItems() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_postpone:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               postponeSelectedTasks( getTasksListFragment().getSelectedItems() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_delete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               deleteSelectedTasks( getTasksListFragment().getSelectedItems() );
             break;
          
          default :
@@ -344,13 +351,44 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
-   private void deleteTaskImpl( String taskId )
+   private void completeSelectedTasks( List< ? extends Task > tasks )
    {
-      final Task task = getTask( taskId );
-      final ApplyChangesInfo modifications = TaskEditUtils.deleteTask( this,
-                                                                       task );
+      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                               tasks,
+                                                                               true );
       applyModifications( modifications );
-      
+      getTasksListFragment().stopSelectionMode();
+   }
+   
+   
+   
+   private void incompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                               tasks,
+                                                                               false );
+      applyModifications( modifications );
+      getTasksListFragment().stopSelectionMode();
+   }
+   
+   
+   
+   private void postponeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
+                                                                          tasks );
+      applyModifications( modifications );
+      getTasksListFragment().stopSelectionMode();
+   }
+   
+   
+   
+   private void deleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final ApplyChangesInfo modifications = TaskEditUtils.deleteTasks( this,
+                                                                        tasks );
+      applyModifications( modifications );
+      getTasksListFragment().stopSelectionMode();
    }
    
    

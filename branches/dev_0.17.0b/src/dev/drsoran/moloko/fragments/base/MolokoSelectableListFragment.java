@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.AdapterView;
@@ -94,6 +95,22 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
    
    
    
+   public List< D > getSelectedItems()
+   {
+      return selectedItems;
+   }
+   
+   
+   
+   @Override
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      super.onViewCreated( view, savedInstanceState );
+      getListView().setOnItemLongClickListener( this );
+   }
+   
+   
+   
    @Override
    public boolean onItemLongClick( AdapterView< ? > parent,
                                    View view,
@@ -133,7 +150,7 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
       {
          if ( activeActionMode == null )
          {
-            activateSelectionMode( result );
+            activateSelectionMode( selectedItems );
          }
          else
          {

@@ -68,6 +68,16 @@ public class NotesListActionModeCallback extends
    
    
    @Override
+   public boolean onPrepareActionMode( ActionMode mode, Menu menu )
+   {
+      super.onPrepareActionMode( mode, menu );
+      menu.findItem( R.id.menu_selection ).setIcon( null );
+      return true;
+   }
+   
+   
+   
+   @Override
    public boolean onActionItemClicked( ActionMode mode, MenuItem item )
    {
       switch ( item.getItemId() )

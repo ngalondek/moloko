@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -40,67 +39,20 @@ import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTasksListFragmentAdapter extends
-         SelectableArrayAdapter< Task >
+         SwitchSelectableArrayAdapter< Task >
 {
    private final Context context;
    
-   private final int unselectedResourceId;
-   
-   private final int selectedResourceId;
-   
-   private final LayoutInflater inflater;
-   
    private final MolokoCalendar setDueDateCalendar = MolokoCalendar.getInstance();
-   
-   private boolean isCheckable;
    
    
    
    protected AbstractTasksListFragmentAdapter( Context context,
       int unselectedResourceId, int selectedResourceId, List< Task > tasks )
    {
-      super( context, View.NO_ID, tasks );
+      super( context, unselectedResourceId, selectedResourceId, tasks );
       
       this.context = context;
-      this.unselectedResourceId = unselectedResourceId;
-      this.selectedResourceId = selectedResourceId;
-      this.inflater = ( (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE ) );
-   }
-   
-   
-   
-   public LayoutInflater getInflater()
-   {
-      return inflater;
-   }
-   
-   
-   
-   public boolean isCheckable()
-   {
-      return isCheckable;
-   }
-   
-   
-   
-   public void setCheckable( boolean isCheckable )
-   {
-      this.isCheckable = isCheckable;
-      notifyDataSetChanged();
-   }
-   
-   
-   
-   public int getUnselectedLayoutRessource()
-   {
-      return unselectedResourceId;
-   }
-   
-   
-   
-   public int getSelectedLayoutRessource()
-   {
-      return selectedResourceId;
    }
    
    
@@ -108,10 +60,7 @@ abstract class AbstractTasksListFragmentAdapter extends
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      if ( convertView == null || mustSwitchLayout( convertView ) )
-      {
-         convertView = createListItemView( parent );
-      }
+      convertView = super.getView( position, convertView, parent );
       
       defaultInitializeListItemView( position, convertView );
       
@@ -120,24 +69,8 @@ abstract class AbstractTasksListFragmentAdapter extends
    
    
    
-   private View createListItemView( ViewGroup parent )
-   {
-      if ( isCheckable )
-      {
-         return inflater.inflate( selectedResourceId, parent, false );
-      }
-      else
-      {
-         return inflater.inflate( unselectedResourceId, parent, false );
-      }
-   }
-   
-   
-   
    private void defaultInitializeListItemView( int position, View convertView )
    {
-      final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
-      
       final ImageView completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
       final TextView description = (TextView) convertView.findViewById( R.id.taskslist_listitem_desc );
       final TextView dueDate = (TextView) convertView.findViewById( R.id.taskslist_listitem_due_date );
@@ -145,11 +78,7 @@ abstract class AbstractTasksListFragmentAdapter extends
       final Task task = getItem( position );
       
       UIUtils.setTaskDescription( description, task, MolokoDateUtils.newTime() );
-      
       setDueDate( dueDate, task );
-      
-      UIUtils.setPriorityColor( priority, task );
-      
       setCompleted( completed, task );
    }
    
@@ -277,8 +206,4 @@ abstract class AbstractTasksListFragmentAdapter extends
    {
       view.setEnabled( task.getCompleted() != null );
    }
-   
-   
-   
-   protected abstract boolean mustSwitchLayout( View convertView );
 }

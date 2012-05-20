@@ -26,7 +26,9 @@ import java.util.List;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
 
@@ -45,9 +47,27 @@ public class MinDetailedTasksListFragmentAdapter extends
    
    
    @Override
+   public View getView( int position, View convertView, ViewGroup parent )
+   {
+      convertView = super.getView( position, convertView, parent );
+      
+      if ( !isSelectable() )
+      {
+         final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
+         final Task task = getItem( position );
+         
+         UIUtils.setPriorityColor( priority, task );
+      }
+      
+      return convertView;
+   }
+   
+   
+   
+   @Override
    protected boolean mustSwitchLayout( View convertView )
    {
-      if ( isCheckable() )
+      if ( isSelectable() )
       {
          return convertView.findViewById( R.id.taskslist_selectable_mindetailed_listitem ) == null;
       }

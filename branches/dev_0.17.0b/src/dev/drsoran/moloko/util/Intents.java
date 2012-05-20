@@ -39,7 +39,6 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
@@ -653,31 +652,6 @@ public final class Intents
       final Intent intent = new Intent( Intent.ACTION_EDIT, Tasks.CONTENT_URI );
       intent.putParcelableArrayListExtra( Extras.KEY_TASKS,
                                           new ArrayList< Task >( tasks ) );
-      
-      return intent;
-   }
-   
-   
-   
-   public final static Intent createSelectMultipleTasksIntent( Context context,
-                                                               IFilter filter,
-                                                               int sortOrder )
-   {
-      final Intent intent;
-      
-      if ( filter instanceof SqlSelectionFilter )
-         intent = createSqlSelectionFilterIntent( context,
-                                                  (SqlSelectionFilter) filter,
-                                                  context.getString( R.string.select_multiple_tasks_titlebar ) );
-      else
-         intent = createSmartFilterIntent( context,
-                                           (RtmSmartFilter) filter,
-                                           context.getString( R.string.select_multiple_tasks_titlebar ) );
-      
-      intent.setAction( Intent.ACTION_PICK );
-      
-      if ( sortOrder != -1 )
-         intent.putExtra( Extras.KEY_TASK_SORT_ORDER, sortOrder );
       
       return intent;
    }

@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.actionmodes;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.util.Pair;
 
@@ -50,7 +52,7 @@ public class TasksListActionModeCallback extends
    
    
    
-   public void setNotesListActionModeListener( ITasksListActionModeListener listener )
+   public void setTasksListActionModeListener( ITasksListActionModeListener listener )
    {
       this.listener = listener;
    }
@@ -123,27 +125,27 @@ public class TasksListActionModeCallback extends
       {
          case R.id.menu_complete_selected_tasks:
             if ( listener != null )
-               listener.onCompleteTasks( getAdapter().getSelectedItems() );
+               listener.onCompleteTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
             return true;
             
          case R.id.menu_uncomplete_selected_tasks:
             if ( listener != null )
-               listener.onIncompleteTasks( getAdapter().getSelectedItems() );
+               listener.onIncompleteTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
             return true;
             
          case R.id.menu_edit_selected:
             if ( listener != null )
-               listener.onEditTasks( getAdapter().getSelectedItems() );
+               listener.onEditTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
             return true;
             
          case R.id.menu_postpone_selected_tasks:
             if ( listener != null )
-               listener.onPostponeTasks( getAdapter().getSelectedItems() );
+               listener.onPostponeTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
             return true;
             
          case R.id.menu_delete_selected:
             if ( listener != null )
-               listener.onDeleteTasks( getAdapter().getSelectedItems() );
+               listener.onDeleteTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
             return true;
             
          default :

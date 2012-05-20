@@ -265,7 +265,6 @@ public class FullDetailedTasksListFragment extends
    {
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getSherlockActivity(),
-                                                       R.layout.fulldetailed_taskslist_listitem,
                                                        result,
                                                        filter,
                                                        flags,
@@ -285,8 +284,10 @@ public class FullDetailedTasksListFragment extends
    @Override
    protected BaseSelectableActionModeCallback< Task > createActionModeCallback()
    {
-      return new TasksListActionModeCallback( getSherlockActivity(),
-                                              getListAdapter() );
+      final TasksListActionModeCallback callback = new TasksListActionModeCallback( getSherlockActivity(),
+                                                                                    getListAdapter() );
+      callback.setTasksListActionModeListener( listener );
+      return callback;
    }
    
    
@@ -295,6 +296,7 @@ public class FullDetailedTasksListFragment extends
    protected void configureListAdapterForSelectionMode()
    {
       super.configureListAdapterForSelectionMode();
+      getListAdapter().setSelectable( true );
    }
    
    
@@ -304,6 +306,7 @@ public class FullDetailedTasksListFragment extends
                                           BaseSelectableActionModeCallback< Task > callback )
    {
       super.onSelectionModeStopped( mode, callback );
+      getListAdapter().setSelectable( false );
    }
    
    

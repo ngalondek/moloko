@@ -354,6 +354,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       final ApplyChangesInfo modifications = NoteEditUtils.deleteNotes( this,
                                                                         notesToDelete );
       applyModifications( modifications );
+      
+      notesListFragment.stopSelectionMode();
    }
    
    

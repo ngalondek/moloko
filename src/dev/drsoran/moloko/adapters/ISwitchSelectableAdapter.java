@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,9 +20,21 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko.adapters;
 
-public interface IMinDetailedTasksListFragmentListener extends ITasksListFragmentListener
+public interface ISwitchSelectableAdapter
 {
-   void onSelectTasks();
+   boolean isSelectable();
+   
+   
+   
+   void setSelectable( boolean isSelectable );
+   
+   
+   
+   int getUnselectedLayoutRessource();
+   
+   
+   
+   int getSelectedLayoutRessource();
 }

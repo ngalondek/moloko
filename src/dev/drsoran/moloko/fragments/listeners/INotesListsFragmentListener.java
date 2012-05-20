@@ -22,20 +22,17 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-import java.util.Collection;
-
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.actionmodes.listener.INotesListActionModeListener;
 
-public interface INotesListsFragmentListener
+
+public interface INotesListsFragmentListener extends
+         INotesListActionModeListener
 {
    void onOpenNote( RtmTaskNote note, int position );
    
    
    
    void onAddNote();
-   
-   
-   
-   void onDeleteNotes( Collection< RtmTaskNote > notes );
 }

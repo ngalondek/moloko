@@ -24,34 +24,12 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
+import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
+
 
 public interface IFullDetailedTasksListFragmentListener extends
-         ITasksListFragmentListener
+         ITasksListFragmentListener, ITasksListActionModeListener
 {
-   void onEditTask( int pos );
-   
-   
-   
-   void onCompleteTask( int pos );
-   
-   
-   
-   void onIncompleteTask( int pos );
-   
-   
-   
-   void onPostponeTask( int pos );
-   
-   
-   
-   void onDeleteTask( int pos );
-   
-   
-   
-   void onSelectTasks();
-   
-   
-   
    void onOpenList( int pos, String listId );
    
    

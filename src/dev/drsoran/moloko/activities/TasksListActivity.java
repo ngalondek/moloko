@@ -24,32 +24,25 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
-import android.app.Dialog;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TasksListActivity extends AbstractFullDetailedTasksListActivity
 {
-   private static class OptionsMenu
-   {
-      public final static int ADD_LIST = R.id.menu_add_list;
-   }
-   
    @InstanceState( key = "SHOW_ADD_SMART_LIST" )
    private boolean showAddSmartListMenu;
    
@@ -60,11 +53,28 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    {
       super.onCreateOptionsMenu( menu );
       
-      final MenuInflater inflater = getSupportMenuInflater();
-      
-      if ( showAddSmartListMenu && isWritableAccess() )
+      if ( isWritableAccess() )
       {
-         inflater.inflate( R.menu.add_smart_list, menu );
+         getSupportMenuInflater().inflate( R.menu.taskslist_activity_rwd, menu );
+      }
+      else
+      {
+         getSupportMenuInflater().inflate( R.menu.taskslist_activity, menu );
+      }
+      
+      return true;
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      super.onPrepareOptionsMenu( menu );
+      
+      if ( isWritableAccess() )
+      {
+         menu.findItem( R.id.menu_add_list ).setVisible( showAddSmartListMenu );
       }
       
       return true;
@@ -77,28 +87,12 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.ADD_LIST:
+         case R.id.menu_add_list:
             showAddListDialog();
             return true;
             
          default :
             return super.onOptionsItemSelected( item );
-      }
-   }
-   
-   
-   
-   @Override
-   protected void handleDeleteElementDialogClick( String tag, int which )
-   {
-      if ( which == Dialog.BUTTON_POSITIVE )
-      {
-         final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-         final ApplyChangesInfo deleteListActions = RtmListEditUtils.deleteListByName( TasksListActivity.this,
-                                                                                       listName );
-         applyModifications( deleteListActions );
-         
-         finish();
       }
    }
    
@@ -141,5 +135,13 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       }
       
       return show;
+   }
+   
+   
+   
+   @Override
+   protected Fragment createTasksListFragment( Bundle config )
+   {
+      return FullDetailedTasksListFragment.newInstance( config );
    }
 }

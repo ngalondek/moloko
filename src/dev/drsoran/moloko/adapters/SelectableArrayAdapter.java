@@ -25,6 +25,7 @@ package dev.drsoran.moloko.adapters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,13 +33,24 @@ import java.util.Set;
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import dev.drsoran.moloko.IOnSelectionChangesListener;
 
 
 abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
          ISelectableAdapter< T >
 {
-   private IOnSelectionChangesListener< T > listener;
+   private final Comparator< T > SORT_SELECTION = new Comparator< T >()
+   {
+      @Override
+      public int compare( T lhs, T rhs )
+      {
+         final int valLhs = selectedItems.contains( lhs ) ? 1 : 0;
+         final int valRhs = selectedItems.contains( rhs ) ? 1 : 0;
+         
+         return valRhs - valLhs;
+      }
+   };
+   
+   private IOnSelectionChangesListener< T > selectionChangedListener;
    
    private Set< T > selectedItems;
    
@@ -59,7 +71,7 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    @Override
    public IOnSelectionChangesListener< T > getOnSelectionChangesListener()
    {
-      return listener;
+      return selectionChangedListener;
    }
    
    
@@ -67,7 +79,7 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    @Override
    public void setOnSelectionChangesListener( IOnSelectionChangesListener< T > listener )
    {
-      this.listener = listener;
+      this.selectionChangedListener = listener;
    }
    
    
@@ -203,6 +215,14 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    
    
    
+   @Override
+   public void sortBySelection()
+   {
+      sort( SORT_SELECTION );
+   }
+   
+   
+   
    private void notifyItem( T item, boolean isSelected )
    {
       notifyBulk( Collections.singletonList( item ), isSelected );
@@ -212,9 +232,9 @@ abstract class SelectableArrayAdapter< T > extends ArrayAdapter< T > implements
    
    private void notifyBulk( Collection< ? extends T > items, boolean isSelected )
    {
-      if ( listener != null )
+      if ( selectionChangedListener != null )
       {
-         listener.onSelectionChanged( items, isSelected );
+         selectionChangedListener.onSelectionChanged( items, isSelected );
       }
    }
 }

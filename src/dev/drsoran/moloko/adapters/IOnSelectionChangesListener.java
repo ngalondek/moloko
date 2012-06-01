@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.adapters;
 
 import java.util.Collection;
 

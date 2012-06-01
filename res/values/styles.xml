@@ -181,7 +181,7 @@
     <style name="TasksList_ListItem_DueDate" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
-
+ 
     <style name="TasksList_ListItem_Location" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">@drawable/taskslist_listitem_location_text</item>
         <item name="android:background">@color/taskslist_listitem_location_text_bgnd</item>

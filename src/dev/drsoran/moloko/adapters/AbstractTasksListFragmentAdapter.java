@@ -32,6 +32,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.sort.CompositeComparator;
+import dev.drsoran.moloko.sort.SortTaskDueDate;
+import dev.drsoran.moloko.sort.SortTaskName;
+import dev.drsoran.moloko.sort.SortTaskPriority;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
@@ -51,8 +56,30 @@ abstract class AbstractTasksListFragmentAdapter extends
       int unselectedResourceId, int selectedResourceId, List< Task > tasks )
    {
       super( context, unselectedResourceId, selectedResourceId, tasks );
-      
       this.context = context;
+   }
+   
+   
+   
+   public void sort( int taskSort )
+   {
+      switch ( taskSort )
+      {
+         case Settings.TASK_SORT_PRIORITY:
+            sort( new CompositeComparator< Task >( new SortTaskPriority() ).add( new SortTaskDueDate() ) );
+            break;
+         
+         case Settings.TASK_SORT_DUE_DATE:
+            sort( new CompositeComparator< Task >( new SortTaskDueDate() ).add( new SortTaskPriority() ) );
+            break;
+         
+         case Settings.TASK_SORT_NAME:
+            sort( new SortTaskName() );
+            break;
+         
+         default :
+            throw new IllegalArgumentException( taskSort + " is no valid sort" );
+      }
    }
    
    
@@ -86,10 +113,7 @@ abstract class AbstractTasksListFragmentAdapter extends
    
    private void setDueDate( TextView view, Task task )
    {
-      Date dateToSet = task.getCompleted();
-      
-      if ( dateToSet == null )
-         dateToSet = task.getDue();
+      final Date dateToSet = task.getDue();
       
       if ( dateToSet != null )
          setDueDateCalendar.setTime( dateToSet );
@@ -159,16 +183,24 @@ abstract class AbstractTasksListFragmentAdapter extends
                else
                {
                   final MolokoCalendar calWeekdayRange = nowCal;
-                  calWeekdayRange.add( Calendar.DAY_OF_MONTH, 6 );
+                  calWeekdayRange.add( Calendar.DAY_OF_MONTH, 1 );
                   nowCal = null;
                   
-                  if ( calWeekdayRange.get( Calendar.DAY_OF_YEAR ) >= cal.get( Calendar.DAY_OF_YEAR ) )
+                  final int calDayOfYear = cal.get( Calendar.DAY_OF_YEAR );
+                  boolean isInNext6DaysRange = calWeekdayRange.get( Calendar.DAY_OF_YEAR ) <= calDayOfYear;
+                  
+                  if ( isInNext6DaysRange )
+                  {
+                     calWeekdayRange.add( Calendar.DAY_OF_MONTH, 5 );
+                     isInNext6DaysRange = calWeekdayRange.get( Calendar.DAY_OF_YEAR ) >= calDayOfYear;
+                  }
+                  
+                  if ( isInNext6DaysRange )
                   {
                      // we only show the week day
                      dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
                                                                    false );
                   }
-                  
                   // Not the same week and not in the range [today + 1, today + 6]
                   else
                   {

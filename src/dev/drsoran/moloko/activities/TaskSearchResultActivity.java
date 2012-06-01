@@ -28,53 +28,24 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.text.TextUtils;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.fragments.TaskSearchResultListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 
 
 public class TaskSearchResultActivity extends
          AbstractFullDetailedTasksListActivity implements
          ITasksSearchResultListFragmentListener
 {
-   private static class OptionsMenu
-   {
-      public final static int ADD_LIST = R.id.menu_add_list;
-      
-      public final static int CLEAR_HISTORY = R.id.menu_clear_search_history;
-   }
-   
-   @InstanceState( key = SearchManager.QUERY, defaultValue = InstanceState.NULL )
-   private String lastQuery;
-   
-   private boolean lastQuerySucceeded = true;
-   
-   
-   
-   public TaskSearchResultActivity()
-   {
-      registerAnnotatedConfiguredInstance( this, TaskSearchResultActivity.class );
-   }
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      setQueryAsActivityTitle();
-   }
+   private boolean lastQuerySucceeded;
    
    
    
@@ -82,7 +53,33 @@ public class TaskSearchResultActivity extends
    protected void onNewIntent( Intent intent )
    {
       super.onNewIntent( intent );
-      setQueryAsActivityTitle();
+      
+      initialize();
+      reloadWithNewQuery( intent );
+   }
+   
+   
+   
+   @Override
+   protected void initializeTitle()
+   {
+      setTitle( getQueryFromBundle( getIntent().getExtras() ) );
+   }
+   
+   
+   
+   @Override
+   protected void initializeActionBar()
+   {
+      setStandardNavigationMode();
+   }
+   
+   
+   
+   @Override
+   public void onBackStackChanged()
+   {
+      setTitle( getQueryFromBundle( getCurrentTasksListFragmentConfiguration() ) );
    }
    
    
@@ -92,24 +89,28 @@ public class TaskSearchResultActivity extends
    {
       super.onCreateOptionsMenu( menu );
       
-      final MolokoMenuItemBuilder builder = new MolokoMenuItemBuilder();
+      if ( isWritableAccess() )
+      {
+         getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity_rwd,
+                                           menu );
+      }
+      else
+      {
+         getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity,
+                                           menu );
+      }
       
-      builder.setItemId( OptionsMenu.ADD_LIST )
-             .setTitle( getString( R.string.tasksearchresult_menu_add_smart_list ) )
-             .setIconId( R.drawable.ic_menu_add_list )
-             .setOrder( MenuCategory.CONTAINER )
-             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-             .setShow( lastQuerySucceeded
-                && AccountUtils.isWriteableAccess( this ) )
-             .build( menu );
-      
-      builder.setItemId( OptionsMenu.CLEAR_HISTORY )
-             .setTitle( getString( R.string.tasksearchresult_menu_opt_clear_history_title ) )
-             .setIconId( R.drawable.ic_menu_delete )
-             .setOrder( MenuCategory.ALTERNATIVE )
-             .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_NEVER )
-             .setShow( true )
-             .build( menu );
+      return true;
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      super.onPrepareOptionsMenu( menu );
+      menu.setGroupVisible( R.id.menu_group_tasksearchresult_query_succeeded,
+                            lastQuerySucceeded );
       
       return true;
    }
@@ -121,7 +122,7 @@ public class TaskSearchResultActivity extends
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.CLEAR_HISTORY:
+         case R.id.menu_clear_search_history:
             getRecentSuggestions().clearHistory();
             
             Toast.makeText( this,
@@ -129,7 +130,7 @@ public class TaskSearchResultActivity extends
                             Toast.LENGTH_SHORT ).show();
             return true;
             
-         case OptionsMenu.ADD_LIST:
+         case R.id.menu_add_list:
             showAddListDialog();
             return true;
             
@@ -161,23 +162,6 @@ public class TaskSearchResultActivity extends
    
    
    @Override
-   public void onOpenList( int pos, String listId )
-   {
-      startActivity( Intents.createOpenListIntentById( this, listId, null ) );
-   }
-   
-   
-   
-   @Override
-   public void onOpenLocation( int pos, String locationId )
-   {
-      startActivity( Intents.createOpenLocationIntentByName( this,
-                                                             getTask( pos ).getLocationName() ) );
-   }
-   
-   
-   
-   @Override
    protected void onOpenChoosenTags( List< String > tags,
                                      String logicalOperation )
    {
@@ -186,21 +170,36 @@ public class TaskSearchResultActivity extends
    
    
    
-   private void setQueryAsActivityTitle()
-   {
-      if ( !TextUtils.isEmpty( lastQuery ) )
-      {
-         // TODO:
-         // setActivityTitle( lastQuery );
-      }
-   }
-   
-   
-   
-   private final SearchRecentSuggestions getRecentSuggestions()
+   private SearchRecentSuggestions getRecentSuggestions()
    {
       return new SearchRecentSuggestions( this,
                                           TasksSearchRecentSuggestionsProvider.AUTHORITY,
                                           TasksSearchRecentSuggestionsProvider.MODE );
+   }
+   
+   
+   
+   private String getQueryFromBundle( Bundle bundle )
+   {
+      return bundle.getString( SearchManager.QUERY );
+   }
+   
+   
+   
+   private void reloadWithNewQuery( Intent intent )
+   {
+      final Bundle newConfig = getCurrentTasksListFragmentConfiguration();
+      newConfig.putString( SearchManager.QUERY,
+                           getQueryFromBundle( intent.getExtras() ) );
+      
+      reloadTasksListWithConfiguration( newConfig );
+   }
+   
+   
+   
+   @Override
+   protected Fragment createTasksListFragment( Bundle config )
+   {
+      return TaskSearchResultListFragment.newInstance( config );
    }
 }

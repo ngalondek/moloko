@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,17 +20,18 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko.sort;
 
-import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
+import java.util.Comparator;
+
+import dev.drsoran.rtm.Task;
 
 
-public interface ITasksSearchResultListFragmentListener extends
-         ITasksListActionModeListener
+public class SortTaskName implements Comparator< Task >
 {
-   void onQuerySucceeded( String queryString );
-   
-   
-   
-   void onQueryFailed( String queryString );
+   @Override
+   public int compare( Task lhs, Task rhs )
+   {
+      return lhs.getName().compareToIgnoreCase( rhs.getName() );
+   }
 }

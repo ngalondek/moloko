@@ -104,11 +104,11 @@
         <item quantity="other">%1$d faites</item>
     </plurals>
 
-    <!-- TasksList activity -->
+    <!-- TasksList -->
     <!-- Menus -->
-    <plurals name="taskslist_listitem_ctx_tags">
-        <item quantity="one">Afficher les tâches avec \'%1$s\'</item>
-        <item quantity="other">Afficher les tâches marquées avec...</item>
+    <plurals name="taskslist_open_tags">
+        <item quantity="one">Tâches avec \'%1$s\'</item>
+        <item quantity="other">Tâches marquées avec...</item>
     </plurals>
 
 </resources>

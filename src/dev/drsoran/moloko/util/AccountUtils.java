@@ -33,6 +33,7 @@ import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 
 
@@ -141,7 +142,9 @@ public final class AccountUtils
    public final static boolean isReadOnlyAccess( Context context )
    {
       final Perms level = getAccessLevel( context );
-      return isReadOnlyAccess( level );
+      return isReadOnlyAccess( level )
+         || context.getResources()
+                   .getBoolean( R.bool.force_readable_rtm_access );
    }
    
    

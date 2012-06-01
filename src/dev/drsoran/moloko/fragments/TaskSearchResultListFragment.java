@@ -26,8 +26,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Html;
@@ -45,24 +43,10 @@ import dev.drsoran.rtm.Task;
 
 public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
 {
-   private final static IntentFilter INTENT_FILTER;
-   
-   static
-   {
-      INTENT_FILTER = new IntentFilter( Intent.ACTION_SEARCH );
-      INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
-   }
-   
-   
-   public static class Config
-   {
-      public final static String QUERY = SearchManager.QUERY;
-   }
+   @InstanceState( key = SearchManager.QUERY )
+   private String query;
    
    private ITasksSearchResultListFragmentListener listener;
-   
-   @InstanceState( key = Config.QUERY )
-   private String query;
    
    private RtmSmartFilter filter;
    
@@ -120,13 +104,6 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    {
       listener = null;
       super.onDetach();
-   }
-   
-   
-   
-   public static IntentFilter getIntentFilter()
-   {
-      return INTENT_FILTER;
    }
    
    

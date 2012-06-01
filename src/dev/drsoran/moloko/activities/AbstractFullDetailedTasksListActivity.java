@@ -22,15 +22,17 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
@@ -38,11 +40,12 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.QuickAddTaskActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.IQuickAddTaskActionModeListener;
+import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
-import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
@@ -53,8 +56,8 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractFullDetailedTasksListActivity extends
-         AbstractTasksListActivity implements
-         IFullDetailedTasksListFragmentListener, IShowTasksWithTagsListener,
+         AbstractTasksListActivity implements OnItemLongClickListener,
+         ITasksListActionModeListener, IShowTasksWithTagsListener,
          IQuickAddTaskActionModeListener
 {
    @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
@@ -85,21 +88,20 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onItemLongClick( AdapterView< ? > parent,
+                                   View view,
+                                   int position,
+                                   long id )
    {
-      super.onCreateOptionsMenu( menu );
-      
-      final MenuInflater inflater = getSupportMenuInflater();
-      
-      if ( isWritableAccess() )
+      if ( activeActionMode == null )
       {
-         inflater.inflate( R.menu.taskslist_activity_rwd, menu );
+         final Task task = getTask( position );
+         
+         getTasksListFragment().startSelectionMode( Collections.singletonList( task ) );
+         return true;
       }
       
-      inflater.inflate( R.menu.sync, menu );
-      inflater.inflate( R.menu.search, menu );
-      
-      return true;
+      return false;
    }
    
    
@@ -157,23 +159,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    @Override
-   public void onOpenList( int pos, String listId )
-   {
-      startActivity( Intents.createOpenListIntentById( this, listId, null ) );
-   }
-   
-   
-   
-   @Override
-   public void onOpenLocation( int pos, String locationId )
-   {
-      startActivity( Intents.createOpenLocationIntentByName( this,
-                                                             getTask( pos ).getLocationName() ) );
-   }
-   
-   
-   
-   @Override
    public final void onShowTasksWithTags( List< String > tags )
    {
       if ( tags.size() == 1 )
@@ -197,6 +182,15 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       final String logOpString = determineLogicalOperationString( operation );
       onOpenChoosenTags( tags, logOpString );
+   }
+   
+   
+   
+   @Override
+   public void onOpenTaskLocation( Task task )
+   {
+      startActivity( Intents.createOpenLocationIntentByName( this,
+                                                             task.getLocationName() ) );
    }
    
    
@@ -453,5 +447,13 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private void showChooseTagsDialog( List< String > tags )
    {
       ChooseTagsDialogFragment.show( this, tags );
+   }
+   
+   
+   
+   private FullDetailedTasksListFragment getTasksListFragment()
+   {
+      final FullDetailedTasksListFragment fragment = (FullDetailedTasksListFragment) findAddedFragmentById( R.id.frag_taskslist );
+      return fragment;
    }
 }

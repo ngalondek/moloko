@@ -46,4 +46,12 @@ public interface ITasksListActionModeListener
    
    
    void onDeleteTasks( List< ? extends Task > tasks );
+   
+   
+   
+   void onOpenTaskLocation( Task task );
+   
+   
+   
+   void onShowTasksWithTags( List< String > tags );
 }

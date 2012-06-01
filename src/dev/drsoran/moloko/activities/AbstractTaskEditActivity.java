@@ -67,6 +67,8 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    public boolean onCreateOptionsMenu( Menu menu )
    {
       getSupportMenuInflater().inflate( R.menu.edit_activity, menu );
+      super.onCreateOptionsMenu( menu );
+      
       return true;
    }
    

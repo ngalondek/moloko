@@ -22,7 +22,13 @@
 
 package dev.drsoran.moloko.actionmodes.listener;
 
-public interface IBaseSelectableActionModeListener
+import com.actionbarsherlock.view.ActionMode;
+
+import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
+
+
+public interface IBaseSelectableActionModeListener< T >
 {
-   void onFinishActionMode();
+   void onFinishingSelectionMode( ActionMode mode,
+                                  BaseSelectableActionModeCallback< T > callback );
 }

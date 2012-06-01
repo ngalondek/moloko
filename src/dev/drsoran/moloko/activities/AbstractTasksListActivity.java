@@ -44,12 +44,9 @@ import dev.drsoran.moloko.adapters.TasksListNavigationAdapter;
 import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
-import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
-import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
@@ -65,10 +62,6 @@ public abstract class AbstractTasksListActivity extends
    private final static String SELECTED_NAVIGATION_ID = "sel_nav_id";
    
    protected final static String CUSTOM_NAVIGATION_ITEM_ID = "0";
-   
-   @InstanceState( key = Intents.Extras.KEY_ACTIVITY_TITLE,
-                   defaultValue = Strings.EMPTY_STRING )
-   private String title;
    
    @InstanceState( key = Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                    defaultValue = InstanceState.NULL )
@@ -94,33 +87,44 @@ public abstract class AbstractTasksListActivity extends
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.taskslist_activity );
       
-      initializeTitle();
-      initializeSelectedNavigationItemId();
-      initializeActionBar();
-      initializeTasksListFragment();
+      setContentView( R.layout.taskslist_activity );
+      setTitleFromConfiguration( savedInstanceState != null
+                                                           ? savedInstanceState
+                                                           : getIntent().getExtras() );
+      
+      initialize();
       
       getSupportFragmentManager().addOnBackStackChangedListener( this );
    }
    
    
    
-   private void initializeTitle()
+   protected void initialize()
    {
-      if ( TextUtils.isEmpty( title ) )
+      initializeTitle();
+      initializeSelectedNavigationItemId();
+      initializeActionBar();
+      initializeTasksListFragment();
+   }
+   
+   
+   
+   protected void initializeTitle()
+   {
+      if ( TextUtils.isEmpty( getTitle() ) )
       {
          final String intentListName = getListNameFromIntent();
          if ( !TextUtils.isEmpty( intentListName ) )
          {
-            title = intentListName;
+            setTitle( intentListName );
          }
       }
    }
    
    
    
-   private void initializeSelectedNavigationItemId()
+   protected void initializeSelectedNavigationItemId()
    {
       if ( selectedNavigationItemId == null )
       {
@@ -133,7 +137,7 @@ public abstract class AbstractTasksListActivity extends
    
    
    
-   private void initializeActionBar()
+   protected void initializeActionBar()
    {
       setStandardNavigationMode();
       startLoadingRtmLists();
@@ -144,8 +148,11 @@ public abstract class AbstractTasksListActivity extends
    @Override
    public void onBackStackChanged()
    {
-      selectedNavigationItemId = getTasksListFragment().getTag();
-      updateNavigationAdapterSelectedIndex();
+      if ( isListNavigationMode() )
+      {
+         selectedNavigationItemId = getTasksListFragment().getTag();
+         updateNavigationAdapterSelectedIndex();
+      }
    }
    
    
@@ -159,20 +166,9 @@ public abstract class AbstractTasksListActivity extends
    
    
    
-   private Bundle getCurrentTasksListFragmentConfiguration()
+   protected Bundle getCurrentTasksListFragmentConfiguration()
    {
       return getFragmentConfigurations( R.id.frag_taskslist );
-   }
-   
-   
-   
-   @Override
-   public void onTaskSortChanged( int newTaskSort )
-   {
-      final Bundle config = getCurrentTasksListFragmentConfiguration();
-      config.putInt( Intents.Extras.KEY_TASK_SORT_ORDER, newTaskSort );
-      
-      reloadTasksListWithConfiguration( config );
    }
    
    
@@ -212,6 +208,13 @@ public abstract class AbstractTasksListActivity extends
    
    
    
+   private void setTitleFromConfiguration( Bundle bundle )
+   {
+      setTitle( bundle.getString( Intents.Extras.KEY_ACTIVITY_TITLE ) );
+   }
+   
+   
+   
    protected boolean hasListNameInIntent()
    {
       return getIntent().getExtras().containsKey( Intents.Extras.KEY_LIST_NAME );
@@ -239,16 +242,20 @@ public abstract class AbstractTasksListActivity extends
    
    protected IItem getNavigationItem( int position )
    {
+      if ( !isListNavigationMode() )
+      {
+         throw new UnsupportedOperationException( "No list navigation mode." );
+      }
+      
       return actionBarNavigationAdapter.getItem( position );
    }
    
    
    
-   private void setStandardNavigationMode()
+   protected void setStandardNavigationMode()
    {
       final ActionBar actionBar = getSupportActionBar();
       
-      actionBar.setTitle( title );
       actionBar.setSubtitle( subTitle );
       actionBar.setDisplayShowTitleEnabled( true );
       actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
@@ -257,7 +264,14 @@ public abstract class AbstractTasksListActivity extends
    
    
    
-   private void setListNavigationMode()
+   public boolean isStandardNavigationMode()
+   {
+      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_STANDARD;
+   }
+   
+   
+   
+   protected void setListNavigationMode()
    {
       final ActionBar actionBar = getSupportActionBar();
       
@@ -266,6 +280,13 @@ public abstract class AbstractTasksListActivity extends
       actionBar.setListNavigationCallbacks( actionBarNavigationAdapter, this );
       
       updateNavigationAdapterSelectedIndex();
+   }
+   
+   
+   
+   public boolean isListNavigationMode()
+   {
+      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
    }
    
    
@@ -302,7 +323,7 @@ public abstract class AbstractTasksListActivity extends
       {
          items.add( 0,
                     new TasksListNavigationAdapter.CustomItem( CUSTOM_NAVIGATION_ITEM_ID,
-                                                               title,
+                                                               getTitle().toString(),
                                                                getIntent().getExtras() ) );
       }
       
@@ -376,11 +397,9 @@ public abstract class AbstractTasksListActivity extends
    
    
    
-   protected AbstractTasksListFragment< ? extends Task > getTasksListFragment()
+   private AbstractTasksListFragment< ? > getTasksListFragment()
    {
-      @SuppressWarnings( "unchecked" )
-      final AbstractTasksListFragment< ? extends Task > fragment = (AbstractTasksListFragment< ? extends Task >) findAddedFragmentById( R.id.frag_taskslist );
-      
+      final AbstractTasksListFragment< ? > fragment = (AbstractTasksListFragment< ? >) findAddedFragmentById( R.id.frag_taskslist );
       return fragment;
    }
    
@@ -390,9 +409,7 @@ public abstract class AbstractTasksListActivity extends
    {
       if ( findAddedFragmentById( R.id.frag_taskslist ) == null )
       {
-         final Fragment fragment = DefaultFragmentFactory.create( this,
-                                                                  FullDetailedTasksListFragment.class,
-                                                                  getIntent().getExtras() );
+         final Fragment fragment = createTasksListFragment( getIntent().getExtras() );
          
          final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
          transaction.add( R.id.frag_taskslist,
@@ -407,14 +424,14 @@ public abstract class AbstractTasksListActivity extends
    
    protected void reloadTasksListWithConfiguration( Bundle config )
    {
-      final Fragment fragment = DefaultFragmentFactory.create( this,
-                                                               FullDetailedTasksListFragment.class,
-                                                               config );
+      final Fragment fragment = createTasksListFragment( config );
+      final String fragmentTag = isListNavigationMode()
+                                                       ? getSelectedNavigationItemId()
+                                                       : null;
       
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-      transaction.replace( R.id.frag_taskslist,
-                           fragment,
-                           getSelectedNavigationItemId() );
+      
+      transaction.replace( R.id.frag_taskslist, fragment, fragmentTag );
       transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
       transaction.addToBackStack( null );
       transaction.commit();
@@ -435,4 +452,8 @@ public abstract class AbstractTasksListActivity extends
    {
       return FRAGMENT_IDS;
    }
+   
+   
+   
+   protected abstract Fragment createTasksListFragment( Bundle config );
 }

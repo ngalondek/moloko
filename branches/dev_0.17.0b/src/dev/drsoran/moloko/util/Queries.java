@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -34,9 +34,7 @@ import android.provider.BaseColumns;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.provider.Rtm.Tasks;
 
 
 public final class Queries
@@ -49,23 +47,6 @@ public final class Queries
    private Queries()
    {
       throw new AssertionError( "This class should not be instantiated." );
-   }
-   
-   
-   
-   public final static String resolveTaskSortToSqlite( int sortValue )
-   {
-      switch ( sortValue )
-      {
-         case Settings.TASK_SORT_PRIORITY:
-            return Tasks.SORT_PRIORITY;
-         case Settings.TASK_SORT_DUE_DATE:
-            return Tasks.SORT_DUE_DATE;
-         case Settings.TASK_SORT_NAME:
-            return Tasks.SORT_TASK_NAME;
-         default :
-            return null;
-      }
    }
    
    

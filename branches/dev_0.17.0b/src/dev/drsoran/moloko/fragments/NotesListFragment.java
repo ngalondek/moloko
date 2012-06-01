@@ -30,6 +30,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -153,6 +154,24 @@ public class NotesListFragment extends
    
    
    @Override
+   public boolean onItemLongClick( AdapterView< ? > parent,
+                                   View view,
+                                   int position,
+                                   long id )
+   {
+      if ( isWritableAccess() )
+      {
+         return super.onItemLongClick( parent, view, position, id );
+      }
+      else
+      {
+         return false;
+      }
+   }
+   
+   
+   
+   @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
       super.onListItemClick( l, v, position, id );
@@ -236,10 +255,10 @@ public class NotesListFragment extends
    
    
    @Override
-   protected void onSelectionModeStopped( ActionMode mode,
-                                          BaseSelectableActionModeCallback< RtmTaskNote > callback )
+   protected void onSelectionModeFinished( ActionMode mode,
+                                           BaseSelectableActionModeCallback< RtmTaskNote > callback )
    {
-      super.onSelectionModeStopped( mode, callback );
+      super.onSelectionModeFinished( mode, callback );
       configureListAdapterForDefaultMode();
    }
    

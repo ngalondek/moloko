@@ -114,9 +114,6 @@
    <item
       type="id"
       name="menu_group_sort" />
-   <item
-      type="id"
-      name="menu_group_taskslist_actionmode" />
 
    <!-- MenuItem IDs -->
    <item
@@ -133,22 +130,13 @@
       name="menu_sort_task_name" />
    <item
       type="id"
-      name="menu_sort_selection" />
-   <item
-      type="id"
       name="menu_settings" />
    <item
       type="id"
       name="menu_sync" />
    <item
       type="id"
-      name="menu_show_lists" />
-   <item
-      type="id"
       name="menu_delete_list" />
-   <item
-      type="id"
-      name="menu_edit_multiple_tasks" />
    <item
       type="id"
       name="menu_selection" />
@@ -215,39 +203,18 @@
    <item
       type="id"
       name="menu_quick_add_task_estimate" />
-
+   <item
+      type="id"
+      name="menu_open_list" />
+   <item
+      type="id"
+      name="menu_open_tags" />
+   <item
+      type="id"
+      name="menu_open_tasks_at_loc" />
+   
 
    <!-- ContextMenuItem IDs -->
-   <item
-      type="id"
-      name="ctx_menu_open_task" />
-   <item
-      type="id"
-      name="ctx_menu_edit_task" />
-   <item
-      type="id"
-      name="ctx_menu_complete_task" />
-   <item
-      type="id"
-      name="ctx_menu_postpone_task" />
-   <item
-      type="id"
-      name="ctx_menu_delete_task" />
-   <item
-      type="id"
-      name="ctx_menu_open_list" />
-   <item
-      type="id"
-      name="ctx_menu_open_tag" />
-   <item
-      type="id"
-      name="ctx_menu_open_tags" />
-   <item
-      type="id"
-      name="ctx_menu_open_tasks_at_loc" />
-   <item
-      type="id"
-      name="ctx_menu_toggle_selection" />
    <item
       type="id"
       name="ctx_menu_show_phonebook_contact" />

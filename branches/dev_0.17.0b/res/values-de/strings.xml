@@ -41,6 +41,7 @@
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
+   <string name="app_sort_selection">Auswahl</string>
    <string name="app_save">Speichern</string>
    <string name="app_startup">Starte Moloko &#8230;</string>
    <string name="app_selected_count">%1$d ausgewählt</string>
@@ -125,6 +126,7 @@
    <string name="phr_loading">Lädt gerade&#8230;</string>
    <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
+   <string name="phr_more">Mehr</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -156,6 +158,7 @@
    <string name="menu_opt_deselect_all_female">Keine</string>
    <string name="menu_opt_deselect_all_mainly">Keines</string>
    <string name="menu_opt_inv_selection">Umkehren</string>
+   <string name="menu_opt_sort">Sortieren</string>
 
    <!-- Global Dialogs -->   
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
@@ -296,7 +299,6 @@
 	<!-- AbstractTasksList fragment -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
 	  <!-- Menus -->
-	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
      <string name="abstaskslist_listitem_ctx_complete_task">Erledigt \'%1$s\'</string>
      <string name="abstaskslist_listitem_ctx_uncomplete_task">Unerledigt \'%1$s\'</string>

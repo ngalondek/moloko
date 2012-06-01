@@ -24,8 +24,6 @@ package dev.drsoran.moloko.adapters;
 
 import java.util.Collection;
 
-import dev.drsoran.moloko.IOnSelectionChangesListener;
-
 
 public interface ISelectableAdapter< T >
 {
@@ -82,6 +80,10 @@ public interface ISelectableAdapter< T >
    
    
    int getSelectedCount();
+   
+   
+   
+   void sortBySelection();
    
    
    

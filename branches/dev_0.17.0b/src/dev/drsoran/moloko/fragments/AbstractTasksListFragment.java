@@ -44,11 +44,10 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoSelectableListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
@@ -94,7 +93,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       if ( activity instanceof ITasksListFragmentListener )
          listener = (ITasksListFragmentListener) activity;
       else
-         listener = new NullTasksListFragmentListener();
+         listener = null;
    }
    
    
@@ -117,20 +116,11 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected CharSequence getEmptyListText()
-   {
-      return getString( R.string.abstaskslist_no_tasks );
-   }
-   
-   
-   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      createTasksSortSubMenu( menu, inflater );
-      
-      final int currentTaskSort = getTaskSort();
-      initializeTasksSortSubMenu( menu, currentTaskSort );
+      inflater.inflate( R.menu.tasks_sort, menu );
+      super.onCreateOptionsMenu( menu, inflater );
    }
    
    
@@ -163,30 +153,26 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       switch ( item.getItemId() )
       {
          case R.id.menu_sort_priority:
-            resortTasks( Settings.TASK_SORT_PRIORITY );
+            tasksSort = Settings.TASK_SORT_PRIORITY;
+            resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
          case R.id.menu_sort_due:
-            resortTasks( Settings.TASK_SORT_DUE_DATE );
+            tasksSort = Settings.TASK_SORT_DUE_DATE;
+            resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
          case R.id.menu_sort_task_name:
-            resortTasks( Settings.TASK_SORT_NAME );
+            tasksSort = Settings.TASK_SORT_NAME;
+            resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
          default :
             return super.onOptionsItemSelected( item );
       }
-   }
-   
-   
-   
-   protected void createTasksSortSubMenu( Menu menu, MenuInflater inflater )
-   {
-      inflater.inflate( R.menu.tasks_sort, menu );
    }
    
    
@@ -220,7 +206,10 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
-      listener.onOpenTask( position );
+      if ( listener != null && !isSelectionMode() )
+      {
+         listener.onOpenTask( position );
+      }
    }
    
    
@@ -314,32 +303,10 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public boolean shouldResortTasks( int taskSort )
-   {
-      return getTaskSort() != taskSort;
-   }
-   
-   
-   
-   protected void resortTasks( int newTaskSort )
-   {
-      if ( shouldResortTasks( newTaskSort ) )
-         listener.onTaskSortChanged( newTaskSort );
-   }
-   
-   
-   
-   protected String resolveTaskSortToSqlite( int taskSort )
-   {
-      return Queries.resolveTaskSortToSqlite( taskSort );
-   }
-   
-   
-   
    @Override
    public void showError( CharSequence errorMessage )
    {
-      showError( errorMessage );
+      super.showError( errorMessage );
       getLoaderManager().destroyLoader( getLoaderId() );
    }
    
@@ -348,7 +315,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void showError( Spanned errorMessage )
    {
-      showError( errorMessage );
+      super.showError( errorMessage );
       getLoaderManager().destroyLoader( getLoaderId() );
    }
    
@@ -396,7 +363,28 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected abstract int getDefaultTaskSort();
+   protected static String resolveTaskSortToSqlite( int sortValue )
+   {
+      switch ( sortValue )
+      {
+         case Settings.TASK_SORT_PRIORITY:
+            return Tasks.SORT_PRIORITY;
+         case Settings.TASK_SORT_DUE_DATE:
+            return Tasks.SORT_DUE_DATE;
+         case Settings.TASK_SORT_NAME:
+            return Tasks.SORT_TASK_NAME;
+         default :
+            return null;
+      }
+   }
+   
+   
+   
+   public abstract void resortTasks( int newTaskSort );
+   
+   
+   
+   public abstract int getDefaultTaskSort();
    
    
    

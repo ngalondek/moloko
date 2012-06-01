@@ -41,7 +41,7 @@ public class BaseSelectableActionModeCallback< T > implements
    
    private ISelectableAdapter< T > adapter;
    
-   private IBaseSelectableActionModeListener listener;
+   private IBaseSelectableActionModeListener< T > listener;
    
    
    
@@ -75,7 +75,7 @@ public class BaseSelectableActionModeCallback< T > implements
    
    
    
-   public void setActionModeListener( IBaseSelectableActionModeListener listener )
+   public void setActionModeListener( IBaseSelectableActionModeListener< T > listener )
    {
       this.listener = listener;
    }
@@ -97,16 +97,8 @@ public class BaseSelectableActionModeCallback< T > implements
       final int selectedCnt = adapter.getSelectedCount();
       
       setTitle( mode, selectedCnt );
-      setMenuItemsVisibility( menu, selectedCnt );
       
       return true;
-   }
-   
-   
-   
-   private void setMenuItemsVisibility( Menu menu, int selectedCnt )
-   {
-      menu.findItem( R.id.menu_delete_selected ).setVisible( selectedCnt > 0 );
    }
    
    
@@ -140,7 +132,7 @@ public class BaseSelectableActionModeCallback< T > implements
    {
       if ( listener != null )
       {
-         listener.onFinishActionMode();
+         listener.onFinishingSelectionMode( mode, this );
          listener = null;
       }
    }

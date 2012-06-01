@@ -39,6 +39,7 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
 import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
+import dev.drsoran.moloko.activities.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.ISelectableAdapter;
 import dev.drsoran.moloko.adapters.MinDetailedTasksListFragmentAdapter;
 import dev.drsoran.moloko.loaders.TasksLoader;
@@ -72,7 +73,15 @@ public class MinDetailedTasksListFragment extends
    
    
    @Override
-   protected int getDefaultTaskSort()
+   public void resortTasks( int newTaskSort )
+   {
+      getListAdapter().sort( newTaskSort );
+   }
+   
+   
+   
+   @Override
+   public int getDefaultTaskSort()
    {
       return MolokoApp.getSettings( getSherlockActivity() ).getTaskSort();
    }
@@ -117,7 +126,7 @@ public class MinDetailedTasksListFragment extends
    @Override
    protected BaseSelectableActionModeCallback< Task > createActionModeCallback()
    {
-      return new TasksListActionModeCallback( getSherlockActivity(),
+      return new TasksListActionModeCallback( (MolokoFragmentActivity) getSherlockActivity(),
                                               getListAdapter() );
    }
    
@@ -133,10 +142,10 @@ public class MinDetailedTasksListFragment extends
    
    
    @Override
-   protected void onSelectionModeStopped( ActionMode mode,
-                                          BaseSelectableActionModeCallback< Task > callback )
+   protected void onSelectionModeFinished( ActionMode mode,
+                                           BaseSelectableActionModeCallback< Task > callback )
    {
-      super.onSelectionModeStopped( mode, callback );
+      super.onSelectionModeFinished( mode, callback );
       getListAdapter().setSelectable( false );
    }
    

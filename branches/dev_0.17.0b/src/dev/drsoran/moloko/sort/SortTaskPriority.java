@@ -20,23 +20,18 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko.sort;
 
-import java.util.List;
+import java.util.Comparator;
 
-import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
+import dev.drsoran.rtm.Task;
 
 
-public interface IFullDetailedTasksListFragmentListener extends
-         ITasksListFragmentListener, ITasksListActionModeListener
+public class SortTaskPriority implements Comparator< Task >
 {
-   void onOpenList( int pos, String listId );
-   
-   
-   
-   void onOpenLocation( int pos, String locationId );
-   
-   
-   
-   void onShowTasksWithTags( List< String > tags );
+   @Override
+   public int compare( Task lhs, Task rhs )
+   {
+      return lhs.getPriority().compareTo( rhs.getPriority() );
+   }
 }

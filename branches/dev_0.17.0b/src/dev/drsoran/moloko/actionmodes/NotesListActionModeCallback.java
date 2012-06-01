@@ -60,7 +60,7 @@ public class NotesListActionModeCallback extends
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
       super.onCreateActionMode( mode, menu );
-      mode.getMenuInflater().inflate( R.menu.noteslist_actionmode, menu );
+      mode.getMenuInflater().inflate( R.menu.noteslist_actionmode_rwd, menu );
       
       return true;
    }

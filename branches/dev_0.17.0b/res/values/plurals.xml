@@ -101,11 +101,11 @@
       <item quantity="other">%1$d completed</item>
    </plurals>
    
-   <!-- TasksList activity -->
+   <!-- TasksList fragment -->
    	<!-- Menus -->
-   	<plurals name="taskslist_listitem_ctx_tags">
-   		<item quantity="one">Show tasks with \'%1$s\'</item>
-   		<item quantity="other">Show tasks tagged with...</item>
+   	<plurals name="taskslist_open_tags">
+   		<item quantity="one">Tasks with \'%1$s\'</item>
+   		<item quantity="other">Tasks tagged with...</item>
    	</plurals>
    
 </resources>

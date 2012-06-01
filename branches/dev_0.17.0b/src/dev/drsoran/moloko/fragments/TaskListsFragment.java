@@ -57,7 +57,7 @@ public class TaskListsFragment extends
 {
    private static class CtxtMenu
    {
-      public final static int OPEN_LIST = R.id.ctx_menu_open_list;
+      public final static int OPEN_LIST = R.id.menu_open_list;
       
       public final static int EXPAND = R.id.ctx_menu_expand;
       

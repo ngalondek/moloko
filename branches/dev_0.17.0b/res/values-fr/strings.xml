@@ -42,6 +42,7 @@
    <string name="app_sort_alpha">Nom de la Tâche</string>
    <string name="app_sort_prio">Priorité</string>
    <string name="app_sort_due_date">Échéance</string>
+   <string name="app_sort_selection">Selection</string>
    <string name="app_save">Save</string>
    <string name="app_startup">Démarrage de Moloko &#8230;</string>
    <string name="app_selected_count">%1$d selected</string>
@@ -120,6 +121,7 @@
    <string name="phr_loading">Chargement &#8230;</string>
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
+   <string name="phr_more">More</string>
 
    <!-- Global errors -->
    <string name="err_error">Erreur</string>
@@ -153,6 +155,7 @@
    <string name="menu_opt_deselect_all_female">@string/menu_opt_deselect_all_male</string>
    <string name="menu_opt_deselect_all_mainly">@string/menu_opt_deselect_all_male</string>
    <string name="menu_opt_inv_selection">Inverser</string>
+   <string name="menu_opt_sort">Trier par</string>
 
    <!-- Global Dialogs -->
    <string name="dlg_estimate_picker_title">Durée estimée ?</string>
@@ -296,7 +299,6 @@
    <!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Aucune tâche</string>
      <!-- Menus -->
-     <string name="abstaskslist_menu_opt_sort">Trier par</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Modification multiple</string>
      <string name="abstaskslist_listitem_ctx_complete_task">Marquer \'%1$s\' tâches faites</string>
      <string name="abstaskslist_listitem_ctx_uncomplete_task">Marquer \'%1$s\' tâches à faire</string>

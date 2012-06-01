@@ -64,20 +64,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       public final static String TASK_ID = "task_id";
    }
    
-   
-   private final static class OptionsMenu
-   {
-      public final static int POSTPONE_TASK = R.id.menu_postpone_selected_tasks;
-      
-      public final static int COMPLETE_TASK = R.id.menu_complete_selected_tasks;
-      
-      public final static int UNCOMPLETE_TASK = R.id.menu_uncomplete_selected_tasks;
-      
-      public final static int DELETE_TASK = R.id.menu_delete_selected;
-      
-      public final static int EDIT_TASK = R.id.menu_edit_selected;
-   }
-   
    private ITaskFragmentListener listener;
    
    @InstanceState( key = Config.TASK_ID )
@@ -227,23 +213,23 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.COMPLETE_TASK:
+         case R.id.menu_complete_selected_tasks:
             listener.onCompleteTask( getLoaderDataAssertNotNull() );
             return true;
             
-         case OptionsMenu.UNCOMPLETE_TASK:
+         case R.id.menu_uncomplete_selected_tasks:
             listener.onIncompleteTask( getLoaderDataAssertNotNull() );
             return true;
             
-         case OptionsMenu.POSTPONE_TASK:
+         case R.id.menu_postpone_selected_tasks:
             listener.onPostponeTask( getLoaderDataAssertNotNull() );
             return true;
             
-         case OptionsMenu.DELETE_TASK:
+         case R.id.menu_delete_selected:
             listener.onDeleteTask( getLoaderDataAssertNotNull() );
             return true;
             
-         case OptionsMenu.EDIT_TASK:
+         case R.id.menu_edit_selected:
             listener.onEditTask( getLoaderDataAssertNotNull() );
             
          default :

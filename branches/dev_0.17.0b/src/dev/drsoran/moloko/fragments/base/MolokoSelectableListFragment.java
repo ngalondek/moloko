@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
@@ -36,16 +37,17 @@ import android.widget.ListAdapter;
 
 import com.actionbarsherlock.view.ActionMode;
 
-import dev.drsoran.moloko.IOnSelectionChangesListener;
 import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.IBaseSelectableActionModeListener;
+import dev.drsoran.moloko.adapters.IOnSelectionChangesListener;
 import dev.drsoran.moloko.adapters.ISelectableAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
 
 
 public abstract class MolokoSelectableListFragment< D extends Parcelable >
          extends MolokoListFragment< D > implements OnItemLongClickListener,
-         IOnSelectionChangesListener< D >, IBaseSelectableActionModeListener
+         IOnSelectionChangesListener< D >,
+         IBaseSelectableActionModeListener< D >
 {
    @InstanceState( key = "is_selection_mode",
                    defaultValue = InstanceState.NO_DEFAULT )
@@ -58,12 +60,30 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
    
    private BaseSelectableActionModeCallback< D > actionModeCallback;
    
+   private OnItemLongClickListener longClickListener;
+   
    
    
    protected MolokoSelectableListFragment()
    {
       registerAnnotatedConfiguredInstance( this,
                                            MolokoSelectableListFragment.class );
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      if ( activity instanceof OnItemLongClickListener )
+      {
+         longClickListener = (OnItemLongClickListener) activity;
+      }
+      else
+      {
+         longClickListener = this;
+      }
    }
    
    
@@ -106,7 +126,21 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      getListView().setOnItemLongClickListener( this );
+      setOnItemLongClickListener( longClickListener );
+   }
+   
+   
+   
+   public void setOnItemLongClickListener( OnItemLongClickListener listener )
+   {
+      getListView().setOnItemLongClickListener( listener );
+   }
+   
+   
+   
+   public OnItemLongClickListener getOnItemLongClickListener()
+   {
+      return getListView().getOnItemLongClickListener();
    }
    
    
@@ -117,6 +151,7 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
                                    int position,
                                    long id )
    {
+      
       final D item = getSelectableListAdapter().getItem( position );
       final List< D > selectedItems = Collections.singletonList( item );
       
@@ -163,14 +198,6 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
    
    
    
-   @Override
-   public void onFinishActionMode()
-   {
-      deactivateSelectionMode();
-   }
-   
-   
-   
    protected void onSelectionModeStarted( ActionMode mode,
                                           BaseSelectableActionModeCallback< D > callback )
    {
@@ -178,8 +205,17 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
    
    
    
-   protected void onSelectionModeStopped( ActionMode mode,
-                                          BaseSelectableActionModeCallback< D > callback )
+   @Override
+   public void onFinishingSelectionMode( ActionMode mode,
+                                         BaseSelectableActionModeCallback< D > callback )
+   {
+      deactivateSelectionMode();
+   }
+   
+   
+   
+   protected void onSelectionModeFinished( ActionMode mode,
+                                           BaseSelectableActionModeCallback< D > callback )
    {
       final ISelectableAdapter< D > adapter = getSelectableListAdapter();
       
@@ -210,6 +246,8 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
       actionModeCallback.setActionModeListener( this );
       activeActionMode = getSherlockActivity().startActionMode( actionModeCallback );
       
+      setRetainInstance( true );
+      
       onSelectionModeStarted( activeActionMode, actionModeCallback );
    }
    
@@ -226,7 +264,9 @@ public abstract class MolokoSelectableListFragment< D extends Parcelable >
       actionModeCallback = null;
       activeActionMode = null;
       
-      onSelectionModeStopped( actionMode, callBack );
+      setRetainInstance( false );
+      
+      onSelectionModeFinished( actionMode, callBack );
    }
    
    

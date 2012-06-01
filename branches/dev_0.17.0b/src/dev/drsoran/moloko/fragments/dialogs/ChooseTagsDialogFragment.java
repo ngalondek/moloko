@@ -145,7 +145,7 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
       
       final Activity activity = getSherlockActivity();
       
-      final Dialog dialog = new AlertDialog.Builder( activity ).setTitle( getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
+      final Dialog dialog = new AlertDialog.Builder( activity ).setTitle( getResources().getQuantityString( R.plurals.taskslist_open_tags,
                                                                                                             tagStrings.length ) )
                                                                .setIcon( R.drawable.ic_dialog_tag )
                                                                .setMultiChoiceItems( tagStrings,

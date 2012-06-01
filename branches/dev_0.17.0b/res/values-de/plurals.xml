@@ -102,11 +102,11 @@
         <item quantity="other">%1$d erledigt</item>
     </plurals>
 
-    <!-- TasksList activity -->
+    <!-- TasksList -->
     <!-- Menus -->
-    <plurals name="taskslist_listitem_ctx_tags">
-        <item quantity="one">Zeige Aufgaben mit \'%1$s\'</item>
-        <item quantity="other">Zeige Aufgaben mit Tags...</item>
+    <plurals name="taskslist_open_tags">
+        <item quantity="one">Aufgaben mit \'%1$s\'</item>
+        <item quantity="other">Aufgaben mit Tags...</item>
     </plurals>
 
 </resources>

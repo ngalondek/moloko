@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,16 +30,16 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.rtm.Contact;
 
 
-public class ContactsListAdapter extends ArrayAdapter< Contact >
+public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
 {
    private final static String TAG = "Moloko."
       + ContactsListAdapter.class.getName();
@@ -53,19 +51,18 @@ public class ContactsListAdapter extends ArrayAdapter< Contact >
    private final LayoutInflater inflater;
    
    
-
-   public ContactsListAdapter( Context context, int resourceId,
-      List< Contact > contacts )
+   
+   public ContactsListAdapter( Context context, int resourceId )
    {
-      super( context, 0, contacts );
+      super( context );
       
       this.context = context;
       this.resourceId = resourceId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -122,12 +119,21 @@ public class ContactsListAdapter extends ArrayAdapter< Contact >
       return convertView;
    }
    
-
-
+   
+   
+   @Override
+   public long getItemId( int position )
+   {
+      return Long.parseLong( getItem( position ).getId() );
+   }
+   
+   
+   
    private int setCallButton( final View view, final Contact contact )
    {
       view.setOnClickListener( new OnClickListener()
       {
+         @Override
          public void onClick( final View v )
          {
             final Intent intent = new Intent( Intent.ACTION_VIEW,

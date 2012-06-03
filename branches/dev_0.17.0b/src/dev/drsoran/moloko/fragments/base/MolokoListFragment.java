@@ -33,7 +33,6 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.mdt.rtm.data.RtmAuth;
@@ -41,6 +40,7 @@ import com.mdt.rtm.data.RtmAuth;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 import dev.drsoran.moloko.fragments.base.impl.LoaderListFragmentImpl;
@@ -332,18 +332,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
-   public void onListAdapterCreated( ListAdapter listAdapter, List< D > result )
-   {
-   }
-   
-   
-   
-   public void onListAdapterDestroyed()
-   {
-   }
-   
-   
-   
    @Override
    public abstract View onCreateView( LayoutInflater inflater,
                                       ViewGroup container,
@@ -367,5 +355,5 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
-   public abstract ListAdapter createListAdapterForResult( List< D > result );
+   public abstract SwappableArrayAdapter< D > createListAdapter();
 }

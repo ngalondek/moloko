@@ -31,20 +31,16 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 import android.widget.TextView;
-
-import com.actionbarsherlock.view.ActionMode;
-
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
+import dev.drsoran.moloko.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.activities.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
-import dev.drsoran.moloko.adapters.ISelectableAdapter;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.rtm.Task;
@@ -159,12 +155,10 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public ListAdapter createListAdapterForResult( List< Task > result,
-                                                  IFilter filter )
+   public SwappableArrayAdapter< Task > createListAdapter( IFilter filter )
    {
       final int flags = 0;
-      return new FullDetailedTasksListFragmentAdapter( getSherlockActivity(),
-                                                       result,
+      return new FullDetailedTasksListFragmentAdapter( getMolokoListView(),
                                                        filter,
                                                        flags,
                                                        this );
@@ -181,38 +175,12 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   protected BaseSelectableActionModeCallback< Task > createActionModeCallback()
+   public BaseMultiChoiceModeListener< Task > createMultiCoiceModeListener()
    {
       final TasksListActionModeCallback callback = new TasksListActionModeCallback( (MolokoFragmentActivity) getSherlockActivity(),
-                                                                                    getListAdapter() );
+                                                                                    getMolokoListView() );
       callback.setTasksListActionModeListener( listener );
+      
       return callback;
-   }
-   
-   
-   
-   @Override
-   protected void configureListAdapterForSelectionMode()
-   {
-      super.configureListAdapterForSelectionMode();
-      getListAdapter().setSelectable( true );
-   }
-   
-   
-   
-   @Override
-   protected void onSelectionModeFinished( ActionMode mode,
-                                           BaseSelectableActionModeCallback< Task > callback )
-   {
-      super.onSelectionModeFinished( mode, callback );
-      getListAdapter().setSelectable( false );
-   }
-   
-   
-   
-   @Override
-   protected ISelectableAdapter< Task > getSelectableListAdapter()
-   {
-      return getListAdapter();
    }
 }

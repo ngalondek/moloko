@@ -29,19 +29,15 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
-
-import com.actionbarsherlock.view.ActionMode;
-
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
+import dev.drsoran.moloko.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
 import dev.drsoran.moloko.activities.MolokoFragmentActivity;
-import dev.drsoran.moloko.adapters.ISelectableAdapter;
 import dev.drsoran.moloko.adapters.MinDetailedTasksListFragmentAdapter;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.rtm.Task;
@@ -106,11 +102,9 @@ public class MinDetailedTasksListFragment extends
    
    
    @Override
-   public ListAdapter createListAdapterForResult( List< Task > result,
-                                                  IFilter filter )
+   public SwappableArrayAdapter< Task > createListAdapter( IFilter filter )
    {
-      return new MinDetailedTasksListFragmentAdapter( getSherlockActivity(),
-                                                      result );
+      return new MinDetailedTasksListFragmentAdapter( getMolokoListView() );
    }
    
    
@@ -124,36 +118,9 @@ public class MinDetailedTasksListFragment extends
    
    
    @Override
-   protected BaseSelectableActionModeCallback< Task > createActionModeCallback()
+   public BaseMultiChoiceModeListener< Task > createMultiCoiceModeListener()
    {
       return new TasksListActionModeCallback( (MolokoFragmentActivity) getSherlockActivity(),
-                                              getListAdapter() );
-   }
-   
-   
-   
-   @Override
-   protected void configureListAdapterForSelectionMode()
-   {
-      super.configureListAdapterForSelectionMode();
-      getListAdapter().setSelectable( true );
-   }
-   
-   
-   
-   @Override
-   protected void onSelectionModeFinished( ActionMode mode,
-                                           BaseSelectableActionModeCallback< Task > callback )
-   {
-      super.onSelectionModeFinished( mode, callback );
-      getListAdapter().setSelectable( false );
-   }
-   
-   
-   
-   @Override
-   protected ISelectableAdapter< Task > getSelectableListAdapter()
-   {
-      return getListAdapter();
+                                              getMolokoListView() );
    }
 }

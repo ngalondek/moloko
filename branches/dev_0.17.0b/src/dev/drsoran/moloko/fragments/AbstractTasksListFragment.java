@@ -41,8 +41,9 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.base.MolokoSelectableListFragment;
+import dev.drsoran.moloko.fragments.base.MolokoMultiChoiceModalListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
@@ -53,7 +54,7 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
-         MolokoSelectableListFragment< T >
+         MolokoMultiChoiceModalListFragment< T >
 {
    protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
    
@@ -206,7 +207,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
-      if ( listener != null && !isSelectionMode() )
+      if ( listener != null )
       {
          listener.onOpenTask( position );
       }
@@ -356,9 +357,9 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public ListAdapter createListAdapterForResult( List< T > result )
+   public SwappableArrayAdapter< T > createListAdapter()
    {
-      return createListAdapterForResult( result, getFilter() );
+      return createListAdapter( getFilter() );
    }
    
    
@@ -388,6 +389,5 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected abstract ListAdapter createListAdapterForResult( List< T > result,
-                                                              IFilter filter );
+   protected abstract SwappableArrayAdapter< T > createListAdapter( IFilter filter );
 }

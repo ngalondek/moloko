@@ -25,7 +25,6 @@ package dev.drsoran.moloko.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -40,6 +39,7 @@ import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
+import dev.drsoran.moloko.widgets.MolokoListView;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
@@ -61,14 +61,12 @@ public class FullDetailedTasksListFragmentAdapter extends
    
    
    
-   public FullDetailedTasksListFragmentAdapter( Context context,
-      List< Task > tasks, IFilter filter, int flags,
-      OnClickListener onClickListener )
+   public FullDetailedTasksListFragmentAdapter( MolokoListView listView,
+      IFilter filter, int flags, OnClickListener onClickListener )
    {
-      super( context,
+      super( listView,
              R.layout.fulldetailed_taskslist_listitem,
-             R.layout.mindetailed_selectable_taskslist_listitem,
-             tasks );
+             R.layout.mindetailed_selectable_taskslist_listitem );
       
       this.flags = flags;
       this.filter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
@@ -107,7 +105,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    {
       convertView = super.getView( position, convertView, parent );
       
-      if ( !isSelectable() )
+      if ( !isInMultiChoiceModalActionMode() )
       {
          final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
          final ViewGroup additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
@@ -217,7 +215,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    @Override
    protected boolean mustSwitchLayout( View convertView )
    {
-      if ( isSelectable() )
+      if ( isInMultiChoiceModalActionMode() )
       {
          return convertView.findViewById( R.id.taskslist_selectable_mindetailed_listitem ) == null;
       }

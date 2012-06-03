@@ -355,7 +355,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
                                                                         notesToDelete );
       applyModifications( modifications );
       
-      notesListFragment.stopSelectionMode();
+      // TODO: Move to actionmode?
+      // notesListFragment.stopSelectionMode();
    }
    
    

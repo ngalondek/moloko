@@ -57,17 +57,13 @@ abstract class LoaderFragmentImplBase< D >
       Loader< D > newLoaderInstance( int id, Bundle config );
    }
    
-   
-   public static class Config
-   {
-      public final static String RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
-   }
+   private final static String RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
    
    private final Fragment fragment;
    
    private final LoaderCallbacks< D > loaderCallbacks;
    
-   private final IConfigurable config;
+   private final IConfigurable configurable;
    
    private final Support< D > support;
    
@@ -77,18 +73,18 @@ abstract class LoaderFragmentImplBase< D >
    
    private boolean loaderNotDataFound;
    
-   @InstanceState( key = Config.RESPECT_CONTENT_CHANGES, defaultValue = "true" )
+   @InstanceState( key = RESPECT_CONTENT_CHANGES, defaultValue = "true" )
    private boolean respectContentChanges = true;
    
    
    
    @SuppressWarnings( "unchecked" )
    protected LoaderFragmentImplBase( Fragment fragment,
-      LoaderCallbacks< D > loaderCallbacks, IConfigurable config )
+      LoaderCallbacks< D > loaderCallbacks, IConfigurable configurable )
    {
       this.fragment = fragment;
       this.loaderCallbacks = loaderCallbacks;
-      this.config = config;
+      this.configurable = configurable;
       this.support = (Support< D >) fragment;
    }
    
@@ -96,8 +92,8 @@ abstract class LoaderFragmentImplBase< D >
    
    public void onAttach( Activity activity )
    {
-      config.registerAnnotatedConfiguredInstance( this,
-                                                  LoaderFragmentImplBase.class );
+      configurable.registerAnnotatedConfiguredInstance( this,
+                                                        LoaderFragmentImplBase.class );
       
       if ( activity instanceof ILoaderFragmentListener )
          loaderListener = (ILoaderFragmentListener) activity;
@@ -109,18 +105,19 @@ abstract class LoaderFragmentImplBase< D >
    
    public void onCreate( Bundle savedInstanceState )
    {
+      final Bundle config;
       if ( savedInstanceState != null )
       {
-         config.configure( savedInstanceState );
+         config = savedInstanceState;
       }
       else
       {
-         final Bundle bundle = new Bundle();
-         bundle.putBoolean( Config.RESPECT_CONTENT_CHANGES,
+         config = new Bundle();
+         config.putBoolean( RESPECT_CONTENT_CHANGES,
                             isRespectingContentChanges() );
-         
-         config.configure( bundle );
       }
+      
+      configurable.configure( config );
    }
    
    

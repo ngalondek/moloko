@@ -24,7 +24,6 @@ package dev.drsoran.moloko.adapters;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import android.content.Context;
 import android.view.View;
@@ -33,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.adapters.base.LayoutSwitchMultiChoiceModalAdapter;
 import dev.drsoran.moloko.sort.CompositeComparator;
 import dev.drsoran.moloko.sort.SortTaskDueDate;
 import dev.drsoran.moloko.sort.SortTaskName;
@@ -40,23 +40,21 @@ import dev.drsoran.moloko.sort.SortTaskPriority;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.widgets.MolokoListView;
 import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTasksListFragmentAdapter extends
-         SwitchSelectableArrayAdapter< Task >
+         LayoutSwitchMultiChoiceModalAdapter< Task >
 {
-   private final Context context;
-   
    private final MolokoCalendar setDueDateCalendar = MolokoCalendar.getInstance();
    
    
    
-   protected AbstractTasksListFragmentAdapter( Context context,
-      int unselectedResourceId, int selectedResourceId, List< Task > tasks )
+   protected AbstractTasksListFragmentAdapter( MolokoListView listView,
+      int unselectedResourceId, int selectedResourceId )
    {
-      super( context, unselectedResourceId, selectedResourceId, tasks );
-      this.context = context;
+      super( listView, unselectedResourceId, selectedResourceId );
    }
    
    
@@ -96,6 +94,14 @@ abstract class AbstractTasksListFragmentAdapter extends
    
    
    
+   @Override
+   public long getItemId( int position )
+   {
+      return Long.parseLong( getItem( position ).getId() );
+   }
+   
+   
+   
    private void defaultInitializeListItemView( int position, View convertView )
    {
       final ImageView completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
@@ -128,6 +134,8 @@ abstract class AbstractTasksListFragmentAdapter extends
    
    private void setDueDate( TextView view, MolokoCalendar cal )
    {
+      final Context context = getContext();
+      
       // if has a due date
       if ( cal.hasDate() )
       {

@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.view.View;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 
 
@@ -40,11 +41,7 @@ public class LoaderListFragmentImpl< D > extends
    public static interface Support< D > extends
             LoaderFragmentImplBase.Support< List< D > >
    {
-      ListAdapter getListAdapter();
-      
-      
-      
-      ListAdapter createListAdapterForResult( List< D > result );
+      SwappableArrayAdapter< D > createListAdapter();
    }
    
    private final MolokoListFragment< D > fragment;
@@ -68,7 +65,9 @@ public class LoaderListFragmentImpl< D > extends
    
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      if ( support.getListAdapter() == null && support.isReadyToStartLoader() )
+      fragment.setListAdapter( support.createListAdapter() );
+      
+      if ( support.isReadyToStartLoader() )
       {
          startLoader();
       }
@@ -96,17 +95,16 @@ public class LoaderListFragmentImpl< D > extends
    @Override
    public void onLoadFinished( Loader< List< D > > loader, List< D > data )
    {
+      @SuppressWarnings( "unchecked" )
+      final SwappableArrayAdapter< D > listAdapter = (SwappableArrayAdapter< D >) fragment.getListAdapter();
+      
       if ( data != null )
       {
-         final ListAdapter adapter = support.createListAdapterForResult( data );
-         
-         fragment.setListAdapter( adapter );
-         fragment.onListAdapterCreated( adapter, data );
+         listAdapter.swap( data );
       }
       else
       {
-         fragment.setListAdapter( null );
-         fragment.onListAdapterDestroyed();
+         listAdapter.swap( Collections.< D > emptyList() );
          fragment.getLoaderManager().destroyLoader( support.getLoaderId() );
       }
       
@@ -140,7 +138,6 @@ public class LoaderListFragmentImpl< D > extends
    
    private void notifyDataSetChanged()
    {
-      if ( fragment.getListAdapter() instanceof BaseAdapter )
-         ( (BaseAdapter) fragment.getListAdapter() ).notifyDataSetChanged();
+      ( (BaseAdapter) fragment.getListAdapter() ).notifyDataSetChanged();
    }
 }

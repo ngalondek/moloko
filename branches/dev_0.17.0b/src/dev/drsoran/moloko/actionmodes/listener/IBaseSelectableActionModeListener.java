@@ -24,11 +24,11 @@ package dev.drsoran.moloko.actionmodes.listener;
 
 import com.actionbarsherlock.view.ActionMode;
 
-import dev.drsoran.moloko.actionmodes.BaseSelectableActionModeCallback;
+import dev.drsoran.moloko.actionmodes.BaseMultiChoiceModeListener;
 
 
 public interface IBaseSelectableActionModeListener< T >
 {
    void onFinishingSelectionMode( ActionMode mode,
-                                  BaseSelectableActionModeCallback< T > callback );
+                                  BaseMultiChoiceModeListener< T > callback );
 }

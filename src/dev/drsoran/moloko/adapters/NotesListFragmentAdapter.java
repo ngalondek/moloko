@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.List;
-
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -33,24 +31,22 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.base.MultiChoiceModalArrayAdapter;
+import dev.drsoran.moloko.fragments.NotesListFragment;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 public class NotesListFragmentAdapter extends
-         SwitchSelectableArrayAdapter< RtmTaskNote >
+         MultiChoiceModalArrayAdapter< RtmTaskNote >
 {
    private final MolokoListFragment< RtmTaskNote > fragment;
    
    
    
-   public NotesListFragmentAdapter( MolokoListFragment< RtmTaskNote > fragment,
-      List< RtmTaskNote > notes )
+   public NotesListFragmentAdapter( NotesListFragment fragment )
    {
-      super( fragment.getSherlockActivity(),
-             R.layout.noteslist_listitem,
-             R.layout.noteslist_listitem,
-             notes );
+      super( fragment.getMolokoListView(), R.layout.noteslist_listitem );
       this.fragment = fragment;
    }
    
@@ -65,6 +61,14 @@ public class NotesListFragmentAdapter extends
       initNoteListItem( note, (ViewGroup) convertView );
       
       return convertView;
+   }
+   
+   
+   
+   @Override
+   public long getItemId( int position )
+   {
+      return Long.parseLong( getItem( position ).getId() );
    }
    
    
@@ -99,13 +103,5 @@ public class NotesListFragmentAdapter extends
       {
          noteTextView.setVisibility( View.GONE );
       }
-   }
-   
-   
-   
-   @Override
-   protected boolean mustSwitchLayout( View convertView )
-   {
-      return false;
    }
 }

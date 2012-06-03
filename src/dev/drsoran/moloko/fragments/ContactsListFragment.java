@@ -33,13 +33,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.actionbarsherlock.view.Menu;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ContactsListAdapter;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.loaders.ContactsLoader;
@@ -173,11 +173,10 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
    
    
    @Override
-   public ListAdapter createListAdapterForResult( List< Contact > result )
+   public SwappableArrayAdapter< Contact > createListAdapter()
    {
       return new ContactsListAdapter( getSherlockActivity(),
-                                      R.layout.contactslist_activity_listitem,
-                                      result );
+                                      R.layout.contactslist_activity_listitem );
    }
    
    

@@ -22,26 +22,22 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.List;
-
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.widgets.MolokoListView;
 import dev.drsoran.rtm.Task;
 
 
 public class MinDetailedTasksListFragmentAdapter extends
          AbstractTasksListFragmentAdapter
 {
-   public MinDetailedTasksListFragmentAdapter( Context context,
-      List< Task > tasks )
+   public MinDetailedTasksListFragmentAdapter( MolokoListView listView )
    {
-      super( context,
+      super( listView,
              R.layout.mindetailed_taskslist_listitem,
-             R.layout.mindetailed_selectable_taskslist_listitem,
-             tasks );
+             R.layout.mindetailed_selectable_taskslist_listitem );
    }
    
    
@@ -51,7 +47,7 @@ public class MinDetailedTasksListFragmentAdapter extends
    {
       convertView = super.getView( position, convertView, parent );
       
-      if ( !isSelectable() )
+      if ( !isInMultiChoiceModalActionMode() )
       {
          final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
          final Task task = getItem( position );
@@ -67,7 +63,7 @@ public class MinDetailedTasksListFragmentAdapter extends
    @Override
    protected boolean mustSwitchLayout( View convertView )
    {
-      if ( isSelectable() )
+      if ( isInMultiChoiceModalActionMode() )
       {
          return convertView.findViewById( R.id.taskslist_selectable_mindetailed_listitem ) == null;
       }

@@ -11,27 +11,22 @@
       details. You should have received a copy of the GNU General Public
       License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
+      implementation
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<dev.drsoran.moloko.layouts.CheckableListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/content"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
-
-    <LinearLayout
-        android:id="@+id/animation"
+    
+    <CheckBox
+        android:id="@+id/checkable"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"        
-        android:animateLayoutChanges="true"
-        android:layoutAnimation="@anim/layout_slide_in_left" >
-
-        <CheckBox
-            android:id="@android:id/checkbox"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="gone" />
-    </LinearLayout>
+        android:layout_height="fill_parent"
+        android:gravity="top|left"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -93,4 +88,4 @@
             android:text="Text" />
     </RelativeLayout>
 
-</LinearLayout>
+</dev.drsoran.moloko.layouts.CheckableListItem>

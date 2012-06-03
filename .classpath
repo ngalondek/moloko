@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*.g|**/*.tokens|dev/drsoran/moloko/activities/RtmSmartFilterTestActivity.java|dev/drsoran/moloko/QuickAddTaskActionBarSwitcher.java|dev/drsoran/moloko/fragments/SelectableTasksListsFragment.java|dev/drsoran/moloko/fragments/listeners/ISelectableTasksListFragmentListener.java|dev/drsoran/moloko/adapters/SelectableTasksListFragmentAdapter.java|dev/drsoran/moloko/activities/SelectMultipleTasksActivity.java|dev/drsoran/moloko/fragments/factories/TasksListFragmentFactory.java" kind="src" path="src"/>
+	<classpathentry excluding="**/*.g|**/*.tokens|dev/drsoran/moloko/activities/RtmSmartFilterTestActivity.java|dev/drsoran/moloko/QuickAddTaskActionBarSwitcher.java|dev/drsoran/moloko/fragments/SelectableTasksListsFragment.java|dev/drsoran/moloko/fragments/listeners/ISelectableTasksListFragmentListener.java|dev/drsoran/moloko/adapters/SelectableTasksListFragmentAdapter.java|dev/drsoran/moloko/activities/SelectMultipleTasksActivity.java|dev/drsoran/moloko/fragments/factories/TasksListFragmentFactory.java|dev/drsoran/moloko/fragments/base/impl/SelectableCompatibilityImplBase.java|dev/drsoran/moloko/fragments/base/impl/SelectableListCompatibilityImpl.java|dev/drsoran/moloko/adapters/SelectableArrayAdapter.java|dev/drsoran/moloko/adapters/IMultiChoiceListAdapter.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="aidl"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>

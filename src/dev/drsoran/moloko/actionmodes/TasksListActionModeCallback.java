@@ -35,12 +35,12 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.activities.MolokoFragmentActivity;
-import dev.drsoran.moloko.adapters.ISelectableAdapter;
+import dev.drsoran.moloko.widgets.MolokoListView;
 import dev.drsoran.rtm.Task;
 
 
 public class TasksListActionModeCallback extends
-         BaseSelectableActionModeCallback< Task >
+         BaseMultiChoiceModeListener< Task >
 {
    private final MolokoFragmentActivity context;
    
@@ -49,9 +49,9 @@ public class TasksListActionModeCallback extends
    
    
    public TasksListActionModeCallback( MolokoFragmentActivity context,
-      ISelectableAdapter< Task > adapter )
+      MolokoListView listView )
    {
-      super( context, adapter );
+      super( listView );
       this.context = context;
    }
    
@@ -88,10 +88,10 @@ public class TasksListActionModeCallback extends
    {
       super.onPrepareActionMode( mode, menu );
       
-      final ISelectableAdapter< Task > adapter = getAdapter();
-      final int selectedCount = adapter.getSelectedCount();
+      final int selectedCount = getListView().getCheckedItemCountSupport();
+      final boolean isLoaderDataAvailable = getAdapter().getCount() > 0;
       
-      final boolean showRwdItems = selectedCount > 0
+      final boolean showRwdItems = selectedCount > 0 && isLoaderDataAvailable
          && context.isWritableAccess();
       menu.setGroupVisible( R.id.menu_group_at_least_one_selected, showRwdItems );
       if ( showRwdItems )
@@ -99,7 +99,8 @@ public class TasksListActionModeCallback extends
          prepareRwdActionMenu( menu );
       }
       
-      final boolean showSingleSelectionItems = selectedCount == 1;
+      final boolean showSingleSelectionItems = selectedCount == 1
+         && isLoaderDataAvailable;
       menu.setGroupVisible( R.id.menu_group_single_selection,
                             showSingleSelectionItems );
       if ( showSingleSelectionItems )
@@ -114,9 +115,8 @@ public class TasksListActionModeCallback extends
    
    private void prepareRwdActionMenu( Menu menu )
    {
-      final ISelectableAdapter< Task > adapter = getAdapter();
-      final int selectedCount = adapter.getSelectedCount();
-      final Pair< Integer, Integer > selectedCompletedUncompletedCount = getSelectedCompletedUncompletedCount( adapter );
+      final int selectedCount = getListView().getCheckedItemCountSupport();
+      final Pair< Integer, Integer > selectedCompletedUncompletedCount = getSelectedCompletedUncompletedCount();
       
       menu.findItem( R.id.menu_edit_selected )
           .setTitle( context.getString( R.string.select_multiple_tasks_menu_opt_do_edit,
@@ -187,23 +187,23 @@ public class TasksListActionModeCallback extends
          switch ( item.getItemId() )
          {
             case R.id.menu_complete_selected_tasks:
-               listener.onCompleteTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
+               listener.onCompleteTasks( new ArrayList< Task >( getSelectedItems() ) );
                break;
             
             case R.id.menu_uncomplete_selected_tasks:
-               listener.onIncompleteTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
+               listener.onIncompleteTasks( new ArrayList< Task >( getSelectedItems() ) );
                break;
             
             case R.id.menu_edit_selected:
-               listener.onEditTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
+               listener.onEditTasks( new ArrayList< Task >( getSelectedItems() ) );
                break;
             
             case R.id.menu_postpone_selected_tasks:
-               listener.onPostponeTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
+               listener.onPostponeTasks( new ArrayList< Task >( getSelectedItems() ) );
                break;
             
             case R.id.menu_delete_selected:
-               listener.onDeleteTasks( new ArrayList< Task >( getAdapter().getSelectedItems() ) );
+               listener.onDeleteTasks( new ArrayList< Task >( getSelectedItems() ) );
                break;
             
             case R.id.menu_open_tags:
@@ -233,11 +233,11 @@ public class TasksListActionModeCallback extends
    
    
    
-   private static Pair< Integer, Integer > getSelectedCompletedUncompletedCount( ISelectableAdapter< Task > adapter )
+   private Pair< Integer, Integer > getSelectedCompletedUncompletedCount()
    {
       int selCompl = 0, selUncompl = 0;
       
-      for ( Task task : adapter.getSelectedItems() )
+      for ( Task task : getSelectedItems() )
       {
          if ( task.getCompleted() != null )
             ++selCompl;
@@ -253,6 +253,6 @@ public class TasksListActionModeCallback extends
    
    private Task getSelectedTask()
    {
-      return getAdapter().getSelectedItems().iterator().next();
+      return (Task) getListView().getSelectedItem();
    }
 }

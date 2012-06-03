@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.actionmodes;
 
-import android.content.Context;
-
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -31,20 +29,19 @@ import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.listener.INotesListActionModeListener;
-import dev.drsoran.moloko.adapters.ISelectableAdapter;
+import dev.drsoran.moloko.widgets.MolokoListView;
 
 
 public class NotesListActionModeCallback extends
-         BaseSelectableActionModeCallback< RtmTaskNote >
+         BaseMultiChoiceModeListener< RtmTaskNote >
 {
    INotesListActionModeListener listener;
    
    
    
-   public NotesListActionModeCallback( Context context,
-      ISelectableAdapter< RtmTaskNote > adapter )
+   public NotesListActionModeCallback( MolokoListView listView )
    {
-      super( context, adapter );
+      super( listView );
    }
    
    
@@ -85,7 +82,8 @@ public class NotesListActionModeCallback extends
          case R.id.menu_delete_selected:
             if ( listener != null )
             {
-               listener.onDeleteNotes( getAdapter().getSelectedItems() );
+               // TODO:
+               // listener.onDeleteNotes( getAdapter().getSelectedItems() );
                return true;
             }
             return false;

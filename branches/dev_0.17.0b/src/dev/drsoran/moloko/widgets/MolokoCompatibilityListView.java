@@ -32,6 +32,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -323,41 +324,44 @@ public class MolokoCompatibilityListView extends MolokoListView implements
    {
       if ( isMultiChoiceModalMode )
       {
-         final boolean newValue = !checkStates.get( position, false );
-         checkStates.put( position, newValue );
-         
-         if ( checkedIdStates != null && adapter.hasStableIds() )
+         if ( choiceActionMode != null )
          {
+            final boolean newValue = !checkStates.get( position, false );
+            checkStates.put( position, newValue );
+            
+            if ( checkedIdStates != null && adapter.hasStableIds() )
+            {
+               if ( newValue )
+               {
+                  checkedIdStates.put( adapter.getItemId( position ), position );
+               }
+               else
+               {
+                  checkedIdStates.remove( adapter.getItemId( position ) );
+               }
+            }
+            
             if ( newValue )
             {
-               checkedIdStates.put( adapter.getItemId( position ), position );
+               checkedItemCount++;
+               super.setItemChecked( position, true );
             }
             else
             {
-               checkedIdStates.remove( adapter.getItemId( position ) );
+               checkedItemCount--;
+               super.setItemChecked( position, false );
             }
-         }
-         
-         if ( newValue )
-         {
-            checkedItemCount++;
-         }
-         else
-         {
-            checkedItemCount--;
-         }
-         
-         if ( choiceActionMode != null )
-         {
+            
             multiChoiceModeCallback.onItemCheckedStateChanged( choiceActionMode,
                                                                position,
                                                                id,
                                                                newValue );
+            return true;
          }
-         
-         invalidateViews();
-         
-         return true;
+         else
+         {
+            return compatibilityPerformItemClicked( view, position, id );
+         }
       }
       else
       {
@@ -578,6 +582,23 @@ public class MolokoCompatibilityListView extends MolokoListView implements
       {
          choiceActionMode.invalidate();
       }
+   }
+   
+   
+   
+   private boolean compatibilityPerformItemClicked( View view,
+                                                    int position,
+                                                    long id )
+   {
+      final OnItemClickListener onItemClickListener = getOnItemClickListener();
+      if ( onItemClickListener != null )
+      {
+         playSoundEffect( SoundEffectConstants.CLICK );
+         onItemClickListener.onItemClick( this, view, position, id );
+         return true;
+      }
+      
+      return false;
    }
    
    

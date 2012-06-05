@@ -10,17 +10,15 @@
       for more details. You should have received a copy of the GNU General
       Public License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
+      implementation
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <group android:id="@+id/menu_group_single_selection" >
-        <item
-            android:id="@id/menu_open_tags"
-            android:showAsAction="never"/>
-        <item
-            android:id="@id/menu_open_tasks_at_loc"
-            android:showAsAction="never"/>
-    </group>
+    <item
+        android:id="@id/menu_open_tags"
+        android:showAsAction="never"/>
+    <item
+        android:id="@id/menu_open_tasks_at_loc"
+        android:showAsAction="never"/>
 
 </menu>

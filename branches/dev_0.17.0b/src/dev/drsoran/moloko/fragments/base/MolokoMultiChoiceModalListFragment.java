@@ -73,7 +73,7 @@ public abstract class MolokoMultiChoiceModalListFragment< D > extends
                }
             } );
             
-            molokoListView.setMolokoMultiChoiceModeListener( createMultiCoiceModeListener() );
+            molokoListView.setMolokoMultiChoiceModeListener( createMultiCoiceModalModeListener() );
          }
       }
       
@@ -106,5 +106,5 @@ public abstract class MolokoMultiChoiceModalListFragment< D > extends
    
    
    
-   public abstract IMolokoMultiChoiceModeListener createMultiCoiceModeListener();
+   public abstract IMolokoMultiChoiceModeListener createMultiCoiceModalModeListener();
 }

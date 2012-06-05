@@ -22,9 +22,7 @@
 
 package dev.drsoran.moloko.actionmodes;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import android.content.Context;
 import android.util.SparseBooleanArray;
@@ -136,36 +134,7 @@ public class BaseMultiChoiceModeListener< T > implements
    
    public Collection< T > getSelectedItems()
    {
-      final Collection< T > selectedItems;
-      final ListAdapter adapter = listView.getAdapter();
-      
-      if ( adapter.getCount() > 0 )
-      {
-         final SparseBooleanArray checkedPositions = listView.getCheckedItemPositions();
-         final int numSelected = checkedPositions.size();
-         
-         selectedItems = new ArrayList< T >( numSelected );
-         
-         for ( int i = 0; i < numSelected; ++i )
-         {
-            final int position = checkedPositions.keyAt( i );
-            final boolean isChecked = checkedPositions.get( position );
-            
-            if ( isChecked )
-            {
-               @SuppressWarnings( "unchecked" )
-               final T selectedItem = (T) adapter.getItem( position );
-               
-               selectedItems.add( selectedItem );
-            }
-         }
-      }
-      else
-      {
-         selectedItems = Collections.emptyList();
-      }
-      
-      return selectedItems;
+      return listView.getCheckedItems();
    }
    
    
@@ -231,6 +200,7 @@ public class BaseMultiChoiceModeListener< T > implements
                                           boolean checked )
    {
       updateTitle( mode );
+      mode.invalidate();
    }
    
    

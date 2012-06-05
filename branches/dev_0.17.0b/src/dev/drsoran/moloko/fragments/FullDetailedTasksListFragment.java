@@ -25,7 +25,6 @@ package dev.drsoran.moloko.fragments;
 import java.util.Collections;
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -35,10 +34,7 @@ import android.widget.TextView;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.actionmodes.BaseMultiChoiceModeListener;
-import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
-import dev.drsoran.moloko.activities.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
 import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.loaders.TasksLoader;
@@ -49,11 +45,6 @@ import dev.drsoran.rtm.Task;
 public class FullDetailedTasksListFragment extends
          AbstractTasksListFragment< Task > implements View.OnClickListener
 {
-   
-   private ITasksListActionModeListener listener;
-   
-   
-   
    public static FullDetailedTasksListFragment newInstance( Bundle configuration )
    {
       final FullDetailedTasksListFragment fragment = new FullDetailedTasksListFragment();
@@ -61,28 +52,6 @@ public class FullDetailedTasksListFragment extends
       fragment.setArguments( configuration );
       
       return fragment;
-   }
-   
-   
-   
-   @Override
-   public void onAttach( Activity activity )
-   {
-      super.onAttach( activity );
-      
-      if ( activity instanceof ITasksListActionModeListener )
-         listener = (ITasksListActionModeListener) activity;
-      else
-         listener = null;
-   }
-   
-   
-   
-   @Override
-   public void onDetach()
-   {
-      listener = null;
-      super.onDetach();
    }
    
    
@@ -100,17 +69,18 @@ public class FullDetailedTasksListFragment extends
    @Override
    public void onClick( View view )
    {
-      if ( listener != null )
+      final ITasksListActionModeListener actionModeListener = getActionModeListener();
+      if ( actionModeListener != null )
       {
          switch ( view.getId() )
          {
             case R.id.tags_layout_btn_tag:
                final String tag = ( (TextView) view ).getText().toString();
-               listener.onShowTasksWithTags( Collections.singletonList( tag ) );
+               actionModeListener.onShowTasksWithTags( Collections.singletonList( tag ) );
                break;
             
             case R.id.taskslist_listitem_location:
-               listener.onOpenTaskLocation( getTask( view ) );
+               actionModeListener.onOpenTaskLocation( getTask( view ) );
                break;
             
             default :
@@ -170,17 +140,5 @@ public class FullDetailedTasksListFragment extends
    public FullDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (FullDetailedTasksListFragmentAdapter) super.getListAdapter();
-   }
-   
-   
-   
-   @Override
-   public BaseMultiChoiceModeListener< Task > createMultiCoiceModeListener()
-   {
-      final TasksListActionModeCallback callback = new TasksListActionModeCallback( (MolokoFragmentActivity) getSherlockActivity(),
-                                                                                    getMolokoListView() );
-      callback.setTasksListActionModeListener( listener );
-      
-      return callback;
    }
 }

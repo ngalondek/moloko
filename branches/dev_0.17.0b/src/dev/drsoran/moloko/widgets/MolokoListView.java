@@ -22,8 +22,14 @@
 
 package dev.drsoran.moloko.widgets;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.SparseBooleanArray;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.actionbarsherlock.view.ActionMode;
@@ -37,6 +43,7 @@ public abstract class MolokoListView extends ListView
    
    public interface IActionModeSupport
    {
+      
       ActionMode startActionMode( IMolokoMultiChoiceModeListener callback );
       
       
@@ -101,6 +108,42 @@ public abstract class MolokoListView extends ListView
    public int getCheckedItemCount()
    {
       return super.getCheckedItemCount();
+   }
+   
+   
+   
+   public < T > List< T > getCheckedItems()
+   {
+      final List< T > checkedItems;
+      final ListAdapter adapter = getAdapter();
+      
+      if ( adapter.getCount() > 0 )
+      {
+         final SparseBooleanArray checkedPositions = getCheckedItemPositions();
+         final int numSelected = checkedPositions.size();
+         
+         checkedItems = new ArrayList< T >( numSelected );
+         
+         for ( int i = 0; i < numSelected; ++i )
+         {
+            final int position = checkedPositions.keyAt( i );
+            final boolean isChecked = checkedPositions.get( position );
+            
+            if ( isChecked )
+            {
+               @SuppressWarnings( "unchecked" )
+               final T selectedItem = (T) adapter.getItem( position );
+               
+               checkedItems.add( selectedItem );
+            }
+         }
+      }
+      else
+      {
+         checkedItems = Collections.emptyList();
+      }
+      
+      return checkedItems;
    }
    
    

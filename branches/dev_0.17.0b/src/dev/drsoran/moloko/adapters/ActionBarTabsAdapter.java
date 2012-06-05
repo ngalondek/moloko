@@ -43,9 +43,9 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
 {
    private static final class TabInfo
    {
-      private Class< ? extends Fragment > clazz;
+      private final Class< ? extends Fragment > clazz;
       
-      private Bundle args;
+      private final Bundle args;
       
       private Fragment fragment;
       
@@ -64,7 +64,7 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    
    private final ViewPager viewPager;
    
-   private final List< TabInfo > tabs = new ArrayList< TabInfo >();
+   private final List< TabInfo > tabInfos = new ArrayList< TabInfo >();
    
    
    
@@ -75,6 +75,7 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
       context = activity;
       actionBar = activity.getSupportActionBar();
       viewPager = pager;
+      
       viewPager.setAdapter( this );
       viewPager.setOnPageChangeListener( this );
    }
@@ -90,34 +91,10 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
       tab.setTag( info );
       tab.setTabListener( this );
       
-      tabs.add( info );
+      tabInfos.add( info );
       actionBar.addTab( tab );
       
       notifyDataSetChanged();
-   }
-   
-   
-   
-   public void replaceTabFragment( int position,
-                                   Class< ? extends Fragment > clazz,
-                                   Bundle args )
-   {
-      final TabInfo info = tabs.get( position );
-      info.clazz = clazz;
-      info.args = args;
-      
-      final Fragment oldFragment = info.fragment;
-      info.fragment = null;
-      
-      if ( oldFragment != null )
-      {
-         context.getSupportFragmentManager()
-                .beginTransaction()
-                .remove( oldFragment )
-                .commit();
-         
-         notifyDataSetChanged();
-      }
    }
    
    
@@ -149,12 +126,13 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    @Override
    public void onTabSelected( Tab tab, FragmentTransaction ft )
    {
-      final Object tag = tab.getTag();
-      for ( int i = 0; i < tabs.size(); i++ )
+      final Object tabInfo = tab.getTag();
+      for ( int i = 0; i < tabInfos.size(); i++ )
       {
-         if ( tabs.get( i ) == tag )
+         if ( tabInfos.get( i ) == tabInfo )
          {
             viewPager.setCurrentItem( i );
+            break;
          }
       }
    }
@@ -178,7 +156,7 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    @Override
    public Fragment getItem( int position )
    {
-      final TabInfo info = tabs.get( position );
+      final TabInfo info = tabInfos.get( position );
       info.fragment = DefaultFragmentFactory.create( context,
                                                      info.clazz,
                                                      info.args );
@@ -188,23 +166,22 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    
    
    
-   @Override
-   public int getItemPosition( Object object )
-   {
-      boolean found = false;
-      for ( int i = 0; i < tabs.size() && !found; i++ )
-      {
-         found = tabs.get( i ).fragment == object;
-      }
-      
-      return found ? POSITION_UNCHANGED : POSITION_NONE;
-   }
-   
-   
+   // @Override
+   // public int getItemPosition( Object object )
+   // {
+   // boolean found = false;
+   // for ( int i = 0; i < tabs.size() && !found; i++ )
+   // {
+   // found = tabs.get( i ).fragment == object;
+   // }
+   //
+   // return found ? POSITION_UNCHANGED : POSITION_NONE;
+   // }
+   //
    
    @Override
    public int getCount()
    {
-      return tabs.size();
+      return tabInfos.size();
    }
 }

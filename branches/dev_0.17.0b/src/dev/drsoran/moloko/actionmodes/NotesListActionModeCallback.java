@@ -82,8 +82,7 @@ public class NotesListActionModeCallback extends
          case R.id.menu_delete_selected:
             if ( listener != null )
             {
-               // TODO:
-               // listener.onDeleteNotes( getAdapter().getSelectedItems() );
+               listener.onDeleteNotes( getSelectedItems() );
                return true;
             }
             return false;

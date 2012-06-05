@@ -33,9 +33,6 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.actionmodes.BaseMultiChoiceModeListener;
-import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
-import dev.drsoran.moloko.activities.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.MinDetailedTasksListFragmentAdapter;
 import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.loaders.TasksLoader;
@@ -113,14 +110,5 @@ public class MinDetailedTasksListFragment extends
    public MinDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (MinDetailedTasksListFragmentAdapter) super.getListAdapter();
-   }
-   
-   
-   
-   @Override
-   public BaseMultiChoiceModeListener< Task > createMultiCoiceModeListener()
-   {
-      return new TasksListActionModeCallback( (MolokoFragmentActivity) getSherlockActivity(),
-                                              getMolokoListView() );
    }
 }

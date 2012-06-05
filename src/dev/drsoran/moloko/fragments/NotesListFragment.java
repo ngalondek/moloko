@@ -224,10 +224,11 @@ public class NotesListFragment extends
    
    
    @Override
-   public BaseMultiChoiceModeListener< RtmTaskNote > createMultiCoiceModeListener()
+   public BaseMultiChoiceModeListener< RtmTaskNote > createMultiCoiceModalModeListener()
    {
       final NotesListActionModeCallback callback = new NotesListActionModeCallback( getMolokoListView() );
       callback.setNotesListActionModeListener( listener );
+      
       return callback;
    }
 }

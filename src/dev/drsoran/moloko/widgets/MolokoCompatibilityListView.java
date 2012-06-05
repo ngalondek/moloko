@@ -268,6 +268,8 @@ public class MolokoCompatibilityListView extends MolokoListView implements
    @Override
    public void setItemChecked( int position, boolean value )
    {
+      super.setItemChecked( position, value );
+      
       if ( isMultiChoiceModalMode )
       {
          if ( value && choiceActionMode == null )
@@ -313,8 +315,6 @@ public class MolokoCompatibilityListView extends MolokoListView implements
          
          invalidateViews();
       }
-      
-      super.setItemChecked( position, value );
    }
    
    

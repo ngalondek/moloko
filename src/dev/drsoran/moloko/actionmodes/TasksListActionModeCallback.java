@@ -23,9 +23,7 @@
 package dev.drsoran.moloko.actionmodes;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import android.text.TextUtils;
 import android.util.Pair;
 
 import com.actionbarsherlock.view.ActionMode;
@@ -34,25 +32,23 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
-import dev.drsoran.moloko.activities.MolokoFragmentActivity;
-import dev.drsoran.moloko.widgets.MolokoListView;
+import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.rtm.Task;
 
 
 public class TasksListActionModeCallback extends
          BaseMultiChoiceModeListener< Task >
 {
-   private final MolokoFragmentActivity context;
+   private final AbstractTasksListFragment< ? > fragment;
    
    private ITasksListActionModeListener listener;
    
    
    
-   public TasksListActionModeCallback( MolokoFragmentActivity context,
-      MolokoListView listView )
+   public TasksListActionModeCallback( AbstractTasksListFragment< ? > fragment )
    {
-      super( listView );
-      this.context = context;
+      super( fragment.getMolokoListView() );
+      this.fragment = fragment;
    }
    
    
@@ -68,15 +64,7 @@ public class TasksListActionModeCallback extends
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
       super.onCreateActionMode( mode, menu );
-      
-      if ( context.isWritableAccess() )
-      {
-         mode.getMenuInflater().inflate( R.menu.taskslist_actionmode_rwd, menu );
-      }
-      else
-      {
-         mode.getMenuInflater().inflate( R.menu.taskslist_actionmode, menu );
-      }
+      mode.getMenuInflater().inflate( R.menu.taskslist_actionmode_rwd, menu );
       
       return true;
    }
@@ -92,7 +80,7 @@ public class TasksListActionModeCallback extends
       final boolean isLoaderDataAvailable = getAdapter().getCount() > 0;
       
       final boolean showRwdItems = selectedCount > 0 && isLoaderDataAvailable
-         && context.isWritableAccess();
+         && fragment.isWritableAccess();
       menu.setGroupVisible( R.id.menu_group_at_least_one_selected, showRwdItems );
       if ( showRwdItems )
       {
@@ -105,7 +93,7 @@ public class TasksListActionModeCallback extends
                             showSingleSelectionItems );
       if ( showSingleSelectionItems )
       {
-         prepareSingleTaskActionMenu( menu );
+         fragment.prepareSingleTaskActionMenu( menu, getSelectedTask() );
       }
       
       return true;
@@ -119,58 +107,28 @@ public class TasksListActionModeCallback extends
       final Pair< Integer, Integer > selectedCompletedUncompletedCount = getSelectedCompletedUncompletedCount();
       
       menu.findItem( R.id.menu_edit_selected )
-          .setTitle( context.getString( R.string.select_multiple_tasks_menu_opt_do_edit,
-                                        selectedCount ) );
+          .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_do_edit,
+                                         selectedCount ) );
       
       // The complete task menu is only shown if all selected tasks are uncompleted
       menu.findItem( R.id.menu_complete_selected_tasks )
           .setVisible( selectedCompletedUncompletedCount.second.intValue() == selectedCount )
-          .setTitle( context.getString( R.string.select_multiple_tasks_menu_opt_complete,
-                                        selectedCount ) );
+          .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_complete,
+                                         selectedCount ) );
       
       // The incomplete task menu is only shown if all selected tasks are completed
       menu.findItem( R.id.menu_uncomplete_selected_tasks )
           .setVisible( selectedCompletedUncompletedCount.first.intValue() == selectedCount )
-          .setTitle( context.getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
-                                        selectedCount ) );
+          .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
+                                         selectedCount ) );
       
       menu.findItem( R.id.menu_postpone_selected_tasks )
-          .setTitle( context.getString( R.string.select_multiple_tasks_menu_opt_postpone,
-                                        selectedCount ) );
+          .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_postpone,
+                                         selectedCount ) );
       
       menu.findItem( R.id.menu_delete_selected )
-          .setTitle( context.getString( R.string.select_multiple_tasks_menu_opt_delete,
-                                        selectedCount ) );
-   }
-   
-   
-   
-   private void prepareSingleTaskActionMenu( Menu menu )
-   {
-      final Task selectedTask = getSelectedTask();
-      final List< String > tags = selectedTask.getTags();
-      final int tagsCount = tags.size();
-      
-      final MenuItem openTagsMenuItem = menu.findItem( R.id.menu_open_tags )
-                                            .setVisible( tagsCount > 0 );
-      if ( openTagsMenuItem.isVisible() )
-      {
-         openTagsMenuItem.setTitle( context.getResources()
-                                           .getQuantityString( R.plurals.taskslist_open_tags,
-                                                               tagsCount,
-                                                               tags.get( 0 ) ) );
-      }
-      
-      final MenuItem tasksAtLocationMenuItem = menu.findItem( R.id.menu_open_tasks_at_loc );
-      final String locationName = selectedTask.getLocationName();
-      final boolean hasLoction = !TextUtils.isEmpty( locationName );
-      
-      tasksAtLocationMenuItem.setVisible( hasLoction );
-      if ( hasLoction )
-      {
-         tasksAtLocationMenuItem.setTitle( context.getString( R.string.abstaskslist_listitem_ctx_tasks_at_location,
-                                                              locationName ) );
-      }
+          .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_delete,
+                                         selectedCount ) );
    }
    
    
@@ -253,6 +211,6 @@ public class TasksListActionModeCallback extends
    
    private Task getSelectedTask()
    {
-      return (Task) getListView().getSelectedItem();
+      return (Task) getListView().getCheckedItems().get( 0 );
    }
 }

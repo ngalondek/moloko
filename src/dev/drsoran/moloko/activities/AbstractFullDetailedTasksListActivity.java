@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -278,38 +279,39 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
-   // TODO: Move to actionmode?
-   // @Override
-   // public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
-   // {
-   // switch ( dialogId )
-   // {
-   //
-   // case R.id.dlg_selectmultipletasks_complete:
-   // if ( which == Dialog.BUTTON_POSITIVE )
-   // completeSelectedTasks( getTasksListFragment().getSelectedItems() );
-   // break;
-   //
-   // case R.id.dlg_selectmultipletasks_incomplete:
-   // if ( which == Dialog.BUTTON_POSITIVE )
-   // incompleteSelectedTasks( getTasksListFragment().getSelectedItems() );
-   // break;
-   //
-   // case R.id.dlg_selectmultipletasks_postpone:
-   // if ( which == Dialog.BUTTON_POSITIVE )
-   // postponeSelectedTasks( getTasksListFragment().getSelectedItems() );
-   // break;
-   //
-   // case R.id.dlg_selectmultipletasks_delete:
-   // if ( which == Dialog.BUTTON_POSITIVE )
-   // deleteSelectedTasks( getTasksListFragment().getSelectedItems() );
-   // break;
-   //
-   // default :
-   // super.onAlertDialogFragmentClick( dialogId, tag, which );
-   // break;
-   // }
-   // }
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   {
+      switch ( dialogId )
+      {
+      
+         case R.id.dlg_selectmultipletasks_complete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               completeSelectedTasks( getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_incomplete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               incompleteSelectedTasks( getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_postpone:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               postponeSelectedTasks( getSelectedTasks() );
+            break;
+         
+         case R.id.dlg_selectmultipletasks_delete:
+            if ( which == Dialog.BUTTON_POSITIVE )
+               deleteSelectedTasks( getSelectedTasks() );
+            break;
+         
+         default :
+            super.onAlertDialogFragmentClick( dialogId, tag, which );
+            break;
+      }
+   }
+   
+   
    
    protected void onOpenChoosenTags( List< String > tags,
                                      String logicalOperation )
@@ -319,46 +321,47 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
-   // TODO: Move to actionmode?
-   // private void completeSelectedTasks( List< ? extends Task > tasks )
-   // {
-   // final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
-   // tasks,
-   // true );
-   // applyModifications( modifications );
-   // getTasksListFragment().stopSelectionMode();
-   // }
-   //
-   //
-   //
-   // private void incompleteSelectedTasks( List< ? extends Task > tasks )
-   // {
-   // final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
-   // tasks,
-   // false );
-   // applyModifications( modifications );
-   // getTasksListFragment().stopSelectionMode();
-   // }
-   //
-   //
-   //
-   // private void postponeSelectedTasks( List< ? extends Task > tasks )
-   // {
-   // final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
-   // tasks );
-   // applyModifications( modifications );
-   // getTasksListFragment().stopSelectionMode();
-   // }
-   //
-   //
-   //
-   // private void deleteSelectedTasks( List< ? extends Task > tasks )
-   // {
-   // final ApplyChangesInfo modifications = TaskEditUtils.deleteTasks( this,
-   // tasks );
-   // applyModifications( modifications );
-   // getTasksListFragment().stopSelectionMode();
-   // }
+   private void completeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                               tasks,
+                                                                               true );
+      applyModifications( modifications );
+      getTasksListFragment().getListView().clearChoices();
+   }
+   
+   
+   
+   private void incompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                               tasks,
+                                                                               false );
+      applyModifications( modifications );
+      getTasksListFragment().getListView().clearChoices();
+   }
+   
+   
+   
+   private void postponeSelectedTasks( List< ? extends Task > tasks )
+   {
+      final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
+                                                                          tasks );
+      applyModifications( modifications );
+      getTasksListFragment().getListView().clearChoices();
+   }
+   
+   
+   
+   private void deleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      final ApplyChangesInfo modifications = TaskEditUtils.deleteTasks( this,
+                                                                        tasks );
+      applyModifications( modifications );
+      getTasksListFragment().getListView().clearChoices();
+   }
+   
+   
    
    private void showQuickAddTaskInput()
    {
@@ -428,5 +431,12 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       final FullDetailedTasksListFragment fragment = (FullDetailedTasksListFragment) findAddedFragmentById( R.id.frag_taskslist );
       return fragment;
+   }
+   
+   
+   
+   private List< Task > getSelectedTasks()
+   {
+      return getTasksListFragment().getMolokoListView().getCheckedItems();
    }
 }

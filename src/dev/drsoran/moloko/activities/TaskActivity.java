@@ -34,7 +34,6 @@ import android.support.v4.view.ViewPager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
-import com.mdt.rtm.data.RtmAuth.Perms;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
@@ -188,8 +187,14 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    {
       if ( savedInstanceState != null )
       {
-         getSupportActionBar().setSelectedNavigationItem( savedInstanceState.getInt( TABS_ADAPTER_STATE,
-                                                                                     TASK_TAB_POSITION ) );
+         final int savedTabPosition = savedInstanceState.getInt( TABS_ADAPTER_STATE,
+                                                                 TASK_TAB_POSITION );
+         final ActionBar actionBar = getSupportActionBar();
+         
+         if ( actionBar.getSelectedNavigationIndex() != savedTabPosition )
+         {
+            actionBar.setSelectedNavigationItem( savedTabPosition );
+         }
       }
    }
    
@@ -205,15 +210,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
          taskId = taskUri.getLastPathSegment();
       
       return taskId;
-   }
-   
-   
-   
-   @Override
-   protected void onReEvaluateRtmAccessLevel( Perms currentAccessLevel )
-   {
-      super.onReEvaluateRtmAccessLevel( currentAccessLevel );
-      invalidateOptionsMenu();
    }
    
    
@@ -341,6 +337,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       final String message = getResources().getQuantityString( R.plurals.notes_delete,
                                                                notes.size(),
                                                                notes.size() );
+      
       new AlertDialogFragment.Builder( R.id.dlg_delete_notes ).setMessage( message )
                                                               .setPositiveButton( R.string.btn_delete )
                                                               .setNegativeButton( R.string.btn_cancel )
@@ -354,9 +351,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       final ApplyChangesInfo modifications = NoteEditUtils.deleteNotes( this,
                                                                         notesToDelete );
       applyModifications( modifications );
-      
-      // TODO: Move to actionmode?
-      // notesListFragment.stopSelectionMode();
    }
    
    

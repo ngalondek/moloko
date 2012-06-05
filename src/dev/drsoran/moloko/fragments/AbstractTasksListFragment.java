@@ -28,11 +28,16 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.actionbarsherlock.internal.view.menu.MenuWrapper;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -41,6 +46,9 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.actionmodes.BaseMultiChoiceModeListener;
+import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
+import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoMultiChoiceModalListFragment;
@@ -48,6 +56,7 @@ import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.widgets.MolokoListView;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -58,7 +67,9 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
 {
    protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
    
-   private ITasksListFragmentListener listener;
+   private ITasksListFragmentListener fragmentListener;
+   
+   private ITasksListActionModeListener actionModeListener;
    
    @InstanceState( key = Intents.Extras.KEY_FILTER )
    private IFilter filter;
@@ -78,6 +89,24 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof ITasksListFragmentListener )
+         fragmentListener = (ITasksListFragmentListener) activity;
+      else
+         fragmentListener = null;
+      
+      if ( activity instanceof ITasksListActionModeListener )
+         actionModeListener = (ITasksListActionModeListener) activity;
+      else
+         actionModeListener = null;
+   }
+   
+   
+   
+   @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
@@ -87,14 +116,13 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public void onAttach( Activity activity )
+   public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      super.onAttach( activity );
-      
-      if ( activity instanceof ITasksListFragmentListener )
-         listener = (ITasksListFragmentListener) activity;
-      else
-         listener = null;
+      super.onViewCreated( view, savedInstanceState );
+      if ( isReadOnlyAccess() )
+      {
+         registerForContextMenu( getListView() );
+      }
    }
    
    
@@ -102,7 +130,9 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onDetach()
    {
-      listener = null;
+      fragmentListener = null;
+      actionModeListener = null;
+      
       super.onDetach();
    }
    
@@ -178,6 +208,89 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
+   public void onCreateContextMenu( ContextMenu menu,
+                                    View v,
+                                    ContextMenuInfo menuInfo )
+   {
+      super.onCreateContextMenu( menu, v, menuInfo );
+      
+      getSherlockActivity().getMenuInflater()
+                           .inflate( R.menu.taskslist_listitem_context, menu );
+      
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+      final Task selectedTask = getTask( info.position );
+      
+      prepareSingleTaskActionMenu( new MenuWrapper( menu ), selectedTask );
+   }
+   
+   
+   
+   public void prepareSingleTaskActionMenu( Menu menu, Task selectedTask )
+   {
+      final List< String > tags = selectedTask.getTags();
+      final int tagsCount = tags.size();
+      
+      final MenuItem openTagsMenuItem = menu.findItem( R.id.menu_open_tags )
+                                            .setVisible( tagsCount > 0 );
+      if ( openTagsMenuItem.isVisible() )
+      {
+         openTagsMenuItem.setTitle( getResources().getQuantityString( R.plurals.taskslist_open_tags,
+                                                                      tagsCount,
+                                                                      tags.get( 0 ) ) );
+      }
+      
+      final MenuItem tasksAtLocationMenuItem = menu.findItem( R.id.menu_open_tasks_at_loc );
+      final String locationName = selectedTask.getLocationName();
+      final boolean hasLoction = !TextUtils.isEmpty( locationName );
+      
+      tasksAtLocationMenuItem.setVisible( hasLoction );
+      if ( hasLoction )
+      {
+         tasksAtLocationMenuItem.setTitle( getString( R.string.abstaskslist_listitem_ctx_tasks_at_location,
+                                                      locationName ) );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onContextItemSelected( android.view.MenuItem item )
+   {
+      boolean handled = false;
+      
+      if ( actionModeListener != null )
+      {
+         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+         final Task selectedTask = getTask( info.position );
+         
+         switch ( item.getItemId() )
+         {
+            case R.id.menu_open_tags:
+               actionModeListener.onShowTasksWithTags( selectedTask.getTags() );
+               handled = true;
+               break;
+            
+            case R.id.menu_open_tasks_at_loc:
+               actionModeListener.onOpenTaskLocation( selectedTask );
+               handled = true;
+               break;
+            
+            default :
+               break;
+         }
+      }
+      
+      if ( !handled )
+      {
+         return super.onContextItemSelected( item );
+      }
+      
+      return true;
+   }
+   
+   
+   
    protected void initializeTasksSortSubMenu( Menu menu, int currentTaskSort )
    {
       // INFO: These items are exclusive checkable. Setting one will reset the other.
@@ -207,10 +320,17 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
-      if ( listener != null )
+      if ( fragmentListener != null )
       {
-         listener.onOpenTask( position );
+         fragmentListener.onOpenTask( position );
       }
+   }
+   
+   
+   
+   public ITasksListActionModeListener getActionModeListener()
+   {
+      return actionModeListener;
    }
    
    
@@ -235,13 +355,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       if ( filter == null )
          filter = new RtmSmartFilter( Strings.EMPTY_STRING );
-   }
-   
-   
-   
-   public boolean hasTasks()
-   {
-      return getListAdapter() != null && getListAdapter().getCount() > 0;
    }
    
    
@@ -377,6 +490,26 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          default :
             return null;
       }
+   }
+   
+   
+   
+   @Override
+   public int getChoiceMode()
+   {
+      return isWritableAccess() ? MolokoListView.CHOICE_MODE_MULTIPLE_MODAL
+                               : MolokoListView.CHOICE_MODE_NONE;
+   }
+   
+   
+   
+   @Override
+   public BaseMultiChoiceModeListener< Task > createMultiCoiceModalModeListener()
+   {
+      final TasksListActionModeCallback callback = new TasksListActionModeCallback( this );
+      callback.setTasksListActionModeListener( actionModeListener );
+      
+      return callback;
    }
    
    

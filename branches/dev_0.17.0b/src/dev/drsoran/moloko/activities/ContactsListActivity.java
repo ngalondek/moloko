@@ -25,13 +25,10 @@ package dev.drsoran.moloko.activities;
 import android.os.Bundle;
 
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 
 
 public class ContactsListActivity extends MolokoFragmentActivity implements
@@ -41,7 +38,6 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       setContentView( R.layout.contactslist_activity );
    }
    
@@ -50,14 +46,7 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      MolokoMenuItemBuilder.newSettingsMenuItem( this )
-                           .setOrder( MenuCategory.ALTERNATIVE )
-                           .build( menu );
-      
-      MolokoMenuItemBuilder.newSyncMenuItem( this )
-                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-                           .build( menu );
-      
+      getSupportMenuInflater().inflate( R.menu.sync_only, menu );
       return true;
    }
    

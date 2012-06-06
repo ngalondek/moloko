@@ -26,7 +26,7 @@
         android:paddingBottom="8dip" >
 
         <LinearLayout
-            android:id="@id/frag_task_edit_multiple"
+            android:id="@id/frag_task_edit"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />

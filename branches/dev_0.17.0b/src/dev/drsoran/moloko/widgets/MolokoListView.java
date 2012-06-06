@@ -43,7 +43,6 @@ public abstract class MolokoListView extends ListView
    
    public interface IActionModeSupport
    {
-      
       ActionMode startActionMode( IMolokoMultiChoiceModeListener callback );
       
       

@@ -43,23 +43,28 @@
         <item name="android:listViewStyle">@style/ForceWhiteListViewStyle</item>
     </style>
     
-    <style name="Theme.Moloko.TasksList">
-        
+    <style name="Theme.Moloko.HomeAsUp">
+
         <!-- ActionBar -->
         <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
         <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+    </style>
+    
+    <style name="Theme.Moloko.HomeAsUp.NoTitle">
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
+    </style>
+        
+    <style name="Theme.Moloko.TasksList" parent="@style/Theme.Moloko.HomeAsUp">
+        
+        <!-- ActionBar -->
         <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
         <item name="android:actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
         
         <!-- Widgets -->
         <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>
-    </style>
-
-    <style name="Theme.Moloko.SelectMultipleTasks">
-
-        <!-- ActionBar -->
-        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
     </style>
 
     <style name="Theme.Moloko.Task">
@@ -74,19 +79,6 @@
         <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
     </style>
     
-    <style name="Theme.Moloko.Task.Edit">
-
-        <!-- ActionBar -->
-        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
-    </style>
-
-    <style name="Theme.Moloko.Task.EditMultiple">
-
-        <!-- Window attributes
-        <item name="android:windowBackground">@color/app_default_bgnd</item> -->
-    </style>
-
     <style name="Theme.ChangeTagsDialog" parent="android:style/Theme.Dialog">
         
         <!-- Window attributes -->

@@ -37,10 +37,7 @@ import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -85,27 +82,27 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      MolokoMenuItemBuilder.newSettingsMenuItem( this )
-                           .setOrder( MenuCategory.ALTERNATIVE )
-                           .build( menu );
-      
-      new MolokoMenuItemBuilder().setItemId( OptionsMenu.ADD_LIST )
-                                 .setTitle( getString( R.string.tasklists_menu_add_list ) )
-                                 .setIconId( R.drawable.ic_menu_add_list )
-                                 .setOrder( MenuCategory.CONTAINER )
-                                 .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-                                 .setShow( AccountUtils.isWriteableAccess( this ) )
-                                 .build( menu );
-      
-      MolokoMenuItemBuilder.newSearchMenuItem( this )
-                           .setOrder( MenuCategory.ALTERNATIVE )
-                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-                           .build( menu );
-      
-      MolokoMenuItemBuilder.newSyncMenuItem( this )
-                           .setOrder( MenuCategory.ALTERNATIVE )
-                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-                           .build( menu );
+      // MolokoMenuItemBuilder.newSettingsMenuItem( this )
+      // .setOrder( MenuCategory.ALTERNATIVE )
+      // .build( menu );
+      //
+      // new MolokoMenuItemBuilder().setItemId( OptionsMenu.ADD_LIST )
+      // .setTitle( getString( R.string.tasklists_menu_add_list ) )
+      // .setIconId( R.drawable.ic_menu_add_list )
+      // .setOrder( MenuCategory.CONTAINER )
+      // .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+      // .setShow( AccountUtils.isWriteableAccess( this ) )
+      // .build( menu );
+      //
+      // MolokoMenuItemBuilder.newSearchMenuItem( this )
+      // .setOrder( MenuCategory.ALTERNATIVE )
+      // .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+      // .build( menu );
+      //
+      // MolokoMenuItemBuilder.newSyncMenuItem( this )
+      // .setOrder( MenuCategory.ALTERNATIVE )
+      // .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
+      // .build( menu );
       
       return true;
    }

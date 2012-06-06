@@ -10,37 +10,36 @@
       for more details. You should have received a copy of the GNU General
       Public License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
+      implementation
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <group android:id="@+id/menu_group_at_least_one_selected" >
-        <item
-            android:id="@id/menu_complete_selected_tasks"
-            android:icon="@drawable/ic_menu_complete"
-            android:showAsAction="ifRoom"
-            android:title="@string/select_multiple_tasks_menu_opt_complete"/>
-        <item
-            android:id="@id/menu_uncomplete_selected_tasks"
-            android:icon="@drawable/ic_menu_incomplete"
-            android:showAsAction="ifRoom"
-            android:title="@string/select_multiple_tasks_menu_opt_uncomplete"/>
-        <item
-            android:id="@id/menu_edit_selected"
-            android:icon="@drawable/ic_menu_edit"
-            android:showAsAction="ifRoom"
-            android:title="@string/select_multiple_tasks_menu_opt_do_edit"/>
-        <item
-            android:id="@id/menu_postpone_selected_tasks"
-            android:icon="@drawable/ic_menu_postponed"
-            android:showAsAction="ifRoom"
-            android:title="@string/select_multiple_tasks_menu_opt_postpone"/>
-        <item
-            android:id="@id/menu_delete_selected"
-            android:icon="@drawable/ic_menu_trash"
-            android:showAsAction="ifRoom"
-            android:title="@string/select_multiple_tasks_menu_opt_delete"/>
-    </group>
+    <item
+        android:id="@id/menu_complete_selected_tasks"
+        android:icon="@drawable/ic_menu_complete"
+        android:showAsAction="ifRoom"
+        android:title="@string/select_multiple_tasks_menu_opt_complete"/>
+    <item
+        android:id="@id/menu_uncomplete_selected_tasks"
+        android:icon="@drawable/ic_menu_incomplete"
+        android:showAsAction="ifRoom"
+        android:title="@string/select_multiple_tasks_menu_opt_uncomplete"/>
+    <item
+        android:id="@id/menu_edit_selected"
+        android:icon="@drawable/ic_menu_edit"
+        android:showAsAction="ifRoom"
+        android:title="@string/select_multiple_tasks_menu_opt_do_edit"/>
+    <item
+        android:id="@id/menu_postpone_selected_tasks"
+        android:icon="@drawable/ic_menu_postponed"
+        android:showAsAction="ifRoom"
+        android:title="@string/select_multiple_tasks_menu_opt_postpone"/>
+    <item
+        android:id="@id/menu_delete_selected"
+        android:icon="@drawable/ic_menu_trash"
+        android:showAsAction="ifRoom"
+        android:title="@string/select_multiple_tasks_menu_opt_delete"/>
+
     <group android:id="@+id/menu_group_single_selection" >
         <item
             android:id="@id/menu_open_tags"

@@ -10,34 +10,20 @@
       for more details. You should have received a copy of the GNU General
       Public License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
+      implementation
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <item
+        android:id="@id/menu_quick_add_task"
+        android:icon="@drawable/ic_menu_add_task"
+        android:showAsAction="always|withText"
+        android:title="@string/app_task_add"/>
     <item
         android:id="@id/menu_search_tasks"
         android:icon="@drawable/ic_menu_search"
         android:showAsAction="ifRoom"
         android:title="@string/search_hint"/>
-
-    <group android:id="@+id/menu_group_tasksearchresult_query_succeeded" >
-        <item
-            android:id="@id/menu_add_list"
-            android:icon="@drawable/ic_menu_add_list"
-            android:showAsAction="ifRoom"
-            android:title="@string/tasksearchresult_menu_add_smart_list"/>
-        <item
-            android:id="@id/menu_quick_add_task"
-            android:icon="@drawable/ic_menu_add_task"
-            android:showAsAction="ifRoom"
-            android:title="@string/app_task_add"/>
-    </group>
-
-    <item
-        android:id="@id/menu_clear_search_history"
-        android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="never"
-        android:title="@string/tasksearchresult_menu_opt_clear_history_title"/>
     <item
         android:id="@id/menu_sync"
         android:icon="@drawable/ic_menu_refresh"

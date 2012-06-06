@@ -63,6 +63,10 @@ public abstract class AbstractTasksListActivity extends
    
    protected final static String CUSTOM_NAVIGATION_ITEM_ID = "0";
    
+   @InstanceState( key = Intents.Extras.KEY_ACTIVITY_TITLE,
+                   defaultValue = InstanceState.NULL )
+   private String title;
+   
    @InstanceState( key = Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                    defaultValue = InstanceState.NULL )
    private String subTitle;
@@ -89,10 +93,7 @@ public abstract class AbstractTasksListActivity extends
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.taskslist_activity );
-      setTitleFromConfiguration( savedInstanceState != null
-                                                           ? savedInstanceState
-                                                           : getIntent().getExtras() );
-      
+      setTitle( title );
       initialize();
       
       getSupportFragmentManager().addOnBackStackChangedListener( this );
@@ -204,13 +205,6 @@ public abstract class AbstractTasksListActivity extends
    public IFilter getConfiguredFilter()
    {
       return getTasksListFragment().getFilter();
-   }
-   
-   
-   
-   private void setTitleFromConfiguration( Bundle bundle )
-   {
-      setTitle( bundle.getString( Intents.Extras.KEY_ACTIVITY_TITLE ) );
    }
    
    

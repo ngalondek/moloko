@@ -28,6 +28,7 @@ import java.util.List;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 
@@ -56,9 +57,9 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.task_edit_activity );
       
-      createTaskEditFragment();
+      setContentView( getContentViewResourceId() );
+      addTaskEditFragment();
    }
    
    
@@ -236,6 +237,19 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    
    
    
+   private void addTaskEditFragment()
+   {
+      if ( findAddedFragmentById( R.id.frag_task_edit ) == null )
+      {
+         final Fragment fragment = createTaskEditFragment();
+         getSupportFragmentManager().beginTransaction()
+                                    .add( R.id.frag_task_edit, fragment )
+                                    .commit();
+      }
+   }
+   
+   
+   
    private void showChangeTagsDialog( Bundle config )
    {
       final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -267,5 +281,9 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    
    
    
-   protected abstract void createTaskEditFragment();
+   protected abstract int getContentViewResourceId();
+   
+   
+   
+   protected abstract Fragment createTaskEditFragment();
 }

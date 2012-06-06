@@ -39,13 +39,14 @@ import dev.drsoran.rtm.Task;
 public class TasksListActionModeCallback extends
          BaseMultiChoiceModeListener< Task >
 {
-   private final AbstractTasksListFragment< ? > fragment;
+   private final AbstractTasksListFragment< ? extends Task > fragment;
    
    private ITasksListActionModeListener listener;
    
    
    
-   public TasksListActionModeCallback( AbstractTasksListFragment< ? > fragment )
+   public TasksListActionModeCallback(
+      AbstractTasksListFragment< ? extends Task > fragment )
    {
       super( fragment.getMolokoListView() );
       this.fragment = fragment;
@@ -76,21 +77,15 @@ public class TasksListActionModeCallback extends
    {
       super.onPrepareActionMode( mode, menu );
       
-      final int selectedCount = getListView().getCheckedItemCountSupport();
-      final boolean isLoaderDataAvailable = getAdapter().getCount() > 0;
+      prepareRwdActionMenu( menu );
       
-      final boolean showRwdItems = selectedCount > 0 && isLoaderDataAvailable
-         && fragment.isWritableAccess();
-      menu.setGroupVisible( R.id.menu_group_at_least_one_selected, showRwdItems );
-      if ( showRwdItems )
-      {
-         prepareRwdActionMenu( menu );
-      }
+      final int selectedCount = getListView().getCheckedItemCountSupport();
       
       final boolean showSingleSelectionItems = selectedCount == 1
-         && isLoaderDataAvailable;
+         && hasLoaderData();
       menu.setGroupVisible( R.id.menu_group_single_selection,
                             showSingleSelectionItems );
+      
       if ( showSingleSelectionItems )
       {
          fragment.prepareSingleTaskActionMenu( menu, getSelectedTask() );
@@ -104,29 +99,40 @@ public class TasksListActionModeCallback extends
    private void prepareRwdActionMenu( Menu menu )
    {
       final int selectedCount = getListView().getCheckedItemCountSupport();
-      final Pair< Integer, Integer > selectedCompletedUncompletedCount = getSelectedCompletedUncompletedCount();
+      final boolean show = selectedCount > 0 && hasLoaderData();
+      
+      Pair< Integer, Integer > selectedCompletedUncompletedCount = null;
+      if ( show )
+      {
+         selectedCompletedUncompletedCount = getSelectedCompletedUncompletedCount();
+      }
       
       menu.findItem( R.id.menu_edit_selected )
+          .setVisible( show )
           .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_do_edit,
                                          selectedCount ) );
       
       // The complete task menu is only shown if all selected tasks are uncompleted
       menu.findItem( R.id.menu_complete_selected_tasks )
-          .setVisible( selectedCompletedUncompletedCount.second.intValue() == selectedCount )
+          .setVisible( show
+             && selectedCompletedUncompletedCount.second.intValue() == selectedCount )
           .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_complete,
                                          selectedCount ) );
       
       // The incomplete task menu is only shown if all selected tasks are completed
       menu.findItem( R.id.menu_uncomplete_selected_tasks )
-          .setVisible( selectedCompletedUncompletedCount.first.intValue() == selectedCount )
+          .setVisible( show
+             && selectedCompletedUncompletedCount.first.intValue() == selectedCount )
           .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
                                          selectedCount ) );
       
       menu.findItem( R.id.menu_postpone_selected_tasks )
+          .setVisible( show )
           .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_postpone,
                                          selectedCount ) );
       
       menu.findItem( R.id.menu_delete_selected )
+          .setVisible( show )
           .setTitle( fragment.getString( R.string.select_multiple_tasks_menu_opt_delete,
                                          selectedCount ) );
    }
@@ -211,6 +217,6 @@ public class TasksListActionModeCallback extends
    
    private Task getSelectedTask()
    {
-      return (Task) getListView().getCheckedItems().get( 0 );
+      return getSelectedItems().iterator().next();
    }
 }

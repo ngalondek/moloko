@@ -25,6 +25,7 @@ package dev.drsoran.moloko.actionmodes;
 import java.util.Collection;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.util.SparseBooleanArray;
 import android.widget.ListAdapter;
 
@@ -42,9 +43,39 @@ import dev.drsoran.moloko.widgets.MolokoListView.IMolokoMultiChoiceModeListener;
 public class BaseMultiChoiceModeListener< T > implements
          IMolokoMultiChoiceModeListener
 {
+   private class ListDatasetObserver extends DataSetObserver
+   {
+      
+      @Override
+      public void onChanged()
+      {
+         super.onChanged();
+         if ( actionMode != null )
+         {
+            actionMode.invalidate();
+         }
+      }
+      
+      
+      
+      @Override
+      public void onInvalidated()
+      {
+         super.onInvalidated();
+         if ( actionMode != null )
+         {
+            actionMode.invalidate();
+         }
+      }
+   }
+   
+   private final DataSetObserver dataSetObserver = new ListDatasetObserver();
+   
    private final MolokoListView listView;
    
    private IBaseSelectableActionModeListener< T > listener;
+   
+   private ActionMode actionMode;
    
    
    
@@ -85,7 +116,7 @@ public class BaseMultiChoiceModeListener< T > implements
    
    public void selectAll()
    {
-      final ListAdapter adapter = listView.getAdapter();
+      final ListAdapter adapter = getAdapter();
       final SparseBooleanArray checkedPositions = listView.getCheckedItemPositions();
       
       for ( int i = 0, cnt = adapter.getCount(); i < cnt; ++i )
@@ -142,7 +173,11 @@ public class BaseMultiChoiceModeListener< T > implements
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
+      actionMode = mode;
+      
       mode.getMenuInflater().inflate( R.menu.selection_mode_female, menu );
+      getAdapter().registerDataSetObserver( dataSetObserver );
+      
       return true;
    }
    
@@ -187,8 +222,10 @@ public class BaseMultiChoiceModeListener< T > implements
       if ( listener != null )
       {
          listener.onFinishingSelectionMode( mode, this );
-         listener = null;
       }
+      
+      getAdapter().unregisterDataSetObserver( dataSetObserver );
+      actionMode = null;
    }
    
    
@@ -201,6 +238,17 @@ public class BaseMultiChoiceModeListener< T > implements
    {
       updateTitle( mode );
       mode.invalidate();
+   }
+   
+   
+   
+   /**
+    * Even if the list returns a checked count > 0, the data in the adapter may not yet exist and is still in loading.
+    * The checked state is stored separate in the ListView.
+    */
+   public boolean hasLoaderData()
+   {
+      return getAdapter().getCount() > 0;
    }
    
    

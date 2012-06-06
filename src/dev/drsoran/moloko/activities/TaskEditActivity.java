@@ -27,7 +27,6 @@ import android.support.v4.app.Fragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
-import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.rtm.Task;
 
@@ -48,14 +47,18 @@ public class TaskEditActivity extends AbstractTaskEditActivity
    
    
    @Override
-   protected void createTaskEditFragment()
+   protected int getContentViewResourceId()
    {
-      final Fragment fragment = DefaultFragmentFactory.create( this,
-                                                               TaskEditFragment.class,
-                                                               createTaskEditFragmentConfig() );
-      getSupportFragmentManager().beginTransaction()
-                                 .add( R.id.frag_task_edit, fragment )
-                                 .commit();
+      return R.layout.task_edit_activity;
+   }
+   
+   
+   
+   @Override
+   protected Fragment createTaskEditFragment()
+   {
+      final Fragment fragment = TaskEditFragment.newInstance( createTaskEditFragmentConfig() );
+      return fragment;
    }
    
    

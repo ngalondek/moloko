@@ -472,6 +472,23 @@ public class DateParserTestCase_de
          end.add( Calendar.DAY_OF_YEAR, 2 );
          
          final MolokoCalendar start = DateTimeTestHelper.getDateParserCalendar();
+         
+         parseDateWithin( "2 tage ab heute",
+                          false,
+                          start.get( Calendar.YEAR ),
+                          start.get( Calendar.MONTH ),
+                          start.get( Calendar.WEEK_OF_YEAR ),
+                          start.get( Calendar.DAY_OF_YEAR ),
+                          end.get( Calendar.YEAR ),
+                          end.get( Calendar.MONTH ),
+                          end.get( Calendar.WEEK_OF_YEAR ),
+                          end.get( Calendar.DAY_OF_YEAR ) );
+      }
+      {
+         final MolokoCalendar end = DateTimeTestHelper.getDateParserCalendar();
+         end.add( Calendar.DAY_OF_YEAR, 2 );
+         
+         final MolokoCalendar start = DateTimeTestHelper.getDateParserCalendar();
          start.add( Calendar.DAY_OF_YEAR, 1 );
          
          parseDateWithin( "ein tag ab morgen",

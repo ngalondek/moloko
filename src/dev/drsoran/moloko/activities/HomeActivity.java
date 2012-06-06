@@ -38,8 +38,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.MolokoMenuItemBuilder;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
@@ -48,11 +46,6 @@ import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
 public class HomeActivity extends MolokoFragmentActivity implements
          OnItemClickListener
 {
-   private static class OptionsMenu
-   {
-      public final static int ADD_TASK = R.id.menu_quick_add_task;
-   }
-   
    private final Handler handler = new Handler();
    
    private IMolokoHomeWidget addAccountWidget;
@@ -110,23 +103,14 @@ public class HomeActivity extends MolokoFragmentActivity implements
    {
       super.onCreateOptionsMenu( menu );
       
-      new MolokoMenuItemBuilder().setItemId( OptionsMenu.ADD_TASK )
-                                 .setTitle( getString( R.string.app_task_add ) )
-                                 .setIconId( R.drawable.ic_menu_add_task )
-                                 .setOrder( MenuCategory.CONTAINER )
-                                 .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
-                                 .setShow( AccountUtils.isWriteableAccess( this ) )
-                                 .build( menu );
-      
-      MolokoMenuItemBuilder.newSearchMenuItem( this )
-                           .setOrder( MenuCategory.ALTERNATIVE )
-                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
-                           .build( menu );
-      
-      MolokoMenuItemBuilder.newSyncMenuItem( this )
-                           .setOrder( MenuCategory.ALTERNATIVE )
-                           .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_ALWAYS )
-                           .build( menu );
+      if ( isWritableAccess() )
+      {
+         getSupportMenuInflater().inflate( R.menu.home_activity_rwd, menu );
+      }
+      else
+      {
+         getSupportMenuInflater().inflate( R.menu.home_activity, menu );
+      }
       
       return true;
    }
@@ -142,7 +126,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
             UIUtils.showAboutMolokoDialog( this );
             return true;
             
-         case OptionsMenu.ADD_TASK:
+         case R.id.menu_quick_add_task:
             onAddTask();
             return true;
             

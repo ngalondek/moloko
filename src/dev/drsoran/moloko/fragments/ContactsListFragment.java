@@ -48,11 +48,6 @@ import dev.drsoran.rtm.Contact;
 
 public class ContactsListFragment extends MolokoListFragment< Contact >
 {
-   private static class CtxtMenu
-   {
-      public final static int SHOW_PHONEBOOK_CONTACT = R.id.ctx_menu_show_phonebook_contact;
-   }
-   
    private IContactsListFragmentListener listener;
    
    
@@ -107,7 +102,6 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
       final View fragmentView = inflater.inflate( R.layout.contactslist_fragment,
                                                   container,
                                                   false );
-      
       return fragmentView;
    }
    
@@ -126,9 +120,8 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
       if ( contact.getLookUpKey() != null )
       {
          final String fullname = contact.getFullname();
-         
          menu.add( Menu.NONE,
-                   CtxtMenu.SHOW_PHONEBOOK_CONTACT,
+                   R.id.ctx_menu_show_phonebook_contact,
                    Menu.NONE,
                    getString( R.string.contactslist_listitem_show_phonebook_contact,
                               fullname ) );
@@ -144,7 +137,7 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
       
       switch ( item.getItemId() )
       {
-         case CtxtMenu.SHOW_PHONEBOOK_CONTACT:
+         case R.id.ctx_menu_show_phonebook_contact:
             final Contact contact = getListAdapter().getItem( info.position );
             
             if ( listener != null )

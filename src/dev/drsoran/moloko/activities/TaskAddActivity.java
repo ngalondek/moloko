@@ -26,27 +26,23 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.TaskAddFragment;
-import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
 
 
 public class TaskAddActivity extends AbstractTaskEditActivity
 {
-   public TaskAddActivity()
+   @Override
+   protected int getContentViewResourceId()
    {
-      registerAnnotatedConfiguredInstance( this, TaskAddActivity.class );
+      return R.layout.task_edit_activity;
    }
    
    
    
    @Override
-   protected void createTaskEditFragment()
+   protected Fragment createTaskEditFragment()
    {
-      final Fragment fragment = DefaultFragmentFactory.create( this,
-                                                               TaskAddFragment.class,
-                                                               createTaskAddFragmentConfig() );
-      getSupportFragmentManager().beginTransaction()
-                                 .add( R.id.frag_task_edit, fragment )
-                                 .commit();
+      final Fragment fragment = TaskAddFragment.newInstance( createTaskAddFragmentConfig() );
+      return fragment;
    }
    
    

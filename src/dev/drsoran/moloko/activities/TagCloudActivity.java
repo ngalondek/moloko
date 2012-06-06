@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -25,6 +25,9 @@ package dev.drsoran.moloko.activities;
 import java.util.Collections;
 
 import android.os.Bundle;
+
+import com.actionbarsherlock.view.Menu;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITagCloudFragmentListener;
@@ -35,22 +38,24 @@ import dev.drsoran.moloko.util.Intents;
 public class TagCloudActivity extends MolokoFragmentActivity implements
          ITagCloudFragmentListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TagCloudActivity.class.getSimpleName();
-   
-   
-
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       setContentView( R.layout.tagcloud_activity );
    }
    
-
-
+   
+   
+   @Override
+   public boolean onCreateOptionsMenu( Menu menu )
+   {
+      getSupportMenuInflater().inflate( R.menu.sync_only, menu );
+      return true;
+   }
+   
+   
+   
    @Override
    protected int[] getFragmentIds()
    {
@@ -58,32 +63,32 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
       { R.id.frag_tag_cloud };
    }
    
-
-
+   
+   
    @Override
    public void onListNameClicked( String listName )
    {
       startActivity( Intents.createOpenListIntentByName( this, listName, null ) );
    }
    
-
-
+   
+   
    @Override
    public void onLocationNameClicked( String locationName )
    {
       startActivity( Intents.createOpenLocationIntentByName( this, locationName ) );
    }
    
-
-
+   
+   
    @Override
    public void onLocationNameLongClicked( String locationName )
    {
       LocationChooserDialogFragment.showChooser( this, locationName );
    }
    
-
-
+   
+   
    @Override
    public void onTagNameClicked( String tagName )
    {

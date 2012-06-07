@@ -91,8 +91,6 @@ public class MinDetailedTasksListFragment extends
       final TasksLoader loader = new TasksLoader( getSherlockActivity(),
                                                   selection,
                                                   order );
-      loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
-      
       return loader;
    }
    

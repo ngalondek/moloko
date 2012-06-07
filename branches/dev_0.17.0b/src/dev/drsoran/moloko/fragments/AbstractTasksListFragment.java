@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -65,8 +64,6 @@ import dev.drsoran.rtm.Task;
 public abstract class AbstractTasksListFragment< T extends Task > extends
          MolokoMultiChoiceModalListFragment< T >
 {
-   protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
-   
    private ITasksListFragmentListener fragmentListener;
    
    private ITasksListActionModeListener actionModeListener;
@@ -439,7 +436,9 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onLoadFinished( Loader< List< T >> loader, List< T > data )
    {
       super.onLoadFinished( loader, data );
+      
       invalidateOptionsMenu();
+      resortTasks( tasksSort );
    }
    
    

@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.view.View;
-import android.widget.BaseAdapter;
 import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 
@@ -138,6 +137,6 @@ public class LoaderListFragmentImpl< D > extends
    
    private void notifyDataSetChanged()
    {
-      ( (BaseAdapter) fragment.getListAdapter() ).notifyDataSetChanged();
+      ( (SwappableArrayAdapter< ? >) fragment.getListAdapter() ).notifyDataSetChanged();
    }
 }

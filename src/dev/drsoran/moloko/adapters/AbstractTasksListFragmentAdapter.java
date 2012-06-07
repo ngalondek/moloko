@@ -26,10 +26,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.adapters.base.LayoutSwitchMultiChoiceModalAdapter;
@@ -49,34 +51,64 @@ abstract class AbstractTasksListFragmentAdapter extends
 {
    private final MolokoCalendar setDueDateCalendar = MolokoCalendar.getInstance();
    
+   private final DataSetObserver dataSetObserver = new DataSetObserver()
+   {
+      @Override
+      public void onChanged()
+      {
+         super.onChanged();
+         lastTasksSort = -1;
+      }
+      
+      
+      
+      @Override
+      public void onInvalidated()
+      {
+         super.onInvalidated();
+         lastTasksSort = -1;
+      }
+   };
+   
+   private int lastTasksSort;
+   
    
    
    protected AbstractTasksListFragmentAdapter( MolokoListView listView,
       int unselectedResourceId, int selectedResourceId )
    {
       super( listView, unselectedResourceId, selectedResourceId );
+      
+      lastTasksSort = MolokoApp.getSettings( getContext() ).getTaskSort();
+      registerDataSetObserver( dataSetObserver );
    }
    
    
    
    public void sort( int taskSort )
    {
-      switch ( taskSort )
+      if ( lastTasksSort != taskSort )
       {
-         case Settings.TASK_SORT_PRIORITY:
-            sort( new CompositeComparator< Task >( new SortTaskPriority() ).add( new SortTaskDueDate() ) );
-            break;
+         switch ( taskSort )
+         {
+            case Settings.TASK_SORT_PRIORITY:
+               sort( new CompositeComparator< Task >( new SortTaskPriority() ).add( new SortTaskDueDate() ) );
+               break;
+            
+            case Settings.TASK_SORT_DUE_DATE:
+               sort( new CompositeComparator< Task >( new SortTaskDueDate() ).add( new SortTaskPriority() ) );
+               break;
+            
+            case Settings.TASK_SORT_NAME:
+               sort( new SortTaskName() );
+               break;
+            
+            default :
+               throw new IllegalArgumentException( taskSort
+                  + " is no valid sort" );
+         }
          
-         case Settings.TASK_SORT_DUE_DATE:
-            sort( new CompositeComparator< Task >( new SortTaskDueDate() ).add( new SortTaskPriority() ) );
-            break;
-         
-         case Settings.TASK_SORT_NAME:
-            sort( new SortTaskName() );
-            break;
-         
-         default :
-            throw new IllegalArgumentException( taskSort + " is no valid sort" );
+         lastTasksSort = taskSort;
       }
    }
    

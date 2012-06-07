@@ -26,7 +26,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.format.DateUtils;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
@@ -56,6 +58,8 @@ abstract class LoaderFragmentImplBase< D >
       
       Loader< D > newLoaderInstance( int id, Bundle config );
    }
+   
+   private final static long DEFAULT_LOADER_THROTTLE_MS = DateUtils.SECOND_IN_MILLIS;
    
    private final static String RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
    
@@ -163,7 +167,9 @@ abstract class LoaderFragmentImplBase< D >
                                             .getLoader( support.getLoaderId() );
          
          if ( loader instanceof AbstractLoader< ? > )
+         {
             ( (AbstractLoader< ? >) loader ).setRespectContentChanges( respect );
+         }
       }
    }
    
@@ -180,8 +186,15 @@ abstract class LoaderFragmentImplBase< D >
    {
       final Loader< D > loader = support.newLoaderInstance( id, args );
       
+      if ( loader instanceof AsyncTaskLoader< ? > )
+      {
+         ( (AsyncTaskLoader< ? >) loader ).setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
+      }
+      
       if ( loader instanceof AbstractLoader< ? > )
+      {
          ( (AbstractLoader< ? >) loader ).setRespectContentChanges( isRespectingContentChanges() );
+      }
       
       loaderListener.onFragmentLoadStarted( fragment.getId(), fragment.getTag() );
       

@@ -61,11 +61,6 @@
       android:hardwareAccelerated="true"
       android:allowBackup="true">
 
-      <!-- Declare the default searchable Activity for the whole app -->
-      <meta-data
-         android:name="android.app.default_searchable"
-         android:value=".activities.TaskSearchResultActivity" />
-
       <!-- Content Provider -->
       <provider
          android:name=".content.RtmProvider"
@@ -91,6 +86,9 @@
       <activity
          android:label="@string/app_name"
          android:name=".activities.HomeActivity">
+         <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activities.TaskSearchResultActivity" />
       </activity>
 
       <activity
@@ -116,6 +114,9 @@
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
+         <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activities.TaskSearchResultActivity" />
       </activity>
 
       <activity
@@ -140,6 +141,9 @@
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.list" />
          </intent-filter>
+         <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activities.TaskSearchResultActivity" />
       </activity>
 
       <activity
@@ -177,7 +181,8 @@
       <activity
          android:name=".activities.TaskEditActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
-         android:uiOptions="splitActionBarWhenNarrow">
+         android:uiOptions="splitActionBarWhenNarrow"
+         android:windowSoftInputMode="adjustResize">
          
          <!-- Edit a single task -->
          <intent-filter>
@@ -193,7 +198,8 @@
       <activity
          android:name=".activities.TaskAddActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
-         android:uiOptions="splitActionBarWhenNarrow">
+         android:uiOptions="splitActionBarWhenNarrow"
+         android:windowSoftInputMode="adjustResize">
          
          <!-- Insert a new task -->      
          <intent-filter>
@@ -209,7 +215,8 @@
       <activity
          android:name=".activities.TaskEditMultipleActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
-         android:uiOptions="splitActionBarWhenNarrow">
+         android:uiOptions="splitActionBarWhenNarrow"
+         android:windowSoftInputMode="adjustResize">
          <intent-filter>
             <!-- Edit a list of tasks -->
             <action
@@ -224,7 +231,8 @@
       <activity
          android:name=".activities.NoteActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
-         android:uiOptions="splitActionBarWhenNarrow">
+         android:uiOptions="splitActionBarWhenNarrow"
+         android:windowSoftInputMode="adjustResize">
          
          <!-- Edit a single note -->
          <intent-filter>
@@ -249,8 +257,7 @@
        
       <activity
          android:label="@string/app_contacts"
-         android:name=".activities.ContactsListActivity"
-         android:theme="@style/Theme.Moloko.HomeAsUp">
+         android:name=".activities.ContactsListActivity">
          <intent-filter>
             <!-- Show all contacts -->
             <action
@@ -264,8 +271,7 @@
 
       <activity
          android:label="@string/app_tagcloud"
-         android:name=".activities.TagCloudActivity"
-         android:theme="@style/Theme.Moloko.HomeAsUp">
+         android:name=".activities.TagCloudActivity">
       </activity>
 
       <activity

@@ -57,18 +57,12 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_tag_cloud };
-   }
-   
-   
-   
-   @Override
    public void onListNameClicked( String listName )
    {
-      startActivity( Intents.createOpenListIntentByName( this, listName, null ) );
+      startActivityWithHomeAction( Intents.createOpenListIntentByName( this,
+                                                                       listName,
+                                                                       null ),
+                                   getClass() );
    }
    
    
@@ -76,7 +70,9 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    @Override
    public void onLocationNameClicked( String locationName )
    {
-      startActivity( Intents.createOpenLocationIntentByName( this, locationName ) );
+      startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
+                                                                           locationName ),
+                                   getClass() );
    }
    
    
@@ -92,8 +88,18 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    @Override
    public void onTagNameClicked( String tagName )
    {
-      startActivity( Intents.createOpenTagsIntent( this,
-                                                   Collections.singletonList( tagName ),
-                                                   RtmSmartFilterLexer.AND_LIT ) );
+      startActivityWithHomeAction( Intents.createOpenTagsIntent( this,
+                                                                 Collections.singletonList( tagName ),
+                                                                 RtmSmartFilterLexer.AND_LIT ),
+                                   getClass() );
+   }
+   
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return new int[]
+      { R.id.frag_tag_cloud };
    }
 }

@@ -51,6 +51,13 @@ public class ActionModeWrapper extends ActionMode
    
    
    
+   public android.view.ActionMode getWrapped()
+   {
+      return mActionMode;
+   }
+   
+   
+   
    @Override
    public void setTitle( CharSequence title )
    {

@@ -577,11 +577,7 @@ public abstract class AbstractTaskEditFragment
    
    protected void initializeTagsSection()
    {
-      UIUtils.inflateTags( getSherlockActivity(),
-                           tagsLayout,
-                           getTags(),
-                           null,
-                           null );
+      UIUtils.inflateTags( getSherlockActivity(), tagsLayout, getTags(), null );
    }
    
    

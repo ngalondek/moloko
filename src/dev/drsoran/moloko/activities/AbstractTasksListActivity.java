@@ -103,10 +103,26 @@ public abstract class AbstractTasksListActivity extends
    
    protected void initialize()
    {
+      initializeHomeNavigtaion();
       initializeTitle();
       initializeSelectedNavigationItemId();
       initializeActionBar();
       initializeTasksListFragment();
+   }
+   
+   
+   
+   protected void initializeHomeNavigtaion()
+   {
+      if ( Intents.HomeAction.BACK.equals( getHomeAction() )
+         || Intents.HomeAction.ACTIVITY.equals( getHomeAction() ) )
+      {
+         getSupportActionBar().setDisplayHomeAsUpEnabled( true );
+      }
+      else
+      {
+         getSupportActionBar().setDisplayHomeAsUpEnabled( false );
+      }
    }
    
    

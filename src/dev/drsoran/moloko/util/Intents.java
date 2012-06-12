@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -42,6 +41,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
+import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
@@ -81,8 +81,24 @@ public final class Intents
    }
    
    
+   public final static class HomeAction
+   {
+      public final static String NONE = "none";
+      
+      public final static String BACK = "back";
+      
+      public final static String HOME = "home";
+      
+      public final static String ACTIVITY = "activity";
+   }
+   
+   
    public final static class Extras
    {
+      public final static String HOME_ACTION = "home_action";
+      
+      public final static String HOME_AS_UP_ACTIVITY = "home_as_up_activity";
+      
       public final static String KEY_ACTIVITY_TITLE = "activity_title";
       
       public final static String KEY_ACTIVITY_SUB_TITLE = "activity_sub_title";
@@ -462,10 +478,17 @@ public final class Intents
    
    
    
-   public final static Intent createHomeAsUpIntent( Context context,
-                                                    Class< ? extends Activity > target )
+   public final static Intent createHomeIntent( Context context )
    {
-      return new Intent( context, target ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+      return createHomeAsUpIntent( context, HomeActivity.class );
+   }
+   
+   
+   
+   public final static Intent createHomeAsUpIntent( Context context,
+                                                    Class< ? > homeAsUpTarget )
+   {
+      return new Intent( context, homeAsUpTarget ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
    }
    
    

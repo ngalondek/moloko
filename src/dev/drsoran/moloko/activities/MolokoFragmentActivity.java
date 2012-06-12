@@ -24,7 +24,6 @@ package dev.drsoran.moloko.activities;
 
 import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,22 +33,26 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
+import dev.drsoran.moloko.ActionModeWrapper;
 import dev.drsoran.moloko.AnnotatedConfigurationSupport;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.ISyncStatusListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.IAlertDialogFragmentListener;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Intents.HomeAction;
 
 
 public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
@@ -65,9 +68,25 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    private final Handler handler = new Handler();
    
+   @InstanceState( key = Intents.Extras.HOME_ACTION,
+                   defaultValue = Intents.HomeAction.BACK )
+   private String homeAction;
+   
+   @InstanceState( key = Intents.Extras.HOME_AS_UP_ACTIVITY,
+                   defaultValue = InstanceState.NULL )
+   private String homeAsUpTargetActivity;
+   
    private boolean ignoreAccountListenerAfterRegister = true;
    
-   private Class< ? extends Activity > homeAsUpTargetActivity = HomeActivity.class;
+   private boolean disableSearch;
+   
+   
+   
+   protected MolokoFragmentActivity()
+   {
+      annotatedConfigSupport.registerInstance( this,
+                                               MolokoFragmentActivity.class );
+   }
    
    
    
@@ -81,9 +100,10 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       setupActionBar();
       
       configureByIntent( getIntent() );
-      
       if ( savedInstanceState != null )
+      {
          configureBySavedInstanceState( savedInstanceState );
+      }
       
       AccountUtils.registerAccountListener( this, handler, this );
       
@@ -171,6 +191,94 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    @Override
+   public void onActionModeStarted( ActionMode mode )
+   {
+      disableSearch = true;
+      super.onActionModeStarted( mode );
+   }
+   
+   
+   
+   @Override
+   public final void onActionModeStarted( android.view.ActionMode mode )
+   {
+      super.onActionModeStarted( mode );
+      onActionModeStarted( new ActionModeWrapper( getSupportMenuInflater(),
+                                                  mode ) );
+   }
+   
+   
+   
+   @Override
+   public void onActionModeFinished( ActionMode mode )
+   {
+      disableSearch = false;
+      super.onActionModeFinished( mode );
+   }
+   
+   
+   
+   @Override
+   public final void onActionModeFinished( android.view.ActionMode mode )
+   {
+      onActionModeFinished( new ActionModeWrapper( getSupportMenuInflater(),
+                                                   mode ) );
+      super.onActionModeFinished( mode );
+   }
+   
+   
+   
+   public void startActivityWithHomeAction( Intent intent, String homeAction )
+   {
+      startActivity( intent.putExtra( Intents.Extras.HOME_ACTION, homeAction ) );
+   }
+   
+   
+   
+   public void startActivityWithHomeAction( Intent intent,
+                                            Class< ? > homeAsUpActivity )
+   {
+      startActivity( intent.putExtra( Intents.Extras.HOME_ACTION,
+                                      HomeAction.ACTIVITY )
+                           .putExtra( Intents.Extras.HOME_AS_UP_ACTIVITY,
+                                      homeAsUpActivity.getName() ) );
+   }
+   
+   
+   
+   public void startActivityPreserveHomeAction( Intent intent )
+   {
+      if ( homeAction != null )
+      {
+         intent.putExtra( Intents.Extras.HOME_ACTION, homeAction );
+      }
+      
+      if ( homeAsUpTargetActivity != null )
+      {
+         intent.putExtra( Intents.Extras.HOME_AS_UP_ACTIVITY,
+                          homeAsUpTargetActivity );
+      }
+      
+      startActivity( intent );
+   }
+   
+   
+   
+   public String getHomeAction()
+   {
+      return homeAction;
+   }
+   
+   
+   
+   public String getHomeAsUpTargetActivity()
+   {
+      return homeAsUpTargetActivity;
+   }
+   
+   
+   
+   @Override
    public void reEvaluateRtmAccessLevel( Perms currentAccessLevel )
    {
       invalidateOptionsMenu();
@@ -220,13 +328,6 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       }
       
       return handled || super.onOptionsItemSelected( item );
-   }
-   
-   
-   
-   public void setHomeAsUpTargetActivity( Class< ? extends Activity > target )
-   {
-      homeAsUpTargetActivity = target;
    }
    
    
@@ -476,17 +577,41 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    private void onActionBarHome()
    {
-      if ( isShowHomeAsUp() )
+      if ( Intents.HomeAction.HOME.equals( homeAction ) )
+      {
+         if ( onFinishActivityByHome() )
+         {
+            startActivity( Intents.createHomeIntent( this ) );
+         }
+      }
+      else if ( Intents.HomeAction.BACK.equals( homeAction ) )
+      {
+         if ( onFinishActivityByHome() )
+         {
+            finish();
+         }
+      }
+      else if ( Intents.HomeAction.ACTIVITY.equals( homeAction ) )
       {
          if ( onFinishActivityByHome() )
          {
             startActivity( Intents.createHomeAsUpIntent( this,
-                                                         homeAsUpTargetActivity ) );
+                                                         getHomeAsUpActivityClass() ) );
          }
       }
-      else
+   }
+   
+   
+   
+   private Class< ? > getHomeAsUpActivityClass()
+   {
+      try
       {
-         startActivity( Intents.createHomeAsUpIntent( this, HomeActivity.class ) );
+         return getClassLoader().loadClass( homeAsUpTargetActivity );
+      }
+      catch ( ClassNotFoundException e )
+      {
+         throw new RuntimeException( e );
       }
    }
    
@@ -502,6 +627,19 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    private void onMenuSearch()
    {
       onSearchRequested();
+   }
+   
+   
+   
+   @Override
+   public boolean onSearchRequested()
+   {
+      if ( !disableSearch )
+      {
+         return super.onSearchRequested();
+      }
+      
+      return false;
    }
    
    

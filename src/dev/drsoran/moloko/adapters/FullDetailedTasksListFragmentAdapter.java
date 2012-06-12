@@ -28,7 +28,6 @@ import java.util.List;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,20 +48,16 @@ public class FullDetailedTasksListFragmentAdapter extends
 {
    public final static int FLAG_SHOW_ALL = 1 << 0;
    
-   public final static int FLAG_NO_CLICKABLES = 1 << 1;
-   
    private final RtmSmartFilter filter;
    
    private final String[] tagsToRemove;
    
    private final int flags;
    
-   private final OnClickListener onClickListener;
-   
    
    
    public FullDetailedTasksListFragmentAdapter( MolokoListView listView,
-      IFilter filter, int flags, OnClickListener onClickListener )
+      IFilter filter, int flags )
    {
       super( listView,
              R.layout.fulldetailed_taskslist_listitem,
@@ -94,8 +89,6 @@ public class FullDetailedTasksListFragmentAdapter extends
       {
          this.tagsToRemove = null;
       }
-      
-      this.onClickListener = onClickListener;
    }
    
    
@@ -156,14 +149,11 @@ public class FullDetailedTasksListFragmentAdapter extends
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getListName() );
-         
-         if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
-            view.setClickable( false );
-         else
-            view.setOnClickListener( onClickListener );
       }
       else
+      {
          view.setVisibility( View.GONE );
+      }
    }
    
    
@@ -183,11 +173,6 @@ public class FullDetailedTasksListFragmentAdapter extends
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getLocationName() );
-         
-         if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
-            view.setClickable( false );
-         else
-            view.setOnClickListener( onClickListener );
       }
    }
    
@@ -200,14 +185,7 @@ public class FullDetailedTasksListFragmentAdapter extends
       if ( tagsToRemove != null && tagsToRemove.length > 0 )
          tagsConfig.putStringArray( UIUtils.REMOVE_TAGS_EQUALS, tagsToRemove );
       
-      if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
-         tagsConfig.putBoolean( UIUtils.DISABLE_ALL_TAGS, Boolean.TRUE );
-      
-      UIUtils.inflateTags( getContext(),
-                           tagsLayout,
-                           task.getTags(),
-                           tagsConfig,
-                           onClickListener );
+      UIUtils.inflateTags( getContext(), tagsLayout, task.getTags(), tagsConfig );
    }
    
    

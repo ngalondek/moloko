@@ -43,6 +43,13 @@
         <item name="android:listViewStyle">@style/ForceWhiteListViewStyle</item>
     </style>
     
+    <style name="Theme.Moloko.NoTitle">
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.NoTitle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.NoTitle</item>
+    </style>
+    
     <style name="Theme.Moloko.HomeAsUp">
 
         <!-- ActionBar -->
@@ -57,7 +64,7 @@
         <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
     </style>
         
-    <style name="Theme.Moloko.TasksList" parent="@style/Theme.Moloko.HomeAsUp">
+    <style name="Theme.Moloko.TasksList">
         
         <!-- ActionBar -->
         <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>

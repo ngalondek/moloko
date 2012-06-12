@@ -63,7 +63,10 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
    @Override
    public void onShowTasksOfContact( String fullname, String username )
    {
-      startActivity( Intents.createOpenContactIntent( this, fullname, username ) );
+      startActivityWithHomeAction( Intents.createOpenContactIntent( this,
+                                                                    fullname,
+                                                                    username ),
+                                   getClass() );
    }
    
    

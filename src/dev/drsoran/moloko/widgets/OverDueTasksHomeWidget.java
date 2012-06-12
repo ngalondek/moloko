@@ -56,6 +56,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    
    private final Runnable reloadRunnable = new Runnable()
    {
+      @Override
       public void run()
       {
          asyncReload();
@@ -63,7 +64,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    };
    
    
-
+   
    public OverDueTasksHomeWidget( Context context, AttributeSet attrs,
       int labelId )
    {
@@ -95,8 +96,8 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       };
    }
    
-
-
+   
+   
    @Override
    public void start()
    {
@@ -105,8 +106,8 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
    }
    
-
-
+   
+   
    @Override
    public void stop()
    {
@@ -115,8 +116,8 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
    }
    
-
-
+   
+   
    public View getWidgetView()
    {
       final View view = LayoutInflater.from( getContext() )
@@ -125,8 +126,9 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       return view;
    }
    
-
-
+   
+   
+   @Override
    public Intent getIntent()
    {
       final SqlSelectionFilter filter = new SqlSelectionFilter( getSelection() );
@@ -136,15 +138,8 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
                                                      label.getText().toString() );
    }
    
-
-
-   public Runnable getRunnable()
-   {
-      return null;
-   }
    
-
-
+   
    @Override
    protected Integer doBackgroundQuery()
    {
@@ -163,24 +158,24 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       return null;
    }
    
-
-
+   
+   
    @Override
    protected void onMinuteTick()
    {
       asyncReloadWithoutSpinner();
    }
    
-
-
+   
+   
    @Override
    protected void onSystemTimeChanged()
    {
       asyncReloadWithoutSpinner();
    }
    
-
-
+   
+   
    private final String getSelection()
    {
       final String tasksDueBeforeToday = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT

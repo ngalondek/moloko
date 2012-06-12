@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.List;
-
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,7 +36,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.TaskSearchResultListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
-import dev.drsoran.moloko.util.Intents;
 
 
 public class TaskSearchResultActivity extends
@@ -157,15 +154,6 @@ public class TaskSearchResultActivity extends
    {
       lastQuerySucceeded = false;
       invalidateOptionsMenu();
-   }
-   
-   
-   
-   @Override
-   protected void onOpenChoosenTags( List< String > tags,
-                                     String logicalOperation )
-   {
-      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
    }
    
    

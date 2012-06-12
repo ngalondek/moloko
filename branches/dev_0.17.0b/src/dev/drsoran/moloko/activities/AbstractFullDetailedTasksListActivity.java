@@ -165,8 +165,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    @Override
    public void onOpenTaskLocation( Task task )
    {
-      startActivity( Intents.createOpenLocationIntentByName( this,
-                                                             task.getLocationName() ) );
+      startActivityPreserveHomeAction( Intents.createOpenLocationIntentByName( this,
+                                                                               task.getLocationName() ) );
    }
    
    
@@ -316,7 +316,9 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    protected void onOpenChoosenTags( List< String > tags,
                                      String logicalOperation )
    {
-      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
+      startActivityPreserveHomeAction( Intents.createOpenTagsIntent( this,
+                                                                     tags,
+                                                                     logicalOperation ) );
    }
    
    

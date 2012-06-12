@@ -25,7 +25,6 @@ package dev.drsoran.moloko.activities;
 import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -38,6 +37,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Intents.HomeAction;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
@@ -46,8 +46,6 @@ import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
 public class HomeActivity extends MolokoFragmentActivity implements
          OnItemClickListener
 {
-   private final Handler handler = new Handler();
-   
    private IMolokoHomeWidget addAccountWidget;
    
    
@@ -88,12 +86,13 @@ public class HomeActivity extends MolokoFragmentActivity implements
    @Override
    protected void onStop()
    {
-      super.onStop();
-      
       final HomeAdapter homeAdapter = getHomeAdapter();
-      
       if ( homeAdapter != null )
+      {
          homeAdapter.stopWidgets();
+      }
+      
+      super.onStop();
    }
    
    
@@ -194,15 +193,9 @@ public class HomeActivity extends MolokoFragmentActivity implements
       final HomeAdapter adapter = (HomeAdapter) ( (GridView) adapterView ).getAdapter();
       
       final Intent intent = adapter.getIntentForWidget( pos );
-      
       if ( intent != null )
-         startActivity( intent );
-      else
       {
-         final Runnable runnable = adapter.getRunnableForWidget( pos );
-         
-         if ( runnable != null )
-            handler.post( runnable );
+         startActivityWithHomeAction( intent, HomeAction.HOME );
       }
    }
    

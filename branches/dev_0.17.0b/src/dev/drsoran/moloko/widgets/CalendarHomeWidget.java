@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -71,7 +71,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    };
    
    
-
+   
    public CalendarHomeWidget( Context context, AttributeSet attrs, int labelId,
       int type )
    {
@@ -106,30 +106,28 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       };
    }
    
-
-
+   
+   
    @Override
    public void start()
    {
       super.start();
       
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
-      
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    @Override
    public void stop()
    {
-      super.stop();
-      
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
+      super.stop();
    }
    
-
-
+   
+   
    public View getWidgetView()
    {
       final View view = LayoutInflater.from( getContext() )
@@ -138,8 +136,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return view;
    }
    
-
-
+   
+   
    private MolokoCalendar getCalendar()
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -156,8 +154,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return cal;
    }
    
-
-
+   
+   
    @Override
    public Intent getIntent()
    {
@@ -174,16 +172,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return Intents.createSmartFilterIntent( getContext(), filter, title );
    }
    
-
-
-   @Override
-   public Runnable getRunnable()
-   {
-      return null;
-   }
    
-
-
+   
    @Override
    protected Integer doBackgroundQuery()
    {
@@ -206,8 +196,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return null;
    }
    
-
-
+   
+   
    @Override
    protected void onMidnight()
    {
@@ -215,8 +205,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    @Override
    protected void onSystemTimeChanged()
    {
@@ -224,8 +214,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    private String getFilterExpression( final MolokoCalendar cal )
    {
       return RtmSmartFilterLexer.OP_DUE_LIT
@@ -235,8 +225,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
                                                                        | MolokoDateUtils.FORMAT_NUMERIC ) );
    }
    
-
-
+   
+   
    private void setCalendarDayInWidget()
    {
       final MolokoCalendar cal = getCalendar();

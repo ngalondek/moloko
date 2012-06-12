@@ -298,7 +298,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       UIUtils.inflateTags( getSherlockActivity(),
                            tagsLayout,
                            task.getTags(),
-                           null,
                            null );
       
       setDateTimeSection( dateTimeSection, task );

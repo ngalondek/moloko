@@ -137,7 +137,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
          final Intent intent = Intents.createOpenListIntent( this,
                                                              rtmList,
                                                              null );
-         startActivity( intent );
+         startActivityWithHomeAction( intent, getClass() );
       }
    }
    
@@ -146,7 +146,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void openChild( Intent intent )
    {
-      startActivity( intent );
+      startActivityWithHomeAction( intent, getClass() );
    }
    
    

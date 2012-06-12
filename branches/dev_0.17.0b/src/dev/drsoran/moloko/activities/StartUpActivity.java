@@ -40,6 +40,7 @@ import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Intents.HomeAction;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
@@ -222,14 +223,16 @@ public class StartUpActivity extends MolokoFragmentActivity
       switch ( startUpView )
       {
          case Settings.STARTUP_VIEW_DEFAULT_LIST:
-            startActivity( Intents.createOpenListIntentById( this,
-                                                             settings.getDefaultListId(),
-                                                             null ) );
+            startActivityWithHomeAction( Intents.createOpenListIntentById( this,
+                                                                           settings.getDefaultListId(),
+                                                                           null ),
+                                         HomeAction.HOME );
             break;
          
          case Settings.STARTUP_VIEW_LISTS:
-            startActivity( new Intent( Intent.ACTION_VIEW,
-                                       ListOverviews.CONTENT_URI ) );
+            startActivityWithHomeAction( new Intent( Intent.ACTION_VIEW,
+                                                     ListOverviews.CONTENT_URI ),
+                                         HomeAction.HOME );
             break;
          
          case Settings.STARTUP_VIEW_HOME:

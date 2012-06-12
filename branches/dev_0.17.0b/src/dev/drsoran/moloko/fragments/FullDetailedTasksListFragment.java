@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.os.Bundle;
@@ -30,11 +29,9 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
 import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.loaders.TasksLoader;
@@ -43,7 +40,7 @@ import dev.drsoran.rtm.Task;
 
 
 public class FullDetailedTasksListFragment extends
-         AbstractTasksListFragment< Task > implements View.OnClickListener
+         AbstractTasksListFragment< Task >
 {
    public static FullDetailedTasksListFragment newInstance( Bundle configuration )
    {
@@ -62,31 +59,6 @@ public class FullDetailedTasksListFragment extends
                              Bundle savedInstanceState )
    {
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
-   }
-   
-   
-   
-   @Override
-   public void onClick( View view )
-   {
-      final ITasksListActionModeListener actionModeListener = getActionModeListener();
-      if ( actionModeListener != null )
-      {
-         switch ( view.getId() )
-         {
-            case R.id.tags_layout_btn_tag:
-               final String tag = ( (TextView) view ).getText().toString();
-               actionModeListener.onShowTasksWithTags( Collections.singletonList( tag ) );
-               break;
-            
-            case R.id.taskslist_listitem_location:
-               actionModeListener.onOpenTaskLocation( getTask( view ) );
-               break;
-            
-            default :
-               break;
-         }
-      }
    }
    
    
@@ -128,8 +100,7 @@ public class FullDetailedTasksListFragment extends
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getMolokoListView(),
                                                        filter,
-                                                       flags,
-                                                       this );
+                                                       flags );
    }
    
    

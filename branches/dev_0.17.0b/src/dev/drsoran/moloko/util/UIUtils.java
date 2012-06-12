@@ -43,7 +43,6 @@ import android.text.style.UnderlineSpan;
 import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -59,14 +58,7 @@ import dev.drsoran.rtm.Task;
 
 public final class UIUtils
 {
-   /**
-    * If a tag has been clicked then it makes no sense to click it in the result again.
-    */
-   public static final String DISABLE_TAGS_EQUALS = "disable_tags_equals";
-   
    public static final String REMOVE_TAGS_EQUALS = "remove_tags_equals";
-   
-   public static final String DISABLE_ALL_TAGS = "disable_all_tags";
    
    public static final String REMOVE_ALL_TAGS = "remove_all_tags";
    
@@ -285,69 +277,46 @@ public final class UIUtils
    public final static void inflateTags( Context context,
                                          ViewGroup container,
                                          Collection< String > tags,
-                                         Bundle configuration,
-                                         OnClickListener listener ) throws InflateException
+                                         Bundle configuration )
    {
       if ( configuration == null )
-         configuration = new Bundle();
+      {
+         configuration = Bundle.EMPTY;
+      }
       
       final int tagPos = getTaggedViewPos( container, "tag_name" );
       
       if ( tagPos != -1 )
+      {
          container.removeViews( tagPos, container.getChildCount() - tagPos );
+      }
       
       // inflate the stub and add tags
       if ( tags.size() > 0 && !configuration.containsKey( REMOVE_ALL_TAGS ) )
       {
          try
          {
-            if ( configuration.containsKey( DISABLE_ALL_TAGS ) )
+            final String[] tagsToRemove = configuration.getStringArray( REMOVE_TAGS_EQUALS );
+            
+            for ( String tagText : tags )
             {
-               for ( String tagText : tags )
+               boolean remove = false;
+               
+               if ( tagsToRemove != null )
+               {
+                  for ( int i = 0; i < tagsToRemove.length && !remove; i++ )
+                  {
+                     remove = tagsToRemove[ i ].equalsIgnoreCase( tagText );
+                  }
+               }
+               
+               if ( !remove )
                {
                   final TextView tagView = (TextView) View.inflate( context,
                                                                     R.layout.tag_button,
                                                                     null );
-                  tagView.setClickable( false );
                   tagView.setText( tagText );
                   container.addView( tagView );
-               }
-            }
-            else
-            {
-               final String[] tagsToDisable = configuration.getStringArray( DISABLE_TAGS_EQUALS );
-               final String[] tagsToRemove = configuration.getStringArray( REMOVE_TAGS_EQUALS );
-               
-               for ( String tagText : tags )
-               {
-                  boolean remove = false;
-                  
-                  if ( tagsToRemove != null )
-                     for ( int i = 0; i < tagsToRemove.length && !remove; i++ )
-                     {
-                        remove = tagsToRemove[ i ].equalsIgnoreCase( tagText );
-                     }
-                  
-                  if ( !remove )
-                  {
-                     boolean disable = false;
-                     
-                     if ( tagsToDisable != null )
-                        for ( int i = 0; i < tagsToDisable.length && !disable; i++ )
-                        {
-                           disable = tagsToDisable[ i ].equalsIgnoreCase( tagText );
-                        }
-                     
-                     final TextView tagView = (TextView) View.inflate( context,
-                                                                       R.layout.tag_button,
-                                                                       null );
-                     tagView.setClickable( !disable );
-                     tagView.setText( tagText );
-                     container.addView( tagView );
-                     
-                     if ( !disable && listener != null )
-                        tagView.setOnClickListener( listener );
-                  }
                }
             }
          }

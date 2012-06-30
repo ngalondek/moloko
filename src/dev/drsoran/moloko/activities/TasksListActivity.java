@@ -125,7 +125,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       
       // if we are configured with a list name then we already are in a list
       // and do not need to add a new one.
-      show = show && selectedItem.getId().equals( CUSTOM_NAVIGATION_ITEM_ID );
+      show = show && selectedItem.getId() == CUSTOM_NAVIGATION_ITEM_ID;
       
       if ( show )
       {

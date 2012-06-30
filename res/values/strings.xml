@@ -342,6 +342,7 @@
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Due tomorrow</string>
    <string name="taskslist_actionbar_subtitle_overdue">Overdue</string>
    <string name="taskslist_actionbar_subtitle_completed">Completed</string>
+   <string name="taskslist_actionbar_subtitle_incomplete">Incomplete</string>
      <!-- Menus -->
      <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
      <string name="taskslist_menu_opt_delete_list">Delete list</string>

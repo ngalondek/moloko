@@ -29,23 +29,34 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.actionbarsherlock.internal.widget.CapitalizingTextView;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
-public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
+public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
 {
    public static interface IItem
    {
-      String getId();
+      long getId();
       
       
       
-      String getDisplay();
+      String getPrimaryText();
+      
+      
+      
+      String getSupplementalText();
+      
+      
+      
+      int getNumberOfTasks();
       
       
       
@@ -53,7 +64,7 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
    }
    
    
-   public final static class RtmListItem implements IItem
+   public static class RtmListItem implements IItem
    {
       private final Context context;
       
@@ -70,17 +81,33 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
       
       
       @Override
-      public String getId()
+      public long getId()
       {
-         return list.getId();
+         return Long.valueOf( list.getId() );
       }
       
       
       
       @Override
-      public String getDisplay()
+      public String getPrimaryText()
       {
          return list.getName();
+      }
+      
+      
+      
+      @Override
+      public String getSupplementalText()
+      {
+         return null;
+      }
+      
+      
+      
+      @Override
+      public int getNumberOfTasks()
+      {
+         return -1;
       }
       
       
@@ -93,27 +120,83 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
    }
    
    
+   public static class ExtendedRtmListItem extends RtmListItem
+   {
+      private final String supplementalText;
+      
+      private final int numTasks;
+      
+      private Bundle config;
+      
+      
+      
+      public ExtendedRtmListItem( Context context, String typeOfTasks,
+         RtmListWithTaskCount list, int numTasks )
+      {
+         super( context, list );
+         this.supplementalText = typeOfTasks;
+         this.numTasks = numTasks;
+      }
+      
+      
+      
+      @Override
+      public String getSupplementalText()
+      {
+         return supplementalText;
+      }
+      
+      
+      
+      @Override
+      public int getNumberOfTasks()
+      {
+         return numTasks;
+      }
+      
+      
+      
+      @Override
+      public Bundle getTasksListConfig()
+      {
+         return config;
+      }
+      
+      
+      
+      public ExtendedRtmListItem setTasksListConfig( Bundle config )
+      {
+         this.config = config;
+         return this;
+      }
+   }
+   
+   
    public final static class CustomItem implements IItem
    {
-      private final String id;
+      private final long id;
       
-      private final String display;
+      private final String primaryText;
+      
+      private final String supplemental;
       
       private final Bundle config;
       
       
       
-      public CustomItem( String id, String display, Bundle config )
+      public CustomItem( long id, String primaryText, String supplemental,
+         Bundle config )
       {
          this.id = id;
-         this.display = display;
+         this.primaryText = primaryText;
+         this.supplemental = supplemental;
          this.config = config;
       }
       
       
       
       @Override
-      public String getId()
+      public long getId()
       {
          return id;
       }
@@ -121,9 +204,25 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
       
       
       @Override
-      public String getDisplay()
+      public String getPrimaryText()
       {
-         return display;
+         return primaryText;
+      }
+      
+      
+      
+      @Override
+      public String getSupplementalText()
+      {
+         return supplemental;
+      }
+      
+      
+      
+      @Override
+      public int getNumberOfTasks()
+      {
+         return -1;
       }
       
       
@@ -135,26 +234,186 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
       }
    }
    
+   
+   private abstract class AbstractDropDownPresenter
+   {
+      public View getDropDownItemView( int position,
+                                       View convertView,
+                                       ViewGroup parent )
+      {
+         final int listSectionIndex = getListSectionIndex();
+         if ( position < listSectionIndex )
+         {
+            convertView = inflateIfNeeded( convertView,
+                                           parent,
+                                           getLayoutResourceId() );
+            
+            initializeSelectedItemDropDownView( position, convertView, parent );
+         }
+         else if ( position == listSectionIndex )
+         {
+            convertView = inflateIfNeeded( convertView,
+                                           parent,
+                                           R.layout.taskslist_activity_actionbar_listsection_dropdown_item );
+            
+            final CapitalizingTextView textView = (CapitalizingTextView) convertView.findViewById( android.R.id.text1 );
+            textView.setTextCompat( getContext().getString( R.string.app_tasklists ) );
+         }
+         // Normal list
+         else
+         {
+            convertView = inflateIfNeeded( convertView,
+                                           parent,
+                                           R.layout.sherlock_spinner_dropdown_item );
+            
+            // Subtract 1 from the position since the list section item is not part of the adapter
+            // data.
+            final String title = getItem( position - 1 ).getPrimaryText();
+            final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text1 );
+            itemTextView.setText( title );
+         }
+         
+         return convertView;
+      }
+      
+      
+      
+      public int getItemViewType( int position )
+      {
+         final int listSectionIndex = getListSectionIndex();
+         if ( position < listSectionIndex )
+         {
+            return getLayoutResourceId();
+         }
+         else if ( position == listSectionIndex )
+         {
+            return R.layout.taskslist_activity_actionbar_listsection_dropdown_item;
+         }
+         // Normal list
+         else
+         {
+            return R.layout.sherlock_spinner_dropdown_item;
+         }
+      }
+      
+      
+      
+      private void initializeSelectedItemDropDownView( int position,
+                                                       View convertView,
+                                                       ViewGroup parent )
+      {
+         final IItem item = getItem( position );
+         
+         final TextView titleView = (TextView) convertView.findViewById( android.R.id.text1 );
+         titleView.setText( item.getPrimaryText() );
+         
+         final TextView subtitleView = (TextView) convertView.findViewById( android.R.id.text2 );
+         if ( subtitleView != null )
+         {
+            subtitleView.setText( item.getSupplementalText() );
+         }
+         
+         final TextView numTasksView = (TextView) convertView.findViewById( R.id.numTasks );
+         if ( numTasksView != null )
+         {
+            numTasksView.setText( String.valueOf( item.getNumberOfTasks() ) );
+         }
+      }
+      
+      
+      
+      public abstract int getViewTypeCount();
+      
+      
+      
+      public abstract int getLayoutResourceId();
+      
+      
+      
+      public abstract int getListSectionIndex();
+   }
+   
+   
+   private class CustomItemDropDownPresenter extends AbstractDropDownPresenter
+   {
+      @Override
+      public int getViewTypeCount()
+      {
+         return 2;
+      }
+      
+      
+      
+      @Override
+      public int getLayoutResourceId()
+      {
+         return R.layout.sherlock_spinner_dropdown_item;
+      }
+      
+      
+      
+      @Override
+      public int getListSectionIndex()
+      {
+         return 1;
+      }
+   }
+   
+   
+   private class RtmListItemDropDownPresenter extends AbstractDropDownPresenter
+   {
+      @Override
+      public int getViewTypeCount()
+      {
+         return 3;
+      }
+      
+      
+      
+      @Override
+      public int getLayoutResourceId()
+      {
+         return R.layout.taskslist_activity_actionbar_extendedrtmlist_dropdown_item;
+      }
+      
+      
+      
+      @Override
+      public int getListSectionIndex()
+      {
+         return 5;
+      }
+   }
+   
+   public final static int ITEM_POSITION_INCOMPLETE_TASKS = 0;
+   
+   public final static int ITEM_POSITION_COMPLETED_TASKS = 1;
+   
+   public final static int ITEM_POSITION_OVERDUE_TASKS = 2;
+   
+   public final static int ITEM_POSITION_TODAY_TASKS = 3;
+   
+   public final static int ITEM_POSITION_TOMORROW_TASKS = 4;
+   
    private final LayoutInflater inflater;
    
-   private int selectedItemIndex;
+   private AbstractDropDownPresenter dropDownPresenter;
    
    
    
    public TasksListNavigationAdapter( Context context, List< IItem > items )
    {
       super( context, 0, items );
+      
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-   }
-   
-   
-   
-   public void setSelectedItemIndex( int selectedItemIndex )
-   {
-      if ( this.selectedItemIndex != selectedItemIndex )
+      
+      if ( items.get( 0 ) instanceof CustomItem )
       {
-         this.selectedItemIndex = selectedItemIndex;
-         notifyDataSetChanged();
+         dropDownPresenter = new CustomItemDropDownPresenter();
+      }
+      else
+      {
+         dropDownPresenter = new RtmListItemDropDownPresenter();
       }
    }
    
@@ -162,19 +421,19 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
    
    public Bundle getTasksListConfigForItem( int position )
    {
-      return getItem( position ).getTasksListConfig();
+      return getItem( getListSectionAwareItemPosition( position ) ).getTasksListConfig();
    }
    
    
    
-   public IItem getItem( String id )
+   public IItem getItem( long id )
    {
       IItem item = null;
       
       for ( int i = 0, cnt = getCount(); i < cnt && item == null; i++ )
       {
          final IItem tempItem = getItem( i );
-         if ( tempItem.getId().equals( id ) )
+         if ( tempItem.getId() == id )
          {
             item = tempItem;
          }
@@ -192,7 +451,7 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
       for ( int i = 0, cnt = getCount(); i < cnt && item == null; i++ )
       {
          final IItem tempItem = getItem( i );
-         if ( tempItem.getDisplay().equals( display ) )
+         if ( tempItem.getPrimaryText().equals( display ) )
          {
             item = tempItem;
          }
@@ -204,14 +463,51 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
    
    
    @Override
+   public long getItemId( int position )
+   {
+      return getItem( getListSectionAwareItemPosition( position ) ).getId();
+   }
+   
+   
+   
+   @Override
+   public int getViewTypeCount()
+   {
+      return dropDownPresenter.getViewTypeCount();
+   }
+   
+   
+   
+   @Override
+   public int getItemViewType( int position )
+   {
+      return dropDownPresenter.getItemViewType( position );
+   }
+   
+   
+   
+   @Override
+   public boolean areAllItemsEnabled()
+   {
+      return false;
+   }
+   
+   
+   
+   @Override
+   public boolean isEnabled( int position )
+   {
+      return dropDownPresenter.getListSectionIndex() != position;
+   }
+   
+   
+   
+   @Override
    public View getDropDownView( int position, View convertView, ViewGroup parent )
    {
-      final View view = createViewFromResource( position,
-                                                convertView,
-                                                parent,
-                                                R.layout.sherlock_spinner_dropdown_item );
-      setSelectedItemStyle( position, view );
-      return view;
+      return dropDownPresenter.getDropDownItemView( position,
+                                                    convertView,
+                                                    parent );
    }
    
    
@@ -219,46 +515,51 @@ public class TasksListNavigationAdapter extends ArrayAdapter< IItem >
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      final View view = createViewFromResource( position,
-                                                convertView,
-                                                parent,
-                                                R.layout.sherlock_spinner_item );
-      return view;
-   }
-   
-   
-   
-   private View createViewFromResource( int position,
-                                        View convertView,
-                                        ViewGroup parent,
-                                        int layoutResourceId )
-   {
-      if ( convertView == null )
-         convertView = inflater.inflate( layoutResourceId, parent, false );
+      final IItem item = getItem( getListSectionAwareItemPosition( position ) );
       
-      final String item = getItem( position ).getDisplay();
+      if ( item instanceof CustomItem )
+      {
+         convertView = inflateIfNeeded( convertView,
+                                        parent,
+                                        R.layout.sherlock_spinner_item );
+      }
+      else
+      {
+         convertView = inflateIfNeeded( convertView,
+                                        parent,
+                                        R.layout.taskslist_activity_actionbar_spinner_item_2line );
+         
+         final String subTitle = item.getSupplementalText();
+         final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text2 );
+         itemTextView.setText( subTitle );
+      }
+      
+      final String title = item.getPrimaryText();
       final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text1 );
-      itemTextView.setText( item );
+      itemTextView.setText( title );
       
       return convertView;
    }
    
    
    
-   private void setSelectedItemStyle( int position, View spinnerItem )
+   private int getListSectionAwareItemPosition( int position )
    {
-      final TextView itemTextView = (TextView) spinnerItem.findViewById( android.R.id.text1 );
-      spinnerItem.setSelected( position == selectedItemIndex );
+      return position >= dropDownPresenter.getListSectionIndex() ? position - 1
+                                                                : position;
+   }
+   
+   
+   
+   private View inflateIfNeeded( View convertView, ViewGroup parent, int resId )
+   {
+      if ( convertView == null
+         || ( (Integer) convertView.getTag() ).intValue() != resId )
+      {
+         convertView = inflater.inflate( resId, parent, false );
+         convertView.setTag( Integer.valueOf( resId ) );
+      }
       
-      if ( spinnerItem.isSelected() )
-      {
-         itemTextView.setTextAppearance( getContext(),
-                                         R.style.TasksListSpinnerItem_Active );
-      }
-      else
-      {
-         itemTextView.setTextAppearance( getContext(),
-                                         R.style.TasksListSpinnerItem );
-      }
+      return convertView;
    }
 }

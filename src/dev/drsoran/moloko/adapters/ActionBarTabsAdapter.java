@@ -22,12 +22,8 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 
@@ -35,44 +31,23 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 
 import dev.drsoran.moloko.activities.MolokoFragmentActivity;
-import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
+import dev.drsoran.moloko.adapters.base.BaseFragmentPagerAdapter;
 
 
-public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
+public class ActionBarTabsAdapter extends BaseFragmentPagerAdapter implements
          ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
-   private static final class TabInfo
-   {
-      private final Class< ? extends Fragment > clazz;
-      
-      private final Bundle args;
-      
-      private Fragment fragment;
-      
-      
-      
-      public TabInfo( Class< ? extends Fragment > clazz, Bundle args )
-      {
-         this.clazz = clazz;
-         this.args = args;
-      }
-   }
-   
-   private final MolokoFragmentActivity context;
    
    private final ActionBar actionBar;
    
    private final ViewPager viewPager;
    
-   private final List< TabInfo > tabInfos = new ArrayList< TabInfo >();
-   
    
    
    public ActionBarTabsAdapter( MolokoFragmentActivity activity, ViewPager pager )
    {
-      super( activity.getSupportFragmentManager() );
+      super( activity, activity.getSupportFragmentManager() );
       
-      context = activity;
       actionBar = activity.getSupportActionBar();
       viewPager = pager;
       
@@ -86,15 +61,22 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
                        Class< ? extends Fragment > clazz,
                        Bundle args )
    {
-      final TabInfo info = new TabInfo( clazz, args );
+      final PageInfo info = super.add( clazz, args );
       
       tab.setTag( info );
       tab.setTabListener( this );
       
-      tabInfos.add( info );
       actionBar.addTab( tab );
       
       notifyDataSetChanged();
+   }
+   
+   
+   
+   @Override
+   public PageInfo add( Class< ? extends Fragment > clazz, Bundle args )
+   {
+      throw new UnsupportedOperationException( "Not supported for ActionBar Tabs." );
    }
    
    
@@ -126,10 +108,10 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    @Override
    public void onTabSelected( Tab tab, FragmentTransaction ft )
    {
-      final Object tabInfo = tab.getTag();
-      for ( int i = 0; i < tabInfos.size(); i++ )
+      final Object pageInfo = tab.getTag();
+      for ( int i = 0, cnt = getCount(); i < cnt; i++ )
       {
-         if ( tabInfos.get( i ) == tabInfo )
+         if ( getPageInfo( i ) == pageInfo )
          {
             viewPager.setCurrentItem( i );
             break;
@@ -149,39 +131,5 @@ public class ActionBarTabsAdapter extends FragmentPagerAdapter implements
    @Override
    public void onTabReselected( Tab tab, FragmentTransaction ft )
    {
-   }
-   
-   
-   
-   @Override
-   public Fragment getItem( int position )
-   {
-      final TabInfo info = tabInfos.get( position );
-      info.fragment = DefaultFragmentFactory.create( context,
-                                                     info.clazz,
-                                                     info.args );
-      
-      return info.fragment;
-   }
-   
-   
-   
-   // @Override
-   // public int getItemPosition( Object object )
-   // {
-   // boolean found = false;
-   // for ( int i = 0; i < tabs.size() && !found; i++ )
-   // {
-   // found = tabs.get( i ).fragment == object;
-   // }
-   //
-   // return found ? POSITION_UNCHANGED : POSITION_NONE;
-   // }
-   //
-   
-   @Override
-   public int getCount()
-   {
-      return tabInfos.size();
    }
 }

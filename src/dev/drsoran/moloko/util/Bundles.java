@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.SparseArray;
 
 
 public final class Bundles
@@ -27,11 +28,6 @@ public final class Bundles
          bundle.putString( key, String.class.cast( value ) );
       }
       
-      else if ( type == Long.class || type == long.class )
-      {
-         bundle.putLong( key, Long.class.cast( value ) );
-      }
-      
       else if ( type == Integer.class || type == int.class )
       {
          bundle.putInt( key, Integer.class.cast( value ) );
@@ -45,11 +41,6 @@ public final class Bundles
       else if ( type == Bundle.class )
       {
          bundle.putBundle( key, Bundle.class.cast( value ) );
-      }
-      
-      else if ( type == Float.class || type == float.class )
-      {
-         bundle.putFloat( key, Float.class.cast( value ) );
       }
       
       else if ( type == ArrayList.class )
@@ -66,6 +57,23 @@ public final class Bundles
             final ArrayList< String > cast = ArrayList.class.cast( value );
             bundle.putStringArrayList( key, cast );
          }
+      }
+      
+      else if ( type == SparseArray.class )
+      {
+         @SuppressWarnings( "unchecked" )
+         final SparseArray< ? extends Parcelable > cast = SparseArray.class.cast( value );
+         bundle.putSparseParcelableArray( key, cast );
+      }
+      
+      else if ( type == Long.class || type == long.class )
+      {
+         bundle.putLong( key, Long.class.cast( value ) );
+      }
+      
+      else if ( type == Float.class || type == float.class )
+      {
+         bundle.putFloat( key, Float.class.cast( value ) );
       }
       
       else if ( type == String[].class )

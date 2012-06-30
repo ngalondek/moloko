@@ -42,6 +42,8 @@ public class RtmListWithTaskCountLoader extends
    
    private final String slelection;
    
+   private boolean expandLists;
+   
    
    
    public RtmListWithTaskCountLoader( Context context )
@@ -60,10 +62,27 @@ public class RtmListWithTaskCountLoader extends
    
    
    
+   public void setPreExpandExtendedListInfoAfterLoad( boolean expandLists )
+   {
+      this.expandLists = expandLists;
+   }
+   
+   
+   
    @Override
    protected List< RtmListWithTaskCount > queryResultInBackground( ContentProviderClient client )
    {
-      return ListOverviewsProviderPart.getListsOverview( client, slelection );
+      final List< RtmListWithTaskCount > lists = ListOverviewsProviderPart.getListsOverview( client,
+                                                                                             slelection );
+      if ( lists != null && expandLists )
+      {
+         for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
+         {
+            rtmListWithTaskCount.getExtendedListInfo( getContext() );
+         }
+      }
+      
+      return lists;
    }
    
    

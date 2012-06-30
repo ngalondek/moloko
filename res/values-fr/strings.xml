@@ -314,6 +314,7 @@
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Demain</string>
    <string name="taskslist_actionbar_subtitle_overdue">En retard</string>
    <string name="taskslist_actionbar_subtitle_completed">Faites</string>
+   <string name="taskslist_actionbar_subtitle_incomplete">Incomplete</string>
      <!-- Menus -->
      <string name="taskslist_menu_opt_delete_list">Supprimer la liste</string>
 

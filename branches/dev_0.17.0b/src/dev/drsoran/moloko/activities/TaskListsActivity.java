@@ -51,12 +51,6 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       public final static String LIST_TO_DELETE = "list_to_delete";
    }
    
-   
-   protected static class OptionsMenu
-   {
-      public final static int ADD_LIST = R.id.menu_add_list;
-   }
-   
    @InstanceState( key = Config.LIST_TO_DELETE,
                    defaultValue = InstanceState.NULL )
    private RtmList listToDelete;
@@ -82,27 +76,14 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      // MolokoMenuItemBuilder.newSettingsMenuItem( this )
-      // .setOrder( MenuCategory.ALTERNATIVE )
-      // .build( menu );
-      //
-      // new MolokoMenuItemBuilder().setItemId( OptionsMenu.ADD_LIST )
-      // .setTitle( getString( R.string.tasklists_menu_add_list ) )
-      // .setIconId( R.drawable.ic_menu_add_list )
-      // .setOrder( MenuCategory.CONTAINER )
-      // .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-      // .setShow( AccountUtils.isWriteableAccess( this ) )
-      // .build( menu );
-      //
-      // MolokoMenuItemBuilder.newSearchMenuItem( this )
-      // .setOrder( MenuCategory.ALTERNATIVE )
-      // .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-      // .build( menu );
-      //
-      // MolokoMenuItemBuilder.newSyncMenuItem( this )
-      // .setOrder( MenuCategory.ALTERNATIVE )
-      // .setShowAsActionFlags( MenuItem.SHOW_AS_ACTION_IF_ROOM )
-      // .build( menu );
+      if ( isWritableAccess() )
+      {
+         getSupportMenuInflater().inflate( R.menu.tasklists_activity_rwd, menu );
+      }
+      else
+      {
+         getSupportMenuInflater().inflate( R.menu.tasklists_activity, menu );
+      }
       
       return true;
    }
@@ -114,7 +95,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.ADD_LIST:
+         case R.id.menu_add_list:
             showAddListDialog();
             return true;
             

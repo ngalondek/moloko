@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.actionmodes;
 
+import android.content.Context;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -68,8 +69,8 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      final View quickAddTaskInputView = LayoutInflater.from( activity.getSupportActionBar()
-                                                                      .getThemedContext() )
+      final Context context = activity.getSupportActionBar().getThemedContext();
+      final View quickAddTaskInputView = LayoutInflater.from( context )
                                                        .inflate( R.layout.quick_add_task_action_mode,
                                                                  null );
       mode.setCustomView( quickAddTaskInputView );
@@ -77,7 +78,7 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
       quickAddTaskInput = (RtmSmartAddTextView) quickAddTaskInputView.findViewById( R.id.quick_add_task_edit );
       connectToCommitInput();
       
-      quickAddTaskInputHandler = new QuickAddTaskActionModeInputHandler( activity,
+      quickAddTaskInputHandler = new QuickAddTaskActionModeInputHandler( context,
                                                                          quickAddTaskInput );
       
       showButtomButtonBar();

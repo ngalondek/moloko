@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -51,14 +50,12 @@ public class SimpleLineLayout extends LinearLayout
          root = this;
       }
       
-      final View content = LayoutInflater.from( context )
-                                         .inflate( R.layout.app_simple_line,
-                                                   root,
-                                                   false );
+      final View content = new View( context, attrs, 0 );
+      content.setBackgroundResource( R.drawable.app_simple_line );
       
       initImpl( context, attrs, content );
       
-      root.addView( content, content.getLayoutParams() );
+      root.addView( content, generateLayoutParams( attrs ) );
    }
    
    
@@ -77,7 +74,5 @@ public class SimpleLineLayout extends LinearLayout
       ( (GradientDrawable) line.getBackground() ).setColor( color );
       
       array.recycle();
-      
-      setLayoutParams( generateLayoutParams( attrs ) );
    }
 }

@@ -69,6 +69,7 @@
         <!-- ActionBar -->
         <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
         <item name="android:actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
+        <item name="spinnerDropDownItemStyle">@style/TasksListSpinnerDropdownItem</item>
         
         <!-- Widgets -->
         <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>

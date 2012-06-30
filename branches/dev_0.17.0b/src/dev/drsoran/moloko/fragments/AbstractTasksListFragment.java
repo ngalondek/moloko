@@ -26,6 +26,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -62,7 +63,8 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
-         MolokoMultiChoiceModalListFragment< T >
+         MolokoMultiChoiceModalListFragment< T > implements
+         ITasksListFragment< T >
 {
    private ITasksListFragmentListener fragmentListener;
    
@@ -325,13 +327,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public ITasksListActionModeListener getActionModeListener()
-   {
-      return actionModeListener;
-   }
-   
-   
-   
+   @Override
    public IFilter getFilter()
    {
       return filter;
@@ -339,6 +335,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public RtmSmartFilter getRtmSmartFilter()
    {
       final IFilter filter = getFilter();
@@ -356,13 +353,14 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public boolean hasMultipleTasks()
+   private boolean hasMultipleTasks()
    {
       return getListAdapter() != null && getListAdapter().getCount() > 1;
    }
    
    
    
+   @Override
    @SuppressWarnings( "unchecked" )
    public T getTask( int pos )
    {
@@ -371,6 +369,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public int getTaskPos( View view )
    {
       return getListView().getPositionForView( view );
@@ -378,6 +377,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public T getTask( View view )
    {
       return getTask( getTaskPos( view ) );
@@ -385,6 +385,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public T getTask( String taskId )
    {
       T task = null;
@@ -407,6 +408,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public int getTaskSort()
    {
       return tasksSort;
@@ -513,11 +515,11 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public abstract void resortTasks( int newTaskSort );
-   
-   
-   
-   public abstract int getDefaultTaskSort();
+   @Override
+   public Fragment getFragment()
+   {
+      return this;
+   }
    
    
    

@@ -108,10 +108,10 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
          
          for ( RtmListWithTaskCount list : lists )
          {
-            if ( list.getIncompleteTaskCount() > 0 )
+            if ( list.getTaskCount() > 0 )
                cloudEntries.add( new TagCloudEntry( TagCloudEntry.LIST,
                                                     list.getName(),
-                                                    list.getIncompleteTaskCount() ) );
+                                                    list.getTaskCount() ) );
          }
          
          for ( TagWithTaskCount tag : tags )

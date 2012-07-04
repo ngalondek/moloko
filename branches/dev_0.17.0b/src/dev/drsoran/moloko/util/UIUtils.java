@@ -251,7 +251,7 @@ public final class UIUtils
    public final static void setListTasksCountView( TextView tasksCount,
                                                    RtmListWithTaskCount list )
    {
-      final int numTasks = list.getIncompleteTaskCount();
+      final int numTasks = list.getTaskCount();
       tasksCount.setText( String.valueOf( numTasks ) );
       
       if ( list.hasSmartFilter() )

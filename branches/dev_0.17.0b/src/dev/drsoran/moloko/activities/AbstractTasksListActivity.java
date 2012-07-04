@@ -194,6 +194,10 @@ public abstract class AbstractTasksListActivity extends
          setNavigationAdapter();
          updateNavigationAdapter = false;
       }
+      else
+      {
+         getSupportActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
+      }
    }
    
    
@@ -398,11 +402,9 @@ public abstract class AbstractTasksListActivity extends
             Bundle config = Intents.Extras.createOpenListExtras( context,
                                                                  list,
                                                                  null );
-            actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_INCOMPLETE_TASKS,
-                                          new TasksListNavigationAdapter.ExtendedRtmListItem( context,
-                                                                                              context.getString( R.string.taskslist_actionbar_subtitle_incomplete ),
-                                                                                              list,
-                                                                                              list.getIncompleteTaskCount() ).setTasksListConfig( config ) );
+            actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_DEFAULT_TASKS,
+                                          new TasksListNavigationAdapter.RtmListItem( context,
+                                                                                      list ) );
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,

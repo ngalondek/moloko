@@ -20,48 +20,44 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.layouts;
+package dev.drsoran.moloko.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.Canvas;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import dev.drsoran.moloko.R;
 
 
-public class SimpleLineLayout extends LinearLayout
+public class SimpleLineView extends View
 {
-   public SimpleLineLayout( Context context, AttributeSet attrs )
+   private ShapeDrawable lineDrawable;
+   
+   
+   
+   public SimpleLineView( Context context )
    {
-      this( context, attrs, null );
+      super( context );
+      initLineDrawable( context.getResources()
+                               .getColor( R.color.app_default_line ) );
    }
    
    
    
-   public SimpleLineLayout( Context context, AttributeSet attrs, ViewGroup root )
+   public SimpleLineView( Context context, AttributeSet attrs )
    {
-      super( context, attrs );
-      
-      if ( root == null )
-      {
-         root = this;
-      }
-      
-      final View content = new View( context, attrs, 0 );
-      content.setBackgroundResource( R.drawable.app_simple_line );
-      
-      initImpl( context, attrs, content );
-      
-      root.addView( content, generateLayoutParams( attrs ) );
+      this( context, attrs, R.style.SimpleLine_Default );
    }
    
    
    
-   private void initImpl( Context context, AttributeSet attrs, View line )
+   public SimpleLineView( Context context, AttributeSet attrs, int defStyle )
    {
+      super( context, attrs, defStyle );
+      
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.SimpleLine,
                                                                0,
@@ -70,9 +66,39 @@ public class SimpleLineLayout extends LinearLayout
       final int color = array.getColor( R.styleable.SimpleLine_lineColor,
                                         context.getResources()
                                                .getColor( R.color.app_default_line ) );
-      
-      ( (GradientDrawable) line.getBackground() ).setColor( color );
-      
       array.recycle();
+      
+      initLineDrawable( color );
+   }
+   
+   
+   
+   public void setLineColor( int color )
+   {
+      lineDrawable.getPaint().setColor( color );
+   }
+   
+   
+   
+   public int getLineColor()
+   {
+      return lineDrawable.getPaint().getColor();
+   }
+   
+   
+   
+   private void initLineDrawable( int color )
+   {
+      lineDrawable = new ShapeDrawable( new RectShape() );
+      setLineColor( color );
+   }
+   
+   
+   
+   @Override
+   protected void onDraw( Canvas canvas )
+   {
+      lineDrawable.setBounds( 0, 0, getWidth(), getHeight() );
+      lineDrawable.draw( canvas );
    }
 }

@@ -12,61 +12,38 @@
       License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
-
 -->
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/spinnerDropDownItemStyle"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:padding="5dip">
-    
-    <dev.drsoran.moloko.layouts.SimpleLineLayout
-        android:id="@id/line"
-        android:layout_height="fill_parent"
-        android:layout_width="50dip"
+    android:layout_height="fill_parent"
+    android:paddingTop="5dip"
+    android:paddingBottom="5dip"    
+    android:paddingRight="5dip"
+    android:paddingLeft="32dip" >
+
+    <TextView
+        android:id="@android:id/text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        moloko:lineColor="@color/app_holo_blue" />
-    
-   <LinearLayout
-       android:id="@android:id/content"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_toRightOf="@id/line"
-       android:paddingLeft="5dip"
-       android:orientation="vertical">
-       
-	   <TextView
-	       android:id="@android:id/text1"
-	       android:layout_width="fill_parent"
-	       android:layout_height="wrap_content"       
-	       android:ellipsize="marquee"
-	       android:singleLine="true"
-	       android:textAppearance="@style/TextAppearance.TasksListSpinnerDropdownItem"
-	       android:text="ListName" />
-	   
-	   <TextView
-	       android:id="@android:id/text2"
-	       android:layout_width="fill_parent"
-	       android:layout_height="wrap_content"
-	       android:singleLine="true"
-	       android:ellipsize="marquee"
-	       android:textAppearance="@style/TextAppearance.TasksListSpinnerDropdownItem.SecondLine"
-	       android:text="ListKind" />
-   </LinearLayout>
-   
-   <TextView
-       android:id="@+id/numTasks"
-       style="@style/ActionBarSubtitleTextStyle"       
-       android:layout_width="wrap_content"
-       android:layout_height="fill_parent"
-       android:layout_toRightOf="@android:id/content"
-       android:layout_alignParentRight="true"
-       android:gravity="right|center_vertical"
-       android:textSize="24sp"
-       android:paddingLeft="5dip"
-       android:paddingRight="5dip"
-       android:text="NumTasks" />
+        android:layout_centerVertical="true"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:text="ListKind"
+        android:textAppearance="@style/TextAppearance.TasksListSpinnerDropdownItem.SecondLine" />
+
+    <TextView
+        android:id="@+id/numTasks"
+        style="@style/ActionBarSubtitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@android:id/text2"
+        android:gravity="right"
+        android:paddingLeft="5dip"        
+        android:text="NumTasks"
+        android:textSize="24sp" />
 
 </RelativeLayout>

@@ -107,7 +107,7 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public int getNumberOfTasks()
       {
-         return -1;
+         return list.getTaskCount();
       }
       
       
@@ -237,18 +237,33 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
    
    private abstract class AbstractDropDownPresenter
    {
+      public View getSpinnerItemView( int position,
+                                      View convertView,
+                                      ViewGroup parent )
+      {
+         final int resId = getSpinnerLayoutResourceId( position );
+         convertView = inflateIfNeeded( convertView, parent, resId );
+         
+         initializeSelectedItemView( position, convertView, parent );
+         
+         return convertView;
+      }
+      
+      
+      
       public View getDropDownItemView( int position,
                                        View convertView,
                                        ViewGroup parent )
       {
          final int listSectionIndex = getListSectionIndex();
+         
          if ( position < listSectionIndex )
          {
             convertView = inflateIfNeeded( convertView,
                                            parent,
-                                           getLayoutResourceId() );
+                                           getDropdownLayoutResourceId( position ) );
             
-            initializeSelectedItemDropDownView( position, convertView, parent );
+            initializeSelectedItemView( position, convertView, parent );
          }
          else if ( position == listSectionIndex )
          {
@@ -283,7 +298,7 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
          final int listSectionIndex = getListSectionIndex();
          if ( position < listSectionIndex )
          {
-            return getLayoutResourceId();
+            return getDropdownLayoutResourceId( position );
          }
          else if ( position == listSectionIndex )
          {
@@ -298,19 +313,22 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       
       
       
-      private void initializeSelectedItemDropDownView( int position,
-                                                       View convertView,
-                                                       ViewGroup parent )
+      private void initializeSelectedItemView( int position,
+                                               View convertView,
+                                               ViewGroup parent )
       {
          final IItem item = getItem( position );
          
-         final TextView titleView = (TextView) convertView.findViewById( android.R.id.text1 );
-         titleView.setText( item.getPrimaryText() );
-         
-         final TextView subtitleView = (TextView) convertView.findViewById( android.R.id.text2 );
-         if ( subtitleView != null )
+         final TextView text1View = (TextView) convertView.findViewById( android.R.id.text1 );
+         if ( text1View != null )
          {
-            subtitleView.setText( item.getSupplementalText() );
+            setText( text1View, item.getPrimaryText() );
+         }
+         
+         final TextView text2View = (TextView) convertView.findViewById( android.R.id.text2 );
+         if ( text2View != null )
+         {
+            setText( text2View, item.getSupplementalText() );
          }
          
          final TextView numTasksView = (TextView) convertView.findViewById( R.id.numTasks );
@@ -322,11 +340,25 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       
       
       
-      public abstract int getViewTypeCount();
+      private void setText( TextView textView, String text )
+      {
+         if ( textView instanceof CapitalizingTextView )
+         {
+            ( (CapitalizingTextView) textView ).setTextCompat( text );
+         }
+         else
+         {
+            textView.setText( text );
+         }
+      }
       
       
       
-      public abstract int getLayoutResourceId();
+      public abstract int getSpinnerLayoutResourceId( int position );
+      
+      
+      
+      public abstract int getDropdownLayoutResourceId( int position );
       
       
       
@@ -337,15 +369,15 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
    private class CustomItemDropDownPresenter extends AbstractDropDownPresenter
    {
       @Override
-      public int getViewTypeCount()
+      public int getSpinnerLayoutResourceId( int position )
       {
-         return 2;
+         return R.layout.sherlock_spinner_dropdown_item;
       }
       
       
       
       @Override
-      public int getLayoutResourceId()
+      public int getDropdownLayoutResourceId( int position )
       {
          return R.layout.sherlock_spinner_dropdown_item;
       }
@@ -363,17 +395,31 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
    private class RtmListItemDropDownPresenter extends AbstractDropDownPresenter
    {
       @Override
-      public int getViewTypeCount()
+      public int getSpinnerLayoutResourceId( int position )
       {
-         return 3;
+         if ( position == ITEM_POSITION_DEFAULT_TASKS )
+         {
+            return R.layout.sherlock_spinner_dropdown_item;
+         }
+         else
+         {
+            return R.layout.taskslist_activity_actionbar_spinner_item_2line;
+         }
       }
       
       
       
       @Override
-      public int getLayoutResourceId()
+      public int getDropdownLayoutResourceId( int position )
       {
-         return R.layout.taskslist_activity_actionbar_extendedrtmlist_dropdown_item;
+         if ( position == ITEM_POSITION_DEFAULT_TASKS )
+         {
+            return R.layout.taskslist_activity_actionbar_rtmlist_dropdown_item;
+         }
+         else
+         {
+            return R.layout.taskslist_activity_actionbar_extendedrtmlist_dropdown_item;
+         }
       }
       
       
@@ -385,7 +431,7 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       }
    }
    
-   public final static int ITEM_POSITION_INCOMPLETE_TASKS = 0;
+   public final static int ITEM_POSITION_DEFAULT_TASKS = 0;
    
    public final static int ITEM_POSITION_COMPLETED_TASKS = 1;
    
@@ -471,14 +517,6 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
    
    
    @Override
-   public int getViewTypeCount()
-   {
-      return dropDownPresenter.getViewTypeCount();
-   }
-   
-   
-   
-   @Override
    public int getItemViewType( int position )
    {
       return dropDownPresenter.getItemViewType( position );
@@ -515,30 +553,9 @@ public class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      final IItem item = getItem( getListSectionAwareItemPosition( position ) );
-      
-      if ( item instanceof CustomItem )
-      {
-         convertView = inflateIfNeeded( convertView,
-                                        parent,
-                                        R.layout.sherlock_spinner_item );
-      }
-      else
-      {
-         convertView = inflateIfNeeded( convertView,
-                                        parent,
-                                        R.layout.taskslist_activity_actionbar_spinner_item_2line );
-         
-         final String subTitle = item.getSupplementalText();
-         final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text2 );
-         itemTextView.setText( subTitle );
-      }
-      
-      final String title = item.getPrimaryText();
-      final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text1 );
-      itemTextView.setText( title );
-      
-      return convertView;
+      return dropDownPresenter.getSpinnerItemView( position,
+                                                   convertView,
+                                                   parent );
    }
    
    

@@ -11,7 +11,7 @@
 	If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
 	- implementation-->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- *********** -->
     <!-- Application -->
@@ -88,6 +88,10 @@
         <item name="android:textColor">@color/priority_2</item>
         <item name="android:textStyle">italic|bold</item>
         <item name="android:padding">5dip</item>
+    </style>
+    
+    <style name="SimpleLine_Default">
+        <item name="lineColor">@color/app_default_line</item>
     </style>
 
     <!-- ListStyle -->

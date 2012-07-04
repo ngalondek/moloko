@@ -173,7 +173,7 @@ public class RtmListWithTaskCount
    
 
 
-   public int getIncompleteTaskCount()
+   public int getTaskCount()
    {
       return incompletedTaskCount;
    }

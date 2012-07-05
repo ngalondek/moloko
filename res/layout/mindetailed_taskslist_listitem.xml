@@ -15,17 +15,12 @@
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
-   <Button
+   <dev.drsoran.moloko.widgets.SimpleLineView
       android:id="@+id/taskslist_listitem_priority"
-      android:background="@android:color/transparent"
-      android:layout_width="wrap_content"
+      android:layout_width="5dip"
       android:layout_height="fill_parent"
       android:layout_marginTop="1dip"
-      android:layout_marginBottom="1dip"
-      android:minWidth="5dip"
-      android:maxWidth="5dip"
-      android:enabled="false"
-      android:focusable="false" />
+      android:layout_marginBottom="1dip" />
 
    <include
       android:id="@+id/taskslist_listitem_base"

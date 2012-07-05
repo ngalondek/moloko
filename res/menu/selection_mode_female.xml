@@ -17,18 +17,18 @@
     <item
         android:id="@id/menu_selection"
         android:icon="@drawable/ic_menu_select_all"
-        android:showAsAction="always|withText"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/menu_opt_selection">
         <menu>
             <item
                 android:id="@id/menu_select_all"
                 android:icon="@drawable/ic_menu_select_all"
-                android:showAsAction="always|withText"
+                android:showAsAction="ifRoom|withText"
                 android:title="@string/menu_opt_select_all_female"/>
             <item
                 android:id="@id/menu_deselect_all"
                 android:icon="@drawable/ic_menu_select_no"
-                android:showAsAction="always|withText"
+                android:showAsAction="ifRoom|withText"
                 android:title="@string/menu_opt_deselect_all_female"/>
             <item
                 android:id="@id/menu_invert_selection"

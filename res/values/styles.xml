@@ -334,7 +334,7 @@
         <item name="android:textSize">12sp</item>
     </style>
     
-    <style name="Note_Line_Style">
+    <style name="Note_Line_Style" parent="@style/SimpleLine_Default">
         <item name="lineColor">@color/note_header_line</item>
     </style>
 

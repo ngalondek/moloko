@@ -64,8 +64,8 @@ public class TasksListActionModeCallback extends
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      super.onCreateActionMode( mode, menu );
       mode.getMenuInflater().inflate( R.menu.taskslist_actionmode_rwd, menu );
+      super.onCreateActionMode( mode, menu );
       
       return true;
    }

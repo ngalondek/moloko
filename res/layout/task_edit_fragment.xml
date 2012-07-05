@@ -169,11 +169,10 @@
                 android:layout_below="@id/task_edit_tags_layout"
                 android:layout_marginTop="10dip" >
 
-                <View
+                <dev.drsoran.moloko.widgets.SimpleLineView
                     android:id="@+id/task_edit_due_top_line"
                     android:layout_width="fill_parent"
-                    android:layout_height="1dip"
-                    android:background="@drawable/app_simple_line" />
+                    android:layout_height="1dip" />
 
                 <TextView
                     android:id="@+id/task_edit_due_title"

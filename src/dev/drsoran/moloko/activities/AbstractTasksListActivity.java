@@ -349,11 +349,8 @@ public abstract class AbstractTasksListActivity extends
       if ( isFirstInitialization )
       {
          selectedNavigationItem = new SelectedNavigationItem();
-         
-         final String listIdFromIntent = getListIdFromIntent();
-         selectedNavigationItem.id = !TextUtils.isEmpty( listIdFromIntent )
-                                                                           ? Long.valueOf( listIdFromIntent )
-                                                                           : CUSTOM_NAVIGATION_ITEM_ID;
+         setSelectedNavigationItemIdFromIntent();
+         setSelectedNavigationItemPositionFromSubTitle();
          
          backStackNavigationItems = new SparseArray< SelectedNavigationItem >();
          
@@ -365,9 +362,41 @@ public abstract class AbstractTasksListActivity extends
       
       setNavigationAdapter();
       
-      if ( !isFirstInitialization )
+      getSupportActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
+   }
+   
+   
+   
+   private void setSelectedNavigationItemIdFromIntent()
+   {
+      final String listIdFromIntent = getListIdFromIntent();
+      selectedNavigationItem.id = !TextUtils.isEmpty( listIdFromIntent )
+                                                                        ? Long.valueOf( listIdFromIntent )
+                                                                        : CUSTOM_NAVIGATION_ITEM_ID;
+   }
+   
+   
+   
+   private void setSelectedNavigationItemPositionFromSubTitle()
+   {
+      if ( !TextUtils.isEmpty( subTitle ) )
       {
-         getSupportActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
+         if ( getCompletedSubtitle().equals( subTitle ) )
+         {
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS;
+         }
+         else if ( getOverdueSubtitle().equals( subTitle ) )
+         {
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_OVERDUE_TASKS;
+         }
+         else if ( getDueTodaySubtitle().equals( subTitle ) )
+         {
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_TODAY_TASKS;
+         }
+         else if ( getDueTomorrowSubtitle().equals( subTitle ) )
+         {
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_TOMORROW_TASKS;
+         }
       }
    }
    
@@ -412,7 +441,7 @@ public abstract class AbstractTasksListActivity extends
                                                              + RtmSmartFilterLexer.COMPLETED_LIT );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
-                                                                                              context.getString( R.string.taskslist_actionbar_subtitle_completed ),
+                                                                                              getCompletedSubtitle(),
                                                                                               list,
                                                                                               extendedListInfo.completedTaskCount ).setTasksListConfig( config ) );
             
@@ -422,7 +451,7 @@ public abstract class AbstractTasksListActivity extends
                                                              + DateParser.tokenNames[ DateParser.TODAY ] );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_OVERDUE_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
-                                                                                              context.getString( R.string.taskslist_actionbar_subtitle_overdue ),
+                                                                                              getOverdueSubtitle(),
                                                                                               list,
                                                                                               extendedListInfo.overDueTaskCount ).setTasksListConfig( config ) );
             
@@ -432,7 +461,7 @@ public abstract class AbstractTasksListActivity extends
                                                              + DateParser.tokenNames[ DateParser.TODAY ] );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_TODAY_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
-                                                                                              context.getString( R.string.taskslist_actionbar_subtitle_due_today ),
+                                                                                              getDueTodaySubtitle(),
                                                                                               list,
                                                                                               extendedListInfo.dueTodayTaskCount ).setTasksListConfig( config ) );
             
@@ -442,7 +471,7 @@ public abstract class AbstractTasksListActivity extends
                                                              + DateParser.tokenNames[ DateParser.TOMORROW ] );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_TOMORROW_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
-                                                                                              context.getString( R.string.taskslist_actionbar_subtitle_due_tomorrow ),
+                                                                                              getDueTomorrowSubtitle(),
                                                                                               list,
                                                                                               extendedListInfo.dueTomorrowTaskCount ).setTasksListConfig( config ) );
          }
@@ -458,6 +487,34 @@ public abstract class AbstractTasksListActivity extends
       }
       
       return actionBarNavigationItems;
+   }
+   
+   
+   
+   private String getCompletedSubtitle()
+   {
+      return getString( R.string.taskslist_actionbar_subtitle_completed );
+   }
+   
+   
+   
+   private String getOverdueSubtitle()
+   {
+      return getString( R.string.taskslist_actionbar_subtitle_overdue );
+   }
+   
+   
+   
+   private String getDueTodaySubtitle()
+   {
+      return getString( R.string.taskslist_actionbar_subtitle_due_today );
+   }
+   
+   
+   
+   private String getDueTomorrowSubtitle()
+   {
+      return getString( R.string.taskslist_actionbar_subtitle_due_tomorrow );
    }
    
    

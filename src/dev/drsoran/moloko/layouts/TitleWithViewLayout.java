@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 
 
 public abstract class TitleWithViewLayout extends LinearLayout
@@ -157,8 +157,8 @@ public abstract class TitleWithViewLayout extends LinearLayout
       {
          if ( array.getBoolean( R.styleable.TitleWithView_showTopLine, true ) )
          {
-            ( (GradientDrawable) topLine.getBackground() ).setColor( array.getColor( R.styleable.TitleWithView_topLineColor,
-                                                                                     R.color.app_default_line ) );
+            ( (SimpleLineView) topLine ).setLineColor( array.getColor( R.styleable.TitleWithView_topLineColor,
+                                                                       R.color.app_default_line ) );
             topLine.getLayoutParams().height = array.getDimensionPixelSize( R.styleable.TitleWithView_topLineHeight,
                                                                             1 );
          }

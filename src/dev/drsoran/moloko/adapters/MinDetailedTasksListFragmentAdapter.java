@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.MolokoListView;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.Task;
 
 
@@ -49,10 +50,10 @@ public class MinDetailedTasksListFragmentAdapter extends
       
       if ( !isInMultiChoiceModalActionMode() )
       {
-         final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
+         final SimpleLineView priority = (SimpleLineView) convertView.findViewById( R.id.taskslist_listitem_priority );
          final Task task = getItem( position );
          
-         UIUtils.setPriorityColor( priority, task );
+         UIUtils.setPriorityColor( getContext(), priority, task );
       }
       
       return convertView;

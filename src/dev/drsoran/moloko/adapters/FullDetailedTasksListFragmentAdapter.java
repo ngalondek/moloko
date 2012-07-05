@@ -39,6 +39,7 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.moloko.widgets.MolokoListView;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
@@ -100,7 +101,7 @@ public class FullDetailedTasksListFragmentAdapter extends
       
       if ( !isInMultiChoiceModalActionMode() )
       {
-         final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
+         final SimpleLineView priority = (SimpleLineView) convertView.findViewById( R.id.taskslist_listitem_priority );
          final ViewGroup additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
          final TextView listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
          final TextView location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
@@ -110,7 +111,7 @@ public class FullDetailedTasksListFragmentAdapter extends
          
          final Task task = getItem( position );
          
-         UIUtils.setPriorityColor( priority, task );
+         UIUtils.setPriorityColor( getContext(), priority, task );
          
          if ( task.getRecurrence() != null )
             recurrent.setVisibility( View.VISIBLE );

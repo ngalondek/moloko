@@ -74,12 +74,11 @@
       android:layout_height="fill_parent"
       android:orientation="horizontal">
 
-      <View
+      <dev.drsoran.moloko.widgets.SimpleLineView
          android:layout_height="fill_parent"
          android:layout_width="1dip"
          android:layout_marginTop="2dip"
-         android:layout_marginBottom="2dip"
-         android:background="@drawable/app_simple_line" />
+         android:layout_marginBottom="2dip" />
 
       <ImageView
          android:layout_width="32dip"

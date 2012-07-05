@@ -9,18 +9,17 @@
         android:layout_height="wrap_content"
         android:fillViewport="true" >
 
-        <FrameLayout            
+        <FrameLayout
             android:id="@android:id/content"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-            <View
+            <dev.drsoran.moloko.widgets.SimpleLineView
                 android:id="@+id/task_overview_priority_bar"
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/task_overview_priority_bar_heigth"
-                android:background="@drawable/app_simple_line" />
+                android:layout_height="@dimen/task_overview_priority_bar_heigth" />
 
-            <RelativeLayout                
+            <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="10dip"

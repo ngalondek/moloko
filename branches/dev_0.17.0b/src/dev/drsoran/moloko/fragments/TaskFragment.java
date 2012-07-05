@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -49,6 +50,7 @@ import dev.drsoran.moloko.util.MenuItemPreparer;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.Participant;
 import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
@@ -71,7 +73,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    
    private ViewGroup content;
    
-   private View priorityBar;
+   private SimpleLineView priorityBar;
    
    private TextView addedDate;
    
@@ -156,7 +158,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
                                                   false );
       
       content = (ViewGroup) fragmentView.findViewById( android.R.id.content );
-      priorityBar = content.findViewById( R.id.task_overview_priority_bar );
+      priorityBar = (SimpleLineView) content.findViewById( R.id.task_overview_priority_bar );
       addedDate = (TextView) content.findViewById( R.id.task_overview_added_date );
       completedDate = (TextView) content.findViewById( R.id.task_overview_completed_date );
       source = (TextView) content.findViewById( R.id.task_overview_src );
@@ -250,10 +252,11 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    public void initContent( ViewGroup container )
    {
       final Task task = getLoaderDataAssertNotNull();
+      final SherlockFragmentActivity activity = getSherlockActivity();
       
-      UIUtils.setPriorityColor( priorityBar, task );
+      UIUtils.setPriorityColor( activity, priorityBar, task );
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
+      addedDate.setText( MolokoDateUtils.formatDateTime( activity,
                                                          task.getAdded()
                                                              .getTime(),
                                                          FULL_DATE_FLAGS ) );
@@ -261,7 +264,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       if ( task.getCompleted() != null )
       {
          completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
+         completedDate.setText( MolokoDateUtils.formatDateTime( activity,
                                                                 task.getCompleted()
                                                                     .getTime(),
                                                                 FULL_DATE_FLAGS ) );
@@ -295,10 +298,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       
       listName.setText( task.getListName() );
       
-      UIUtils.inflateTags( getSherlockActivity(),
-                           tagsLayout,
-                           task.getTags(),
-                           null );
+      UIUtils.inflateTags( activity, tagsLayout, task.getTags(), null );
       
       setDateTimeSection( dateTimeSection, task );
       
@@ -316,7 +316,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
          urlSection.setVisibility( View.GONE );
       }
       
-      getSherlockActivity().invalidateOptionsMenu();
+      activity.invalidateOptionsMenu();
    }
    
    

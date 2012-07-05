@@ -52,6 +52,7 @@ import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
@@ -334,22 +335,28 @@ public final class UIUtils
    
    
    
-   public final static void setPriorityColor( View view, Task task )
+   public final static void setPriorityColor( Context context,
+                                              SimpleLineView view,
+                                              Task task )
    {
       switch ( task.getPriority() )
       {
          case High:
-            view.setBackgroundResource( R.color.priority_1 );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_1 ) );
             break;
          case Medium:
-            view.setBackgroundResource( R.color.priority_2 );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_2 ) );
             break;
          case Low:
-            view.setBackgroundResource( R.color.priority_3 );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_3 ) );
             break;
          case None:
          default :
-            view.setBackgroundResource( R.color.priority_none );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_none ) );
             break;
       }
    }

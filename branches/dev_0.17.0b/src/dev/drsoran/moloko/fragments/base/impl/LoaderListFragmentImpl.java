@@ -64,6 +64,7 @@ public class LoaderListFragmentImpl< D > extends
    
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
+      viewManager.onViewCreated( view, savedInstanceState );
       fragment.setListAdapter( support.createListAdapter() );
       
       if ( support.isReadyToStartLoader() )
@@ -110,6 +111,20 @@ public class LoaderListFragmentImpl< D > extends
       super.onLoadFinished( loader, data );
       
       viewManager.onLoadFinished( isLoaderDataFound() );
+   }
+   
+   
+   
+   public int getNoElementsResourceId()
+   {
+      return viewManager.getNoElementsResourceId();
+   }
+   
+   
+   
+   public void setNoElementsResourceId( int resId )
+   {
+      viewManager.setNoElementsResourceId( resId );
    }
    
    

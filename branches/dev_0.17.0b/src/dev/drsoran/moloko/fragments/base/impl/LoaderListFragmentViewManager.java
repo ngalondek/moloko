@@ -22,8 +22,11 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
+import android.os.Bundle;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -34,44 +37,60 @@ import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 
 class LoaderListFragmentViewManager
 {
-   
    private final SherlockListFragment fragment;
+   
+   private LinearLayout emptyViewContainer;
+   
+   private int noElementsResId;
    
    
    
    public LoaderListFragmentViewManager( SherlockListFragment fragment )
    {
       this.fragment = fragment;
+      this.noElementsResId = R.string.phr_nothing;
+   }
+   
+   
+   
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      emptyViewContainer = (LinearLayout) fragment.getListView().getEmptyView();
    }
    
    
    
    public void onCreateLoader()
    {
-      showListView( false );
-      showLoadingSpinner( true );
-      
-      // Set the visible state of the "empty" view
-      // here cause a list w/o adapter is empty.
-      showEmptyView( false );
-      showErrorView( false );
+      showLoadingSpinner();
    }
    
    
    
    public void onLoadFinished( boolean success )
    {
-      // Do not set the visible state of the "empty" view
-      // here since it gets controlled by the list view.
-      
-      showListView( success );
-      showLoadingSpinner( false );
-      showErrorView( !success );
-      
-      if ( !success )
+      if ( success )
+      {
+         setNoElementsView();
+      }
+      else
       {
          showError( R.string.err_unexpected );
       }
+   }
+   
+   
+   
+   public int getNoElementsResourceId()
+   {
+      return noElementsResId;
+   }
+   
+   
+   
+   public void setNoElementsResourceId( int resId )
+   {
+      noElementsResId = resId;
    }
    
    
@@ -100,71 +119,63 @@ class LoaderListFragmentViewManager
    
    
    
-   private void showLoadingSpinner( boolean show )
+   private void showLoadingSpinner()
    {
-      final View spinner = fragment.getView()
-                                   .findViewById( R.id.loading_spinner );
-      if ( spinner != null )
-         spinner.setVisibility( show ? View.VISIBLE : View.GONE );
+      final View spinner = getLayoutInflater().inflate( R.layout.app_loading_spinner,
+                                                        null );
+      setEmptyViewToContainer( spinner );
    }
    
    
    
-   private void showListView( boolean show )
+   private void setNoElementsView()
    {
-      final View listView = fragment.getView().findViewById( android.R.id.list );
-      if ( listView != null )
-         listView.setVisibility( show ? View.VISIBLE : View.GONE );
-   }
-   
-   
-   
-   private void showEmptyView( boolean show )
-   {
-      final View emptyView = fragment.getView()
-                                     .findViewById( android.R.id.empty );
-      if ( emptyView != null )
-         emptyView.setVisibility( show ? View.VISIBLE : View.GONE );
-   }
-   
-   
-   
-   private TitleWithTextLayout getErrorView()
-   {
-      View errorView = null;
+      final View noElementsView = getLayoutInflater().inflate( R.layout.app_no_elements,
+                                                               null );
+      final TextView noElementsTextView = (TextView) noElementsView.findViewById( R.id.no_elements );
+      noElementsTextView.setText( noElementsResId );
       
-      if ( fragment.getView() != null )
-         errorView = fragment.getView().findViewById( R.id.error );
-      
-      return (TitleWithTextLayout) errorView;
+      setEmptyViewToContainer( noElementsView );
    }
    
    
    
-   private void showErrorView( boolean show )
+   private void setEmptyViewToContainer( View emptyView )
    {
-      final View errorView = getErrorView();
-      if ( errorView != null )
-         errorView.setVisibility( show ? View.VISIBLE : View.GONE );
+      emptyViewContainer.removeAllViews();
+      emptyViewContainer.addView( emptyView );
+   }
+   
+   
+   
+   private TitleWithTextLayout showErrorView()
+   {
+      final TitleWithTextLayout errorView = (TitleWithTextLayout) getLayoutInflater().inflate( R.layout.app_error,
+                                                                                               null );
+      setEmptyViewToContainer( errorView );
+      
+      return errorView;
    }
    
    
    
    private TextView prepareErrorViewAndGetMessageView()
    {
-      TextView errorTextView = null;
-      final TitleWithTextLayout errorView = getErrorView();
+      final TitleWithTextLayout errorView = showErrorView();
       
+      TextView errorTextView = null;
       if ( errorView != null )
       {
-         showListView( false );
-         showLoadingSpinner( false );
-         showEmptyView( false );
-         showErrorView( true );
-         
          errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
       }
       
       return errorTextView;
+   }
+   
+   
+   
+   private LayoutInflater getLayoutInflater()
+   {
+      return fragment.getSherlockActivity().getLayoutInflater();
    }
 }

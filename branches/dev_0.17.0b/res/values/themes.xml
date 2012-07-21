@@ -16,7 +16,7 @@
 
         <!-- ActionBar -->
         <item name="actionBarStyle">@style/ActionBarStyle</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle</item>        
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
 
         <!-- Widgets -->
         <item name="android:expandableListViewStyle">@style/ExpandableListViewStyle</item>
@@ -28,6 +28,7 @@
         <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner</item>
         <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>
         <item name="clearButtonStyle">@style/ClearButtonStyle</item>
+        <item name="simpleLineStyle">@style/SimpleLine_Default</item>
 
         <!-- ButtonBar -->
         <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>

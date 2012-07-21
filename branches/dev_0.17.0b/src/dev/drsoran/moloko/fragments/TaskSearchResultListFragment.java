@@ -121,11 +121,13 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
+      super.onViewCreated( view, savedInstanceState );
+      
       if ( !evaluateQuery() )
+      {
          showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
                                                   getQuery() ) ) );
-      else
-         super.onViewCreated( view, savedInstanceState );
+      }
    }
    
    

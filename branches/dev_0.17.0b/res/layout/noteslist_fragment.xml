@@ -14,8 +14,7 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent">
 
     <include
         android:id="@android:id/list"
@@ -27,23 +26,9 @@
         <!-- Preview: listitem=@layout/noteslist_listitem -->
     </include>
 
-    <TextView
-        android:id="@android:id/empty"
-        style="@style/No_List_Elements_Text"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="@string/noteslist_no_notes" />
-
-    <include
-        android:id="@+id/loading_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        layout="@layout/app_loading_spinner"
-        android:visibility="gone" />
-
-    <dev.drsoran.moloko.layouts.TitleWithTextLayout
-        android:id="@+id/error"
-        style="@style/Error"
-        android:visibility="gone" />
+    <include android:id="@android:id/empty"
+      layout="@layout/app_empty_list_container"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"/>
 
 </FrameLayout>

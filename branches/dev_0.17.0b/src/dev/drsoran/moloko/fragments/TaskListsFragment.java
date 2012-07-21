@@ -68,6 +68,13 @@ public class TaskListsFragment extends
    
    
    
+   public TaskListsFragment()
+   {
+      setNoElementsResourceId( R.string.tasklists_no_lists );
+   }
+   
+   
+   
    @Override
    public void onAttach( Activity activity )
    {

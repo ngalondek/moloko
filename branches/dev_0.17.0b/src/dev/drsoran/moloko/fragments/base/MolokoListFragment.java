@@ -143,6 +143,20 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
+   public int getNoElementsResourceId()
+   {
+      return loaderImpl.getNoElementsResourceId();
+   }
+   
+   
+   
+   public void setNoElementsResourceId( int resId )
+   {
+      loaderImpl.setNoElementsResourceId( resId );
+   }
+   
+   
+   
    @Override
    public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {

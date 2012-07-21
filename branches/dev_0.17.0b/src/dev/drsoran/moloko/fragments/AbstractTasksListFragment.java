@@ -83,6 +83,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       registerAnnotatedConfiguredInstance( this,
                                            AbstractTasksListFragment.class );
+      setNoElementsResourceId( R.string.abstaskslist_no_tasks );
    }
    
    

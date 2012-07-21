@@ -69,6 +69,8 @@ public class LoaderExpandableListFragmentImpl< D > extends
    
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
+      viewManager.onViewCreated( view, savedInstanceState );
+      
       if ( support.getExpandableListAdapter() == null
          && support.isReadyToStartLoader() )
       {
@@ -115,6 +117,20 @@ public class LoaderExpandableListFragmentImpl< D > extends
       super.onLoadFinished( loader, data );
       
       viewManager.onLoadFinished( isLoaderDataFound() );
+   }
+   
+   
+   
+   public int getNoElementsResourceId()
+   {
+      return viewManager.getNoElementsResourceId();
+   }
+   
+   
+   
+   public void setNoElementsResourceId( int resId )
+   {
+      viewManager.setNoElementsResourceId( resId );
    }
    
    

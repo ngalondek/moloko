@@ -63,6 +63,13 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
    
    
    
+   public ContactsListFragment()
+   {
+      setNoElementsResourceId( R.string.contactslist_no_contacts );
+   }
+   
+   
+   
    @Override
    public void onAttach( Activity activity )
    {

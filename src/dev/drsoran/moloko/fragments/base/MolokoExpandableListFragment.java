@@ -155,6 +155,20 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
+   public int getNoElementsResourceId()
+   {
+      return loaderImpl.getNoElementsResourceId();
+   }
+   
+   
+   
+   public void setNoElementsResourceId( int resId )
+   {
+      loaderImpl.setNoElementsResourceId( resId );
+   }
+   
+   
+   
    @Override
    public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {

@@ -40,16 +40,14 @@ public class SimpleLineView extends View
    
    public SimpleLineView( Context context )
    {
-      super( context );
-      initLineDrawable( context.getResources()
-                               .getColor( R.color.app_default_line ) );
+      this( context, null, R.attr.simpleLineStyle );
    }
    
    
    
    public SimpleLineView( Context context, AttributeSet attrs )
    {
-      this( context, attrs, R.style.SimpleLine_Default );
+      this( context, attrs, R.attr.simpleLineStyle );
    }
    
    

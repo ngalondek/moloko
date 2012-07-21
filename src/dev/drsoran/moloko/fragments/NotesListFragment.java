@@ -80,6 +80,7 @@ public class NotesListFragment extends
    public NotesListFragment()
    {
       registerAnnotatedConfiguredInstance( this, NotesListFragment.class );
+      setNoElementsResourceId( R.string.noteslist_no_notes );
    }
    
    

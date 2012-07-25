@@ -161,6 +161,34 @@ public class RtmSmartFilter extends RtmData implements IFilter
    
    
    
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( o == null )
+      {
+         return false;
+      }
+      
+      if ( o == this )
+      {
+         return true;
+      }
+      
+      if ( o.getClass() != getClass() )
+      {
+         return false;
+      }
+      
+      final RtmSmartFilter other = (RtmSmartFilter) o;
+      
+      boolean equal = Strings.equals( filter, other.filter );
+      equal = equal && Strings.equals( evalFilter, other.evalFilter );
+      
+      return equal;
+   }
+   
+   
+   
    public static final String evaluate( String filter, boolean excludeCompleted )
    {
       return evaluate( transformFilter( filter ), null, excludeCompleted );

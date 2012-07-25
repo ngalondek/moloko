@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -123,7 +124,9 @@ class LoaderListFragmentViewManager
    {
       final View spinner = getLayoutInflater().inflate( R.layout.app_loading_spinner,
                                                         null );
-      setEmptyViewToContainer( spinner );
+      setEmptyViewToContainer( spinner,
+                               new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT,
+                                                              LinearLayout.LayoutParams.MATCH_PARENT ) );
    }
    
    
@@ -142,19 +145,35 @@ class LoaderListFragmentViewManager
    
    private void setEmptyViewToContainer( View emptyView )
    {
+      setEmptyViewToContainer( emptyView, null );
+   }
+   
+   
+   
+   private void setEmptyViewToContainer( View emptyView,
+                                         LinearLayout.LayoutParams layoutParams )
+   {
       emptyViewContainer.removeAllViews();
-      emptyViewContainer.addView( emptyView );
+      
+      if ( layoutParams != null )
+      {
+         emptyViewContainer.addView( emptyView, layoutParams );
+      }
+      else
+      {
+         emptyViewContainer.addView( emptyView );
+      }
    }
    
    
    
    private TitleWithTextLayout showErrorView()
    {
-      final TitleWithTextLayout errorView = (TitleWithTextLayout) getLayoutInflater().inflate( R.layout.app_error,
-                                                                                               null );
-      setEmptyViewToContainer( errorView );
+      final ViewGroup errorContainer = (ViewGroup) getLayoutInflater().inflate( R.layout.app_error,
+                                                                                null );
+      setEmptyViewToContainer( errorContainer );
       
-      return errorView;
+      return (TitleWithTextLayout) errorContainer.getChildAt( 0 );
    }
    
    

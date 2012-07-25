@@ -441,7 +441,11 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       super.onLoadFinished( loader, data );
       
       invalidateOptionsMenu();
-      resortTasks( tasksSort );
+      
+      if ( data != null )
+      {
+         resortTasks( tasksSort );
+      }
    }
    
    

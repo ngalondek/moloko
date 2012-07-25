@@ -74,6 +74,13 @@ public final class Strings
    
    
    
+   public final static boolean equals( String lhs, String rhs )
+   {
+      return ( lhs == rhs ) || ( lhs != null && lhs.equals( rhs ) );
+   }
+   
+   
+   
    public final static Object convertTo( String value, Class< ? > valueClass )
    {
       if ( valueClass == String.class )

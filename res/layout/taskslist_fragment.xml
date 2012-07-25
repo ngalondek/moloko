@@ -9,26 +9,30 @@
    PURPOSE. See the GNU General Public License for more details. You should 
    have received a copy of the GNU General Public License along with Moloko. 
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation
+   - implementation
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
 
-   <include
-      android:id="@android:id/list"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      layout="@layout/listview" >
+	<include
+		android:id="@android:id/list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		layout="@layout/listview" >
 
-      <!--
+		<!--
             Preview: 
-           listitem=@layout/fulldetailed_taskslist_listitem
-      -->
-   </include>
-   
-   <include android:id="@android:id/empty"
-      layout="@layout/app_empty_list_container" />
+           listitem=@layout/fulldetailed_taskslist_listitem
+		-->
+	</include>
 
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@android:id/empty"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+	</LinearLayout>
+	
 </FrameLayout>

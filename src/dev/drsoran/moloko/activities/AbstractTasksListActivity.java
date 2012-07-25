@@ -598,9 +598,9 @@ public abstract class AbstractTasksListActivity extends
          
          selectedNavigationItem = new SelectedNavigationItem( itemId,
                                                               itemPosition );
-         reloadTasksListWithConfiguration( newConfig, selectedNavigationItem );
-         
          updateNavigationAdapter = hasChangedSelectedItemId;
+         
+         reloadTasksListWithConfiguration( newConfig );
       }
       
       return handled;
@@ -633,14 +633,6 @@ public abstract class AbstractTasksListActivity extends
    
    
    protected void reloadTasksListWithConfiguration( Bundle config )
-   {
-      reloadTasksListWithConfiguration( config, null );
-   }
-   
-   
-   
-   private void reloadTasksListWithConfiguration( Bundle config,
-                                                  SelectedNavigationItem selectedNavigationItem )
    {
       final Fragment fragment = createTasksListFragment( config );
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

@@ -610,9 +610,18 @@ public abstract class AbstractTasksListActivity extends
    
    private ITasksListFragment< ? extends Task > getTasksListFragment()
    {
-      @SuppressWarnings( "unchecked" )
-      final ITasksListFragment< ? extends Task > fragment = (ITasksListFragment< ? extends Task >) findAddedFragmentById( R.id.frag_taskslist );
-      return fragment;
+      final Fragment fragment = findAddedFragmentById( R.id.frag_taskslist );
+      
+      if ( fragment instanceof ITasksListFragment )
+      {
+         @SuppressWarnings( "unchecked" )
+         final ITasksListFragment< ? extends Task > tasksListFragment = (ITasksListFragment< ? extends Task >) fragment;
+         return tasksListFragment;
+      }
+      else
+      {
+         return null;
+      }
    }
    
    

@@ -24,25 +24,19 @@ package dev.drsoran.moloko.fragments;
 
 import android.app.SearchManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import dev.drsoran.moloko.IFilter;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.RtmSmartFilter;
-import dev.drsoran.rtm.Task;
 
 
-public class TaskSearchResultFailedFragment extends MolokoFragment implements
-         ITasksListFragment< Task >
+public class TaskSearchResultFailedFragment extends MolokoFragment
 {
    @InstanceState( key = SearchManager.QUERY,
                    defaultValue = Strings.EMPTY_STRING )
@@ -93,82 +87,4 @@ public class TaskSearchResultFailedFragment extends MolokoFragment implements
       errorTextView.setText( fromHtml );
    }
    
-   
-   
-   @Override
-   public IFilter getFilter()
-   {
-      return null;
-   }
-   
-   
-   
-   @Override
-   public RtmSmartFilter getRtmSmartFilter()
-   {
-      return null;
-   }
-   
-   
-   
-   @Override
-   public Task getTask( int pos )
-   {
-      return null;
-   }
-   
-   
-   
-   @Override
-   public int getTaskPos( View view )
-   {
-      return 0;
-   }
-   
-   
-   
-   @Override
-   public Task getTask( View view )
-   {
-      return null;
-   }
-   
-   
-   
-   @Override
-   public Task getTask( String taskId )
-   {
-      return null;
-   }
-   
-   
-   
-   @Override
-   public int getTaskSort()
-   {
-      return getDefaultTaskSort();
-   }
-   
-   
-   
-   @Override
-   public int getDefaultTaskSort()
-   {
-      return MolokoApp.getSettings( getSherlockActivity() ).getTaskSort();
-   }
-   
-   
-   
-   @Override
-   public void resortTasks( int newTaskSort )
-   {
-   }
-   
-   
-   
-   @Override
-   public Fragment getFragment()
-   {
-      return this;
-   }
 }

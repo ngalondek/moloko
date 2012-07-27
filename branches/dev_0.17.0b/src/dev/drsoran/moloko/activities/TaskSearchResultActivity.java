@@ -46,9 +46,8 @@ import dev.drsoran.rtm.RtmSmartFilter;
 public class TaskSearchResultActivity extends
          AbstractFullDetailedTasksListActivity
 {
-   @InstanceState( key = "succeeded_query_stack",
-                   defaultValue = InstanceState.NO_DEFAULT )
-   private ArrayList< String > succeededQueryStack;
+   @InstanceState( key = "query_stack", defaultValue = InstanceState.NO_DEFAULT )
+   private ArrayList< String > queryStack;
    
    private boolean lastQuerySucceeded;
    
@@ -64,10 +63,8 @@ public class TaskSearchResultActivity extends
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      evaluateAndStoreQuery();
-      getSupportFragmentManager().addOnBackStackChangedListener( this );
-      
       super.onCreate( savedInstanceState );
+      getSupportFragmentManager().addOnBackStackChangedListener( this );
    }
    
    
@@ -84,7 +81,20 @@ public class TaskSearchResultActivity extends
    @Override
    public void onBackStackChanged()
    {
-      setTitle( popSucceededQuery() );
+      setTitle( getTopQuery() );
+   }
+   
+   
+   
+   @Override
+   public void onBackPressed()
+   {
+      if ( queryStack.size() > 0 )
+      {
+         popQuery();
+      }
+      
+      super.onBackPressed();
    }
    
    
@@ -94,22 +104,11 @@ public class TaskSearchResultActivity extends
    {
       super.onNewIntent( intent );
       
-      final String lastSucceededQuery = getLastSucceededQuery();
-      if ( !lastSucceededQuery.equalsIgnoreCase( getQueryFromIntent() ) )
+      final String lastQuery = getTopQuery();
+      if ( !lastQuery.equalsIgnoreCase( getQueryFromIntent() ) )
       {
-         evaluateAndStoreQuery();
-         // ??
-         reloadWithNewQuery( intent );
+         reloadWithNewQuery();
       }
-   }
-   
-   
-   
-   private boolean queryHasChanged( RtmSmartFilter oldFilter )
-   {
-      return ( oldFilter != null && filter == null )
-         || ( oldFilter == null && filter != null )
-         || ( oldFilter != null && filter != null && !oldFilter.equals( filter ) );
    }
    
    
@@ -228,19 +227,17 @@ public class TaskSearchResultActivity extends
    
    
    
-   private void reloadWithNewQuery( Intent intent )
+   private void reloadWithNewQuery()
    {
-      final Bundle newConfig = getCurrentTasksListFragmentConfiguration();
-      putTransformedQueryFromSmartFilter( newConfig );
-      
-      reloadTasksListWithConfiguration( newConfig );
+      final Bundle config = getCurrentTasksListFragmentConfiguration();
+      reloadTasksListWithConfiguration( config );
    }
    
    
    
    private Bundle putTransformedQueryFromSmartFilter( Bundle config )
    {
-      config.putParcelable( Intents.Extras.KEY_FILTER, filter );
+      config.putParcelable( Intents.Extras.KEY_FILTER, evaluateRtmSmartFilter() );
       return config;
    }
    
@@ -253,23 +250,23 @@ public class TaskSearchResultActivity extends
    
    
    
-   private String getLastSucceededQuery()
+   private String getTopQuery()
    {
-      return succeededQueryStack.get( succeededQueryStack.size() - 1 );
+      return queryStack.get( queryStack.size() - 1 );
    }
    
    
    
-   private void pushSucceededQuery( String query )
+   private void pushQuery( String query )
    {
-      succeededQueryStack.add( query );
+      queryStack.add( query );
    }
    
    
    
-   private String popSucceededQuery()
+   private String popQuery()
    {
-      return succeededQueryStack.remove( succeededQueryStack.size() - 1 );
+      return queryStack.remove( queryStack.size() - 1 );
    }
    
    
@@ -279,7 +276,7 @@ public class TaskSearchResultActivity extends
       final String queryString = getQueryFromIntent();
       getRecentSuggestions().saveRecentQuery( queryString, null );
       
-      pushSucceededQuery( queryString );
+      pushQuery( queryString );
       lastQuerySucceeded = true;
       
       invalidateOptionsMenu();
@@ -298,9 +295,12 @@ public class TaskSearchResultActivity extends
    @Override
    protected Fragment createTasksListFragment( Bundle config )
    {
+      evaluateAndStoreQuery();
+      
       if ( lastQuerySucceeded )
       {
          putTransformedQueryFromSmartFilter( config );
+         
          return FullDetailedTasksListFragment.newInstance( config );
       }
       else

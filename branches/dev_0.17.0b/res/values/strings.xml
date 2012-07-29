@@ -348,7 +348,7 @@
      <string name="taskslist_menu_opt_delete_list">Delete list</string>
 
    <!-- TaskSearchResult fragment -->
-   <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the search syntax.</string>
+   <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">Check the search syntax.&lt;/a></string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Add smart list</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Clear search history</string>

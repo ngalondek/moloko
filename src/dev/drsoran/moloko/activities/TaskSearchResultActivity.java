@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
@@ -47,9 +49,7 @@ public class TaskSearchResultActivity extends
          AbstractFullDetailedTasksListActivity
 {
    @InstanceState( key = "query_stack", defaultValue = InstanceState.NO_DEFAULT )
-   private ArrayList< String > queryStack;
-   
-   private boolean lastQuerySucceeded;
+   private final ArrayList< QueryStackItem > queryStack = new ArrayList< QueryStackItem >();
    
    
    
@@ -81,7 +81,7 @@ public class TaskSearchResultActivity extends
    @Override
    public void onBackStackChanged()
    {
-      setTitle( getTopQuery() );
+      setTitle( getTopQuery().query );
    }
    
    
@@ -104,7 +104,7 @@ public class TaskSearchResultActivity extends
    {
       super.onNewIntent( intent );
       
-      final String lastQuery = getTopQuery();
+      final String lastQuery = getTopQuery().query;
       if ( !lastQuery.equalsIgnoreCase( getQueryFromIntent() ) )
       {
          reloadWithNewQuery();
@@ -155,7 +155,7 @@ public class TaskSearchResultActivity extends
    {
       super.onPrepareOptionsMenu( menu );
       menu.setGroupVisible( R.id.menu_group_tasksearchresult_query_succeeded,
-                            lastQuerySucceeded );
+                            getTopQuery().succeeded );
       
       return true;
    }
@@ -250,21 +250,21 @@ public class TaskSearchResultActivity extends
    
    
    
-   private String getTopQuery()
+   private QueryStackItem getTopQuery()
    {
       return queryStack.get( queryStack.size() - 1 );
    }
    
    
    
-   private void pushQuery( String query )
+   private void pushQuery( QueryStackItem query )
    {
       queryStack.add( query );
    }
    
    
    
-   private String popQuery()
+   private QueryStackItem popQuery()
    {
       return queryStack.remove( queryStack.size() - 1 );
    }
@@ -276,8 +276,7 @@ public class TaskSearchResultActivity extends
       final String queryString = getQueryFromIntent();
       getRecentSuggestions().saveRecentQuery( queryString, null );
       
-      pushQuery( queryString );
-      lastQuerySucceeded = true;
+      pushQuery( new QueryStackItem( queryString, true ) );
       
       invalidateOptionsMenu();
    }
@@ -286,7 +285,10 @@ public class TaskSearchResultActivity extends
    
    private void onQueryFailed()
    {
-      lastQuerySucceeded = false;
+      final String queryString = getQueryFromIntent();
+      
+      pushQuery( new QueryStackItem( queryString, false ) );
+      
       invalidateOptionsMenu();
    }
    
@@ -297,7 +299,7 @@ public class TaskSearchResultActivity extends
    {
       evaluateAndStoreQuery();
       
-      if ( lastQuerySucceeded )
+      if ( getTopQuery().succeeded )
       {
          putTransformedQueryFromSmartFilter( config );
          
@@ -309,6 +311,74 @@ public class TaskSearchResultActivity extends
          config.putString( SearchManager.QUERY, getQueryFromIntent() );
          
          return TaskSearchResultFailedFragment.newInstance( config );
+      }
+   }
+   
+   
+   private final static class QueryStackItem implements Parcelable
+   {
+      @SuppressWarnings( "unused" )
+      public static final Parcelable.Creator< QueryStackItem > CREATOR = new Parcelable.Creator< QueryStackItem >()
+      {
+         
+         @Override
+         public QueryStackItem createFromParcel( Parcel source )
+         {
+            return new QueryStackItem( source );
+         }
+         
+         
+         
+         @Override
+         public QueryStackItem[] newArray( int size )
+         {
+            return new QueryStackItem[ size ];
+         }
+         
+      };
+      
+      public String query;
+      
+      public boolean succeeded;
+      
+      
+      
+      public QueryStackItem( String query, boolean succeeded )
+      {
+         this.query = query;
+         this.succeeded = succeeded;
+      }
+      
+      
+      
+      public QueryStackItem( Parcel source )
+      {
+         this( source.readString(), source.readByte() != 0 );
+      }
+      
+      
+      
+      @Override
+      public void writeToParcel( Parcel dest, int flags )
+      {
+         dest.writeString( query );
+         dest.writeByte( (byte) ( succeeded ? 1 : 0 ) );
+      }
+      
+      
+      
+      @Override
+      public int describeContents()
+      {
+         return 0;
+      }
+      
+      
+      
+      @Override
+      public String toString()
+      {
+         return query;
       }
    }
 }

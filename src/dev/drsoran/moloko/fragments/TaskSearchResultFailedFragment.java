@@ -84,7 +84,8 @@ public class TaskSearchResultFailedFragment extends MolokoFragment
    private void setErrorText( ViewGroup content, Spanned fromHtml )
    {
       final TextView errorTextView = (TextView) content.findViewById( R.id.title_with_text_text );
+      
       errorTextView.setText( fromHtml );
+      errorTextView.setLinksClickable( true );
    }
-   
 }

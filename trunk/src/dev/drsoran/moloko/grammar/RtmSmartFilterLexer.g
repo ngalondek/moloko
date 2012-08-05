@@ -9,13 +9,14 @@ options
 {
    package dev.drsoran.moloko.grammar;
 
+   import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
    import dev.drsoran.moloko.util.MolokoCalendar;
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
    import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
    import dev.drsoran.provider.Rtm.Tasks;
    import dev.drsoran.provider.Rtm.Tags;
    import dev.drsoran.provider.Rtm.Notes;
-   import dev.drsoran.provider.Rtm.Locations;
+   import dev.drsoran.provider.Rtm.Locations;   
 
    import org.antlr.runtime.RecognitionException;
 
@@ -105,8 +106,9 @@ options
 
    // END TOKEN LITERALS  
 
+   private final static String DEFAULT_OPERATOR = AND_LIT;
 
-   // STATUS VARIABLES
+   // STATUS VARIABLES   
 
    private StringBuilder result = new StringBuilder();
 
@@ -114,9 +116,13 @@ options
 
    private boolean error = false;
    
-   private boolean op_not = false;
+   private boolean lexedOperator = false;
+   
+   private boolean opNot = false;
    
    private ArrayList< RtmSmartFilterToken > tokens;
+   
+   private int numTokens;
 
 
 
@@ -127,8 +133,11 @@ options
 		
       result.setLength( 0 );
       hasStatusCompletedOp = false;
+      lexedOperator = false;
+      opNot = false;
       error = false;
       tokens = null;
+      numTokens = 0;
    }
 
 
@@ -268,7 +277,7 @@ options
 
    private void inTimeParamRange( String column, String param, boolean past )
    {
-      final RtmDateTimeParsing.DateWithinReturn range = RtmDateTimeParsing.parseDateWithin( unquotify( param ), past );
+      final ParseDateWithinReturn range = RtmDateTimeParsing.parseDateWithin( unquotify( param ), past );
 
       if ( range != null )
       {
@@ -325,8 +334,25 @@ options
 
    private final void addRtmToken( int type, String param )
    {
+      ++numTokens;
+      
       if ( tokens != null )
-         tokens.add( new RtmSmartFilterToken( type, unquotify( param ), op_not ) );
+      {
+         tokens.add( new RtmSmartFilterToken( type, unquotify( param ), opNot ) );
+      }
+   }
+   
+   private final void ensureOperator()
+   {
+      // We do not insert the default operatorfor the first, lexed token
+      if (!lexedOperator && numTokens > 0)
+      {
+         result.append(" ")
+               .append(DEFAULT_OPERATOR)
+               .append(" ");
+               
+         lexedOperator = true;
+      }
    }
 }
 
@@ -335,22 +361,29 @@ options
 
 OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
                {
+                  ensureOperator();
+                  
                   result.append( Tasks.LIST_NAME );
                   likeStringParam( $s.getText() );
 
                   addRtmToken( OP_LIST, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_PRIORITY :  'priority:' s=STRING
                {
+                  ensureOperator();
+                  
                   result.append( Tasks.PRIORITY );
                   likeStringParam( firstCharOf( unquotify( $s.getText() ) ) );
                   
                   addRtmToken( OP_PRIORITY, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_STATUS   :  'status:'
                {
+                  ensureOperator();
                   result.append( Tasks.COMPLETED_DATE );
                }
                (
@@ -366,10 +399,15 @@ OP_STATUS   :  'status:'
                      result.append(" IS NULL");
                      addRtmToken( OP_STATUS, INCOMPLETE_LIT );
                   }
-               );
+               )
+               {
+                  lexedOperator = false;
+               };
 
 OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
               {
+                 ensureOperator();
+                 
                  final String unqString = unquotify( $s.getText() );
                  
                  result.append( "(" );
@@ -400,18 +438,23 @@ OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
                  result.append( ")" );
                        
                  addRtmToken( OP_TAG, $s.getText() );
+                 lexedOperator = false;
               };
 
 OP_TAG_CONTAINS : 'tagcontains:' ( s=STRING | s=Q_STRING )
                   {
+                    ensureOperator();
+                    
 	                 result.append( Tasks.TAGS );
                     containsStringParam( $s.getText() );
                     
                     addRtmToken( OP_TAG_CONTAINS, $s.getText() );
+                    lexedOperator = false;
                   };
 
 OP_IS_TAGGED    : 'istagged:'
                   {
+                     ensureOperator();
                      result.append( Tasks.TAGS );
                   }
                   (
@@ -428,18 +471,27 @@ OP_IS_TAGGED    : 'istagged:'
                         
                         addRtmToken( OP_IS_TAGGED, FALSE_LIT );
                      }
-                  );
+                  )
+                  {
+                     lexedOperator = false;
+                  };
 
 OP_LOCATION : 'location:' ( s=STRING | s=Q_STRING )
                {
+                  ensureOperator();
                   result.append( Tasks.LOCATION_NAME );
                   likeStringParam( $s.getText() );
+                  
                   addRtmToken( OP_LOCATION, $s.getText() );
+                  lexedOperator = false;
                };
 
 // OP_LOCATED_WITHIN
 
 OP_ISLOCATED : 'islocated:'
+               {
+                  ensureOperator();
+               }
                (
                   TRUE
                   {
@@ -466,10 +518,14 @@ OP_ISLOCATED : 'islocated:'
                      
                      addRtmToken( OP_ISLOCATED, FALSE_LIT );
                   }
-               );
+               )
+               {
+                  lexedOperator = false;
+               };
 
 OP_IS_REPEATING : 'isrepeating:'
                   {
+                     ensureOperator();
                      result.append( Tasks.RECURRENCE );
                   }
                   (
@@ -484,17 +540,26 @@ OP_IS_REPEATING : 'isrepeating:'
                         result.append(" IS NULL");
                         addRtmToken( OP_IS_REPEATING, FALSE_LIT );
                      }
-                  );
+                  )
+                  {
+                     lexedOperator = false;
+                  };
 
 OP_NAME      : 'name:' ( s=STRING | s=Q_STRING )
                {
+                  ensureOperator();
+                  
                   result.append( Tasks.TASKSERIES_NAME );
                   containsStringParam( $s.getText() );
+                  
                   addRtmToken( OP_NAME, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
                    {
+                      ensureOperator();
+                      
                       result.append( "(" );
                       result.append( " (SELECT " )
                             .append( Notes.TASKSERIES_ID )
@@ -513,9 +578,13 @@ OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
                       result.append( ")" );
                       
                       addRtmToken( OP_NOTE_CONTAINS, $s.getText() );
+                      lexedOperator = false;
                    };
 
 OP_HAS_NOTES : 'hasnotes:'
+               {
+                  ensureOperator();
+               }
                (
                   TRUE
                   {
@@ -528,86 +597,139 @@ OP_HAS_NOTES : 'hasnotes:'
                      result.append( Tasks.NOTE_IDS + " IS NULL");
                      addRtmToken( OP_HAS_NOTES, FALSE_LIT );
                   }
-               );
+               )
+               {
+                  lexedOperator = false;
+               };
 
 OP_DUE      :  'due:' ( s=STRING | s=Q_STRING )
                {
+                  ensureOperator();
+                  
                   equalsTimeParam( Tasks.DUE_DATE, $s.getText() );
+                  
                   addRtmToken( OP_DUE, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_DUE_AFTER : 'dueafter:' ( s=STRING | s=Q_STRING )
                {
+                  ensureOperator();
+
                   differsTimeParam( Tasks.DUE_DATE, $s.getText(), false );
+                  
                   addRtmToken( OP_DUE_AFTER, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_DUE_BEFORE : 'duebefore:' ( s=STRING | s=Q_STRING )
                 {
+                   ensureOperator();
+                   
                    differsTimeParam( Tasks.DUE_DATE, $s.getText(), true );
+                   
                    addRtmToken( OP_DUE_BEFORE, $s.getText() );
+                   lexedOperator = false;
                 };
 
 OP_DUE_WITHIN : 'duewithin:' s=Q_STRING
                 {
+                   ensureOperator();
+                   
                    inTimeParamRange( Tasks.DUE_DATE, $s.getText(), false );
+                   
                    addRtmToken( OP_DUE_WITHIN, $s.getText() );
+                   lexedOperator = false;
                 };
 
 OP_COMPLETED : 'completed:' ( s=STRING | s=Q_STRING )
                {
+                  ensureOperator();
+                  
                   equalsTimeParam( Tasks.COMPLETED_DATE, $s.getText() );
                   hasStatusCompletedOp = true;
+                  
                   addRtmToken( OP_COMPLETED, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_COMPLETED_BEFORE : 'completedbefore:' ( s=STRING | s=Q_STRING )
                       {
+                          ensureOperator();
+                          
                           differsTimeParam( Tasks.COMPLETED_DATE, $s.getText(), true );
                           hasStatusCompletedOp = true;
+                          
                           addRtmToken( OP_COMPLETED_BEFORE, $s.getText() );
+                          lexedOperator = false;
                       };
 
 OP_COMPLETED_AFTER : 'completedafter:' ( s=STRING | s=Q_STRING )
                      {
+                        ensureOperator();
+                        
                         differsTimeParam( Tasks.COMPLETED_DATE, $s.getText(), false );
                         hasStatusCompletedOp = true;
+                        
                         addRtmToken( OP_COMPLETED_AFTER, $s.getText() );
+                        lexedOperator = false;
                      };
 
 OP_COMPLETED_WITHIN : 'completedwithin:' s=Q_STRING
                       {
+                         ensureOperator();
+                         
                          inTimeParamRange( Tasks.COMPLETED_DATE, $s.getText(), true );
                          hasStatusCompletedOp = true;
+                         
                          addRtmToken( OP_COMPLETED_WITHIN, $s.getText() );
+                         lexedOperator = false;
                       };
 
 OP_ADDED     : 'added:' ( s=STRING | s=Q_STRING )
                {
+                  ensureOperator();
+                  
                   equalsTimeParam( Tasks.ADDED_DATE, $s.getText() );
+                  
                   addRtmToken( OP_ADDED, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_ADDED_BEFORE : 'addedbefore:' ( s=STRING | s=Q_STRING )
                   {
+                     ensureOperator();
+                     
                      differsTimeParam( Tasks.ADDED_DATE, $s.getText(), true );
+                     
                      addRtmToken( OP_ADDED_BEFORE, $s.getText() );
+                     lexedOperator = false;
                   };
 
 OP_ADDED_AFTER : 'addedafter:' ( s=STRING | s=Q_STRING )
                  {
+                    ensureOperator();
+                    
                     differsTimeParam( Tasks.ADDED_DATE, $s.getText(), false );
+                    
                     addRtmToken( OP_ADDED_AFTER, $s.getText() );
+                    lexedOperator = false;
                  };
 
 OP_ADDED_WITHIN : 'addedwithin:' s=Q_STRING
                   {
+                     ensureOperator();
+                     
                      inTimeParamRange( Tasks.ADDED_DATE, $s.getText(), true );
+                     
                      addRtmToken( OP_ADDED_WITHIN, $s.getText() );
+                     lexedOperator = false;
                   };
 
 OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
                    {
+                      ensureOperator();
+                      
                       result.append( "(" );
                       result.append( Tasks.ESTIMATE_MILLIS );
 
@@ -638,10 +760,12 @@ OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
                       }
                          
                       addRtmToken( OP_TIME_ESTIMATE, $s.getText() );
+                      lexedOperator = false;
                    };
 
 OP_POSTPONED : 'postponed:'
                {
+                  ensureOperator();
                   result.append( Tasks.POSTPONED );
                }
                (
@@ -657,9 +781,13 @@ OP_POSTPONED : 'postponed:'
                )
                {
                   addRtmToken( OP_POSTPONED, $s.getText() );
+                  lexedOperator = false;
                };
 
 OP_IS_SHARED : 'isshared:'
+               {
+                  ensureOperator();
+               }
                (
                   TRUE
                   {
@@ -672,10 +800,15 @@ OP_IS_SHARED : 'isshared:'
                      result.append( Tasks.PARTICIPANT_IDS + " IS NULL");
                      addRtmToken( OP_IS_SHARED, FALSE_LIT );
                   }
-               );
+               )
+               {
+                  lexedOperator = false;
+               };
 
 OP_SHARED_WITH : 'sharedwith:' ( s=STRING | s=Q_STRING )
                  {
+                    ensureOperator();
+                    
                     result.append( "(" );
                     result.append( Tasks.PARTICIPANT_FULLNAMES );
                     containsStringParam( $s.getText() );
@@ -686,6 +819,7 @@ OP_SHARED_WITH : 'sharedwith:' ( s=STRING | s=Q_STRING )
                     result.append( ")" );
                     
                     addRtmToken( OP_SHARED_WITH, $s.getText() );
+                    lexedOperator = false;
                  };
 
 // OP_IS_RECEIVED
@@ -709,6 +843,7 @@ FALSE       : 'false';
 
 L_PARENTH   : '('
                {
+                  ensureOperator();
                   result.append( "( " );
                };
 
@@ -720,19 +855,24 @@ R_PARENTH   : ')'
 AND         : 'and'
               {
                  result.append( " AND " );
-                 op_not = false;
+                 opNot = false;
+                 lexedOperator = true;
               };
 
 OR          : 'or'
               {
                  result.append( " OR " );
-                 op_not = false;
+                 opNot = false;
+                 lexedOperator = true;
               };
 
 NOT         : 'not'
               {
+                 ensureOperator();
+              }
+              {
                  result.append( " NOT " );
-                 op_not = true;
+                 opNot = true;
               };
 
 WS          :   ( ' '

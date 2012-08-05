@@ -57,7 +57,7 @@ public class PopupNotificationFragment extends MolokoFragment
       @Override
       public void run()
       {
-         notifyClosePopup();
+         notifyClosePopup( false );
       }
    };
    
@@ -174,7 +174,7 @@ public class PopupNotificationFragment extends MolokoFragment
          @Override
          public void onClick( View v )
          {
-            notifyClosePopup();
+            notifyClosePopup( true );
          }
       } );
    }
@@ -192,11 +192,11 @@ public class PopupNotificationFragment extends MolokoFragment
    
    
    
-   private void notifyClosePopup()
+   private void notifyClosePopup( boolean closeButton )
    {
       if ( listener != null )
       {
-         listener.onClosePopup();
+         listener.onClosePopup( closeButton );
       }
    }
 }

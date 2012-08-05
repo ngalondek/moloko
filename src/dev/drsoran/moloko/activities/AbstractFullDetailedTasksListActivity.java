@@ -28,8 +28,8 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuItem;
@@ -42,12 +42,10 @@ import dev.drsoran.moloko.actionmodes.QuickAddTaskActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.IQuickAddTaskActionModeListener;
 import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.PopupNotificationFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.IPopupNotificationFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
@@ -58,10 +56,9 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractFullDetailedTasksListActivity extends
-         AbstractTasksListActivity implements OnBackStackChangedListener,
-         ITasksListActionModeListener, IShowTasksWithTagsListener,
-         IQuickAddTaskActionModeListener, ILoaderFragmentListener,
-         IPopupNotificationFragmentListener
+         AbstractTasksListActivity implements ITasksListActionModeListener,
+         IShowTasksWithTagsListener, IQuickAddTaskActionModeListener,
+         ILoaderFragmentListener
 {
    @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
    private boolean quickAddTaskActionModeActive;
@@ -85,19 +82,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       if ( quickAddTaskActionModeActive )
       {
          showQuickAddTaskInput();
-      }
-   }
-   
-   
-   
-   @Override
-   public void onBackStackChanged()
-   {
-      // We only consider the backstack change for a dismissed
-      // popup notification.
-      if ( !( getBottomFragment() instanceof PopupNotificationFragment ) )
-      {
-         onClosePopup();
       }
    }
    
@@ -305,7 +289,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       switch ( dialogId )
       {
-      
          case R.id.dlg_selectmultipletasks_complete:
             if ( which == Dialog.BUTTON_POSITIVE )
                completeSelectedTasks( getSelectedTasks() );
@@ -330,21 +313,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
             super.onAlertDialogFragmentClick( dialogId, tag, which );
             break;
       }
-   }
-   
-   
-   
-   @Override
-   public void onClosePopup()
-   {
-      getSupportFragmentManager().removeOnBackStackChangedListener( this );
-      
-      removeBottomFragment();
-      
-      // TODO: Activate storage of notification flag
-      // MolokoApp.getSettings( this )
-      // .storeBool( getString( R.string.key_notified_taskslist_multiselection ),
-      // true );
    }
    
    
@@ -521,21 +489,13 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void showMultiSelectionNotification()
    {
-      if ( getBottomFragment() == null )
-      {
-         final Bundle config = new Bundle( 3 );
-         config.putString( PopupNotificationFragment.Config.NOTIFICATION_TITLE,
-                           getString( R.string.phr_hint ) );
-         config.putString( PopupNotificationFragment.Config.NOTIFICATION_MESSAGE,
-                           getString( R.string.abstaskslist_notif_multi_selection ) );
-         config.putLong( PopupNotificationFragment.Config.NOTIFICATION_AUTO_CLOSE_MS,
-                         getResources().getInteger( R.integer.popup_notification_delay_off_ms ) );
-         
-         final Fragment fragment = PopupNotificationFragment.newInstance( config );
-         addBottomFragment( fragment ).addToBackStack( null ).commit();
-         
-         getSupportFragmentManager().addOnBackStackChangedListener( this );
-      }
+      new AlertDialogFragment.Builder( View.NO_ID ).setTitle( getString( R.string.phr_hint ) )
+                                                   .setMessage( getString( R.string.abstaskslist_notif_multi_selection ) )
+                                                   .setNeutralButton( android.R.string.ok )
+                                                   .show( this );
+      MolokoApp.getSettings( this )
+               .storeBool( getString( R.string.key_notified_taskslist_multiselection ),
+                           true );
    }
    
    

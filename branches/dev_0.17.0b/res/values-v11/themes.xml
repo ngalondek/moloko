@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Theme.Moloko" parent="@style/Theme.__Moloko">
+        <!-- Widgets -->
+        <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>
+        <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
+    </style>
+        
     <style name="Theme.Moloko.Preferences" parent="Theme.Sherlock.Light"></style>  
 
     <style name="Theme.ChangeTagsDialog" parent="android:style/Theme.Holo.Light.Dialog">

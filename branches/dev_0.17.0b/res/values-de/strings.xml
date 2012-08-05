@@ -310,7 +310,7 @@
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <!-- Notifications -->
-     <string name="abstaskslist_notif_multi_selection">Um mehre Aufgaben gemeinsam zu bearbeiten, kicken Sie lang auf eine Aufgabe.</string>
+     <string name="abstaskslist_notif_multi_selection">Um mehrere Aufgaben gemeinsam zu bearbeiten, klicken Sie länger auf eine Aufgabe.</string>
      
    <!-- TasksList fragment -->
    <string name="taskslist_actionbar_subtitle_due_today">Heute fällig</string>

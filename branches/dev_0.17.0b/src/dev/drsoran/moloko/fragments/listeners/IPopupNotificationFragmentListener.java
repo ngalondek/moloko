@@ -24,5 +24,5 @@ package dev.drsoran.moloko.fragments.listeners;
 
 public interface IPopupNotificationFragmentListener
 {
-   public void onClosePopup();
+   public void onClosePopup( boolean closeButton );
 }

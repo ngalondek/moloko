@@ -432,6 +432,13 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
+   public void executeDelayed( Runnable runnable, int delayMillis )
+   {
+      getHandler().postDelayed( runnable, delayMillis );
+   }
+   
+   
+   
    protected Handler getHandler()
    {
       return handler;

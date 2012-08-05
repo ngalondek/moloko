@@ -65,6 +65,9 @@
    <item
       type="id"
       name="frag_about_moloko" />
+   <item
+      type="id"
+      name="frag_multi_container" />
 
    <!-- Dialog Fragment IDs -->
    <item

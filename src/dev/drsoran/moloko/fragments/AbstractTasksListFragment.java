@@ -410,6 +410,14 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
+   public int getTaskCount()
+   {
+      return getListAdapter() != null ? getListAdapter().getCount() : 0;
+   }
+   
+   
+   
+   @Override
    public int getTaskSort()
    {
       return tasksSort;

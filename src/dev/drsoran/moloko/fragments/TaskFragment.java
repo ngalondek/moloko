@@ -454,18 +454,17 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
                                                                  task.getLocationAddress() ) )
             {
                final SpannableString clickableLocation = new SpannableString( locationName );
-               clickableLocation.setSpan( new ClickableSpan()
-               {
-                  @Override
-                  public void onClick( View widget )
-                  {
-                     listener.onOpenLocation( task );
-                  }
-               }, 0, clickableLocation.length(), 0 );
-               
-               UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( R.string.task_location ),
-                                                      clickableLocation );
+               UIUtils.initializeTitleWithTextLayoutAsLink( view,
+                                                            getString( R.string.task_location ),
+                                                            clickableLocation,
+                                                            new ClickableSpan()
+                                                            {
+                                                               @Override
+                                                               public void onClick( View widget )
+                                                               {
+                                                                  listener.onOpenLocation( task );
+                                                               }
+                                                            } );
             }
             else
             {
@@ -495,20 +494,18 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
          
          for ( final Participant participant : participants.getParticipants() )
          {
-            final SpannableString clickableContact = new SpannableString( participant.getFullname() );
-            
-            clickableContact.setSpan( new ClickableSpan()
-            {
-               @Override
-               public void onClick( View widget )
-               {
-                  listener.onOpenContact( participant.getFullname(),
-                                          participant.getUsername() );
-               }
-            }, 0, clickableContact.length(), 0 );
-            
             final TextView textView = new TextView( getSherlockActivity() );
-            UIUtils.applySpannable( textView, clickableContact );
+            UIUtils.makeLink( textView,
+                              participant.getFullname(),
+                              new ClickableSpan()
+                              {
+                                 @Override
+                                 public void onClick( View widget )
+                                 {
+                                    listener.onOpenContact( participant.getFullname(),
+                                                            participant.getUsername() );
+                                 }
+                              } );
             
             view.addView( textView );
          }

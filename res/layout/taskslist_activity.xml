@@ -27,9 +27,9 @@
     </LinearLayout>
         
     <LinearLayout
-        android:id="@id/frag_quick_add_task_button_bar"
+        android:id="@id/frag_multi_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-    </LinearLayout>
+    </LinearLayout>    
 
 </LinearLayout>

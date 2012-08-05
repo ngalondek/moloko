@@ -138,6 +138,7 @@
    <string name="phr_edit_dlg_done">Applying changes?</string>
    <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
    <string name="phr_more">More</string>
+   <string name="phr_hint">Hint</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -335,6 +336,8 @@
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">and</string>
      <string name="abstaskslist_dlg_show_tags_or">or</string>
+     <!-- Notifications -->
+     <string name="abstaskslist_notif_multi_selection">To edit multiple tasks at once, long click a task.</string>
 
    <!-- TasksList fragment -->
    <string name="taskslist_actionbar">%1$s</string>
@@ -348,7 +351,7 @@
      <string name="taskslist_menu_opt_delete_list">Delete list</string>
 
    <!-- TaskSearchResult fragment -->
-   <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">Check the search syntax.&lt;/a></string>
+   <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">search syntax.&lt;/a></string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Add smart list</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Clear search history</string>
@@ -389,6 +392,12 @@
 
    <!-- Quick add task fragment -->
    <string name="quick_add_task_hint">@string/app_task_add</string>
+   <string name="quick_add_task_op_due">@string/task_edit_due</string>
+   <string name="quick_add_task_op_priority">@string/task_edit_priority</string>
+   <string name="quick_add_task_op_list_tags">List or tag</string>
+   <string name="quick_add_task_op_location">@string/task_location</string>
+   <string name="quick_add_task_op_recurrene">@string/task_edit_recurrence</string>
+   <string name="quick_add_task_op_estimate">@string/task_edit_estimate</string>
 
    <!-- Authenticator activity -->
    <string name="auth_permission_label">Permission</string>

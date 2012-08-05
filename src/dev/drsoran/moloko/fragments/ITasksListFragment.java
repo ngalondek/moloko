@@ -25,6 +25,7 @@ package dev.drsoran.moloko.fragments;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.widgets.MolokoListView;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -54,6 +55,10 @@ public interface ITasksListFragment< T >
    
    
    
+   int getTaskCount();
+   
+   
+   
    int getTaskSort();
    
    
@@ -63,6 +68,10 @@ public interface ITasksListFragment< T >
    
    
    void resortTasks( int newTaskSort );
+   
+   
+   
+   MolokoListView getMolokoListView();
    
    
    

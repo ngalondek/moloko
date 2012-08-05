@@ -39,6 +39,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Pair;
 import android.view.InflateException;
@@ -382,6 +383,7 @@ public final class UIUtils
       boolean ok = layout != null;
       
       if ( ok )
+      {
          try
          {
             final TextView titleView = (TextView) layout.findViewById( R.id.title_with_view_title );
@@ -400,6 +402,7 @@ public final class UIUtils
          {
             ok = false;
          }
+      }
       
       return ok;
    }
@@ -414,6 +417,7 @@ public final class UIUtils
          && initializeTitleWithViewLayout( layout, title );
       
       if ( ok )
+      {
          try
          {
             final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
@@ -432,15 +436,17 @@ public final class UIUtils
          {
             ok = false;
          }
+      }
       
       return ok;
    }
    
    
    
-   public final static boolean initializeTitleWithTextLayout( View layout,
-                                                              String title,
-                                                              Spannable text )
+   public final static boolean initializeTitleWithTextLayoutAsLink( View layout,
+                                                                    String title,
+                                                                    Spannable text,
+                                                                    ClickableSpan onClickHandler )
    {
       boolean ok = initializeTitleWithTextLayout( layout,
                                                   title,
@@ -451,7 +457,7 @@ public final class UIUtils
          try
          {
             final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
-            applySpannable( textView, text );
+            makeLink( textView, text, onClickHandler );
          }
          catch ( ClassCastException e )
          {
@@ -464,8 +470,25 @@ public final class UIUtils
    
    
    
-   public final static void applySpannable( TextView textView, Spannable text )
+   public final static void makeLink( TextView textView,
+                                      String text,
+                                      ClickableSpan onClickHandler )
    {
+      final SpannableString spannableText = new SpannableString( text );
+      makeLink( textView, spannableText, onClickHandler );
+   }
+   
+   
+   
+   public final static void makeLink( TextView textView,
+                                      Spannable text,
+                                      ClickableSpan onClickHandler )
+   {
+      if ( onClickHandler != null )
+      {
+         text.setSpan( onClickHandler, 0, text.length(), 0 );
+      }
+      
       textView.setMovementMethod( LinkMovementMethod.getInstance() );
       textView.setText( text, BufferType.SPANNABLE );
    }

@@ -608,7 +608,7 @@ public abstract class AbstractTasksListActivity extends
    
    
    
-   private ITasksListFragment< ? extends Task > getTasksListFragment()
+   protected ITasksListFragment< ? extends Task > getTasksListFragment()
    {
       final Fragment fragment = findAddedFragmentById( R.id.frag_taskslist );
       

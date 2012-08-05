@@ -27,21 +27,27 @@ import java.util.List;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.QuickAddTaskActionModeCallback;
 import dev.drsoran.moloko.actionmodes.listener.IQuickAddTaskActionModeListener;
 import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
+import dev.drsoran.moloko.fragments.PopupNotificationFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
+import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IPopupNotificationFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
@@ -52,8 +58,10 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractFullDetailedTasksListActivity extends
-         AbstractTasksListActivity implements ITasksListActionModeListener,
-         IShowTasksWithTagsListener, IQuickAddTaskActionModeListener
+         AbstractTasksListActivity implements OnBackStackChangedListener,
+         ITasksListActionModeListener, IShowTasksWithTagsListener,
+         IQuickAddTaskActionModeListener, ILoaderFragmentListener,
+         IPopupNotificationFragmentListener
 {
    @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
    private boolean quickAddTaskActionModeActive;
@@ -77,6 +85,19 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       if ( quickAddTaskActionModeActive )
       {
          showQuickAddTaskInput();
+      }
+   }
+   
+   
+   
+   @Override
+   public void onBackStackChanged()
+   {
+      // We only consider the backstack change for a dismissed
+      // popup notification.
+      if ( !( getBottomFragment() instanceof PopupNotificationFragment ) )
+      {
+         onClosePopup();
       }
    }
    
@@ -313,6 +334,21 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
+   @Override
+   public void onClosePopup()
+   {
+      getSupportFragmentManager().removeOnBackStackChangedListener( this );
+      
+      removeBottomFragment();
+      
+      // TODO: Activate storage of notification flag
+      // MolokoApp.getSettings( this )
+      // .storeBool( getString( R.string.key_notified_taskslist_multiselection ),
+      // true );
+   }
+   
+   
+   
    protected void onOpenChoosenTags( List< String > tags,
                                      String logicalOperation )
    {
@@ -323,13 +359,102 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
+   @Override
+   public void onFragmentLoadStarted( int fragmentId, String fragmentTag )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onFragmentLoadFinished( int fragmentId,
+                                       String fragmentTag,
+                                       boolean success )
+   {
+      if ( success && !hasShownMultiSelectionNotification()
+         && getTasksListFragment().getTaskCount() > 0 )
+      {
+         executeDelayed( new Runnable()
+                         {
+                            @Override
+                            public void run()
+                            {
+                               showMultiSelectionNotification();
+                            }
+                         },
+                         getResources().getInteger( R.integer.popup_notification_delay_on_ms ) );
+      }
+   }
+   
+   
+   
+   public FragmentTransaction addBottomFragment( Fragment fragmentToAdd )
+   {
+      final Fragment bottomFragment = getBottomFragment();
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                                                                         .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+      
+      if ( bottomFragment == null )
+      {
+         transaction.add( R.id.frag_multi_container, fragmentToAdd );
+      }
+      else
+      {
+         transaction.replace( R.id.frag_multi_container, fragmentToAdd );
+      }
+      
+      return transaction;
+   }
+   
+   
+   
+   public Fragment getBottomFragment()
+   {
+      return findAddedFragmentById( R.id.frag_multi_container );
+   }
+   
+   
+   
+   public < T > T getBottomFragment( Class< ? > clazz )
+   {
+      final Fragment addedFragment = getBottomFragment();
+      
+      if ( addedFragment != null && addedFragment.getClass() == clazz )
+      {
+         @SuppressWarnings( "unchecked" )
+         final T fragment = (T) addedFragment;
+         return fragment;
+      }
+      
+      return null;
+   }
+   
+   
+   
+   public Fragment removeBottomFragment()
+   {
+      final Fragment bottomFragment = getBottomFragment();
+      
+      if ( bottomFragment != null )
+      {
+         getSupportFragmentManager().beginTransaction()
+                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_CLOSE )
+                                    .remove( bottomFragment )
+                                    .commit();
+      }
+      
+      return bottomFragment;
+   }
+   
+   
+   
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
       final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
                                                                                tasks,
                                                                                true );
       applyModifications( modifications );
-      getTasksListFragment().getListView().clearChoices();
+      getTasksListFragment().getMolokoListView().clearChoices();
    }
    
    
@@ -340,7 +465,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                tasks,
                                                                                false );
       applyModifications( modifications );
-      getTasksListFragment().getListView().clearChoices();
+      getTasksListFragment().getMolokoListView().clearChoices();
    }
    
    
@@ -350,7 +475,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
                                                                           tasks );
       applyModifications( modifications );
-      getTasksListFragment().getListView().clearChoices();
+      getTasksListFragment().getMolokoListView().clearChoices();
    }
    
    
@@ -360,7 +485,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       final ApplyChangesInfo modifications = TaskEditUtils.deleteTasks( this,
                                                                         tasks );
       applyModifications( modifications );
-      getTasksListFragment().getListView().clearChoices();
+      getTasksListFragment().getMolokoListView().clearChoices();
    }
    
    
@@ -381,6 +506,36 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       startActionMode( new QuickAddTaskActionModeCallback( this,
                                                            (RtmSmartFilter) filter ) );
       quickAddTaskActionModeActive = true;
+   }
+   
+   
+   
+   private boolean hasShownMultiSelectionNotification()
+   {
+      return MolokoApp.getSettings( this )
+                      .loadBool( getString( R.string.key_notified_taskslist_multiselection ),
+                                 false );
+   }
+   
+   
+   
+   private void showMultiSelectionNotification()
+   {
+      if ( getBottomFragment() == null )
+      {
+         final Bundle config = new Bundle( 3 );
+         config.putString( PopupNotificationFragment.Config.NOTIFICATION_TITLE,
+                           getString( R.string.phr_hint ) );
+         config.putString( PopupNotificationFragment.Config.NOTIFICATION_MESSAGE,
+                           getString( R.string.abstaskslist_notif_multi_selection ) );
+         config.putLong( PopupNotificationFragment.Config.NOTIFICATION_AUTO_CLOSE_MS,
+                         getResources().getInteger( R.integer.popup_notification_delay_off_ms ) );
+         
+         final Fragment fragment = PopupNotificationFragment.newInstance( config );
+         addBottomFragment( fragment ).addToBackStack( null ).commit();
+         
+         getSupportFragmentManager().addOnBackStackChangedListener( this );
+      }
    }
    
    
@@ -425,14 +580,6 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private void showChooseTagsDialog( List< String > tags )
    {
       ChooseTagsDialogFragment.show( this, tags );
-   }
-   
-   
-   
-   private FullDetailedTasksListFragment getTasksListFragment()
-   {
-      final FullDetailedTasksListFragment fragment = (FullDetailedTasksListFragment) findAddedFragmentById( R.id.frag_taskslist );
-      return fragment;
    }
    
    

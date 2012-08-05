@@ -122,6 +122,7 @@
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
    <string name="phr_more">More</string>
+   <string name="phr_hint">Hint</string>
 
    <!-- Global errors -->
    <string name="err_error">Erreur</string>
@@ -308,6 +309,8 @@
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">et</string>
      <string name="abstaskslist_dlg_show_tags_or">ou</string>
+     <!-- Notifications -->
+     <string name="abstaskslist_notif_multi_selection">To edit multiple tasks at once, long click a task.</string>
 
    <!-- TasksList fragment -->
    <string name="taskslist_actionbar_subtitle_due_today">Aujourd\'hui</string>
@@ -319,7 +322,7 @@
      <string name="taskslist_menu_opt_delete_list">Supprimer la liste</string>
 
    <!-- TaskSearchResult fragment -->
-   <string name="tasksearchresult_wrong_syntax_html">La recherche de :&lt;b>\'%1$s\'&lt;/b> ne peut pas être réalisée. Vérifier la requête.</string>
+   <string name="tasksearchresult_wrong_syntax_html">La recherche de :&lt;b>\'%1$s\'&lt;/b> ne peut pas être réalisée. &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">Vérifier la requête.&lt;/a></string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Ajouter une liste intelligente</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Effacer l\'historique de recherche</string>
@@ -352,6 +355,9 @@
    <string name="noteslist_no_notes">No notes</string>
       <!-- Menus -->
       <string name="noteslist_menu_add_note">New note</string>
+      
+   <!-- Quick add task fragment -->
+   <string name="quick_add_task_op_list_tags">List or tag</string>
 
    <!-- Authenticator fragment -->
    <string name="auth_permission_label">Permission</string>

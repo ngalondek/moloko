@@ -25,7 +25,7 @@ package dev.drsoran.moloko.fragments;
 import android.app.SearchManager;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +33,7 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoFragment;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -71,21 +72,20 @@ public class TaskSearchResultFailedFragment extends MolokoFragment
       final ViewGroup view = (ViewGroup) inflater.inflate( R.layout.tasksearch_result_failed_fragment,
                                                            container,
                                                            false );
-      
-      setErrorText( view,
-                    Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
-                                                  query ) ) );
+      setErrorText( view );
       
       return view;
    }
    
    
    
-   private void setErrorText( ViewGroup content, Spanned fromHtml )
+   private void setErrorText( ViewGroup content )
    {
-      final TextView errorTextView = (TextView) content.findViewById( R.id.title_with_text_text );
+      final TitleWithTextLayout errorLayout = (TitleWithTextLayout) content.findViewById( android.R.id.text1 );
+      final TextView errorTextView = errorLayout.getView();
       
-      errorTextView.setText( fromHtml );
-      errorTextView.setLinksClickable( true );
+      errorTextView.setText( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
+                                                           query ) ) );
+      errorTextView.setMovementMethod( LinkMovementMethod.getInstance() );
    }
 }

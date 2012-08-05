@@ -127,6 +127,7 @@
    <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
    <string name="phr_more">Mehr</string>
+   <string name="phr_hint">Hinweis</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -308,6 +309,8 @@
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
+     <!-- Notifications -->
+     <string name="abstaskslist_notif_multi_selection">Um mehre Aufgaben gemeinsam zu bearbeiten, kicken Sie lang auf eine Aufgabe.</string>
      
    <!-- TasksList fragment -->
    <string name="taskslist_actionbar_subtitle_due_today">Heute fällig</string>
@@ -319,7 +322,7 @@
      <string name="taskslist_menu_opt_delete_list">Liste löschen</string>
 	
    <!-- TaskSearchResult fragment -->
-   <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
+   <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">Such-Syntax.&lt;/a></string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_add_smart_list">Neue Smart List</string>
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
@@ -346,8 +349,11 @@
    <!-- NotesList fragment -->
    <string name="noteslist_no_notes">Keine Notizen</string>
       <!-- Menus -->
-      <string name="noteslist_menu_add_note">Neue Notiz</string>      
+      <string name="noteslist_menu_add_note">Neue Notiz</string>
       
+   <!-- Quick add task fragment -->
+   <string name="quick_add_task_op_list_tags">Liste oder Tag</string>
+
    <!-- ContactsList fragment -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>
       <!-- Menus -->

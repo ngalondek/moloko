@@ -11,4 +11,8 @@
    
    <!-- Account preferences -->
    <string name="acc_prefs_sync_interval_off">-1</string>
+   
+   <!-- Delay values -->
+   <integer name="popup_notification_delay_on_ms">1000</integer>
+   <integer name="popup_notification_delay_off_ms">7000</integer>
 </resources>

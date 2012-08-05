@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_popup_notification"
+    android:padding="5dip" >
+    
+    <dev.drsoran.moloko.layouts.TitleWithTextLayout
+        android:id="@+id/notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"        
+        android:layout_toLeftOf="@android:id/closeButton"
+        android:layout_centerVertical="true"
+        android:paddingRight="5dip"
+        moloko:title="@string/phr_hint"
+        moloko:text="Text"
+        moloko:imageSrc="@drawable/ic_prefs_info" />
+    <ImageButton
+        android:id="@android:id/closeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/abs__item_background_holo_light"
+        android:src="@drawable/ic_button_edittext_pressed_delete" />
+</RelativeLayout>

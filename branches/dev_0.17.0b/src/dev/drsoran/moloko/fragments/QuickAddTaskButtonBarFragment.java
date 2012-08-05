@@ -23,9 +23,11 @@
 package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
@@ -33,7 +35,7 @@ import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 
 
 public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
-         View.OnClickListener
+         View.OnClickListener, View.OnLongClickListener
 {
    public final static QuickAddTaskButtonBarFragment newInstance( Bundle config )
    {
@@ -51,8 +53,8 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
@@ -82,18 +84,12 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
    {
       super.onViewCreated( view, savedInstanceState );
       
-      view.findViewById( R.id.quick_add_task_btn_due_date )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_prio )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_list_tags )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_location )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_repeat )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_estimate )
-          .setOnClickListener( this );
+      setListener( view, R.id.quick_add_task_btn_due_date );
+      setListener( view, R.id.quick_add_task_btn_prio );
+      setListener( view, R.id.quick_add_task_btn_list_tags );
+      setListener( view, R.id.quick_add_task_btn_location );
+      setListener( view, R.id.quick_add_task_btn_repeat );
+      setListener( view, R.id.quick_add_task_btn_estimate );
    }
    
    
@@ -130,6 +126,51 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
          default :
             break;
       }
+   }
+   
+   
+   
+   @Override
+   public boolean onLongClick( View view )
+   {
+      switch ( view.getId() )
+      {
+         case R.id.quick_add_task_btn_due_date:
+         case R.id.quick_add_task_btn_prio:
+         case R.id.quick_add_task_btn_list_tags:
+         case R.id.quick_add_task_btn_location:
+         case R.id.quick_add_task_btn_repeat:
+         case R.id.quick_add_task_btn_estimate:
+         {
+            showButtonTextAsToast( (CharSequence) view.getTag() );
+            return true;
+         }
+         
+         default :
+            return false;
+      }
+   }
+   
+   
+   
+   private void showButtonTextAsToast( CharSequence buttonText )
+   {
+      final Toast cheatSheet = Toast.makeText( getSherlockActivity(),
+                                               buttonText,
+                                               Toast.LENGTH_SHORT );
+      cheatSheet.setGravity( Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL,
+                             0,
+                             getView().getHeight() );
+      cheatSheet.show();
+   }
+   
+   
+   
+   private void setListener( View parent, int buttonId )
+   {
+      final View button = parent.findViewById( buttonId );
+      button.setOnClickListener( this );
+      button.setOnLongClickListener( this );
    }
    
    

@@ -35,4 +35,5 @@
    <string name="key_notify_permanent">notify_permanent</string>
    <string name="key_notify_permanent_overdue">notify_permanent_overdue</string>
    <string name="key_conn_use_https">conn_use_https</string>
+   <string name="key_notified_taskslist_multiselection">notified_taskslist_multiselection</string>
 </resources>

@@ -285,6 +285,87 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   public String loadString( String key, String defValue )
+   {
+      String value;
+      
+      if ( !preferences.contains( key ) )
+      {
+         final Editor editor = preferences.edit();
+         editor.putString( key, defValue ).commit();
+         value = defValue;
+      }
+      else
+      {
+         value = preferences.getString( key, defValue );
+      }
+      
+      return value;
+   }
+   
+   
+   
+   private void storeString( String key, String value )
+   {
+      final Editor editor = preferences.edit();
+      editor.putString( key, Strings.emptyIfNull( value ) ).commit();
+   }
+   
+   
+   
+   private void storeStringIfChanged( String key, String value )
+   {
+      final String nonNullValue = Strings.emptyIfNull( value );
+      if ( hasValueChanged( key, nonNullValue ) )
+      {
+         storeString( key, nonNullValue );
+      }
+   }
+   
+   
+   
+   public int loadInt( String key, int defValue )
+   {
+      return Integer.parseInt( loadString( key, String.valueOf( defValue ) ) );
+   }
+   
+   
+   
+   public void storeInt( String key, int value )
+   {
+      storeStringIfChanged( key, String.valueOf( value ) );
+   }
+   
+   
+   
+   public long loadLong( String key, long defValue )
+   {
+      return Long.parseLong( loadString( key, String.valueOf( defValue ) ) );
+   }
+   
+   
+   
+   public void storeLong( String key, long value )
+   {
+      storeStringIfChanged( key, String.valueOf( value ) );
+   }
+   
+   
+   
+   public boolean loadBool( String key, boolean defValue )
+   {
+      return preferences.getBoolean( key, defValue );
+   }
+   
+   
+   
+   public void storeBool( String key, boolean value )
+   {
+      preferences.edit().putBoolean( key, value ).commit();
+   }
+   
+   
+   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -311,66 +392,6 @@ public class Settings implements IOnSettingsChangedListener
    {
       MolokoApp.getNotifierContext( context )
                .unregisterOnSettingsChangedListener( this );
-   }
-   
-   
-   
-   private String loadString( String key, String defValue )
-   {
-      String value;
-      
-      if ( !preferences.contains( key ) )
-      {
-         final Editor editor = preferences.edit();
-         editor.putString( key, defValue ).commit();
-         value = defValue;
-      }
-      else
-      {
-         value = preferences.getString( key, defValue );
-      }
-      
-      return value;
-   }
-   
-   
-   
-   private void storeStringIfChanged( String key, String value )
-   {
-      final String nonNullValue = Strings.emptyIfNull( value );
-      if ( hasValueChanged( key, nonNullValue ) )
-      {
-         final Editor editor = preferences.edit();
-         editor.putString( key, nonNullValue ).commit();
-      }
-   }
-   
-   
-   
-   private int loadInt( String key, int defValue )
-   {
-      return Integer.parseInt( loadString( key, String.valueOf( defValue ) ) );
-   }
-   
-   
-   
-   private void storeInt( String key, int value )
-   {
-      storeStringIfChanged( key, String.valueOf( value ) );
-   }
-   
-   
-   
-   private long loadLong( String key, long defValue )
-   {
-      return Long.parseLong( loadString( key, String.valueOf( defValue ) ) );
-   }
-   
-   
-   
-   private boolean loadBool( String key, boolean defValue )
-   {
-      return preferences.getBoolean( key, defValue );
    }
    
    

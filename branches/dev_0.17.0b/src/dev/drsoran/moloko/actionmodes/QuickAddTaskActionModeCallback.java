@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.actionmodes;
 
 import android.content.Context;
-import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +35,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.listener.IQuickAddTaskActionModeListener;
-import dev.drsoran.moloko.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.activities.AbstractFullDetailedTasksListActivity;
 import dev.drsoran.moloko.fragments.QuickAddTaskButtonBarFragment;
 import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
 import dev.drsoran.moloko.util.UIUtils;
@@ -47,7 +46,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
          IQuickAddTaskButtonBarFragmentListener
 {
-   private final MolokoFragmentActivity activity;
+   private final AbstractFullDetailedTasksListActivity activity;
    
    private final RtmSmartFilter filter;
    
@@ -57,8 +56,8 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    
    
    
-   public QuickAddTaskActionModeCallback( MolokoFragmentActivity activity,
-      RtmSmartFilter filter )
+   public QuickAddTaskActionModeCallback(
+      AbstractFullDetailedTasksListActivity activity, RtmSmartFilter filter )
    {
       this.activity = activity;
       this.filter = filter;
@@ -129,11 +128,7 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
       if ( fragment == null )
       {
          fragment = QuickAddTaskButtonBarFragment.newInstance( null );
-         activity.getSupportFragmentManager()
-                 .beginTransaction()
-                 .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE )
-                 .add( R.id.frag_quick_add_task_button_bar, fragment )
-                 .commit();
+         activity.addBottomFragment( fragment ).commit();
       }
       
       fragment.setQuickAddTaskButtonBarFragmentListener( this );
@@ -147,12 +142,7 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
       if ( fragment != null )
       {
          fragment.setQuickAddTaskButtonBarFragmentListener( null );
-         
-         activity.getSupportFragmentManager()
-                 .beginTransaction()
-                 .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE )
-                 .remove( fragment )
-                 .commit();
+         activity.removeBottomFragment();
       }
    }
    
@@ -160,7 +150,7 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    
    private QuickAddTaskButtonBarFragment getButtonBarFragment()
    {
-      return (QuickAddTaskButtonBarFragment) activity.findAddedFragmentById( R.id.frag_quick_add_task_button_bar );
+      return activity.getBottomFragment( QuickAddTaskButtonBarFragment.class );
    }
    
    

@@ -29,7 +29,7 @@
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_time"
-        android:text="^" />
+        android:tag="@string/quick_add_task_op_due" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_prio"
@@ -39,7 +39,7 @@
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_priority"
-        android:text="!" />
+        android:tag="@string/quick_add_task_op_priority" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_list_tags"
@@ -49,7 +49,7 @@
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_smart_add_list_or_tag"
-        android:text="#" />
+        android:tag="@string/quick_add_task_op_list_tags" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_location"
@@ -59,7 +59,7 @@
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_location"
-        android:text=" @" />
+        android:tag="@string/quick_add_task_op_location" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_repeat"
@@ -69,7 +69,7 @@
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_recurrent"
-        android:text="*" />
+        android:tag="@string/quick_add_task_op_recurrene" />
 
     <ImageButton
         android:id="@+id/quick_add_task_btn_estimate"
@@ -79,6 +79,6 @@
         android:layout_gravity="center"
         android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_thumb"
-        android:text="=" />
+        android:tag="@string/quick_add_task_op_estimate" />
 
 </LinearLayout>

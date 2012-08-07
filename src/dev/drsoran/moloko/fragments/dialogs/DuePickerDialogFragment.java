@@ -43,9 +43,9 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.DateFormatWheelTextAdapter;
 import dev.drsoran.moloko.adapters.DueTimeWheelTextAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -147,7 +147,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
-      final char[] dateFormatOrder = MolokoDateUtils.getDateFormatOrder( activity );
+      final char[] dateFormatOrder = MolokoDateFormatter.getDateFormatOrder( activity );
       assignWheelsByDateFormat( view, dateFormatOrder );
       
       initDaysWheel( activity );

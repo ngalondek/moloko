@@ -32,9 +32,9 @@ import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.base.MultiChoiceModalArrayAdapter;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.fragments.NotesListFragment;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 public class NotesListFragmentAdapter extends
@@ -76,11 +76,11 @@ public class NotesListFragmentAdapter extends
    private void initNoteListItem( RtmTaskNote note, ViewGroup listItemView )
    {
       final TextView createdDateView = (TextView) listItemView.findViewById( R.id.note_created_date );
-      createdDateView.setText( MolokoDateUtils.formatDate( fragment.getSherlockActivity(),
-                                                           note.getCreatedDate()
-                                                               .getTime(),
-                                                           MolokoDateUtils.FORMAT_ABR_MONTH
-                                                              | DateUtils.FORMAT_SHOW_YEAR ) );
+      createdDateView.setText( MolokoDateFormatter.formatDate( fragment.getSherlockActivity(),
+                                                               note.getCreatedDate()
+                                                                   .getTime(),
+                                                               MolokoDateFormatter.FORMAT_ABR_MONTH
+                                                                  | DateUtils.FORMAT_SHOW_YEAR ) );
       
       final TextView titleView = (TextView) listItemView.findViewById( R.id.note_title );
       if ( !TextUtils.isEmpty( note.getTitle() ) )

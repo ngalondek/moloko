@@ -24,11 +24,16 @@ package dev.drsoran.moloko.notification;
 
 import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 
 
 class PreHoneycombPermanentNotificationPresenter extends
          AbstractPermanentNotificationPresenter
 {
+   private Intent onClickIntent;
+   
+   
    
    public PreHoneycombPermanentNotificationPresenter( Context context )
    {
@@ -38,11 +43,63 @@ class PreHoneycombPermanentNotificationPresenter extends
    
    
    @Override
-   protected Notification newNotfication( String title, String text, int count )
+   public void handleNotificationClicked( int notificationId )
    {
+      startActivity( onClickIntent );
+   }
+   
+   
+   
+   @Override
+   public void cancelNotification()
+   {
+      super.cancelNotification();
+      onClickIntent = null;
+   }
+   
+   
+   
+   @Override
+   protected Notification newNotfication( String title,
+                                          String text,
+                                          Cursor tasksCursor,
+                                          String filterString )
+   {
+      createOnClickIntent( tasksCursor, title, filterString );
+      
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            count );
+                                                                            tasksCursor.getCount() );
       return builder.build();
+   }
+   
+   
+   
+   private void createOnClickIntent( Cursor tasksCursor,
+                                     String activityTitle,
+                                     String filterString )
+   {
+      final int numTasks = tasksCursor.getCount();
+      
+      if ( numTasks == 1 )
+      {
+         onClickIntent = createSingletonOnClickIntent( tasksCursor );
+      }
+      else
+      {
+         onClickIntent = createMultiTasksOnClickIntent( tasksCursor,
+                                                        activityTitle,
+                                                        filterString );
+      }
+   }
+   
+   
+   
+   private void startActivity( Intent intent )
+   {
+      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TASK
+         | Intent.FLAG_ACTIVITY_NEW_TASK );
+      
+      getContext().startActivity( intent );
    }
 }

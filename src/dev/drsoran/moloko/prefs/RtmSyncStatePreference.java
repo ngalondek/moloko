@@ -45,11 +45,11 @@ import android.widget.Toast;
 import dev.drsoran.moloko.ISyncStatusListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmSettings;
 
 
@@ -98,7 +98,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
          {
             Toast.makeText( getContext(),
                             R.string.err_add_account_canceled,
-                            Toast.LENGTH_SHORT );
+                            Toast.LENGTH_SHORT ).show();
          }
          catch ( AuthenticatorException e )
          {
@@ -107,7 +107,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
             // account type. This should not happen.
             Toast.makeText( getContext(),
                             R.string.err_unexpected,
-                            Toast.LENGTH_LONG );
+                            Toast.LENGTH_LONG ).show();
          }
          catch ( IOException e )
          {
@@ -167,11 +167,11 @@ class RtmSyncStatePreference extends InfoTextPreference implements
          }
          else
          {
-            final String date = MolokoDateUtils.formatDate( getContext(),
-                                                            settings.getSyncTimeStamp()
-                                                                    .getTime(),
-                                                            MolokoDateUtils.FORMAT_NUMERIC
-                                                               | MolokoDateUtils.FORMAT_WITH_YEAR );
+            final String date = MolokoDateFormatter.formatDate( getContext(),
+                                                                settings.getSyncTimeStamp()
+                                                                        .getTime(),
+                                                                MolokoDateFormatter.FORMAT_NUMERIC
+                                                                   | MolokoDateFormatter.FORMAT_WITH_YEAR );
             
             setInfoText( getContext().getString( R.string.moloko_prefs_rtm_sync_text_in_sync,
                                                  date ) );

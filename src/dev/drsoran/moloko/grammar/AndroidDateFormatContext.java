@@ -1,7 +1,7 @@
 package dev.drsoran.moloko.grammar;
 
 import android.content.Context;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 
 
 public class AndroidDateFormatContext implements IDateFormatContext
@@ -20,10 +20,10 @@ public class AndroidDateFormatContext implements IDateFormatContext
    @Override
    public String formatDateNumeric( long millis )
    {
-      return MolokoDateUtils.formatDate( context,
-                                         millis,
-                                         MolokoDateUtils.FORMAT_NUMERIC
-                                            | MolokoDateUtils.FORMAT_WITH_YEAR );
+      return MolokoDateFormatter.formatDate( context,
+                                             millis,
+                                             MolokoDateFormatter.FORMAT_NUMERIC
+                                                | MolokoDateFormatter.FORMAT_WITH_YEAR );
    }
    
    
@@ -31,7 +31,7 @@ public class AndroidDateFormatContext implements IDateFormatContext
    @Override
    public String formatDateNumeric( String part1, String part2 )
    {
-      return MolokoDateUtils.formatDateNumeric( context, part1, part2 );
+      return MolokoDateFormatter.formatDateNumeric( context, part1, part2 );
    }
    
    
@@ -39,7 +39,10 @@ public class AndroidDateFormatContext implements IDateFormatContext
    @Override
    public String formatDateNumeric( String part1, String part2, String part3 )
    {
-      return MolokoDateUtils.formatDateNumeric( context, part1, part2, part3 );
+      return MolokoDateFormatter.formatDateNumeric( context,
+                                                    part1,
+                                                    part2,
+                                                    part3 );
    }
    
    
@@ -47,7 +50,7 @@ public class AndroidDateFormatContext implements IDateFormatContext
    @Override
    public String getNumericDateFormatPattern( boolean withYear )
    {
-      return MolokoDateUtils.getNumericDateFormatPattern( context, withYear );
+      return MolokoDateFormatter.getNumericDateFormatPattern( context, withYear );
    }
    
 }

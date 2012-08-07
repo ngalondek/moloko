@@ -38,11 +38,11 @@ import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
@@ -165,9 +165,9 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       final String title = getContext().getString( ( ( type == TODAY )
                                                                       ? R.string.phr_today_with_date
                                                                       : R.string.phr_tomorrow_with_date ),
-                                                   MolokoDateUtils.formatDate( getContext(),
-                                                                               cal.getTimeInMillis(),
-                                                                               0 ) );
+                                                   MolokoDateFormatter.formatDate( getContext(),
+                                                                                   cal.getTimeInMillis(),
+                                                                                   0 ) );
       
       return Intents.createSmartFilterIntent( getContext(), filter, title );
    }
@@ -219,10 +219,10 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    private String getFilterExpression( final MolokoCalendar cal )
    {
       return RtmSmartFilterLexer.OP_DUE_LIT
-         + RtmSmartFilterLexer.quotify( MolokoDateUtils.formatDate( getContext(),
-                                                                    cal.getTimeInMillis(),
-                                                                    MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                       | MolokoDateUtils.FORMAT_NUMERIC ) );
+         + RtmSmartFilterLexer.quotify( MolokoDateFormatter.formatDate( getContext(),
+                                                                        cal.getTimeInMillis(),
+                                                                        MolokoDateFormatter.FORMAT_WITH_YEAR
+                                                                           | MolokoDateFormatter.FORMAT_NUMERIC ) );
    }
    
    

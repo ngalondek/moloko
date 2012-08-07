@@ -36,10 +36,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
@@ -135,9 +135,9 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
             return Integer.valueOf( lists.get( groupPosition )
                                          .getExtendedListInfo( context ).completedTaskCount );
          case SUM_ESTIMATE:
-            return MolokoDateUtils.formatEstimated( context,
-                                                    lists.get( groupPosition )
-                                                         .getExtendedListInfo( context ).sumEstimated );
+            return MolokoDateFormatter.formatEstimated( context,
+                                                        lists.get( groupPosition )
+                                                             .getExtendedListInfo( context ).sumEstimated );
          default :
             return null;
       }

@@ -38,6 +38,7 @@ import android.net.Uri;
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -269,8 +270,8 @@ abstract class AbstractDueTaskNotificationPresenter implements
                                         .longValue();
       
       final String text = context.getString( R.string.notification_due,
-                                             MolokoDateUtils.formatTime( context,
-                                                                         dueTimeMillis ) );
+                                             MolokoDateFormatter.formatTime( context,
+                                                                             dueTimeMillis ) );
       return text;
    }
    

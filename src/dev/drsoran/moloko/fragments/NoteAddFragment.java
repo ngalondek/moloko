@@ -39,6 +39,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
@@ -108,9 +109,9 @@ public class NoteAddFragment extends AbstractNoteEditFragment
    private void showNote( View content )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
-                                                           created.toMillis( true ),
-                                                           MolokoDateUtils.FORMAT_WITH_YEAR ) );
+      createdDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
+                                                               created.toMillis( true ),
+                                                               MolokoDateFormatter.FORMAT_WITH_YEAR ) );
       
       title.setText( newTitle );
       text.setText( newText );

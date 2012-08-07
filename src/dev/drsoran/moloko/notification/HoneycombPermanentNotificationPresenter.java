@@ -23,15 +23,25 @@
 package dev.drsoran.moloko.notification;
 
 import android.app.Notification;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.HomeActivity;
+import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 class HoneycombPermanentNotificationPresenter extends
          AbstractPermanentNotificationPresenter
 {
+   private Intent[] onClickIntentStack;
+   
+   
    
    public HoneycombPermanentNotificationPresenter( Context context )
    {
@@ -41,16 +51,93 @@ class HoneycombPermanentNotificationPresenter extends
    
    
    @Override
-   protected Notification newNotfication( String title, String text, int count )
+   public void handleNotificationClicked( int notificationId )
    {
-      if ( count > 1 )
+      getContext().startActivities( onClickIntentStack );
+   }
+   
+   
+   
+   @Override
+   public void cancelNotification()
+   {
+      super.cancelNotification();
+      onClickIntentStack = null;
+   }
+   
+   
+   
+   @Override
+   protected Notification newNotfication( String title,
+                                          String text,
+                                          Cursor tasksCursor,
+                                          String filterString )
+   {
+      createOnClickIntentStack( tasksCursor, title, filterString );
+      
+      final int tasksCount = tasksCursor.getCount();
+      
+      if ( tasksCount > 1 )
       {
-         return newStackedNotification( title, text, count );
+         return newStackedNotification( title, text, tasksCount );
       }
       else
       {
-         return newSingletonNotification( title, text, count );
+         return newSingletonNotification( title, text, tasksCount );
       }
+   }
+   
+   
+   
+   private void createOnClickIntentStack( Cursor tasksCursor,
+                                          String title,
+                                          String filterString )
+   {
+      if ( tasksCursor.getCount() == 1 )
+      {
+         final Intent notifyingTaskIntent = createSingletonOnClickIntent( tasksCursor );
+         onClickIntentStack = makeSingleNotificationActivityStack( notifyingTaskIntent,
+                                                                   Queries.getOptString( tasksCursor,
+                                                                                         getColumnIndex( Tasks.LIST_ID ) ) );
+      }
+      else
+      {
+         final Intent notifyingTasksIntent = createMultiTasksOnClickIntent( tasksCursor,
+                                                                            title,
+                                                                            filterString );
+         onClickIntentStack = makeStackedNotificationActivityStack( notifyingTasksIntent );
+      }
+   }
+   
+   
+   
+   private Intent[] makeSingleNotificationActivityStack( Intent notificationTargetIntent,
+                                                         String listIdOfTask )
+   {
+      final Intent[] intentStack = new Intent[ 4 ];
+      
+      intentStack[ 0 ] = Intent.makeRestartActivityTask( new ComponentName( getContext(),
+                                                                            HomeActivity.class ) );
+      intentStack[ 1 ] = Intents.createOpenListOverviewsIntent();
+      intentStack[ 2 ] = Intents.createOpenListIntentById( getContext(),
+                                                           listIdOfTask,
+                                                           null );
+      intentStack[ 3 ] = notificationTargetIntent;
+      
+      return intentStack;
+   }
+   
+   
+   
+   private Intent[] makeStackedNotificationActivityStack( Intent notificationTargetIntent )
+   {
+      final Intent[] intentStack = new Intent[ 2 ];
+      
+      intentStack[ 0 ] = Intent.makeRestartActivityTask( new ComponentName( getContext(),
+                                                                            HomeActivity.class ) );
+      intentStack[ 1 ] = notificationTargetIntent;
+      
+      return intentStack;
    }
    
    

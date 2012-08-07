@@ -36,10 +36,10 @@ import android.util.Log;
 import android.util.Pair;
 import android.widget.ListAdapter;
 import dev.drsoran.moloko.adapters.RtmSmartAddAdapter;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
@@ -290,8 +290,8 @@ class QuickAddTaskActionModeInputHandler
                            if ( estimated != -1 )
                            {
                               config.putString( Tasks.ESTIMATE,
-                                                MolokoDateUtils.formatEstimated( context,
-                                                                                 estimated ) );
+                                                MolokoDateFormatter.formatEstimated( context,
+                                                                                     estimated ) );
                               config.putLong( Tasks.ESTIMATE_MILLIS,
                                               Long.valueOf( estimated ) );
                            }

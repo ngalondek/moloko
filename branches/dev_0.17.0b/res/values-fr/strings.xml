@@ -105,6 +105,8 @@
    <string name="phr_today_with_date">Aujourd\'hui le %1$s</string>
    <string name="phr_tomorrow">Demain</string>
    <string name="phr_tomorrow_with_date">Demain le %1$s</string>
+   <string name="phr_yesterday">Yesterday</string>
+   <string name="phr_yesterday_with_date">Yesterday the %1$s</string>
    <string name="phr_establish_connection">Connectez-vous à internet pour continuer.</string>
    <string name="phr_open_with_name">Ouvrir \'%1$s\'</string>
    <string name="phr_edit_with_name">Modifier \'%1$s\'</string>

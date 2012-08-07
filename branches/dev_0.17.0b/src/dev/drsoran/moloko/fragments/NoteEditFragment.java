@@ -33,9 +33,9 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
@@ -110,10 +110,10 @@ public class NoteEditFragment extends AbstractNoteEditFragment
    private void showNote( View content, RtmTaskNote note )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
-                                                           note.getCreatedDate()
-                                                               .getTime(),
-                                                           MolokoDateUtils.FORMAT_WITH_YEAR ) );
+      createdDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
+                                                               note.getCreatedDate()
+                                                                   .getTime(),
+                                                               MolokoDateFormatter.FORMAT_WITH_YEAR ) );
       title.setText( note.getTitle() );
       text.setText( note.getText() );
    }

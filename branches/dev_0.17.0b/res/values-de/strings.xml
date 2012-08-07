@@ -110,6 +110,8 @@
    <string name="phr_today_with_date">Heute, der %1$s</string>
    <string name="phr_tomorrow">Morgen</string>
    <string name="phr_tomorrow_with_date">Morgen, der %1$s</string>
+   <string name="phr_yesterday">Gestern</string>
+   <string name="phr_yesterday_with_date">Gestern, der %1$s</string>
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
    <string name="phr_open_with_name">Öffne \'%1$s\'</string>
    <string name="phr_edit_with_name">Bearbeite \'%1$s\'</string>

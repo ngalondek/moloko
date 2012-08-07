@@ -120,6 +120,8 @@
    <string name="phr_today_with_date">Today %1$s</string>
    <string name="phr_tomorrow">Tomorrow</string>
    <string name="phr_tomorrow_with_date">Tomorrow the %1$s</string>
+   <string name="phr_yesterday">Yesterday</string>
+   <string name="phr_yesterday_with_date">Yesterday the %1$s</string>
    <string name="phr_establish_connection">Establish an Internet connection to continue.</string>
    <string name="phr_open_with_name">Open \'%1$s\'</string>
    <string name="phr_edit_with_name">Edit \'%1$s\'</string>
@@ -314,12 +316,14 @@
    <string name="notification_permanent_overdue_title">Overdue tasks</string>
       <!-- >1 task due, 0 tasks overdue -->
    <string name="notification_permanent_text_multiple">%1$d due, %2$d high priority</string>
-      <!-- >0 task due, >0 tasks overdue -->
+      <!-- >0 tasks due, >0 tasks overdue -->
    <string name="notification_permanent_text_multiple_w_overdue">%1$d due, %2$d overdue</string>
-      <!-- 0 tasks due, >1 task overdue -->
+      <!-- 0 tasks due, >1 tasks overdue -->
    <string name="notification_permanent_text_multiple_overdue">%1$d overdue</string>
-      <!-- 1 task due or overdue, show task name -->
+      <!-- 1 task due, show task name -->
    <string name="notification_permanent_text_one_task">%1$s</string>
+      <!-- 1 task overdue, show task name and due date relative to now -->
+   <string name="notification_permanent_text_one_task_overdue">%1$s (%2$s)</string>
    <string name="notification_due_ticker">%1$s due %2$s</string>
    <string name="notification_due">due at %1$s</string>
    <string name="notification_due_tasks_list_title">Due tasks</string>

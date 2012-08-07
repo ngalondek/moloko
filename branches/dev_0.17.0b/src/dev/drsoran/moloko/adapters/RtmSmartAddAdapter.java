@@ -48,6 +48,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -475,8 +476,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       private void addEstimate( long estimate )
       {
-         estimates.add( Pair.create( MolokoDateUtils.formatEstimated( context,
-                                                                      estimate ),
+         estimates.add( Pair.create( MolokoDateFormatter.formatEstimated( context,
+                                                                          estimate ),
                                      Long.valueOf( estimate ) ) );
       }
    }

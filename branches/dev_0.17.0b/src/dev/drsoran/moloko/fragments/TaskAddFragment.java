@@ -41,7 +41,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -198,9 +198,9 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    @Override
    protected void initializeHeadSection()
    {
-      addedDate.setText( MolokoDateUtils.formatDateTime( getSherlockActivity(),
-                                                         created,
-                                                         FULL_DATE_FLAGS ) );
+      addedDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
+                                                             created,
+                                                             FULL_DATE_FLAGS ) );
       completedDate.setVisibility( View.GONE );
       postponed.setVisibility( View.GONE );
       

@@ -22,11 +22,8 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import android.content.Context;
 import android.database.DataSetObserver;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,13 +32,13 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.adapters.base.LayoutSwitchMultiChoiceModalAdapter;
+import dev.drsoran.moloko.format.RtmStyleTaskDateFormatter;
+import dev.drsoran.moloko.format.RtmStyleTaskDescTextViewFormatter;
 import dev.drsoran.moloko.sort.CompositeComparator;
 import dev.drsoran.moloko.sort.SortTaskDueDate;
 import dev.drsoran.moloko.sort.SortTaskName;
 import dev.drsoran.moloko.sort.SortTaskPriority;
-import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.MolokoListView;
 import dev.drsoran.rtm.Task;
 
@@ -49,7 +46,7 @@ import dev.drsoran.rtm.Task;
 abstract class AbstractTasksListFragmentAdapter extends
          LayoutSwitchMultiChoiceModalAdapter< Task >
 {
-   private final MolokoCalendar setDueDateCalendar = MolokoCalendar.getInstance();
+   private final RtmStyleTaskDateFormatter taskDateFormatter;
    
    private final DataSetObserver dataSetObserver = new DataSetObserver()
    {
@@ -79,7 +76,9 @@ abstract class AbstractTasksListFragmentAdapter extends
    {
       super( listView, unselectedResourceId, selectedResourceId );
       
+      taskDateFormatter = new RtmStyleTaskDateFormatter( getContext() );
       lastTasksSort = MolokoApp.getSettings( getContext() ).getTaskSort();
+      
       registerDataSetObserver( dataSetObserver );
    }
    
@@ -142,7 +141,9 @@ abstract class AbstractTasksListFragmentAdapter extends
       
       final Task task = getItem( position );
       
-      UIUtils.setTaskDescription( description, task, MolokoDateUtils.newTime() );
+      RtmStyleTaskDescTextViewFormatter.setTaskDescription( description,
+                                                            task,
+                                                            MolokoDateUtils.newTime() );
       setDueDate( dueDate, task );
       setCompleted( completed, task );
    }
@@ -151,125 +152,17 @@ abstract class AbstractTasksListFragmentAdapter extends
    
    private void setDueDate( TextView view, Task task )
    {
-      final Date dateToSet = task.getDue();
+      final String formattedDueDate = taskDateFormatter.getFormattedDueDate( task );
       
-      if ( dateToSet != null )
-         setDueDateCalendar.setTime( dateToSet );
-      
-      setDueDateCalendar.setHasDate( dateToSet != null );
-      setDueDateCalendar.setHasTime( task.hasDueTime() );
-      
-      setDueDate( view, setDueDateCalendar );
-   }
-   
-   
-   
-   private void setDueDate( TextView view, MolokoCalendar cal )
-   {
-      final Context context = getContext();
-      
-      // if has a due date
-      if ( cal.hasDate() )
+      if ( !TextUtils.isEmpty( formattedDueDate ) )
       {
          view.setVisibility( View.VISIBLE );
-         
-         String dueText = null;
-         
-         final long dueMillis = cal.getTimeInMillis();
-         final boolean hasDueTime = cal.hasTime();
-         
-         // Today
-         if ( MolokoDateUtils.isToday( dueMillis ) )
-         {
-            // If it has a time, we show the time
-            if ( hasDueTime )
-               dueText = MolokoDateUtils.formatTime( context, dueMillis );
-            else
-               // We only show the 'Today' phrase
-               dueText = context.getString( R.string.phr_today );
-         }
-         
-         // Not today
-         else
-         {
-            final long nowMillis = System.currentTimeMillis();
-            MolokoCalendar nowCal = MolokoDateUtils.newCalendar( nowMillis );
-            
-            // If it is the same year
-            if ( cal.get( Calendar.YEAR ) == nowCal.get( Calendar.YEAR ) )
-            {
-               // If the same week
-               if ( nowCal.get( Calendar.WEEK_OF_YEAR ) == cal.get( Calendar.WEEK_OF_YEAR ) )
-               {
-                  // is in the past?
-                  if ( cal.before( nowCal ) )
-                  {
-                     // we show the date but w/o year
-                     dueText = MolokoDateUtils.formatDate( context,
-                                                           dueMillis,
-                                                           MolokoDateUtils.FORMAT_ABR_MONTH );
-                  }
-                  
-                  // later this week
-                  else
-                  {
-                     // we only show the week day
-                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
-                                                                   false );
-                  }
-               }
-               
-               // Is it in the range [today + 1, today + 6]?
-               else
-               {
-                  final MolokoCalendar calWeekdayRange = nowCal;
-                  calWeekdayRange.add( Calendar.DAY_OF_MONTH, 1 );
-                  nowCal = null;
-                  
-                  final int calDayOfYear = cal.get( Calendar.DAY_OF_YEAR );
-                  boolean isInNext6DaysRange = calWeekdayRange.get( Calendar.DAY_OF_YEAR ) <= calDayOfYear;
-                  
-                  if ( isInNext6DaysRange )
-                  {
-                     calWeekdayRange.add( Calendar.DAY_OF_MONTH, 5 );
-                     isInNext6DaysRange = calWeekdayRange.get( Calendar.DAY_OF_YEAR ) >= calDayOfYear;
-                  }
-                  
-                  if ( isInNext6DaysRange )
-                  {
-                     // we only show the week day
-                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
-                                                                   false );
-                  }
-                  // Not the same week and not in the range [today + 1, today + 6]
-                  else
-                  {
-                     // we show the date but w/o year
-                     dueText = MolokoDateUtils.formatDate( context,
-                                                           dueMillis,
-                                                           MolokoDateUtils.FORMAT_ABR_MONTH );
-                  }
-               }
-               
-            }
-            
-            // Not the same year
-            else
-            {
-               // we show the full date with year
-               dueText = MolokoDateUtils.formatDate( context,
-                                                     dueMillis,
-                                                     MolokoDateUtils.FORMAT_ABR_MONTH
-                                                        | MolokoDateUtils.FORMAT_WITH_YEAR );
-            }
-         }
-         
-         view.setText( dueText );
+         view.setText( formattedDueDate );
       }
-      
-      // has no due date
       else
+      {
          view.setVisibility( View.GONE );
+      }
    }
    
    

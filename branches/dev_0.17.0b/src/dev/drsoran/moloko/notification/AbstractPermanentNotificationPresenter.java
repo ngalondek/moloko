@@ -29,6 +29,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.mdt.rtm.data.RtmTask;
@@ -36,6 +37,8 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.format.OverdueNotificationTaskDateFormatter;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -51,8 +54,6 @@ abstract class AbstractPermanentNotificationPresenter implements
    private final static int ID = R.id.notification_permanent;
    
    private final Context context;
-   
-   private Intent onClickIntent;
    
    private boolean isNotificationActive;
    
@@ -82,33 +83,20 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    
    @Override
-   public void handleNotificationClicked( int notificationId )
-   {
-      startActivity( onClickIntent );
-   }
-   
-   
-   
-   @Override
    public void cancelNotification()
    {
       if ( isNotificationActive )
       {
          getNotificationManager().cancel( ID );
-         
-         onClickIntent = null;
          isNotificationActive = false;
       }
    }
    
    
    
-   protected void startActivity( Intent intent )
+   public static int getColumnIndex( String colName )
    {
-      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TASK
-         | Intent.FLAG_ACTIVITY_NEW_TASK );
-      
-      context.startActivity( intent );
+      return TasksProviderPart.COL_INDICES.get( colName ).intValue();
    }
    
    
@@ -116,6 +104,32 @@ abstract class AbstractPermanentNotificationPresenter implements
    protected Context getContext()
    {
       return context;
+   }
+   
+   
+   
+   protected Intent createSingletonOnClickIntent( Cursor tasksCursor )
+   {
+      if ( tasksCursor.moveToFirst() )
+      {
+         return Intents.createOpenTaskIntentFromNotification( getContext(),
+                                                              Queries.getOptString( tasksCursor,
+                                                                                    getColumnIndex( Tasks._ID ) ) );
+      }
+      
+      return null;
+   }
+   
+   
+   
+   protected Intent createMultiTasksOnClickIntent( Cursor tasksCursor,
+                                                   String activityTitle,
+                                                   String filterString )
+   {
+      return Intents.createSmartFilterIntent( getContext(),
+                                              new RtmSmartFilter( filterString ),
+                                              activityTitle )
+                    .putExtra( Intents.Extras.KEY_FROM_NOTIFICATION, true );
    }
    
    
@@ -146,9 +160,8 @@ abstract class AbstractPermanentNotificationPresenter implements
       
       final Notification notification = newNotfication( title,
                                                         text,
-                                                        tasksCursor.getCount() );
-      
-      createOnClickIntent( tasksCursor, title, filterString );
+                                                        tasksCursor,
+                                                        filterString );
       
       getNotificationManager().notify( ID, notification );
       
@@ -178,12 +191,12 @@ abstract class AbstractPermanentNotificationPresenter implements
             final long tomorrowMillis = cal.getTimeInMillis();
             
             return context.getString( R.string.notification_permanent_today_and_tomorrow_title,
-                                      MolokoDateUtils.formatDate( context,
-                                                                  todayMillis,
-                                                                  MolokoDateUtils.FORMAT_NUMERIC ),
-                                      MolokoDateUtils.formatDate( context,
-                                                                  tomorrowMillis,
-                                                                  MolokoDateUtils.FORMAT_NUMERIC ) );
+                                      MolokoDateFormatter.formatDate( context,
+                                                                      todayMillis,
+                                                                      MolokoDateFormatter.FORMAT_NUMERIC ),
+                                      MolokoDateFormatter.formatDate( context,
+                                                                      tomorrowMillis,
+                                                                      MolokoDateFormatter.FORMAT_NUMERIC ) );
          }
          
          case PermanentNotificationType.OFF:
@@ -222,8 +235,25 @@ abstract class AbstractPermanentNotificationPresenter implements
          
          final String taskName = Queries.getOptString( tasksCursor,
                                                        getColumnIndex( Tasks.TASKSERIES_NAME ) );
-         result = context.getString( R.string.notification_permanent_text_one_task,
-                                     taskName );
+         
+         // If we have one task to show and this is overdue, show due date.
+         if ( overdueCnt == 1 )
+         {
+            final String pastString = new OverdueNotificationTaskDateFormatter( context ).getFormattedOverdueDueDate( Queries.getOptLong( tasksCursor,
+                                                                                                                                          getColumnIndex( Tasks.DUE_DATE ) ) );
+            if ( !TextUtils.isEmpty( pastString ) )
+            {
+               result = context.getString( R.string.notification_permanent_text_one_task_overdue,
+                                           taskName,
+                                           pastString );
+            }
+         }
+         
+         if ( TextUtils.isEmpty( result ) )
+         {
+            result = context.getString( R.string.notification_permanent_text_one_task,
+                                        taskName );
+         }
       }
       
       else if ( tasksDueCnt > 0 )
@@ -313,37 +343,6 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    
    
-   private void createOnClickIntent( Cursor tasksCursor,
-                                     String activityTitle,
-                                     String filterString )
-   {
-      final int numTasks = tasksCursor.getCount();
-      
-      if ( numTasks == 1 )
-      {
-         if ( tasksCursor.moveToFirst() )
-         {
-            onClickIntent = Intents.createOpenTaskIntentFromNotification( context,
-                                                                          Queries.getOptString( tasksCursor,
-                                                                                                getColumnIndex( Tasks._ID ) ) );
-         }
-         else
-         {
-            onClickIntent = null;
-         }
-      }
-      else
-      {
-         onClickIntent = Intents.createSmartFilterIntent( context,
-                                                          new RtmSmartFilter( filterString ),
-                                                          activityTitle )
-                                .putExtra( Intents.Extras.KEY_FROM_NOTIFICATION,
-                                           true );
-      }
-   }
-   
-   
-   
    private int getPermanentNotificationTypeFromSettings()
    {
       return MolokoApp.getSettings( context ).getNotifyingPermanentTasksType();
@@ -359,13 +358,6 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    
    
-   private static int getColumnIndex( String colName )
-   {
-      return TasksProviderPart.COL_INDICES.get( colName ).intValue();
-   }
-   
-   
-   
    private NotificationManager getNotificationManager()
    {
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );
@@ -375,5 +367,6 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    protected abstract Notification newNotfication( String title,
                                                    String text,
-                                                   int count );
+                                                   Cursor tasksCursor,
+                                                   String filterString );
 }

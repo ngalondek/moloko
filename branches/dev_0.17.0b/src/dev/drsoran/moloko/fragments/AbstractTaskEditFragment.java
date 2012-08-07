@@ -55,6 +55,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
@@ -84,7 +85,7 @@ public abstract class AbstractTaskEditFragment
          MolokoLoaderEditFragment< AbstractTaskEditFragment.TaskEditDatabaseData >
          implements IChangesTarget
 {
-   protected final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   protected final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
    
    
    public final static class TaskEditDatabaseData
@@ -367,17 +368,17 @@ public abstract class AbstractTaskEditFragment
    {
       final Context context = getSherlockActivity();
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( context,
-                                                         task.getAdded()
-                                                             .getTime(),
-                                                         FULL_DATE_FLAGS ) );
+      addedDate.setText( MolokoDateFormatter.formatDateTime( context,
+                                                             task.getAdded()
+                                                                 .getTime(),
+                                                             FULL_DATE_FLAGS ) );
       
       if ( task.getCompleted() != null )
       {
-         completedDate.setText( MolokoDateUtils.formatDateTime( context,
-                                                                task.getCompleted()
-                                                                    .getTime(),
-                                                                FULL_DATE_FLAGS ) );
+         completedDate.setText( MolokoDateFormatter.formatDateTime( context,
+                                                                    task.getCompleted()
+                                                                        .getTime(),
+                                                                    FULL_DATE_FLAGS ) );
          completedDate.setVisibility( View.VISIBLE );
       }
       else
@@ -867,8 +868,8 @@ public abstract class AbstractTaskEditFragment
       
       if ( estimateMillis.longValue() != -1 )
       {
-         final String estEditText = MolokoDateUtils.formatEstimated( getSherlockActivity(),
-                                                                     estimateMillis.longValue() );
+         final String estEditText = MolokoDateFormatter.formatEstimated( getSherlockActivity(),
+                                                                         estimateMillis.longValue() );
          putChange( Tasks.ESTIMATE, estEditText, String.class );
          putChange( Tasks.ESTIMATE_MILLIS, estimateMillis, Long.class );
       }

@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
@@ -37,10 +36,8 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
@@ -196,56 +193,6 @@ public final class UIUtils
       }
       
       return dropDownView;
-   }
-   
-   
-   
-   public final static void setTaskDescription( TextView view,
-                                                Task task,
-                                                Time timeBase )
-   {
-      if ( timeBase == null )
-      {
-         timeBase = MolokoDateUtils.newTime();
-      }
-      
-      view.setText( task.getName() );
-      
-      boolean setTypeFace = false;
-      
-      // description
-      if ( task.getDue() != null )
-      {
-         final long dueDateMillis = task.getDue().getTime();
-         
-         // Make bold if the task is today
-         if ( MolokoDateUtils.isToday( dueDateMillis ) )
-         {
-            view.setTypeface( Typeface.DEFAULT_BOLD );
-            view.setText( task.getName() );
-            setTypeFace = true;
-         }
-         
-         // Make underline and bold if overdue
-         else
-         {
-            final Time dueTime = MolokoDateUtils.newTime( task.getDue()
-                                                              .getTime() );
-            
-            if ( timeBase.after( dueTime ) )
-            {
-               final SpannableString content = new SpannableString( task.getName() );
-               
-               content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
-               view.setTypeface( Typeface.DEFAULT_BOLD );
-               view.setText( content );
-               setTypeFace = true;
-            }
-         }
-      }
-      
-      if ( !setTypeFace )
-         view.setTypeface( Typeface.DEFAULT );
    }
    
    

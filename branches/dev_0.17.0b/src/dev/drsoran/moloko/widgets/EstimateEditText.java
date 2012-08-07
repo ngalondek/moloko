@@ -32,8 +32,8 @@ import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
@@ -176,8 +176,8 @@ public class EstimateEditText extends ClearableEditText
          }
          else
          {
-            setText( MolokoDateUtils.formatEstimated( getContext(),
-                                                      estimateMillis.longValue() ) );
+            setText( MolokoDateFormatter.formatEstimated( getContext(),
+                                                          estimateMillis.longValue() ) );
          }
       }
    }

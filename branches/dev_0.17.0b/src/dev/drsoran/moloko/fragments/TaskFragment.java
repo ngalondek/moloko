@@ -41,13 +41,14 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.format.RtmStyleTaskDescTextViewFormatter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.MenuItemPreparer;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.widgets.SimpleLineView;
@@ -58,7 +59,7 @@ import dev.drsoran.rtm.Task;
 
 public class TaskFragment extends MolokoLoaderFragment< Task >
 {
-   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   public final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
    
    
    public static class Config
@@ -256,18 +257,18 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       
       UIUtils.setPriorityColor( activity, priorityBar, task );
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( activity,
-                                                         task.getAdded()
-                                                             .getTime(),
-                                                         FULL_DATE_FLAGS ) );
+      addedDate.setText( MolokoDateFormatter.formatDateTime( activity,
+                                                             task.getAdded()
+                                                                 .getTime(),
+                                                             FULL_DATE_FLAGS ) );
       
       if ( task.getCompleted() != null )
       {
          completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( activity,
-                                                                task.getCompleted()
-                                                                    .getTime(),
-                                                                FULL_DATE_FLAGS ) );
+         completedDate.setText( MolokoDateFormatter.formatDateTime( activity,
+                                                                    task.getCompleted()
+                                                                        .getTime(),
+                                                                    FULL_DATE_FLAGS ) );
       }
       else
       {
@@ -294,7 +295,9 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       else
          source.setText( "?" );
       
-      UIUtils.setTaskDescription( description, task, null );
+      RtmStyleTaskDescTextViewFormatter.setTaskDescription( description,
+                                                            task,
+                                                            null );
       
       listName.setText( task.getListName() );
       
@@ -342,18 +345,18 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
          {
             if ( task.hasDueTime() )
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( getSherlockActivity(),
-                                                                        task.getDue()
-                                                                            .getTime(),
-                                                                        MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                           | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
+                                        MolokoDateFormatter.formatDateTime( getSherlockActivity(),
+                                                                            task.getDue()
+                                                                                .getTime(),
+                                                                            MolokoDateFormatter.FORMAT_WITH_YEAR
+                                                                               | MolokoDateFormatter.FORMAT_SHOW_WEEKDAY ) );
             else
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( getSherlockActivity(),
-                                                                    task.getDue()
-                                                                        .getTime(),
-                                                                    MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                       | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
+                                        MolokoDateFormatter.formatDate( getSherlockActivity(),
+                                                                        task.getDue()
+                                                                            .getTime(),
+                                                                        MolokoDateFormatter.FORMAT_WITH_YEAR
+                                                                           | MolokoDateFormatter.FORMAT_SHOW_WEEKDAY ) );
             
          }
          
@@ -387,8 +390,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
          {
             UIUtils.appendAtNewLine( textBuffer,
                                      getString( R.string.task_datetime_estimate_inline,
-                                                MolokoDateUtils.formatEstimated( getSherlockActivity(),
-                                                                                 task.getEstimateMillis() ) ) );
+                                                MolokoDateFormatter.formatEstimated( getSherlockActivity(),
+                                                                                     task.getEstimateMillis() ) ) );
          }
          
          // Determine the section title

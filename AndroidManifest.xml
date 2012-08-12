@@ -307,13 +307,11 @@
       <activity
          android:name=".auth.AuthenticatorActivity"
          android:label="@string/rtm_full"
-         android:theme="@style/Theme.Moloko.Authenticator"
          android:excludeFromRecents="true" />
 
       <activity
          android:name=".auth.RtmWebLoginActivity"
          android:label="@string/rtm_full"
-         android:theme="@style/Theme.Moloko.Authenticator"
          android:excludeFromRecents="true" />
 
       <activity

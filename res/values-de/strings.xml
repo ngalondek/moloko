@@ -363,11 +363,38 @@
       
    <!-- Authenticator activity -->
    <string name="auth_permission_label">Berechtigung</string>
-   <string name="auth_info_text">Nach dem Fortfahren werden Sie auf die Remember The Milk Website geleitet, wo Sie durch die Eingabe Ihrer Zugangsdaten die Zugriffsberechtigung auf die RTM Daten bestätigen.\n\nIhr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>
-   <string name="auth_missing_credential">Wichtige Kontoangaben fehlen. Bitte ergänzen.</string>
-   <string name="auth_expired_auth_token">Die Zugriffsberechtigung wurde von Remember The Milk für %1$s nicht bestätigt. Bitte neu beantragen.</string>
+   <string name="auth_permission_choose">Berechtigung wählen</string>
+   <string name="auth_info_text">Bitte bestätigen Sie Ihre Zugriffsberechtigung. Ihr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>
+   <string name="auth_completing">Erstelle lokales Konto.</string>
+   <string name="auth_missing_credential">Wichtige RTM Kontoangaben fehlen. Sie können dies in wenigen Schritten reparieren.</string>
+   <string name="auth_expired_auth_token">Die Zugriffsberechtigung wurde von Remember The Milk nicht bestätigt. Sie können dies in wenigen Schritten reparieren.</string>
+   <string name="auth_account_exists">Moloko unterstützt nur ein Remember The Milk Konto.\n\nWenn Sie die Zugriffsberechtigung für Moloko ändern wollen, löschen Sie Ihr derzeitiges Konto und erstellen Sie ein Neues. Ihre Daten bleiben unberührt.</string>
    <string name="auth_perm_read">Lesen</string>  
    <string name="auth_perm_delete">Lesen, Schreiben und Löschen</string>
+   <string name="auth_perm_short_info">Durch die Auswahl der Berechtigung, können Sie den Zugriff für Moloko auf Ihr RTM Konto beschränken.</string>
+   <string name="auth_perm_feature_read">
+       &lt;p>
+       Mit der &lt;b>Leseberechtigung&lt;/b> können Sie:&lt;br/>
+       &lt;font color="green">● Aufgaben, Listen oder Notizen anzeigen&lt;/font>&lt;br/>
+       &lt;font color="green">● Von RTM nach Moloko synchronisieren&lt;/font>&lt;br/>
+       &lt;/p>
+       &lt;p>
+       Sie können nicht:&lt;br/>
+       &lt;font color="red">● Aufgaben, Listen oder Notizen ändern&lt;/font>&lt;br/>
+       &lt;font color="red">● Aufgaben, Listen oder Notizen anlegen&lt;/font>
+       &lt;/p>
+   </string>
+   <string name="auth_perm_feature_read_write">
+       &lt;p>
+       Mit vollem Zugriff können Sie:&lt;br/>
+       &lt;font color="green">● Aufgaben, Listen oder Notizen anzeigen&lt;/font>&lt;br/>
+       &lt;font color="green">● Aufgaben, Listen oder Notizen ändern&lt;/font>&lt;br/>
+       &lt;font color="green">● Aufgaben, Listen oder Notizen anlegen&lt;/font>&lt;br/>
+       &lt;font color="green">● Von RTM nach Moloko synchronisieren&lt;/font>&lt;br/>
+       &lt;font color="green">● Änderungen von Moloko nach RTM senden&lt;/font>&lt;br/>
+       &lt;/p>
+   </string>
+   
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Beantrage Auth-Token für Berechtigung \'%1$s\'</string>
       <string name="auth_dlg_permisson_info">Durch die Auswahl der Berechtigung, können Sie den Zugriff für Moloko auf Ihr RTM Konto beschränken.\n\n

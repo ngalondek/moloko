@@ -36,8 +36,6 @@
     
     <style name="Theme.Moloko" parent="@style/Theme.__Moloko" />
 
-    <style name="Theme.Moloko.Authenticator" parent="@android:style/Theme"></style>
-
     <style name="Theme.Moloko.Preferences">
         <item name="android:windowNoTitle">false</item>
         <item name="android:windowTitleStyle">@style/WindowTitleStyle</item>

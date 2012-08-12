@@ -3,4 +3,7 @@
     <issue id="ContentDescription" severity="ignore" />
     <issue id="MissingTranslation" severity="ignore" />
     <issue id="NewApi" severity="ignore" />
+    <issue id="SetJavaScriptEnabled">
+        <ignore path="src\dev\drsoran\moloko\auth\RtmWebLoginFragment.java" />
+    </issue>
 </lint>

@@ -53,7 +53,7 @@ public class RtmAccessLevelAwareFragmentImpl
    {
       if ( activity != null )
       {
-         activity.invalidateOptionsMenu();
+         activity.supportInvalidateOptionsMenu();
       }
    }
    

@@ -23,61 +23,37 @@
 package dev.drsoran.moloko.auth;
 
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.mdt.rtm.ServiceInternalException;
+import com.actionbarsherlock.view.Window;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.connection.ConnectionUtil;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 
 
-/**
- * Activity which displays login screen to the user.
- */
-public class AuthenticatorActivity extends AccountAuthenticatorActivity
+public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
+         implements IStartAuthenticationFragmentListener,
+         IRtmWebLoginFragmentListener
 {
-   private static final String TAG = "Moloko."
-      + AuthenticatorActivity.class.getSimpleName();
-   
-   public static final String PARAM_AUTH_TOKEN_EXPIRED = "authTokenExpired";
-   
-   public static final String PARAM_MISSINGCREDENTIALS = "missingCredentials";
-   
-   public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
-   
-   public static final String PARAM_UPDATECREDENTIALS = "updateCredentials";
-   
    public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
    
    private AccountManager accountManager;
    
-   private AsyncRtmAuthenticator authenticator;
-   
-   private Spinner permDropDown;
-   
-   private TextView messageText;
-   
-   private boolean newAccount;
+   private boolean isNewAccount;
    
    
    
@@ -86,420 +62,221 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    {
       super.onCreate( icicle );
       
-      // Initialize UI
-      requestWindowFeature( Window.FEATURE_LEFT_ICON );
+      requestWindowFeature( Window.FEATURE_INDETERMINATE_PROGRESS );
       setContentView( R.layout.authenticator_activity );
-      getWindow().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
-                                              R.drawable.rtm );
+      setSupportProgressBarIndeterminateVisibility( false );
       
       accountManager = AccountManager.get( this );
       
-      permDropDown = (Spinner) findViewById( R.id.auth_spin_permission );
+      createStartFragment();
       
-      messageText = (TextView) findViewById( R.id.auth_text_message );
-      
-      createOrReuseAuthenticator();
-      
-      initializeGui();
-      
-      newAccount = getIntent().getStringExtra( AccountManager.KEY_ACCOUNT_NAME ) == null;
+      isNewAccount = getIntent().getStringExtra( AccountManager.KEY_ACCOUNT_NAME ) == null;
    }
    
    
    
    @Override
-   protected void onDestroy()
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
    {
-      shutdownRtmAuthenticator();
-      super.onDestroy();
-   }
-   
-   
-   
-   @Override
-   protected Dialog onCreateDialog( int id )
-   {
-      final ProgressDialog dialog = new ProgressDialog( this );
-      dialog.setMessage( getString( R.string.auth_dlg_get_auth_token,
-                                    getSelectedPermissionText() ) );
-      dialog.setIndeterminate( true );
-      dialog.setCancelable( true );
-      dialog.setOnCancelListener( new DialogInterface.OnCancelListener()
+      switch ( dialogId )
       {
-         @Override
-         public void onCancel( DialogInterface dialog )
-         {
-            Log.d( TAG, "cancel has been invoked" );
-            
-            if ( authenticator != null )
-               authenticator.cancelExecution();
-            
-            removeDialog( 0 );
-         }
-      } );
-      return dialog;
+         case R.id.dlg_not_connected:
+            startActivity( new Intent( android.provider.Settings.ACTION_WIRELESS_SETTINGS ) );
+            break;
+         
+         case R.id.error:
+            finish();
+            break;
+         
+         default :
+            super.onAlertDialogFragmentClick( dialogId, tag, which );
+      }
    }
    
    
    
    @Override
-   public Object onRetainNonConfigurationInstance()
+   public Object onRetainCustomNonConfigurationInstance()
    {
-      final Object o = authenticator;
-      authenticator = null;
-      return o;
-   }
-   
-   
-   
-   public void onAuthenticate( View view )
-   {
-      messageText.setText( null );
-      
-      if ( ConnectionUtil.isConnected( this ) )
+      final AuthFragment authFragment = (AuthFragment) getSupportFragmentManager().findFragmentById( R.id.frag_multi_container );
+      if ( authFragment != null )
       {
-         authenticator.beginAuthentication( this, getSelectedPermission() );
+         return authFragment.onRetainNonConfigurationInstance();
       }
       else
       {
-         new AlertDialog.Builder( this ).setTitle( R.string.err_not_connected )
-                                        .setMessage( R.string.phr_establish_connection )
-                                        .setIcon( android.R.drawable.ic_dialog_alert )
-                                        .show()
-                                        .setOwnerActivity( this );
+         return null;
       }
    }
    
    
    
-   public void onCancel( View view )
+   @Override
+   public void onStartAuthentication( RtmAuth.Perms permission )
    {
+      if ( ConnectionUtil.isConnected( this ) )
+      {
+         final Bundle config = new Bundle( 1 );
+         config.putString( Constants.FEAT_PERMISSION, permission.toString() );
+         
+         getSupportFragmentManager().beginTransaction()
+                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                                    .replace( R.id.frag_multi_container,
+                                              RtmWebLoginFragment.newInstance( config ) )
+                                    .commit();
+      }
+      else
+      {
+         new AlertDialogFragment.Builder( R.id.dlg_not_connected ).setTitle( getString( R.string.err_not_connected ) )
+                                                                  .setMessage( getString( R.string.phr_establish_connection ) )
+                                                                  .setIcon( R.drawable.ic_prefs_info )
+                                                                  .setNeutralButton( R.string.phr_settings )
+                                                                  .show( this );
+      }
+   }
+   
+   
+   
+   /**
+    * Response is received from the server for authentication request. Sets the AccountAuthenticatorResult which is sent
+    * back to the caller. Also sets the authToken in AccountManager for this account.
+    */
+   @Override
+   public void onAuthenticationFinished( RtmAuth rtmAuth )
+   {
+      final Account account = new Account( rtmAuth.getUser().getUsername(),
+                                           Constants.ACCOUNT_TYPE );
+      try
+      {
+         boolean ok = true;
+         
+         if ( isNewAccount )
+         {
+            ok = accountManager.addAccountExplicitly( account,
+                                                      rtmAuth.getToken(),
+                                                      null );
+            if ( ok )
+            {
+               ContentResolver.setSyncAutomatically( account,
+                                                     Rtm.AUTHORITY,
+                                                     true );
+            }
+         }
+         
+         if ( ok )
+         {
+            accountManager.setUserData( account,
+                                        Constants.FEAT_API_KEY,
+                                        MolokoApp.getRtmApiKey( this ) );
+            accountManager.setUserData( account,
+                                        Constants.FEAT_SHARED_SECRET,
+                                        MolokoApp.getRtmSharedSecret( this ) );
+            accountManager.setUserData( account,
+                                        Constants.FEAT_PERMISSION,
+                                        rtmAuth.getPerms().toString() );
+            accountManager.setUserData( account,
+                                        Constants.ACCOUNT_USER_ID,
+                                        rtmAuth.getUser().getId() );
+            accountManager.setUserData( account,
+                                        Constants.ACCOUNT_FULLNAME,
+                                        rtmAuth.getUser().getFullname() );
+            
+            final Intent intent = new Intent();
+            
+            intent.putExtra( AccountManager.KEY_ACCOUNT_NAME,
+                             rtmAuth.getUser().getUsername() );
+            // We store the authToken as password
+            intent.putExtra( AccountManager.KEY_PASSWORD, rtmAuth.getToken() );
+            intent.putExtra( AccountManager.KEY_ACCOUNT_TYPE,
+                             Constants.ACCOUNT_TYPE );
+            intent.putExtra( AccountManager.KEY_AUTHTOKEN, rtmAuth.getToken() );
+            
+            intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, true );
+            
+            setAccountAuthenticatorResult( intent.getExtras() );
+            setResult( RESULT_OK, intent );
+         }
+      }
+      catch ( SecurityException e )
+      {
+         Log.e( LogUtils.toTag( AuthenticatorActivity.class ),
+                e.getLocalizedMessage() );
+         
+         onAuthenticationFailed( getString( R.string.auth_err_cause_scurity ) );
+      }
+      finally
+      {
+         finish();
+      }
+   }
+   
+   
+   
+   @Override
+   public void onAuthenticationCanceled()
+   {
+      setResult( RESULT_CANCELED, null );
       finish();
    }
    
    
    
-   public void onPermissionInfo( View view )
-   {
-      new AlertDialog.Builder( this ).setTitle( R.string.app_account_preferences )
-                                     .setIcon( R.drawable.ic_prefs_info )
-                                     .setMessage( R.string.auth_dlg_permisson_info )
-                                     .setNeutralButton( R.string.btn_ok, null )
-                                     .show();
-   }
-   
-   
-   
-   public void onPreBeginAuthentication()
-   {
-      showDialog( 0 );
-   }
-   
-   
-   
-   public void onPostBeginAuthentication( String loginUrl, Exception e )
-   {
-      if ( e != null )
-      {
-         removeDialog( 0 );
-         messageText.setText( getErrorMessage( e ) );
-      }
-      else if ( TextUtils.isEmpty( loginUrl ) )
-      {
-         removeDialog( 0 );
-         messageText.setText( getErrorMessage( R.string.auth_err_cause_inv_login_url ) );
-      }
-      else
-      {
-         Log.d( TAG, "LoginURL: " + loginUrl );
-         
-         final Intent intent = new Intent( android.content.Intent.ACTION_VIEW,
-                                           Uri.parse( loginUrl ),
-                                           this,
-                                           RtmWebLoginActivity.class );
-         
-         startActivityForResult( intent, RtmWebLoginActivity.ReqType.OPEN_URL );
-      }
-   }
-   
-   
-   
-   public void onPostCompleteAuthentication( String authToken,
-                                             Exception exception )
-   {
-      Log.d( TAG, "AuthToken: " + authToken );
-      
-      if ( exception != null )
-      {
-         removeDialog( 0 );
-         messageText.setText( getErrorMessage( exception ) );
-      }
-      else if ( TextUtils.isEmpty( authToken ) )
-      {
-         removeDialog( 0 );
-         messageText.setText( getErrorMessage( R.string.auth_err_cause_inv_auth_token ) );
-      }
-      else
-      {
-         // We want to get the complete RtmAuth instance
-         authenticator.checkAuthToken( this, authToken );
-      }
-   }
-   
-   
-   
-   public void onPostCheckAuthToken( RtmAuth rtmAuth, Exception exception )
-   {
-      removeDialog( 0 );
-      
-      if ( exception != null )
-      {
-         messageText.setText( getErrorMessage( exception ) );
-      }
-      else if ( rtmAuth == null )
-      {
-         messageText.setText( getErrorMessage( R.string.auth_err_cause_inv_auth_token ) );
-      }
-      else
-      {
-         // Response is received from the server for authentication request.
-         // Sets the AccountAuthenticatorResult which is sent back to the
-         // caller.
-         // Also sets the authToken in AccountManager for this account.
-         final Account account = new Account( rtmAuth.getUser().getUsername(),
-                                              Constants.ACCOUNT_TYPE );
-         try
-         {
-            boolean ok = true;
-            
-            if ( newAccount )
-            {
-               ok = accountManager.addAccountExplicitly( account,
-                                                         rtmAuth.getToken(),
-                                                         null );
-               
-               if ( ok )
-                  ContentResolver.setSyncAutomatically( account,
-                                                        Rtm.AUTHORITY,
-                                                        true );
-            }
-            
-            if ( ok )
-            {
-               accountManager.setUserData( account,
-                                           Constants.FEAT_API_KEY,
-                                           MolokoApp.getRtmApiKey( this ) );
-               accountManager.setUserData( account,
-                                           Constants.FEAT_SHARED_SECRET,
-                                           MolokoApp.getRtmSharedSecret( this ) );
-               accountManager.setUserData( account,
-                                           Constants.FEAT_PERMISSION,
-                                           rtmAuth.getPerms().toString() );
-               accountManager.setUserData( account,
-                                           Constants.ACCOUNT_USER_ID,
-                                           rtmAuth.getUser().getId() );
-               accountManager.setUserData( account,
-                                           Constants.ACCOUNT_FULLNAME,
-                                           rtmAuth.getUser().getFullname() );
-               
-               final Intent intent = new Intent();
-               
-               intent.putExtra( AccountManager.KEY_ACCOUNT_NAME,
-                                rtmAuth.getUser().getUsername() );
-               // We store the authToken as password
-               intent.putExtra( AccountManager.KEY_PASSWORD, rtmAuth.getToken() );
-               intent.putExtra( AccountManager.KEY_ACCOUNT_TYPE,
-                                Constants.ACCOUNT_TYPE );
-               intent.putExtra( AccountManager.KEY_AUTHTOKEN,
-                                rtmAuth.getToken() );
-               
-               intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, true );
-               
-               setAccountAuthenticatorResult( intent.getExtras() );
-               setResult( RESULT_OK, intent );
-               finish();
-            }
-         }
-         catch ( SecurityException e )
-         {
-            messageText.setText( getErrorMessage( R.string.auth_err_cause_scurity )
-               + e.getLocalizedMessage() );
-         }
-      }
-   }
-   
-   
-   
    @Override
-   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   public void onAuthenticationFailed( String localizedCause )
    {
-      if ( requestCode == RtmWebLoginActivity.ReqType.OPEN_URL
-         && resultCode == Activity.RESULT_OK )
+      new AlertDialogFragment.Builder( R.id.error ).setTitle( getString( R.string.err_error ) )
+                                                   .setIcon( R.drawable.ic_black_error )
+                                                   .setMessage( getString( R.string.auth_err_with_cause,
+                                                                           localizedCause ) )
+                                                   .setNeutralButton( R.string.btn_back )
+                                                   .show( this );
+   }
+   
+   
+   
+   private void createStartFragment()
+   {
+      final FragmentManager fragmentManager = getSupportFragmentManager();
+      
+      if ( fragmentManager.findFragmentById( R.id.frag_multi_container ) == null )
       {
-         authenticator.completeAuthentication( this );
+         final Fragment startFragment = chooseStartFragmentByIntentData();
+         
+         fragmentManager.beginTransaction()
+                        .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                        .add( R.id.frag_multi_container, startFragment )
+                        .commit();
       }
+   }
+   
+   
+   
+   private Fragment chooseStartFragmentByIntentData()
+   {
+      final Fragment chosenFragment;
+      final Intent intent = getIntent();
+      
+      if ( intent.getBooleanExtra( Intents.Extras.AUTH_MISSINGCREDENTIALS,
+                                   false )
+         || intent.getBooleanExtra( Intents.Extras.AUTH_TOKEN_EXPIRED, false ) )
+      {
+         chosenFragment = AccountIssueFragment.newInstance( getIntent().getExtras() );
+      }
+      
+      else if ( AccountUtils.getRtmAccount( accountManager ) != null )
+      {
+         final Bundle config = new Bundle( 1 );
+         config.putBoolean( AccountIssueFragment.Config.ACCOUNT_ALREADY_EXISTS,
+                            true );
+         
+         chosenFragment = AccountIssueFragment.newInstance( config );
+      }
+      
       else
       {
-         Toast.makeText( this,
-                         R.string.auth_toast_err_weblogin,
-                         Toast.LENGTH_LONG ).show();
-         removeDialog( 0 );
-      }
-   }
-   
-   
-   
-   private void initializeGui()
-   {
-      if ( authenticator == null )
-      {
-         messageText.setText( R.string.auth_err_cause_no_service );
-      }
-      else
-      {
-         // Check the intent parameters
-         final Intent intent = getIntent();
-         
-         // Fill the widgets with all information we have
-         final String permission = intent.getStringExtra( Constants.FEAT_PERMISSION );
-         
-         if ( permission != null )
-            selectPermission( permission );
-         
-         if ( intent.getBooleanExtra( PARAM_MISSINGCREDENTIALS, false ) )
-         {
-            messageText.setText( R.string.auth_missing_credential );
-         }
-         else if ( intent.getBooleanExtra( PARAM_AUTH_TOKEN_EXPIRED, false ) )
-         {
-            messageText.setText( getString( R.string.auth_expired_auth_token,
-                                            getString( R.string.app_name ) ) );
-         }
-         else
-         {
-            messageText.setText( getString( R.string.auth_info_text ) );
-         }
-      }
-   }
-   
-   
-   
-   private String getSelectedPermissionText()
-   {
-      final String[] rtmPermissions = getResources().getStringArray( R.array.rtm_permissions );
-      
-      String text = rtmPermissions[ 0 ];
-      
-      final int selectedIdx = permDropDown.getSelectedItemPosition();
-      
-      if ( selectedIdx != Spinner.INVALID_POSITION )
-      {
-         if ( rtmPermissions.length > selectedIdx )
-         {
-            text = rtmPermissions[ selectedIdx ];
-         }
+         chosenFragment = ChooseRtmPermissionFragment.newInstance( getIntent().getExtras() );
       }
       
-      return text;
-   }
-   
-   
-   
-   private RtmAuth.Perms getSelectedPermission()
-   {
-      RtmAuth.Perms perm = RtmAuth.Perms.nothing;
-      
-      final int selectedIdx = permDropDown.getSelectedItemPosition();
-      
-      if ( selectedIdx != Spinner.INVALID_POSITION )
-      {
-         final String[] rtmPermissionsVals = getResources().getStringArray( R.array.rtm_permissions_values );
-         
-         if ( rtmPermissionsVals.length > selectedIdx )
-         {
-            try
-            {
-               perm = RtmAuth.Perms.valueOf( rtmPermissionsVals[ selectedIdx ] );
-            }
-            catch ( IllegalArgumentException e )
-            {
-            }
-         }
-      }
-      
-      return perm;
-   }
-   
-   
-   
-   private int selectPermission( String permissionValue )
-   {
-      int position = Spinner.INVALID_POSITION;
-      
-      final String[] rtmPermissionsVals = getResources().getStringArray( R.array.rtm_permissions_values );
-      
-      for ( int i = 0; i < rtmPermissionsVals.length
-         && position == Spinner.INVALID_POSITION; i++ )
-      {
-         if ( rtmPermissionsVals[ i ].equals( permissionValue ) )
-            position = i;
-      }
-      
-      if ( position != Spinner.INVALID_POSITION )
-         permDropDown.setSelection( position );
-      
-      return position;
-   }
-   
-   
-   
-   private String getErrorMessage( Exception exception )
-   {
-      return getString( R.string.auth_err_with_cause,
-                        AsyncRtmAuthenticator.getExceptionCause( exception ) );
-   }
-   
-   
-   
-   private String getErrorMessage( int resId )
-   {
-      return getString( R.string.auth_err_with_cause, getString( resId ) );
-   }
-   
-   
-   
-   private void createOrReuseAuthenticator()
-   {
-      authenticator = (AsyncRtmAuthenticator) getLastNonConfigurationInstance();
-      
-      if ( authenticator == null )
-      {
-         createAuthenticator();
-      }
-   }
-   
-   
-   
-   private void createAuthenticator()
-   {
-      try
-      {
-         authenticator = new AsyncRtmAuthenticator( this );
-      }
-      catch ( ServiceInternalException e )
-      {
-         authenticator = null;
-         Log.e( TAG, "Error creating RTM service", e );
-      }
-   }
-   
-   
-   
-   private void shutdownRtmAuthenticator()
-   {
-      if ( authenticator != null )
-         authenticator.shutdown();
-      
-      authenticator = null;
+      return chosenFragment;
    }
 }

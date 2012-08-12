@@ -29,7 +29,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -47,7 +46,6 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.connection.DefaultRtmConnectionFactory;
 import dev.drsoran.moloko.connection.IRtmConnection;
 import dev.drsoran.moloko.util.Strings;
@@ -83,11 +81,9 @@ public class ServiceImpl implements Service
    
    
    
-   public static ServiceImpl getInstance( Context context,
+   public static ServiceImpl getInstance( boolean useHttps,
                                           ApplicationInfo applicationInfo ) throws ServiceInternalException
    {
-      final boolean useHttps = MolokoApp.getSettings( context ).isUsingHttps();
-      
       final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
                                                        !useHttps );
       

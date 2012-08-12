@@ -128,6 +128,14 @@ public final class Intents
       
       public final static String KEY_FROM_NOTIFICATION = "from_notification";
       
+      public static final String AUTH_TOKEN_EXPIRED = "authTokenExpired";
+      
+      public static final String AUTH_MISSINGCREDENTIALS = "missingCredentials";
+      
+      public static final String AUTH_CONFIRMCREDENTIALS = "confirmCredentials";
+      
+      public static final String AUTH_UPDATECREDENTIALS = "updateCredentials";
+      
       
       
       public final static Bundle createSyncStatusExtras( int status )

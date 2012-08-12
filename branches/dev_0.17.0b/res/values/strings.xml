@@ -405,11 +405,38 @@
 
    <!-- Authenticator activity -->
    <string name="auth_permission_label">Permission</string>
-   <string name="auth_info_text">After continue you will be redirected to the Remember The Milk website. There you can confirm the access permission by entering your RTM credentials.\n\nYour username and password will not be stored locally.</string>
-   <string name="auth_missing_credential">Important account information is missing. Please complete.</string>
-   <string name="auth_expired_auth_token">The access permission is from Remember The Milk for %1$s not confirmed. Please apply again.</string>
+   <string name="auth_permission_choose">Choose permission</string>
+   <string name="auth_info_text">Please confirm your access permission. Your username and password will not be stored locally.</string>
+   <string name="auth_completing">Completing account creation.</string>
+   <string name="auth_missing_credential">Important account information is missing. You can fix this in a few steps.</string>
+   <string name="auth_expired_auth_token">The access permission from Remember The Milk was not confirmed. You can fix this in a few steps.</string>
+   <string name="auth_account_exists">Moloko supports only one Remember The Milk account.\n\nIf you want to change your access permission, please remove your existing account and create a new one. Your data remains untouched.</string>
    <string name="auth_perm_read">Read</string>
    <string name="auth_perm_delete">Read, Write and Delete</string>
+   <string name="auth_perm_short_info">By choosing the permission, you can restrict the access to your RTM account for Moloko.</string>
+   <string name="auth_perm_feature_read">
+       &lt;p>
+       With permission &lt;b>Read&lt;/b> you can:&lt;br/>
+       &lt;font color="green">● View tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Synchronize from RTM to Moloko&lt;/font>&lt;br/>
+       &lt;/p>
+       &lt;p>
+       You can not:&lt;br/>
+       &lt;font color="red">● Edit tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="red">● Add or remove tasks, lists, notes&lt;/font>
+       &lt;/p>
+   </string>
+   <string name="auth_perm_feature_read_write">
+       &lt;p>
+       With full permissions you can:&lt;br/>
+       &lt;font color="green">● View tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Edit tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Add or remove tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Synchronize from RTM to Moloko&lt;/font>&lt;br/>
+       &lt;font color="green">● Send your edits from Moloko to RTM &lt;/font>&lt;br/>
+       &lt;/p>
+   </string>
+       
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Request Auth-Token for access level \'%1$s\'</string>
       <string name="auth_dlg_permisson_info">By choosing the permission, you can restrict the access to your RTM account for Moloko.\n\n
@@ -536,5 +563,8 @@ User: %s\n
    <string name="app_quick_add_task_recurr_sugg_after_2_weeks">after 2 weeks</string>
    <string name="app_quick_add_task_recurr_sugg_every_1_month">after 1 month</string>
    <string name="app_quick_add_task_recurr_sugg_after_1_year">after 1 year</string>
+   
+   <!-- Design -->
+   <string name="design_text">Text</string>
 
 </resources>

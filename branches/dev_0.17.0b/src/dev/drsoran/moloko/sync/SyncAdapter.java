@@ -218,7 +218,8 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
       final Service service;
       try
       {
-         service = ServiceImpl.getInstance( context,
+         service = ServiceImpl.getInstance( MolokoApp.getSettings( context )
+                                                     .isUsingHttps(),
                                             new ApplicationInfo( credentials.first,
                                                                  credentials.second,
                                                                  context.getString( R.string.app_name ),

@@ -363,11 +363,38 @@
 
    <!-- Authenticator fragment -->
    <string name="auth_permission_label">Permission</string>
-   <string name="auth_info_text">Après l\'appui sur Continuer, vous allez être redirigés sur ls site web de Remember The Milk. Là, vous pourrez vous connecter et confirmer le niveau d\'accréditation du certificat utilisé par Moloko.\n\nVotre nom d\'utilisatur et votre mot de passe ne seront pas enregistrés localement.</string>
-   <string name="auth_missing_credential">Une information importante de votre profil RTM manque. Merci de le compléter.</string>
-   <string name="auth_expired_auth_token">Le niveau d\'accréditation de Remember The Milk pour %1$s n\'est pas confirmé. Merci de vous identifier à nouveau.</string>
+   <string name="auth_permission_choose">Choose permission</string>
+   <string name="auth_info_text">Please confirm your access permission. Your username and password will not be stored locally.</string>
+   <string name="auth_completing">Completing account creation.</string>
+   <string name="auth_missing_credential">Important account information is missing. You can fix this in a few steps.</string>
+   <string name="auth_expired_auth_token">The access permission from Remember The Milk was not confirmed. You can fix this in a few steps.</string>
+   <string name="auth_account_exists">Moloko supports only one Remember The Milk account.\n\nIf you want to change your access permission, please remove your existing account and create a new one. Your data remains untouched.</string>
    <string name="auth_perm_read">Lecture</string>
    <string name="auth_perm_delete">Lecture, Ecriture et Suppression</string>
+   <string name="auth_perm_short_info">Choisir les permissions, vous permet de restreindre les droits d\'accès de Moloko à votre compte RTM.</string>
+   <string name="auth_perm_feature_read">
+       &lt;p>
+       With permission &lt;b>Read&lt;/b> you can:&lt;br/>
+       &lt;font color="green">● View tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Synchronize from RTM to Moloko&lt;/font>&lt;br/>
+       &lt;/p>
+       &lt;p>
+       You can not:&lt;br/>
+       &lt;font color="red">● Edit tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="red">● Add or remove tasks, lists, notes&lt;/font>
+       &lt;/p>
+   </string>
+   <string name="auth_perm_feature_read_write">
+       &lt;p>
+       With full permissions you can:&lt;br/>
+       &lt;font color="green">● View tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Edit tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Add or remove tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Synchronize from RTM to Moloko&lt;/font>&lt;br/>
+       &lt;font color="green">● Send your edits from Moloko to RTM &lt;/font>&lt;br/>
+       &lt;/p>
+   </string>
+   
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Récupération du jeton d\'authentification pour le niveau d\'accréditation \'%1$s\'</string>
       <string name="auth_dlg_permisson_info">Choisir les permissions, vous permet de restreindre les droits d\'accès de Moloko à votre compte RTM.\n\nEn choisissant \'Lecture\', vous ne pourrez pas ajouter, modifier ou supprimer des tâches, listes ou notes dans Moloko. \'Lecture\' offre seulement la consultation de vos données RTM.\n\nEn choisissant \'Lecture, Ecriture et Suppression\', vous pouvez faire dans Moloko presque tout ce que vous faites sur le site web de RTM, et en particulier ajouter, modifier ou supprimer des tâches, listes ou notes.\n\nLa synchronisatin en arrière plan se fera dans les deux cas. Dans le cadre de la permission \'Lecture\', les données seront seulement reçues du serveur RTM, rien ne sera envoyé.\n\nVous pouvez changer les droits d\'accès n\'importe quand en supprimant votre compte RTM de votre téléphone et en vous reconnectant à celui ci. A ce moment là, vous pourrez à nouveau choisir vos droits d\'accès.</string>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <!--
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
+
+<PreferenceScreen
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+   android:orderingFromXml="true">
+
+   <PreferenceCategory
+	   android:title="@string/moloko_prefs_notification_tasks_w_due_cat_title">
+	
+	   <CheckBoxPreference
+	      android:title="@string/moloko_prefs_notification_tasks_w_due_title"
+	      android:summaryOn="@string/phr_on"
+	      android:summaryOff="@string/phr_off"
+	      android:key="@string/key_notify_due_tasks"
+	      android:defaultValue="true" />
+	   <dev.drsoran.moloko.prefs.AutoSummaryListPreference
+	      android:title="@string/moloko_prefs_notification_tasks_w_due_before_title"
+	      android:summary="%s"
+	      android:entries="@array/moloko_prefs_notification_task_due_before_entries"
+	      android:entryValues="@array/moloko_prefs_notification_task_due_before_values"
+	      android:key="@string/key_notify_due_tasks_before"
+	      android:dependency="@string/key_notify_due_tasks"
+	      android:defaultValue="@string/moloko_prefs_notification_tasks_w_due_before_default_value" />
+	   <RingtonePreference
+	      android:title="@string/moloko_prefs_notification_tasks_w_due_ringtone_title"
+	      android:showSilent="true"
+	      android:ringtoneType="all"
+	      android:key="@string/key_notify_due_tasks_ringtone"
+	      android:dependency="@string/key_notify_due_tasks" />
+	   <dev.drsoran.moloko.prefs.VibratePreference
+	      android:title="@string/moloko_prefs_notification_tasks_w_due_vibrate_title"
+	      android:summaryOn="@string/phr_yes"
+         android:summaryOff="@string/phr_no"
+	      android:key="@string/key_notify_due_tasks_vibrate"
+	      android:dependency="@string/key_notify_due_tasks"
+	      android:defaultValue="false" />
+	   <CheckBoxPreference
+	      android:title="@string/moloko_prefs_notification_tasks_w_due_led_title"
+	      android:summaryOn="@string/phr_yes"
+         android:summaryOff="@string/phr_no"
+	      android:key="@string/key_notify_due_tasks_led"
+	      android:dependency="@string/key_notify_due_tasks"
+	      android:defaultValue="false" />
+	</PreferenceCategory>
+	
+	<PreferenceCategory
+	   android:title="@string/moloko_prefs_notification_permanent_cat_title">
+	
+	   <dev.drsoran.moloko.prefs.AutoSummaryListPreference
+	      android:title="@string/moloko_prefs_notification_tasks_w_due_before_title"
+	      android:summary="%s"
+	      android:entries="@array/moloko_prefs_notification_permanent_entries"
+	      android:entryValues="@array/moloko_prefs_notification_permanent_values"
+	      android:key="@string/key_notify_permanent"
+	      android:defaultValue="2" />
+	   <CheckBoxPreference
+	      android:title="@string/moloko_prefs_notification_permanent_show_overdue_tasks_title"
+	      android:summaryOn="@string/phr_yes"
+	      android:summaryOff="@string/phr_no"
+	      android:key="@string/key_notify_permanent_overdue"            
+	      android:defaultValue="false" />
+	</PreferenceCategory>
+    
+</PreferenceScreen>

@@ -32,8 +32,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.ContactsListActivity;
-import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.activities.TagCloudActivity;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
@@ -88,8 +88,7 @@ public class HomeAdapter extends BaseAdapter
                                                null,
                                                R.string.app_preferences,
                                                R.drawable.ic_home_settings,
-                                               new Intent( context,
-                                                           MolokoPreferencesActivity.class ) ) );
+                                               Intents.createOpenPreferencesIntent( context ) ) );
    }
    
    

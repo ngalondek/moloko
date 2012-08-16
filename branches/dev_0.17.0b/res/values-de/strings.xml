@@ -130,6 +130,8 @@
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
    <string name="phr_more">Mehr</string>
    <string name="phr_hint">Hinweis</string>
+   <string name="phr_yes">Ja</string>
+   <string name="phr_no">Nein</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -424,44 +426,53 @@
    <string name="acc_pref_conn_use_https">HTTPS verwenden (empfohlen)</string>
    
    <!-- MolokoPreferences activity -->
-   <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
-   <string name="moloko_prefs_rtm_summary">Zeit- und Datumsformat, Standardliste usw.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken</string>
-   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
-   <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
-   <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>
-   <string name="moloko_prefs_rtm_dateformat_us">Amerikanisch\n(02/14/2000)</string>
-   <string name="moloko_prefs_rtm_timeformat_title">Zeitformat</string>
-   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
-   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
-   <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
-   <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
-   <string name="moloko_prefs_startup_view_title">Startansicht</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen&#8230;</string>
-   <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
-   <string name="moloko_prefs_def_sort_title">Sortierung der Aufgaben</string>
-   <string name="moloko_prefs_def_sort_summary">nach %s</string>
-   <string name="moloko_prefs_notification_title">Benachrichtigung</string>
-   <string name="moloko_prefs_notification_summary">Benachrichtigungen wählen, Töne u.s.w.</string>
-   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Aufgaben mit Fälligkeitszeit</string>
-   <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigen</string>
-   <string name="moloko_prefs_notification_tasks_w_due_before_title">Erinnerung</string>
-   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Benachrichtigungston</string>
-   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrieren</string>
-   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
-   <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
-   <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
-   <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
-   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Heutige und morgige Aufgaben</string>
-   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">An überfällige Aufgaben erinnern</string>
-   <string name="moloko_prefs_cat_help_dev_title">Helfen Sie bei der Entwicklung</string>
-   <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
-   <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>
-   <string name="moloko_prefs_acra_summary_off">Bitte unterstützen Sie die Entwicklung durch das Senden von Fehlerberichten</string>
-   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string>
-   <string name="moloko_prefs_send_db_text">Moloko Datenbank an Entwickler senden</string>
-   <string name="moloko_prefs_clear_db_text">Alle Daten aus der Datenbank entfernen</string>  
+      <!-- RTM settings -->
+	   <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
+	   <string name="moloko_prefs_rtm_summary">Standardliste und Kontoeinstellungen</string>
+	   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen</string>
+	   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken</string>
+	   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
+	   <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
+	   <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>
+	   <string name="moloko_prefs_rtm_dateformat_us">Amerikanisch\n(02/14/2000)</string>
+	   <string name="moloko_prefs_rtm_timeformat_title">Zeitformat</string>
+	   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
+	   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
+	   <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
+	   <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
+	
+	   <!-- General settings -->
+	   <string name="moloko_prefs_general_title">Allgemeine Einstellungen</string>
+	   <string name="moloko_prefs_startup_view_title">Startansicht</string>
+	   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen&#8230;</string>
+	   <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
+	   <string name="moloko_prefs_def_sort_title">Sortierung der Aufgaben</string>
+	   <string name="moloko_prefs_def_sort_summary">nach %s</string>
+	   
+	   <!-- Notification settings -->
+	   <string name="moloko_prefs_notification_title">Benachrichtigungen</string>
+	   <string name="moloko_prefs_notification_summary">Benachrichtigungen wählen, Töne u.s.w.</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Aufgaben mit Fälligkeitszeit</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigen</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_before_title">Erinnerung</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Benachrichtigungston</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrieren</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
+	   <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
+	   <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
+	   <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
+	   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Heutige und morgige Aufgaben</string>
+	   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">An überfällige Aufgaben erinnern</string>
+	   
+	   <!-- Development settings -->
+	   <string name="moloko_prefs_support_dev_title">Helfen Sie bei der Entwicklung</string>
+	   <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
+	   <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>
+	   <string name="moloko_prefs_acra_summary_off">Bitte unterstützen Sie die Entwicklung durch das Senden von Fehlerberichten</string>
+	   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string>
+	   <string name="moloko_prefs_send_db_text">Moloko Datenbank an Entwickler senden</string>
+	   <string name="moloko_prefs_clear_db_text">Alle Daten aus der Datenbank entfernen</string>  
+	   
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
       <string name="moloko_prefs_clear_db_dlg_title">Datenbank säubern</string>

@@ -20,11 +20,10 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.prefs.auth;
+package dev.drsoran.moloko.prefs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.prefs.AutoSummaryListPreference;
 
 
 class SyncIntervalPreference extends AutoSummaryListPreference

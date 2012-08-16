@@ -61,7 +61,7 @@
    <string name="rtm_full">Remember The Milk</string>
 
    <!-- Global constants -->
-   <string name="g_settings_src_rtm_btn">Take settings from RTM Server</string>
+   <string name="g_settings_src_rtm_btn">Take setting from RTM Server</string>
    <string name="g_settings_src_rtm">Loaded from RTM Server</string>
    <string name="g_settings_src_local">Local setting</string>
    <string name="g_no_account">No RTM credentials available</string>
@@ -141,6 +141,8 @@
    <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
    <string name="phr_more">More</string>
    <string name="phr_hint">Hint</string>
+   <string name="phr_yes">Yes</string>
+   <string name="phr_no">No</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -467,49 +469,58 @@
    <string name="acc_pref_conn_use_https">Use HTTPS (recommended)</string>
    
    <!-- MolokoPreferences activity -->
-   <string name="moloko_prefs_rtm_title">RTM Settings</string>
-   <string name="moloko_prefs_rtm_summary">Time and date format, default list etc.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click</string>
-   <string name="moloko_prefs_rtm_timezone_title">Timezone</string>
-   <string name="moloko_prefs_rtm_dateformat_title">Date Format</string>
-   <string name="moloko_prefs_rtm_dateformat_eu">European\n(14.02.2000)</string>
-   <string name="moloko_prefs_rtm_dateformat_us">American\n(02/14/2000)</string>
-   <string name="moloko_prefs_rtm_timeformat_title">Time Format</string>
-   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
-   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
-   <string name="moloko_prefs_rtm_defaultlist_title">Default List</string>
-   <string name="moloko_prefs_rtm_language_title">Localization</string>
-   <string name="moloko_prefs_startup_view_title">Start View</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Choose default list&#8230;</string>
-   <string name="moloko_prefs_startup_view_def_list_name">Default list (%1$s)</string>
-   <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
-   <string name="moloko_prefs_startup_view_home">@string/app_home</string>
-   <string name="moloko_prefs_def_sort_title">Sort tasks</string>
-   <string name="moloko_prefs_def_sort_summary">by %s</string>
-   <string name="moloko_prefs_notification_title">Notification</string>
-   <string name="moloko_prefs_notification_summary">Choose notifications, ringtones etc</string>
-   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tasks with due time</string>
-   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
-   <string name="moloko_prefs_notification_tasks_w_due_before_title">Reminders</string>
-   <string name="moloko_prefs_notification_tasks_w_due_before_default_value">@string/fifteen_min_ms</string>
-   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Notification tone</string>
-   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrate</string>
-   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
-   <string name="moloko_prefs_notification_permanent_cat_title">Permanent notifications</string>
-   <string name="moloko_prefs_notification_permanent_today">Tasks due today</string>
-   <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
-   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tasks due today and tomorrow</string>
-   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
-   <string name="moloko_prefs_cat_help_dev_title">Support development</string>
-   <string name="moloko_prefs_acra_title">Enable error reporting</string>
-   <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
-   <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
-   <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
-   <string name="moloko_prefs_send_db_text">Send Moloko database to developers</string>
-   <string name="moloko_prefs_clear_db_text">Clear the database and swipe all data</string>
-   <string name="moloko_about_text">About Moloko</string>
-   <!-- Dialogs -->
+      <!-- RTM settings -->
+	   <string name="moloko_prefs_rtm_title">RTM Settings</string>
+	   <string name="moloko_prefs_rtm_summary">Default list and account settings</string>
+	   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s</string>
+	   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click</string>
+	   <string name="moloko_prefs_rtm_timezone_title">Timezone</string>
+	   <string name="moloko_prefs_rtm_dateformat_title">Date Format</string>
+	   <string name="moloko_prefs_rtm_dateformat_eu">European\n(14.02.2000)</string>
+	   <string name="moloko_prefs_rtm_dateformat_us">American\n(02/14/2000)</string>
+	   <string name="moloko_prefs_rtm_timeformat_title">Time Format</string>
+	   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
+	   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
+	   <string name="moloko_prefs_rtm_defaultlist_title">Default List</string>
+	   <string name="moloko_prefs_rtm_language_title">Localization</string>
+	   
+	   <!-- General settings -->
+	   <string name="moloko_prefs_general_title">General Settings</string>
+	   <string name="moloko_prefs_startup_view_title">Start View</string>
+	   <string name="moloko_prefs_startup_view_def_list_choose">Choose default list&#8230;</string>
+	   <string name="moloko_prefs_startup_view_def_list_name">Default list (%1$s)</string>
+	   <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
+	   <string name="moloko_prefs_startup_view_home">@string/app_home</string>
+	   <string name="moloko_prefs_def_sort_title">Sort tasks</string>
+	   <string name="moloko_prefs_def_sort_summary">by %s</string>
+	   
+	   <!-- Notification settings -->
+	   <string name="moloko_prefs_notification_title">Notifications</string>
+	   <string name="moloko_prefs_notification_summary">Choose notifications, ringtones etc</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tasks with due time</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_before_title">Reminders</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_before_default_value">@string/fifteen_min_ms</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Notification tone</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrate</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
+	   <string name="moloko_prefs_notification_permanent_cat_title">Permanent notifications</string>
+	   <string name="moloko_prefs_notification_permanent_today">Tasks due today</string>
+	   <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
+	   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tasks due today and tomorrow</string>
+	   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
+	   
+	   <!-- Development settings -->
+	   <string name="moloko_prefs_support_dev_title">Support development</string>
+	   <string name="moloko_prefs_acra_title">Enable error reporting</string>
+	   <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
+	   <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
+	   <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
+	   <string name="moloko_prefs_send_db_text">Send Moloko database to developers</string>
+	   <string name="moloko_prefs_clear_db_text">Clear the database and swipe all data</string>
+	   <string name="moloko_about_text">About Moloko</string>
+	   
+      <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Settings are retrieved from the RTM Server</string>
       <string name="moloko_prefs_clear_db_dlg_title">Swipe database</string>
       <string name="moloko_prefs_clear_db_dlg_clearing">Clearing database&#8230;</string>

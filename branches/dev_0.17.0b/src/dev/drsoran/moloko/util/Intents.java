@@ -42,10 +42,10 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.HomeActivity;
-import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.notification.MolokoNotificationService;
+import dev.drsoran.moloko.prefs.activities.MainPreferencesActivity;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
@@ -503,7 +503,7 @@ public final class Intents
    
    public final static Intent createOpenPreferencesIntent( Context context )
    {
-      return new Intent( context, MolokoPreferencesActivity.class );
+      return new Intent( context, MainPreferencesActivity.class );
    }
    
    

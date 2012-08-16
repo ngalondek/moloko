@@ -125,6 +125,8 @@
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
    <string name="phr_more">More</string>
    <string name="phr_hint">Hint</string>
+   <string name="phr_yes">Yes</string>
+   <string name="phr_no">No</string>
 
    <!-- Global errors -->
    <string name="err_error">Erreur</string>
@@ -418,44 +420,53 @@
    <string name="acc_pref_conn_use_https">Utiliser HTTPS (recommendé)</string>
 
    <!-- MolokoPreferences activity -->
-   <string name="moloko_prefs_rtm_title">Paramètres RTM</string>
-   <string name="moloko_prefs_rtm_summary">Format d\'heure et de date, liste par défaut etc.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupérés du serveur pour la dernière fois le %1$s</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur</string>
-   <string name="moloko_prefs_rtm_timezone_title">Fuseau horaire</string>
-   <string name="moloko_prefs_rtm_dateformat_title">Format de la date</string>
-   <string name="moloko_prefs_rtm_dateformat_eu">Européen\n(14.02.2000)</string>
-   <string name="moloko_prefs_rtm_dateformat_us">Américain\n(02/14/2000)</string>
-   <string name="moloko_prefs_rtm_timeformat_title">Format de l\'heure</string>
-   <string name="moloko_prefs_rtm_defaultlist_title">Liste par défaut</string>
-   <string name="moloko_prefs_rtm_language_title">Langue</string>
-   <string name="moloko_prefs_startup_view_title">Start View</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Choisir la liste par défaut&#8230;</string>
-   <string name="moloko_prefs_startup_view_def_list_name">Liste par défaut (%1$s)</string>
-   <string name="moloko_prefs_def_sort_title">Trier les tâches</string>
-   <string name="moloko_prefs_def_sort_summary">par %s</string>
-   <string name="moloko_prefs_notification_title">Notification</string>
-   <string name="moloko_prefs_notification_summary">Choisir les notification, sonneries, etc.</string>
-   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tâches avec une échéance</string>
-   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
-   <string name="moloko_prefs_notification_tasks_w_due_before_title">Rappels</string>
-   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Sonnerie de notification</string>
-   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibreur</string>
-   <string name="moloko_prefs_notification_tasks_w_due_led_title">Statut de la LED</string>
-   <string name="moloko_prefs_notification_permanent_cat_title">Notifications permanentes</string>
-   <string name="moloko_prefs_notification_permanent_today">Tâches à faire aujourd\'hui</string>
-   <string name="moloko_prefs_notification_permanent_tomorrow">Tâches à faire demain</string>
-   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tâches à faire aujourd\'hui et demain</string>
-   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Rappeler les tâches en retard</string>
-   <string name="moloko_prefs_cat_help_dev_title">Aider le développement</string>
-   <string name="moloko_prefs_acra_title">Activer les rapports d\'erreurs</string>
-   <string name="moloko_prefs_acra_summary_on">Nous vous remercions d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
-   <string name="moloko_prefs_acra_summary_off">S\'il vous plait, veuillez activer l\'envoi de rapports d\'erreurs à l\'équipe de développement</string>
-   <string name="moloko_prefs_send_log_text">Envoyer le rapport d\'erreurs de Moloko à l\'équipe de développement</string>
-   <string name="moloko_prefs_send_db_text">Envoyer la base de données à l\'équipe de développement</string>
-   <string name="moloko_prefs_clear_db_text">Effacer la base de données et supprimer toutes les données</string>
-   <string name="moloko_about_text">À propos de Moloko</string>
-   <!-- Dialogs -->
+      <!-- RTM settings -->
+	   <string name="moloko_prefs_rtm_title">Paramètres RTM</string>
+	   <string name="moloko_prefs_rtm_summary">Default list and account settings</string>
+	   <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupérés du serveur pour la dernière fois le %1$s</string>
+	   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur</string>
+	   <string name="moloko_prefs_rtm_timezone_title">Fuseau horaire</string>
+	   <string name="moloko_prefs_rtm_dateformat_title">Format de la date</string>
+	   <string name="moloko_prefs_rtm_dateformat_eu">Européen\n(14.02.2000)</string>
+	   <string name="moloko_prefs_rtm_dateformat_us">Américain\n(02/14/2000)</string>
+	   <string name="moloko_prefs_rtm_timeformat_title">Format de l\'heure</string>
+	   <string name="moloko_prefs_rtm_defaultlist_title">Liste par défaut</string>
+	   <string name="moloko_prefs_rtm_language_title">Langue</string>
+	   
+	   <!-- General settings -->
+	   <string name="moloko_prefs_general_title">General Settings</string>
+	   <string name="moloko_prefs_startup_view_title">Start View</string>
+	   <string name="moloko_prefs_startup_view_def_list_choose">Choisir la liste par défaut&#8230;</string>
+	   <string name="moloko_prefs_startup_view_def_list_name">Liste par défaut (%1$s)</string>
+	   <string name="moloko_prefs_def_sort_title">Trier les tâches</string>
+	   <string name="moloko_prefs_def_sort_summary">par %s</string>
+	   
+	   <!-- Notification settings -->
+	   <string name="moloko_prefs_notification_title">Notification</string>
+	   <string name="moloko_prefs_notification_summary">Choisir les notification, sonneries, etc.</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tâches avec une échéance</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_before_title">Rappels</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Sonnerie de notification</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibreur</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_led_title">Statut de la LED</string>
+	   <string name="moloko_prefs_notification_permanent_cat_title">Notifications permanentes</string>
+	   <string name="moloko_prefs_notification_permanent_today">Tâches à faire aujourd\'hui</string>
+	   <string name="moloko_prefs_notification_permanent_tomorrow">Tâches à faire demain</string>
+	   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tâches à faire aujourd\'hui et demain</string>
+	   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Rappeler les tâches en retard</string>
+
+	   <!-- Development settings -->	   
+	   <string name="moloko_prefs_support_dev_title">Aider le développement</string>
+	   <string name="moloko_prefs_acra_title">Activer les rapports d\'erreurs</string>
+	   <string name="moloko_prefs_acra_summary_on">Nous vous remercions d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
+	   <string name="moloko_prefs_acra_summary_off">S\'il vous plait, veuillez activer l\'envoi de rapports d\'erreurs à l\'équipe de développement</string>
+	   <string name="moloko_prefs_send_log_text">Envoyer le rapport d\'erreurs de Moloko à l\'équipe de développement</string>
+	   <string name="moloko_prefs_send_db_text">Envoyer la base de données à l\'équipe de développement</string>
+	   <string name="moloko_prefs_clear_db_text">Effacer la base de données et supprimer toutes les données</string>
+	   <string name="moloko_about_text">À propos de Moloko</string>
+	   
+      <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Les paramètres ont été récupérés du serveur RTM</string>
       <string name="moloko_prefs_clear_db_dlg_title">Effacer la base de données</string>
       <string name="moloko_prefs_clear_db_dlg_clearing">Effacement de la base de données&#8230;</string>

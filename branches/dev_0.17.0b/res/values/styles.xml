@@ -96,11 +96,6 @@
 
     <!-- ListStyle -->
 
-    <style name="ForceWhiteListViewStyle" parent="@android:style/Widget.ListView">
-        <item name="android:background">@android:color/white</item>
-        <item name="android:cacheColorHint">@android:color/white</item>
-    </style>
-
     <style name="ExpandableListViewStyle" parent="@android:style/Widget.ExpandableListView">
         <item name="android:childDivider">@android:drawable/divider_horizontal_bright</item>
         <item name="android:groupIndicator">@null</item>

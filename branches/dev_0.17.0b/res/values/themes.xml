@@ -35,14 +35,6 @@
     </style>
     
     <style name="Theme.Moloko" parent="@style/Theme.__Moloko" />
-
-    <style name="Theme.Moloko.Preferences">
-        <item name="android:windowNoTitle">false</item>
-        <item name="android:windowTitleStyle">@style/WindowTitleStyle</item>
-
-        <!-- Widgets -->
-        <item name="android:listViewStyle">@style/ForceWhiteListViewStyle</item>
-    </style>
     
     <style name="Theme.Moloko.NoTitle">
 

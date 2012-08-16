@@ -36,8 +36,7 @@
             android:inputType="textNoSuggestions" />
 
         <ListView
-            android:id="@android:id/list"
-            style="@style/ForceWhiteListViewStyle"
+            android:id="@android:id/list"            
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/change_tags_fragment_edit"

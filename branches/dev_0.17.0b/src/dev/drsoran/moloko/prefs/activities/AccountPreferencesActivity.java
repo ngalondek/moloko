@@ -20,21 +20,16 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.auth;
+package dev.drsoran.moloko.prefs.activities;
 
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import dev.drsoran.moloko.R;
 
 
-public class AccountPreferencesActivity extends PreferenceActivity
+public class AccountPreferencesActivity extends PreHoneycombPreferencesActivity
 {
    @Override
-   protected void onCreate( Bundle savedInstanceState )
+   protected int getPreferencesResource()
    {
-      super.onCreate( savedInstanceState );
-      
-      addPreferencesFromResource( R.xml.account_preferences_activity );
+      return R.xml.account_preferences;
    }
-   
 }

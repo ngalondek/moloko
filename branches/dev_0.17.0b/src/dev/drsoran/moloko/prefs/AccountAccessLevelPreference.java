@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.prefs.auth;
+package dev.drsoran.moloko.prefs;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -41,7 +41,6 @@ import android.view.View;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
-import dev.drsoran.moloko.prefs.InfoTextPreference;
 import dev.drsoran.moloko.util.AccountUtils;
 
 

@@ -176,7 +176,7 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
    public SwappableArrayAdapter< Contact > createListAdapter()
    {
       return new ContactsListAdapter( getSherlockActivity(),
-                                      R.layout.contactslist_activity_listitem );
+                                      R.layout.contactslist_fragment_listitem );
    }
    
    

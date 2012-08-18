@@ -22,10 +22,7 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.List;
-
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 
@@ -60,7 +57,6 @@ public abstract class MolokoMultiChoiceModalListFragment< D > extends
          {
             molokoListView.setActionModeSupport( new IActionModeSupport()
             {
-               
                @Override
                public ActionMode startActionMode( IMolokoMultiChoiceModeListener callback )
                {
@@ -105,14 +101,6 @@ public abstract class MolokoMultiChoiceModalListFragment< D > extends
    public int getChoiceMode()
    {
       return MolokoListView.CHOICE_MODE_MULTIPLE_MODAL;
-   }
-   
-   
-   
-   @Override
-   public void onLoaderReset( Loader< List< D >> loader )
-   {
-      super.onLoaderReset( loader );
    }
    
    

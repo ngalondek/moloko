@@ -24,11 +24,10 @@ package dev.drsoran.moloko.prefs;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.AttributeSet;
+import android.view.View;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 
 
 class AboutPreference extends InfoTextPreference
@@ -44,27 +43,14 @@ class AboutPreference extends InfoTextPreference
    @Override
    protected void onClick()
    {
-      // TODO: Try using AboutMolokoDialogFragment if PreferenceFragment is supported by ActionBarSherlock
-      
       final Context context = getContext();
+      final View contentView = AboutMolokoDialogFragment.inflateAboutContent( context );
       
-      try
-      {
-         Spanned message = Html.fromHtml( context.getString( R.string.moloko_about_info,
-                                                             context.getPackageManager()
-                                                                    .getPackageInfo( context.getPackageName(),
-                                                                                     0 ).versionName ) );
-         
-         new AlertDialog.Builder( context ).setIcon( R.drawable.ic_prefs_info )
-                                           .setTitle( R.string.moloko_about_text )
-                                           .setMessage( message )
-                                           .setPositiveButton( context.getString( R.string.phr_ok ),
-                                                               null )
-                                           .show();
-      }
-      catch ( NameNotFoundException e )
-      {
-         
-      }
+      new AlertDialog.Builder( context ).setIcon( R.drawable.ic_prefs_info )
+                                        .setTitle( R.string.moloko_about_text )
+                                        .setView( contentView )
+                                        .setPositiveButton( context.getString( R.string.phr_ok ),
+                                                            null )
+                                        .show();
    }
 }

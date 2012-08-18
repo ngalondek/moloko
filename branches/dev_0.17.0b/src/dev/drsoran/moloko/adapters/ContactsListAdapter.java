@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,9 +40,6 @@ import dev.drsoran.rtm.Contact;
 
 public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
 {
-   private final static String TAG = "Moloko."
-      + ContactsListAdapter.class.getName();
-   
    private final Context context;
    
    private final int resourceId;
@@ -71,28 +67,13 @@ public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
          convertView = inflater.inflate( resourceId, parent, false );
       }
       
-      ImageView picture;
-      TextView fullname;
-      TextView username;
-      TextView numSharedTasks;
-      View callButton;
-      
-      try
-      {
-         picture = (ImageView) convertView.findViewById( R.id.contactslist_listitem_contact_pic );
-         fullname = (TextView) convertView.findViewById( R.id.contactslist_listitem_fullname );
-         username = (TextView) convertView.findViewById( R.id.contactslist_listitem_username );
-         numSharedTasks = (TextView) convertView.findViewById( R.id.contactslist_listitem_num_shared );
-         callButton = convertView.findViewById( R.id.contactslist_listitem_btn_call );
-      }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
-      }
+      final ImageView picture = (ImageView) convertView.findViewById( R.id.contactslist_listitem_contact_pic );
+      final TextView fullname = (TextView) convertView.findViewById( R.id.contactslist_listitem_fullname );
+      final TextView username = (TextView) convertView.findViewById( R.id.contactslist_listitem_username );
+      final TextView numSharedTasks = (TextView) convertView.findViewById( R.id.contactslist_listitem_num_shared );
+      final View callButton = convertView.findViewById( R.id.contactslist_listitem_btn_call );
       
       final Contact contact = getItem( position );
-      
       final Bitmap photo = contact.getPhoto();
       
       if ( photo != null )
@@ -115,7 +96,6 @@ public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
                                                               ? setCallButton( callButton,
                                                                                contact )
                                                               : View.GONE );
-      
       return convertView;
    }
    

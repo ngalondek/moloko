@@ -266,6 +266,9 @@
         <item name="android:textColor">@color/app_dlg_due_picker_weekday</item>
         <item name="android:singleLine">true</item>
     </style>
+    
+    <style name="Dlg_About_Moloko_TextAppearence" parent="@android:style/TextAppearance.Theme.Dialog">        
+    </style>
 
     <!-- ********* -->
     <!-- Home -->
@@ -348,7 +351,7 @@
     <style name="NotificationStackCount">
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
-
+    
     <!-- ********* -->
     <!-- Error -->
 

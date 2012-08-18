@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
       free software: you can redistribute it and/or modify it under the terms of
       the GNU General Public License as published by the Free Software
       Foundation, either version 3 of the License, or (at your option) any later
@@ -19,7 +19,8 @@
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
    android:baselineAligned="false"
-   android:orientation="horizontal">
+   android:orientation="horizontal"
+   android:descendantFocusability="blocksDescendants">
 
    <RelativeLayout
       android:layout_width="0dip"
@@ -44,7 +45,7 @@
          android:layout_toRightOf="@id/contactslist_listitem_contact_pic"
          android:layout_alignTop="@id/contactslist_listitem_contact_pic"
          android:layout_marginLeft="5dip"
-         android:text="fullname" />
+         android:text="@string/design_text" />
 
       <TextView
          android:id="@+id/contactslist_listitem_username"
@@ -54,7 +55,7 @@
          android:layout_below="@id/contactslist_listitem_fullname"
          android:layout_alignLeft="@id/contactslist_listitem_fullname"
          android:layout_marginTop="3dip"
-         android:text="username" />
+         android:text="@string/design_text" />
 
       <TextView
          android:id="@+id/contactslist_listitem_num_shared"
@@ -64,8 +65,7 @@
          android:layout_below="@id/contactslist_listitem_username"
          android:layout_alignLeft="@id/contactslist_listitem_fullname"
          android:layout_marginTop="3dip"
-         android:text="num_shared" />
-
+         android:text="@string/design_text" />
    </RelativeLayout>
 
    <LinearLayout
@@ -79,14 +79,16 @@
          android:layout_width="1dip"
          android:layout_marginTop="2dip"
          android:layout_marginBottom="2dip" />
+      
+      <ImageButton
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_gravity="right"
+          android:layout_marginLeft="?android:attr/scrollbarSize"
+          android:layout_marginRight="?android:attr/scrollbarSize"
+          android:background="@drawable/abs__item_background_holo_light"
+          android:scaleType="center"
+          android:src="@drawable/ic_list_contactslist_call" />
 
-      <ImageView
-         android:layout_width="32dip"
-         android:layout_height="32dip"
-         android:layout_gravity="center"
-         android:layout_marginLeft="?android:attr/scrollbarSize"
-         android:layout_marginRight="?android:attr/scrollbarSize"
-         android:src="@drawable/ic_list_contactslist_call"
-         android:scaleType="fitXY" />
    </LinearLayout>
 </LinearLayout>

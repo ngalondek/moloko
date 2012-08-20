@@ -86,15 +86,15 @@ public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
    
    public void swap( List< T > newData )
    {
-      setNotifyOnChange( false );
-      
       clear();
+      
+      setNotifyOnChange( false );
       for ( T data : newData )
       {
          add( data );
       }
-      
       setNotifyOnChange( true );
+      
       notifyDataSetChanged();
    }
    

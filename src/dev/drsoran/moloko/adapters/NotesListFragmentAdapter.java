@@ -68,7 +68,17 @@ public class NotesListFragmentAdapter extends
    @Override
    public long getItemId( int position )
    {
-      return Long.parseLong( getItem( position ).getId() );
+      // Note: We handle the case for queries out of bounds because the
+      // Android runtime asks us for invalid positions if the last element
+      // is removed and we get a changed data set.
+      if ( position < getCount() )
+      {
+         return Long.parseLong( getItem( position ).getId() );
+      }
+      else
+      {
+         return -1;
+      }
    }
    
    

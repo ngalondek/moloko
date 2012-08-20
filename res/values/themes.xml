@@ -29,9 +29,6 @@
         <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>
         <item name="clearButtonStyle">@style/ClearButtonStyle</item>
         <item name="simpleLineStyle">@style/SimpleLine_Default</item>
-
-        <!-- ButtonBar -->
-        <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>
     </style>
     
     <style name="Theme.Moloko" parent="@style/Theme.__Moloko" />
@@ -57,7 +54,7 @@
         <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
     </style>
         
-    <style name="Theme.Moloko.TasksList">
+    <style name="Theme.Moloko.__TasksList">
         
         <!-- ActionBar -->
         <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
@@ -66,6 +63,9 @@
         
         <!-- Widgets -->
         <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>
+    </style>
+    
+    <style name="Theme.Moloko.TasksList" parent="@style/Theme.Moloko.__TasksList">
     </style>
 
     <style name="Theme.Moloko.Task">

@@ -11,21 +11,23 @@
       details. You should have received a copy of the GNU General Public
       License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
--->
+      implementation-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".actionmodes.QuickAddTaskActionModeCallback" >
 
     <dev.drsoran.moloko.widgets.RtmSmartAddTextView
+        style="@style/RtmSmartAddTextViewStyle"
         android:id="@+id/quick_add_task_edit"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginLeft="3dip"
         android:layout_marginRight="3dip"
         android:layout_marginTop="3dip"
         android:hint="@string/quick_add_task_hint"
         android:imeOptions="actionDone"
-        android:inputType="text|textAutoComplete|textCapSentences"/>
+        android:inputType="text|textAutoComplete|textCapSentences" />
 
 </LinearLayout>

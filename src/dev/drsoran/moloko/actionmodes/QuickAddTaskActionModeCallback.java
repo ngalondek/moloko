@@ -68,7 +68,7 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      final Context context = activity.getSupportActionBar().getThemedContext();
+      final Context context = activity;
       final View quickAddTaskInputView = LayoutInflater.from( context )
                                                        .inflate( R.layout.quick_add_task_action_mode,
                                                                  null );
@@ -79,6 +79,8 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
       
       quickAddTaskInputHandler = new QuickAddTaskActionModeInputHandler( context,
                                                                          quickAddTaskInput );
+      
+      mode.getMenuInflater().inflate( R.menu.quick_add_task_actionmode, menu );
       
       showButtomButtonBar();
       
@@ -99,7 +101,15 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    @Override
    public boolean onActionItemClicked( ActionMode mode, MenuItem item )
    {
-      return false;
+      switch ( item.getItemId() )
+      {
+         case R.id.menu_quick_add_task:
+            onInputCommitted();
+            return true;
+            
+         default :
+            return false;
+      }
    }
    
    
@@ -164,12 +174,7 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
          {
             if ( UIUtils.hasInputCommitted( actionId ) )
             {
-               if ( activity instanceof IQuickAddTaskActionModeListener )
-               {
-                  final QuickAddTaskActionModeInputHandler handler = QuickAddTaskActionModeCallback.this.quickAddTaskInputHandler;
-                  ( (IQuickAddTaskActionModeListener) activity ).onQuickAddAddNewTask( handler.getNewTaskConfig() );
-               }
-               
+               onInputCommitted();
                return true;
             }
             
@@ -183,5 +188,15 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    private void disconnectFromCommitInput()
    {
       quickAddTaskInput.setOnEditorActionListener( null );
+   }
+   
+   
+   
+   private void onInputCommitted()
+   {
+      if ( activity instanceof IQuickAddTaskActionModeListener )
+      {
+         ( (IQuickAddTaskActionModeListener) activity ).onQuickAddAddNewTask( quickAddTaskInputHandler.getNewTaskConfig() );
+      }
    }
 }

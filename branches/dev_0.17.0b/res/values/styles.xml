@@ -80,10 +80,6 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="BottomButtonBarStyle">
-        <item name="android:background">@color/app_buttonbar_bgnd</item>
-    </style>
-
     <style name="No_List_Elements_Text" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/priority_2</item>
         <item name="android:textStyle">italic|bold</item>
@@ -111,6 +107,12 @@
 
     <style name="AutoCompleteTextViewStyle" parent="@android:style/Widget.AutoCompleteTextView">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+    
+    <!-- RtmSmartAdd -->
+    
+    <style name="RtmSmartAddTextViewStyle" parent="@style/AutoCompleteTextViewStyle">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>        
     </style>
 
     <!-- TextWith...Styles -->

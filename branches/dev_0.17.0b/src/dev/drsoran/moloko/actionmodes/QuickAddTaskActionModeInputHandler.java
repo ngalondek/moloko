@@ -96,6 +96,8 @@ class QuickAddTaskActionModeInputHandler
    {
       final int pos = Selection.getSelectionStart( addTaskEdit.getText() );
       insertOperatorAtPosition( operator, pos );
+      
+      addTaskEdit.requestFocus();
    }
    
    

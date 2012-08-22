@@ -17,17 +17,17 @@
     <item
         android:id="@id/menu_complete_selected_tasks"
         android:icon="@drawable/ic_menu_complete"
-        android:showAsAction="always|withText"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/app_task_complete"/>
     <item
         android:id="@id/menu_uncomplete_selected_tasks"
         android:icon="@drawable/ic_menu_incomplete"
-        android:showAsAction="always|withText"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/app_task_uncomplete"/>
     <item
         android:id="@id/menu_postpone_selected_tasks"
         android:icon="@drawable/ic_menu_postponed"
-        android:showAsAction="always|withText"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/app_task_postpone"/>
     <item
         android:id="@id/menu_delete_selected"

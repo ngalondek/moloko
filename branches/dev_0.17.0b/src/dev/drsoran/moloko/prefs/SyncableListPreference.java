@@ -26,6 +26,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -217,8 +218,9 @@ abstract class SyncableListPreference extends AutoSummaryListPreference
       
       if ( drawables[ 0 ] != null )
       {
-         drawable = new BitmapDrawable( getContext().getResources()
-                                                    .openRawResource( resId ) );
+         final Resources resources = getContext().getResources();
+         drawable = new BitmapDrawable( resources,
+                                        resources.openRawResource( resId ) );
          
          if ( drawable != null )
             drawable.setBounds( drawables[ 0 ].getBounds() );

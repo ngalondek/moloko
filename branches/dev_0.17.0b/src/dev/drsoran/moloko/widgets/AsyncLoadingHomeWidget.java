@@ -37,14 +37,30 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
    private AsyncTask< Void, Void, Integer > query;
    
    
-
+   
+   public AsyncLoadingHomeWidget( Context context, AttributeSet attrs,
+      int defStyle )
+   {
+      super( context, attrs, defStyle );
+   }
+   
+   
+   
    public AsyncLoadingHomeWidget( Context context, AttributeSet attrs )
    {
       super( context, attrs );
    }
    
-
-
+   
+   
+   public AsyncLoadingHomeWidget( Context context )
+   {
+      super( context );
+   }
+   
+   
+   
+   @Override
    public void stop()
    {
       if ( query != null )
@@ -53,8 +69,8 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
       query = null;
    }
    
-
-
+   
+   
    protected void asyncReload()
    {
       if ( query != null )
@@ -74,8 +90,8 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
             return doBackgroundQuery();
          }
          
-
-
+         
+         
          @Override
          protected void onPostExecute( Integer result )
          {
@@ -89,8 +105,8 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
       }.execute();
    }
    
-
-
+   
+   
    protected void asyncReloadWithoutSpinner()
    {
       if ( query != null )
@@ -110,8 +126,8 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
             return doBackgroundQuery();
          }
          
-
-
+         
+         
          @Override
          protected void onPostExecute( Integer result )
          {
@@ -122,12 +138,12 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
       }.execute();
    }
    
-
-
+   
+   
    protected abstract Integer doBackgroundQuery();
    
-
-
+   
+   
    protected void handleAsyncResult( View v, Integer c )
    {
       if ( c != null )

@@ -36,21 +36,21 @@ public final class LogUtils
    public final static String DB_READ_ONLY_ERROR = "Cannot modify the RTM database with read only permission level";
    
    
-
+   
    private LogUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   
    public final static < T > String toTag( Class< T > c )
    {
       return "Moloko." + c.getSimpleName();
    }
    
-
-
+   
+   
    public final static void logDBError( Context context,
                                         String tag,
                                         String entity )
@@ -58,8 +58,8 @@ public final class LogUtils
       logDBError( context, tag, entity, null );
    }
    
-
-
+   
+   
    public final static void logDBError( Context context,
                                         String tag,
                                         String entity,
@@ -72,6 +72,6 @@ public final class LogUtils
       else
          Log.e( tag, message );
       
-      Toast.makeText( context, message, Toast.LENGTH_SHORT );
+      Toast.makeText( context, message, Toast.LENGTH_SHORT ).show();
    }
 }

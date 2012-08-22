@@ -34,7 +34,7 @@
       android:layout_toRightOf="@id/taskslist_listitem_check"
       android:layout_alignTop="@id/taskslist_listitem_check"
       android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
-      android:text="task_desc"
+      android:text="@string/design_text"
       android:focusable="false" />
 
    <dev.drsoran.moloko.layouts.WrappingLayout
@@ -55,7 +55,7 @@
          style="@style/TasksList_ListItem_ListName"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:text="list_name" />
+         android:text="@string/design_text" />
 
       <TextView
          android:id="@+id/taskslist_listitem_location"
@@ -63,7 +63,7 @@
          style="@style/TasksList_ListItem_Location"
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
-         android:text="location_name" />
+         android:text="@string/design_text" />
    </dev.drsoran.moloko.layouts.WrappingLayout>
 
    <LinearLayout
@@ -106,7 +106,7 @@
          style="@style/TasksList_ListItem_DueDate"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:text="due_date"
+         android:text="@string/design_text"
          android:singleLine="true"
          android:focusable="false" />
    </LinearLayout>

@@ -22,7 +22,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignRight="@+id/note_title"
-      android:text="Created_Date" />
+      android:text="@string/design_text" />
 
    <dev.drsoran.moloko.widgets.ClearableEditText
       android:id="@+id/note_title"

@@ -14,7 +14,7 @@
       android:layout_marginLeft="2dip"
       android:layout_marginRight="5dip"
       android:layout_alignParentLeft="true"
-      android:text="wkd" />
+      android:text="@string/design_text" />
 
    <TextView
       android:id="@id/due_dlg_value"
@@ -23,5 +23,5 @@
       android:layout_height="wrap_content"
       android:layout_alignParentRight="true"
       android:layout_centerVertical="true"
-      android:text="value" />
+      android:text="@string/design_text" />
 </RelativeLayout>

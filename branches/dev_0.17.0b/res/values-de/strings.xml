@@ -28,9 +28,7 @@
 	<string name="app_account_preferences">Kontoeinstellungen</string>
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
-   <string name="app_task_edit_multiple">%1$d %2$s bearbeiten</string>
    <string name="app_task_add">Neue Aufgabe</string>
-   <string name="app_task_select_multiple">Aufgaben wählen (%1$d)</string>
    <string name="app_task_complete">Erledigt</string>
    <string name="app_task_uncomplete">Unerledigt</string>
    <string name="app_task_postpone">Schieben</string>
@@ -41,7 +39,6 @@
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
-   <string name="app_sort_selection">Auswahl</string>
    <string name="app_save">Speichern</string>
    <string name="app_startup">Starte Moloko &#8230;</string>
    <string name="app_selected_count">%1$d ausgewählt</string>
@@ -111,16 +108,12 @@
    <string name="phr_tomorrow">Morgen</string>
    <string name="phr_tomorrow_with_date">Morgen, der %1$s</string>
    <string name="phr_yesterday">Gestern</string>
-   <string name="phr_yesterday_with_date">Gestern, der %1$s</string>
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
-   <string name="phr_open_with_name">Öffne \'%1$s\'</string>
-   <string name="phr_edit_with_name">Bearbeite \'%1$s\'</string>
    <string name="phr_delete_with_name">Lösche \'%1$s\'</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
    <string name="phr_nothing">nichts</string>
    <string name="phr_do_sync">Synchronisieren</string>   
-   <string name="phr_cancel_sync">Synchronisierung abbrechen</string>
    <string name="phr_on">An</string>
    <string name="phr_off">Aus</string>
    <string name="phr_manuell">Manuell</string>
@@ -128,7 +121,6 @@
    <string name="phr_loading">Lädt gerade&#8230;</string>
    <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
-   <string name="phr_more">Mehr</string>
    <string name="phr_hint">Hinweis</string>
    <string name="phr_yes">Ja</string>
    <string name="phr_no">Nein</string>
@@ -147,7 +139,6 @@
 	<string name="btn_cancel">Abbrechen</string>
 	<string name="btn_new_account">Neues Konto</string>
    <string name="btn_account_settings">Konto</string>
-   <string name="btn_edit">Bearbeiten</string>
    <string name="btn_complete">Erledigt</string>
    <string name="btn_uncomplete">Unerledigt</string>
    <string name="btn_postpone">Aufschieben</string>
@@ -161,11 +152,10 @@
    <string name="menu_opt_select_all_male">Alle</string>
    <string name="menu_opt_deselect_all_male">Keiner</string>
    <string name="menu_opt_deselect_all_female">Keine</string>
-   <string name="menu_opt_deselect_all_mainly">Keines</string>
    <string name="menu_opt_inv_selection">Umkehren</string>
    <string name="menu_opt_sort">Sortieren</string>
 
-   <!-- Global Dialogs -->   
+   <!-- Global Dialogs -->
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>
@@ -304,11 +294,6 @@
 	<!-- AbstractTasksList fragment -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
 	  <!-- Menus -->
-     <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
-     <string name="abstaskslist_listitem_ctx_complete_task">Erledigt \'%1$s\'</string>
-     <string name="abstaskslist_listitem_ctx_uncomplete_task">Unerledigt \'%1$s\'</string>
-     <string name="abstaskslist_listitem_ctx_postpone_task">Schiebe \'%1$s\' auf</string>
-	  <string name="abstaskslist_listitem_ctx_open_list">Liste \'%1$s\' öffnen</string>
      <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort \'%1$s\'</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">und</string>
@@ -321,9 +306,12 @@
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Morgen fällig</string>
    <string name="taskslist_actionbar_subtitle_overdue">Überfällig</string>
    <string name="taskslist_actionbar_subtitle_completed">Erledigt</string>
-   <string name="taskslist_actionbar_subtitle_incomplete">Unerledigt</string>
-     <!-- Menus -->
-     <string name="taskslist_menu_opt_delete_list">Liste löschen</string>
+      <!-- Menus -->
+      <string name="select_multiple_tasks_menu_opt_do_edit">%1$d bearbeiten</string>
+      <string name="select_multiple_tasks_menu_opt_complete">%1$d erledigt</string>
+      <string name="select_multiple_tasks_menu_opt_uncomplete">%1$d unerledigt</string>
+      <string name="select_multiple_tasks_menu_opt_postpone">%1$d aufschieben</string>
+      <string name="select_multiple_tasks_menu_opt_delete">%1$d löschen</string>      
 	
    <!-- TaskSearchResult fragment -->
    <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">Such-Syntax.&lt;/a></string>
@@ -332,17 +320,6 @@
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Der Suchverlauf wurde gelöscht</string>
-     
-   <!-- SelectMultipleTasks fragment -->
-      <string name="select_multiple_tasks_sort_selection">Auswahl</string>
-      <!-- Menus -->
-      <string name="select_multiple_tasks_menu_opt_do_edit">%1$d bearbeiten</string>
-      <string name="select_multiple_tasks_menu_opt_complete">%1$d erledigt</string>
-      <string name="select_multiple_tasks_menu_opt_uncomplete">%1$d unerledigt</string>
-      <string name="select_multiple_tasks_menu_opt_postpone">%1$d aufschieben</string>
-      <string name="select_multiple_tasks_menu_opt_delete">%1$d löschen</string>
-      <string name="select_multiple_tasks_menu_ctx_select">Markiere %1$s</string>
-      <string name="select_multiple_tasks_menu_ctx_deselect">Entferne Markierung von %1$s</string>
   
    <!-- NoteEdit fragment -->
    <string name="note_edit_title_hint">Titel der Notiz</string>
@@ -363,8 +340,7 @@
       <!-- Menus -->
       <string name="contactslist_listitem_show_phonebook_contact">Details von %1$s</string>
       
-   <!-- Authenticator activity -->
-   <string name="auth_permission_label">Berechtigung</string>
+   <!-- Authenticator fragment -->
    <string name="auth_permission_choose">Berechtigung wählen</string>
    <string name="auth_info_text">Bitte bestätigen Sie Ihre Zugriffsberechtigung. Ihr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>
    <string name="auth_completing">Erstelle lokales Konto.</string>
@@ -406,20 +382,16 @@
                                              Die Hintergrund-Synchronisation findet bei allen Zugriffsarten statt. Wenngleich im Modus \'Lesen\' Daten nur vom RTM-Server geholt
                                              werden.\n\nSie können den Zugriff jederzeit ändern, indem Sie das RTM-Konto auf diesem Gerät löschen und ein neues Konto mit der
                                              neuen Zugriffsebene anlegen.</string>
-      <!-- Toasts -->
-      <string name="auth_toast_err_weblogin">Beim Aufrufen der RTM-Authentifizierungsseite ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
       <!-- Errors -->
       <string name="auth_err_with_cause">Fehler beim Erstellen des Kontos. Grund: %1$s</string>
       <string name="auth_err_cause_inv_auth_token">Ungüliges Auth-Token empfangen</string>
       <string name="auth_err_cause_scurity">Sicherheitsverletzung. </string>
       <string name="auth_err_cause_inv_login_url">Ungültige Login-URL empfangen</string>
-      <string name="auth_err_cause_no_service">Es trat ein Fehler beim Erstellen der RTM-Service Verbindung auf</string>
       
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">Allgemeine Einstellungen</string>
    <string name="acc_pref_account_summary">Synchronisierung, HTTP(S) Einstellungen</string>
-   <string name="acc_pref_sync_interval_title">Synchronisierung</string>
-   <string name="acc_pref_perm_title">Zugriffsebene</string>
+   <string name="acc_pref_sync_interval_title">Synchronisierung</string>   
    <string name="acc_pref_perm_value">%1$s - zum Ändern klicken</string>    
    <string name="acc_pref_perm_has_not">Keine Zugangsberechtigung</string>
    <string name="acc_pref_conn_cat_title">Verbindung</string>
@@ -428,18 +400,9 @@
    <!-- MolokoPreferences activity -->
       <!-- RTM settings -->
 	   <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
-	   <string name="moloko_prefs_rtm_summary">Standardliste und Kontoeinstellungen</string>
 	   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen</string>
 	   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken</string>
-	   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
-	   <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
-	   <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>
-	   <string name="moloko_prefs_rtm_dateformat_us">Amerikanisch\n(02/14/2000)</string>
-	   <string name="moloko_prefs_rtm_timeformat_title">Zeitformat</string>
-	   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
-	   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
 	   <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
-	   <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
 	
 	   <!-- General settings -->
 	   <string name="moloko_prefs_general_title">Allgemeine Einstellungen</string>
@@ -450,8 +413,7 @@
 	   <string name="moloko_prefs_def_sort_summary">nach %s</string>
 	   
 	   <!-- Notification settings -->
-	   <string name="moloko_prefs_notification_title">Benachrichtigungen</string>
-	   <string name="moloko_prefs_notification_summary">Benachrichtigungen wählen, Töne u.s.w.</string>
+	   <string name="moloko_prefs_notification_title">Benachrichtigungen</string>	   
 	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Aufgaben mit Fälligkeitszeit</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigen</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_before_title">Erinnerung</string>

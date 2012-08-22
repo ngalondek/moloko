@@ -244,6 +244,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    
    
    
+   @SuppressWarnings( "deprecation" )
    @Override
    public Notification build()
    {

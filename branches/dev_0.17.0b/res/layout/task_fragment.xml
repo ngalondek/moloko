@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="Added_Date" />
+                    android:text="@string/design_text" />
 
                 <TextView
                     android:id="@+id/task_overview_completed_date"
@@ -45,7 +45,7 @@
                     android:layout_marginTop="3dip"
                     android:drawableLeft="@drawable/ic_small_green_check"
                     android:drawablePadding="2dip"
-                    android:text="Completed_Date" />
+                    android:text="@string/design_text" />
 
                 <RelativeLayout
                     android:id="@+id/task_overview_status_container"
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignWithParentIfMissing="true"
                     android:layout_below="@id/task_overview_status_container"
-                    android:text="Task_Desc" />
+                    android:text="@string/design_text" />
 
                 <TextView
                     android:id="@+id/task_overview_list_name"
@@ -93,7 +93,7 @@
                     android:layout_alignLeft="@id/task_overview_desc"
                     android:layout_below="@id/task_overview_desc"
                     android:layout_marginTop="3dip"
-                    android:text="List_Name" />
+                    android:text="@string/design_text" />
 
                 <dev.drsoran.moloko.layouts.WrappingLayout
                     android:id="@+id/task_overview_tags"

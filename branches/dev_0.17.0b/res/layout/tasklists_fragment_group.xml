@@ -34,7 +34,7 @@
       android:layout_height="wrap_content"
       android:layout_weight="1"
       android:layout_gravity="center_vertical"
-      android:text="ListName"
+      android:text="@string/design_text"
       android:singleLine="true"
       android:ellipsize="marquee" />
 
@@ -54,5 +54,5 @@
       android:layout_marginLeft="5dip"
       android:layout_marginRight="?android:attr/scrollbarSize"
       android:layout_gravity="center_vertical"
-      android:text="num_tasks" />
+      android:text="@string/design_text" />
 </LinearLayout>

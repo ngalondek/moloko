@@ -24,6 +24,7 @@ package dev.drsoran.moloko.widgets;
 
 import java.util.Calendar;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -47,6 +48,7 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
+@SuppressLint( "ViewConstructor" )
 public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
 {
    private final ViewGroup widgetContainer;

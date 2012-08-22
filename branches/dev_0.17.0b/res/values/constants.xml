@@ -14,5 +14,4 @@
    
    <!-- Delay values -->
    <integer name="popup_notification_delay_on_ms">1000</integer>
-   <integer name="popup_notification_delay_off_ms">7000</integer>
 </resources>

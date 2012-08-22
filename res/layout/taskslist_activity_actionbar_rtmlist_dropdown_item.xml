@@ -27,7 +27,7 @@
         android:layout_centerVertical="true"
         android:ellipsize="marquee"
         android:singleLine="true"
-        android:text="ListName"
+        android:text="@string/design_text"
         android:textAppearance="@style/TextAppearance.TasksListSpinnerDropdownItem" />
 
     <TextView
@@ -40,7 +40,7 @@
         android:layout_centerVertical="true"
         android:gravity="right"
         android:paddingLeft="5dip"
-        android:text="NumTasks"
+        android:text="@string/design_text"
         android:textSize="24sp" />
 
 </RelativeLayout>

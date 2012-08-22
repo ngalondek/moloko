@@ -24,6 +24,7 @@ package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
 import dev.drsoran.moloko.R;
@@ -62,7 +63,7 @@ public class CheckableListItem extends LinearLayout implements Checkable
       super.onAttachedToWindow();
       
       if ( !isInEditMode() )
-         delegate = (Checkable) findViewById( R.id.checkable );
+         delegate = (CheckBox) findViewById( R.id.checkable );
    }
    
    

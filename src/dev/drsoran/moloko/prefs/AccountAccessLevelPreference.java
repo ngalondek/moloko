@@ -146,7 +146,7 @@ class AccountAccessLevelPreference extends InfoTextPreference implements
          {
             Toast.makeText( getContext(),
                             R.string.err_add_account_canceled,
-                            Toast.LENGTH_SHORT );
+                            Toast.LENGTH_SHORT ).show();
          }
          catch ( AuthenticatorException e )
          {
@@ -155,7 +155,7 @@ class AccountAccessLevelPreference extends InfoTextPreference implements
             // account type. This should not happen.
             Toast.makeText( getContext(),
                             R.string.err_unexpected,
-                            Toast.LENGTH_LONG );
+                            Toast.LENGTH_LONG ).show();
          }
          catch ( IOException e )
          {

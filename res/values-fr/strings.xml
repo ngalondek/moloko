@@ -29,9 +29,7 @@
    <string name="app_account_preferences">Paramètres du compte</string>
    <string name="app_tasklists">Listes</string>
    <string name="app_task">Tâche</string>
-   <string name="app_task_edit_multiple">Modifier %1$d %2$s</string>
    <string name="app_task_add">Nouvelle Tâche</string>
-   <string name="app_task_select_multiple">Selectionner des tâches (%1$d)</string>
    <string name="app_task_complete">Marquer faite</string>
    <string name="app_task_uncomplete">Marquer à faire</string>
    <string name="app_task_postpone">Reporter la tâche</string>
@@ -42,7 +40,6 @@
    <string name="app_sort_alpha">Nom de la Tâche</string>
    <string name="app_sort_prio">Priorité</string>
    <string name="app_sort_due_date">Échéance</string>
-   <string name="app_sort_selection">Selection</string>
    <string name="app_save">Save</string>
    <string name="app_startup">Démarrage de Moloko &#8230;</string>
    <string name="app_selected_count">%1$d selected</string>
@@ -106,24 +103,19 @@
    <string name="phr_tomorrow">Demain</string>
    <string name="phr_tomorrow_with_date">Demain le %1$s</string>
    <string name="phr_yesterday">Yesterday</string>
-   <string name="phr_yesterday_with_date">Yesterday the %1$s</string>
    <string name="phr_establish_connection">Connectez-vous à internet pour continuer.</string>
-   <string name="phr_open_with_name">Ouvrir \'%1$s\'</string>
-   <string name="phr_edit_with_name">Modifier \'%1$s\'</string>
    <string name="phr_delete_with_name">Supprimer \'%1$s\'</string>
    <string name="phr_settings">Paramètres</string>
    <string name="phr_none_f">aucune</string>
    <string name="phr_nothing">rien</string>
    <string name="phr_do_sync">Synchroniser</string>
-   <string name="phr_cancel_sync">Arrêter la synchronisation</string>
    <string name="phr_on">On</string>
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manuel</string>
    <string name="phr_password_set">entré</string>
    <string name="phr_loading">Chargement &#8230;</string>
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
-   <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
-   <string name="phr_more">More</string>
+   <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>   
    <string name="phr_hint">Hint</string>
    <string name="phr_yes">Yes</string>
    <string name="phr_no">No</string>
@@ -142,7 +134,6 @@
    <string name="btn_cancel">Annuler</string>
    <string name="btn_new_account">Nouveau Compte</string>
    <string name="btn_account_settings">Compte</string>
-   <string name="btn_edit">Modifier</string>
    <string name="btn_complete">Marquer faite</string>
    <string name="btn_uncomplete">Marquer à faire</string>
    <string name="btn_postpone">Reporter</string>
@@ -155,10 +146,8 @@
    <string name="menu_opt_selection">Selection</string>
    <string name="menu_opt_select_all_male">Toutes</string>
    <string name="menu_opt_select_all_female">@string/menu_opt_select_all_male</string>
-   <string name="menu_opt_select_all_mainly">@string/menu_opt_select_all_male</string>
    <string name="menu_opt_deselect_all_male">Aucunne</string>
-   <string name="menu_opt_deselect_all_female">@string/menu_opt_deselect_all_male</string>
-   <string name="menu_opt_deselect_all_mainly">@string/menu_opt_deselect_all_male</string>
+   <string name="menu_opt_deselect_all_female">@string/menu_opt_deselect_all_male</string>   
    <string name="menu_opt_inv_selection">Inverser</string>
    <string name="menu_opt_sort">Trier par</string>
 
@@ -304,11 +293,6 @@
    <!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Aucune tâche</string>
      <!-- Menus -->
-     <string name="abstaskslist_menu_opt_edit_multiple">Modification multiple</string>
-     <string name="abstaskslist_listitem_ctx_complete_task">Marquer \'%1$s\' tâches faites</string>
-     <string name="abstaskslist_listitem_ctx_uncomplete_task">Marquer \'%1$s\' tâches à faire</string>
-     <string name="abstaskslist_listitem_ctx_postpone_task">Reporter \'%1$s\' tâches</string>
-     <string name="abstaskslist_listitem_ctx_open_list">Ouvrir la liste \'%1$s\'</string>
      <string name="abstaskslist_listitem_ctx_tasks_at_location">Tâches à \'%1$s\'</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">et</string>
@@ -321,9 +305,12 @@
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Demain</string>
    <string name="taskslist_actionbar_subtitle_overdue">En retard</string>
    <string name="taskslist_actionbar_subtitle_completed">Faites</string>
-   <string name="taskslist_actionbar_subtitle_incomplete">Incomplete</string>
-     <!-- Menus -->
-     <string name="taskslist_menu_opt_delete_list">Supprimer la liste</string>
+      <!-- Menus -->
+      <string name="select_multiple_tasks_menu_opt_do_edit">Modifier %1$d tâches</string>
+      <string name="select_multiple_tasks_menu_opt_complete">Marquer %1$d tâches faites</string>
+      <string name="select_multiple_tasks_menu_opt_uncomplete">Marquer %1$d tâches à faire</string>
+      <string name="select_multiple_tasks_menu_opt_postpone">Reporter %1$d tâches</string>
+      <string name="select_multiple_tasks_menu_opt_delete">Supprimer %1$d tâches</string>
 
    <!-- TaskSearchResult fragment -->
    <string name="tasksearchresult_wrong_syntax_html">La recherche de :&lt;b>\'%1$s\'&lt;/b> ne peut pas être réalisée. &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">Vérifier la requête.&lt;/a></string>
@@ -332,17 +319,6 @@
      <string name="tasksearchresult_menu_opt_clear_history_title">Effacer l\'historique de recherche</string>
      <!-- Toasts -->
      <string name="tasksearchresult_toast_history_cleared">Historique de recherche effacé</string>
-
-   <!-- SelectMultipleTasks fragment -->
-   <string name="select_multiple_tasks_sort_selection">Sélectionnées ou pas</string>
-      <!-- Menus -->
-      <string name="select_multiple_tasks_menu_opt_do_edit">Modifier %1$d tâches</string>
-      <string name="select_multiple_tasks_menu_opt_complete">Marquer %1$d tâches faites</string>
-      <string name="select_multiple_tasks_menu_opt_uncomplete">Marquer %1$d tâches à faire</string>
-      <string name="select_multiple_tasks_menu_opt_postpone">Reporter %1$d tâches</string>
-      <string name="select_multiple_tasks_menu_opt_delete">Supprimer %1$d tâches</string>
-      <string name="select_multiple_tasks_menu_ctx_select">Selectionner %1$s tâches</string>
-      <string name="select_multiple_tasks_menu_ctx_deselect">Déselectionner %1$s tâches</string>
 
    <!-- ContactsList fragment -->
    <string name="contactslist_no_contacts">Aucun contact</string>
@@ -364,7 +340,6 @@
    <string name="quick_add_task_op_list_tags">List or tag</string>
 
    <!-- Authenticator fragment -->
-   <string name="auth_permission_label">Permission</string>
    <string name="auth_permission_choose">Choose permission</string>
    <string name="auth_info_text">Please confirm your access permission. Your username and password will not be stored locally.</string>
    <string name="auth_completing">Completing account creation.</string>
@@ -400,20 +375,16 @@
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Récupération du jeton d\'authentification pour le niveau d\'accréditation \'%1$s\'</string>
       <string name="auth_dlg_permisson_info">Choisir les permissions, vous permet de restreindre les droits d\'accès de Moloko à votre compte RTM.\n\nEn choisissant \'Lecture\', vous ne pourrez pas ajouter, modifier ou supprimer des tâches, listes ou notes dans Moloko. \'Lecture\' offre seulement la consultation de vos données RTM.\n\nEn choisissant \'Lecture, Ecriture et Suppression\', vous pouvez faire dans Moloko presque tout ce que vous faites sur le site web de RTM, et en particulier ajouter, modifier ou supprimer des tâches, listes ou notes.\n\nLa synchronisatin en arrière plan se fera dans les deux cas. Dans le cadre de la permission \'Lecture\', les données seront seulement reçues du serveur RTM, rien ne sera envoyé.\n\nVous pouvez changer les droits d\'accès n\'importe quand en supprimant votre compte RTM de votre téléphone et en vous reconnectant à celui ci. A ce moment là, vous pourrez à nouveau choisir vos droits d\'accès.</string>
-      <!-- Toasts -->
-      <string name="auth_toast_err_weblogin">Une erreur est survenue lors de l\'ouverture de la page de connexion au site de RTM. Essayez à nouveau.</string>
       <!-- Errors -->
       <string name="auth_err_with_cause">Impossible de créer le compte. Raison: %1$s</string>
       <string name="auth_err_cause_inv_auth_token">Le jeton d\'authentification reçu est incorrect</string>
       <string name="auth_err_cause_scurity">Problème de sécurité</string>
       <string name="auth_err_cause_inv_login_url">La page de connexion reçue n\'est pas la bonne</string>
-      <string name="auth_err_cause_no_service">Une erreur s\'est produite lors de la création de la connexion au service RTM</string>
 
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">Paramètres généraux</string>
    <string name="acc_pref_account_summary">Synchronisation, Paramètres HTTP(S)</string>
    <string name="acc_pref_sync_interval_title">Synchronisation</string>
-   <string name="acc_pref_perm_title">Niveau d\'accès</string>
    <string name="acc_pref_perm_value">%1$s - cliquez pour modifier</string>
    <string name="acc_pref_perm_has_not">Aucune permission</string>
    <string name="acc_pref_conn_cat_title">Connexion</string>
@@ -422,16 +393,9 @@
    <!-- MolokoPreferences activity -->
       <!-- RTM settings -->
 	   <string name="moloko_prefs_rtm_title">Paramètres RTM</string>
-	   <string name="moloko_prefs_rtm_summary">Default list and account settings</string>
 	   <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupérés du serveur pour la dernière fois le %1$s</string>
 	   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur</string>
-	   <string name="moloko_prefs_rtm_timezone_title">Fuseau horaire</string>
-	   <string name="moloko_prefs_rtm_dateformat_title">Format de la date</string>
-	   <string name="moloko_prefs_rtm_dateformat_eu">Européen\n(14.02.2000)</string>
-	   <string name="moloko_prefs_rtm_dateformat_us">Américain\n(02/14/2000)</string>
-	   <string name="moloko_prefs_rtm_timeformat_title">Format de l\'heure</string>
 	   <string name="moloko_prefs_rtm_defaultlist_title">Liste par défaut</string>
-	   <string name="moloko_prefs_rtm_language_title">Langue</string>
 	   
 	   <!-- General settings -->
 	   <string name="moloko_prefs_general_title">General Settings</string>
@@ -443,7 +407,6 @@
 	   
 	   <!-- Notification settings -->
 	   <string name="moloko_prefs_notification_title">Notification</string>
-	   <string name="moloko_prefs_notification_summary">Choisir les notification, sonneries, etc.</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tâches avec une échéance</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_before_title">Rappels</string>

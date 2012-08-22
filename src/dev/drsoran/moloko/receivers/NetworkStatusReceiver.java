@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Message;
 import dev.drsoran.moloko.IOnNetworkStatusChangedListener;
@@ -49,34 +50,23 @@ public class NetworkStatusReceiver extends BroadcastReceiver
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      // Check if we musn't use background data any more
-      if ( intent.getAction()
-                 .equals( ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED ) )
-      {
-         final ConnectivityManager cm = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
-         
-         if ( cm != null )
-         {
-            final Message msg = new Message();
-            msg.what = Integer.valueOf( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS );
-            
-            msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
-                                                                                          Boolean.valueOf( cm.getBackgroundDataSetting() ) );
-            
-            handler.sendMessage( msg );
-         }
-      }
-      else if ( intent.getAction()
-                      .equals( ConnectivityManager.CONNECTIVITY_ACTION ) )
+      final ConnectivityManager cm = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
+      if ( cm != null )
       {
          final Message msg = new Message();
          msg.what = Integer.valueOf( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS );
          
          msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
-                                                                                       Boolean.valueOf( intent.getBooleanExtra( ConnectivityManager.EXTRA_NO_CONNECTIVITY,
-                                                                                                                                false ) ) );
-         
+                                                                                       isConnected( cm ) );
          handler.sendMessage( msg );
       }
+   }
+   
+   
+   
+   private boolean isConnected( ConnectivityManager connectivityManager )
+   {
+      final NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+      return activeNetworkInfo != null && activeNetworkInfo.isConnected();
    }
 }

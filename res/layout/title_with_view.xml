@@ -39,7 +39,7 @@
          android:singleLine="true"
          android:ellipsize="end"
          android:gravity="left"
-         android:text="title" />
+         android:text="@string/design_text" />
       
       <dev.drsoran.moloko.widgets.SimpleLineView
          android:id="@+id/title_with_view_top_line"

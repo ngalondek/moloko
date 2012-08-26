@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.activities;
+package dev.drsoran.moloko.activities.base;
 
 import android.app.Dialog;
 import android.app.FragmentTransaction;

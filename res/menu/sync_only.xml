@@ -10,14 +10,13 @@
       for more details. You should have received a copy of the GNU General
       Public License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
+      implementation
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@id/menu_sync"
-        android:icon="@drawable/ic_menu_refresh"
-        android:showAsAction="ifRoom"
-        android:title="@string/phr_do_sync"/>
-
+        android:showAsAction="ifRoom"        
+        android:actionProviderClass="dev.drsoran.moloko.actionproviders.SyncActionProvider"
+        android:title="@string/phr_do_sync" />
 </menu>

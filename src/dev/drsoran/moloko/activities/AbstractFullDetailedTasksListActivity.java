@@ -265,21 +265,24 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    @Override
    public void onDeleteTasks( List< ? extends Task > tasks )
    {
+      final String message;
+      
       if ( tasks.size() == 1 )
       {
          final Task task = tasks.get( 0 );
-         UIUtils.showDeleteElementDialog( this, task.getName(), task.getId() );
+         message = getString( R.string.phr_delete_with_name, task.getName() );
       }
       else
       {
-         final String message = getResources().getQuantityString( R.plurals.tasks_delete,
-                                                                  tasks.size(),
-                                                                  tasks.size() );
-         new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_delete ).setMessage( message )
-                                                                               .setPositiveButton( R.string.btn_delete )
-                                                                               .setNegativeButton( R.string.btn_cancel )
-                                                                               .show( this );
+         message = getResources().getQuantityString( R.plurals.tasks_delete,
+                                                     tasks.size(),
+                                                     tasks.size() );
       }
+      
+      new AlertDialogFragment.Builder( R.id.dlg_selectmultipletasks_delete ).setMessage( message )
+                                                                            .setPositiveButton( R.string.btn_delete )
+                                                                            .setNegativeButton( R.string.btn_cancel )
+                                                                            .show( this );
    }
    
    
@@ -313,6 +316,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
             super.onAlertDialogFragmentClick( dialogId, tag, which );
             break;
       }
+      
+      activeActionMode.finish();
    }
    
    

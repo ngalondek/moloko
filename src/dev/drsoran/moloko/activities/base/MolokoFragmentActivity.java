@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.activities;
+package dev.drsoran.moloko.activities.base;
 
 import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
@@ -34,6 +34,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.mdt.rtm.data.RtmAuth;
@@ -46,6 +47,7 @@ import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.ISyncStatusListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.actionproviders.ISyncActionProviderHost;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.IAlertDialogFragmentListener;
 import dev.drsoran.moloko.sync.Constants;
@@ -57,7 +59,8 @@ import dev.drsoran.moloko.util.Intents.HomeAction;
 
 public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
          implements IConfigurable, IAlertDialogFragmentListener,
-         ISyncStatusListener, OnAccountsUpdateListener, IRtmAccessLevelAware
+         ISyncStatusListener, ISyncActionProviderHost,
+         OnAccountsUpdateListener, IRtmAccessLevelAware
 {
    public final static class StartActivityRequestCode
    {
@@ -79,6 +82,10 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    private boolean ignoreAccountListenerAfterRegister = true;
    
    private boolean disableSearch;
+   
+   private boolean showSyncProgress;
+   
+   private boolean showSyncProgressByActionProvider;
    
    
    
@@ -153,6 +160,33 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    protected void configureBySavedInstanceState( Bundle savedInstanceState )
    {
       configure( savedInstanceState );
+   }
+   
+   
+   
+   @Override
+   public final boolean onCreateOptionsMenu( Menu menu )
+   {
+      onActivityCreateOptionsMenu( menu );
+      
+      // If the sync icon is displayed as action item, the
+      // flag will be set correctly. This may happen if the
+      // icon is first shown and then pushed into overflow
+      // if a fragment adds new items.
+      if ( menu.findItem( R.id.menu_sync ) != null )
+      {
+         setShowSyncProgress( true );
+         showSyncProgressByActionProvider = false;
+      }
+      
+      return true;
+   }
+   
+   
+   
+   public boolean onActivityCreateOptionsMenu( Menu menu )
+   {
+      return super.onCreateOptionsMenu( menu );
    }
    
    
@@ -427,14 +461,14 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    public void execute( Runnable runnable )
    {
-      getHandler().post( runnable );
+      handler.post( runnable );
    }
    
    
    
    public void executeDelayed( Runnable runnable, int delayMillis )
    {
-      getHandler().postDelayed( runnable, delayMillis );
+      handler.postDelayed( runnable, delayMillis );
    }
    
    
@@ -472,22 +506,57 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
+   public void setShowSyncProgress( boolean show )
+   {
+      if ( showSyncProgress != show )
+      {
+         showSyncProgress = show;
+         initializeSyncingProgressIndicator();
+      }
+   }
+   
+   
+   
+   public boolean getShowSyncProgress()
+   {
+      return showSyncProgress;
+   }
+   
+   
+   
    @Override
    public void onSyncStatusChanged( int status )
    {
-      switch ( status )
+      if ( showSyncProgressByActionProvider )
       {
-         case Constants.SYNC_STATUS_STARTED:
-            setSupportProgressBarIndeterminateVisibility( true );
-            break;
-         
-         case Constants.SYNC_STATUS_FINISHED:
-            setSupportProgressBarIndeterminateVisibility( false );
-            break;
-         
-         default :
-            break;
+         supportInvalidateOptionsMenu();
       }
+      
+      if ( showSyncProgress )
+      {
+         switch ( status )
+         {
+            case Constants.SYNC_STATUS_STARTED:
+               setSupportProgressBarIndeterminateVisibility( true );
+               break;
+            
+            case Constants.SYNC_STATUS_FINISHED:
+               setSupportProgressBarIndeterminateVisibility( false );
+               break;
+            
+            default :
+               break;
+         }
+      }
+   }
+   
+   
+   
+   @Override
+   public void onSyncActionProviderViewCreated()
+   {
+      showSyncProgressByActionProvider = true;
+      setShowSyncProgress( false );
    }
    
    
@@ -577,7 +646,8 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    private void initializeSyncingProgressIndicator()
    {
-      setSupportProgressBarIndeterminateVisibility( SyncUtils.isSyncing( this ) );
+      setSupportProgressBarIndeterminateVisibility( showSyncProgress
+         && SyncUtils.isSyncing( this ) );
    }
    
    

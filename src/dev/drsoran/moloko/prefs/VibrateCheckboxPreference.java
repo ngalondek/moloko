@@ -28,24 +28,24 @@ import android.preference.CheckBoxPreference;
 import android.util.AttributeSet;
 
 
-class VibratePreference extends CheckBoxPreference
+class VibrateCheckboxPreference extends CheckBoxPreference
 {
    
-   public VibratePreference( Context context, AttributeSet attrs, int defStyle )
+   public VibrateCheckboxPreference( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
    }
    
    
    
-   public VibratePreference( Context context, AttributeSet attrs )
+   public VibrateCheckboxPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
    }
    
    
    
-   public VibratePreference( Context context )
+   public VibrateCheckboxPreference( Context context )
    {
       super( context );
    }

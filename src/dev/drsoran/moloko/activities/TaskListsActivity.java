@@ -33,6 +33,7 @@ import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
@@ -74,7 +75,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
       if ( isWritableAccess() )
       {
@@ -84,6 +85,8 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       {
          getSupportMenuInflater().inflate( R.menu.tasklists_activity, menu );
       }
+      
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
    }

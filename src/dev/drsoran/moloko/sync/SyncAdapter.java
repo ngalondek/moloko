@@ -114,6 +114,8 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
          ensureTransactionSupport( provider );
          this.syncResult = syncResult;
          
+         context.sendBroadcast( Intents.createSyncStartedIntent() );
+         
          String authToken = null;
          Service service = null;
          try
@@ -125,8 +127,6 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
             {
                service = createService( account, authToken );
                molokoSyncResult = new MolokoSyncResult( context, syncResult );
-               
-               context.sendBroadcast( Intents.createSyncStartedIntent() );
                
                if ( isSettingsOnlySync( extras ) )
                {

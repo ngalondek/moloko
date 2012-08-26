@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,16 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.actionproviders;
 
-
-
-public interface IEditableFragment
+public interface ISyncActionProviderHost
 {
-   boolean canBeEdited();
-   
-   
-   
-   @Deprecated
-   IEditFragment createEditFragmentInstance();
+   void onSyncActionProviderViewCreated();
 }

@@ -36,6 +36,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
 import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
@@ -65,10 +66,10 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
       getSupportMenuInflater().inflate( R.menu.edit_activity, menu );
-      super.onCreateOptionsMenu( menu );
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
    }

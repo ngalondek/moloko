@@ -28,7 +28,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 
 
 public class EditElementActionModeCallback implements ActionMode.Callback

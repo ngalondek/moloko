@@ -186,7 +186,6 @@ public class TasksListActionModeCallback extends
       
       if ( handled )
       {
-         mode.finish();
          return true;
       }
       else

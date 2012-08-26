@@ -38,6 +38,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.adapters.ActionBarTabsAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.NotesListFragment;

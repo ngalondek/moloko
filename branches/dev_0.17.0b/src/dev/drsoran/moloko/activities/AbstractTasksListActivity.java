@@ -45,6 +45,7 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.adapters.TasksListNavigationAdapter;
 import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.annotations.InstanceState;

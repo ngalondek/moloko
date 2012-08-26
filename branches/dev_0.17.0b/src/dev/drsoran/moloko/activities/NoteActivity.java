@@ -31,6 +31,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.fragments.NoteAddFragment;
 import dev.drsoran.moloko.fragments.NoteEditFragment;
 import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
@@ -51,10 +52,10 @@ public class NoteActivity extends MolokoEditFragmentActivity
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
       getSupportMenuInflater().inflate( R.menu.edit_activity, menu );
-      super.onCreateOptionsMenu( menu );
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
    }

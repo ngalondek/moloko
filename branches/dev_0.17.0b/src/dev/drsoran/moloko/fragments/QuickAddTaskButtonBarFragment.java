@@ -23,15 +23,14 @@
 package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.util.ShowButtonTextAsToast;
 
 
 public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
@@ -142,26 +141,14 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
          case R.id.quick_add_task_btn_repeat:
          case R.id.quick_add_task_btn_estimate:
          {
-            showButtonTextAsToast( (CharSequence) view.getTag() );
+            new ShowButtonTextAsToast( getSherlockActivity() ).show( view,
+                                                                     (CharSequence) view.getTag() );
             return true;
          }
          
          default :
             return false;
       }
-   }
-   
-   
-   
-   private void showButtonTextAsToast( CharSequence buttonText )
-   {
-      final Toast cheatSheet = Toast.makeText( getSherlockActivity(),
-                                               buttonText,
-                                               Toast.LENGTH_SHORT );
-      cheatSheet.setGravity( Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL,
-                             0,
-                             getView().getHeight() );
-      cheatSheet.show();
    }
    
    

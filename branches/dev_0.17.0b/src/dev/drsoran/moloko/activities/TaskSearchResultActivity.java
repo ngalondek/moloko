@@ -130,10 +130,8 @@ public class TaskSearchResultActivity extends
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      super.onCreateOptionsMenu( menu );
-      
       if ( isWritableAccess() )
       {
          getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity_rwd,
@@ -144,6 +142,8 @@ public class TaskSearchResultActivity extends
          getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity,
                                            menu );
       }
+      
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
    }

@@ -29,6 +29,7 @@ import android.os.Bundle;
 import com.actionbarsherlock.view.Menu;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITagCloudFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
@@ -48,9 +49,11 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
       getSupportMenuInflater().inflate( R.menu.sync_only, menu );
+      super.onActivityCreateOptionsMenu( menu );
+      
       return true;
    }
    

@@ -27,6 +27,7 @@ import android.os.Bundle;
 import com.actionbarsherlock.view.Menu;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
 
@@ -44,9 +45,11 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
       getSupportMenuInflater().inflate( R.menu.sync_only, menu );
+      super.onActivityCreateOptionsMenu( menu );
+      
       return true;
    }
    

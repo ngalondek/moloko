@@ -30,7 +30,7 @@ import android.support.v4.view.ViewPager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 
-import dev.drsoran.moloko.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.base.BaseFragmentPagerAdapter;
 
 

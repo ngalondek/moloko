@@ -21,10 +21,8 @@
    <PreferenceCategory
 	   android:title="@string/moloko_prefs_notification_tasks_w_due_cat_title">
 	
-	   <CheckBoxPreference
+	   <SwitchPreference
 	      android:title="@string/moloko_prefs_notification_tasks_w_due_title"
-	      android:summaryOn="@string/phr_on"
-	      android:summaryOff="@string/phr_off"
 	      android:key="@string/key_notify_due_tasks"
 	      android:defaultValue="true" />
 	   <dev.drsoran.moloko.prefs.AutoSummaryListPreference
@@ -41,17 +39,13 @@
 	      android:ringtoneType="all"
 	      android:key="@string/key_notify_due_tasks_ringtone"
 	      android:dependency="@string/key_notify_due_tasks" />
-	   <dev.drsoran.moloko.prefs.VibrateCheckboxPreference
+	   <dev.drsoran.moloko.prefs.VibrateSwitchPreference
 	      android:title="@string/moloko_prefs_notification_tasks_w_due_vibrate_title"
-	      android:summaryOn="@string/phr_yes"
-         android:summaryOff="@string/phr_no"
 	      android:key="@string/key_notify_due_tasks_vibrate"
 	      android:dependency="@string/key_notify_due_tasks"
 	      android:defaultValue="false" />
-	   <CheckBoxPreference
+	   <SwitchPreference
 	      android:title="@string/moloko_prefs_notification_tasks_w_due_led_title"
-	      android:summaryOn="@string/phr_yes"
-         android:summaryOff="@string/phr_no"
 	      android:key="@string/key_notify_due_tasks_led"
 	      android:dependency="@string/key_notify_due_tasks"
 	      android:defaultValue="false" />
@@ -69,8 +63,6 @@
 	      android:defaultValue="2" />
 	   <CheckBoxPreference
 	      android:title="@string/moloko_prefs_notification_permanent_show_overdue_tasks_title"
-	      android:summaryOn="@string/phr_yes"
-	      android:summaryOff="@string/phr_no"
 	      android:key="@string/key_notify_permanent_overdue"            
 	      android:defaultValue="false" />
 	</PreferenceCategory>

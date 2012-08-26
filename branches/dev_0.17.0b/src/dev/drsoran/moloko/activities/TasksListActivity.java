@@ -49,10 +49,8 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      super.onCreateOptionsMenu( menu );
-      
       if ( isWritableAccess() )
       {
          getSupportMenuInflater().inflate( R.menu.taskslist_activity_rwd, menu );
@@ -61,6 +59,8 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       {
          getSupportMenuInflater().inflate( R.menu.taskslist_activity, menu );
       }
+      
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
    }

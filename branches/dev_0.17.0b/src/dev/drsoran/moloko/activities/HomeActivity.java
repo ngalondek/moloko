@@ -34,6 +34,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
@@ -54,6 +55,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
       setContentView( R.layout.home_activity );
       
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
@@ -98,10 +100,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      super.onCreateOptionsMenu( menu );
-      
       if ( isWritableAccess() )
       {
          getSupportMenuInflater().inflate( R.menu.home_activity_rwd, menu );
@@ -110,6 +110,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       {
          getSupportMenuInflater().inflate( R.menu.home_activity, menu );
       }
+      
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
    }

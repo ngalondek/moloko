@@ -67,6 +67,18 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private final Handler handler = new Handler();
    
+   private final Runnable showContentAsyncRunnable = new Runnable()
+   {
+      @Override
+      public void run()
+      {
+         if ( fragment.isAdded() )
+         {
+            showContent();
+         }
+      }
+   };
+   
    
    
    @SuppressWarnings( "unchecked" )
@@ -102,6 +114,15 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
          showContent();
       else
          showLoadingSpinner();
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
+      handler.removeCallbacks( showContentAsyncRunnable );
+      super.onDetach();
    }
    
    
@@ -186,15 +207,8 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private void showContentAsync()
    {
-      handler.post( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            if ( fragment.isAdded() )
-               showContent();
-         }
-      } );
+      handler.removeCallbacks( showContentAsyncRunnable );
+      handler.post( showContentAsyncRunnable );
    }
    
    

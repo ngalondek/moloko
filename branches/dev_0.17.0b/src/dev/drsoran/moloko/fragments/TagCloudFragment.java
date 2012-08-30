@@ -53,63 +53,6 @@ public class TagCloudFragment extends
    private final static String TAG = "Moloko."
       + TagCloudFragment.class.getSimpleName();
    
-   
-   public static class TagCloudEntry implements Comparable< TagCloudEntry >
-   {
-      public final static int LIST = 0;
-      
-      public final static int TAG = 1;
-      
-      public final static int LOCATION = 2;
-      
-      public final int type;
-      
-      public final String name;
-      
-      public final int count;
-      
-      
-      
-      public TagCloudEntry( int type, String name, int count )
-      {
-         this.type = type;
-         this.name = name;
-         this.count = count;
-      }
-      
-      
-      
-      @Override
-      public int compareTo( TagCloudEntry another )
-      {
-         return name.compareToIgnoreCase( another.name );
-      }
-      
-      
-      
-      @Override
-      public String toString()
-      {
-         String val;
-         
-         switch ( type )
-         {
-            case LIST:
-               val = "List";
-               break;
-            case TAG:
-               val = "Tag";
-               break;
-            case LOCATION:
-               val = "Location";
-               break;
-            default :
-               val = "unknown";
-         }
-         return ( val + name + ":" + count );
-      }
-   }
-   
    /**
     * Relationship between task count and text size.
     */
@@ -214,7 +157,6 @@ public class TagCloudFragment extends
       final View fragmentView = inflater.inflate( R.layout.tagcloud_fragment,
                                                   container,
                                                   false );
-      
       return fragmentView;
    }
    
@@ -272,9 +214,13 @@ public class TagCloudFragment extends
                   break;
             }
             
-            cloudEntryButton.setTextSize( 14.0f * getMagnifyFactor( cloudEntry.count ) );
+            final float baseTextSize = 20 * getResources().getDisplayMetrics().density;
+            final float textSize = baseTextSize
+               * getMagnifyFactor( cloudEntry.count );
             
-            if ( cloudEntry.count >= 2 )
+            cloudEntryButton.setTextSize( textSize );
+            
+            if ( cloudEntry.count > 1 )
             {
                cloudEntryButton.setTypeface( Typeface.DEFAULT_BOLD );
             }
@@ -371,4 +317,60 @@ public class TagCloudFragment extends
       return result;
    }
    
+   
+   public static class TagCloudEntry implements Comparable< TagCloudEntry >
+   {
+      public final static int LIST = 0;
+      
+      public final static int TAG = 1;
+      
+      public final static int LOCATION = 2;
+      
+      public final int type;
+      
+      public final String name;
+      
+      public final int count;
+      
+      
+      
+      public TagCloudEntry( int type, String name, int count )
+      {
+         this.type = type;
+         this.name = name;
+         this.count = count;
+      }
+      
+      
+      
+      @Override
+      public int compareTo( TagCloudEntry another )
+      {
+         return name.compareToIgnoreCase( another.name );
+      }
+      
+      
+      
+      @Override
+      public String toString()
+      {
+         String val;
+         
+         switch ( type )
+         {
+            case LIST:
+               val = "List";
+               break;
+            case TAG:
+               val = "Tag";
+               break;
+            case LOCATION:
+               val = "Location";
+               break;
+            default :
+               val = "unknown";
+         }
+         return ( val + name + ":" + count );
+      }
+   }
 }

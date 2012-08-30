@@ -138,6 +138,26 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
+   @Override
+   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   {
+      if ( requestCode == R.integer.activity_request_default )
+      {
+         // The task in edit was deleted by a background sync. Close this
+         // activity.
+         if ( resultCode == R.integer.activity_result_deleted )
+         {
+            finish();
+         }
+      }
+      else
+      {
+         super.onActivityResult( requestCode, resultCode, data );
+      }
+   }
+   
+   
+   
    private void createTabs()
    {
       createTabsAdapter();
@@ -278,7 +298,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onEditTask( Task task )
    {
-      startActivity( Intents.createEditTaskIntent( this, task ) );
+      startActivityForResult( Intents.createEditTaskIntent( this, task ),
+                              R.integer.activity_request_default );
    }
    
    
@@ -313,7 +334,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    {
       if ( isWritableAccess() )
       {
-         startActivity( Intents.createEditNoteIntent( this, note ) );
+         startActivity( Intents.createEditNoteIntent( this,
+                                                      taskFragment.getTaskAssertNotNull(),
+                                                      note ) );
       }
    }
    

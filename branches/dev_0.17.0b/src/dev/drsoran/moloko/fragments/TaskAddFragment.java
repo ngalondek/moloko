@@ -155,7 +155,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected Bundle getInitialValues()
+   protected Bundle determineInitialValues()
    {
       final Bundle initialValues = getDefaultConfiguration();
       
@@ -173,9 +173,9 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected void getInitialChanges()
+   protected void determineInitialChanges()
    {
-      super.getInitialChanges();
+      super.determineInitialChanges();
       
       putChange( Tasks.TASKSERIES_NAME, taskName, String.class );
       putChange( Tasks.LIST_ID, listId, String.class );
@@ -324,9 +324,11 @@ public class TaskAddFragment extends AbstractTaskEditFragment
       for ( Iterator< Pair< String, String >> i = idsToNames.iterator(); res == null
          && i.hasNext(); )
       {
-         Pair< String, String > listIdToListName = i.next();
+         final Pair< String, String > listIdToListName = i.next();
          if ( listIdToListName.second.equalsIgnoreCase( name ) )
+         {
             res = listIdToListName.first;
+         }
       }
       
       return res;
@@ -335,7 +337,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected ApplyChangesInfo getChanges()
+   protected ApplyChangesInfo getApplyChangesInfo()
    {
       final Task newTask = newTask();
       final ApplyChangesInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),

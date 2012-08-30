@@ -53,6 +53,7 @@ import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
@@ -87,106 +88,10 @@ public abstract class AbstractTaskEditFragment
 {
    protected final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
    
-   
-   public final static class TaskEditDatabaseData
-   {
-      public final RtmLists lists;
-      
-      public final List< RtmLocation > locations;
-      
-      
-      
-      public TaskEditDatabaseData( RtmLists lists, List< RtmLocation > locations )
-      {
-         this.lists = lists;
-         this.locations = locations;
-      }
-      
-      
-      
-      public List< Pair< String, String > > getListIdsToListNames()
-      {
-         final List< Pair< String, String > > listIdToListName = new ArrayList< Pair< String, String > >();
-         
-         if ( lists != null )
-         {
-            final List< Pair< String, RtmList > > listIdToList = lists.getLists();
-            for ( Pair< String, RtmList > list : listIdToList )
-               listIdToListName.add( Pair.create( list.first,
-                                                  list.second.getName() ) );
-         }
-         
-         return listIdToListName;
-      }
-      
-      
-      
-      public List< String > getListIds()
-      {
-         return lists.getListIds();
-      }
-      
-      
-      
-      public List< String > getListNames()
-      {
-         return lists.getListNames();
-      }
-      
-      
-      
-      public List< Pair< String, String > > getLocationIdsToLocationNames()
-      {
-         final List< Pair< String, String > > locationIdToLocationName = new ArrayList< Pair< String, String > >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationIdToLocationName.add( Pair.create( location.id,
-                                                          location.name ) );
-         }
-         
-         return locationIdToLocationName;
-      }
-      
-      
-      
-      public List< String > getLocationIds()
-      {
-         final List< String > locationIds = new ArrayList< String >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationIds.add( location.id );
-         }
-         
-         return locationIds;
-      }
-      
-      
-      
-      public List< String > getLocationNames()
-      {
-         final List< String > locationNames = new ArrayList< String >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationNames.add( location.name );
-         }
-         
-         return locationNames;
-      }
-   }
-   
-   private final static String KEY_CHANGES = "changes";
-   
-   private final static int TASK_EDIT_LOADER = 1;
+   @InstanceState( key = "changes", defaultValue = InstanceState.NO_DEFAULT )
+   private Bundle changes;
    
    private Bundle initialValues;
-   
-   private Bundle changes;
    
    protected ITaskEditFragmentListener listener;
    
@@ -227,20 +132,6 @@ public abstract class AbstractTaskEditFragment
    
    
    @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      if ( savedInstanceState != null
-         && savedInstanceState.containsKey( KEY_CHANGES ) )
-      {
-         changes = savedInstanceState.getBundle( KEY_CHANGES );
-      }
-   }
-   
-   
-   
-   @Override
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
@@ -258,17 +149,6 @@ public abstract class AbstractTaskEditFragment
    {
       listener = null;
       super.onDetach();
-   }
-   
-   
-   
-   @Override
-   public void onSaveInstanceState( Bundle outState )
-   {
-      super.onSaveInstanceState( outState );
-      
-      if ( changes != null )
-         outState.putBundle( KEY_CHANGES, changes );
    }
    
    
@@ -308,12 +188,26 @@ public abstract class AbstractTaskEditFragment
    
    
    
+   public Bundle getInitialValues()
+   {
+      return initialValues;
+   }
+   
+   
+   
+   public Bundle getChanges()
+   {
+      return changes == null ? Bundle.EMPTY : changes;
+   }
+   
+   
+   
    @Override
    public void initContent( ViewGroup content )
    {
-      initialValues = getInitialValues();
+      initialValues = determineInitialValues();
       
-      getInitialChanges();
+      determineInitialChanges();
       
       if ( initialValues != null )
       {
@@ -343,7 +237,7 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   protected void getInitialChanges()
+   protected void determineInitialChanges()
    {
    }
    
@@ -925,7 +819,7 @@ public abstract class AbstractTaskEditFragment
    
    
    @Override
-   protected ApplyChangesInfo getChanges()
+   protected ApplyChangesInfo getApplyChangesInfo()
    {
       saveDueChanges();
       saveRecurrenceChanges();
@@ -1223,7 +1117,7 @@ public abstract class AbstractTaskEditFragment
    @Override
    public int getLoaderId()
    {
-      return TASK_EDIT_LOADER;
+      return TaskEditDatabaseDataLoader.ID;
    }
    
    
@@ -1236,9 +1130,104 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   protected abstract Bundle getInitialValues();
+   protected abstract Bundle determineInitialValues();
    
    
    
    protected abstract List< Task > getEditedTasks();
+   
+   
+   public final static class TaskEditDatabaseData
+   {
+      public final RtmLists lists;
+      
+      public final List< RtmLocation > locations;
+      
+      
+      
+      public TaskEditDatabaseData( RtmLists lists, List< RtmLocation > locations )
+      {
+         this.lists = lists;
+         this.locations = locations;
+      }
+      
+      
+      
+      public List< Pair< String, String > > getListIdsToListNames()
+      {
+         final List< Pair< String, String > > listIdToListName = new ArrayList< Pair< String, String > >();
+         
+         if ( lists != null )
+         {
+            final List< Pair< String, RtmList > > listIdToList = lists.getLists();
+            for ( Pair< String, RtmList > list : listIdToList )
+            {
+               listIdToListName.add( Pair.create( list.first,
+                                                  list.second.getName() ) );
+            }
+         }
+         
+         return listIdToListName;
+      }
+      
+      
+      
+      public List< String > getListIds()
+      {
+         return lists.getListIds();
+      }
+      
+      
+      
+      public List< String > getListNames()
+      {
+         return lists.getListNames();
+      }
+      
+      
+      
+      public List< Pair< String, String > > getLocationIdsToLocationNames()
+      {
+         final List< Pair< String, String > > locationIdToLocationName = new ArrayList< Pair< String, String > >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationIdToLocationName.add( Pair.create( location.id,
+                                                          location.name ) );
+         }
+         
+         return locationIdToLocationName;
+      }
+      
+      
+      
+      public List< String > getLocationIds()
+      {
+         final List< String > locationIds = new ArrayList< String >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationIds.add( location.id );
+         }
+         
+         return locationIds;
+      }
+      
+      
+      
+      public List< String > getLocationNames()
+      {
+         final List< String > locationNames = new ArrayList< String >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationNames.add( location.name );
+         }
+         
+         return locationNames;
+      }
+   }
 }

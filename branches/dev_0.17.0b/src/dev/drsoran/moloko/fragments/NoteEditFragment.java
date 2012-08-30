@@ -22,7 +22,12 @@
 
 package dev.drsoran.moloko.fragments;
 
+import android.app.Activity;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,17 +39,28 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.fragments.listeners.INoteEditFragmentListener;
+import dev.drsoran.moloko.loaders.RtmTaskNoteLoader;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.NoteEditUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.provider.Rtm.Notes;
 
 
-public class NoteEditFragment extends AbstractNoteEditFragment
+public class NoteEditFragment extends AbstractNoteEditFragment implements
+         LoaderCallbacks< RtmTaskNote >
 {
+   private final Handler handler = new Handler();
+   
    @InstanceState( key = Intents.Extras.KEY_NOTE )
    private RtmTaskNote note;
+   
+   private ContentObserver noteChangesObserver;
+   
+   private INoteEditFragmentListener listener;
    
    
    
@@ -62,6 +78,32 @@ public class NoteEditFragment extends AbstractNoteEditFragment
    public NoteEditFragment()
    {
       registerAnnotatedConfiguredInstance( this, NoteEditFragment.class );
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof INoteEditFragmentListener )
+      {
+         listener = (INoteEditFragmentListener) activity;
+      }
+      else
+      {
+         listener = null;
+      }
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      registerForNoteDeletedByBackgroundSync();
    }
    
    
@@ -87,6 +129,24 @@ public class NoteEditFragment extends AbstractNoteEditFragment
    {
       super.onViewCreated( view, savedInstanceState );
       text.requestFocus();
+   }
+   
+   
+   
+   @Override
+   public void onDestroy()
+   {
+      unregisterForNoteDeletedByBackgroundSync();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
+      listener = null;
+      super.onDetach();
    }
    
    
@@ -156,5 +216,77 @@ public class NoteEditFragment extends AbstractNoteEditFragment
                                                                                 text );
       
       return modifications;
+   }
+   
+   
+   
+   @Override
+   public Loader< RtmTaskNote > onCreateLoader( int id, Bundle args )
+   {
+      return new RtmTaskNoteLoader( getSherlockActivity(),
+                                    getNoteAssertNotNull().getId() );
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< RtmTaskNote > loader, RtmTaskNote data )
+   {
+      // If the database changed by a background sync and the assigned note
+      // has been deleted, then we ask the user if he wants to keep his changes
+      // or drop the note.
+      if ( data == null )
+      {
+         handler.post( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               if ( listener != null )
+               {
+                  listener.onBackgroundDeletion( getNoteAssertNotNull() );
+               }
+            }
+         } );
+      }
+   }
+   
+   
+   
+   @Override
+   public void onLoaderReset( Loader< RtmTaskNote > loader )
+   {
+   }
+   
+   
+   
+   private void registerForNoteDeletedByBackgroundSync()
+   {
+      noteChangesObserver = new ContentObserver( handler )
+      {
+         @Override
+         public void onChange( boolean selfChange )
+         {
+            getSherlockActivity().getSupportLoaderManager()
+                                 .initLoader( RtmTaskNoteLoader.ID,
+                                              Bundle.EMPTY,
+                                              NoteEditFragment.this );
+         }
+      };
+      
+      getSherlockActivity().getContentResolver()
+                           .registerContentObserver( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                               getNoteAssertNotNull().getId() ),
+                                                     false,
+                                                     noteChangesObserver );
+   }
+   
+   
+   
+   private void unregisterForNoteDeletedByBackgroundSync()
+   {
+      getSherlockActivity().getContentResolver()
+                           .unregisterContentObserver( noteChangesObserver );
+      noteChangesObserver = null;
    }
 }

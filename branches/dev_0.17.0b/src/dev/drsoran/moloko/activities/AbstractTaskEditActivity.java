@@ -22,15 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Dialog;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Pair;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -38,33 +30,10 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
-import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.DuePickerDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.EstimatePickerDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.RecurrPickerDialogFragment;
-import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
-import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
-import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.Strings;
 
 
 abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
-         implements ITaskEditFragmentListener, IChangeTagsFragmentListener,
-         IPickerDialogListener
 {
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      setContentView( getContentViewResourceId() );
-      addTaskEditFragment();
-   }
-   
-   
-   
    @Override
    public boolean onActivityCreateOptionsMenu( Menu menu )
    {
@@ -115,85 +84,10 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    
    
    
-   @Override
-   public void onChangeTags( List< String > tags )
+   public AbstractTaskEditFragment getTaskEditFragment()
    {
-      showChangeTagsDialog( createTaskEditChangeTagsConfiguration( tags ) );
-   }
-   
-   
-   
-   @Override
-   public void onTagsChanged( List< String > tags )
-   {
-      final AbstractTaskEditFragment taskEditFragment = getTaskEditFragment();
-      taskEditFragment.setTags( tags );
-   }
-   
-   
-   
-   @Override
-   public void onEditDueByPicker()
-   {
-      MolokoCalendar due = getTaskEditFragment().getDue();
-      
-      if ( due == null || !due.hasDate() )
-      {
-         due = MolokoCalendar.getInstance();
-         due.setHasTime( false );
-      }
-      
-      DuePickerDialogFragment.show( this, due.getTimeInMillis(), due.hasTime() );
-   }
-   
-   
-   
-   @Override
-   public void onEditRecurrenceByPicker()
-   {
-      Pair< String, Boolean > recurrencePattern = getTaskEditFragment().getRecurrencePattern();
-      
-      if ( recurrencePattern == null )
-         recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
-      
-      RecurrPickerDialogFragment.show( this,
-                                       recurrencePattern.first,
-                                       recurrencePattern.second );
-   }
-   
-   
-   
-   @Override
-   public void onEditEstimateByPicker()
-   {
-      final long estimateMillis = getTaskEditFragment().getEstimateMillis();
-      EstimatePickerDialogFragment.show( this, estimateMillis );
-   }
-   
-   
-   
-   @Override
-   public void onPickerDialogClosed( AbstractPickerDialogFragment dialog,
-                                     CloseReason reason )
-   {
-      if ( reason == CloseReason.OK )
-      {
-         if ( dialog instanceof DuePickerDialogFragment )
-         {
-            final DuePickerDialogFragment frag = (DuePickerDialogFragment) dialog;
-            getTaskEditFragment().setDue( frag.getCalendar() );
-         }
-         else if ( dialog instanceof RecurrPickerDialogFragment )
-         {
-            final RecurrPickerDialogFragment frag = (RecurrPickerDialogFragment) dialog;
-            getTaskEditFragment().setRecurrencePattern( frag.getPattern() );
-         }
-         else if ( dialog instanceof EstimatePickerDialogFragment )
-         {
-            final EstimatePickerDialogFragment frag = (EstimatePickerDialogFragment) dialog;
-            getTaskEditFragment().setEstimateMillis( frag.getMillis() );
-         }
-      }
+      final AbstractTaskEditFragment taskEditFragment = (AbstractTaskEditFragment) findAddedFragmentById( R.id.frag_task_edit );
+      return taskEditFragment;
    }
    
    
@@ -235,56 +129,4 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
          finish();
       }
    }
-   
-   
-   
-   private void addTaskEditFragment()
-   {
-      if ( findAddedFragmentById( R.id.frag_task_edit ) == null )
-      {
-         final Fragment fragment = createTaskEditFragment();
-         getSupportFragmentManager().beginTransaction()
-                                    .add( R.id.frag_task_edit, fragment )
-                                    .commit();
-      }
-   }
-   
-   
-   
-   private void showChangeTagsDialog( Bundle config )
-   {
-      final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-      final DialogFragment newFragment = ChangeTagsDialogFragment.newInstance( config );
-      
-      newFragment.show( fragmentTransaction,
-                        String.valueOf( R.id.frag_change_tags ) );
-   }
-   
-   
-   
-   private AbstractTaskEditFragment getTaskEditFragment()
-   {
-      final AbstractTaskEditFragment taskEditFragment = (AbstractTaskEditFragment) findAddedFragmentById( R.id.frag_task_edit );
-      return taskEditFragment;
-   }
-   
-   
-   
-   private Bundle createTaskEditChangeTagsConfiguration( List< String > tags )
-   {
-      final Bundle config = new Bundle( 2 );
-      
-      config.putStringArrayList( ChangeTagsDialogFragment.Config.TAGS,
-                                 new ArrayList< String >( tags ) );
-      
-      return config;
-   }
-   
-   
-   
-   protected abstract int getContentViewResourceId();
-   
-   
-   
-   protected abstract Fragment createTaskEditFragment();
 }

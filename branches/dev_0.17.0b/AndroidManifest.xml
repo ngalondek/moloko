@@ -199,17 +199,9 @@
                android:name="android.intent.category.DEFAULT" />
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
-         </intent-filter>         
-      </activity>
-      
-      <activity
-         android:name=".activities.TaskAddActivity"
-         android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
-         android:exported="false"
-         android:uiOptions="splitActionBarWhenNarrow"
-         android:windowSoftInputMode="adjustResize">
+         </intent-filter>
          
-         <!-- Insert a new task -->      
+         <!-- Insert a new task -->
          <intent-filter>
             <action
                android:name="android.intent.action.INSERT" />
@@ -238,7 +230,7 @@
       </activity>
       
       <activity
-         android:name=".activities.NoteActivity"
+         android:name=".activities.NoteEditActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
          android:exported="false"
          android:uiOptions="splitActionBarWhenNarrow"

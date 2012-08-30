@@ -25,7 +25,11 @@ package dev.drsoran.moloko.fragments;
 import java.util.Collections;
 import java.util.List;
 
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,14 +38,27 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
 public class TaskEditFragment extends AbstractTaskEditFragment
 {
+   private final Handler handler = new Handler();
+   
+   private final TaskLoaderHandler taskLoaderHandler = new TaskLoaderHandler();
+   
+   @InstanceState( key = Intents.Extras.KEY_TASK )
+   private Task task;
+   
+   private ContentObserver taskChangesObserver;
+   
+   
    
    public final static TaskEditFragment newInstance( Bundle config )
    {
@@ -51,9 +68,6 @@ public class TaskEditFragment extends AbstractTaskEditFragment
       
       return fragment;
    }
-   
-   @InstanceState( key = Intents.Extras.KEY_TASK )
-   private Task task;
    
    
    
@@ -65,7 +79,25 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected Bundle getInitialValues()
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      registerForTaskDeletedByBackgroundSync();
+   }
+   
+   
+   
+   @Override
+   public void onDestroy()
+   {
+      unregisterForTaskDeletedByBackgroundSync();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
+   public Bundle determineInitialValues()
    {
       final Task task = getTaskAssertNotNull();
       
@@ -136,5 +168,79 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    protected List< Task > getEditedTasks()
    {
       return Collections.singletonList( getTaskAssertNotNull() );
+   }
+   
+   
+   
+   private void registerForTaskDeletedByBackgroundSync()
+   {
+      taskChangesObserver = new ContentObserver( handler )
+      {
+         @Override
+         public void onChange( boolean selfChange )
+         {
+            getSherlockActivity().getSupportLoaderManager()
+                                 .initLoader( TaskLoader.ID,
+                                              Bundle.EMPTY,
+                                              TaskEditFragment.this.taskLoaderHandler );
+         }
+      };
+      
+      getSherlockActivity().getContentResolver()
+                           .registerContentObserver( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                               getTaskAssertNotNull().getId() ),
+                                                     false,
+                                                     taskChangesObserver );
+   }
+   
+   
+   
+   private void unregisterForTaskDeletedByBackgroundSync()
+   {
+      getSherlockActivity().getContentResolver()
+                           .unregisterContentObserver( taskChangesObserver );
+      taskChangesObserver = null;
+   }
+   
+   
+   private class TaskLoaderHandler implements LoaderCallbacks< Task >
+   {
+      @Override
+      public Loader< Task > onCreateLoader( int id, Bundle args )
+      {
+         return new TaskLoader( getSherlockActivity(),
+                                getTaskAssertNotNull().getId() );
+      }
+      
+      
+      
+      @Override
+      public void onLoadFinished( Loader< Task > loader, Task data )
+      {
+         // If the database changed by a background sync and the assigned note
+         // has been deleted, then we ask the user if he wants to keep his changes
+         // or drop the note.
+         if ( data == null )
+         {
+            handler.post( new Runnable()
+            {
+               @Override
+               public void run()
+               {
+                  if ( listener != null )
+                  {
+                     listener.onBackgroundDeletion( getTaskAssertNotNull() );
+                  }
+               }
+            } );
+         }
+      }
+      
+      
+      
+      @Override
+      public void onLoaderReset( Loader< Task > loader )
+      {
+      }
    }
 }

@@ -139,6 +139,7 @@
    <string name="btn_postpone">Reporter</string>
    <string name="btn_delete">Supprimer</string>   
    <string name="btn_back">Retour</string>
+   <string name="btn_discard">Discard</string>
    
    <!-- Global menus -->
    <string name="menu_opt_edit">Edit</string>
@@ -218,6 +219,10 @@
    
    <!-- Task activity -->   
    <string name="taskactivity_tab_notes">Notes</string>
+   
+   <!-- TaskEdit activity -->
+      <!-- Dialogs -->
+      <string name="taskedit_activity_dlg_removing_editing">The task you are editing is removed by processing a background sync.</string>
 
    <!-- Task fragment -->
    <string name="task_source">source : %1$s</string>
@@ -231,8 +236,7 @@
    <string name="task_location">Lieu</string>
    <string name="task_participants">Partagée avec</string>
       <!-- Dialogs -->
-      <string name="task_dlg_choose_location_app">Afficher le lieu avec&#8230;</string>
-      <string name="task_dlg_removing_editing_note">La note que vous modifiez a été supprimée par une mise à jour en tâche de fond. Si vous continuez l\'édition, une nouvelle note sera créée avec vos modifications.</string>
+      <string name="task_dlg_choose_location_app">Afficher le lieu avec&#8230;</string>      
 
    <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Nom de la tâche</string>
@@ -324,6 +328,10 @@
    <string name="contactslist_no_contacts">Aucun contact</string>
       <!-- Menus -->
       <string name="contactslist_listitem_show_phonebook_contact">Détails de %1$s</string>
+
+   <!-- Note activity -->
+      <!-- Dialogs -->
+      <string name="note_dlg_removing_editing_note">La note que vous modifiez a été supprimée par une mise à jour en tâche de fond. Si vous continuez l\'édition, une nouvelle note sera créée avec vos modifications.</string>
 
    <!-- NoteEdit fragment -->
    <string name="note_edit_title_hint">Titre de la Note</string>

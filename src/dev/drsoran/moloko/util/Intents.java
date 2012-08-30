@@ -160,10 +160,12 @@ public final class Intents
       
       
       
-      public final static Bundle createEditNoteExtras( RtmTaskNote note )
+      public final static Bundle createEditNoteExtras( Task task,
+                                                       RtmTaskNote note )
       {
-         final Bundle bundle = new Bundle( 1 );
+         final Bundle bundle = new Bundle( 2 );
          
+         bundle.putParcelable( Extras.KEY_TASK, task );
          bundle.putParcelable( Extras.KEY_NOTE, note );
          
          return bundle;
@@ -702,13 +704,14 @@ public final class Intents
    
    
    public final static Intent createEditNoteIntent( Context context,
+                                                    Task task,
                                                     RtmTaskNote note )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT,
                                         Queries.contentUriWithId( Notes.CONTENT_URI,
                                                                   note.getId() ) );
       
-      intent.putExtras( Extras.createEditNoteExtras( note ) );
+      intent.putExtras( Extras.createEditNoteExtras( task, note ) );
       
       return intent;
    }

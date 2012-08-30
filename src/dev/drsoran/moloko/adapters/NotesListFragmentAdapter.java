@@ -104,14 +104,17 @@ public class NotesListFragmentAdapter extends
       }
       
       final TextView noteTextView = (TextView) listItemView.findViewById( R.id.note_text );
+      final View simpleLine = listItemView.findViewById( R.id.line );
       if ( !TextUtils.isEmpty( note.getText() ) )
       {
          noteTextView.setVisibility( View.VISIBLE );
          noteTextView.setText( note.getText() );
+         simpleLine.setVisibility( View.VISIBLE );
       }
       else
       {
          noteTextView.setVisibility( View.GONE );
+         simpleLine.setVisibility( View.GONE );
       }
    }
 }

@@ -85,7 +85,7 @@ public abstract class MolokoLoaderEditFragment< D > extends
    {
       if ( hasChanges() )
       {
-         return getChanges();
+         return getApplyChangesInfo();
       }
       
       return ApplyChangesInfo.EMPTY;
@@ -100,5 +100,5 @@ public abstract class MolokoLoaderEditFragment< D > extends
    
    
    
-   protected abstract ApplyChangesInfo getChanges();
+   protected abstract ApplyChangesInfo getApplyChangesInfo();
 }

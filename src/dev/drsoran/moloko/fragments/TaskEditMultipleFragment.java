@@ -89,7 +89,7 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected Bundle getInitialValues()
+   public Bundle determineInitialValues()
    {
       final List< Task > tasks = getTasksAssertNotNull();
       

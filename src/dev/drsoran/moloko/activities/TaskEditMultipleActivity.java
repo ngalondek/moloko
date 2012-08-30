@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
@@ -49,15 +50,32 @@ public class TaskEditMultipleActivity extends AbstractTaskEditActivity
    
    
    @Override
-   protected int getContentViewResourceId()
+   public void onCreate( Bundle savedInstanceState )
    {
-      return R.layout.task_edit_multiple_activity;
+      super.onCreate( savedInstanceState );
+      
+      setContentView( R.layout.task_edit_multiple_activity );
+      addFragment();
    }
    
    
    
-   @Override
-   protected Fragment createTaskEditFragment()
+   private void addFragment()
+   {
+      if ( findAddedFragmentById( R.id.frag_task_edit ) == null )
+      {
+         final Fragment fragment = createTaskEditMultipleFragment();
+         
+         getSupportFragmentManager().beginTransaction()
+                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                                    .add( R.id.frag_task_edit, fragment )
+                                    .commit();
+      }
+   }
+   
+   
+   
+   private Fragment createTaskEditMultipleFragment()
    {
       final Fragment fragment = TaskEditMultipleFragment.newInstance( createTaskEditMultipleFragmentConfig() );
       return fragment;

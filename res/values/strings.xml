@@ -157,6 +157,7 @@
    <string name="btn_postpone">Postpone</string>
    <string name="btn_delete">Delete</string>
    <string name="btn_back">Back</string>
+   <string name="btn_discard">Discard</string>
    
    <!-- Global menus -->
    <string name="menu_opt_edit">Edit</string>
@@ -240,6 +241,10 @@
    <!-- Task activity -->
    <string name="taskactivity_tab_task">@string/app_task</string>
    <string name="taskactivity_tab_notes">Notes</string>
+   
+   <!-- TaskEdit activity -->
+      <!-- Dialogs -->
+      <string name="taskedit_activity_dlg_removing_editing">The task you are editing is removed by processing a background sync.</string>
 
    <!-- Task fragment -->
    <string name="task_source">from %1$s</string>
@@ -255,7 +260,6 @@
    <string name="task_url">URL</string>
       <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Open location with&#8230;</string>
-      <string name="task_dlg_removing_editing_note">The note you are editing is removed by processing a background sync. If you continue editing, a new note is inserted with your changes.</string>
 
    <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Task Name</string>
@@ -355,6 +359,10 @@
    <string name="contactslist_listitem_num_tasks">%1$d %2$s</string>
       <!-- Menus -->
       <string name="contactslist_listitem_show_phonebook_contact">Details of %1$s</string>
+      
+   <!-- Note activity -->
+      <!-- Dialogs -->
+      <string name="note_dlg_removing_editing_note">The note you are editing is removed by processing a background sync. If you continue editing, a new note is inserted with your changes.</string>
 
    <!-- NoteEdit fragment -->
    <string name="note_edit_title_hint">Note title</string>

@@ -144,6 +144,7 @@
    <string name="btn_postpone">Aufschieben</string>
    <string name="btn_delete">Löschen</string>
    <string name="btn_back">Zurück</string>
+   <string name="btn_discard">Verwerfen</string>
    
    <!-- Global menus -->
    <string name="menu_opt_edit">Bearbeiten</string>
@@ -222,6 +223,10 @@
 	<!-- Task activity -->
 	<string name="taskactivity_tab_notes">Notizen</string>
 	
+	<!-- TaskEdit activity -->
+	  <!-- Dialogs -->
+	  <string name="taskedit_activity_dlg_removing_editing">Die Aufgabe in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt.</string>
+	
 	<!-- Task fragment -->
 	<string name="task_source">von %1$s</string>
 	<string name="task_datetime_title_due">Wann</string>
@@ -233,8 +238,7 @@
    <string name="task_participants">Freigegeben für</string>
    <string name="task_location">Ort</string>
       <!-- Dialogs -->
-      <string name="task_dlg_choose_location_app">Öffne Ort mit&#8230;</string>
-      <string name="task_dlg_removing_editing_note">Die Notiz in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt. Wenn Sie die Bearbeitung fortsetzen, wird eine neue Notiz mit Ihren Änderungen eingefügt.</string>         
+      <string name="task_dlg_choose_location_app">Öffne Ort mit&#8230;</string>      
         
    <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
@@ -339,6 +343,10 @@
    <string name="contactslist_no_contacts">Keine Kontakte</string>
       <!-- Menus -->
       <string name="contactslist_listitem_show_phonebook_contact">Details von %1$s</string>
+   
+   <!-- Note activity -->
+      <!-- Dialogs -->
+      <string name="note_dlg_removing_editing_note">Die Notiz in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt. Wenn Sie die Bearbeitung fortsetzen, wird eine neue Notiz mit Ihren Änderungen eingefügt.</string>
       
    <!-- Authenticator fragment -->
    <string name="auth_permission_choose">Berechtigung wählen</string>

@@ -90,7 +90,7 @@
       name="dlg_delete_element" />
    <item
       type="id"
-      name="dlg_taskactivity_request_remove_note" />
+      name="dlg_request_remove_by_bg_sync" />
    <item
       type="id"
       name="dlg_selectmultipletasks_complete" />

@@ -24,6 +24,8 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
+import dev.drsoran.rtm.Task;
+
 
 public interface ITaskEditFragmentListener
 {
@@ -40,4 +42,8 @@ public interface ITaskEditFragmentListener
    
    
    void onEditEstimateByPicker();
+   
+   
+   
+   void onBackgroundDeletion( Task oldTask );
 }

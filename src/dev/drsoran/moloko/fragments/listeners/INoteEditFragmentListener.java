@@ -20,39 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.activities;
+package dev.drsoran.moloko.fragments.listeners;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.TaskAddFragment;
+import com.mdt.rtm.data.RtmTaskNote;
 
 
-public class TaskAddActivity extends AbstractTaskEditActivity
+public interface INoteEditFragmentListener
 {
-   @Override
-   protected int getContentViewResourceId()
-   {
-      return R.layout.task_edit_activity;
-   }
-   
-   
-   
-   @Override
-   protected Fragment createTaskEditFragment()
-   {
-      final Fragment fragment = TaskAddFragment.newInstance( createTaskAddFragmentConfig() );
-      return fragment;
-   }
-   
-   
-   
-   private Bundle createTaskAddFragmentConfig()
-   {
-      final Bundle config = new Bundle();
-      
-      config.putAll( getIntent().getExtras() );
-      
-      return config;
-   }
+   void onBackgroundDeletion( RtmTaskNote oldNote );
 }

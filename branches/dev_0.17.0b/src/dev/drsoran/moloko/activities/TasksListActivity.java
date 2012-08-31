@@ -31,11 +31,10 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
-import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
-import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -43,11 +42,6 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public class TasksListActivity extends AbstractFullDetailedTasksListActivity
 {
-   @InstanceState( key = "SHOW_ADD_SMART_LIST" )
-   private boolean showAddSmartListMenu;
-   
-   
-   
    @Override
    public boolean onActivityCreateOptionsMenu( Menu menu )
    {
@@ -74,10 +68,56 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       
       if ( isWritableAccess() )
       {
-         menu.findItem( R.id.menu_add_list ).setVisible( showAddSmartListMenu );
+         final MenuItem addSmartListItem = menu.findItem( R.id.menu_add_list );
+         prepareAddSmartListMenuVisibility( addSmartListItem );
       }
       
+      final MenuItem toggleDefaultListItem = menu.findItem( R.id.menu_toggle_default_list );
+      prepareToggleDefaultListMenu( toggleDefaultListItem );
+      
       return true;
+   }
+   
+   
+   
+   private void prepareAddSmartListMenuVisibility( MenuItem addSmartListItem )
+   {
+      final RtmSmartFilter filter = geActiveRtmSmartFilter();
+      boolean show = filter != null;
+      
+      // the active, selected item is an already existing list, then we
+      // don't need to add a new list.
+      show = show && !isRealList( getActiveListId() );
+      
+      if ( show )
+      {
+         final List< RtmSmartFilterToken > unAmbigiousTokens = RtmSmartFilterParsing.removeAmbiguousTokens( filter.getTokens() );
+         show = unAmbigiousTokens.size() > 0;
+      }
+      
+      addSmartListItem.setVisible( show );
+   }
+   
+   
+   
+   private void prepareToggleDefaultListMenu( MenuItem toggleDefaultListItem )
+   {
+      final String listIdOfTasksList = getActiveListId();
+      
+      toggleDefaultListItem.setVisible( listIdOfTasksList != null
+         && isRealList( listIdOfTasksList ) );
+      
+      if ( toggleDefaultListItem.isVisible() )
+      {
+         if ( isDefaultList() )
+         {
+            toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_remove_def_list );
+         }
+         else
+         {
+            toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_make_def_list );
+         }
+      }
    }
    
    
@@ -91,6 +131,17 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
             showAddListDialog();
             return true;
             
+         case R.id.menu_toggle_default_list:
+            if ( isDefaultList() )
+            {
+               resetDefaultList();
+            }
+            else
+            {
+               setAsDefaultList();
+            }
+            return true;
+            
          default :
             return super.onOptionsItemSelected( item );
       }
@@ -101,40 +152,8 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    @Override
    public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
-      final IItem selectedItem = getNavigationItem( itemPosition );
-      if ( selectedItem != null )
-      {
-         final boolean show = evaluateAddSmartListMenuVisibility( selectedItem );
-         if ( show != showAddSmartListMenu )
-         {
-            showAddSmartListMenu = show;
-            invalidateOptionsMenu();
-         }
-      }
-      
+      supportInvalidateOptionsMenu();
       return super.onNavigationItemSelected( itemPosition, itemId );
-   }
-   
-   
-   
-   private boolean evaluateAddSmartListMenuVisibility( IItem selectedItem )
-   {
-      final IFilter filter = selectedItem.getTasksListConfig()
-                                         .getParcelable( Intents.Extras.KEY_FILTER );
-      boolean show = filter instanceof RtmSmartFilter;
-      
-      // if we are configured with a list name then we already are in a list
-      // and do not need to add a new one.
-      show = show && selectedItem.getId() == CUSTOM_NAVIGATION_ITEM_ID;
-      
-      if ( show )
-      {
-         final RtmSmartFilter rtmSmartFilter = (RtmSmartFilter) filter;
-         final List< RtmSmartFilterToken > unAmbigiousTokens = RtmSmartFilterParsing.removeAmbiguousTokens( rtmSmartFilter.getTokens() );
-         show = unAmbigiousTokens.size() > 0;
-      }
-      
-      return show;
    }
    
    
@@ -143,5 +162,53 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    protected Fragment createTasksListFragment( Bundle config )
    {
       return FullDetailedTasksListFragment.newInstance( config );
+   }
+   
+   
+   
+   private RtmSmartFilter geActiveRtmSmartFilter()
+   {
+      final IFilter activeFilter = getActiveFilter();
+      if ( activeFilter instanceof RtmSmartFilter )
+      {
+         return (RtmSmartFilter) activeFilter;
+      }
+      else
+      {
+         return null;
+      }
+   }
+   
+   
+   
+   /**
+    * Checks if the list ID belongs to a list from the database or is a custom navigation item ID. E.g. a search query.
+    */
+   private static boolean isRealList( String listId )
+   {
+      return !String.valueOf( CUSTOM_NAVIGATION_ITEM_ID ).equals( listId );
+   }
+   
+   
+   
+   private boolean isDefaultList()
+   {
+      return getActiveListId().equals( MolokoApp.getSettings( this )
+                                                .getDefaultListId() );
+   }
+   
+   
+   
+   private void setAsDefaultList()
+   {
+      MolokoApp.getSettings( this ).setDefaultListId( getActiveListId() );
+   }
+   
+   
+   
+   private void resetDefaultList()
+   {
+      MolokoApp.getSettings( this )
+               .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
 }

@@ -14,11 +14,5 @@
    
    <!-- Delay values -->
    <integer name="popup_notification_delay_on_ms">1000</integer>
-   
-   <!-- Activity request and result codes -->
-      <!-- Request -->
-      <integer name="activity_request_default">0</integer>
       
-      <!-- Result -->
-      <integer name="activity_result_deleted">10000</integer>
 </resources>

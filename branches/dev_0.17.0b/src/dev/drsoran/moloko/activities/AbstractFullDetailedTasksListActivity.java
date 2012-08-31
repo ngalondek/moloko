@@ -470,7 +470,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
          throw new IllegalStateException( "ActionMode already started." );
       }
       
-      IFilter filter = getConfiguredFilter();
+      IFilter filter = getActiveFilter();
       if ( !( filter instanceof RtmSmartFilter ) )
       {
          filter = null;
@@ -532,7 +532,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       final Bundle config = new Bundle();
       config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
-                            getConfiguredFilter() );
+                            getActiveFilter() );
       
       final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
       UIUtils.showDialogFragment( this,

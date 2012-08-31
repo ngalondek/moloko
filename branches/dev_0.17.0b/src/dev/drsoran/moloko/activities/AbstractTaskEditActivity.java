@@ -97,6 +97,7 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    {
       if ( which == Dialog.BUTTON_POSITIVE )
       {
+         setResult( RESULT_CANCELED );
          finish();
       }
    }
@@ -116,6 +117,7 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    {
       if ( finishFragmentEditing( getTaskEditFragment() ) )
       {
+         setResult( RESULT_OK );
          finish();
       }
    }
@@ -126,6 +128,7 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    {
       if ( cancelFragmentEditing( getTaskEditFragment() ) )
       {
+         setResult( RESULT_CANCELED );
          finish();
       }
    }

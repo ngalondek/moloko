@@ -224,56 +224,56 @@ public abstract class AbstractTasksListActivity extends
    
    
    
-   protected Bundle getCurrentTasksListFragmentConfiguration()
+   public Bundle getCurrentTasksListFragmentConfiguration()
    {
       return getFragmentConfigurations( R.id.frag_taskslist );
    }
    
    
    
-   protected final Task getTask( int pos )
+   public final Task getTask( int pos )
    {
       return getTasksListFragment().getTask( pos );
    }
    
    
    
-   protected final Task getTask( String taskId )
+   public final Task getTask( String taskId )
    {
       return getTasksListFragment().getTask( taskId );
    }
    
    
    
-   protected int getTaskSort()
+   public int getTaskSort()
    {
       return getTasksListFragment().getTaskSort();
    }
    
    
    
-   protected boolean isSameTaskSortLikeCurrent( int sortOrder )
+   public boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
       return getTasksListFragment().getTaskSort() == sortOrder;
    }
    
    
    
-   public IFilter getConfiguredFilter()
+   public IFilter getActiveFilter()
    {
       return getTasksListFragment().getFilter();
    }
    
    
    
-   protected boolean hasListNameInIntent()
+   public boolean hasListNameInIntent()
    {
       return getIntent().getExtras().containsKey( Intents.Extras.KEY_LIST_NAME );
    }
    
    
    
-   protected String getListNameFromIntent()
+   public String getListNameFromIntent()
    {
       final String listName = getIntent().getExtras()
                                          .getString( Intents.Extras.KEY_LIST_NAME );
@@ -282,11 +282,25 @@ public abstract class AbstractTasksListActivity extends
    
    
    
-   protected String getListIdFromIntent()
+   public String getListIdFromIntent()
    {
       final String listId = getIntent().getExtras()
                                        .getString( Intents.Extras.KEY_LIST_ID );
       return listId;
+   }
+   
+   
+   
+   public String getActiveListId()
+   {
+      if ( isListNavigationMode() )
+      {
+         return String.valueOf( selectedNavigationItem.id );
+      }
+      else
+      {
+         return getListIdFromIntent();
+      }
    }
    
    
@@ -299,6 +313,18 @@ public abstract class AbstractTasksListActivity extends
       }
       
       return actionBarNavigationAdapter.getItem( position );
+   }
+   
+   
+   
+   protected int getSelectedNavigationItemPosition()
+   {
+      if ( !isListNavigationMode() )
+      {
+         throw new UnsupportedOperationException( "No list navigation mode." );
+      }
+      
+      return selectedNavigationItem.position;
    }
    
    

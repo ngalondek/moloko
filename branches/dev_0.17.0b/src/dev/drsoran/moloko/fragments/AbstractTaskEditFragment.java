@@ -292,9 +292,7 @@ public abstract class AbstractTaskEditFragment
       }
       
       if ( !TextUtils.isEmpty( task.getSource() ) )
-         source.setText( getString( R.string.task_source,
-                                    UIUtils.convertSource( getSherlockActivity(),
-                                                           task.getSource() ) ) );
+         source.setText( getString( R.string.task_source, task.getSource() ) );
       else
          source.setText( "?" );
    }

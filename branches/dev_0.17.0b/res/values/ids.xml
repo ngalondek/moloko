@@ -136,6 +136,9 @@
       name="menu_sync" />
    <item
       type="id"
+      name="menu_toggle_default_list"/>
+   <item
+      type="id"
       name="menu_delete_list" />
    <item
       type="id"

@@ -141,11 +141,11 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
-      if ( requestCode == R.integer.activity_request_default )
+      if ( requestCode == TaskEditActivity.REQ_DEFAULT )
       {
          // The task in edit was deleted by a background sync. Close this
          // activity.
-         if ( resultCode == R.integer.activity_result_deleted )
+         if ( resultCode == TaskEditActivity.RESULT_DELETED )
          {
             finish();
          }
@@ -299,7 +299,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    public void onEditTask( Task task )
    {
       startActivityForResult( Intents.createEditTaskIntent( this, task ),
-                              R.integer.activity_request_default );
+                              TaskEditActivity.REQ_DEFAULT );
    }
    
    

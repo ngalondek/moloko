@@ -55,6 +55,12 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
          ITaskEditFragmentListener, IChangeTagsFragmentListener,
          IPickerDialogListener
 {
+   public final static int REQ_DEFAULT = 0;
+   
+   public final static int RESULT_DELETED = -10;
+   
+   
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -167,7 +173,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
          switch ( which )
          {
             case AlertDialog.BUTTON_NEUTRAL:
-               setResult( R.integer.activity_result_deleted );
+               setResult( RESULT_DELETED );
                finish();
                break;
             

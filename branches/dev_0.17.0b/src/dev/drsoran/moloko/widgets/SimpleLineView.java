@@ -74,6 +74,7 @@ public class SimpleLineView extends View
    public void setLineColor( int color )
    {
       lineDrawable.getPaint().setColor( color );
+      invalidateDrawable( lineDrawable );
    }
    
    

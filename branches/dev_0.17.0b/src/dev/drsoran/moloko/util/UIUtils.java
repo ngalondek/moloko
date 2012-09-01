@@ -324,95 +324,57 @@ public final class UIUtils
    
    
    
-   public final static boolean initializeTitleWithViewLayout( View layout,
-                                                              String title )
+   public final static void initializeTitleWithViewLayout( View layout,
+                                                           String title )
    {
-      boolean ok = layout != null;
+      final TextView titleView = (TextView) layout.findViewById( R.id.title_with_view_title );
       
-      if ( ok )
+      if ( TextUtils.isEmpty( title ) )
       {
-         try
-         {
-            final TextView titleView = (TextView) layout.findViewById( R.id.title_with_view_title );
-            
-            if ( TextUtils.isEmpty( title ) )
-            {
-               titleView.setVisibility( View.GONE );
-            }
-            else
-            {
-               titleView.setVisibility( View.VISIBLE );
-               titleView.setText( title );
-            }
-         }
-         catch ( ClassCastException e )
-         {
-            ok = false;
-         }
+         titleView.setVisibility( View.GONE );
       }
-      
-      return ok;
+      else
+      {
+         titleView.setVisibility( View.VISIBLE );
+         titleView.setText( title );
+      }
    }
    
    
    
-   public final static boolean initializeTitleWithTextLayout( View layout,
-                                                              String title,
-                                                              String text )
+   public final static void initializeTitleWithTextLayout( View layout,
+                                                           String title,
+                                                           String text )
    {
-      boolean ok = layout != null
-         && initializeTitleWithViewLayout( layout, title );
+      initializeTitleWithViewLayout( layout, title );
       
-      if ( ok )
+      final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
+      
+      if ( TextUtils.isEmpty( text ) )
       {
-         try
-         {
-            final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
-            
-            if ( TextUtils.isEmpty( text ) )
-            {
-               textView.setVisibility( View.GONE );
-            }
-            else
-            {
-               textView.setVisibility( View.VISIBLE );
-               textView.setText( text );
-            }
-         }
-         catch ( ClassCastException e )
-         {
-            ok = false;
-         }
+         textView.setVisibility( View.GONE );
       }
-      
-      return ok;
+      else
+      {
+         textView.setVisibility( View.VISIBLE );
+         textView.setText( text );
+      }
    }
    
    
    
-   public final static boolean initializeTitleWithTextLayoutAsLink( View layout,
-                                                                    String title,
-                                                                    Spannable text,
-                                                                    ClickableSpan onClickHandler )
+   public final static void initializeTitleWithTextLayoutAsLink( View layout,
+                                                                 String title,
+                                                                 Spannable text,
+                                                                 ClickableSpan onClickHandler )
    {
-      boolean ok = initializeTitleWithTextLayout( layout,
-                                                  title,
-                                                  text.toString() );
+      initializeTitleWithTextLayout( layout, title, text.toString() );
       
-      if ( ok && text != null )
+      if ( text != null )
       {
-         try
-         {
-            final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
-            makeLink( textView, text, onClickHandler );
-         }
-         catch ( ClassCastException e )
-         {
-            ok = false;
-         }
+         final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
+         makeLink( textView, text, onClickHandler );
       }
-      
-      return ok;
    }
    
    

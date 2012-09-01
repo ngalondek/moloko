@@ -33,7 +33,10 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.content.LocationOverviewsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.fragments.TagCloudFragment.ListTagCloudEntry;
+import dev.drsoran.moloko.fragments.TagCloudFragment.LocationTagCloudEntry;
 import dev.drsoran.moloko.fragments.TagCloudFragment.TagCloudEntry;
+import dev.drsoran.moloko.fragments.TagCloudFragment.TagTagCloudEntry;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -109,24 +112,22 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
          for ( RtmListWithTaskCount list : lists )
          {
             if ( list.getTaskCount() > 0 )
-               cloudEntries.add( new TagCloudEntry( TagCloudEntry.LIST,
-                                                    list.getName(),
-                                                    list.getTaskCount() ) );
+            {
+               cloudEntries.add( new ListTagCloudEntry( list ) );
+            }
          }
          
          for ( TagWithTaskCount tag : tags )
          {
-            cloudEntries.add( new TagCloudEntry( TagCloudEntry.TAG,
-                                                 tag.getTag(),
-                                                 tag.getTaskCount() ) );
+            cloudEntries.add( new TagTagCloudEntry( tag ) );
          }
          
          for ( LocationWithTaskCount location : locations )
          {
             if ( location.getIncompleteTaskCount() > 0 )
-               cloudEntries.add( new TagCloudEntry( TagCloudEntry.LOCATION,
-                                                    location.getRtmLocation().name,
-                                                    location.getIncompleteTaskCount() ) );
+            {
+               cloudEntries.add( new LocationTagCloudEntry( location ) );
+            }
          }
       }
       

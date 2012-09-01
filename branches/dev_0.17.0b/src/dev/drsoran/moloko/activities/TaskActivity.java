@@ -44,7 +44,6 @@ import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.NotesListFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.INotesListsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.Intents;
@@ -307,7 +306,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onOpenLocation( Task task )
    {
-      LocationChooserDialogFragment.show( this, task );
+      startActivity( Intents.createOpenLocationWithOtherAppChooser( task.getLongitude(),
+                                                                    task.getLatitude(),
+                                                                    task.getZoom() ) );
    }
    
    

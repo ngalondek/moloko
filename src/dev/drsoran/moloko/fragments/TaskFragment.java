@@ -44,7 +44,6 @@ import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.format.RtmStyleTaskDescTextViewFormatter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
-import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
@@ -404,10 +403,9 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
          else
             titleId = R.string.task_datetime_title_recurr;
          
-         if ( !UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( titleId ),
-                                                      textBuffer.toString() ) )
-            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+         UIUtils.initializeTitleWithTextLayout( view,
+                                                getString( titleId ),
+                                                textBuffer.toString() );
       }
    }
    
@@ -452,35 +450,24 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
          
          if ( locationIsClickable )
          {
-            // Check if we can click the location
-            if ( LocationChooserDialogFragment.hasIntentHandler( getSherlockActivity(),
-                                                                 task.getLocationAddress() ) )
-            {
-               final SpannableString clickableLocation = new SpannableString( locationName );
-               UIUtils.initializeTitleWithTextLayoutAsLink( view,
-                                                            getString( R.string.task_location ),
-                                                            clickableLocation,
-                                                            new ClickableSpan()
-                                                            {
-                                                               @Override
-                                                               public void onClick( View widget )
-                                                               {
-                                                                  listener.onOpenLocation( task );
-                                                               }
-                                                            } );
-            }
-            else
-            {
-               locationIsClickable = false;
-            }
-         }
-         
-         if ( !locationIsClickable )
-         {
-            if ( !UIUtils.initializeTitleWithTextLayout( view,
+            final SpannableString clickableLocation = new SpannableString( locationName );
+            UIUtils.initializeTitleWithTextLayoutAsLink( view,
                                                          getString( R.string.task_location ),
-                                                         locationName ) )
-               throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+                                                         clickableLocation,
+                                                         new ClickableSpan()
+                                                         {
+                                                            @Override
+                                                            public void onClick( View widget )
+                                                            {
+                                                               listener.onOpenLocation( task );
+                                                            }
+                                                         } );
+         }
+         else
+         {
+            UIUtils.initializeTitleWithTextLayout( view,
+                                                   getString( R.string.task_location ),
+                                                   locationName );
          }
       }
    }

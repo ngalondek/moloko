@@ -27,13 +27,14 @@ import java.util.Collections;
 import android.os.Bundle;
 
 import com.actionbarsherlock.view.Menu;
+import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
-import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITagCloudFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TagCloudActivity extends MolokoFragmentActivity implements
@@ -60,41 +61,41 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onListNameClicked( String listName )
+   public void onOpenList( RtmListWithTaskCount list )
    {
-      startActivityWithHomeAction( Intents.createOpenListIntentByName( this,
-                                                                       listName,
-                                                                       null ),
+      startActivityWithHomeAction( Intents.createOpenListIntent( this,
+                                                                 list,
+                                                                 null ),
                                    getClass() );
    }
    
    
    
    @Override
-   public void onLocationNameClicked( String locationName )
-   {
-      startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
-                                                                           locationName ),
-                                   getClass() );
-   }
-   
-   
-   
-   @Override
-   public void onLocationNameLongClicked( String locationName )
-   {
-      LocationChooserDialogFragment.showChooser( this, locationName );
-   }
-   
-   
-   
-   @Override
-   public void onTagNameClicked( String tagName )
+   public void onOpenTag( String tag )
    {
       startActivityWithHomeAction( Intents.createOpenTagsIntent( this,
-                                                                 Collections.singletonList( tagName ),
+                                                                 Collections.singletonList( tag ),
                                                                  RtmSmartFilterLexer.AND_LIT ),
                                    getClass() );
+   }
+   
+   
+   
+   @Override
+   public void onOpenLocation( RtmLocation location )
+   {
+      startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
+                                                                           location.name ),
+                                   getClass() );
+   }
+   
+   
+   
+   @Override
+   public void onOpenLocationWithOtherApp( RtmLocation location )
+   {
+      startActivity( Intents.createOpenLocationWithOtherAppChooser( location ) );
    }
    
    

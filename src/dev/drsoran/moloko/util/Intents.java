@@ -30,12 +30,15 @@ import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
 
+import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.MolokoApp;
@@ -188,61 +191,6 @@ public final class Intents
             bundle.putString( Extras.KEY_NOTE_TEXT, text );
          
          return bundle;
-      }
-      
-      
-      
-      public final static Bundle createOpenListExtrasById( Context context,
-                                                           String id,
-                                                           String additionalFilter )
-      {
-         Bundle extras = null;
-         
-         final ContentProviderClient client = context.getContentResolver()
-                                                     .acquireContentProviderClient( ListOverviews.CONTENT_URI );
-         
-         if ( client != null )
-         {
-            final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                         ListOverviews._ID
-                                                                                            + "="
-                                                                                            + id );
-            
-            if ( list != null )
-               extras = createOpenListExtras( context, list, additionalFilter );
-            
-            client.release();
-         }
-         
-         return extras;
-      }
-      
-      
-      
-      public final static Bundle createOpenListExtrasByName( Context context,
-                                                             String name,
-                                                             String additionalFilter )
-      {
-         Bundle extras = null;
-         
-         final ContentProviderClient client = context.getContentResolver()
-                                                     .acquireContentProviderClient( ListOverviews.CONTENT_URI );
-         
-         if ( client != null )
-         {
-            final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                         ListOverviews.LIST_NAME
-                                                                                            + "='"
-                                                                                            + name
-                                                                                            + "'" );
-            
-            if ( list != null )
-               extras = createOpenListExtras( context, list, additionalFilter );
-            
-            client.release();
-         }
-         
-         return extras;
       }
       
       
@@ -562,34 +510,6 @@ public final class Intents
    
    
    
-   public final static Intent createOpenListIntentByName( Context context,
-                                                          String name,
-                                                          String filter )
-   {
-      Intent intent = null;
-      
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( ListOverviews.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                      ListOverviews.LIST_NAME
-                                                                                         + "='"
-                                                                                         + name
-                                                                                         + "'" );
-         
-         if ( list != null )
-            intent = createOpenListIntent( context, list, filter );
-         
-         client.release();
-      }
-      
-      return intent;
-   }
-   
-   
-   
    public final static Intent createOpenListIntent( Context context,
                                                     RtmListWithTaskCount list,
                                                     String additionalSmartFilter )
@@ -617,6 +537,61 @@ public final class Intents
    {
       return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenLocationExtras( context,
                                                                                                              name ) );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppIntent( float lon,
+                                                                    float lat,
+                                                                    int zoom )
+   {
+      return new Intent( Intent.ACTION_VIEW, Uri.parse( "geo:" + lat + ","
+         + lon + "?z=" + zoom ) );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppIntent( String address )
+   {
+      return new Intent( Intent.ACTION_VIEW, Uri.parse( "geo:0,0?q=" + address ) );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppChooser( float lon,
+                                                                     float lat,
+                                                                     int zoom )
+   {
+      return Intent.createChooser( createOpenLocationWithOtherAppIntent( lon,
+                                                                         lat,
+                                                                         zoom ),
+                                   null );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppChooser( RtmLocation location )
+   {
+      // Determine the type of the location. If we have coordinates
+      // we use these cause they are more precise than the
+      // address.
+      if ( location.longitude != 0.0f || location.latitude != 0.0f )
+      {
+         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.longitude,
+                                                                            location.latitude,
+                                                                            location.zoom ),
+                                      null );
+      }
+      else if ( !TextUtils.isEmpty( location.address ) )
+      {
+         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.address ),
+                                      null );
+      }
+      
+      else
+      {
+         return null;
+      }
    }
    
    
@@ -741,5 +716,30 @@ public final class Intents
       intent.putExtras( Extras.createSmartFilterExtras( context, filter, title ) );
       
       return intent;
+   }
+   
+   
+   
+   public static Intent getFirstResolvable( Context context, Intent[] intents )
+   {
+      final PackageManager pm = context.getPackageManager();
+      
+      Intent firstResolvedIntent = null;
+      for ( int i = 0; i < intents.length && firstResolvedIntent == null; i++ )
+      {
+         final Intent intent = intents[ i ];
+         
+         if ( intent != null )
+         {
+            final List< ResolveInfo > resolveInfos = pm.queryIntentActivities( intent,
+                                                                               PackageManager.MATCH_DEFAULT_ONLY );
+            if ( resolveInfos != null && resolveInfos.size() > 0 )
+            {
+               firstResolvedIntent = intent;
+            }
+         }
+      }
+      
+      return firstResolvedIntent;
    }
 }

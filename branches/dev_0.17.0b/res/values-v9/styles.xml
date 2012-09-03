@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-   Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko 
+   Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko 
 	is free software: you can redistribute it and/or modify it under the terms 
 	of the GNU General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. Moloko 
@@ -9,10 +9,10 @@
 	PURPOSE. See the GNU General Public License for more details. You should 
 	have received a copy of the GNU General Public License along with Moloko. 
 	If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-	- implementation
+	- implementation
 -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
    <!-- ************ -->
    <!-- Notification -->
@@ -20,5 +20,21 @@
    <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
    <style name="NotificationText" parent="android:TextAppearance.StatusBar.EventContent" />
    <style name="NotificationStackCount" parent="android:TextAppearance.StatusBar.EventContent" />
+   
+   <!-- ListStyle -->
+   
+   <style name="ListViewStyle" parent="@android:style/Widget.ListView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+   </style>
+   
+   <style name="ExpandableListViewStyle" parent="@android:style/Widget.ExpandableListView">
+      <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+   </style>
+   
+   <!-- GridViewStyle -->
+   
+   <style name="GridViewStyle" parent="@android:style/Widget.GridView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+   </style>
 
 </resources>

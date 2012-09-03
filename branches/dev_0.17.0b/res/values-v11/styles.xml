@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-   Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko 
+   Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko 
 	is free software: you can redistribute it and/or modify it under the terms 
 	of the GNU General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. Moloko 
@@ -19,6 +19,19 @@
     
     <style name="Quick_Add_Task_Action_Bar_Fragment_Text">        
         <item name="android:textColorHint">@color/app_darker_gray</item>
+    </style>
+    
+    <!-- ListStyle -->
+    
+    <style name="ListViewStyle" parent="@android:style/Widget.DeviceDefault.Light.ListView">
+    </style>
+    
+    <style name="ExpandableListViewStyle" parent="@android:style/Widget.DeviceDefault.Light.ExpandableListView">
+    </style>
+    
+    <!-- GridViewStyle -->
+   
+    <style name="GridViewStyle" parent="@android:style/Widget.DeviceDefault.Light.GridView">
     </style>
     
     <!-- Take preferences from RTM checkbox style -->

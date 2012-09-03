@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.__Moloko" parent="Theme.Sherlock.Light.DarkActionBar.ForceOverflow">
 
@@ -19,10 +19,12 @@
         <item name="android:actionBarStyle">@style/ActionBarStyle</item>
 
         <!-- Widgets -->
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
         <item name="android:expandableListViewStyle">@style/ExpandableListViewStyle</item>
+        <item name="android:gridViewStyle">@style/GridViewStyle</item>
         <item name="android:listPreferredItemHeight">@dimen/app_listPreferredItemHeight</item>
         <item name="android:textViewStyle">@style/TextViewStyle</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>        
         <item name="titleWithViewStyle">@style/TitleWithViewStyle</item>
         <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text</item>
         <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner</item>

@@ -90,13 +90,6 @@
         <item name="lineColor">@color/app_default_line</item>
     </style>
 
-    <!-- ListStyle -->
-
-    <style name="ExpandableListViewStyle" parent="@android:style/Widget.ExpandableListView">
-        <item name="android:childDivider">@android:drawable/divider_horizontal_bright</item>
-        <item name="android:groupIndicator">@null</item>
-    </style>
-
     <!-- TextViewStyle -->
 
     <style name="TextViewStyle" parent="@android:style/Widget.TextView">
@@ -106,7 +99,7 @@
     <!-- AutocompleteTextViewStyle -->
 
     <style name="AutoCompleteTextViewStyle" parent="@android:style/Widget.AutoCompleteTextView">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>        
     </style>
     
     <!-- RtmSmartAdd -->

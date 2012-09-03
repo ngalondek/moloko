@@ -27,7 +27,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -330,34 +329,9 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       
       if ( view != null )
       {
-         ImageView groupIndicator;
-         TextView listName;
-         TextView tasksCount;
-         ViewGroup iconsContainer;
-         
-         try
-         {
-            groupIndicator = (ImageView) view.findViewById( R.id.tasklists_group_indicator );
-            groupIndicator.setOnClickListener( iconExpandCollapseListener );
-            
-            listName = (TextView) view.findViewById( R.id.tasklists_group_list_name );
-            tasksCount = (TextView) view.findViewById( R.id.tasklists_group_num_tasks );
-            iconsContainer = (ViewGroup) view.findViewById( R.id.tasklists_group_icons_container );
-         }
-         catch ( ClassCastException e )
-         {
-            Log.e( TAG, "Invalid layout spec.", e );
-            throw e;
-         }
-         
-         if ( isExpanded )
-         {
-            groupIndicator.setImageResource( R.drawable.expander_ic_maximized );
-         }
-         else
-         {
-            groupIndicator.setImageResource( R.drawable.expander_ic_minimized );
-         }
+         final TextView listName = (TextView) view.findViewById( R.id.tasklists_group_list_name );
+         final TextView tasksCount = (TextView) view.findViewById( R.id.tasklists_group_num_tasks );
+         final ViewGroup iconsContainer = (ViewGroup) view.findViewById( R.id.tasklists_group_icons_container );
          
          final RtmListWithTaskCount rtmList = lists.get( groupPosition );
          

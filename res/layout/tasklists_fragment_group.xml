@@ -17,6 +17,7 @@
    android:layout_height="wrap_content"
    android:minHeight="@dimen/tasklists_group_height">
 
+   <!-- 
    <ImageView
       android:id="@+id/tasklists_group_indicator"
       android:layout_width="wrap_content"
@@ -26,6 +27,8 @@
       android:layout_gravity="center_vertical"
       android:src="@drawable/expander_ic_minimized"
       android:onClick="onGroupIndicatorClicked" />
+      
+     -->
 
    <TextView
       android:id="@+id/tasklists_group_list_name"

@@ -25,7 +25,6 @@ package dev.drsoran.moloko.notification;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -38,15 +37,14 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 class LoadPermanentTasksAsyncTask extends AbstractNotificationTasksLoader
 {
-   
    private final boolean includeOverDueTasks;
    
    private final int type;
    
    
    
-   public LoadPermanentTasksAsyncTask( Context context, Handler handler,
-      int type, boolean includeOverdueTasks )
+   public LoadPermanentTasksAsyncTask( Context context,
+      ITasksLoadedHandler handler, int type, boolean includeOverdueTasks )
    {
       super( context, handler );
       

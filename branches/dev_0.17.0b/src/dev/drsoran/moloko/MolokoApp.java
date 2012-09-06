@@ -34,23 +34,32 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Message;
 import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.notification.PermanentNotificationType;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
 import dev.drsoran.moloko.sync.periodic.PeriodicSyncHandlerFactory;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
-@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
-public class MolokoApp extends Application implements IOnBootCompletedListener,
+@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ",
+                 mode = ReportingInteractionMode.NOTIFICATION,
+                 resNotifTickerText = R.string.acra_crash_notif_ticker_text,
+                 resNotifTitle = R.string.acra_crash_notif_title,
+                 resNotifText = R.string.acra_crash_notif_text,
+                 resNotifIcon = android.R.drawable.stat_notify_error,
+                 resDialogText = R.string.acra_crash_dialog_text,
+                 resDialogIcon = android.R.drawable.ic_dialog_info,
+                 resDialogTitle = R.string.acra_crash_dialog_title,
+                 resDialogCommentPrompt = R.string.acra_crash_comment_prompt,
+                 resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
+public class MolokoApp extends Application implements
          IOnSettingsChangedListener
 {
+   private final static TokenBasedHandler handler = new TokenBasedHandler();
+   
    private Settings settings;
    
    private NotifierContext notifierContext;
@@ -98,7 +107,6 @@ public class MolokoApp extends Application implements IOnBootCompletedListener,
    public void onConfigurationChanged( Configuration newConfig )
    {
       super.onConfigurationChanged( newConfig );
-      
       initParserLanguages();
    }
    
@@ -121,20 +129,16 @@ public class MolokoApp extends Application implements IOnBootCompletedListener,
    
    
    
-   public static Handler getHandler( Context context )
+   public static Handler getHandler()
    {
-      final MolokoApp app = MolokoApp.get( context );
-      if ( app != null )
-         return app.getHandler();
-      else
-         return null;
+      return handler;
    }
    
    
    
-   public Handler getHandler()
+   public static IHandlerToken acquireHandlerToken()
    {
-      return handler;
+      return handler.aquireToken();
    }
    
    
@@ -231,8 +235,8 @@ public class MolokoApp extends Application implements IOnBootCompletedListener,
    private void registerNotificationSettingsListener()
    {
       notifierContext.registerOnSettingsChangedListener( IOnSettingsChangedListener.NOTIFY_DUE_TASKS
-                                                            | IOnSettingsChangedListener.NOTIFY_PERMAENT_TASKS
-                                                            | IOnSettingsChangedListener.NOTIFY_PERMAENT_OVERDUE_TASKS,
+                                                            | IOnSettingsChangedListener.NOTIFY_PERMANENT_TASKS
+                                                            | IOnSettingsChangedListener.NOTIFY_PERMANENT_OVERDUE_TASKS,
                                                          this );
    }
    
@@ -341,10 +345,16 @@ public class MolokoApp extends Application implements IOnBootCompletedListener,
    
    
    
-   @Override
    public void onBootCompleted()
    {
-      startNotificationServiceIfNotificationsAreActive();
+      handler.post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            startNotificationServiceIfNotificationsAreActive();
+         }
+      } );
    }
    
    
@@ -362,29 +372,4 @@ public class MolokoApp extends Application implements IOnBootCompletedListener,
       
       return activated;
    }
-   
-   private final Handler handler = new Handler()
-   {
-      
-      @Override
-      public void handleMessage( Message msg )
-      {
-         boolean handled = false;
-         if ( msg.obj instanceof ListenerList.MessgageObject< ? > )
-         {
-            final ListenerList.MessgageObject< ? > msgObj = (MessgageObject< ? >) msg.obj;
-            
-            if ( msgObj.type.getName()
-                            .equals( IOnBootCompletedListener.class.getName() ) )
-            {
-               onBootCompleted();
-            }
-         }
-         
-         if ( !handled )
-         {
-            super.handleMessage( msg );
-         }
-      }
-   };
 }

@@ -183,7 +183,7 @@ class DueTasksNotifier extends AbstractNotifier
    {
       final long remindBeforeMillis = getSettings().getNotifyingDueTasksBeforeMs();
       final LoadHoleDayDueTasksAsyncTask loader = new LoadHoleDayDueTasksAsyncTask( context,
-                                                                                    getHandler(),
+                                                                                    this,
                                                                                     remindBeforeMillis );
       startTasksLoader( loader );
    }

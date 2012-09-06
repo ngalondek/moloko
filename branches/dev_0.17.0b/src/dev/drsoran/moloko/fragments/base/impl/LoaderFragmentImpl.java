@@ -26,7 +26,6 @@ import java.util.HashMap;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -37,6 +36,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.LogUtils;
 
@@ -65,7 +66,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private final Support< D > support;
    
-   private final Handler handler = new Handler();
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    private final Runnable showContentAsyncRunnable = new Runnable()
    {
@@ -121,7 +122,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    @Override
    public void onDetach()
    {
-      handler.removeCallbacks( showContentAsyncRunnable );
+      handler.release();
       super.onDetach();
    }
    
@@ -207,7 +208,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private void showContentAsync()
    {
-      handler.removeCallbacks( showContentAsyncRunnable );
+      handler.removeRunnables();
       handler.post( showContentAsyncRunnable );
    }
    

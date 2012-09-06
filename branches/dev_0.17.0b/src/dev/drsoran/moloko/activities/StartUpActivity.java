@@ -27,8 +27,6 @@ import android.app.Dialog;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.RemoteException;
 
 import com.mdt.rtm.data.RtmList;
@@ -50,8 +48,6 @@ import dev.drsoran.provider.Rtm.Lists;
 public class StartUpActivity extends MolokoFragmentActivity
 {
    private final static String STATE_INDEX_KEY = "state_index";
-   
-   private final static int MSG_STATE_CHANGED = 0;
    
    private final static int STATE_CHECK_ACCOUNT = 0;
    
@@ -75,19 +71,11 @@ public class StartUpActivity extends MolokoFragmentActivity
       setTitle( R.string.app_startup );
       
       if ( savedInstanceState != null )
+      {
          stateIndex = savedInstanceState.getInt( STATE_INDEX_KEY, 0 );
+      }
       
       reEvaluateCurrentState();
-   }
-   
-   
-   
-   @Override
-   protected void onDestroy()
-   {
-      handler.removeMessages( MSG_STATE_CHANGED );
-      
-      super.onDestroy();
    }
    
    
@@ -96,7 +84,6 @@ public class StartUpActivity extends MolokoFragmentActivity
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      
       outState.putInt( STATE_INDEX_KEY, stateIndex );
    }
    
@@ -153,16 +140,18 @@ public class StartUpActivity extends MolokoFragmentActivity
    private void checkAccount()
    {
       boolean switchToNextState = true;
-      final Account account = AccountUtils.getRtmAccount( this );
+      final Account account = AccountUtils.getRtmAccount( StartUpActivity.this );
       
       if ( account == null )
       {
-         UIUtils.showNoAccountDialog( this );
+         UIUtils.showNoAccountDialog( StartUpActivity.this );
          switchToNextState = false;
       }
       
       if ( switchToNextState )
+      {
          switchToNextState();
+      }
    }
    
    
@@ -266,7 +255,23 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    private void reEvaluateCurrentState()
    {
-      handler.sendEmptyMessage( MSG_STATE_CHANGED );
+      switch ( stateIndex )
+      {
+         case STATE_CHECK_ACCOUNT:
+            checkAccount();
+            break;
+         
+         case STATE_DETERMINE_STARTUP_VIEW:
+            determineStartupView();
+            break;
+         
+         case STATE_COMPLETED:
+            onStartUpCompleted();
+            break;
+         
+         default :
+            throw new IllegalStateException( "Unknown state: " + stateIndex );
+      }
    }
    
    
@@ -296,40 +301,6 @@ public class StartUpActivity extends MolokoFragmentActivity
    @Override
    protected int[] getFragmentIds()
    {
-      return null;
+      return new int[] {};
    }
-   
-   private final Handler handler = new Handler()
-   {
-      @Override
-      public void handleMessage( Message msg )
-      {
-         switch ( msg.what )
-         {
-            case MSG_STATE_CHANGED:
-               switch ( stateIndex )
-               {
-                  case STATE_CHECK_ACCOUNT:
-                     checkAccount();
-                     break;
-                  
-                  case STATE_DETERMINE_STARTUP_VIEW:
-                     determineStartupView();
-                     break;
-                  
-                  case STATE_COMPLETED:
-                     onStartUpCompleted();
-                     break;
-                  
-                  default :
-                     throw new IllegalStateException( "Unknown state: "
-                        + stateIndex );
-               }
-               break;
-            
-            default :
-               super.handleMessage( msg );
-         }
-      }
-   };
 }

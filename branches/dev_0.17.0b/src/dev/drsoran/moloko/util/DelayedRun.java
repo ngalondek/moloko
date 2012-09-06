@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.util;
 
-import android.os.Handler;
+import dev.drsoran.moloko.IHandlerToken;
 
 
 public class DelayedRun
@@ -32,13 +32,13 @@ public class DelayedRun
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
-   public static Runnable run( Handler handler,
+   
+   
+   public static Runnable run( IHandlerToken handler,
                                Runnable action,
                                long afterMillis )
    {
-      handler.removeCallbacks( action );
+      handler.removeRunnable( action );
       handler.postDelayed( action, afterMillis );
       
       return action;

@@ -25,20 +25,18 @@ package dev.drsoran.moloko.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
 import android.text.format.Time;
 import dev.drsoran.moloko.IOnTimeChangedListener;
-import dev.drsoran.moloko.util.ListenerList;
+import dev.drsoran.moloko.NotifierContextHandler;
 
 
 public class TimeTickReceiver extends BroadcastReceiver
 {
-   private final Handler handler;
+   private final NotifierContextHandler handler;
    
    
    
-   public TimeTickReceiver( Handler handler )
+   public TimeTickReceiver( NotifierContextHandler handler )
    {
       this.handler = handler;
    }
@@ -53,19 +51,9 @@ public class TimeTickReceiver extends BroadcastReceiver
       
       if ( now.hour == 0 && now.minute == 0 )
       {
-         final Message msg = new Message();
-         msg.obj = new ListenerList.MessgageObject< IOnTimeChangedListener >( IOnTimeChangedListener.class,
-                                                                              null );
-         msg.what = IOnTimeChangedListener.MIDNIGHT;
-         
-         handler.sendMessage( msg );
+         handler.onTimeChanged( IOnTimeChangedListener.MIDNIGHT );
       }
       
-      final Message msg = new Message();
-      msg.obj = new ListenerList.MessgageObject< IOnTimeChangedListener >( IOnTimeChangedListener.class,
-                                                                           null );
-      msg.what = IOnTimeChangedListener.MINUTE_TICK;
-      
-      handler.sendMessage( msg );
+      handler.onTimeChanged( IOnTimeChangedListener.MINUTE_TICK );
    }
 }

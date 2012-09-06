@@ -159,7 +159,7 @@ class PermanentNotifier extends AbstractNotifier
                                     boolean showOverDueTasks )
    {
       final LoadPermanentTasksAsyncTask loader = new LoadPermanentTasksAsyncTask( context,
-                                                                                  getHandler(),
+                                                                                  this,
                                                                                   notificationType,
                                                                                   showOverDueTasks );
       lastLoaderfilterString = loader.getFilterString();

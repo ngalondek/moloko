@@ -25,17 +25,20 @@ package dev.drsoran.moloko.notification;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.os.Handler;
-import android.os.Message;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.notification.AbstractNotificationTasksLoader.ITasksLoadedHandler;
 import dev.drsoran.moloko.util.DelayedRun;
 
 
-abstract class AbstractNotifier implements IStatusbarNotifier
+abstract class AbstractNotifier implements IStatusbarNotifier,
+         ITasksLoadedHandler
 {
    protected final Context context;
+   
+   private final IHandlerToken handlerToken = MolokoNotificationService.acquireHandlerToken();
    
    private AbstractNotificationTasksLoader tasksLoader;
    
@@ -57,9 +60,25 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    public void shutdown()
    {
       stopLoadingTasksToNotify();
-      cancelHandlerMessages();
       closeCurrentCursor();
       unregisterTasksContentProviderObserver();
+      
+      handlerToken.release();
+   }
+   
+   
+   
+   @Override
+   public void onTasksLoaded( final Cursor result )
+   {
+      handlerToken.post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            onFinishedLoading( result );
+         }
+      } );
    }
    
    
@@ -107,13 +126,6 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    
    
    
-   protected Handler getHandler()
-   {
-      return handler;
-   }
-   
-   
-   
    private void storeNewCursor( Cursor cursor )
    {
       if ( currentTasksCursor == null )
@@ -151,13 +163,13 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    {
       if ( tasksContentProviderObserver == null )
       {
-         tasksContentProviderObserver = new ContentObserver( handler )
+         tasksContentProviderObserver = new ContentObserver( null )
          {
             @Override
             public void onChange( boolean selfChange )
             {
                // Aggregate several calls to a single update.
-               DelayedRun.run( handler, new Runnable()
+               DelayedRun.run( handlerToken, new Runnable()
                {
                   @Override
                   public void run()
@@ -189,24 +201,8 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    
    private void cancelHandlerMessages()
    {
-      handler.removeMessages( AbstractNotificationTasksLoader.MSG_TASKS_LOADED_ASYNC );
+      handlerToken.removeRunnables();
    }
-   
-   private final Handler handler = new Handler()
-   {
-      @Override
-      public void handleMessage( Message msg )
-      {
-         if ( msg.what == AbstractNotificationTasksLoader.MSG_TASKS_LOADED_ASYNC )
-         {
-            onFinishedLoading( (Cursor) msg.obj );
-         }
-         else
-         {
-            super.handleMessage( msg );
-         }
-      }
-   };
    
    
    

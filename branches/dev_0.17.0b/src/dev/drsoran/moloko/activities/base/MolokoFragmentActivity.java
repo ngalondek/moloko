@@ -23,11 +23,9 @@
 package dev.drsoran.moloko.activities.base;
 
 import android.accounts.Account;
-import android.accounts.OnAccountsUpdateListener;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
@@ -42,7 +40,9 @@ import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.ActionModeWrapper;
 import dev.drsoran.moloko.AnnotatedConfigurationSupport;
+import dev.drsoran.moloko.IAccountUpdatedListener;
 import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.ISyncStatusListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -59,8 +59,8 @@ import dev.drsoran.moloko.util.Intents.HomeAction;
 
 public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
          implements IConfigurable, IAlertDialogFragmentListener,
-         ISyncStatusListener, ISyncActionProviderHost,
-         OnAccountsUpdateListener, IRtmAccessLevelAware
+         ISyncStatusListener, ISyncActionProviderHost, IRtmAccessLevelAware,
+         IAccountUpdatedListener
 {
    public final static class StartActivityRequestCode
    {
@@ -69,7 +69,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    private final AnnotatedConfigurationSupport annotatedConfigSupport = new AnnotatedConfigurationSupport();
    
-   private final Handler handler = new Handler();
+   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
    
    @InstanceState( key = Intents.Extras.HOME_ACTION,
                    defaultValue = Intents.HomeAction.BACK )
@@ -78,8 +78,6 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    @InstanceState( key = Intents.Extras.HOME_AS_UP_ACTIVITY,
                    defaultValue = InstanceState.NULL )
    private String homeAsUpTargetActivity;
-   
-   private boolean ignoreAccountListenerAfterRegister = true;
    
    private boolean disableSearch;
    
@@ -112,7 +110,8 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
          configureBySavedInstanceState( savedInstanceState );
       }
       
-      AccountUtils.registerAccountListener( this, handler, this );
+      MolokoApp.getNotifierContext( this )
+               .registerAccountUpdatedListener( this );
       
       MolokoApp.getNotifierContext( this )
                .registerSyncStatusChangedListener( this );
@@ -196,7 +195,8 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    {
       annotatedConfigSupport.onDetach();
       
-      AccountUtils.unregisterAccountListener( this, this );
+      MolokoApp.getNotifierContext( this )
+               .unregisterAccountUpdatedListener( this );
       
       MolokoApp.getNotifierContext( this )
                .unregisterSyncStatusChangedListener( this );
@@ -461,21 +461,21 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    public void execute( Runnable runnable )
    {
-      handler.post( runnable );
+      handlerToken.post( runnable );
    }
    
    
    
    public void executeDelayed( Runnable runnable, int delayMillis )
    {
-      handler.postDelayed( runnable, delayMillis );
+      handlerToken.postDelayed( runnable, delayMillis );
    }
    
    
    
-   protected Handler getHandler()
+   public IHandlerToken getHandlerToken()
    {
-      return handler;
+      return handlerToken;
    }
    
    
@@ -492,16 +492,9 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    @Override
-   public void onAccountsUpdated( Account[] accounts )
+   public void onAccountUpdated( int what, Account account )
    {
-      if ( !ignoreAccountListenerAfterRegister )
-      {
-         onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
-      }
-      else
-      {
-         ignoreAccountListenerAfterRegister = false;
-      }
+      onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
    }
    
    

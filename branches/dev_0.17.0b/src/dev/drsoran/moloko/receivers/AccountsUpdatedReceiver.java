@@ -22,20 +22,23 @@
 
 package dev.drsoran.moloko.receivers;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import dev.drsoran.moloko.IOnTimeChangedListener;
+import dev.drsoran.moloko.IAccountUpdatedListener;
 import dev.drsoran.moloko.NotifierContextHandler;
+import dev.drsoran.moloko.util.AccountUtils;
 
 
-public class TimeChangedReceiver extends BroadcastReceiver
+public class AccountsUpdatedReceiver extends BroadcastReceiver
 {
    private final NotifierContextHandler handler;
    
    
    
-   public TimeChangedReceiver( NotifierContextHandler handler )
+   public AccountsUpdatedReceiver( NotifierContextHandler handler )
    {
       this.handler = handler;
    }
@@ -45,6 +48,23 @@ public class TimeChangedReceiver extends BroadcastReceiver
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      handler.onTimeChanged( IOnTimeChangedListener.SYSTEM_TIME );
+      Account rtmAccount = null;
+      
+      final AccountManager accountManager = AccountManager.get( context );
+      if ( accountManager != null )
+      {
+         rtmAccount = AccountUtils.getRtmAccount( accountManager );
+      }
+      
+      if ( rtmAccount != null )
+      {
+         handler.onAccountUpdated( IAccountUpdatedListener.ACCOUNT_UPDATED,
+                                   rtmAccount );
+      }
+      else
+      {
+         handler.onAccountUpdated( IAccountUpdatedListener.ACCOUNT_REMOVED,
+                                   null );
+      }
    }
 }

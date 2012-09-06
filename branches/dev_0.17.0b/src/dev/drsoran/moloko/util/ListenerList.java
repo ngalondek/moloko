@@ -43,22 +43,6 @@ public class ListenerList< T >
    public final Method method;
    
    
-   public final static class MessgageObject< T >
-   {
-      public final Class< T > type;
-      
-      public final Object value;
-      
-      
-      
-      public MessgageObject( Class< T > type, Object value )
-      {
-         this.type = type;
-         this.value = value;
-      }
-   }
-   
-   
    private final class ListenerEntry
    {
       public final int mask;

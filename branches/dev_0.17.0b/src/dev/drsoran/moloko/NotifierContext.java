@@ -22,20 +22,20 @@
 
 package dev.drsoran.moloko;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
+import dev.drsoran.moloko.receivers.AccountsUpdatedReceiver;
 import dev.drsoran.moloko.receivers.NetworkStatusReceiver;
 import dev.drsoran.moloko.receivers.SyncStatusReceiver;
 import dev.drsoran.moloko.receivers.TimeChangedReceiver;
 import dev.drsoran.moloko.receivers.TimeTickReceiver;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.Reflection;
 import dev.drsoran.moloko.util.Strings;
 
@@ -53,6 +53,8 @@ public class NotifierContext extends ContextWrapper
    
    private ListenerList< ISyncStatusListener > syncStatusListeners;
    
+   private ListenerList< IAccountUpdatedListener > accountUpdatedListeners;
+   
    private NetworkStatusReceiver networkStatusReceiver;
    
    private TimeChangedReceiver timeChangedReceiver;
@@ -60,6 +62,8 @@ public class NotifierContext extends ContextWrapper
    private TimeTickReceiver timeTickReceiver;
    
    private SyncStatusReceiver syncStatusReceiver;
+   
+   private AccountsUpdatedReceiver accountsUpdatedReceiver;
    
    private SettingsListener settingsListener;
    
@@ -74,6 +78,7 @@ public class NotifierContext extends ContextWrapper
       registerTimeChangedReceiver();
       registerTimeTickReceiver();
       registerSyncStatusReceiver();
+      registerAccountsUpdatedReceiver();
       registerSettingsListener();
    }
    
@@ -82,11 +87,16 @@ public class NotifierContext extends ContextWrapper
    public void shutdown()
    {
       unregisterSettingsListener();
+      unregisterAccountsUpdatedReceiver();
       unregisterSyncStatusReceiver();
       unregisterTimeChangedReceiver();
       unregisterTimeTickReceiver();
       unregisterNetworkStatusReceiver();
+      
       deleteListenerLists();
+      
+      handler.release();
+      handler = null;
    }
    
    
@@ -173,6 +183,26 @@ public class NotifierContext extends ContextWrapper
    
    
    
+   public void registerAccountUpdatedListener( IAccountUpdatedListener listener )
+   {
+      if ( listener != null )
+      {
+         accountUpdatedListeners.registerListener( Integer.MAX_VALUE, listener );
+      }
+   }
+   
+   
+   
+   public void unregisterAccountUpdatedListener( IAccountUpdatedListener listener )
+   {
+      if ( listener != null )
+      {
+         accountUpdatedListeners.removeListener( listener );
+      }
+   }
+   
+   
+   
    private void createListenerLists()
    {
       try
@@ -185,6 +215,8 @@ public class NotifierContext extends ContextWrapper
                                                                                                               "onNetworkStatusChanged" ) );
          syncStatusListeners = new ListenerList< ISyncStatusListener >( Reflection.findMethod( ISyncStatusListener.class,
                                                                                                "onSyncStatusChanged" ) );
+         accountUpdatedListeners = new ListenerList< IAccountUpdatedListener >( Reflection.findMethod( IAccountUpdatedListener.class,
+                                                                                                       "onAccountUpdated" ) );
       }
       catch ( SecurityException e )
       {
@@ -219,6 +251,12 @@ public class NotifierContext extends ContextWrapper
       {
          syncStatusListeners.clear();
          syncStatusListeners = null;
+      }
+      
+      if ( accountUpdatedListeners != null )
+      {
+         accountUpdatedListeners.clear();
+         accountUpdatedListeners = null;
       }
    }
    
@@ -304,48 +342,61 @@ public class NotifierContext extends ContextWrapper
       settingsListener.shutdown();
    }
    
-   private final Handler handler = new Handler()
+   
+   
+   private void registerAccountsUpdatedReceiver()
+   {
+      accountsUpdatedReceiver = new AccountsUpdatedReceiver( handler );
+      registerReceiver( accountsUpdatedReceiver,
+                        new IntentFilter( AccountManager.LOGIN_ACCOUNTS_CHANGED_ACTION ) );
+   }
+   
+   
+   
+   private void unregisterAccountsUpdatedReceiver()
+   {
+      unregisterReceiver( accountsUpdatedReceiver );
+   }
+   
+   private NotifierContextHandler handler = new NotifierContextHandler()
    {
       @Override
-      public void handleMessage( Message msg )
+      protected void handleTimeChanged( int what )
       {
-         boolean handled = false;
-         if ( msg.obj instanceof ListenerList.MessgageObject< ? > )
-         {
-            handled = true;
-            
-            final ListenerList.MessgageObject< ? > msgObj = (MessgageObject< ? >) msg.obj;
-            
-            if ( msgObj.type.getName()
-                            .equals( IOnTimeChangedListener.class.getName() ) )
-            {
-               timeChangedListeners.notifyListeners( msg.what );
-            }
-            else if ( msgObj.type.getName()
-                                 .equals( IOnSettingsChangedListener.class.getName() ) )
-            {
-               settingsChangedListeners.notifyListeners( msg.what, msgObj.value );
-            }
-            else if ( msgObj.type.getName()
-                                 .equals( IOnNetworkStatusChangedListener.class.getName() ) )
-            {
-               networkStatusListeners.notifyListeners( msg.what, msgObj.value );
-            }
-            else if ( msgObj.type.getName()
-                                 .equals( ISyncStatusListener.class.getName() ) )
-            {
-               syncStatusListeners.notifyListeners( msg.what );
-            }
-            else
-            {
-               handled = false;
-            }
-         }
-         
-         if ( !handled )
-         {
-            super.handleMessage( msg );
-         }
+         timeChangedListeners.notifyListeners( what );
+      }
+      
+      
+      
+      @Override
+      protected void handleNetworkStatusChanged( int what, boolean connected )
+      {
+         networkStatusListeners.notifyListeners( what,
+                                                 Boolean.valueOf( connected ) );
+      }
+      
+      
+      
+      @Override
+      protected void handleSyncStatusChanged( int what )
+      {
+         syncStatusListeners.notifyListeners( what );
+      }
+      
+      
+      
+      @Override
+      protected void handleSettingChanged( int what, Object oldValues )
+      {
+         settingsChangedListeners.notifyListeners( what, oldValues );
+      }
+      
+      
+      
+      @Override
+      protected void handleAccountUpdated( int what, Account account )
+      {
+         accountUpdatedListeners.notifyListeners( what, account );
       }
    };
 }

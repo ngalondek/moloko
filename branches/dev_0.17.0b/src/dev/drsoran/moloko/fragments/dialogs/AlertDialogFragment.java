@@ -130,6 +130,8 @@ public class AlertDialogFragment extends MolokoDialogFragment
       public AlertDialogFragment create()
       {
          AlertDialogFragment frag = AlertDialogFragment.newInstance( config );
+         frag.setCancelable( false );
+         
          return frag;
       }
       

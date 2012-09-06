@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,9 +22,31 @@
 
 package dev.drsoran.moloko;
 
-
-
-public interface IOnBootCompletedListener
+public interface IHandlerToken
 {
-   public void onBootCompleted();
+   boolean post( Runnable r );
+   
+   
+   
+   boolean postAtTime( Runnable r, long uptimeMillis );
+   
+   
+   
+   boolean postDelayed( Runnable r, long delayMillis );
+   
+   
+   
+   void removeRunnable( Runnable r );
+   
+   
+   
+   void removeRunnables();
+   
+   
+   
+   boolean isReleased();
+   
+   
+   
+   void release();
 }

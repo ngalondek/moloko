@@ -28,12 +28,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.IBinder;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.NotifierContext;
+import dev.drsoran.moloko.TokenBasedHandler;
 import dev.drsoran.moloko.util.Intents.Action;
 
 
 public class MolokoNotificationService extends Service
 {
+   private final static TokenBasedHandler handler = new TokenBasedHandler();
+   
    private NotifierContext notifierContext;
    
    private MolokoNotificationManager notificationManager;
@@ -116,6 +120,13 @@ public class MolokoNotificationService extends Service
    public IBinder onBind( Intent intent )
    {
       return serviceNotBindable();
+   }
+   
+   
+   
+   public static IHandlerToken acquireHandlerToken()
+   {
+      return handler.aquireToken();
    }
    
    

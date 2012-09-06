@@ -29,13 +29,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -62,6 +62,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    private final int type;
    
    private final ContentObserver dbObserver;
+   
+   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
    
    private final Runnable reloadRunnable = new Runnable()
    {
@@ -95,15 +97,13 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       label = (TextView) view.findViewById( R.id.text );
       label.setText( labelId );
       
-      final Handler handler = MolokoApp.getHandler( context );
-      
-      dbObserver = new ContentObserver( handler )
+      dbObserver = new ContentObserver( null )
       {
          @Override
          public void onChange( boolean selfChange )
          {
             // Aggregate several calls to a single update.
-            DelayedRun.run( handler, reloadRunnable, 1000 );
+            DelayedRun.run( handlerToken, reloadRunnable, 1000 );
          }
       };
    }
@@ -125,6 +125,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    public void stop()
    {
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
+      handlerToken.removeRunnables();
+      
       super.stop();
    }
    

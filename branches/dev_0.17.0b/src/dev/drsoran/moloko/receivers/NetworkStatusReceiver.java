@@ -27,20 +27,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
-import android.os.Message;
 import dev.drsoran.moloko.IOnNetworkStatusChangedListener;
-import dev.drsoran.moloko.util.ListenerList;
+import dev.drsoran.moloko.NotifierContextHandler;
 
 
 public class NetworkStatusReceiver extends BroadcastReceiver
 {
-   
-   private final Handler handler;
-   
+   private final NotifierContextHandler handler;
    
    
-   public NetworkStatusReceiver( Handler handler )
+   
+   public NetworkStatusReceiver( NotifierContextHandler handler )
    {
       this.handler = handler;
    }
@@ -53,12 +50,8 @@ public class NetworkStatusReceiver extends BroadcastReceiver
       final ConnectivityManager cm = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
       if ( cm != null )
       {
-         final Message msg = new Message();
-         msg.what = Integer.valueOf( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS );
-         
-         msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
-                                                                                       isConnected( cm ) );
-         handler.sendMessage( msg );
+         handler.onNetworkStatusChanged( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS,
+                                         isConnected( cm ) );
       }
    }
    

@@ -25,4 +25,8 @@ package dev.drsoran.moloko.actionproviders;
 public interface ISyncActionProviderHost
 {
    void onSyncActionProviderViewCreated();
+   
+   
+   
+   void showNoAccountDialog();
 }

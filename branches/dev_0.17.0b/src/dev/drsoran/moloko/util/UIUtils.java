@@ -311,6 +311,14 @@ public final class UIUtils
    
    
    
+   public final static void setNoElementsText( View noElementsView, int resId )
+   {
+      final TextView noElementsTextView = (TextView) noElementsView.findViewById( R.id.no_elements );
+      noElementsTextView.setText( resId );
+   }
+   
+   
+   
    public final static StringBuilder appendAtNewLine( StringBuilder stringBuilder,
                                                       String string )
    {

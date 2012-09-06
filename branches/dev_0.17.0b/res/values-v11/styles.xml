@@ -23,15 +23,15 @@
     
     <!-- ListStyle -->
     
-    <style name="ListViewStyle" parent="@android:style/Widget.DeviceDefault.Light.ListView">
+    <style name="ListViewStyle" parent="@android:style/Widget.Holo.Light.ListView">
     </style>
     
-    <style name="ExpandableListViewStyle" parent="@android:style/Widget.DeviceDefault.Light.ExpandableListView">
+    <style name="ExpandableListViewStyle" parent="@android:style/Widget.Holo.Light.ExpandableListView">
     </style>
     
     <!-- GridViewStyle -->
    
-    <style name="GridViewStyle" parent="@android:style/Widget.DeviceDefault.Light.GridView">
+    <style name="GridViewStyle" parent="@android:style/Widget.Holo.Light.GridView">
     </style>
     
     <!-- Take preferences from RTM checkbox style -->

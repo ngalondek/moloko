@@ -280,6 +280,9 @@
      <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
      <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
      
+   <!-- TagCloud fragment -->
+   <string name="tagcloud_no_tags">Keine Tags</string>
+     
    <!-- NotificationManager -->
    <string name="notification_permanent_today_title">Aufgaben für heute</string>
    <string name="notification_permanent_tomorrow_title">Aufgaben für morgen</string>

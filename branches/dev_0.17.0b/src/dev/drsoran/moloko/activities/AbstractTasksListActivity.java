@@ -564,14 +564,17 @@ public abstract class AbstractTasksListActivity extends
    {
       loadedRtmLists = data;
       
-      if ( actionBarNavigationAdapter == null )
+      if ( loadedRtmLists != null && loadedRtmLists.size() > 1 )
       {
-         setListNavigationMode();
-      }
-      else
-      {
-         final List< IItem > navigationItems = createActionBarNavigationItems();
-         actionBarNavigationAdapter.swap( navigationItems );
+         if ( actionBarNavigationAdapter == null )
+         {
+            setListNavigationMode();
+         }
+         else
+         {
+            final List< IItem > navigationItems = createActionBarNavigationItems();
+            actionBarNavigationAdapter.swap( navigationItems );
+         }
       }
    }
    

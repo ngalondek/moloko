@@ -278,6 +278,9 @@
      <string name="tasklists_menu_ctx_rename_list">Renommer \'%1$s\'</string>
      <string name="tasklists_menu_ctx_make_def_list">Choisir comme liste par défaut</string>
      <string name="tasklists_menu_ctx_remove_def_list">Ne plus utiliser comme liste par défaut</string>
+     
+   <!-- TagCloud fragment -->
+   <string name="tagcloud_no_tags">No Tags to display</string>
 
    <!-- NotificationManager -->
    <string name="notification_permanent_today_title">Tâches d\'aujourd\'hui</string>

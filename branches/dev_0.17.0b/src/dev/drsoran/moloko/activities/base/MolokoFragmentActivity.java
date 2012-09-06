@@ -55,6 +55,7 @@ import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Intents.HomeAction;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
@@ -550,6 +551,14 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    {
       showSyncProgressByActionProvider = true;
       setShowSyncProgress( false );
+   }
+   
+   
+   
+   @Override
+   public void showNoAccountDialog()
+   {
+      UIUtils.showNoAccountDialog( this );
    }
    
    

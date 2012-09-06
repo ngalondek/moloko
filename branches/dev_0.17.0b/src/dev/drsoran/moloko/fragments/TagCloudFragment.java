@@ -38,12 +38,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.fragments.listeners.ITagCloudFragmentListener;
 import dev.drsoran.moloko.loaders.TagCloudEntryLoader;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.LocationWithTaskCount;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.TagWithTaskCount;
@@ -124,38 +126,11 @@ public class TagCloudFragment extends
       
       if ( cloudEntries.size() > 0 )
       {
-         final Activity activity = getSherlockActivity();
-         
-         // Sort all cloud entries by their name
-         Collections.sort( cloudEntries );
-         
-         final int size = cloudEntries.size();
-         final List< Button > buttons = new ArrayList< Button >( size );
-         
-         for ( int i = 0; i < size; ++i )
-         {
-            final TagCloudEntry cloudEntry = cloudEntries.get( i );
-            
-            final Button cloudEntryButton = new Button( activity );
-            cloudEntryButton.setId( i );
-            cloudEntryButton.setText( cloudEntry.name );
-            cloudEntryButton.setTextSize( TypedValue.COMPLEX_UNIT_SP,
-                                          18 * getMagnifyFactor( cloudEntry.count ) );
-            
-            cloudEntry.present( cloudEntryButton );
-            cloudEntry.setTagCloudFragmentListener( listener );
-            
-            if ( cloudEntry.count > 1 )
-            {
-               cloudEntryButton.setTypeface( Typeface.DEFAULT_BOLD );
-            }
-            
-            buttons.add( cloudEntryButton );
-         }
-         
-         final ViewGroup tagContainer = (ViewGroup) activity.findViewById( R.id.tagcloud_container );
-         
-         addButtons( buttons, tagContainer );
+         showTagCloudEntries( cloudEntries );
+      }
+      else
+      {
+         showEmptyView();
       }
    }
    
@@ -181,6 +156,58 @@ public class TagCloudFragment extends
    public int getLoaderId()
    {
       return TagCloudEntryLoader.ID;
+   }
+   
+   
+   
+   private void showTagCloudEntries( final List< TagCloudEntry > cloudEntries )
+   {
+      final Activity activity = getSherlockActivity();
+      
+      // Sort all cloud entries by their name
+      Collections.sort( cloudEntries );
+      
+      final int size = cloudEntries.size();
+      final List< Button > buttons = new ArrayList< Button >( size );
+      
+      for ( int i = 0; i < size; ++i )
+      {
+         final TagCloudEntry cloudEntry = cloudEntries.get( i );
+         
+         final Button cloudEntryButton = new Button( activity );
+         cloudEntryButton.setId( i );
+         cloudEntryButton.setText( cloudEntry.name );
+         cloudEntryButton.setTextSize( TypedValue.COMPLEX_UNIT_SP,
+                                       18 * getMagnifyFactor( cloudEntry.count ) );
+         
+         cloudEntry.present( cloudEntryButton );
+         cloudEntry.setTagCloudFragmentListener( listener );
+         
+         if ( cloudEntry.count > 1 )
+         {
+            cloudEntryButton.setTypeface( Typeface.DEFAULT_BOLD );
+         }
+         
+         buttons.add( cloudEntryButton );
+      }
+      
+      final ViewGroup tagContainer = (ViewGroup) activity.findViewById( R.id.tagcloud_container );
+      
+      addButtons( buttons, tagContainer );
+   }
+   
+   
+   
+   private void showEmptyView()
+   {
+      final SherlockFragmentActivity activity = getSherlockActivity();
+      final View noElementsView = activity.getLayoutInflater()
+                                          .inflate( R.layout.app_no_elements,
+                                                    null );
+      UIUtils.setNoElementsText( noElementsView, R.string.tagcloud_no_tags );
+      
+      final ViewGroup tagContainer = (ViewGroup) activity.findViewById( R.id.tagcloud_container );
+      tagContainer.addView( noElementsView );
    }
    
    

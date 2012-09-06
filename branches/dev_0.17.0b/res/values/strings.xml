@@ -303,6 +303,9 @@
      <string name="tasklists_menu_ctx_rename_list">Rename \'%1$s\'</string>
      <string name="tasklists_menu_ctx_make_def_list">Set as default list</string>
      <string name="tasklists_menu_ctx_remove_def_list">Reset as default list</string>
+     
+   <!-- TagCloud fragment -->
+   <string name="tagcloud_no_tags">No Tags to display</string>
 
    <!-- NotificationManager -->
    <string name="notification_permanent_today_title">Tasks for today</string>

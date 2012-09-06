@@ -34,6 +34,7 @@ import com.actionbarsherlock.app.SherlockListFragment;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleWithTextLayout;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 class LoaderListFragmentViewManager
@@ -56,7 +57,7 @@ class LoaderListFragmentViewManager
    
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
-      emptyViewContainer = (LinearLayout) fragment.getListView().getEmptyView();
+      emptyViewContainer = (LinearLayout) view.findViewById( android.R.id.empty );
    }
    
    
@@ -135,8 +136,7 @@ class LoaderListFragmentViewManager
    {
       final View noElementsView = getLayoutInflater().inflate( R.layout.app_no_elements,
                                                                null );
-      final TextView noElementsTextView = (TextView) noElementsView.findViewById( R.id.no_elements );
-      noElementsTextView.setText( noElementsResId );
+      UIUtils.setNoElementsText( noElementsView, noElementsResId );
       
       setEmptyViewToContainer( noElementsView );
    }
@@ -153,15 +153,18 @@ class LoaderListFragmentViewManager
    private void setEmptyViewToContainer( View emptyView,
                                          LinearLayout.LayoutParams layoutParams )
    {
-      emptyViewContainer.removeAllViews();
-      
-      if ( layoutParams != null )
+      if ( emptyViewContainer != null )
       {
-         emptyViewContainer.addView( emptyView, layoutParams );
-      }
-      else
-      {
-         emptyViewContainer.addView( emptyView );
+         emptyViewContainer.removeAllViews();
+         
+         if ( layoutParams != null )
+         {
+            emptyViewContainer.addView( emptyView, layoutParams );
+         }
+         else
+         {
+            emptyViewContainer.addView( emptyView );
+         }
       }
    }
    

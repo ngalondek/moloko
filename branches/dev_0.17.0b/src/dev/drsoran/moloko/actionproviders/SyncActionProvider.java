@@ -127,6 +127,10 @@ public class SyncActionProvider extends ActionProvider
       {
          SyncUtils.requestManualSync( rtmAccount );
       }
+      else if ( host != null )
+      {
+         host.showNoAccountDialog();
+      }
       
       return rtmAccount != null;
    }

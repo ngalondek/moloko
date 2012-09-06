@@ -25,7 +25,6 @@ package dev.drsoran.moloko.auth;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +39,8 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.util.LogUtils;
@@ -52,7 +53,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
    private static final String TAG = "Moloko."
       + RtmWebLoginFragment.class.getSimpleName();
    
-   private final Handler handler = new Handler();
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    @InstanceState( key = Constants.FEAT_PERMISSION, defaultValue = "read" )
    private String permission;
@@ -276,6 +277,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
       }
       
       authenticatorActivity = null;
+      handler.release();
       
       super.onDestroy();
    }

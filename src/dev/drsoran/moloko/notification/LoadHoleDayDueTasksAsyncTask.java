@@ -27,7 +27,6 @@ import java.util.Calendar;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Handler;
 import android.os.RemoteException;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.MolokoCalendar;
@@ -51,11 +50,10 @@ class LoadHoleDayDueTasksAsyncTask extends AbstractNotificationTasksLoader
    
    
    
-   public LoadHoleDayDueTasksAsyncTask( Context context, Handler handler,
-      long remindBeforeMillis )
+   public LoadHoleDayDueTasksAsyncTask( Context context,
+      ITasksLoadedHandler handler, long remindBeforeMillis )
    {
       super( context, handler );
-      
       this.remindBeforeMillis = remindBeforeMillis;
    }
    

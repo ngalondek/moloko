@@ -24,13 +24,14 @@ package dev.drsoran.moloko.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoFragment;
@@ -50,7 +51,7 @@ public class PopupNotificationFragment extends MolokoFragment
       public final static String NOTIFICATION_AUTO_CLOSE_MS = "notif_auto_close_ms";
    }
    
-   private final Handler handler = new Handler();
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    private final Runnable closePopupRunnable = new Runnable()
    {
@@ -137,7 +138,7 @@ public class PopupNotificationFragment extends MolokoFragment
    @Override
    public void onDestroyView()
    {
-      handler.removeCallbacks( closePopupRunnable );
+      handler.release();
       super.onDestroyView();
    }
    
@@ -185,7 +186,7 @@ public class PopupNotificationFragment extends MolokoFragment
    {
       if ( autoCloseMs > 0 && listener != null )
       {
-         handler.removeCallbacks( closePopupRunnable );
+         handler.removeRunnables();
          handler.postDelayed( closePopupRunnable, autoCloseMs );
       }
    }

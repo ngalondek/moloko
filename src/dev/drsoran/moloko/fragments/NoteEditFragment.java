@@ -25,7 +25,6 @@ package dev.drsoran.moloko.fragments;
 import android.app.Activity;
 import android.database.ContentObserver;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -36,6 +35,8 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
@@ -53,7 +54,7 @@ import dev.drsoran.provider.Rtm.Notes;
 public class NoteEditFragment extends AbstractNoteEditFragment implements
          LoaderCallbacks< RtmTaskNote >
 {
-   private final Handler handler = new Handler();
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    @InstanceState( key = Intents.Extras.KEY_NOTE )
    private RtmTaskNote note;
@@ -137,6 +138,8 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
    public void onDestroy()
    {
       unregisterForNoteDeletedByBackgroundSync();
+      handler.release();
+      
       super.onDestroy();
    }
    
@@ -262,7 +265,7 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
    
    private void registerForNoteDeletedByBackgroundSync()
    {
-      noteChangesObserver = new ContentObserver( handler )
+      noteChangesObserver = new ContentObserver( null )
       {
          @Override
          public void onChange( boolean selfChange )

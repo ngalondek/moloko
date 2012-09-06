@@ -24,9 +24,7 @@ package dev.drsoran.moloko.util;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.OnAccountsUpdateListener;
 import android.content.Context;
-import android.os.Handler;
 import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -42,29 +40,6 @@ public final class AccountUtils
    private AccountUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
-   }
-   
-   
-   
-   public final static void registerAccountListener( Context context,
-                                                     Handler handler,
-                                                     OnAccountsUpdateListener listener )
-   {
-      final AccountManager accountManager = AccountManager.get( context );
-      
-      if ( accountManager != null )
-         accountManager.addOnAccountsUpdatedListener( listener, handler, true );
-   }
-   
-   
-   
-   public final static void unregisterAccountListener( Context context,
-                                                       OnAccountsUpdateListener listener )
-   {
-      final AccountManager accountManager = AccountManager.get( context );
-      
-      if ( accountManager != null )
-         accountManager.removeOnAccountsUpdatedListener( listener );
    }
    
    

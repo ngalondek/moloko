@@ -34,11 +34,11 @@ import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -50,8 +50,6 @@ class AccountAccessLevelPreference extends InfoTextPreference implements
    private WeakReference< AccountManager > accountManager;
    
    private AccountManagerFuture< Bundle > changeAccountHandle;
-   
-   private final Handler handler = new Handler();
    
    
    
@@ -124,7 +122,7 @@ class AccountAccessLevelPreference extends InfoTextPreference implements
                                                                     bundle,
                                                                     (Activity) context,
                                                                     this,
-                                                                    handler );
+                                                                    MolokoApp.getHandler() );
          }
       }
    }

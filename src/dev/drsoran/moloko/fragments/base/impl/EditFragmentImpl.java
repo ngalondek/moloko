@@ -24,10 +24,11 @@ package dev.drsoran.moloko.fragments.base.impl;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -35,7 +36,7 @@ public class EditFragmentImpl
 {
    private final Fragment fragment;
    
-   private final Handler handler = new Handler();
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    private IBinder windowToken;
    
@@ -74,6 +75,7 @@ public class EditFragmentImpl
    public void onDestroyView()
    {
       hideSoftInput();
+      handler.release();
    }
    
    

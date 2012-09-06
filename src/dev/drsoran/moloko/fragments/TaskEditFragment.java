@@ -27,7 +27,6 @@ import java.util.List;
 
 import android.database.ContentObserver;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -36,6 +35,8 @@ import android.view.View.OnClickListener;
 
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.loaders.TaskLoader;
@@ -49,7 +50,7 @@ import dev.drsoran.rtm.Task;
 
 public class TaskEditFragment extends AbstractTaskEditFragment
 {
-   private final Handler handler = new Handler();
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    private final TaskLoaderHandler taskLoaderHandler = new TaskLoaderHandler();
    
@@ -91,6 +92,8 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    public void onDestroy()
    {
       unregisterForTaskDeletedByBackgroundSync();
+      handler.release();
+      
       super.onDestroy();
    }
    
@@ -174,7 +177,7 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    
    private void registerForTaskDeletedByBackgroundSync()
    {
-      taskChangesObserver = new ContentObserver( handler )
+      taskChangesObserver = new ContentObserver( null )
       {
          @Override
          public void onChange( boolean selfChange )

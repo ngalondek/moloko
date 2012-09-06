@@ -26,13 +26,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
@@ -53,6 +53,8 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    private final TextView label;
    
    private final ContentObserver dbObserver;
+   
+   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
    
    private final Runnable reloadRunnable = new Runnable()
    {
@@ -83,15 +85,13 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       label = (TextView) view.findViewById( R.id.text );
       label.setText( labelId );
       
-      final Handler handler = MolokoApp.getHandler( context );
-      
-      dbObserver = new ContentObserver( handler )
+      dbObserver = new ContentObserver( null )
       {
          @Override
          public void onChange( boolean selfChange )
          {
             // Aggregate several calls to a single update.
-            DelayedRun.run( handler, reloadRunnable, 1000 );
+            DelayedRun.run( handlerToken, reloadRunnable, 1000 );
          }
       };
    }
@@ -102,7 +102,6 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    public void start()
    {
       super.start();
-      
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
    }
    
@@ -111,9 +110,10 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    @Override
    public void stop()
    {
-      super.stop();
-      
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
+      handlerToken.removeRunnables();
+      
+      super.stop();
    }
    
    

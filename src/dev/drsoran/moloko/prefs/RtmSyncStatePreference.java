@@ -25,11 +25,9 @@ package dev.drsoran.moloko.prefs;
 import java.io.IOException;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
-import android.accounts.OnAccountsUpdateListener;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -37,11 +35,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import dev.drsoran.moloko.IAccountUpdatedListener;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.ISyncStatusListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -54,8 +53,8 @@ import dev.drsoran.rtm.RtmSettings;
 
 
 class RtmSyncStatePreference extends InfoTextPreference implements
-         ISyncStatusListener, OnCancelListener, OnAccountsUpdateListener,
-         AccountManagerCallback< Bundle >
+         ISyncStatusListener, OnCancelListener,
+         AccountManagerCallback< Bundle >, IAccountUpdatedListener
 {
    private ProgressDialog dialog;
    
@@ -63,7 +62,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    
    private AccountManagerFuture< Bundle > addAccountHandle;
    
-   private final Handler handler = new Handler();
+   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
    
    
    
@@ -71,13 +70,9 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    {
       super( context, attrs );
       
-      final AccountManager accountManager = AccountManager.get( getContext() );
-      
-      if ( accountManager != null )
-      {
-         account = AccountUtils.getRtmAccount( accountManager );
-         accountManager.addOnAccountsUpdatedListener( this, handler, true );
-      }
+      account = AccountUtils.getRtmAccount( context );
+      MolokoApp.getNotifierContext( context )
+               .registerAccountUpdatedListener( this );
    }
    
    
@@ -92,7 +87,6 @@ class RtmSyncStatePreference extends InfoTextPreference implements
          try
          {
             future.getResult();
-            onAccountsUpdated( null );
          }
          catch ( OperationCanceledException e )
          {
@@ -119,15 +113,10 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    
    
    @Override
-   public void onAccountsUpdated( Account[] accounts )
+   public void onAccountUpdated( int what, Account account )
    {
-      final AccountManager accountManager = AccountManager.get( getContext() );
-      
-      if ( accountManager != null )
-      {
-         account = AccountUtils.getRtmAccount( accountManager );
-         notifyChanged();
-      }
+      this.account = account;
+      notifyChanged();
    }
    
    
@@ -135,10 +124,8 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    @Override
    public void cleanUp()
    {
-      final AccountManager accountManager = AccountManager.get( getContext() );
-      
-      if ( accountManager != null )
-         accountManager.removeOnAccountsUpdatedListener( this );
+      MolokoApp.getNotifierContext( getContext() )
+               .unregisterAccountUpdatedListener( this );
       
       if ( addAccountHandle != null )
       {
@@ -147,6 +134,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
       }
       
       unregisterSyncStatusChangedListener();
+      handlerToken.release();
    }
    
    
@@ -227,7 +215,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
       {
          unregisterSyncStatusChangedListener();
          
-         handler.post( new Runnable()
+         handlerToken.post( new Runnable()
          {
             @Override
             public void run()

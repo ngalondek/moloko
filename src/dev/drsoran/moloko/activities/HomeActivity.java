@@ -33,6 +33,7 @@ import android.widget.GridView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.moloko.IAccountUpdatedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.HomeAdapter;
@@ -146,11 +147,10 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onAccountsUpdated( Account[] accounts )
+   public void onAccountUpdated( int what, Account account )
    {
-      super.onAccountsUpdated( accounts );
-      
-      showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
+      super.onAccountUpdated( what, account );
+      showAddAccountWidget( what == IAccountUpdatedListener.ACCOUNT_REMOVED );
    }
    
    

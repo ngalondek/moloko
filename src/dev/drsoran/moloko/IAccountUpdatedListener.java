@@ -20,42 +20,18 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.notification;
+package dev.drsoran.moloko;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
+import android.accounts.Account;
 
 
-abstract class AbstractNotificationTasksLoader extends
-         AsyncTask< Void, Void, Cursor >
+public interface IAccountUpdatedListener
 {
-   public interface ITasksLoadedHandler
-   {
-      void onTasksLoaded( Cursor result );
-   }
+   public final static int ACCOUNT_UPDATED = 0;
    
-   protected final Context context;
-   
-   private final ITasksLoadedHandler handler;
+   public final static int ACCOUNT_REMOVED = 1;
    
    
    
-   protected AbstractNotificationTasksLoader( Context context,
-      ITasksLoadedHandler handler )
-   {
-      this.context = context;
-      this.handler = handler;
-   }
-   
-   
-   
-   @Override
-   protected void onPostExecute( Cursor result )
-   {
-      if ( handler != null )
-      {
-         handler.onTasksLoaded( result );
-      }
-   }
+   void onAccountUpdated( int what, Account account );
 }

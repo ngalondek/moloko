@@ -119,11 +119,9 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
-   @Override
-   public void onDetach()
+   public void onDestroy()
    {
       handler.release();
-      super.onDetach();
    }
    
    

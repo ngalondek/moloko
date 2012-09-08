@@ -81,6 +81,15 @@ public abstract class MolokoLoaderEditFragment< D > extends
    
    
    @Override
+   public void onDestroy()
+   {
+      impl.onDestroy();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
    public final ApplyChangesInfo onFinishEditing()
    {
       if ( hasChanges() )

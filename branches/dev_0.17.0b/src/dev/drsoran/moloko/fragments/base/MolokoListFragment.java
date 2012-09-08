@@ -119,8 +119,17 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    @Override
    public void onDestroyView()
    {
-      super.onDestroyView();
       editImpl.onDestroyView();
+      super.onDestroyView();
+   }
+   
+   
+   
+   @Override
+   public void onDestroy()
+   {
+      editImpl.onDestroy();
+      super.onDestroy();
    }
    
    

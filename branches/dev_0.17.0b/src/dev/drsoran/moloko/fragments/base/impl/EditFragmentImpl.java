@@ -58,13 +58,6 @@ public class EditFragmentImpl
    
    
    
-   public void onDetach()
-   {
-      context = null;
-   }
-   
-   
-   
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       windowToken = view.getWindowToken();
@@ -75,7 +68,20 @@ public class EditFragmentImpl
    public void onDestroyView()
    {
       hideSoftInput();
+   }
+   
+   
+   
+   public void onDestroy()
+   {
       handler.release();
+   }
+   
+   
+   
+   public void onDetach()
+   {
+      context = null;
    }
    
    
@@ -99,15 +105,7 @@ public class EditFragmentImpl
    {
       if ( windowToken != null )
       {
-         handler.post( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               if ( context != null )
-                  UIUtils.hideSoftInput( context, windowToken );
-            }
-         } );
+         UIUtils.hideSoftInput( context, windowToken );
       }
    }
    

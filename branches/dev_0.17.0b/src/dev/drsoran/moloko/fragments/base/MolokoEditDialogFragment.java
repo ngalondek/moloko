@@ -73,6 +73,15 @@ public abstract class MolokoEditDialogFragment extends
    
    
    @Override
+   public void onDestroy()
+   {
+      impl.onDestroy();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
    public final ApplyChangesInfo onFinishEditing()
    {
       ApplyChangesInfo changes = ApplyChangesInfo.EMPTY;

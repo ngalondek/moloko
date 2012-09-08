@@ -68,6 +68,15 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
    
    @Override
+   public void onDestroy()
+   {
+      loaderImpl.onDestroy();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
    public void onDetach()
    {
       loaderImpl.onDetach();

@@ -71,6 +71,15 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    
    
    @Override
+   public void onDestroy()
+   {
+      impl.onDestroy();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
    public void onDetach()
    {
       impl.onDetach();

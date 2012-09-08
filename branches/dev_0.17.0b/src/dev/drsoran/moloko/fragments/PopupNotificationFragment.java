@@ -136,10 +136,10 @@ public class PopupNotificationFragment extends MolokoFragment
    
    
    @Override
-   public void onDestroyView()
+   public void onDestroy()
    {
       handler.release();
-      super.onDestroyView();
+      super.onDestroy();
    }
    
    

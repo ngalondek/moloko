@@ -157,7 +157,7 @@
     <style name="TakePrefsFromRtmCheckboxStyle" parent="TextViewStyle">
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
-
+    
     <!-- ********* -->
     <!-- TasksList -->
 

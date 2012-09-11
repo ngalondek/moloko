@@ -131,6 +131,13 @@ public abstract class AbstractTaskEditFragment
    
    
    
+   protected AbstractTaskEditFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, AbstractTaskEditFragment.class );
+   }
+   
+   
+   
    @Override
    public void onAttach( Activity activity )
    {
@@ -215,8 +222,6 @@ public abstract class AbstractTaskEditFragment
          
          nameEditText.setText( getCurrentValue( Tasks.TASKSERIES_NAME,
                                                 String.class ) );
-         nameEditText.requestFocus();
-         
          initializePrioritySpinner();
          initializeListSpinner();
          initializeLocationSpinner();
@@ -233,6 +238,8 @@ public abstract class AbstractTaskEditFragment
          
          putExtaInitialValues();
       }
+      
+      nameEditText.requestFocus();
    }
    
    
@@ -292,9 +299,13 @@ public abstract class AbstractTaskEditFragment
       }
       
       if ( !TextUtils.isEmpty( task.getSource() ) )
+      {
          source.setText( getString( R.string.task_source, task.getSource() ) );
+      }
       else
+      {
          source.setText( "?" );
+      }
    }
    
    

@@ -70,7 +70,7 @@ public class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    {
       final Context context = activity;
       final View quickAddTaskInputView = LayoutInflater.from( context )
-                                                       .inflate( R.layout.quick_add_task_action_mode,
+                                                       .inflate( R.layout.quick_add_task_actionmode,
                                                                  null );
       mode.setCustomView( quickAddTaskInputView );
       

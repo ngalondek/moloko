@@ -404,6 +404,7 @@
    <!-- MolokoPreferences activity -->
       <!-- RTM settings -->
 	   <string name="moloko_prefs_rtm_title">Paramètres RTM</string>
+	   <string name="moloko_prefs_rtm_sync_title">Retrieve RTM settings</string>
 	   <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupérés du serveur pour la dernière fois le %1$s</string>
 	   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur</string>
 	   <string name="moloko_prefs_rtm_defaultlist_title">Liste par défaut</string>
@@ -435,9 +436,9 @@
 	   <string name="moloko_prefs_acra_title">Activer les rapports d\'erreurs</string>
 	   <string name="moloko_prefs_acra_summary_on">Nous vous remercions d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
 	   <string name="moloko_prefs_acra_summary_off">S\'il vous plait, veuillez activer l\'envoi de rapports d\'erreurs à l\'équipe de développement</string>
-	   <string name="moloko_prefs_send_log_text">Envoyer le rapport d\'erreurs de Moloko à l\'équipe de développement</string>
-	   <string name="moloko_prefs_send_db_text">Envoyer la base de données à l\'équipe de développement</string>
-	   <string name="moloko_prefs_clear_db_text">Effacer la base de données et supprimer toutes les données</string>
+	   <string name="moloko_prefs_send_log_text">Send Moloko device log</string>
+      <string name="moloko_prefs_send_db_text">Send Moloko database</string>
+      <string name="moloko_prefs_clear_db_text">Clear database</string>
 	   <string name="moloko_about_text">À propos de Moloko</string>
 	   
       <!-- Dialogs -->

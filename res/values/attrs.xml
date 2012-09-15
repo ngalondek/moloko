@@ -57,8 +57,8 @@
    </declare-styleable>
 
    <declare-styleable name="InfoTextPreference">
-      <attr name="infoText" format="reference|string" />
-      <attr name="infoWidget" format="reference" />
+       <attr name="infoIcon" format="reference" />
+      <attr name="infoWidgetLayout" format="reference" />
    </declare-styleable>
 
    <declare-styleable name="WrappingLayout">

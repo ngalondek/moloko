@@ -366,14 +366,14 @@
 
       <activity
          android:name="org.acra.CrashReportDialog"
-         android:theme="@android:style/Theme.Dialog"
+         android:theme="@style/Theme.Moloko.Dialog"
          android:launchMode="singleInstance"
          android:excludeFromRecents="true"
          android:finishOnTaskLaunch="true" />
 
       <activity
          android:name="com.xtralogic.android.logcollector.SendLogActivity"
-         android:theme="@android:style/Theme.Translucent.NoTitleBar"
+         android:theme="@style/Theme.Moloko.SendLog"
          android:exported="false"
          android:excludeFromRecents="true">
          <intent-filter>

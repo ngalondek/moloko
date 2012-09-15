@@ -33,6 +33,9 @@
       moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
 
    <dev.drsoran.moloko.prefs.RtmSyncStatePreference
-      moloko:infoWidget="@layout/moloko_prefs_widget_sync" />
+      android:title="@string/moloko_prefs_rtm_sync_title"
+      android:summary="@string/design_text"
+      moloko:infoIcon="@drawable/ic_prefs_refresh"
+      moloko:infoWidgetLayout="@layout/moloko_prefs_widget_sync" />
       
 </PreferenceScreen>

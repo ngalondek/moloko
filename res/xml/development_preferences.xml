@@ -26,19 +26,23 @@
       android:defaultValue="true" />
 
    <dev.drsoran.moloko.prefs.SendLogPreference
-      moloko:infoText="@string/moloko_prefs_send_log_text"
-      moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
+      android:title="@string/moloko_prefs_send_log_text"
+      moloko:infoIcon="@drawable/ic_prefs_send_log"
+      moloko:infoWidgetLayout="@layout/moloko_prefs_widget_send_log" />
 
    <dev.drsoran.moloko.prefs.SendDbPreference
-      moloko:infoText="@string/moloko_prefs_send_db_text"
-      moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
+      android:title="@string/moloko_prefs_send_db_text"
+      moloko:infoIcon="@drawable/ic_prefs_send_log"
+      moloko:infoWidgetLayout="@layout/moloko_prefs_widget_send_log" />
       
    <dev.drsoran.moloko.prefs.ClearDbPreference
-      moloko:infoText="@string/moloko_prefs_clear_db_text"
-      moloko:infoWidget="@layout/moloko_prefs_widget_clear_db" />
+      android:title="@string/moloko_prefs_clear_db_text"
+      moloko:infoIcon="@drawable/ic_prefs_delete"
+      moloko:infoWidgetLayout="@layout/moloko_prefs_widget_clear_db" />
 
    <dev.drsoran.moloko.prefs.AboutPreference
-      moloko:infoText="@string/moloko_about_text"
-      moloko:infoWidget="@layout/moloko_prefs_widget_about" />
+      android:title="@string/moloko_about_text"
+      moloko:infoIcon="@drawable/ic_prefs_info"
+      moloko:infoWidgetLayout="@layout/moloko_prefs_widget_about" />
 
 </PreferenceScreen>

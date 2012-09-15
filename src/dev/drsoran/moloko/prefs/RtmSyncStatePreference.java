@@ -37,7 +37,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 import dev.drsoran.moloko.IAccountUpdatedListener;
 import dev.drsoran.moloko.IHandlerToken;
@@ -140,9 +139,9 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    
    
    @Override
-   protected void onBindView( View view )
+   protected void setupPreference( View view )
    {
-      final ImageView widget = (ImageView) view.findViewById( R.id.moloko_prefs_widget_sync );
+      super.setupPreference( view );
       
       if ( account != null )
       {
@@ -151,7 +150,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
          
          if ( settings == null )
          {
-            setInfoText( R.string.moloko_prefs_rtm_sync_text_no_settings );
+            setSummary( R.string.moloko_prefs_rtm_sync_text_no_settings );
          }
          else
          {
@@ -161,19 +160,17 @@ class RtmSyncStatePreference extends InfoTextPreference implements
                                                                 MolokoDateFormatter.FORMAT_NUMERIC
                                                                    | MolokoDateFormatter.FORMAT_WITH_YEAR );
             
-            setInfoText( getContext().getString( R.string.moloko_prefs_rtm_sync_text_in_sync,
-                                                 date ) );
+            setSummary( getContext().getString( R.string.moloko_prefs_rtm_sync_text_in_sync,
+                                                date ) );
          }
          
-         widget.setImageResource( R.drawable.ic_prefs_refresh );
+         setIcon( R.drawable.ic_prefs_refresh );
       }
       else
       {
-         setInfoText( R.string.g_no_account );
-         widget.setImageResource( R.drawable.ic_prefs_add );
+         setSummary( R.string.g_no_account );
+         setIcon( R.drawable.ic_prefs_add );
       }
-      
-      super.onBindView( view );
    }
    
    

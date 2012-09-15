@@ -105,9 +105,26 @@
     <!-- RtmSmartAdd -->
     
     <style name="RtmSmartAddTextViewStyle" parent="@style/AutoCompleteTextViewStyle">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>        
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textCursorDrawable">@null</item>
     </style>
-
+    
+    <!-- ListStyle -->
+   
+    <style name="ListViewStyle" parent="@android:style/Widget.ListView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+    </style>
+   
+    <style name="ExpandableListViewStyle" parent="@android:style/Widget.ExpandableListView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+    </style>
+   
+    <!-- GridViewStyle -->
+   
+    <style name="GridViewStyle" parent="@android:style/Widget.GridView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+    </style>
+    
     <!-- TextWith...Styles -->
 
     <style name="TitleWithViewStyle">
@@ -152,10 +169,18 @@
         <item name="drawablePressed">@drawable/ic_button_edittext_delete</item>
     </style>
     
-    <!-- Take preferences from RTM checkbox style -->
+    <!-- Take preferences from RTM checkbox style --> 
 
-    <style name="TakePrefsFromRtmCheckboxStyle" parent="TextViewStyle">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+    <style name="TakePrefsFromRtmCheckboxStyle" parent="@android:style/TextAppearance.Small.Inverse">
+    </style>
+    
+    <!-- Own Preferneces layout -->
+    
+    <style name="MolokoPrefsLayoutStyle">
+        <item name="android:layout_marginLeft">15dip</item>
+        <item name="android:layout_marginRight">6dip</item>
+        <item name="android:layout_marginTop">6dip</item>
+        <item name="android:layout_marginBottom">6dip</item>
     </style>
     
     <!-- ********* -->

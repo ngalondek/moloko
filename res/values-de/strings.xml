@@ -411,6 +411,7 @@
    <!-- MolokoPreferences activity -->
       <!-- RTM settings -->
 	   <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
+	   <string name="moloko_prefs_rtm_sync_title">Hole RTM Einstellungen</string>
 	   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen</string>
 	   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken</string>
 	   <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
@@ -442,9 +443,9 @@
 	   <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
 	   <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>
 	   <string name="moloko_prefs_acra_summary_off">Bitte unterstützen Sie die Entwicklung durch das Senden von Fehlerberichten</string>
-	   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string>
-	   <string name="moloko_prefs_send_db_text">Moloko Datenbank an Entwickler senden</string>
-	   <string name="moloko_prefs_clear_db_text">Alle Daten aus der Datenbank entfernen</string>  
+	   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log senden</string>
+	   <string name="moloko_prefs_send_db_text">Moloko Datenbank senden</string>
+	   <string name="moloko_prefs_clear_db_text">Datenbank säubern</string>  
 	   
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>

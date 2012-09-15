@@ -28,4 +28,12 @@
       name="taskslist_listitem_row_space">12dip</dimen>
    <dimen
       name="taskslist_listitem_widget_space_lrg">10dip</dimen>
+   <dimen
+      name="moloko_prefs_marginLeft">15dip</dimen>
+   <dimen
+      name="moloko_prefs_marginRight">6dip</dimen>
+   <dimen
+      name="moloko_prefs_marginTop">6dip</dimen>
+   <dimen
+      name="moloko_prefs_marginBottom">6dip</dimen>
 </resources>

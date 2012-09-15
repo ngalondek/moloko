@@ -36,6 +36,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +49,8 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
 
-public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
+public class RecurrencePickerDialogFragment extends
+         AbstractPickerDialogFragment
 {
    public final static class Config
    {
@@ -57,7 +59,9 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
       public final static String IS_EVERY_RECURR = "is_every_recurr";
    }
    
-   @InstanceState( key = Config.RECURR_PATTERN, defaultValue = Strings.EMPTY_STRING )
+   private final static String DEFAULT_RECURRENCE = "after 1 year";
+   
+   @InstanceState( key = Config.RECURR_PATTERN )
    private String recurrencePattern;
    
    @InstanceState( key = Config.IS_EVERY_RECURR )
@@ -88,17 +92,17 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
    
    public final static void show( FragmentActivity activity, Bundle config )
    {
-      final RecurrPickerDialogFragment frag = newInstance( config );
+      final RecurrencePickerDialogFragment frag = newInstance( config );
       UIUtils.showDialogFragment( activity,
                                   frag,
-                                  RecurrPickerDialogFragment.class.getName() );
+                                  RecurrencePickerDialogFragment.class.getName() );
    }
    
    
    
-   public final static RecurrPickerDialogFragment newInstance( Bundle config )
+   public final static RecurrencePickerDialogFragment newInstance( Bundle config )
    {
-      final RecurrPickerDialogFragment frag = new RecurrPickerDialogFragment();
+      final RecurrencePickerDialogFragment frag = new RecurrencePickerDialogFragment();
       
       frag.setArguments( config );
       
@@ -107,10 +111,10 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public RecurrPickerDialogFragment()
+   public RecurrencePickerDialogFragment()
    {
       registerAnnotatedConfiguredInstance( this,
-                                           RecurrPickerDialogFragment.class );
+                                           RecurrencePickerDialogFragment.class );
    }
    
    
@@ -121,6 +125,8 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
+      ensureValidRecurrencePattern();
+      
       final FragmentActivity activity = getSherlockActivity();
       
       final LayoutInflater inflater = LayoutInflater.from( activity );
@@ -130,6 +136,18 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
       
       final Dialog dialog = createDialogImpl();
       return dialog;
+   }
+   
+   
+   
+   private void ensureValidRecurrencePattern()
+   {
+      if ( TextUtils.isEmpty( recurrencePattern ) )
+      {
+         final Pair< String, Boolean > parseReturn = RecurrenceParsing.parseRecurrence( DEFAULT_RECURRENCE );
+         recurrencePattern = parseReturn.first;
+         isEveryRecurrence = parseReturn.second.booleanValue();
+      }
    }
    
    
@@ -235,12 +253,14 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
       
       evAftWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
          
          
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
             updateIsEveryRecurrence();
@@ -249,12 +269,14 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
       
       intervalWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
          
          
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
             updateRecurrencePattern();
@@ -264,12 +286,14 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
       
       freqWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
          
          
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
             updateRecurrencePattern();
@@ -402,19 +426,21 @@ public class RecurrPickerDialogFragment extends AbstractPickerDialogFragment
                                                 .setPositiveButton( R.string.btn_ok,
                                                                     new DialogInterface.OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
-                                                                          RecurrPickerDialogFragment.this.notifiyDialogClosedOk();
+                                                                          RecurrencePickerDialogFragment.this.notifiyDialogClosedOk();
                                                                        }
                                                                     } )
                                                 .setNegativeButton( R.string.btn_cancel,
                                                                     new DialogInterface.OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
-                                                                          RecurrPickerDialogFragment.this.notifiyDialogClosedCancel();
+                                                                          RecurrencePickerDialogFragment.this.notifiyDialogClosedCancel();
                                                                        }
                                                                     } )
                                                 .create();

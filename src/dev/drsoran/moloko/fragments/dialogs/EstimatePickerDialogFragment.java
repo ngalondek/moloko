@@ -59,8 +59,10 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    private final static int UNIT_MINUTE = 2;
    
+   private final static long DEFAULT_ESTIMATE_MILLIS = DateUtils.DAY_IN_MILLIS;
+   
    @InstanceState( key = Config.ESTIMATE_MILLIS )
-   private long estimateMillis = DateUtils.DAY_IN_MILLIS;
+   private long estimateMillis = DEFAULT_ESTIMATE_MILLIS;
    
    private WheelView numberWheel;
    
@@ -113,11 +115,23 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
+      ensureValidEstimateMillis();
+      
       final Pair< Integer, Integer > valueAndUnit = getValueAndUnitFromMillis();
       final View content = initWheels( valueAndUnit.first, valueAndUnit.second );
       
       final Dialog dialog = createDialogImpl( content );
       return dialog;
+   }
+   
+   
+   
+   private void ensureValidEstimateMillis()
+   {
+      if ( estimateMillis == -1 )
+      {
+         estimateMillis = DEFAULT_ESTIMATE_MILLIS;
+      }
    }
    
    
@@ -173,12 +187,14 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       // the initial value
       unitWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
          
          
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
             calculateMillis();
@@ -187,12 +203,14 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       
       numberWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
          
          
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
             calculateMillis();
@@ -217,6 +235,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
                                                 .setPositiveButton( R.string.btn_ok,
                                                                     new DialogInterface.OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
@@ -226,6 +245,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
                                                 .setNegativeButton( R.string.btn_cancel,
                                                                     new DialogInterface.OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {

@@ -125,7 +125,7 @@
    <string name="phr_settings">Settings</string>
    <string name="phr_none_f">none</string>
    <string name="phr_nothing">nothing</string>
-   <string name="phr_do_sync">Synchronize</string>
+   <string name="phr_do_sync">Synchronize</string>   
    <string name="phr_on">On</string>
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manual</string>
@@ -448,6 +448,7 @@
    <!-- MolokoPreferences activity -->
       <!-- RTM settings -->
 	   <string name="moloko_prefs_rtm_title">RTM Settings</string>
+	   <string name="moloko_prefs_rtm_sync_title">Retrieve RTM settings</string>
 	   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s</string>
 	   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click</string>
 	   <string name="moloko_prefs_rtm_defaultlist_title">Default List</string>
@@ -482,9 +483,9 @@
 	   <string name="moloko_prefs_acra_title">Enable error reporting</string>
 	   <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
 	   <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
-	   <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
-	   <string name="moloko_prefs_send_db_text">Send Moloko database to developers</string>
-	   <string name="moloko_prefs_clear_db_text">Clear the database and swipe all data</string>
+	   <string name="moloko_prefs_send_log_text">Send Moloko device log</string>
+	   <string name="moloko_prefs_send_db_text">Send Moloko database</string>
+	   <string name="moloko_prefs_clear_db_text">Clear database</string>
 	   <string name="moloko_about_text">About Moloko</string>
 	   
       <!-- Dialogs -->

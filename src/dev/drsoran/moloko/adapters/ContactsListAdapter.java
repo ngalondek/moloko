@@ -22,11 +22,7 @@
 
 package dev.drsoran.moloko.adapters;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,26 +31,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
+import dev.drsoran.moloko.fragments.ContactsListFragment;
 import dev.drsoran.rtm.Contact;
 
 
 public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
 {
-   private final Context context;
-   
-   private final int resourceId;
+   private final ContactsListFragment context;
    
    private final LayoutInflater inflater;
    
    
    
-   public ContactsListAdapter( Context context, int resourceId )
+   public ContactsListAdapter( ContactsListFragment context )
    {
-      super( context );
+      super( context.getSherlockActivity() );
       
       this.context = context;
-      this.resourceId = resourceId;
-      this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+      inflater = context.getSherlockActivity().getLayoutInflater();
    }
    
    
@@ -64,7 +58,9 @@ public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
    {
       if ( convertView == null )
       {
-         convertView = inflater.inflate( resourceId, parent, false );
+         convertView = inflater.inflate( R.layout.contactslist_fragment_listitem,
+                                         parent,
+                                         false );
       }
       
       final ImageView picture = (ImageView) convertView.findViewById( R.id.contactslist_listitem_contact_pic );
@@ -116,10 +112,7 @@ public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
          @Override
          public void onClick( final View v )
          {
-            final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                              Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_LOOKUP_URI,
-                                                                    contact.getLookUpKey() ) );
-            context.startActivity( intent );
+            context.onCallButtonClicked( contact );
          }
       } );
       

@@ -21,6 +21,16 @@
         <item name="android:textColorHint">@color/app_darker_gray</item>
     </style>
     
+    <!-- TextViewStyle -->
+
+    <style name="TextViewStyle" parent="@android:style/Widget.Holo.Light.TextView">
+    </style>
+
+    <!-- AutocompleteTextViewStyle -->
+
+    <style name="AutoCompleteTextViewStyle" parent="@android:style/Widget.Holo.Light.AutoCompleteTextView">
+    </style>    
+    
     <!-- ListStyle -->
     
     <style name="ListViewStyle" parent="@android:style/Widget.Holo.Light.ListView">
@@ -36,7 +46,7 @@
     
     <!-- Take preferences from RTM checkbox style -->
     
-    <style name="TakePrefsFromRtmCheckboxStyle" parent="TextViewStyle">        
+    <style name="TakePrefsFromRtmCheckboxStyle" parent="@android:style/TextAppearance.Small">        
     </style>
     
 </resources>

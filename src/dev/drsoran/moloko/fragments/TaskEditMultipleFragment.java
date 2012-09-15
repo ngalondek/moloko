@@ -39,9 +39,11 @@ import android.widget.AutoCompleteTextView;
 
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -367,6 +369,22 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    protected List< Task > getEditedTasks()
    {
       return getTasksAssertNotNull();
+   }
+   
+   
+   
+   @Override
+   protected ApplyChangesInfo getApplyChangesInfo()
+   {
+      saveChanges();
+      
+      final ModificationSet modificationSet = createModificationSet( getEditedTasks() );
+      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( modificationSet.toContentProviderActionItemList(),
+                                                                      getString( R.string.toast_save_task ),
+                                                                      getString( R.string.toast_save_task_ok ),
+                                                                      getString( R.string.toast_save_task_failed ) );
+      
+      return applyChangesInfo;
    }
    
    

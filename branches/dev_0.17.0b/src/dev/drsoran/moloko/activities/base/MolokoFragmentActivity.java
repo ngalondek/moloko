@@ -369,7 +369,9 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    protected boolean isShowHomeAsUp()
    {
-      return ( getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP;
+      final ActionBar actionBar = getSupportActionBar();
+      return actionBar != null
+         && ( actionBar.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP;
    }
    
    
@@ -641,7 +643,11 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    protected void setupActionBar()
    {
       requestWindowFeature( Window.FEATURE_INDETERMINATE_PROGRESS );
-      getSupportActionBar().setHomeButtonEnabled( true );
+      final ActionBar actionBar = getSupportActionBar();
+      if ( actionBar != null )
+      {
+         getSupportActionBar().setHomeButtonEnabled( true );
+      }
    }
    
    

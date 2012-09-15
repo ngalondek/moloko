@@ -175,8 +175,7 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
    @Override
    public SwappableArrayAdapter< Contact > createListAdapter()
    {
-      return new ContactsListAdapter( getSherlockActivity(),
-                                      R.layout.contactslist_fragment_listitem );
+      return new ContactsListAdapter( this );
    }
    
    
@@ -209,5 +208,15 @@ public class ContactsListFragment extends MolokoListFragment< Contact >
    public ContactsListAdapter getListAdapter()
    {
       return (ContactsListAdapter) super.getListAdapter();
+   }
+   
+   
+   
+   public void onCallButtonClicked( Contact contact )
+   {
+      if ( listener != null )
+      {
+         listener.onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
+      }
    }
 }

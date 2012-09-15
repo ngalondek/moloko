@@ -160,12 +160,16 @@ public class TaskAddFragment extends AbstractTaskEditFragment
          final Bundle args = getArguments();
          
          putChange( Tasks.TASKSERIES_NAME,
-                    args.getString( Args.TASK_NAME, null ),
+                    args.getString( Args.TASK_NAME ),
                     String.class );
-         putChange( Tasks.PRIORITY,
-                    args.getString( Args.PRIORITY,
-                                    RtmTask.convertPriority( Priority.None ) ),
-                    String.class );
+         
+         String priority = args.getString( Args.PRIORITY );
+         if ( TextUtils.isEmpty( priority ) )
+         {
+            priority = RtmTask.convertPriority( Priority.None );
+         }
+         
+         putChange( Tasks.PRIORITY, priority, String.class );
          putChange( Tasks.TAGS,
                     TextUtils.join( Tasks.TAGS_SEPARATOR, getTagsListFromArgs() ),
                     String.class );
@@ -176,18 +180,18 @@ public class TaskAddFragment extends AbstractTaskEditFragment
                     args.getBoolean( Args.HAS_DUE_TIME, false ),
                     Boolean.class );
          putChange( Tasks.RECURRENCE,
-                    args.getString( Args.RECURRENCE, null ),
+                    args.getString( Args.RECURRENCE ),
                     String.class );
          putChange( Tasks.RECURRENCE_EVERY,
                     args.getBoolean( Args.RECURRENCE_EVERY, false ),
                     Boolean.class );
          putChange( Tasks.ESTIMATE,
-                    args.getString( Args.ESTIMATE, null ),
+                    args.getString( Args.ESTIMATE ),
                     String.class );
          putChange( Tasks.ESTIMATE_MILLIS,
                     args.getLong( Args.ESTIMATE_MILLIS, -1 ),
                     Long.class );
-         putChange( Tasks.URL, args.getString( Args.URL, null ), String.class );
+         putChange( Tasks.URL, args.getString( Args.URL ), String.class );
       }
    }
    
@@ -351,6 +355,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    @Override
    protected ApplyChangesInfo getApplyChangesInfo()
    {
+      saveChanges();
+      
       final Task newTask = newTask();
       final ApplyChangesInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
                                                                        newTask );

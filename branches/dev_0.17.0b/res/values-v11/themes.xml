@@ -18,5 +18,9 @@
         <item name="android:windowSoftInputMode">adjustResize</item>
         
     </style>
+    
+    <style name="Theme.Moloko.Dialog" parent="@android:style/Theme.Holo.Light.Dialog" />
+    
+    <style name="Theme.Moloko.SendLog" parent="@style/Theme.Moloko.Dialog" />
 
 </resources>

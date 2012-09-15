@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -86,15 +87,17 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
          version = "???";
       }
       
-      context.setTheme( R.style.Sherlock___Theme_Dialog );
+      final ContextThemeWrapper themedContext = new ContextThemeWrapper( context,
+                                                                         0 );
+      themedContext.setTheme( R.style.Theme_Moloko_Dialog );
       
-      final LayoutInflater inflater = LayoutInflater.from( context );
+      final LayoutInflater inflater = LayoutInflater.from( themedContext );
       final View aboutMolokoView = inflater.inflate( R.layout.about_dialog_fragment,
                                                      null,
                                                      false );
       
-      final Spanned message = Html.fromHtml( context.getString( R.string.moloko_about_info,
-                                                                version ) );
+      final Spanned message = Html.fromHtml( themedContext.getString( R.string.moloko_about_info,
+                                                                      version ) );
       
       final TextView messageView = (TextView) aboutMolokoView.findViewById( android.R.id.text1 );
       messageView.setText( message );

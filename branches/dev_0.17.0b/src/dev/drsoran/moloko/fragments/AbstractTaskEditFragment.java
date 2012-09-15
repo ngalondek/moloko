@@ -48,7 +48,6 @@ import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
@@ -147,6 +146,15 @@ public abstract class AbstractTaskEditFragment
          listener = (ITaskEditFragmentListener) activity;
       else
          listener = new NullTaskEditFragmentListener();
+   }
+   
+   
+   
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      saveChanges();
+      super.onSaveInstanceState( outState );
    }
    
    
@@ -785,6 +793,15 @@ public abstract class AbstractTaskEditFragment
    
    
    
+   private void commitValues()
+   {
+      commitEditDue();
+      commitEditEstimate();
+      commitEditRecurrence();
+   }
+   
+   
+   
    @Override
    public final < V > V getCurrentValue( String key, Class< V > type )
    {
@@ -827,21 +844,11 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   @Override
-   protected ApplyChangesInfo getApplyChangesInfo()
+   public void saveChanges()
    {
       saveDueChanges();
       saveRecurrenceChanges();
       saveEstimateChanges();
-      
-      final ModificationSet modificationSet = createModificationSet( getEditedTasks() );
-      
-      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( modificationSet.toContentProviderActionItemList(),
-                                                                      getString( R.string.toast_save_task ),
-                                                                      getString( R.string.toast_save_task_ok ),
-                                                                      getString( R.string.toast_save_task_failed ) );
-      
-      return applyChangesInfo;
    }
    
    
@@ -849,9 +856,7 @@ public abstract class AbstractTaskEditFragment
    @Override
    public ValidationResult validate()
    {
-      commitEditDue();
-      commitEditRecurrence();
-      commitEditEstimate();
+      commitValues();
       
       // Task name
       ValidationResult validationResult = validateName();

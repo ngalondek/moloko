@@ -90,5 +90,9 @@
         <!-- Widgets -->
         <item name="android:listPreferredItemHeight">50dip</item>
     </style>
+    
+    <style name="Theme.Moloko.Dialog" parent="@android:style/Theme.Dialog" />
+    
+    <style name="Theme.Moloko.SendLog" parent="@style/Theme.Moloko" />
 
 </resources>

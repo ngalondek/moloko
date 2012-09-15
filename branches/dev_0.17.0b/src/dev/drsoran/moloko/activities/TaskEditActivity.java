@@ -41,7 +41,7 @@ import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.DuePickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.EstimatePickerDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.RecurrPickerDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.RecurrencePickerDialogFragment;
 import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
@@ -113,7 +113,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
       if ( recurrencePattern == null )
          recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
       
-      RecurrPickerDialogFragment.show( this,
+      RecurrencePickerDialogFragment.show( this,
                                        recurrencePattern.first,
                                        recurrencePattern.second );
    }
@@ -140,9 +140,9 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
             final DuePickerDialogFragment frag = (DuePickerDialogFragment) dialog;
             getTaskEditFragment().setDue( frag.getCalendar() );
          }
-         else if ( dialog instanceof RecurrPickerDialogFragment )
+         else if ( dialog instanceof RecurrencePickerDialogFragment )
          {
-            final RecurrPickerDialogFragment frag = (RecurrPickerDialogFragment) dialog;
+            final RecurrencePickerDialogFragment frag = (RecurrencePickerDialogFragment) dialog;
             getTaskEditFragment().setRecurrencePattern( frag.getPattern() );
          }
          else if ( dialog instanceof EstimatePickerDialogFragment )

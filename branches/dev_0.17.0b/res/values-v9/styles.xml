@@ -20,21 +20,5 @@
    <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
    <style name="NotificationText" parent="android:TextAppearance.StatusBar.EventContent" />
    <style name="NotificationStackCount" parent="android:TextAppearance.StatusBar.EventContent" />
-   
-   <!-- ListStyle -->
-   
-   <style name="ListViewStyle" parent="@android:style/Widget.ListView">
-       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
-   </style>
-   
-   <style name="ExpandableListViewStyle" parent="@android:style/Widget.ExpandableListView">
-      <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
-   </style>
-   
-   <!-- GridViewStyle -->
-   
-   <style name="GridViewStyle" parent="@android:style/Widget.GridView">
-       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
-   </style>
 
 </resources>

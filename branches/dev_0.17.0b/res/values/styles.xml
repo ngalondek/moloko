@@ -19,13 +19,14 @@
     <style name="WindowTitleStyle" parent="@android:style/TextAppearance.WindowTitle"></style>
 
     <style name="ActionBarStyle" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        
         <!-- 
         <item name="background">@drawable/actionbar_solid</item>
         <item name="android:background">@drawable/actionbar_solid</item>
         
         <item name="backgroundSplit">@drawable/actionbar_bottom_solid</item>
         <item name="android:backgroundSplit">@drawable/actionbar_bottom_solid</item>
-         -->
+         -->        
         
         <item name="titleTextStyle">@style/ActionBarTextStyle</item>
         <item name="android:titleTextStyle">@style/ActionBarTextStyle</item>

@@ -28,6 +28,7 @@ import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmList;
 
@@ -278,20 +279,32 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    private boolean existsList( String id ) throws RemoteException
    {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
-      
-      boolean exists = client != null;
+      boolean exists = !TextUtils.isEmpty( id );
       
       if ( exists )
       {
-         final RtmList list = RtmListsProviderPart.getList( client, id );
-         exists = list != null;
-         exists = exists && list.getArchived() == 0;
-         exists = exists && list.getDeletedDate() == null;
+         ContentProviderClient client = null;
+         try
+         {
+            client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
+            exists = client != null;
+            
+            if ( exists )
+            {
+               final RtmList list = RtmListsProviderPart.getList( client, id );
+               exists = list != null;
+               exists = exists && list.getArchived() == 0;
+               exists = exists && list.getDeletedDate() == null;
+            }
+         }
+         finally
+         {
+            if ( client != null )
+            {
+               client.release();
+            }
+         }
       }
-      
-      if ( client != null )
-         client.release();
       
       return exists;
    }

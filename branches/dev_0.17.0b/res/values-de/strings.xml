@@ -457,9 +457,7 @@
       <string name="moloko_prefs_send_db_toast_failed">Auf die Datenbank konnte nicht zugegriffen werden</string>
     
    <!-- Error reporting -->   
-   <string name="acra_crash_notif_ticker_text">Moloko ist oder war in einem fehlerhaften Zustand. Bitte senden Sie den Bericht</string>
-   <string name="acra_crash_notif_title">Moloko ist oder war in einem fehlerhaften Zustand</string>
-   <string name="acra_crash_notif_text">Dies tut uns leid. Bitte senden Sie einen Fehlerbericht um die Entwicklung zu unterstützen.</string>
+   <string name="acra_crash_toast_text">Moloko ist in einem fehlerhaften Zustand. Bitte senden Sie den Fehlerbericht.</string>
    <string name="acra_crash_dialog_title">Moloko Fehlerbericht</string>
    <string name="acra_crash_dialog_text">Wir entschuldigen uns für jegliche Unannehmlichkeiten. Durch das Senden eines Fehlerberichts unterstützen Sie die Beseitigung dieses Fehlers in zukünftigen Versionen.</string>
    <string name="acra_crash_comment_prompt">Möglicherweise möchten Sie ein Kommentar hinterlassen:</string>

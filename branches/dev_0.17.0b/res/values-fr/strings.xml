@@ -451,9 +451,7 @@
       <string name="moloko_prefs_send_db_toast_failed">Impossible d\'accéder à la base de données</string>
 
    <!-- Error reporting -->
-   <string name="acra_crash_notif_ticker_text">Moloko est ou a été dans un état inattendu. Veuillez envoyer un rapport d\'erreur.</string>
-   <string name="acra_crash_notif_title">Moloko est ou a été dans un état inattendu</string>
-   <string name="acra_crash_notif_text">Nous nous excusons. Veuillez envoyer un rapport d\'erreur.</string>
+   <string name="acra_crash_toast_text">Moloko has entered an unexpected state. Please send an error report.</string>
    <string name="acra_crash_dialog_title">Rapport d\'erreur Moloko</string>
    <string name="acra_crash_dialog_text">Nous nous excusons du désagrément. Veuillez envoyer un rapport d\'erreur pour nous aider à ce que cela ne se reproduise plus.</string>
    <string name="acra_crash_comment_prompt">Vous pouvez ajouter vos commentaires ci-dessous:</string>

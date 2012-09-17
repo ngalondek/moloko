@@ -44,17 +44,15 @@ import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
-@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ",
-                 mode = ReportingInteractionMode.NOTIFICATION,
-                 resNotifTickerText = R.string.acra_crash_notif_ticker_text,
-                 resNotifTitle = R.string.acra_crash_notif_title,
-                 resNotifText = R.string.acra_crash_notif_text,
-                 resNotifIcon = android.R.drawable.stat_notify_error,
+@ReportsCrashes( formKey = "dEhwNThPMTJJYUhyOWRZWkhmYUkxSmc6MQ",
+                 mode = ReportingInteractionMode.DIALOG,
+                 resToastText = R.string.acra_crash_toast_text,
                  resDialogText = R.string.acra_crash_dialog_text,
-                 resDialogIcon = android.R.drawable.ic_dialog_info,
+                 resDialogIcon = R.drawable.ic_prefs_info,
                  resDialogTitle = R.string.acra_crash_dialog_title,
                  resDialogCommentPrompt = R.string.acra_crash_comment_prompt,
-                 resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
+                 resDialogOkToast = R.string.acra_crash_dialog_ok_toast,
+                 logcatFilterByPid = true )
 public class MolokoApp extends Application implements
          IOnSettingsChangedListener
 {

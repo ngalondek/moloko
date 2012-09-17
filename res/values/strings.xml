@@ -498,9 +498,7 @@
       <string name="moloko_prefs_send_db_toast_failed">Could not access the database</string>
 
    <!-- Error reporting -->
-   <string name="acra_crash_notif_ticker_text">Moloko has or had entered an unexpected state. Please send an error report.</string>
-   <string name="acra_crash_notif_title">Moloko has or had entered an unexpected state</string>
-   <string name="acra_crash_notif_text">We apologize. Please send a report to support development.</string>
+   <string name="acra_crash_toast_text">Moloko has entered an unexpected state. Please send an error report.</string>
    <string name="acra_crash_dialog_title">Moloko error report</string>
    <string name="acra_crash_dialog_text">We apologize for any inconvenience. Please send a report to support the development and help avoiding the issue in future releases.</string>
    <string name="acra_crash_comment_prompt">You might add your comments about the issue below:</string>

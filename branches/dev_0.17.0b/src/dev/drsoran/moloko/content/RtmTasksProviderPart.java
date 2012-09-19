@@ -37,10 +37,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -48,8 +48,7 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmTasksProviderPart.class.getSimpleName();
+   private static final Class< RtmTasksProviderPart > TAG = RtmTasksProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -69,7 +68,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( RtmTask task,
                                                        boolean withId )
    {
@@ -112,8 +111,8 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static ContentProviderOperation insertTask( RtmTask task )
    {
       if ( task.getId() == null )
@@ -124,8 +123,8 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
                                      .build();
    }
    
-
-
+   
+   
    public final static RtmTask getTask( ContentProviderClient client, String id )
    {
       RtmTask task = null;
@@ -152,7 +151,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query rawtask failed. ", e );
+         MolokoApp.Log.e( TAG, "Query rawtask failed. ", e );
          task = null;
       }
       finally
@@ -164,16 +163,16 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       return task;
    }
    
-
-
+   
+   
    public final static List< RtmTask > getAllTasks( ContentProviderClient client,
                                                     String taskSeriesId )
    {
       return getAllTasks( client, taskSeriesId, false );
    }
    
-
-
+   
+   
    public final static List< RtmTask > getAllTasks( ContentProviderClient client,
                                                     String taskSeriesId,
                                                     boolean includeDeleted )
@@ -227,7 +226,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
          }
          catch ( final RemoteException e )
          {
-            Log.e( TAG, "Query rawtasks failed. ", e );
+            MolokoApp.Log.e( TAG, "Query rawtasks failed. ", e );
             tasks = null;
          }
          finally
@@ -240,8 +239,8 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       return tasks;
    }
    
-
-
+   
+   
    public final static int getDeletedTasksCount( ContentProviderClient client )
    {
       int cnt = -1;
@@ -262,7 +261,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query rawtasks failed. ", e );
+         MolokoApp.Log.e( TAG, "Query rawtasks failed. ", e );
       }
       finally
       {
@@ -273,15 +272,16 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       return cnt;
    }
    
-
-
+   
+   
    public RtmTasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, RawTasks.PATH );
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
@@ -320,8 +320,8 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       createModificationsTrigger( db );
    }
    
-
-
+   
+   
    @Override
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
@@ -336,61 +336,64 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       return initialValues;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return RawTasks.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return RawTasks.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return RawTasks.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return RawTasks.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-
-
+   
+   
    private final static RtmTask createTask( Cursor c )
    {
       return new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),

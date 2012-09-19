@@ -119,6 +119,11 @@ public class SettingsListener implements OnSharedPreferenceChangeListener
             onSettingChanged( IOnSettingsChangedListener.STARTUP_VIEW,
                               Collections.emptyMap() );
          }
+         else if ( key.equals( context.getString( R.string.key_sync_inverval ) ) )
+         {
+            onSettingChanged( IOnSettingsChangedListener.SYNC_INTERVAL,
+                              Collections.emptyMap() );
+         }
       }
    }
    

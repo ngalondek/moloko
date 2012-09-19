@@ -26,7 +26,6 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,16 +42,12 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Strings;
 
 
 public class RtmWebLoginFragment extends AuthFragment implements
          IAuthSequenceListener
 {
-   private static final String TAG = "Moloko."
-      + RtmWebLoginFragment.class.getSimpleName();
-   
    private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    @InstanceState( key = Constants.FEAT_PERMISSION, defaultValue = "read" )
@@ -187,7 +182,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
       }
       else
       {
-         Log.d( TAG, "LoginURL: " + loginUrl );
+         MolokoApp.Log.d( getClass(), "LoginURL: " + loginUrl );
          
          messageText.setText( getString( R.string.auth_info_text ) );
          
@@ -204,7 +199,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
    public void onAuthenticationCompleted( String authToken,
                                           ServiceException exception )
    {
-      Log.d( TAG, "AuthToken: " + authToken );
+      MolokoApp.Log.d( getClass(), "AuthToken: " + authToken );
       
       if ( exception != null )
       {
@@ -300,9 +295,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
       }
       catch ( ServiceInternalException e )
       {
-         Log.e( LogUtils.toTag( RtmWebLoginFragment.class ),
-                "Error creating RTM service",
-                e );
+         MolokoApp.Log.e( getClass(), "Error creating RTM service", e );
       }
    }
    

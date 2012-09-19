@@ -34,7 +34,6 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ServiceException;
@@ -57,11 +56,6 @@ import dev.drsoran.provider.Rtm.Sync;
 
 public final class SyncUtils
 {
-   private static final String TAG = "Moloko."
-      + SyncUtils.class.getSimpleName();
-   
-   
-   
    private SyncUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
@@ -70,14 +64,14 @@ public final class SyncUtils
    
    
    public final static void handleServiceInternalException( ServiceInternalException exception,
-                                                            String tag,
+                                                            Class< ? > tag,
                                                             SyncResult syncResult )
    {
       final Exception internalException = exception.getEnclosedException();
       
       if ( internalException != null )
       {
-         Log.e( TAG, exception.responseMessage, internalException );
+         MolokoApp.Log.e( tag, exception.responseMessage, internalException );
          
          if ( internalException instanceof IOException )
             ++syncResult.stats.numIoExceptions;
@@ -86,7 +80,7 @@ public final class SyncUtils
       }
       else
       {
-         Log.e( TAG, exception.responseMessage );
+         MolokoApp.Log.e( tag, exception.responseMessage );
          ++syncResult.stats.numIoExceptions;
       }
    }
@@ -361,7 +355,9 @@ public final class SyncUtils
             }
             catch ( ServiceException e )
             {
-               Log.e( TAG, "Applying server operation failed", e );
+               MolokoApp.Log.e( SyncUtils.class,
+                                "Applying server operation failed",
+                                e );
                throw e;
             }
          }

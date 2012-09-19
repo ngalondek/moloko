@@ -28,10 +28,9 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 
 
@@ -57,9 +56,9 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
                                           getExtras(),
                                           intervalMs / 1000 );
          
-         Log.i( LogUtils.toTag( NativePeriodicSyncHandler.class ),
-                "Added new periodic sync repeating every "
-                   + DateUtils.formatElapsedTime( intervalMs / 1000 ) );
+         MolokoApp.Log.i( getClass(),
+                          "Added new periodic sync repeating every "
+                             + DateUtils.formatElapsedTime( intervalMs / 1000 ) );
       }
    }
    
@@ -84,8 +83,7 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
                                              Rtm.AUTHORITY,
                                              getExtras() );
          
-         Log.i( LogUtils.toTag( NativePeriodicSyncHandler.class ),
-                "Removed periodic sync" );
+         MolokoApp.Log.i( getClass(), "Removed periodic sync" );
       }
    }
    

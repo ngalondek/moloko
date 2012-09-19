@@ -30,14 +30,12 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.content.SyncStatusObserver;
 import android.text.format.DateUtils;
-import android.util.Log;
 import dev.drsoran.moloko.IOnNetworkStatusChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
 
@@ -81,11 +79,9 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
                                     intervalMs,
                                     syncIntent );
          
-         Log.i( LogUtils.toTag( AlarmManagerPeriodicSyncHandler.class ),
-                "Scheduled new sync alarm to go off @"
-                   + MolokoDateUtils.newTime().format2445()
-                   + ", repeating every "
-                   + DateUtils.formatElapsedTime( intervalMs / 1000 ) );
+         MolokoApp.Log.i( getClass(), "Scheduled new sync alarm to go off @"
+            + MolokoDateUtils.newTime().format2445() + ", repeating every "
+            + DateUtils.formatElapsedTime( intervalMs / 1000 ) );
       }
       
    }
@@ -107,9 +103,7 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
       if ( alarmManager != null )
       {
          alarmManager.cancel( Intents.createSyncAlarmIntent( context ) );
-         
-         Log.i( LogUtils.toTag( AlarmManagerPeriodicSyncHandler.class ),
-                "Stopped sync alarm" );
+         MolokoApp.Log.i( getClass(), "Stopped sync alarm" );
       }
    }
    

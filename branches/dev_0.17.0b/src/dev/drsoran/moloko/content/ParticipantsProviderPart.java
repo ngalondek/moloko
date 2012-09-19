@@ -37,7 +37,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -48,8 +48,7 @@ import dev.drsoran.rtm.RtmContact;
 
 public class ParticipantsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + ParticipantsProviderPart.class.getSimpleName();
+   private static final Class< ParticipantsProviderPart > TAG = ParticipantsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -67,7 +66,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( Participant participant,
                                                        boolean withId )
    {
@@ -87,8 +86,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static ParticipantList getParticipants( ContentProviderClient client,
                                                         String taskSeriesId )
    {
@@ -129,7 +128,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query participants failed. ", e );
+         MolokoApp.Log.e( TAG, "Query participants failed. ", e );
          participantsList = null;
       }
       finally
@@ -141,8 +140,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       return participantsList;
    }
    
-
-
+   
+   
    public final static List< RtmContact > getParticipatingContacts( ContentProviderClient client,
                                                                     String taskSeriesId )
    {
@@ -193,7 +192,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query participating contacts failed. ", e );
+         MolokoApp.Log.e( TAG, "Query participating contacts failed. ", e );
          contacts = null;
       }
       finally
@@ -205,8 +204,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       return contacts;
    }
    
-
-
+   
+   
    public final static int getNumTasksParticipating( ContentProviderClient client,
                                                      String contactId )
    {
@@ -228,7 +227,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query num tasks participating failed. ", e );
+         MolokoApp.Log.e( TAG, "Query num tasks participating failed. ", e );
          num = -1;
       }
       finally
@@ -240,8 +239,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       return num;
    }
    
-
-
+   
+   
    public final static List< ContentProviderOperation > insertParticipants( ParticipantList list )
    {
       final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
@@ -258,8 +257,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       return operations;
    }
    
-
-
+   
+   
    public final static Participant createParticipant( Cursor c )
    {
       return new Participant( c.getString( COL_INDICES.get( Participants._ID ) ),
@@ -269,8 +268,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
                               c.getString( COL_INDICES.get( Participants.USERNAME ) ) );
    }
    
-
-
+   
+   
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -278,23 +277,24 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
              .registerContentObserver( Participants.CONTENT_URI, true, observer );
    }
    
-
-
+   
+   
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-
-
+   
+   
    public ParticipantsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Participants.PATH );
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE "
@@ -313,54 +313,57 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
          + " );" );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Participants.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Participants.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Participants.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return null;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

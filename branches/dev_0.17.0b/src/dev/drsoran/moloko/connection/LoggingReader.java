@@ -26,18 +26,18 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
 
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 
 
 class LoggingReader extends Reader
 {
    private final Reader decoratedReader;
    
-   private final String logTarget;
+   private final Class< ? > logTarget;
    
    
    
-   public LoggingReader( Reader decorated, String logTarget )
+   public LoggingReader( Reader decorated, Class< ? > logTarget )
    {
       this.decoratedReader = decorated;
       this.logTarget = logTarget;
@@ -166,13 +166,15 @@ class LoggingReader extends Reader
    private void logRead( char[] buf, int offset, int numRead )
    {
       if ( numRead > 0 )
-         Log.i( logTarget, String.valueOf( buf, offset, numRead ) );
+      {
+         MolokoApp.Log.d( logTarget, String.valueOf( buf, offset, numRead ) );
+      }
    }
    
    
    
    private void finishLogging()
    {
-      Log.i( logTarget, "\n" );
+      MolokoApp.Log.d( logTarget, "\n" );
    }
 }

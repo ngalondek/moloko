@@ -35,7 +35,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Settings;
@@ -44,8 +44,7 @@ import dev.drsoran.rtm.RtmSettings;
 
 public class RtmSettingsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmSettingsProviderPart.class.getSimpleName();
+   private static final Class< RtmSettingsProviderPart > TAG = RtmSettingsProviderPart.class;
    
    public final static String SETTINGS_ID = "1";
    
@@ -123,7 +122,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query settings ID failed. ", e );
+         MolokoApp.Log.e( TAG, "Query settings ID failed. ", e );
          id = null;
       }
       finally
@@ -166,7 +165,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query settings ailed. ", e );
+         MolokoApp.Log.e( TAG, "Query settings ailed. ", e );
          settings = null;
       }
       finally
@@ -204,6 +203,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
    
    
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE "
@@ -254,6 +254,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
    
    
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
@@ -261,6 +262,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
    
    
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
@@ -268,6 +270,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
    
    
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

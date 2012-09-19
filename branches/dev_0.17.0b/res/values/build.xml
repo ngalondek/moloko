@@ -13,5 +13,14 @@
       Röhricht - implementation
    -->
 <resources>
-    <bool name="force_readable_rtm_access">false</bool>
+    <bool name="build_force_readable_rtm_access">false</bool>
+    
+    <!-- Supported levels are:
+         - verbose
+         - debug
+         - info
+         - warn
+         - error
+     -->
+    <string name="build_log_level">debug</string>
 </resources>

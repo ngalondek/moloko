@@ -89,10 +89,7 @@ public class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
       }
       catch ( RemoteException e )
       {
-         LogUtils.logDBError( getContext(),
-                              LogUtils.toTag( RtmTaskNoteLoader.class ),
-                              "Note",
-                              e );
+         LogUtils.logDBError( getContext(), RtmTaskNoteLoader.class, "Note", e );
       }
       
       return taskNotes;

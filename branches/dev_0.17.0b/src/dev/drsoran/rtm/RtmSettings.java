@@ -30,10 +30,10 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmData;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -47,8 +47,6 @@ import dev.drsoran.provider.Rtm.Settings;
 public class RtmSettings extends RtmData implements
          IContentProviderSyncable< RtmSettings >
 {
-   private final String TAG = "Moloko." + RtmSettings.class.getSimpleName();
-   
    public static final Parcelable.Creator< RtmSettings > CREATOR = new Parcelable.Creator< RtmSettings >()
    {
       
@@ -116,7 +114,7 @@ public class RtmSettings extends RtmData implements
       catch ( NumberFormatException nfe )
       {
          this.dateFormat = 0;
-         Log.e( TAG, "Invalid dateformat setting.", nfe );
+         MolokoApp.Log.w( getClass(), "Invalid dateformat setting.", nfe );
       }
       
       try
@@ -126,7 +124,7 @@ public class RtmSettings extends RtmData implements
       catch ( NumberFormatException nfe )
       {
          this.timeFormat = 0;
-         Log.e( TAG, "Invalid timeformat setting.", nfe );
+         MolokoApp.Log.w( getClass(), "Invalid timeformat setting.", nfe );
       }
       
       this.defaultListId = textNullIfEmpty( child( elt, "defaultlist" ) );

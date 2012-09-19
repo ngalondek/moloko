@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import com.actionbarsherlock.view.Window;
 import com.mdt.rtm.data.RtmAuth;
@@ -41,7 +40,6 @@ import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 
 
@@ -199,9 +197,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
       }
       catch ( SecurityException e )
       {
-         Log.e( LogUtils.toTag( AuthenticatorActivity.class ),
-                e.getLocalizedMessage() );
-         
+         MolokoApp.Log.e( getClass(), e.getLocalizedMessage() );
          onAuthenticationFailed( getString( R.string.auth_err_cause_scurity ) );
       }
       finally

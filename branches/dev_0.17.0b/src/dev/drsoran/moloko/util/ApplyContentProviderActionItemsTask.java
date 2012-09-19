@@ -26,7 +26,7 @@ import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.provider.Rtm;
@@ -35,9 +35,6 @@ import dev.drsoran.provider.Rtm;
 public class ApplyContentProviderActionItemsTask extends
          AsyncTask< ContentProviderActionItemList, Void, Boolean >
 {
-   private final static String TAG = "Moloko."
-      + ApplyContentProviderActionItemsTask.class.getSimpleName();
-   
    private final FragmentActivity activity;
    
    @SuppressWarnings( "unused" )
@@ -85,13 +82,13 @@ public class ApplyContentProviderActionItemsTask extends
          }
          else
          {
-            Log.e( TAG, "Required local content is of type "
+            MolokoApp.Log.e( getClass(), "Required local content is of type "
                + RtmProvider.class.getSimpleName() );
          }
       }
       else
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         MolokoApp.Log.e( getClass(), LogUtils.GENERIC_DB_ERROR );
       }
       
       if ( client != null )

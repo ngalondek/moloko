@@ -119,7 +119,7 @@ public final class AccountUtils
       final Perms level = getAccessLevel( context );
       return isReadOnlyAccess( level )
          || context.getResources()
-                   .getBoolean( R.bool.force_readable_rtm_access );
+                   .getBoolean( R.bool.build_force_readable_rtm_access );
    }
    
    

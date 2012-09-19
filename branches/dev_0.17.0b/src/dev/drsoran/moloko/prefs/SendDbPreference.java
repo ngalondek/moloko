@@ -35,11 +35,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.Toast;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmProvider;
-import dev.drsoran.moloko.util.LogUtils;
 
 
 class SendDbPreference extends InfoTextPreference
@@ -109,9 +108,7 @@ class SendDbPreference extends InfoTextPreference
          }
          catch ( Throwable e )
          {
-            Log.e( LogUtils.toTag( SendDbPreference.class ),
-                   "Sending DB failed",
-                   e );
+            MolokoApp.Log.e( getClass(), "Sending DB failed", e );
             
             deleteExternalStoragePrivateFile();
             
@@ -126,8 +123,7 @@ class SendDbPreference extends InfoTextPreference
                          R.string.moloko_prefs_send_db_toast_failed,
                          Toast.LENGTH_LONG ).show();
          
-         Log.e( LogUtils.toTag( SendDbPreference.class ),
-                "Sending DB failed, no access" );
+         MolokoApp.Log.e( getClass(), "Sending DB failed, no access" );
       }
    }
    

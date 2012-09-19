@@ -32,14 +32,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.os.Bundle;
-import android.util.Log;
 
 
 public class ListenerList< T >
 {
-   private final static String TAG = "Moloko."
-      + ListenerList.class.getSimpleName();
-   
    public final Method method;
    
    
@@ -83,15 +79,15 @@ public class ListenerList< T >
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw e;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
          }
       }
@@ -108,15 +104,15 @@ public class ListenerList< T >
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw e;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
          }
       }
@@ -133,15 +129,15 @@ public class ListenerList< T >
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw e;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
          }
       }
@@ -160,15 +156,15 @@ public class ListenerList< T >
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw e;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
          }
          

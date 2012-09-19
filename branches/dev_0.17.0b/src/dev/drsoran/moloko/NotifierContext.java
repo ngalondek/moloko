@@ -28,7 +28,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 import dev.drsoran.moloko.receivers.AccountsUpdatedReceiver;
 import dev.drsoran.moloko.receivers.NetworkStatusReceiver;
 import dev.drsoran.moloko.receivers.SyncStatusReceiver;
@@ -42,9 +41,6 @@ import dev.drsoran.moloko.util.Strings;
 
 public class NotifierContext extends ContextWrapper
 {
-   private final static String TAG = "Moloko."
-      + NotifierContext.class.getSimpleName();
-   
    private ListenerList< IOnTimeChangedListener > timeChangedListeners;
    
    private ListenerList< IOnSettingsChangedListener > settingsChangedListeners;
@@ -220,7 +216,7 @@ public class NotifierContext extends ContextWrapper
       }
       catch ( SecurityException e )
       {
-         Log.e( TAG, Strings.EMPTY_STRING, e );
+         MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
          throw e;
       }
    }

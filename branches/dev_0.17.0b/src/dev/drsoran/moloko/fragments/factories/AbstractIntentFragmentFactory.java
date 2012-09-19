@@ -29,8 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.MolokoApp;
 
 
 abstract class AbstractIntentFragmentFactory
@@ -71,9 +70,10 @@ abstract class AbstractIntentFragmentFactory
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( AbstractIntentFragmentFactory.class ),
-                "Unable to instantiate new fragment by Intent " + intent,
-                e );
+         MolokoApp.Log.e( AbstractIntentFragmentFactory.class,
+                          "Unable to instantiate new fragment by Intent "
+                             + intent,
+                          e );
       }
       
       return fragment;

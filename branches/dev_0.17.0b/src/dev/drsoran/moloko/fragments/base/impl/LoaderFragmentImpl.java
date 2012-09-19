@@ -24,13 +24,11 @@ package dev.drsoran.moloko.fragments.base.impl;
 
 import java.util.HashMap;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +37,6 @@ import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.LogUtils;
 
 
 public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
@@ -249,7 +246,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
                                 .getString( errorMsgResId, params );
       text.setText( msg );
       
-      Log.e( LogUtils.toTag( Context.class ), msg );
+      MolokoApp.Log.e( MolokoApp.class, msg );
    }
    
 }

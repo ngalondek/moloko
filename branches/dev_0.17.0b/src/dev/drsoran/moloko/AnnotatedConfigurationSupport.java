@@ -31,11 +31,9 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.util.Bundles;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Reflection;
 import dev.drsoran.moloko.util.Strings;
 
@@ -492,16 +490,12 @@ public class AnnotatedConfigurationSupport
       }
       catch ( IllegalArgumentException e )
       {
-         Log.e( LogUtils.toTag( AnnotatedConfigurationSupport.class ),
-                Strings.EMPTY_STRING,
-                e );
+         MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
          throw e;
       }
       catch ( IllegalAccessException e )
       {
-         Log.e( LogUtils.toTag( AnnotatedConfigurationSupport.class ),
-                Strings.EMPTY_STRING,
-                e );
+         MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
          throw new RuntimeException( e );
       }
       finally
@@ -522,16 +516,12 @@ public class AnnotatedConfigurationSupport
       }
       catch ( IllegalArgumentException e )
       {
-         Log.e( LogUtils.toTag( AnnotatedConfigurationSupport.class ),
-                Strings.EMPTY_STRING,
-                e );
+         MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
          throw e;
       }
       catch ( IllegalAccessException e )
       {
-         Log.e( LogUtils.toTag( AnnotatedConfigurationSupport.class ),
-                Strings.EMPTY_STRING,
-                e );
+         MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
          throw new RuntimeException( e );
       }
       finally

@@ -29,7 +29,7 @@ import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.content.SyncResult;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.util.LogUtils;
@@ -177,6 +177,7 @@ public class ContentProviderSyncOperation implements
    
    
    
+   @Override
    public int getBatch( List< ContentProviderOperation > batch )
    {
       batch.addAll( operations );
@@ -185,6 +186,7 @@ public class ContentProviderSyncOperation implements
    
    
    
+   @Override
    public Op getOperationType()
    {
       return operationType;
@@ -192,6 +194,7 @@ public class ContentProviderSyncOperation implements
    
    
    
+   @Override
    public int size()
    {
       return operations.size();
@@ -199,6 +202,7 @@ public class ContentProviderSyncOperation implements
    
    
    
+   @Override
    public boolean applyTransactional( RtmProvider rtmProvider )
    {
       final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
@@ -213,9 +217,7 @@ public class ContentProviderSyncOperation implements
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( ContentProviderSyncOperation.class ),
-                LogUtils.GENERIC_DB_ERROR,
-                e );
+         MolokoApp.Log.e( getClass(), LogUtils.GENERIC_DB_ERROR, e );
          return false;
       }
       finally
@@ -277,8 +279,7 @@ public class ContentProviderSyncOperation implements
          stringBuilder.append( op.toString() ).append( "; " );
       }
       
-      Log.d( LogUtils.toTag( ContentProviderSyncOperation.class ),
-             stringBuilder.toString() );
+      MolokoApp.Log.d( getClass(), stringBuilder.toString() );
    }
    
    

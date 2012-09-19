@@ -23,12 +23,12 @@
 package dev.drsoran.moloko.sync;
 
 import android.content.ContentProviderClient;
-import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -37,11 +37,10 @@ import dev.drsoran.rtm.RtmSettings;
 
 public final class RtmSettingsSync
 {
-   private final static String TAG = "Moloko."
-      + RtmSettingsSync.class.getSimpleName();
+   private final static Class< RtmSettingsSync > TAG = RtmSettingsSync.class;
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       MolokoSyncResult syncResult )
@@ -54,7 +53,7 @@ public final class RtmSettingsSync
       }
       catch ( ServiceException e )
       {
-         Log.e( TAG, "Getting server settings failed.", e );
+         MolokoApp.Log.e( TAG, "Getting server settings failed.", e );
          
          switch ( e.responseCode )
          {

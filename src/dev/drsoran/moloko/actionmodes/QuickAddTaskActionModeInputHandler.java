@@ -32,14 +32,15 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.widget.ListAdapter;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.adapters.RtmSmartAddAdapter;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
@@ -52,9 +53,6 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 class QuickAddTaskActionModeInputHandler
 {
-   private static final String TAG = "Moloko."
-      + QuickAddTaskActionModeInputHandler.class.getSimpleName();
-   
    private final Context context;
    
    private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
@@ -173,12 +171,12 @@ class QuickAddTaskActionModeInputHandler
    {
       final CharSequence input = UIUtils.getTrimmedSequence( addTaskEdit );
       
-      Log.i( TAG, "Creating tokens for '" + input + "'" );
+      MolokoApp.Log.d( getClass(), "Creating tokens for '" + input + "'" );
       
       final List< RtmSmartAddTokenizer.Token > tokens = new LinkedList< RtmSmartAddTokenizer.Token >();
       smartAddTokenizer.getTokens( input, tokens );
       
-      Log.i( TAG, "Tokens: " + tokens );
+      MolokoApp.Log.d( getClass(), "Tokens: " + tokens );
       
       final Bundle config = new Bundle();
       
@@ -194,7 +192,8 @@ class QuickAddTaskActionModeInputHandler
             {
                // Check that the task name is not only a space character sequence
                if ( token.type == RtmSmartAddTokenizer.TASK_NAME_TYPE
-                  && !TextUtils.isEmpty( token.text.replaceAll( " ", "" ) ) )
+                  && !TextUtils.isEmpty( token.text.replaceAll( " ",
+                                                                Strings.EMPTY_STRING ) ) )
                {
                   config.putString( Tasks.TASKSERIES_NAME, token.text );
                }

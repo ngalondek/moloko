@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -33,13 +33,13 @@ import java.util.Map;
 import java.util.Set;
 
 import android.content.ContentProviderOperation;
-import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -50,10 +50,6 @@ import dev.drsoran.moloko.util.Strings;
 
 public class ServerSyncOperation< T > implements IServerSyncOperation< T >
 {
-   private final static String TAG = "Moloko."
-      + ServerSyncOperation.class.getSimpleName();
-   
-   
    public static class Builder< T >
    {
       private final Op operationType;
@@ -138,42 +134,46 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       public < O extends IServerSyncOperation< T >> IServerSyncOperation< T > build( Class< O > opType )
       {
          if ( methods.size() == 0 )
+         {
             return NoopServerSyncOperation.< T > newInstance();
+         }
          else
+         {
             try
             {
                return opType.getConstructor( Builder.class ).newInstance( this );
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
                return null;
             }
             catch ( SecurityException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
                return null;
             }
             catch ( InstantiationException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
                return null;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
                return null;
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
                return null;
             }
             catch ( NoSuchMethodException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               MolokoApp.Log.e( getClass(), Strings.EMPTY_STRING, e );
                return null;
             }
+         }
       }
    }
    
@@ -195,6 +195,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    
    
+   @Override
    public T execute( RtmProvider rtmProvider ) throws ServiceException
    {
       transactions = new LinkedList< TimeLineResult.Transaction >();
@@ -212,7 +213,9 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          }
          catch ( Throwable e )
          {
-            Log.e( TAG, "Error during server method execution", e );
+            MolokoApp.Log.e( getClass(),
+                             "Error during server method execution",
+                             e );
             
             // If this was a service exception
             if ( e instanceof ServiceException )
@@ -221,9 +224,9 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
                if ( !RtmServiceConstants.RtmErrorCodes.isElementError( se.responseCode ) )
                   throw se;
                else
-                  Log.e( TAG,
-                         "Ignoring failed server operation due to Element error "
-                            + se.responseCode );
+                  MolokoApp.Log.e( getClass(),
+                                   "Ignoring failed server operation due to Element error "
+                                      + se.responseCode );
             }
             else
                throw new ServiceException( -1,
@@ -242,7 +245,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
       if ( removeModOps.size() > 0 && rtmProvider != null )
       {
-         Log.i( TAG, "Removing " + removeModOps.size() + " modifications" );
+         MolokoApp.Log.i( getClass(), "Removing " + removeModOps.size()
+            + " modifications" );
          
          final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
          
@@ -259,7 +263,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          }
          catch ( Throwable e )
          {
-            Log.e( TAG, "Removing modifications failed", e );
+            MolokoApp.Log.e( getClass(), "Removing modifications failed", e );
          }
          finally
          {
@@ -272,6 +276,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    
    
+   @Override
    public List< TimeLineResult.Transaction > revert( Service service )
    {
       if ( transactions == null )
@@ -292,7 +297,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          }
          catch ( ServiceException e )
          {
-            Log.e( TAG, "Error reverting transaction", e );
+            MolokoApp.Log.e( getClass(), "Error reverting transaction", e );
          }
       }
       
@@ -302,6 +307,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    
    
+   @Override
    public Op getOperationType()
    {
       return operationType;
@@ -309,6 +315,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    
    
+   @Override
    public Map< TimeLineMethod< T >, List< Modification > > getMethods()
    {
       return this.serviceMethods;

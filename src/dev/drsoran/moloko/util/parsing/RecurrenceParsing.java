@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -38,8 +38,8 @@ import org.antlr.runtime.RecognitionException;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
@@ -51,9 +51,7 @@ import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
 public final class RecurrenceParsing
 {
-   
-   private final static String TAG = "Moloko."
-      + RecurrenceParsing.class.getSimpleName();
+   private final static Class< RecurrenceParsing > TAG = RecurrenceParsing.class;
    
    private static RecurrencePatternLexer patternLexer;
    
@@ -74,8 +72,10 @@ public final class RecurrenceParsing
       }
       catch ( ParseException e )
       {
-         lang = null;
-         Log.e( TAG, "Unable to initialize recurrence pattern language.", e );
+         MolokoApp.Log.e( TAG,
+                          "Unable to initialize recurrence pattern language.",
+                          e );
+         throw new RuntimeException( e );
       }
    }
    
@@ -102,37 +102,33 @@ public final class RecurrenceParsing
    {
       String result = null;
       
-      if ( lang != null )
-      {
-         if ( patternLexer == null )
-            patternLexer = new RecurrencePatternLexer();
-         
-         if ( patternParser == null )
-            patternParser = new RecurrencePatternParser();
-         
-         patternLexer.setCharStream( new ANTLRStringStream( pattern ) );
-         final CommonTokenStream antlrTokens = new CommonTokenStream( patternLexer );
-         
-         patternParser.setTokenStream( antlrTokens );
-         
-         if ( context != null )
-            patternParser.setDateFormatContext( new AndroidDateFormatContext( context ) );
-         else
-            patternParser.setDateFormatContext( null );
-         
-         try
-         {
-            result = patternParser.parseRecurrencePattern( lang, isEvery );
-         }
-         catch ( RecognitionException e )
-         {
-            Log.e( TAG, "Failed to parse recurrence pattern " + pattern, e );
-            result = null;
-         }
-      }
+      if ( patternLexer == null )
+         patternLexer = new RecurrencePatternLexer();
+      
+      if ( patternParser == null )
+         patternParser = new RecurrencePatternParser();
+      
+      patternLexer.setCharStream( new ANTLRStringStream( pattern ) );
+      final CommonTokenStream antlrTokens = new CommonTokenStream( patternLexer );
+      
+      patternParser.setTokenStream( antlrTokens );
+      
+      if ( context != null )
+         patternParser.setDateFormatContext( new AndroidDateFormatContext( context ) );
       else
-         Log.e( TAG,
-                "Unable to parse recurrence pattern due to missing language." );
+         patternParser.setDateFormatContext( null );
+      
+      try
+      {
+         result = patternParser.parseRecurrencePattern( lang, isEvery );
+      }
+      catch ( RecognitionException e )
+      {
+         MolokoApp.Log.w( TAG,
+                          "Failed to parse recurrence pattern " + pattern,
+                          e );
+         result = null;
+      }
       
       return result;
    }
@@ -164,7 +160,9 @@ public final class RecurrenceParsing
       }
       catch ( RecognitionException e )
       {
-         Log.e( TAG, "Failed to parse recurrence pattern " + pattern, e );
+         MolokoApp.Log.w( TAG,
+                          "Failed to parse recurrence pattern " + pattern,
+                          e );
          return null;
       }
    }
@@ -211,7 +209,7 @@ public final class RecurrenceParsing
       
       if ( result == null )
       {
-         Log.e( TAG, "Failed to parse recurrence " + recurrence );
+         MolokoApp.Log.w( TAG, "Failed to parse recurrence " + recurrence );
       }
       
       return result;

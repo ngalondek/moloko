@@ -25,7 +25,6 @@ package dev.drsoran.moloko.adapters;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,15 +38,12 @@ import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
 public class ChangeTagsAdapter extends
          ArrayAdapter< ChangeTagsDialogFragment.ChangeTag >
 {
-   private final static String TAG = "Moloko."
-      + ChangeTagsAdapter.class.getName();
-   
    private final int resourceId;
    
    private final LayoutInflater inflater;
    
    
-
+   
    public ChangeTagsAdapter( Context context, int resourceId,
       List< ChangeTagsDialogFragment.ChangeTag > tags )
    {
@@ -57,27 +53,18 @@ public class ChangeTagsAdapter extends
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
+      {
          convertView = inflater.inflate( resourceId, parent, false );
-      
-      ImageView icon;
-      TextView tagText;
-      
-      try
-      {
-         icon = (ImageView) convertView.findViewById( R.id.change_tags_activity_listitem_icon );
-         tagText = (TextView) convertView.findViewById( R.id.change_tags_activity_listitem_tag );
       }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
-      }
+      
+      final ImageView icon = (ImageView) convertView.findViewById( R.id.change_tags_activity_listitem_icon );
+      final TextView tagText = (TextView) convertView.findViewById( R.id.change_tags_activity_listitem_tag );
       
       final ChangeTagsDialogFragment.ChangeTag tag = getItem( position );
       

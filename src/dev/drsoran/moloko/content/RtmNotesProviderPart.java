@@ -38,11 +38,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -50,8 +50,7 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmNotesProviderPart.class.getSimpleName();
+   private static final Class< RtmNotesProviderPart > TAG = RtmNotesProviderPart.class;
    
    
    public final static class NewNoteId
@@ -128,7 +127,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
          notes = null;
       }
       finally
@@ -170,7 +169,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
          notes = null;
       }
       finally
@@ -211,7 +210,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query note failed. ", e );
+         MolokoApp.Log.e( TAG, "Query note failed. ", e );
          note = null;
       }
       finally
@@ -258,7 +257,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
             }
             catch ( final RemoteException e )
             {
-               Log.e( TAG, "Query notes failed. ", e );
+               MolokoApp.Log.e( TAG, "Query notes failed. ", e );
                notes = null;
             }
             finally
@@ -290,7 +289,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
       }
       finally
       {
@@ -321,7 +320,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
       }
       finally
       {

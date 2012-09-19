@@ -28,7 +28,6 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
@@ -40,6 +39,7 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
@@ -62,8 +62,7 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public final class RtmTasksSync
 {
-   private final static String TAG = "Moloko."
-      + RtmTasksSync.class.getSimpleName();
+   private final static Class< RtmTasksSync > TAG = RtmTasksSync.class;
    
    
    private final static class AddTaskResult
@@ -73,7 +72,7 @@ public final class RtmTasksSync
       public final RtmTaskList taskList;
       
       
-
+      
       public AddTaskResult( int responseCode, RtmTaskList taskList )
       {
          this.responseCode = responseCode;
@@ -82,7 +81,7 @@ public final class RtmTasksSync
    }
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
@@ -106,7 +105,7 @@ public final class RtmTasksSync
          else
          {
             syncResult.androidSyncResult.databaseError = true;
-            Log.e( TAG, "Getting new created local tasks failed." );
+            MolokoApp.Log.e( TAG, "Getting new created local tasks failed." );
          }
       }
       
@@ -117,7 +116,7 @@ public final class RtmTasksSync
          if ( tasks == null )
          {
             syncResult.androidSyncResult.databaseError = true;
-            Log.e( TAG, "Getting local tasks failed." );
+            MolokoApp.Log.e( TAG, "Getting local tasks failed." );
             return false;
          }
          else
@@ -143,7 +142,7 @@ public final class RtmTasksSync
          }
          catch ( Throwable e )
          {
-            Log.e( TAG, "Retrieving modifications failed", e );
+            MolokoApp.Log.e( TAG, "Retrieving modifications failed", e );
             modifications = new ModificationSet();
          }
          
@@ -159,7 +158,7 @@ public final class RtmTasksSync
          
          if ( doOutSync )
          {
-            Log.i( TAG, "Retrieved " + modifications.size()
+            MolokoApp.Log.d( TAG, "Retrieved " + modifications.size()
                + " modification(s) and " + numDeleted + " deletion(s)" );
             
             final List< OutSyncTask > server_Tasks = server_SyncTaskList.getOutSyncTasks();
@@ -219,8 +218,8 @@ public final class RtmTasksSync
                                        syncResult );
    }
    
-
-
+   
+   
    public static ServerSyncRtmTaskList getServerTasksList( Service service,
                                                            Date lastSync,
                                                            MolokoSyncResult syncResult )
@@ -234,7 +233,7 @@ public final class RtmTasksSync
          }
          catch ( ServiceException e )
          {
-            Log.e( TAG, "Getting server lists failed.", e );
+            MolokoApp.Log.e( TAG, "Getting server lists failed.", e );
             handleResponseCode( syncResult, e );
             return null;
          }
@@ -242,8 +241,8 @@ public final class RtmTasksSync
       return server_SyncTaskList;
    }
    
-
-
+   
+   
    private static void sendNewTasks( Service service,
                                      RtmProvider provider,
                                      TimeLineFactory timeLineFactory,
@@ -252,7 +251,8 @@ public final class RtmTasksSync
    {
       if ( localTaskSerieses.size() > 0 )
       {
-         Log.i( TAG, "Sending " + localTaskSerieses.size() + " new task(s)" );
+         MolokoApp.Log.d( TAG, "Sending " + localTaskSerieses.size()
+            + " new task(s)" );
          
          RtmTimeline timeline = null;
          
@@ -262,7 +262,7 @@ public final class RtmTasksSync
          }
          catch ( ServiceException e )
          {
-            Log.e( TAG, "Creating new time line failed", e );
+            MolokoApp.Log.e( TAG, "Creating new time line failed", e );
             handleResponseCode( syncResult, e );
             return;
          }
@@ -282,8 +282,8 @@ public final class RtmTasksSync
       }
    }
    
-
-
+   
+   
    private final static RtmTaskList sendTask( Service service,
                                               RtmProvider provider,
                                               RtmTimeline timeline,
@@ -336,9 +336,9 @@ public final class RtmTasksSync
             }
             catch ( Throwable e )
             {
-               Log.e( TAG,
-                      "Applying local changes after sending new task failed",
-                      e );
+               MolokoApp.Log.e( TAG,
+                                "Applying local changes after sending new task failed",
+                                e );
                // TODO: Remove task on RTM side in this case. Otherwise the task
                // would get added again on next sync since the SOURCE is still tagged
                // as new.
@@ -353,8 +353,8 @@ public final class RtmTasksSync
       return res.taskList;
    }
    
-
-
+   
+   
    private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmTaskList > > serverOps,
                                                     SyncRtmTaskList serverList ) throws ServiceException
@@ -374,15 +374,15 @@ public final class RtmTasksSync
             }
             catch ( ServiceException e )
             {
-               Log.e( TAG, "Applying server operation failed", e );
+               MolokoApp.Log.e( TAG, "Applying server operation failed", e );
                throw e;
             }
          }
       }
    }
    
-
-
+   
+   
    private final static AddTaskResult addTask( RtmTimeline timeline,
                                                String name,
                                                String listId )
@@ -405,15 +405,15 @@ public final class RtmTasksSync
       }
       catch ( ServiceException e )
       {
-         Log.e( TAG, "Executing server operation failed", e );
+         MolokoApp.Log.e( TAG, "Executing server operation failed", e );
          respCode = e.responseCode;
       }
       
       return new AddTaskResult( respCode, taskList );
    }
    
-
-
+   
+   
    private final static void handleResponseCode( MolokoSyncResult syncResult,
                                                  ServiceException e )
    {

@@ -35,10 +35,10 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmLocation;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.LocationOverviews;
 import dev.drsoran.provider.Rtm.Locations;
@@ -49,8 +49,7 @@ import dev.drsoran.rtm.LocationWithTaskCount;
 
 public class LocationOverviewsProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = "Moloko."
-      + LocationOverviewsProviderPart.class.getSimpleName();
+   private static final Class< LocationOverviewsProviderPart > TAG = LocationOverviewsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -126,7 +125,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    }
    
    
-
+   
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -136,16 +135,16 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
              .registerContentObserver( TaskSeries.CONTENT_URI, true, observer );
    }
    
-
-
+   
+   
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-
-
+   
+   
    public final static LocationWithTaskCount getLocationOverview( ContentProviderClient client,
                                                                   String id )
    {
@@ -167,7 +166,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query location overview failed. ", e );
+         MolokoApp.Log.e( TAG, "Query location overview failed. ", e );
          location = null;
       }
       finally
@@ -179,8 +178,8 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       return location;
    }
    
-
-
+   
+   
    public final static ArrayList< LocationWithTaskCount > getLocationsOverview( ContentProviderClient client,
                                                                                 String selection )
    {
@@ -220,7 +219,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query location overviews failed. ", e );
+         MolokoApp.Log.e( TAG, "Query location overviews failed. ", e );
          locations = null;
       }
       finally
@@ -232,16 +231,16 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       return locations;
    }
    
-
-
+   
+   
    public LocationOverviewsProviderPart( Context context,
       SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, LocationOverviews.PATH );
    }
    
-
-
+   
+   
    @Override
    public Cursor query( String id,
                         String[] projection,
@@ -278,61 +277,64 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       return cursor;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return null;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return LocationOverviews.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return LocationOverviews.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return LocationOverviews.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
    private final static LocationWithTaskCount createLocationOverview( Cursor c )
    {
       return new LocationWithTaskCount( new RtmLocation( c.getString( COL_INDICES.get( LocationOverviews._ID ) ),

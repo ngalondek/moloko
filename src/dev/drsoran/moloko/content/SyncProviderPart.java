@@ -33,16 +33,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.util.Log;
 import android.util.Pair;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Sync;
 
 
 public class SyncProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + SyncProviderPart.class.getSimpleName();
+   private static final Class< SyncProviderPart > TAG = SyncProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -63,7 +62,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( Long lastIn, Long lastOut )
    {
       final ContentValues values = new ContentValues();
@@ -85,8 +84,8 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static void updateSync( ContentProviderClient client,
                                         Long lastIn,
                                         Long lastOut )
@@ -107,12 +106,12 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query Sync failed. ", e );
+         MolokoApp.Log.e( TAG, "Query Sync failed. ", e );
       }
    }
    
-
-
+   
+   
    public final static String getSyncId( ContentProviderClient client )
    {
       String id = null;
@@ -133,7 +132,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query Sync failed. ", e );
+         MolokoApp.Log.e( TAG, "Query Sync failed. ", e );
          id = null;
       }
       finally
@@ -145,8 +144,8 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       return id;
    }
    
-
-
+   
+   
    public final static Pair< Long, Long > getLastInAndLastOut( ContentProviderClient client )
    {
       Pair< Long, Long > inAndOut = new Pair< Long, Long >( null, null );
@@ -170,7 +169,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query Sync failed. ", e );
+         MolokoApp.Log.e( TAG, "Query Sync failed. ", e );
          inAndOut = null;
       }
       finally
@@ -182,15 +181,16 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       return inAndOut;
    }
    
-
-
+   
+   
    public SyncProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Sync.PATH );
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Sync._ID
@@ -198,54 +198,57 @@ public class SyncProviderPart extends AbstractRtmProviderPart
          + Sync.LAST_IN + " INTEGER, " + Sync.LAST_OUT + " INTEGER );" );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Sync.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Sync.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Sync.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return null;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

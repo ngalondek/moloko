@@ -34,14 +34,11 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 
 import android.net.http.AndroidHttpClient;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 
 
 class ApacheHttpClientRtmConnection implements IRtmConnection
 {
-   private static final String TAG = "Moloko."
-      + ApacheHttpClientRtmConnection.class.getSimpleName();
-   
    private HttpHost httpHost;
    
    private AndroidHttpClient httpClient;
@@ -72,7 +69,7 @@ class ApacheHttpClientRtmConnection implements IRtmConnection
       final InputStream inputStream = new BufferedInputStream( AndroidHttpClient.getUngzippedContent( response.getEntity() ),
                                                                4096 );
       final Reader reader = new LoggingReader( new InputStreamReader( inputStream ),
-                                               TAG );
+                                               getClass() );
       
       return reader;
    }
@@ -83,7 +80,9 @@ class ApacheHttpClientRtmConnection implements IRtmConnection
    public void close()
    {
       if ( httpClient != null )
+      {
          httpClient.close();
+      }
    }
    
    
@@ -108,7 +107,7 @@ class ApacheHttpClientRtmConnection implements IRtmConnection
       if ( statusCode != HttpStatus.SC_OK )
       {
          final String reason = response.getStatusLine().getReasonPhrase();
-         Log.e( TAG, "Method failed: " + reason );
+         MolokoApp.Log.e( getClass(), "Method failed: " + reason );
          throw new IOException( "method failed: " + reason );
       }
    }
@@ -118,6 +117,6 @@ class ApacheHttpClientRtmConnection implements IRtmConnection
    private void logRequest( HttpGet request )
    {
       final String methodUri = request.getRequestLine().getUri();
-      Log.i( TAG, "Executing the method:" + methodUri );
+      MolokoApp.Log.d( getClass(), "Executing the method:" + methodUri );
    }
 }

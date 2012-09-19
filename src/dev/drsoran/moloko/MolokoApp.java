@@ -56,7 +56,9 @@ import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 public class MolokoApp extends Application implements
          IOnSettingsChangedListener
 {
-   private final static TokenBasedHandler handler = new TokenBasedHandler();
+   public static MolokoLog Log;
+   
+   private final static TokenBasedHandler Handler = new TokenBasedHandler();
    
    private Settings settings;
    
@@ -72,6 +74,9 @@ public class MolokoApp extends Application implements
    public void onCreate()
    {
       ACRA.init( this );
+      Log = new MolokoLog( this )
+      {
+      };
       
       super.onCreate();
       
@@ -129,14 +134,14 @@ public class MolokoApp extends Application implements
    
    public static Handler getHandler()
    {
-      return handler;
+      return Handler;
    }
    
    
    
    public static IHandlerToken acquireHandlerToken()
    {
-      return handler.aquireToken();
+      return Handler.aquireToken();
    }
    
    
@@ -345,7 +350,7 @@ public class MolokoApp extends Application implements
    
    public void onBootCompleted()
    {
-      handler.post( new Runnable()
+      Handler.post( new Runnable()
       {
          @Override
          public void run()

@@ -36,7 +36,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.ContactOverviews;
 import dev.drsoran.provider.Rtm.Contacts;
@@ -48,8 +48,7 @@ import dev.drsoran.rtm.RtmContactWithTaskCount;
 
 public class ContactOverviewsProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = "Moloko."
-      + ContactOverviewsProviderPart.class.getSimpleName();
+   private static final Class< ContactOverviewsProviderPart > TAG = ContactOverviewsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -119,7 +118,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
    }
    
    
-
+   
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -129,16 +128,16 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
              .registerContentObserver( Participants.CONTENT_URI, true, observer );
    }
    
-
-
+   
+   
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-
-
+   
+   
    public final static RtmContactWithTaskCount getContactOverview( ContentProviderClient client,
                                                                    String selection )
    {
@@ -161,7 +160,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query contact overview failed. ", e );
+         MolokoApp.Log.e( TAG, "Query contact overview failed. ", e );
          contact = null;
       }
       finally
@@ -173,8 +172,8 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       return contact;
    }
    
-
-
+   
+   
    public final static List< RtmContactWithTaskCount > getContactOverviews( ContentProviderClient client,
                                                                             String selection )
    {
@@ -213,7 +212,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query contact overviews failed. ", e );
+         MolokoApp.Log.e( TAG, "Query contact overviews failed. ", e );
          contacts = null;
       }
       finally
@@ -225,16 +224,16 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       return contacts;
    }
    
-
-
+   
+   
    public ContactOverviewsProviderPart( Context context,
       SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, ContactOverviews.PATH );
    }
    
-
-
+   
+   
    @Override
    public Cursor query( String id,
                         String[] projection,
@@ -271,61 +270,64 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       return cursor;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return null;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return ContactOverviews.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return ContactOverviews.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return ContactOverviews.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
    public final static RtmContactWithTaskCount createContactOverview( Cursor c )
    {
       final RtmContact contact = RtmContactsProviderPart.createContact( c );

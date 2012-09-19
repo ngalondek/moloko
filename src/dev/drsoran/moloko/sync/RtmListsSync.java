@@ -28,7 +28,6 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
@@ -38,6 +37,7 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -56,11 +56,10 @@ import dev.drsoran.provider.Rtm.Lists;
 
 public final class RtmListsSync
 {
-   private final static String TAG = "Moloko."
-      + RtmListsSync.class.getSimpleName();
+   private final static Class< RtmListsSync > TAG = RtmListsSync.class;
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
@@ -83,7 +82,7 @@ public final class RtmListsSync
          else
          {
             syncResult.androidSyncResult.databaseError = true;
-            Log.e( TAG, "Getting new created local lists failed." );
+            MolokoApp.Log.e( TAG, "Getting new created local lists failed." );
          }
       }
       
@@ -96,7 +95,7 @@ public final class RtmListsSync
          if ( local_ListsOfLists == null )
          {
             syncResult.androidSyncResult.databaseError = true;
-            Log.e( TAG, "Getting local lists failed." );
+            MolokoApp.Log.e( TAG, "Getting local lists failed." );
             return false;
          }
          
@@ -112,7 +111,7 @@ public final class RtmListsSync
          }
          catch ( ServiceException e )
          {
-            Log.e( TAG, "Getting server lists failed.", e );
+            MolokoApp.Log.e( TAG, "Getting server lists failed.", e );
             handleResponseCode( syncResult, e );
             return false;
          }
@@ -128,7 +127,7 @@ public final class RtmListsSync
          }
          catch ( Throwable e )
          {
-            Log.e( TAG, "Retrieving modifications failed", e );
+            MolokoApp.Log.e( TAG, "Retrieving modifications failed", e );
             modifications = new ModificationSet();
          }
          
@@ -144,7 +143,7 @@ public final class RtmListsSync
          
          if ( doOutSync )
          {
-            Log.i( TAG, "Retrieved " + modifications.size()
+            MolokoApp.Log.d( TAG, "Retrieved " + modifications.size()
                + " modification(s) and " + numDeleted + " deletion(s)" );
             
             RtmTimeline timeline = null;
@@ -189,8 +188,8 @@ public final class RtmListsSync
       return true;
    }
    
-
-
+   
+   
    private final static boolean sendNewLists( Service service,
                                               RtmProvider localContentProvider,
                                               TimeLineFactory timeLineFactory,
@@ -199,7 +198,7 @@ public final class RtmListsSync
    {
       if ( newLists.size() > 0 )
       {
-         Log.i( TAG, "Sending " + newLists.size() + " new list(s)" );
+         MolokoApp.Log.d( TAG, "Sending " + newLists.size() + " new list(s)" );
          
          RtmTimeline timeline = null;
          
@@ -209,7 +208,7 @@ public final class RtmListsSync
          }
          catch ( ServiceException e )
          {
-            Log.e( TAG, "Creating new time line failed", e );
+            MolokoApp.Log.e( TAG, "Creating new time line failed", e );
             handleResponseCode( syncResult, e );
             return false;
          }
@@ -223,8 +222,8 @@ public final class RtmListsSync
       return true;
    }
    
-
-
+   
+   
    private final static RtmList sendList( Service service,
                                           RtmProvider provider,
                                           RtmTimeline timeline,
@@ -251,9 +250,9 @@ public final class RtmListsSync
          }
          catch ( Throwable e )
          {
-            Log.e( TAG,
-                   "Applying local changes after sending new list failed",
-                   e );
+            MolokoApp.Log.e( TAG,
+                             "Applying local changes after sending new list failed",
+                             e );
          }
          finally
          {
@@ -264,8 +263,8 @@ public final class RtmListsSync
       return serverList;
    }
    
-
-
+   
+   
    private final static RtmList addList( RtmTimeline timeline, SyncRtmList list )
    {
       RtmList resultList = null;
@@ -287,14 +286,14 @@ public final class RtmListsSync
       }
       catch ( ServiceException e )
       {
-         Log.e( TAG, "Executing server operation failed", e );
+         MolokoApp.Log.e( TAG, "Executing server operation failed", e );
       }
       
       return resultList;
    }
    
-
-
+   
+   
    private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmList > > serverOps,
                                                     SyncRtmListsList serverList ) throws ServiceException
@@ -314,15 +313,15 @@ public final class RtmListsSync
             }
             catch ( ServiceException e )
             {
-               Log.e( TAG, "Applying server operation failed", e );
+               MolokoApp.Log.e( TAG, "Applying server operation failed", e );
                throw e;
             }
          }
       }
    }
    
-
-
+   
+   
    private final static void handleResponseCode( MolokoSyncResult syncResult,
                                                  ServiceException e )
    {

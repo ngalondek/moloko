@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.antlr.runtime.RecognitionException;
 
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -39,9 +39,6 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public final class RtmSmartFilterParsing
 {
-   private final static String TAG = "Moloko."
-      + RtmSmartFilterParsing.class.getSimpleName();
-   
    private final static RtmSmartFilterLexer rtmSmartFilterLexer = new RtmSmartFilterLexer();
    
    
@@ -85,7 +82,8 @@ public final class RtmSmartFilterParsing
       }
       catch ( RecognitionException e )
       {
-         Log.e( TAG, "Failed to lex " + filterString, e );
+         MolokoApp.Log.w( RtmSmartFilterParsing.class, "Failed to lex "
+            + filterString, e );
          return null;
       }
    }

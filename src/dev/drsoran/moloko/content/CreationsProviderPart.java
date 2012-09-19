@@ -37,7 +37,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Creations;
@@ -45,8 +45,7 @@ import dev.drsoran.provider.Rtm.Creations;
 
 public class CreationsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + CreationsProviderPart.class.getSimpleName();
+   private static final Class< CreationsProviderPart > TAG = CreationsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -104,7 +103,7 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
          creation = null;
       }
       finally
@@ -153,7 +152,7 @@ public class CreationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
          creations = null;
       }
       finally

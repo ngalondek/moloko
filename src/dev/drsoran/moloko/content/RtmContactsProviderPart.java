@@ -36,7 +36,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
@@ -45,8 +45,7 @@ import dev.drsoran.rtm.RtmContact;
 
 public class RtmContactsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmContactsProviderPart.class.getSimpleName();
+   private static final Class< RtmContactsProviderPart > TAG = RtmContactsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -63,7 +62,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( RtmContact contact,
                                                        boolean withId )
    {
@@ -83,8 +82,8 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static RtmContact getContact( ContentProviderClient client,
                                               String id )
    {
@@ -104,7 +103,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query contact failed. ", e );
+         MolokoApp.Log.e( TAG, "Query contact failed. ", e );
          contact = null;
       }
       finally
@@ -116,8 +115,8 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       return contact;
    }
    
-
-
+   
+   
    public final static List< RtmContact > getAllContacts( ContentProviderClient client,
                                                           String selection )
    {
@@ -156,7 +155,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query locations failed. ", e );
+         MolokoApp.Log.e( TAG, "Query locations failed. ", e );
          contacts = null;
       }
       finally
@@ -168,8 +167,8 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       return contacts;
    }
    
-
-
+   
+   
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -177,16 +176,16 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
              .registerContentObserver( Contacts.CONTENT_URI, true, observer );
    }
    
-
-
+   
+   
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-
-
+   
+   
    public static RtmContact createContact( Cursor c )
    {
       return new RtmContact( c.getString( COL_INDICES.get( Contacts._ID ) ),
@@ -194,15 +193,15 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
                              c.getString( COL_INDICES.get( Contacts.USERNAME ) ) );
    }
    
-
-
+   
+   
    public RtmContactsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Contacts.PATH );
    }
    
-
-
+   
+   
    @Override
    public Object getElement( Uri uri )
    {
@@ -212,8 +211,9 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       return null;
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Contacts._ID
@@ -230,54 +230,57 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
          + "; END;" );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Contacts.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Contacts.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Contacts.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Contacts.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

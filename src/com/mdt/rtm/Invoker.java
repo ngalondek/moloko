@@ -39,7 +39,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.connection.IRtmConnection;
 
 
@@ -50,8 +50,6 @@ import dev.drsoran.moloko.connection.IRtmConnection;
  */
 public class Invoker
 {
-   private static final String TAG = "Moloko." + Invoker.class.getSimpleName();
-   
    private static final DocumentBuilder builder;
    static
    {
@@ -66,8 +64,10 @@ public class Invoker
       }
       catch ( Exception exception )
       {
-         Log.e( TAG, "Unable to construct a document builder", exception );
-         aBuilder = null;
+         MolokoApp.Log.e( Invoker.class,
+                          "Unable to construct a document builder",
+                          exception );
+         throw new RuntimeException( exception );
       }
       builder = aBuilder;
    }
@@ -118,7 +118,7 @@ public class Invoker
    {
       obeyRtmRequestLimit();
       
-      Log.d( TAG, "Invoker running at " + new Date() );
+      MolokoApp.Log.d( getClass(), "Invoker running at " + new Date() );
       
       final String requestUri = computeRequestUri( params );
       
@@ -259,8 +259,9 @@ public class Invoker
             {
                final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
                
-               Log.e( TAG, message.toString(), exception );
-               throw new ServiceInternalException( message.toString() );
+               MolokoApp.Log.e( getClass(), message.toString(), exception );
+               throw new ServiceInternalException( message.toString(),
+                                                   exception );
             }
          }
       }

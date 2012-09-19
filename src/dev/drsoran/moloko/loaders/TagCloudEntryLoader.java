@@ -70,9 +70,7 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                                                                 + " = 0" );
          if ( lists == null )
          {
-            LogUtils.logDBError( getContext(),
-                                 LogUtils.toTag( TagCloudEntryLoader.class ),
-                                 "Lists" );
+            LogUtils.logDBError( getContext(), getClass(), "Lists" );
          }
       }
       
@@ -83,9 +81,7 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
          
          if ( tags == null )
          {
-            LogUtils.logDBError( getContext(),
-                                 LogUtils.toTag( TagCloudEntryLoader.class ),
-                                 "Tags" );
+            LogUtils.logDBError( getContext(), getClass(), "Tags" );
          }
       }
       
@@ -96,9 +92,7 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                                                                          null );
          if ( locations == null )
          {
-            LogUtils.logDBError( getContext(),
-                                 LogUtils.toTag( TagCloudEntryLoader.class ),
-                                 "Locations" );
+            LogUtils.logDBError( getContext(), getClass(), "Locations" );
          }
       }
       

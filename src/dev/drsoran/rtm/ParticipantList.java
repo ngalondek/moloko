@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -32,10 +32,10 @@ import org.w3c.dom.Element;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmData;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
@@ -48,9 +48,6 @@ import dev.drsoran.moloko.sync.util.SyncDiffer;
 public class ParticipantList implements
          IContentProviderSyncable< ParticipantList >, Parcelable
 {
-   private final static String TAG = "Moloko."
-      + ParticipantList.class.getSimpleName();
-   
    public static final Parcelable.Creator< ParticipantList > CREATOR = new Parcelable.Creator< ParticipantList >()
    {
       
@@ -60,8 +57,8 @@ public class ParticipantList implements
          return new ParticipantList( source );
       }
       
-
-
+      
+      
       @Override
       public ParticipantList[] newArray( int size )
       {
@@ -75,23 +72,23 @@ public class ParticipantList implements
    private final List< Participant > participants;
    
    
-
+   
    public ParticipantList( String taskSeriesId )
    {
       this.taskSeriesId = taskSeriesId;
       this.participants = new ArrayList< Participant >( 0 );
    }
    
-
-
+   
+   
    public ParticipantList( String taskSeriesId, List< Participant > participants )
    {
       this.taskSeriesId = taskSeriesId;
       this.participants = new ArrayList< Participant >( participants );
    }
    
-
-
+   
+   
    public ParticipantList( String taskSeriesId, Element elt )
    {
       this.taskSeriesId = taskSeriesId;
@@ -108,63 +105,68 @@ public class ParticipantList implements
          
          if ( !TextUtils.isEmpty( contactId ) && !TextUtils.isEmpty( fullname )
             && !TextUtils.isEmpty( username ) )
+         {
             this.participants.add( new Participant( null,
                                                     taskSeriesId,
                                                     contactId,
                                                     fullname,
                                                     username ) );
+         }
          else
-            Log.e( TAG, "Invalid attribute 'id' in participating contact. "
-               + contactId );
+         {
+            MolokoApp.Log.e( getClass(),
+                             "Invalid attribute 'id' in participating contact. "
+                                + contactId );
+         }
       }
    }
    
-
-
+   
+   
    public ParticipantList( Parcel source )
    {
       this.taskSeriesId = source.readString();
       this.participants = source.createTypedArrayList( Participant.CREATOR );
    }
    
-
-
+   
+   
    public String getTaskSeriesId()
    {
       return taskSeriesId;
    }
    
-
-
+   
+   
    public List< Participant > getParticipants()
    {
       return Collections.unmodifiableList( participants );
    }
    
-
-
+   
+   
    public void addParticipant( Participant participant )
    {
       participants.add( participant );
    }
    
-
-
+   
+   
    public int getCount()
    {
       return participants.size();
    }
    
-
-
+   
+   
    @Override
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
    @Override
    public void writeToParcel( Parcel dest, int flags )
    {
@@ -172,16 +174,16 @@ public class ParticipantList implements
       dest.writeTypedList( participants );
    }
    
-
-
+   
+   
    @Override
    public Date getDeletedDate()
    {
       return null;
    }
    
-
-
+   
+   
    @Override
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
@@ -189,8 +191,8 @@ public class ParticipantList implements
                                          .build();
    }
    
-
-
+   
+   
    @Override
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
@@ -204,8 +206,8 @@ public class ParticipantList implements
       return result.build();
    }
    
-
-
+   
+   
    @Override
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( ParticipantList update )
    {

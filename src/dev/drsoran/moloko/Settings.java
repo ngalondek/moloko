@@ -370,7 +370,7 @@ public class Settings implements IOnSettingsChangedListener
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      if ( which == RTM_SETTINGS_SYNCED )
+      if ( which == IOnSettingsChangedListener.RTM_SETTINGS_SYNCED )
       {
          loadRtmSettings();
          checkDefaultListIdChangedBySync();

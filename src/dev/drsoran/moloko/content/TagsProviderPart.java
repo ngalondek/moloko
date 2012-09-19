@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -44,7 +44,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
@@ -55,8 +55,7 @@ import dev.drsoran.rtm.TagWithTaskCount;
 
 public class TagsProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = "Moloko."
-      + TagsProviderPart.class.getSimpleName();
+   private static final Class< TagsProviderPart > TAG = TagsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -74,7 +73,7 @@ public class TagsProviderPart extends AbstractProviderPart
                                                        COL_INDICES );
       
       QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                   false,
+      false,
                                                    
                                                    // tables
                                                    TaskSeries.PATH + ","
@@ -120,7 +119,7 @@ public class TagsProviderPart extends AbstractProviderPart
    }
    
    
-
+   
    public final static List< Tag > getAllTags( ContentProviderClient client,
                                                String taskSeriesId,
                                                Comparator< Tag > cmp,
@@ -178,7 +177,7 @@ public class TagsProviderPart extends AbstractProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query tags failed. ", e );
+         MolokoApp.Log.e( TAG, "Query tags failed. ", e );
          tags = null;
       }
       finally
@@ -190,8 +189,8 @@ public class TagsProviderPart extends AbstractProviderPart
       return new ArrayList< Tag >( tags );
    }
    
-
-
+   
+   
    public final static List< TagWithTaskCount > getAllTagsWithTaskCount( ContentProviderClient client )
    {
       List< TagWithTaskCount > result = null;
@@ -226,8 +225,8 @@ public class TagsProviderPart extends AbstractProviderPart
       return ok ? result : null;
    }
    
-
-
+   
+   
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -237,23 +236,23 @@ public class TagsProviderPart extends AbstractProviderPart
              .registerContentObserver( RawTasks.CONTENT_URI, true, observer );
    }
    
-
-
+   
+   
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-
-
+   
+   
    public TagsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Tags.PATH );
    }
    
-
-
+   
+   
    @Override
    public Cursor query( String id,
                         String[] projection,
@@ -301,54 +300,57 @@ public class TagsProviderPart extends AbstractProviderPart
       return cursor;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Tags.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Tags.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Tags.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Tags.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

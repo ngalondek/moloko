@@ -33,7 +33,7 @@ import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 
 
@@ -170,9 +170,7 @@ public final class Queries
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( Queries.class ),
-                "Generating new ID failed. ",
-                e );
+         MolokoApp.Log.e( Queries.class, "Generating new ID failed. ", e );
       }
       finally
       {
@@ -296,16 +294,16 @@ public final class Queries
          }
          catch ( InterruptedException e )
          {
-            Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying ContentProviderActionItemList failed",
-                   e );
+            MolokoApp.Log.e( Queries.class,
+                             "Applying ContentProviderActionItemList failed",
+                             e );
             ok = false;
          }
          catch ( ExecutionException e )
          {
-            Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying ContentProviderActionItemList failed",
-                   e );
+            MolokoApp.Log.e( Queries.class,
+                             "Applying ContentProviderActionItemList failed",
+                             e );
             ok = false;
          }
       }

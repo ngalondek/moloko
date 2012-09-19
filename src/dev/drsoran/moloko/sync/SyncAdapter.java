@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -45,7 +45,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ApplicationInfo;
@@ -80,8 +79,7 @@ import dev.drsoran.provider.Rtm.Sync;
 public final class SyncAdapter extends AbstractThreadedSyncAdapter
 {
    
-   private final static String TAG = "Moloko."
-      + SyncAdapter.class.getSimpleName();
+   private final static Class< SyncAdapter > TAG = SyncAdapter.class;
    
    private final Context context;
    
@@ -109,7 +107,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    {
       if ( shouldProcessRequest( extras ) )
       {
-         Log.i( TAG, "Precessing sync with extras " + extras );
+         MolokoApp.Log.i( TAG, "Precessing sync with extras " + extras );
          
          ensureTransactionSupport( provider );
          this.syncResult = syncResult;
@@ -121,7 +119,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
          try
          {
             authToken = checkAccount( account );
-            Log.i( TAG, "Retrieved auth token " + authToken );
+            MolokoApp.Log.d( TAG, "Retrieved auth token " + authToken );
             
             if ( authToken != null )
             {
@@ -146,13 +144,14 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
          {
             if ( syncResult.stats.numAuthExceptions > 0 )
             {
-               Log.e( TAG, syncResult.stats.numAuthExceptions
+               MolokoApp.Log.e( TAG, syncResult.stats.numAuthExceptions
                   + " authentication exceptions. Invalidating auth token." );
                
                invalidateAccount( authToken );
             }
             
-            Log.e( TAG, "Applying sync operations batch failed. " + syncResult );
+            MolokoApp.Log.e( TAG, "Applying sync operations batch failed. "
+               + syncResult );
             clearSyncResult( syncResult );
          }
          finally
@@ -174,7 +173,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
       }
       else
       {
-         Log.i( TAG, "Didn't processed sync with extras " + extras );
+         MolokoApp.Log.i( TAG, "Didn't processed sync with extras " + extras );
       }
    }
    
@@ -318,7 +317,8 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
          
          transactionalAccess.setTransactionSuccessful();
          
-         Log.i( TAG, "Applying sync operations batch succeded. " + syncResult );
+         MolokoApp.Log.i( TAG, "Applying sync operations batch succeded. "
+            + syncResult );
       }
       // let outer try catch the exception
       finally
@@ -382,7 +382,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
                                      Service service )
    {
       final RtmAuth.Perms permission = AccountUtils.getAccessLevel( context );
-      Log.i( TAG, "Sync with permission " + permission );
+      MolokoApp.Log.i( TAG, "Sync with permission " + permission );
       
       // We can only create a time line with write permission. However, we need delete
       // permission to make the server sync transactional. So without delete permissions
@@ -488,7 +488,9 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
             }
          }
          else
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         {
+            MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         }
       }
       
       return result;
@@ -513,12 +515,18 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
             client.release();
             
             if ( mods != null )
+            {
                modifications = new ModificationSet( mods );
+            }
             else
-               Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+            {
+               MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+            }
          }
          else
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         {
+            MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         }
       }
       
       return modifications;
@@ -545,9 +553,13 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    private final static boolean logSyncStep( String step, boolean result )
    {
       if ( result )
-         Log.i( TAG, "Compute " + step + " sync ok" );
+      {
+         MolokoApp.Log.i( TAG, "Compute " + step + " sync ok" );
+      }
       else
-         Log.e( TAG, "Compute " + step + " sync failed" );
+      {
+         MolokoApp.Log.e( TAG, "Compute " + step + " sync failed" );
+      }
       
       return result;
    }

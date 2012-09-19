@@ -94,16 +94,12 @@ class RtmListsEntriesAndValuesLoader
          }
          else
          {
-            LogUtils.logDBError( context,
-                                 LogUtils.toTag( DefaultListPreference.class ),
-                                 "Lists" );
+            LogUtils.logDBError( context, getClass(), "Lists" );
          }
       }
       else
       {
-         LogUtils.logDBError( context,
-                              LogUtils.toTag( DefaultListPreference.class ),
-                              "Lists" );
+         LogUtils.logDBError( context, getClass(), "Lists" );
       }
       
       return entriesAndValues;

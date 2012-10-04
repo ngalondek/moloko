@@ -101,9 +101,9 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    {
       annotatedConfigSupport.onAttach( this, savedInstanceState );
       
-      super.onCreate( savedInstanceState );
-      
       setupActionBar();
+      
+      super.onCreate( savedInstanceState );
       
       configureByIntent( getIntent() );
       if ( savedInstanceState != null )
@@ -654,8 +654,11 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    private void initializeSyncingProgressIndicator()
    {
-      setSupportProgressBarIndeterminateVisibility( showSyncProgress
-         && SyncUtils.isSyncing( this ) );
+      if ( getSupportActionBar() != null )
+      {
+         setSupportProgressBarIndeterminateVisibility( showSyncProgress
+            && SyncUtils.isSyncing( this ) );
+      }
    }
    
    

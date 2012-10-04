@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.dialogs;
+package dev.drsoran.moloko.fragments;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -28,16 +28,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,17 +42,15 @@ import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
-import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
-import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
+import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.loaders.TagsLoader;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Tag;
 
 
-public class ChangeTagsDialogFragment extends
-         MolokoLoaderDialogFragment< List< Tag > >
+public class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
 {
    public static class ChangeTag
    {
@@ -75,18 +67,10 @@ public class ChangeTagsDialogFragment extends
       }
    }
    
-   
-   public static class Config
-   {
-      public final static String TAGS = Tasks.TAGS;
-   }
-   
    private final MultiAutoCompleteTextView.Tokenizer tokenizer = new MultiAutoCompleteTextView.CommaTokenizer();
    
-   @InstanceState( key = Config.TAGS )
+   @InstanceState( key = Intents.Extras.KEY_TAGS )
    private ArrayList< String > chosenTags = new ArrayList< String >();
-   
-   private IChangeTagsFragmentListener listener;
    
    private MultiAutoCompleteTextView editView;
    
@@ -94,9 +78,9 @@ public class ChangeTagsDialogFragment extends
    
    
    
-   public final static ChangeTagsDialogFragment newInstance( Bundle config )
+   public final static ChangeTagsFragment newInstance( Bundle config )
    {
-      final ChangeTagsDialogFragment fragment = new ChangeTagsDialogFragment();
+      final ChangeTagsFragment fragment = new ChangeTagsFragment();
       
       fragment.setArguments( config );
       
@@ -105,9 +89,9 @@ public class ChangeTagsDialogFragment extends
    
    
    
-   public ChangeTagsDialogFragment()
+   public ChangeTagsFragment()
    {
-      registerAnnotatedConfiguredInstance( this, ChangeTagsDialogFragment.class );
+      registerAnnotatedConfiguredInstance( this, ChangeTagsFragment.class );
    }
    
    
@@ -115,42 +99,20 @@ public class ChangeTagsDialogFragment extends
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      setStyle( STYLE_NORMAL, R.style.Theme_ChangeTagsDialog );
       super.onCreate( savedInstanceState );
-      
       ensureUniqueTags();
    }
    
    
    
    @Override
-   public void onAttach( Activity activity )
-   {
-      super.onAttach( activity );
-      
-      if ( activity instanceof IChangeTagsFragmentListener )
-         listener = (IChangeTagsFragmentListener) activity;
-      else
-         listener = null;
-   }
-   
-   
-   
-   @Override
-   public void onDetach()
-   {
-      listener = null;
-      super.onDetach();
-   }
-   
-   
-   
-   @Override
-   protected ViewGroup createDialogView( LayoutInflater inflater )
+   protected View createFragmentView( LayoutInflater inflater,
+                                      ViewGroup container,
+                                      Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.change_tags_fragment,
                                                   null );
-      return (ViewGroup) fragmentView;
+      return fragmentView;
    }
    
    
@@ -188,29 +150,10 @@ public class ChangeTagsDialogFragment extends
    
    
    
-   @Override
-   protected Dialog createDialog( View view )
+   public void setChosenTags( List< String > tags )
    {
-      final Activity activity = getSherlockActivity();
-      final Context context = new ContextThemeWrapper( activity,
-                                                       R.style.Theme_ChangeTagsDialog );
-      
-      return new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_tag )
-                                               .setTitle( getString( R.string.app_change_tags ) )
-                                               .setView( view )
-                                               .setPositiveButton( R.string.btn_ok,
-                                                                   new DialogInterface.OnClickListener()
-                                                                   {
-                                                                      @Override
-                                                                      public void onClick( DialogInterface dialog,
-                                                                                           int which )
-                                                                      {
-                                                                         listener.onTagsChanged( new ArrayList< String >( chosenTags ) );
-                                                                      }
-                                                                   } )
-                                               .setNegativeButton( R.string.btn_cancel,
-                                                                   null )
-                                               .create();
+      chosenTags = new ArrayList< String >( tags );
+      editView.setText( TextUtils.join( ", ", chosenTags ) );
    }
    
    

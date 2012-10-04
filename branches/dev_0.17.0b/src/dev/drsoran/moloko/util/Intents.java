@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,6 +55,7 @@ import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -123,6 +125,8 @@ public final class Intents
       
       public final static String KEY_FILTER = "filter";
       
+      public final static String KEY_TAGS = "tags";
+      
       public final static String KEY_TASK_SORT_ORDER = "tasks_sort_order";
       
       public final static String KEY_SYNC_STATUS = "sync_status";
@@ -189,6 +193,18 @@ public final class Intents
          
          if ( !TextUtils.isEmpty( text ) )
             bundle.putString( Extras.KEY_NOTE_TEXT, text );
+         
+         return bundle;
+      }
+      
+      
+      
+      public final static Bundle createChooseTagsExtras( Collection< String > preselectedTags )
+      {
+         final Bundle bundle = new Bundle( 1 );
+         
+         bundle.putStringArrayList( Extras.KEY_TAGS,
+                                    new ArrayList< String >( preselectedTags ) );
          
          return bundle;
       }
@@ -701,6 +717,17 @@ public final class Intents
       final Intent intent = new Intent( Intent.ACTION_INSERT, Notes.CONTENT_URI );
       
       intent.putExtras( Extras.createAddNoteExtras( task, title, text ) );
+      
+      return intent;
+   }
+   
+   
+   
+   public final static Intent createChooseTagsIntent( Collection< String > preselectedTags )
+   {
+      final Intent intent = new Intent( Intent.ACTION_PICK, Tags.CONTENT_URI );
+      
+      intent.putExtras( Extras.createChooseTagsExtras( preselectedTags ) );
       
       return intent;
    }

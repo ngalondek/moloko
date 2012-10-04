@@ -82,16 +82,9 @@
         <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
     </style>
     
-    <style name="Theme.ChangeTagsDialog" parent="android:style/Theme.Dialog">
-        
-        <!-- Window attributes -->
-        <item name="android:windowSoftInputMode">adjustResize</item>
-        
-        <!-- Widgets -->
-        <item name="android:listPreferredItemHeight">50dip</item>
-    </style>
-    
     <style name="Theme.Moloko.Dialog" parent="@android:style/Theme.Dialog" />
+    
+    <style name="Theme.Moloko.ChangeTags" parent="@style/Theme.Moloko.Dialog" />
     
     <style name="Theme.Moloko.SendLog" parent="@style/Theme.Moloko" />
 

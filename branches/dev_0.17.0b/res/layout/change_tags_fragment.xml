@@ -14,6 +14,7 @@
       implementation
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -21,7 +22,7 @@
     <RelativeLayout
         android:id="@android:id/content"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" >
 
         <dev.drsoran.moloko.widgets.ClearableMultiAutoCompleteTextView
             android:id="@+id/change_tags_fragment_edit"
@@ -36,19 +37,20 @@
             android:inputType="textNoSuggestions" />
 
         <ListView
-            android:id="@android:id/list"            
+            android:id="@android:id/list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/change_tags_fragment_edit"
             android:layout_alignRight="@id/change_tags_fragment_edit"
             android:layout_below="@id/change_tags_fragment_edit"
-            android:layout_marginBottom="5dip" />
+            android:layout_marginBottom="5dip"            
+            tools:listitem="@layout/change_tags_fragment_listitem" />
 
         <TextView
             android:id="@android:id/empty"
             style="@style/No_List_Elements_Text"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_alignLeft="@id/change_tags_fragment_edit"
             android:layout_alignRight="@id/change_tags_fragment_edit"
             android:layout_below="@id/change_tags_fragment_edit"
@@ -60,7 +62,7 @@
     <include
         android:id="@+id/loading_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         layout="@layout/app_loading_spinner"
         android:visibility="gone" />
 

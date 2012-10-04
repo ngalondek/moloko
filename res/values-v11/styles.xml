@@ -23,30 +23,27 @@
     
     <!-- TextViewStyle -->
 
-    <style name="TextViewStyle" parent="@android:style/Widget.Holo.Light.TextView">
-    </style>
+    <style name="TextViewStyle" parent="@android:style/Widget.Holo.Light.TextView" />
 
     <!-- AutocompleteTextViewStyle -->
 
-    <style name="AutoCompleteTextViewStyle" parent="@android:style/Widget.Holo.Light.AutoCompleteTextView">
-    </style>    
+    <style name="AutoCompleteTextViewStyle" parent="@android:style/Widget.Holo.Light.AutoCompleteTextView"/>
     
     <!-- ListStyle -->
     
-    <style name="ListViewStyle" parent="@android:style/Widget.Holo.Light.ListView">
-    </style>
+    <style name="ListViewStyle" parent="@android:style/Widget.Holo.Light.ListView" />
     
-    <style name="ExpandableListViewStyle" parent="@android:style/Widget.Holo.Light.ExpandableListView">
-    </style>
+    <style name="ExpandableListViewStyle" parent="@android:style/Widget.Holo.Light.ExpandableListView" />
     
     <!-- GridViewStyle -->
    
-    <style name="GridViewStyle" parent="@android:style/Widget.Holo.Light.GridView">
-    </style>
+    <style name="GridViewStyle" parent="@android:style/Widget.Holo.Light.GridView" />
     
     <!-- Take preferences from RTM checkbox style -->
     
-    <style name="TakePrefsFromRtmCheckboxStyle" parent="@android:style/TextAppearance.Small">        
-    </style>
+    <style name="TakePrefsFromRtmCheckboxStyle" parent="@android:style/TextAppearance.Small" />
+    
+    <!-- Dialog button style -->
+    <style name="DialogButton" parent="@android:style/Widget.Holo.Light.Button.Borderless.Small" />
     
 </resources>

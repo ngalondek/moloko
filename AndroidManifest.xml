@@ -271,6 +271,23 @@
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.contact" />
          </intent-filter>
       </activity>
+      
+      <activity
+         android:label="@string/app_change_tags"
+         android:name=".activities.ChangeTagsActivity"
+         android:theme="@style/Theme.Moloko.ChangeTags"
+         android:windowSoftInputMode="adjustResize"
+         android:exported="false">
+         <intent-filter>
+            <!-- Pick tags -->
+            <action
+               android:name="android.intent.action.PICK" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.tags" />
+         </intent-filter>
+      </activity>
 
       <activity
          android:label="@string/app_tagcloud"

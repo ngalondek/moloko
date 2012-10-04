@@ -22,13 +22,11 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
@@ -38,22 +36,20 @@ import dev.drsoran.moloko.fragments.TaskAddFragment;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.DuePickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.EstimatePickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.RecurrencePickerDialogFragment;
 import dev.drsoran.moloko.fragments.factories.DefaultFragmentFactory;
-import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.Task;
 
 
 public class TaskEditActivity extends AbstractTaskEditActivity implements
-         ITaskEditFragmentListener, IChangeTagsFragmentListener,
-         IPickerDialogListener
+         ITaskEditFragmentListener, IPickerDialogListener
 {
    public final static int REQ_DEFAULT = 0;
    
@@ -75,16 +71,8 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    @Override
    public void onChangeTags( List< String > tags )
    {
-      showChangeTagsDialog( createTaskEditChangeTagsConfiguration( tags ) );
-   }
-   
-   
-   
-   @Override
-   public void onTagsChanged( List< String > tags )
-   {
-      final AbstractTaskEditFragment taskEditFragment = getTaskEditFragment();
-      taskEditFragment.setTags( tags );
+      startActivityForResult( Intents.createChooseTagsIntent( tags ),
+                              REQ_DEFAULT );
    }
    
    
@@ -114,8 +102,8 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
          recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
       
       RecurrencePickerDialogFragment.show( this,
-                                       recurrencePattern.first,
-                                       recurrencePattern.second );
+                                           recurrencePattern.first,
+                                           recurrencePattern.second );
    }
    
    
@@ -189,6 +177,30 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    
    
    
+   @Override
+   protected void onActivityResult( int req, int result, Intent data )
+   {
+      if ( req == REQ_DEFAULT )
+      {
+         if ( result == RESULT_OK )
+         {
+            onTagsChanged( data.getStringArrayListExtra( Intents.Extras.KEY_TAGS ) );
+         }
+      }
+      
+      super.onActivityResult( req, result, data );
+   }
+   
+   
+   
+   private void onTagsChanged( List< String > tags )
+   {
+      final AbstractTaskEditFragment taskEditFragment = getTaskEditFragment();
+      taskEditFragment.setTags( tags );
+   }
+   
+   
+   
    private void createIntentDependentFragment()
    {
       final String action = getIntent().getAction();
@@ -222,28 +234,5 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
                                     .add( R.id.frag_task_edit, fragment )
                                     .commit();
       }
-   }
-   
-   
-   
-   private void showChangeTagsDialog( Bundle config )
-   {
-      final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-      final DialogFragment newFragment = ChangeTagsDialogFragment.newInstance( config );
-      
-      newFragment.show( fragmentTransaction,
-                        String.valueOf( R.id.frag_change_tags ) );
-   }
-   
-   
-   
-   private Bundle createTaskEditChangeTagsConfiguration( List< String > tags )
-   {
-      final Bundle config = new Bundle( 2 );
-      
-      config.putStringArrayList( ChangeTagsDialogFragment.Config.TAGS,
-                                 new ArrayList< String >( tags ) );
-      
-      return config;
    }
 }

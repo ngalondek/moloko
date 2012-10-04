@@ -184,6 +184,9 @@
         <item name="android:layout_marginBottom">6dip</item>
     </style>
     
+    <!-- Dialog button style -->
+    <style name="DialogButton" parent="@android:style/Widget.Button.Small" />
+    
     <!-- ********* -->
     <!-- TasksList -->
 

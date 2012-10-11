@@ -3,8 +3,7 @@
 
     <style name="Theme.Moloko" parent="@style/Theme.__Moloko">
         <!-- Widgets -->
-        <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>
-        <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
+        <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>        
     </style>
     
     <style name="Theme.Moloko.TasksList" parent="@style/Theme.Moloko.__TasksList">

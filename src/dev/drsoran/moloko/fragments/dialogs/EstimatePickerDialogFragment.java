@@ -176,7 +176,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       final View view = inflater.inflate( R.layout.estimate_picker_dialog, null );
       
       numberWheel = (WheelView) view.findViewById( R.id.estimate_dlg_number_wheel );
-      numberWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 999 ) );
+      numberWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 365 ) );
       numberWheel.setCurrentItem( initialValue - 1 );
       
       unitWheel = (WheelView) view.findViewById( R.id.estimate_dlg_unit_wheel );

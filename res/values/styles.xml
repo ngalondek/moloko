@@ -187,6 +187,14 @@
     <!-- Dialog button style -->
     <style name="DialogButton" parent="@android:style/Widget.Button.Small" />
     
+    <!-- WheelView style -->
+    <style name="WheelViewStyle">
+        <item name="topShadowDrawable">@drawable/wheel_shadow_top</item>
+        <item name="bottomShadowDrawable">@drawable/wheel_shadow_bottom</item>
+        <item name="centerDrawable">@drawable/wheel_selector_val</item>
+        <item name="backgroundDrawable">@drawable/wheel_selector_bgnd</item>
+    </style>    
+    
     <!-- ********* -->
     <!-- TasksList -->
 
@@ -279,16 +287,18 @@
 
     <!-- ************ -->
     <!-- Dialogs -->
-
-    <style name="Dlg_DuePicker_Value" parent="@android:style/TextAppearance.Large">
+    
+    <style name="__WheelTextAppearance" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/app_dlg_due_picker_value</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/wheel_text_size</item>
         <item name="android:singleLine">true</item>
+        <item name="android:textStyle">normal</item>
     </style>
-
-    <style name="Dlg_DuePicker_Weekday" parent="@android:style/TextAppearance.Medium">
+    
+    <style name="WheelTextAppearance" parent="__WheelTextAppearance" />
+    
+    <style name="Dlg_DuePicker_Weekday" parent="WheelTextAppearance">
         <item name="android:textColor">@color/app_dlg_due_picker_weekday</item>
-        <item name="android:singleLine">true</item>
     </style>
     
     <style name="Dlg_About_Moloko_TextAppearence" parent="@android:style/TextAppearance.Theme.Dialog">        

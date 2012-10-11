@@ -321,7 +321,7 @@ public class RecurrencePickerDialogFragment extends
    private void initIntervalWheel( Integer interval )
    {
       final Activity activity = getSherlockActivity();
-      intervalWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 999 ) );
+      intervalWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 365 ) );
       
       if ( interval != null )
          intervalWheel.setCurrentItem( interval.intValue() - 1 );

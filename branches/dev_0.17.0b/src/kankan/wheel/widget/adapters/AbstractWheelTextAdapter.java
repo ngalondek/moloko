@@ -16,13 +16,13 @@
 package kankan.wheel.widget.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import dev.drsoran.moloko.R;
 
 
 /**
@@ -38,18 +38,9 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
    protected static final int NO_RESOURCE = 0;
    
    /** Default text color */
-   public static final int DEFAULT_TEXT_COLOR = 0xFF101010;
-   
-   /** Default text color */
    public static final int LABEL_COLOR = 0xFF700070;
    
-   /** Default text size */
-   public static final int DEFAULT_TEXT_SIZE = 24;
-   
-   // Text settings
-   private int textColor = DEFAULT_TEXT_COLOR;
-   
-   private int textSize = DEFAULT_TEXT_SIZE;
+   private int textAppearanceResId;
    
    // Current context
    protected Context context;
@@ -66,7 +57,7 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
    protected int emptyItemResourceId;
    
    
-
+   
    /**
     * Constructor
     * 
@@ -78,8 +69,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       this( context, TEXT_VIEW_ITEM_RESOURCE );
    }
    
-
-
+   
+   
    /**
     * Constructor
     * 
@@ -93,8 +84,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       this( context, itemResource, NO_RESOURCE );
    }
    
-
-
+   
+   
    /**
     * Constructor
     * 
@@ -113,60 +104,26 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       itemTextResourceId = itemTextResource;
       
       inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+      
+      textAppearanceResId = R.style.WheelTextAppearance;
    }
    
-
-
-   /**
-    * Gets text color
-    * 
-    * @return the text color
-    */
-   public int getTextColor()
+   
+   
+   public int getTextAppearanceResId()
    {
-      return textColor;
+      return textAppearanceResId;
    }
    
-
-
-   /**
-    * Sets text color
-    * 
-    * @param textColor
-    *           the text color to set
-    */
-   public void setTextColor( int textColor )
+   
+   
+   public void setTextAppearanceResId( int textAppearanceResId )
    {
-      this.textColor = textColor;
+      this.textAppearanceResId = textAppearanceResId;
    }
    
-
-
-   /**
-    * Gets text size
-    * 
-    * @return the text size
-    */
-   public int getTextSize()
-   {
-      return textSize;
-   }
    
-
-
-   /**
-    * Sets text size
-    * 
-    * @param textSize
-    *           the text size to set
-    */
-   public void setTextSize( int textSize )
-   {
-      this.textSize = textSize;
-   }
    
-
-
    /**
     * Gets resource Id for items views
     * 
@@ -177,8 +134,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       return itemResourceId;
    }
    
-
-
+   
+   
    /**
     * Sets resource Id for items views
     * 
@@ -190,8 +147,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       this.itemResourceId = itemResourceId;
    }
    
-
-
+   
+   
    /**
     * Gets resource Id for text view in item layout
     * 
@@ -202,8 +159,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       return itemTextResourceId;
    }
    
-
-
+   
+   
    /**
     * Sets resource Id for text view in item layout
     * 
@@ -215,8 +172,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       this.itemTextResourceId = itemTextResourceId;
    }
    
-
-
+   
+   
    /**
     * Gets resource Id for empty items views
     * 
@@ -227,8 +184,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       return emptyItemResourceId;
    }
    
-
-
+   
+   
    /**
     * Sets resource Id for empty items views
     * 
@@ -240,8 +197,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       this.emptyItemResourceId = emptyItemResourceId;
    }
    
-
-
+   
+   
    /**
     * Returns text for specified item
     * 
@@ -251,8 +208,9 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
     */
    protected abstract CharSequence getItemText( int index );
    
-
-
+   
+   
+   @Override
    public View getItem( int index, View convertView, ViewGroup parent )
    {
       if ( index >= 0 && index < getItemsCount() )
@@ -281,8 +239,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       return null;
    }
    
-
-
+   
+   
    @Override
    public View getEmptyItem( View convertView, ViewGroup parent )
    {
@@ -299,8 +257,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       return convertView;
    }
    
-
-
+   
+   
    /**
     * Configures text view. Is called for the TEXT_VIEW_ITEM_RESOURCE views.
     * 
@@ -309,15 +267,13 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
     */
    protected void configureTextView( TextView view )
    {
-      view.setTextColor( textColor );
+      view.setTextAppearance( context, textAppearanceResId );
       view.setGravity( Gravity.CENTER );
-      view.setTextSize( textSize );
       view.setLines( 1 );
-      view.setTypeface( Typeface.SANS_SERIF, Typeface.BOLD );
    }
    
-
-
+   
+   
    /**
     * Loads a text view from view
     * 
@@ -352,8 +308,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter
       return text;
    }
    
-
-
+   
+   
    /**
     * Loads view from resources
     * 

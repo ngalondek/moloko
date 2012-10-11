@@ -639,6 +639,7 @@ public abstract class AbstractTaskEditFragment
    public void setDue( MolokoCalendar due )
    {
       dueEditText.setDue( due.getTimeInMillis(), due.hasTime() );
+      dueEditText.requestFocus();
    }
    
    

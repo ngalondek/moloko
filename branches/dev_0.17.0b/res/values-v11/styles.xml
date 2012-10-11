@@ -46,4 +46,12 @@
     <!-- Dialog button style -->
     <style name="DialogButton" parent="@android:style/Widget.Holo.Light.Button.Borderless.Small" />
     
+    <!-- WheelView style -->
+    <style name="WheelViewStyle">
+        <item name="topShadowDrawable">@null</item>
+        <item name="bottomShadowDrawable">@null</item>
+        <item name="centerDrawable">@drawable/wheel_selector_val</item>
+        <item name="backgroundDrawable">@drawable/wheel_selector_bgnd</item>
+    </style>
+    
 </resources>

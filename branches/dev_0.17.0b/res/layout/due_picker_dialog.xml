@@ -14,19 +14,19 @@
         <dev.drsoran.moloko.widgets.FocusableWheelView
             android:id="@+id/due_dlg_date_wheel_1"
             android:layout_width="0dip"
-            android:layout_height="140dip"
+            android:layout_height="@dimen/due_date_picker_wheel_height"
             android:layout_weight="0.3" />
 
         <dev.drsoran.moloko.widgets.FocusableWheelView
             android:id="@+id/due_dlg_date_wheel_2"
             android:layout_width="0dip"
-            android:layout_height="140dip"
+            android:layout_height="@dimen/due_date_picker_wheel_height"
             android:layout_weight="0.3" />
 
         <dev.drsoran.moloko.widgets.FocusableWheelView
             android:id="@+id/due_dlg_date_wheel_3"
             android:layout_width="0dip"
-            android:layout_height="140dip"
+            android:layout_height="@dimen/due_date_picker_wheel_height"
             android:layout_weight="0.3" />
     </LinearLayout>
 
@@ -39,17 +39,17 @@
         <dev.drsoran.moloko.widgets.FocusableWheelView
             android:id="@+id/due_dlg_time_wheel_hour"
             android:layout_width="60dip"
-            android:layout_height="140dip" />
+            android:layout_height="@dimen/due_time_picker_wheel_height" />
 
         <dev.drsoran.moloko.widgets.FocusableWheelView
             android:id="@+id/due_dlg_time_wheel_minute"
             android:layout_width="60dip"
-            android:layout_height="140dip" />
+            android:layout_height="@dimen/due_time_picker_wheel_height" />
 
         <dev.drsoran.moloko.widgets.FocusableWheelView
             android:id="@+id/due_dlg_time_wheel_am_pm"
             android:layout_width="70dip"
-            android:layout_height="140dip" />
+            android:layout_height="@dimen/due_time_picker_wheel_height" />
     </LinearLayout>
 
 </LinearLayout>

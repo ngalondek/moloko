@@ -27,10 +27,11 @@
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>        
         <item name="titleWithViewStyle">@style/TitleWithViewStyle</item>
         <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text</item>
-        <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner</item>
+        <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
         <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>
         <item name="clearButtonStyle">@style/ClearButtonStyle</item>
         <item name="simpleLineStyle">@style/SimpleLine_Default</item>
+        <item name="wheelViewStyle">@style/WheelViewStyle</item>
     </style>
     
     <style name="Theme.Moloko" parent="@style/Theme.__Moloko" />
@@ -84,7 +85,10 @@
     
     <style name="Theme.Moloko.Dialog" parent="@android:style/Theme.Dialog" />
     
-    <style name="Theme.Moloko.ChangeTags" parent="@style/Theme.Moloko.Dialog" />
+    <style name="Theme.Moloko.ChangeTags" parent="Theme.Sherlock.Light.Dialog">
+        <item name="android:textColorPrimary">@color/app_default_text_color</item>
+        <item name="android:textColorPrimaryInverse">@color/abs__primary_text_holo_light</item>
+    </style>
     
     <style name="Theme.Moloko.SendLog" parent="@style/Theme.Moloko" />
 

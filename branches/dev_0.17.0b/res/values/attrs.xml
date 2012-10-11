@@ -57,7 +57,7 @@
    </declare-styleable>
 
    <declare-styleable name="InfoTextPreference">
-       <attr name="infoIcon" format="reference" />
+      <attr name="infoIcon" format="reference" />
       <attr name="infoWidgetLayout" format="reference" />
    </declare-styleable>
 
@@ -76,17 +76,13 @@
    <declare-styleable name="SimpleLine">
        <attr name="simpleLineStyle" format="reference" />
        <attr name="lineColor" format="reference|color" />
-   </declare-styleable>
+   </declare-styleable>  
    
-   <declare-styleable name="BottomButtonBarLayout">
-      <attr name="bottomButtonBarStyle" format="reference" />
-      <attr name="stretchSingleButton" format="boolean" />
-      <attr name="button1Text" format="reference|string" />
-      <attr name="button2Text" format="reference|string" />
-      <attr name="button1Drawable" format="reference" />
-      <attr name="button2Drawable" format="reference" />
-      <attr name="button1OnClick" format="reference|string" />
-      <attr name="button2OnClick" format="reference|string" />
-      <attr name="backgroundColor" format="reference|color" />
+   <declare-styleable name="WheelView">
+       <attr name="wheelViewStyle" format="reference" />
+       <attr name="topShadowDrawable" format="reference" />
+       <attr name="bottomShadowDrawable" format="reference" />
+       <attr name="centerDrawable" format="reference" />
+       <attr name="backgroundDrawable" format="reference" />
    </declare-styleable>
 </resources>

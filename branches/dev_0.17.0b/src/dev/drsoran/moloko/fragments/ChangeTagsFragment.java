@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -181,20 +182,25 @@ public class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
    private void onListItemClick( ListView l, View v, int position, long id )
    {
       final ChangeTag tag = (ChangeTag) l.getAdapter().getItem( position );
+      final Editable tagsEdit = editView.getEditableText();
       
       if ( tag.isAvailable )
       {
-         final Editable text = editView.getEditableText();
-         
-         if ( TextUtils.isEmpty( text ) )
-            text.append( tag.tag );
+         if ( TextUtils.isEmpty( tagsEdit ) )
+         {
+            tagsEdit.append( tag.tag );
+         }
          else
          {
-            final int trimmedLength = TextUtils.getTrimmedLength( text );
-            if ( text.charAt( trimmedLength - 1 ) == ',' )
-               text.append( tag.tag );
+            final int trimmedLength = TextUtils.getTrimmedLength( tagsEdit );
+            if ( tagsEdit.charAt( trimmedLength - 1 ) == ',' )
+            {
+               tagsEdit.append( tag.tag );
+            }
             else
-               text.append( ", " + tag.tag );
+            {
+               tagsEdit.append( ", " + tag.tag );
+            }
          }
       }
       else
@@ -207,6 +213,7 @@ public class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
          editView.setText( content );
       }
       
+      Selection.setSelection( tagsEdit, tagsEdit.length() );
       updateTagList();
    }
    

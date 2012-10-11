@@ -20,16 +20,22 @@
    <color name="app_holo_gray">#FFCCCCCC</color>
    <color name="app_light_gray">#FFC9C9C9</color>
    <color name="app_darker_gray">#FF858585</color>
-   <color name="app_icon_black_fill">#FF474747</color>   
+   <color name="app_icon_black_fill">#FF474747</color>
+   
+   <!-- A light Holo shade of blue -->
+   <color name="holo_blue_light">#ff33b5e5</color>
+   <!-- A really bright Holo shade of blue -->
+   <color name="holo_blue_bright">#ff00ddff</color>
    
 	<color name="app_actionbar_text_color">@android:color/white</color>
    <color name="app_actionbar_subtitle_color">@color/app_holo_gray</color>
 
    <color name="app_tag_text">@android:color/white</color>
 	<color name="app_tag_bgnd_normal_fill">@color/priority_3</color>	
-   	
+   
 	<color name="app_wheel_focused">@color/priority_1</color>
-   <color name="app_wheel_locked">#AAEA5200</color>
+   <color name="app_wheel_locked">#AAEA5200</color>  
+   
    <color name="app_dlg_due_picker_value">#FF101010</color>
    <color name="app_dlg_due_picker_today">@color/priority_1</color>
    <color name="app_dlg_due_picker_weekday">@color/app_darker_gray</color>

@@ -7,9 +7,10 @@
 
    <TextView
       android:id="@+id/due_dlg_value"
-      style="@style/Dlg_DuePicker_Value"
+      style="@style/WheelTextAppearance"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
-      android:text="@string/design_text" />
+      android:text="@string/design_text"
+      android:textSize="@dimen/wheel_text_size" />
 </RelativeLayout>

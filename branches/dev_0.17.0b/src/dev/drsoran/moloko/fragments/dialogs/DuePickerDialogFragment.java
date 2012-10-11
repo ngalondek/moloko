@@ -26,7 +26,6 @@ import java.util.Calendar;
 
 import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
-import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -269,7 +268,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
       
       cal.set( Calendar.DAY_OF_MONTH, 1 );
       cal.set( Calendar.MONTH, dateMonthWheel.getCurrentItem() );
-      cal.set( Calendar.YEAR, dateYearWheel.getCurrentItem() + 1 );
+      cal.set( Calendar.YEAR, dateYearWheel.getCurrentItem() );
       
       int day = dateDayWheel.getCurrentItem() + 1;
       
@@ -351,10 +350,13 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    private void initYearsWheel( Context context )
    {
       final MolokoCalendar cal = getCalendar();
-      dateYearWheel.setViewAdapter( new NumericWheelAdapter( context,
-                                                             cal.getMinimum( Calendar.YEAR ),
-                                                             cal.getMaximum( Calendar.YEAR ) ) );
-      dateYearWheel.setCurrentItem( cal.get( Calendar.YEAR ) - 1 );
+      dateYearWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
+                                                                    cal,
+                                                                    Calendar.YEAR,
+                                                                    "yyyy",
+                                                                    DateFormatWheelTextAdapter.TYPE_DEFAULT,
+                                                                    0 ) );
+      dateYearWheel.setCurrentItem( cal.get( Calendar.YEAR ) );
    }
    
    

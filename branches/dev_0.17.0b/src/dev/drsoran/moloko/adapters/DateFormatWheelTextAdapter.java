@@ -55,7 +55,7 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    
    private final int calField;
    
-   private final DateFormat format;
+   private final DateFormat dateFormat;
    
    private final SimpleDateFormat weekDayFormat;
    
@@ -70,7 +70,7 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    private final int todayColor;
    
    
-
+   
    public DateFormatWheelTextAdapter( Context context, MolokoCalendar cal,
       int calField, String dateFormat, int type, int flags )
    {
@@ -80,8 +80,8 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
       
       this.calField = calField;
       this.type = type;
-      this.format = new SimpleDateFormat( dateFormat, Locale.getDefault() );
-      this.format.setTimeZone( calendar.getTimeZone() );
+      this.dateFormat = new SimpleDateFormat( dateFormat, Locale.getDefault() );
+      this.dateFormat.setTimeZone( calendar.getTimeZone() );
       
       if ( type == TYPE_SHOW_WEEKDAY )
       {
@@ -89,7 +89,9 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
          this.weekDayFormat.setTimeZone( calendar.getTimeZone() );
       }
       else
+      {
          this.weekDayFormat = null;
+      }
       
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
       
@@ -103,8 +105,9 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
                                .getColor( R.color.app_dlg_due_picker_today );
    }
    
-
-
+   
+   
+   @Override
    public View getItem( int index, View convertView, ViewGroup parent )
    {
       View view = convertView;
@@ -118,11 +121,13 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
                                         parent,
                                         false );
                break;
+            
             case TYPE_SHOW_WEEKDAY:
                view = inflater.inflate( R.layout.due_picker_dialog_type_weekday,
                                         parent,
                                         false );
                break;
+            
             default :
                break;
          }
@@ -131,20 +136,26 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
       if ( view != null )
       {
          if ( calField != Calendar.DAY_OF_MONTH )
+         {
             calendar.set( calField, index );
+         }
          else
+         {
             calendar.set( calField, index + 1 );
+         }
          
          final Date date = calendar.getTime();
          
          final TextView value = (TextView) view.findViewById( R.id.due_dlg_value );
-         value.setText( format.format( date ) );
+         value.setText( dateFormat.format( date ) );
          
          int color = valueColor;
          
          if ( ( flags & FLAG_MARK_TODAY ) == FLAG_MARK_TODAY
             && MolokoDateUtils.isToday( date.getTime() ) )
+         {
             color = todayColor;
+         }
          
          value.setTextColor( color );
          
@@ -154,6 +165,7 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
                final TextView weekday = (TextView) view.findViewById( R.id.due_dlg_weekday );
                weekday.setText( weekDayFormat.format( date ) );
                break;
+            
             default :
                break;
          }
@@ -162,8 +174,9 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
       return view;
    }
    
-
-
+   
+   
+   @Override
    public int getItemsCount()
    {
       return ( max - min ) + 1;

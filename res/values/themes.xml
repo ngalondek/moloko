@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.__Moloko" parent="Theme.Sherlock.Light.DarkActionBar.ForceOverflow">
+    <style name="Theme.__Moloko" parent="Theme.Sherlock.Light.DarkActionBar">
 
         <!-- Window attributes -->
         <item name="android:textColorPrimary">@color/app_default_text_color</item>

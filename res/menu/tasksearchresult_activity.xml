@@ -24,7 +24,8 @@
        android:showAsAction="never"
        android:title="@string/tasksearchresult_menu_opt_clear_history_title" />
    <item
-       android:id="@id/menu_sync"        
+       android:id="@id/menu_sync"
+       android:icon="@drawable/ic_menu_refresh"
        android:showAsAction="ifRoom"
        android:actionProviderClass="dev.drsoran.moloko.actionproviders.SyncActionProvider"
        android:title="@string/phr_do_sync"/>

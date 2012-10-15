@@ -112,10 +112,12 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
          if ( isDefaultList() )
          {
             toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_remove_def_list );
+            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag_unset );
          }
          else
          {
             toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_make_def_list );
+            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag );
          }
       }
    }

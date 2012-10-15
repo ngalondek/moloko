@@ -25,7 +25,8 @@
         android:showAsAction="ifRoom"
         android:title="@string/search_hint"/>
     <item
-        android:id="@id/menu_sync"        
+        android:id="@id/menu_sync"
+        android:icon="@drawable/ic_menu_refresh"
         android:showAsAction="ifRoom"
         android:actionProviderClass="dev.drsoran.moloko.actionproviders.SyncActionProvider"
         android:title="@string/phr_do_sync"/>

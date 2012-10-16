@@ -13,14 +13,5 @@
       Röhricht - implementation
    -->
 <resources>
-    <bool name="build_force_readable_rtm_access">false</bool>
-    
-    <!-- Supported levels are:
-         - verbose
-         - debug
-         - info
-         - warn
-         - error
-     -->
-    <string name="build_log_level">debug</string>
+    <bool name="env_enable_abs_viewpager_workaround">false</bool>
 </resources>

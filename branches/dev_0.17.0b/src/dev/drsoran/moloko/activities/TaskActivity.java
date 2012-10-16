@@ -31,18 +31,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.adapters.ActionBarTabsAdapter;
+import dev.drsoran.moloko.adapters.ActionBarViewPagerTabsAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.NotesListFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
+import dev.drsoran.moloko.fragments.base.IAbsViewPagerSupport;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.INotesListsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
@@ -67,13 +71,15 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    public final static int NOTES_TAB_POSITION = 1;
    
+   private boolean enableAbsViewPagerWorkaround;
+   
    @InstanceState( key = TASK_TO_DELETE, defaultValue = InstanceState.NULL )
    private Task taskToDelete;
    
    @InstanceState( key = NOTES_TO_DELETE, defaultValue = InstanceState.NULL )
    private ArrayList< RtmTaskNote > notesToDelete;
    
-   private ActionBarTabsAdapter tabsAdapter;
+   private ActionBarViewPagerTabsAdapter tabsAdapter;
    
    private TaskFragment taskFragment;
    
@@ -91,6 +97,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
+      enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
+      
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.task_activity );
@@ -112,13 +120,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   public ActionBarTabsAdapter getTabsAdapter()
-   {
-      return tabsAdapter;
-   }
-   
-   
-   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -133,6 +134,52 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    {
       super.onRestoreInstanceState( state );
       restoreTabsAdapterState( state );
+   }
+   
+   
+   
+   @Override
+   public boolean onActivityCreateOptionsMenu( Menu menu )
+   {
+      if ( enableAbsViewPagerWorkaround )
+      {
+         return getSelectedViewPagerSupport().onCreateOptionsMenuViewPagerSupportWorkaround( menu,
+                                                                                             getSupportMenuInflater() );
+      }
+      else
+      {
+         return super.onActivityCreateOptionsMenu( menu );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      if ( enableAbsViewPagerWorkaround )
+      {
+         return getSelectedViewPagerSupport().onPrepareOptionsMenuViewPagerSupportWorkaround( menu );
+      }
+      else
+      {
+         return super.onPrepareOptionsMenu( menu );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      if ( enableAbsViewPagerWorkaround )
+      {
+         return getSelectedViewPagerSupport().onOptionsItemSelectedViewPagerSupportWorkaround( item );
+      }
+      else
+      {
+         return super.onOptionsItemSelected( item );
+      }
    }
    
    
@@ -160,6 +207,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private void createTabs()
    {
       createTabsAdapter();
+      createAbsTabsPagerHandler();
       
       final String taskId = getTaskIdFromIntent();
       
@@ -176,8 +224,18 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private void createTabsAdapter()
    {
-      tabsAdapter = new ActionBarTabsAdapter( this,
-                                              (ViewPager) findViewById( R.id.pager ) );
+      tabsAdapter = new ActionBarViewPagerTabsAdapter( this,
+                                                       (ViewPager) findViewById( R.id.pager ) );
+   }
+   
+   
+   
+   private void createAbsTabsPagerHandler()
+   {
+      if ( enableAbsViewPagerWorkaround )
+      {
+         new AbsWorkaroundPagerHander( (ViewPager) findViewById( R.id.pager ) );
+      }
    }
    
    
@@ -215,6 +273,21 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
          {
             actionBar.setSelectedNavigationItem( savedTabPosition );
          }
+      }
+   }
+   
+   
+   
+   private IAbsViewPagerSupport getSelectedViewPagerSupport()
+   {
+      switch ( getSupportActionBar().getSelectedNavigationIndex() )
+      {
+         case TASK_TAB_POSITION:
+            return taskFragment;
+         case NOTES_TAB_POSITION:
+            return notesListFragment;
+         default :
+            throw new IllegalStateException();
       }
    }
    
@@ -437,5 +510,46 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       return new int[]
       { taskFragment != null ? taskFragment.getId() : -1,
        notesListFragment != null ? notesListFragment.getId() : -1 };
+   }
+   
+   
+   private class AbsWorkaroundPagerHander implements OnPageChangeListener
+   {
+      public AbsWorkaroundPagerHander( ViewPager pager )
+      {
+         pager.setOnPageChangeListener( this );
+      }
+      
+      
+      
+      @Override
+      public void onPageScrollStateChanged( int state )
+      {
+         tabsAdapter.onPageScrollStateChanged( state );
+      }
+      
+      
+      
+      @Override
+      public void onPageScrolled( int position,
+                                  float positionOffset,
+                                  int positionOffsetPixels )
+      {
+         tabsAdapter.onPageScrolled( position,
+                                     positionOffset,
+                                     positionOffsetPixels );
+      }
+      
+      
+      
+      @Override
+      public void onPageSelected( int position )
+      {
+         // Note: We first need to update the new selected
+         // page and then invalidate the menu because the
+         // menu invalidation runs synchronous.
+         tabsAdapter.onPageSelected( position );
+         supportInvalidateOptionsMenu();
+      }
    }
 }

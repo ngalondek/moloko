@@ -43,6 +43,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.format.RtmStyleTaskDescTextViewFormatter;
+import dev.drsoran.moloko.fragments.base.IAbsViewPagerSupport;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
@@ -56,7 +57,8 @@ import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskFragment extends MolokoLoaderFragment< Task >
+public class TaskFragment extends MolokoLoaderFragment< Task > implements
+         IAbsViewPagerSupport
 {
    public final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
    
@@ -65,6 +67,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    {
       public final static String TASK_ID = "task_id";
    }
+   
+   private boolean enableAbsViewPagerWorkaround;
    
    private ITaskFragmentListener listener;
    
@@ -120,8 +124,10 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
+      enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
+      
       super.onCreate( savedInstanceState );
-      setHasOptionsMenu( true );
+      setHasOptionsMenu( !enableAbsViewPagerWorkaround );
    }
    
    
@@ -180,7 +186,26 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
       super.onCreateOptionsMenu( menu, inflater );
-      
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         onCreateOptionsMenuImpl( menu, inflater );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onCreateOptionsMenuViewPagerSupportWorkaround( Menu menu,
+                                                                 MenuInflater inflater )
+   {
+      onCreateOptionsMenuImpl( menu, inflater );
+      return true;
+   }
+   
+   
+   
+   private void onCreateOptionsMenuImpl( Menu menu, MenuInflater inflater )
+   {
       final Task task = getLoaderData();
       if ( task != null && isWritableAccess() )
       {
@@ -194,7 +219,25 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    public void onPrepareOptionsMenu( Menu menu )
    {
       super.onPrepareOptionsMenu( menu );
-      
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         onPrepareOptionsMenuImpl( menu );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenuViewPagerSupportWorkaround( Menu menu )
+   {
+      onPrepareOptionsMenuImpl( menu );
+      return true;
+   }
+   
+   
+   
+   private void onPrepareOptionsMenuImpl( Menu menu )
+   {
       final Task task = getLoaderData();
       if ( task != null )
       {
@@ -212,6 +255,28 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
+   {
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         return onOptionsItemSelectedImpl( item );
+      }
+      else
+      {
+         return super.onOptionsItemSelected( item );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onOptionsItemSelectedViewPagerSupportWorkaround( MenuItem item )
+   {
+      return onOptionsItemSelectedImpl( item );
+   }
+   
+   
+   
+   private boolean onOptionsItemSelectedImpl( MenuItem item )
    {
       switch ( item.getItemId() )
       {
@@ -235,7 +300,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
             listener.onEditTask( getLoaderDataAssertNotNull() );
             
          default :
-            return super.onOptionsItemSelected( item );
+            return false;
       }
    }
    

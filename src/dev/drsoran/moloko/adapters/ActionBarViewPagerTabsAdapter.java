@@ -34,8 +34,8 @@ import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.base.BaseFragmentPagerAdapter;
 
 
-public class ActionBarTabsAdapter extends BaseFragmentPagerAdapter implements
-         ActionBar.TabListener, ViewPager.OnPageChangeListener
+public class ActionBarViewPagerTabsAdapter extends BaseFragmentPagerAdapter
+         implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
    
    private final ActionBar actionBar;
@@ -44,7 +44,8 @@ public class ActionBarTabsAdapter extends BaseFragmentPagerAdapter implements
    
    
    
-   public ActionBarTabsAdapter( MolokoFragmentActivity activity, ViewPager pager )
+   public ActionBarViewPagerTabsAdapter( MolokoFragmentActivity activity,
+      ViewPager pager )
    {
       super( activity, activity.getSupportFragmentManager() );
       

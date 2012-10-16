@@ -44,6 +44,7 @@ import dev.drsoran.moloko.actionmodes.NotesListActionModeCallback;
 import dev.drsoran.moloko.adapters.NotesListFragmentAdapter;
 import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.fragments.base.IAbsViewPagerSupport;
 import dev.drsoran.moloko.fragments.base.MolokoMultiChoiceModalListFragment;
 import dev.drsoran.moloko.fragments.listeners.INotesListsFragmentListener;
 import dev.drsoran.moloko.loaders.RtmTaskNotesLoader;
@@ -51,7 +52,8 @@ import dev.drsoran.moloko.widgets.MolokoListView;
 
 
 public class NotesListFragment extends
-         MolokoMultiChoiceModalListFragment< RtmTaskNote >
+         MolokoMultiChoiceModalListFragment< RtmTaskNote > implements
+         IAbsViewPagerSupport
 {
    
    public static class Config
@@ -69,6 +71,8 @@ public class NotesListFragment extends
       
       return fragment;
    }
+   
+   private boolean enableAbsViewPagerWorkaround;
    
    @InstanceState( key = Config.TASK_ID )
    private String taskId;
@@ -101,8 +105,10 @@ public class NotesListFragment extends
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
+      enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
+      
       super.onCreate( savedInstanceState );
-      setHasOptionsMenu( true );
+      setHasOptionsMenu( !enableAbsViewPagerWorkaround );
    }
    
    
@@ -124,7 +130,26 @@ public class NotesListFragment extends
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
       super.onCreateOptionsMenu( menu, inflater );
-      
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         onCreateOptionsMenuImpl( menu, inflater );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onCreateOptionsMenuViewPagerSupportWorkaround( Menu menu,
+                                                                 MenuInflater inflater )
+   {
+      onCreateOptionsMenuImpl( menu, inflater );
+      return true;
+   }
+   
+   
+   
+   private void onCreateOptionsMenuImpl( Menu menu, MenuInflater inflater )
+   {
       if ( getListAdapter() != null && isWritableAccess() )
       {
          inflater.inflate( R.menu.noteslist_fragment_rwd, menu );
@@ -134,7 +159,37 @@ public class NotesListFragment extends
    
    
    @Override
+   public boolean onPrepareOptionsMenuViewPagerSupportWorkaround( Menu menu )
+   {
+      return true;
+   }
+   
+   
+   
+   @Override
    public boolean onOptionsItemSelected( MenuItem item )
+   {
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         return onOptionsItemSelectedImpl( item );
+      }
+      else
+      {
+         return super.onOptionsItemSelected( item );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onOptionsItemSelectedViewPagerSupportWorkaround( MenuItem item )
+   {
+      return onOptionsItemSelectedImpl( item );
+   }
+   
+   
+   
+   private boolean onOptionsItemSelectedImpl( MenuItem item )
    {
       switch ( item.getItemId() )
       {
@@ -146,7 +201,7 @@ public class NotesListFragment extends
             return true;
             
          default :
-            return super.onOptionsItemSelected( item );
+            return false;
       }
    }
    

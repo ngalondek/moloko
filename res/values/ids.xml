@@ -49,6 +49,9 @@
       name="frag_note" />
    <item
       type="id"
+      name="frag_noteslist" />
+   <item
+      type="id"
       name="frag_change_tags" />
    <item
       type="id"

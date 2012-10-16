@@ -155,7 +155,7 @@ public abstract class MolokoLog
    
    private void setLogLevel( Context context )
    {
-      final String logLevelString = context.getString( R.string.build_log_level );
+      final String logLevelString = context.getString( R.string.env_log_level );
       
       if ( "verbose".equalsIgnoreCase( logLevelString ) )
       {

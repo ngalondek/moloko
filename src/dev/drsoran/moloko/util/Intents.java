@@ -72,8 +72,6 @@ public final class Intents
    
    public final static class Action
    {
-      public final static String TASKS_LISTS_MIN_DETAILED = "dev.drsoran.moloko.util.Intents.Action.TASKS_LISTS_MIN_DETAILED";
-      
       public final static String SYNC_STATUS_UPDATE = "dev.drsoran.moloko.util.Intents.Action.SYNC_STATUS_UPDATE";
       
       public final static String SETTINGS_CHANGED = "dev.drsoran.moloko.util.Intents.Action.SETTINGS_CHANGED";
@@ -83,6 +81,10 @@ public final class Intents
       public final static String NOTIFICATION_SERVICE_NOTIFICATION_CLICKED = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED";
       
       public final static String NOTIFICATION_SERVICE_NOTIFICATON_CLEARED = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED";
+      
+      public final static String TASK_POSTPONED_FROM_NOTIFICATION = "dev.drsoran.moloko.util.Intents.Action.TASK_POSTPONED_FROM_NOTIFICATION";
+      
+      public final static String TASK_COMPLETED_FROM_NOTIFICATION = "dev.drsoran.moloko.util.Intents.Action.TASK_COMPLETED_FROM_NOTIFICATION";
    }
    
    
@@ -448,6 +450,36 @@ public final class Intents
                                        2,
                                        onClickIntent,
                                        PendingIntent.FLAG_CANCEL_CURRENT );
+   }
+   
+   
+   
+   public final static PendingIntent createTaskPostponedFromNotificationIntent( Context context,
+                                                                                Task task )
+   {
+      final Intent broadcastIntent = new Intent( Action.TASK_POSTPONED_FROM_NOTIFICATION );
+      
+      broadcastIntent.putExtra( Extras.KEY_TASK, task );
+      
+      return PendingIntent.getBroadcast( context,
+                                         0,
+                                         broadcastIntent,
+                                         PendingIntent.FLAG_CANCEL_CURRENT );
+   }
+   
+   
+   
+   public final static PendingIntent createTaskCompletedFromNotificationIntent( Context context,
+                                                                                Task task )
+   {
+      final Intent broadcastIntent = new Intent( Action.TASK_COMPLETED_FROM_NOTIFICATION );
+      
+      broadcastIntent.putExtra( Extras.KEY_TASK, task );
+      
+      return PendingIntent.getBroadcast( context,
+                                         0,
+                                         broadcastIntent,
+                                         PendingIntent.FLAG_CANCEL_CURRENT );
    }
    
    

@@ -173,8 +173,9 @@ class StackedDueTaskNotificationPresenter extends
          final List< DueTaskNotification > notificationStack = getDueTaskNotificationsPartOfStack();
          final DueTaskNotification topOfStackNotification = notificationStack.get( 0 );
          final boolean topOfStackHasChanged = !topOfStackNotification.equals( lastTopOfStack );
+         final String topOfStackTaskId = topOfStackNotification.getTaskId();
          
-         moveCursorToTask( tasksCursor, topOfStackNotification.getTaskId() );
+         moveCursorToTask( tasksCursor, topOfStackTaskId );
          
          final String title = getNotificationTitle( tasksCursor );
          final String text = getNotificationText( tasksCursor );
@@ -183,11 +184,11 @@ class StackedDueTaskNotificationPresenter extends
          
          if ( count > 1 )
          {
-            builder = newStackedNotification( title, text, count );
+            builder = newStackedNotification( title, text, tasksCursor );
          }
          else
          {
-            builder = newSingletonNotification( title, text, count );
+            builder = newSingletonNotification( title, text, count, tasksCursor );
          }
          
          builder.setContentIntent( Intents.createDueTasksNotificationIntent( getContext(),
@@ -213,11 +214,12 @@ class StackedDueTaskNotificationPresenter extends
    
    private INotificationBuilder newSingletonNotification( String title,
                                                           String text,
-                                                          int count )
+                                                          int count,
+                                                          Cursor topOfStackTask )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            count );
+                                                                            topOfStackTask );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_due_task_expanded );
@@ -230,16 +232,16 @@ class StackedDueTaskNotificationPresenter extends
    
    private INotificationBuilder newStackedNotification( String title,
                                                         String text,
-                                                        int count )
+                                                        Cursor tasksCursor )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            count );
+                                                                            tasksCursor );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_due_task_expanded_stacked );
       builder.setLargeIcon( largeIcon );
-      builder.setNumber( count );
+      builder.setNumber( tasksCursor.getCount() );
       
       return builder;
    }

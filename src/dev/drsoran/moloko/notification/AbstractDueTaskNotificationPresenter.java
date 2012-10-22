@@ -39,9 +39,11 @@ import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractDueTaskNotificationPresenter implements
@@ -321,14 +323,27 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected INotificationBuilder createDefaultInitializedBuilder( String title,
                                                                    String text,
-                                                                   int count )
+                                                                   Cursor tasksCursor )
    {
       final INotificationBuilder builder = NotificationBuilderFactory.create( getContext() );
       
       builder.setAutoCancel( true );
       builder.setContentTitle( title );
       builder.setContentText( text );
-      builder.setSmallIcon( R.drawable.notification_due_task, count );
+      builder.setSmallIcon( R.drawable.notification_due_task,
+                            tasksCursor.getCount() );
+      
+      final Task task = TasksProviderPart.createTask( tasksCursor );
+      
+      builder.addAction( R.drawable.ic_menu_complete,
+                         getContext().getString( R.string.app_task_complete ),
+                         Intents.createTaskCompletedFromNotificationIntent( getContext(),
+                                                                            task ) );
+      
+      builder.addAction( R.drawable.ic_menu_postponed,
+                         getContext().getString( R.string.app_task_postpone ),
+                         Intents.createTaskPostponedFromNotificationIntent( getContext(),
+                                                                            task ) );
       
       return builder;
    }

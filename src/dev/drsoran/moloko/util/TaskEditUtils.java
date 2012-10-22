@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
+import android.content.Context;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentProviderAction;
@@ -50,18 +50,18 @@ public final class TaskEditUtils
    
    
    
-   public final static ApplyChangesInfo setTaskCompletion( Activity activity,
+   public final static ApplyChangesInfo setTaskCompletion( Context context,
                                                            Task task,
                                                            boolean complete )
    {
-      return setTasksCompletion( activity,
+      return setTasksCompletion( context,
                                  Collections.singletonList( task ),
                                  complete );
    }
    
    
    
-   public final static ApplyChangesInfo setTasksCompletion( Activity activity,
+   public final static ApplyChangesInfo setTasksCompletion( Context context,
                                                             List< ? extends Task > tasks,
                                                             boolean complete )
    {
@@ -85,27 +85,26 @@ public final class TaskEditUtils
       }
       
       return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
-                                   activity.getString( R.string.toast_save_task ),
-                                   activity.getResources()
-                                           .getQuantityString( complete
-                                                                       ? R.plurals.toast_completed_task
-                                                                       : R.plurals.toast_incompleted_task,
-                                                               tasks.size(),
-                                                               tasks.size() ),
-                                   activity.getString( R.string.toast_save_task_failed ) );
+                                   context.getString( R.string.toast_save_task ),
+                                   context.getResources()
+                                          .getQuantityString( complete
+                                                                      ? R.plurals.toast_completed_task
+                                                                      : R.plurals.toast_incompleted_task,
+                                                              tasks.size(),
+                                                              tasks.size() ),
+                                   context.getString( R.string.toast_save_task_failed ) );
    }
    
    
    
-   public final static ApplyChangesInfo postponeTask( Activity activity,
-                                                      Task task )
+   public final static ApplyChangesInfo postponeTask( Context context, Task task )
    {
-      return postponeTasks( activity, Collections.singletonList( task ) );
+      return postponeTasks( context, Collections.singletonList( task ) );
    }
    
    
    
-   public final static ApplyChangesInfo postponeTasks( Activity activity,
+   public final static ApplyChangesInfo postponeTasks( Context context,
                                                        List< ? extends Task > tasks )
    {
       /**
@@ -177,17 +176,17 @@ public final class TaskEditUtils
       }
       
       return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
-                                   activity.getString( R.string.toast_save_task ),
-                                   activity.getResources()
-                                           .getQuantityString( R.plurals.toast_postponed_task,
-                                                               tasks.size(),
-                                                               tasks.size() ),
-                                   activity.getString( R.string.toast_save_task_failed ) );
+                                   context.getString( R.string.toast_save_task ),
+                                   context.getResources()
+                                          .getQuantityString( R.plurals.toast_postponed_task,
+                                                              tasks.size(),
+                                                              tasks.size() ),
+                                   context.getString( R.string.toast_save_task_failed ) );
    }
    
    
    
-   public final static ApplyChangesInfo insertTask( Activity activity, Task task )
+   public final static ApplyChangesInfo insertTask( Context context, Task task )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
@@ -210,21 +209,21 @@ public final class TaskEditUtils
          actionItemList = null;
       
       return new ApplyChangesInfo( actionItemList,
-                                   activity.getString( R.string.toast_insert_task ),
-                                   activity.getString( R.string.toast_insert_task_ok ),
-                                   activity.getString( R.string.toast_insert_task_fail ) );
+                                   context.getString( R.string.toast_insert_task ),
+                                   context.getString( R.string.toast_insert_task_ok ),
+                                   context.getString( R.string.toast_insert_task_fail ) );
    }
    
    
    
-   public final static ApplyChangesInfo deleteTask( Activity activity, Task task )
+   public final static ApplyChangesInfo deleteTask( Context context, Task task )
    {
-      return deleteTasks( activity, Collections.singletonList( task ) );
+      return deleteTasks( context, Collections.singletonList( task ) );
    }
    
    
    
-   public final static ApplyChangesInfo deleteTasks( Activity activity,
+   public final static ApplyChangesInfo deleteTasks( Context context,
                                                      List< ? extends Task > tasks )
    {
       boolean ok = true;
@@ -259,11 +258,11 @@ public final class TaskEditUtils
          actionItemList = null;
       
       return new ApplyChangesInfo( actionItemList,
-                                   activity.getString( R.string.toast_delete_task ),
-                                   activity.getResources()
-                                           .getQuantityString( R.plurals.toast_deleted_task,
-                                                               tasks.size(),
-                                                               tasks.size() ),
-                                   activity.getString( R.string.toast_delete_task_failed ) );
+                                   context.getString( R.string.toast_delete_task ),
+                                   context.getResources()
+                                          .getQuantityString( R.plurals.toast_deleted_task,
+                                                              tasks.size(),
+                                                              tasks.size() ),
+                                   context.getString( R.string.toast_delete_task_failed ) );
    }
 }

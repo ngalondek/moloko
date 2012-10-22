@@ -442,22 +442,6 @@ public class MolokoCompatibilityListView extends MolokoListView implements
    
    
    @Override
-   public int getCheckedItemCountSupport()
-   {
-      if ( isMultiChoiceModalMode )
-      {
-         return checkedItemCount;
-      }
-      else
-      {
-         final long[] checkedIds = super.getCheckedItemIds();
-         return checkedIds != null ? checkedIds.length : 0;
-      }
-   }
-   
-   
-   
-   @Override
    public void clearChoices()
    {
       if ( checkStates != null )
@@ -476,7 +460,7 @@ public class MolokoCompatibilityListView extends MolokoListView implements
    
    
    @Override
-   protected void handleDataChanged()
+   public void handleDataChanged()
    {
       if ( isMultiChoiceModalMode )
       {

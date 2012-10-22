@@ -24,9 +24,9 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.content.Context;
 
 import com.mdt.rtm.data.RtmList;
 
@@ -53,7 +53,7 @@ public final class RtmListEditUtils
    
    
    
-   public final static ApplyChangesInfo setListName( Activity activity,
+   public final static ApplyChangesInfo setListName( Context context,
                                                      String listId,
                                                      String name )
    {
@@ -66,18 +66,18 @@ public final class RtmListEditUtils
       modifications.add( Modification.newListModified( listId ) );
       
       return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
-                                   activity.getString( R.string.toast_save_list ),
-                                   activity.getString( R.string.toast_save_list_ok ),
-                                   activity.getString( R.string.toast_save_list_failed ) );
+                                   context.getString( R.string.toast_save_list ),
+                                   context.getString( R.string.toast_save_list_ok ),
+                                   context.getString( R.string.toast_save_list_failed ) );
    }
    
    
    
-   public final static ApplyChangesInfo deleteListByName( Activity activity,
+   public final static ApplyChangesInfo deleteListByName( Context context,
                                                           String listName )
    {
-      final ContentProviderClient client = activity.getContentResolver()
-                                                   .acquireContentProviderClient( Lists.CONTENT_URI );
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Lists.CONTENT_URI );
       
       if ( client != null )
       {
@@ -86,18 +86,18 @@ public final class RtmListEditUtils
          client.release();
          
          if ( list != null )
-            return deleteList( activity, list );
+            return deleteList( context, list );
       }
       
       return new ApplyChangesInfo( null,
-                                   activity.getString( R.string.toast_delete_list ),
-                                   activity.getString( R.string.toast_delete_list_ok ),
-                                   activity.getString( R.string.toast_delete_list_failed ) );
+                                   context.getString( R.string.toast_delete_list ),
+                                   context.getString( R.string.toast_delete_list_ok ),
+                                   context.getString( R.string.toast_delete_list_failed ) );
    }
    
    
    
-   public final static ApplyChangesInfo insertList( Activity activity,
+   public final static ApplyChangesInfo insertList( Context context,
                                                     RtmList list )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
@@ -114,14 +114,14 @@ public final class RtmListEditUtils
          actionItemList = null;
       
       return new ApplyChangesInfo( actionItemList,
-                                   activity.getString( R.string.toast_insert_list ),
-                                   activity.getString( R.string.toast_insert_list_ok ),
-                                   activity.getString( R.string.toast_insert_list_fail ) );
+                                   context.getString( R.string.toast_insert_list ),
+                                   context.getString( R.string.toast_insert_list_ok ),
+                                   context.getString( R.string.toast_insert_list_fail ) );
    }
    
    
    
-   public final static ApplyChangesInfo deleteList( Activity activity,
+   public final static ApplyChangesInfo deleteList( Context context,
                                                     RtmList list )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
@@ -143,9 +143,9 @@ public final class RtmListEditUtils
          // Move all contained tasks of the deleted List to the Inbox, this only applies to non-smart lists.
          if ( list.getSmartFilter() == null )
          {
-            final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( activity.getContentResolver(),
+            final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( context.getContentResolver(),
                                                                                                                                listId,
-                                                                                                                               activity.getString( R.string.app_list_name_inbox ) );
+                                                                                                                               context.getString( R.string.app_list_name_inbox ) );
             ok = moveTasksToInboxOps != null;
             ok = ok
                && actionItemList.addAll( ContentProviderAction.Type.UPDATE,
@@ -163,11 +163,11 @@ public final class RtmListEditUtils
          {
             actionItemList.add( 0, modifications );
             
-            final String defaultListId = MolokoApp.getSettings( activity )
+            final String defaultListId = MolokoApp.getSettings( context )
                                                   .getDefaultListId();
             if ( defaultListId.equals( listId ) )
             {
-               MolokoApp.getSettings( activity )
+               MolokoApp.getSettings( context )
                         .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
             }
          }
@@ -177,16 +177,16 @@ public final class RtmListEditUtils
          }
          
          applyChangesInfo = new ApplyChangesInfo( actionItemList,
-                                                  activity.getString( R.string.toast_delete_list ),
-                                                  activity.getString( R.string.toast_delete_list_ok ),
-                                                  activity.getString( R.string.toast_delete_list_failed ) );
+                                                  context.getString( R.string.toast_delete_list ),
+                                                  context.getString( R.string.toast_delete_list_ok ),
+                                                  context.getString( R.string.toast_delete_list_failed ) );
       }
       else
       {
          applyChangesInfo = new ApplyChangesInfo( actionItemList,
-                                                  activity.getString( R.string.toast_delete_list ),
-                                                  activity.getString( R.string.toast_delete_list_ok ),
-                                                  activity.getString( R.string.toast_delete_locked_list ) );
+                                                  context.getString( R.string.toast_delete_list ),
+                                                  context.getString( R.string.toast_delete_list_ok ),
+                                                  context.getString( R.string.toast_delete_locked_list ) );
       }
       
       return applyChangesInfo;

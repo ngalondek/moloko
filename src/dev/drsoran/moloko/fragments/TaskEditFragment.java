@@ -195,7 +195,7 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    
    private void registerForTaskDeletedByBackgroundSync()
    {
-      taskChangesObserver = new ContentObserver( null )
+      taskChangesObserver = new ContentObserver( MolokoApp.getHandler() )
       {
          @Override
          public void onChange( boolean selfChange )

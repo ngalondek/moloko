@@ -28,11 +28,15 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.widget.RemoteViews;
+import dev.drsoran.moloko.MolokoApp;
 
 
 class NativeNotificationBuilder implements INotificationBuilder
 {
+   private final static boolean SUPPORT_ADD_ACTION = MolokoApp.isApiLevelSupported( Build.VERSION_CODES.JELLY_BEAN );
+   
    private final Notification.Builder nativeBuilder;
    
    
@@ -40,6 +44,24 @@ class NativeNotificationBuilder implements INotificationBuilder
    public NativeNotificationBuilder( Context context )
    {
       nativeBuilder = new Builder( context );
+   }
+   
+   
+   
+   @Override
+   public INotificationBuilder addAction( int icon,
+                                          CharSequence title,
+                                          PendingIntent intent )
+   {
+      if ( SUPPORT_ADD_ACTION )
+      {
+         nativeBuilder.addAction( icon, title, intent );
+         return this;
+      }
+      else
+      {
+         return this;
+      }
    }
    
    
@@ -206,9 +228,17 @@ class NativeNotificationBuilder implements INotificationBuilder
    
    
    
+   @SuppressWarnings( "deprecation" )
    @Override
    public Notification build()
    {
-      return nativeBuilder.getNotification();
+      if ( SUPPORT_ADD_ACTION )
+      {
+         return nativeBuilder.build();
+      }
+      else
+      {
+         return nativeBuilder.getNotification();
+      }
    }
 }

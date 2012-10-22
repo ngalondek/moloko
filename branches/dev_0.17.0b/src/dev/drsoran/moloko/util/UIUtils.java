@@ -46,7 +46,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
@@ -608,31 +607,5 @@ public final class UIUtils
    {
       return fragmentActivity.getSupportFragmentManager()
                              .findFragmentByTag( fragmentTag ) != null;
-   }
-   
-   
-   
-   public final static boolean reportStatus( Context context,
-                                             int resIdOk,
-                                             int resIdFailed,
-                                             boolean ok )
-   {
-      Toast.makeText( context, ok ? resIdOk : resIdFailed, Toast.LENGTH_LONG )
-           .show();
-      
-      return ok;
-   }
-   
-   
-   
-   public final static boolean reportStatus( Context context,
-                                             CharSequence strOk,
-                                             CharSequence strFailed,
-                                             boolean ok )
-   {
-      Toast.makeText( context, ok ? strOk : strFailed, Toast.LENGTH_LONG )
-           .show();
-      
-      return ok;
    }
 }

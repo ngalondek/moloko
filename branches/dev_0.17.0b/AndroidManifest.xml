@@ -447,6 +447,23 @@
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
       </receiver>
+      
+      <receiver
+         android:name=".receivers.NotificationActionReceiver"
+         android:exported="false">
+         <intent-filter>
+            <action
+               android:name="dev.drsoran.moloko.util.Intents.Action.TASK_COMPLETED_FROM_NOTIFICATION" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+         <intent-filter>
+            <action
+               android:name="dev.drsoran.moloko.util.Intents.Action.TASK_POSTPONED_FROM_NOTIFICATION" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+      </receiver>
   
    </application>
 

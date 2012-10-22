@@ -26,56 +26,30 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
 
 class CompatibilityNotificationBuilder implements INotificationBuilder
 {
-   private final Context context;
-   
-   private boolean autoCancel;
-   
-   private boolean isOngoing;
-   
-   private RemoteViews content;
-   
-   private CharSequence contentText;
-   
-   private CharSequence contentTitle;
-   
-   private PendingIntent contentIntent;
-   
-   private PendingIntent deleteIntent;
-   
-   private CharSequence tickerText;
-   
-   private int defaults = Notification.DEFAULT_ALL;
-   
-   private int lightsARGB;
-   
-   private int lightsOnMs;
-   
-   private int lightsOffMs;
-   
-   private int number;
-   
-   private int icon;
-   
-   private int iconLevel;
-   
-   private Uri sound;
-   
-   private long[] vibrate;
-   
-   private long when;
+   private final NotificationCompat.Builder compatBuilder;
    
    
    
    public CompatibilityNotificationBuilder( Context context )
    {
-      this.context = context;
+      compatBuilder = new NotificationCompat.Builder( context );
+   }
+   
+   
+   
+   @Override
+   public INotificationBuilder addAction( int icon,
+                                          CharSequence title,
+                                          PendingIntent intent )
+   {
+      return this;
    }
    
    
@@ -83,7 +57,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setAutoCancel( boolean autoCancel )
    {
-      this.autoCancel = autoCancel;
+      compatBuilder.setAutoCancel( autoCancel );
       return this;
    }
    
@@ -92,7 +66,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setContent( RemoteViews views )
    {
-      content = views;
+      compatBuilder.setContent( views );
       return this;
    }
    
@@ -101,6 +75,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setContentInfo( CharSequence info )
    {
+      compatBuilder.setContentInfo( info );
       return this;
    }
    
@@ -109,7 +84,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setContentIntent( PendingIntent intent )
    {
-      contentIntent = intent;
+      compatBuilder.setContentIntent( intent );
       return this;
    }
    
@@ -118,7 +93,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setContentText( CharSequence text )
    {
-      contentText = text;
+      compatBuilder.setContentText( text );
       return this;
    }
    
@@ -127,7 +102,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setContentTitle( CharSequence title )
    {
-      contentTitle = title;
+      compatBuilder.setContentTitle( title );
       return this;
    }
    
@@ -136,7 +111,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setDeleteIntent( PendingIntent intent )
    {
-      deleteIntent = intent;
+      compatBuilder.setDeleteIntent( intent );
       return this;
    }
    
@@ -145,7 +120,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setDefaults( int defaults )
    {
-      this.defaults = defaults;
+      compatBuilder.setDefaults( defaults );
       return this;
    }
    
@@ -154,6 +129,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setLargeIcon( Bitmap icon )
    {
+      compatBuilder.setLargeIcon( icon );
       return this;
    }
    
@@ -162,9 +138,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setLights( int argb, int onMs, int offMs )
    {
-      lightsARGB = argb;
-      lightsOnMs = onMs;
-      lightsOffMs = offMs;
+      compatBuilder.setLights( argb, onMs, offMs );
       return this;
    }
    
@@ -173,7 +147,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setNumber( int number )
    {
-      this.number = number;
+      compatBuilder.setNumber( number );
       return this;
    }
    
@@ -182,7 +156,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setOngoing( boolean ongoing )
    {
-      isOngoing = ongoing;
+      compatBuilder.setOngoing( ongoing );
       return this;
    }
    
@@ -191,8 +165,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setSmallIcon( int icon, int level )
    {
-      this.icon = icon;
-      iconLevel = level;
+      compatBuilder.setSmallIcon( icon, level );
       return this;
    }
    
@@ -201,8 +174,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setSmallIcon( int icon )
    {
-      this.icon = icon;
-      iconLevel = 0;
+      compatBuilder.setSmallIcon( icon );
       return this;
    }
    
@@ -211,7 +183,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setSound( Uri sound )
    {
-      this.sound = sound;
+      compatBuilder.setSound( sound );
       return this;
    }
    
@@ -220,7 +192,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setTicker( CharSequence tickerText )
    {
-      this.tickerText = tickerText;
+      compatBuilder.setTicker( tickerText );
       return this;
    }
    
@@ -229,7 +201,7 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setVibrate( long[] pattern )
    {
-      vibrate = pattern;
+      compatBuilder.setVibrate( pattern );
       return this;
    }
    
@@ -238,70 +210,15 @@ class CompatibilityNotificationBuilder implements INotificationBuilder
    @Override
    public INotificationBuilder setWhen( long when )
    {
-      this.when = when;
+      compatBuilder.setWhen( when );
       return this;
    }
    
    
    
-   @SuppressWarnings( "deprecation" )
    @Override
    public Notification build()
    {
-      final Notification notification = new Notification( icon,
-                                                          tickerText,
-                                                          when );
-      notification.setLatestEventInfo( context,
-                                       contentTitle,
-                                       contentText,
-                                       contentIntent );
-      
-      notification.deleteIntent = deleteIntent;
-      
-      if ( content != null )
-      {
-         notification.contentView = content;
-      }
-      
-      notification.defaults = defaults;
-      notification.iconLevel = iconLevel;
-      
-      notification.ledARGB = lightsARGB;
-      notification.ledOnMS = lightsOnMs;
-      notification.ledOffMS = lightsOffMs;
-      if ( areLightsUsed() )
-      {
-         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-      }
-      
-      notification.number = number;
-      
-      notification.sound = sound;
-      if ( sound != null )
-      {
-         notification.audioStreamType = Notification.STREAM_DEFAULT;
-      }
-      
-      notification.vibrate = vibrate;
-      
-      if ( isOngoing )
-      {
-         notification.flags |= Notification.FLAG_ONGOING_EVENT
-            | Notification.FLAG_NO_CLEAR;
-      }
-      if ( autoCancel )
-      {
-         notification.flags |= Notification.FLAG_AUTO_CANCEL;
-      }
-      
-      return notification;
-   }
-   
-   
-   
-   private boolean areLightsUsed()
-   {
-      return ( lightsOnMs != 0 || lightsOffMs != 0 )
-         && Color.alpha( lightsARGB ) != 0;
+      return compatBuilder.getNotification();
    }
 }

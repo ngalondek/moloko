@@ -45,7 +45,6 @@ public class BaseMultiChoiceModeListener< T > implements
 {
    private class ListDatasetObserver extends DataSetObserver
    {
-      
       @Override
       public void onChanged()
       {
@@ -69,7 +68,7 @@ public class BaseMultiChoiceModeListener< T > implements
       }
    }
    
-   private final DataSetObserver dataSetObserver = new ListDatasetObserver();
+   private final DataSetObserver dataSetObserver;
    
    private final MolokoListView listView;
    
@@ -82,6 +81,7 @@ public class BaseMultiChoiceModeListener< T > implements
    public BaseMultiChoiceModeListener( MolokoListView listView )
    {
       this.listView = listView;
+      this.dataSetObserver = new ListDatasetObserver();
    }
    
    

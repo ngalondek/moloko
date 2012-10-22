@@ -317,7 +317,10 @@ public abstract class AbstractFullDetailedTasksListActivity extends
             break;
       }
       
-      activeActionMode.finish();
+      if ( activeActionMode != null )
+      {
+         activeActionMode.finish();
+      }
    }
    
    

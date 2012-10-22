@@ -31,9 +31,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
+import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.Task;
 
 
 class HoneycombPermanentNotificationPresenter extends
@@ -83,7 +85,7 @@ class HoneycombPermanentNotificationPresenter extends
       }
       else
       {
-         return newSingletonNotification( title, text, tasksCount );
+         return newSingletonNotification( title, text, tasksCursor );
       }
    }
    
@@ -144,15 +146,28 @@ class HoneycombPermanentNotificationPresenter extends
    
    private Notification newSingletonNotification( String title,
                                                   String text,
-                                                  int count )
+                                                  Cursor tasksCursor )
    {
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            count );
+                                                                            1 );
       
       final Bitmap largeIcon = BitmapFactory.decodeResource( getContext().getResources(),
                                                              R.drawable.ic_notify_permanent_expanded );
       builder.setLargeIcon( largeIcon );
+      
+      tasksCursor.moveToFirst();
+      final Task task = TasksProviderPart.createTask( tasksCursor );
+      
+      builder.addAction( R.drawable.ic_menu_complete,
+                         getContext().getString( R.string.app_task_complete ),
+                         Intents.createTaskCompletedFromNotificationIntent( getContext(),
+                                                                            task ) );
+      
+      builder.addAction( R.drawable.ic_menu_postponed,
+                         getContext().getString( R.string.app_task_postpone ),
+                         Intents.createTaskPostponedFromNotificationIntent( getContext(),
+                                                                            task ) );
       
       return builder.build();
    }

@@ -24,17 +24,14 @@ package dev.drsoran.moloko.util;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
 
 import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
 
 
 public final class Queries
@@ -274,40 +271,5 @@ public final class Queries
       }
       
       return res;
-   }
-   
-   
-   
-   public final static boolean applyActionItemList( FragmentActivity activity,
-                                                    ContentProviderActionItemList actionItemList,
-                                                    String progressText )
-   {
-      boolean ok = true;
-      
-      if ( actionItemList.size() > 0 )
-      {
-         try
-         {
-            ok = new ApplyContentProviderActionItemsTask( activity,
-                                                          progressText ).execute( actionItemList )
-                                                                        .get();
-         }
-         catch ( InterruptedException e )
-         {
-            MolokoApp.Log.e( Queries.class,
-                             "Applying ContentProviderActionItemList failed",
-                             e );
-            ok = false;
-         }
-         catch ( ExecutionException e )
-         {
-            MolokoApp.Log.e( Queries.class,
-                             "Applying ContentProviderActionItemList failed",
-                             e );
-            ok = false;
-         }
-      }
-      
-      return ok;
    }
 }

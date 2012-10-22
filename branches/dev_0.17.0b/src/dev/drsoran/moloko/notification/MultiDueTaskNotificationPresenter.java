@@ -156,7 +156,7 @@ class MultiDueTaskNotificationPresenter extends
       
       final INotificationBuilder builder = createDefaultInitializedBuilder( title,
                                                                             text,
-                                                                            1 );
+                                                                            tasksCursor );
       builder.setContentIntent( onClickIntent );
       builder.setDeleteIntent( onDeleteIntent );
       

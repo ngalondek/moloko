@@ -99,6 +99,14 @@ public abstract class MolokoListView extends ListView
    
    
    
+   @Override
+   public void handleDataChanged()
+   {
+      super.handleDataChanged();
+   }
+   
+   
+   
    /**
     * Use getCheckedItemCountSupport() since this works with all Android versions.
     */
@@ -115,8 +123,9 @@ public abstract class MolokoListView extends ListView
    {
       final List< T > checkedItems;
       final ListAdapter adapter = getAdapter();
+      final int numItems = adapter.getCount();
       
-      if ( adapter.getCount() > 0 )
+      if ( numItems > 0 )
       {
          final SparseBooleanArray checkedPositions = getCheckedItemPositions();
          final int numSelected = checkedPositions.size();
@@ -128,7 +137,11 @@ public abstract class MolokoListView extends ListView
             final int position = checkedPositions.keyAt( i );
             final boolean isChecked = checkedPositions.get( position );
             
-            if ( isChecked )
+            // Note: We have to check the position against the number of items
+            // to circumvent an issue in Android where the registration order
+            // of a DataSetObserver may cause the checked state of the list
+            // items to be stale.
+            if ( isChecked && position < numItems )
             {
                @SuppressWarnings( "unchecked" )
                final T selectedItem = (T) adapter.getItem( position );
@@ -147,9 +160,33 @@ public abstract class MolokoListView extends ListView
    
    
    
+   public int getCheckedItemCountSupport()
+   {
+      int selectedItemCount = 0;
+      
+      final SparseBooleanArray checkedPositions = getCheckedItemPositions();
+      final int numSelected = checkedPositions.size();
+      final int numItems = getAdapter().getCount();
+      
+      for ( int i = 0; i < numSelected; ++i )
+      {
+         final int position = checkedPositions.keyAt( i );
+         final boolean isChecked = checkedPositions.get( position );
+         
+         // Note: We have to check the position against the number of items
+         // to circumvent an issue in Android where the registration order
+         // of a DataSetObserver may cause the checked state of the list
+         // items to be stale.
+         if ( isChecked && position < numItems )
+         {
+            ++selectedItemCount;
+         }
+      }
+      
+      return selectedItemCount;
+   }
+   
+   
+   
    public abstract void setMolokoMultiChoiceModeListener( IMolokoMultiChoiceModeListener listener );
-   
-   
-   
-   public abstract int getCheckedItemCountSupport();
 }

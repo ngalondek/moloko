@@ -147,13 +147,4 @@ public class MolokoNativeListView extends MolokoListView
    {
       super.setMultiChoiceModeListener( new MolokoMultiChoiceModeWrapper( listener ) );
    }
-   
-   
-   
-   @SuppressWarnings( "deprecation" )
-   @Override
-   public int getCheckedItemCountSupport()
-   {
-      return super.getCheckedItemCount();
-   }
 }

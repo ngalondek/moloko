@@ -30,9 +30,9 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.content.ActionItemListApplier;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -88,11 +88,8 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
          else if ( applyInfo.hasChanges() )
          {
             final ContentProviderActionItemList actionItemList = applyInfo.getActionItems();
-            final String progressMessage = applyInfo.getProgressMessage();
             
-            ok = Queries.applyActionItemList( this,
-                                              actionItemList,
-                                              progressMessage );
+            ok = new ActionItemListApplier( this ).applyNonThrowing( actionItemList );
             showApplyChangesInfoAsToast( applyInfo, ok );
          }
       }
@@ -105,10 +102,10 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    private void showApplyChangesInfoAsToast( ApplyChangesInfo applyInfo,
                                              boolean success )
    {
-      UIUtils.reportStatus( this,
-                            applyInfo.getApplySuccessMessage(),
-                            applyInfo.getApplyFailedMessage(),
-                            success );
+      Toast.makeText( this,
+                      success ? applyInfo.getApplySuccessMessage()
+                             : applyInfo.getApplyFailedMessage(),
+                      Toast.LENGTH_LONG ).show();
    }
    
    

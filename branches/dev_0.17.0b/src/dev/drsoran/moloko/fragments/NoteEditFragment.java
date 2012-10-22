@@ -265,7 +265,7 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
    
    private void registerForNoteDeletedByBackgroundSync()
    {
-      noteChangesObserver = new ContentObserver( null )
+      noteChangesObserver = new ContentObserver( MolokoApp.getHandler() )
       {
          @Override
          public void onChange( boolean selfChange )

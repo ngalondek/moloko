@@ -608,7 +608,7 @@ public class TasksProviderPart extends AbstractProviderPart
    
    
    
-   private final static Task createTask( Cursor c )
+   public final static Task createTask( Cursor c )
    {
       final String taskSeriesId = c.getString( COL_INDICES.get( Tasks.TASKSERIES_ID ) );
       

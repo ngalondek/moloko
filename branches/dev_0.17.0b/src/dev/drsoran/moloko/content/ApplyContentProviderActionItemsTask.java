@@ -20,37 +20,28 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.content;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderClient;
+import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 
 
-public class ApplyContentProviderActionItemsTask extends
+class ApplyContentProviderActionItemsTask extends
          AsyncTask< ContentProviderActionItemList, Void, Boolean >
 {
-   private final FragmentActivity activity;
-   
-   @SuppressWarnings( "unused" )
-   // Can be null
-   private final String progressMsg;
+   private final Context context;
    
    
    
-   public ApplyContentProviderActionItemsTask( FragmentActivity activity,
-      String progressText )
+   public ApplyContentProviderActionItemsTask( Context context )
    {
-      if ( activity == null )
-         throw new NullPointerException( "activity is null" );
-      
-      this.activity = activity;
-      this.progressMsg = progressText;
+      this.context = context;
    }
    
    
@@ -64,11 +55,13 @@ public class ApplyContentProviderActionItemsTask extends
       if ( params.length == 0 || params[ 0 ].size() == 0 )
          return Boolean.TRUE;
       
-      if ( AccountUtils.isReadOnlyAccess( activity ) )
-         throw new SecurityException( LogUtils.DB_READ_ONLY_ERROR );
+      if ( AccountUtils.isReadOnlyAccess( context ) )
+      {
+         throw new UnsupportedOperationException( LogUtils.DB_READ_ONLY_ERROR );
+      }
       
-      final ContentProviderClient client = activity.getContentResolver()
-                                                   .acquireContentProviderClient( Rtm.AUTHORITY );
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Rtm.AUTHORITY );
       boolean ok = client != null;
       if ( ok )
       {
@@ -92,7 +85,9 @@ public class ApplyContentProviderActionItemsTask extends
       }
       
       if ( client != null )
+      {
          client.release();
+      }
       
       return ok;
    }

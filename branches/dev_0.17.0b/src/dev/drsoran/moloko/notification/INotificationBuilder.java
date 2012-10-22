@@ -31,6 +31,12 @@ import android.widget.RemoteViews;
 
 interface INotificationBuilder
 {
+   INotificationBuilder addAction( int icon,
+                                   CharSequence title,
+                                   PendingIntent intent );
+   
+   
+   
    INotificationBuilder setAutoCancel( boolean autoCancel );
    
    

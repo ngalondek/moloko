@@ -35,6 +35,10 @@ interface IMainPreferencesActivityImplementor
    
    
    
+   void onStart( PreferenceActivity activity );
+   
+   
+   
    void onDestroy( PreferenceActivity activity );
    
    

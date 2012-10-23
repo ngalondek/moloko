@@ -22,18 +22,16 @@
 
 package dev.drsoran.moloko.prefs.fragments;
 
-import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.view.View;
 import dev.drsoran.moloko.prefs.PreferenceLifecycle;
 
 
 abstract class MolokoPreferenceFragment extends PreferenceFragment
 {
    @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
+   public void onStart()
    {
-      super.onViewCreated( view, savedInstanceState );
+      super.onStart();
       PreferenceLifecycle.enablePreferences( getPreferenceScreen() );
    }
    

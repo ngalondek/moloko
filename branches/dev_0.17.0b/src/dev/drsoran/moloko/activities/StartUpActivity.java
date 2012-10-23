@@ -38,6 +38,7 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Intents.HomeAction;
@@ -54,10 +55,13 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    private final static int STATE_DETERMINE_STARTUP_VIEW = 1;
    
-   private final static int STATE_COMPLETED = 2;
+   private final static int STATE_CHECK_SYNC_AT_STARTUP = 2;
+   
+   private final static int STATE_COMPLETED = 3;
    
    private final static int[] STATE_SEQUENCE =
-   { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW, STATE_COMPLETED };
+   { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW,
+    STATE_CHECK_SYNC_AT_STARTUP, STATE_COMPLETED };
    
    private int stateIndex = 0;
    
@@ -206,6 +210,21 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    
    
+   private void checkAndPerformSyncAtStartUp()
+   {
+      final Settings molokoSettings = MolokoApp.getSettings( this );
+      
+      if ( molokoSettings.isSyncAtStartup()
+         && !molokoSettings.isManualSyncOnly() )
+      {
+         SyncUtils.requestManualSync( this, true /* silent */);
+      }
+      
+      switchToNextState();
+   }
+   
+   
+   
    private void onStartUpCompleted()
    {
       final Settings settings = MolokoApp.getSettings( this );
@@ -264,6 +283,10 @@ public class StartUpActivity extends MolokoFragmentActivity
          
          case STATE_DETERMINE_STARTUP_VIEW:
             determineStartupView();
+            break;
+         
+         case STATE_CHECK_SYNC_AT_STARTUP:
+            checkAndPerformSyncAtStartUp();
             break;
          
          case STATE_COMPLETED:

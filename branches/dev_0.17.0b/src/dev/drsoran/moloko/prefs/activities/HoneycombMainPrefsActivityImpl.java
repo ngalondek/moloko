@@ -41,6 +41,13 @@ class HoneycombMainPrefsActivityImpl implements
    
    
    @Override
+   public void onStart( PreferenceActivity activity )
+   {
+   }
+   
+   
+   
+   @Override
    public void onDestroy( PreferenceActivity activity )
    {
    }

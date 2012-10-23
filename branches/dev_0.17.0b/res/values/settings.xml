@@ -27,6 +27,7 @@
    <string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
    <string name="key_startup_view">startup_view</string>
    <string name="key_task_sort">task_sort</string>
+   <string name="key_sync_at_startup">sync_at_startup</string>
    <string name="key_notify_due_tasks">notify_due_tasks</string>
    <string name="key_notify_due_tasks_before">notify_due_tasks_before</string>
    <string name="key_notify_due_tasks_ringtone">notify_due_tasks_ringtone</string>

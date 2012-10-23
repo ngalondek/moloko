@@ -135,7 +135,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    private void initTimeFormat()
    {
       is24hTimeFormat = MolokoApp.getSettings( getSherlockActivity() )
-                                 .Is24hTimeformat();
+                                 .is24hTimeformat();
    }
    
    

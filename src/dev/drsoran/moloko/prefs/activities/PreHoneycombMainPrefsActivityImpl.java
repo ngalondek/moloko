@@ -39,6 +39,14 @@ class PreHoneycombMainPrefsActivityImpl implements
    public void onCreate( Bundle savedInstanceState, PreferenceActivity activity )
    {
       activity.addPreferencesFromResource( R.xml.main_preferences );
+   }
+   
+   
+   
+   @SuppressWarnings( "deprecation" )
+   @Override
+   public void onStart( PreferenceActivity activity )
+   {
       PreferenceLifecycle.enablePreferences( activity.getPreferenceScreen() );
    }
    

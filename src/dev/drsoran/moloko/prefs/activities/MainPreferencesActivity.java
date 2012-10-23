@@ -62,6 +62,15 @@ public class MainPreferencesActivity extends SherlockPreferenceActivity
    
    
    @Override
+   protected void onStart()
+   {
+      super.onStart();
+      impl.onStart( this );
+   }
+   
+   
+   
+   @Override
    protected void onDestroy()
    {
       super.onDestroy();

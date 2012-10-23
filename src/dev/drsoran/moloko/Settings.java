@@ -98,7 +98,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
-   public boolean Is24hTimeformat()
+   public boolean is24hTimeformat()
    {
       return android.text.format.DateFormat.is24HourFormat( context );
    }
@@ -210,10 +210,31 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   public boolean isSyncAtStartup()
+   {
+      return loadBool( context.getString( R.string.key_sync_at_startup ), true );
+   }
+   
+   
+   
+   public void setSyncAtStartUp( boolean value )
+   {
+      storeBool( context.getString( R.string.key_sync_at_startup ), value );
+   }
+   
+   
+   
    public long getSyncInterval()
    {
       return loadLong( context.getString( R.string.key_sync_inverval ),
                        Long.valueOf( context.getString( R.string.acc_pref_sync_interval_default_value ) ) );
+   }
+   
+   
+   
+   public boolean isManualSyncOnly()
+   {
+      return getSyncInterval() == -1;
    }
    
    

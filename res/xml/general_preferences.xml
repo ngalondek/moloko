@@ -22,6 +22,11 @@
       android:title="@string/moloko_prefs_startup_view_title"
       android:summary="%s"
       android:key="@string/key_startup_view" />
+   
+   <dev.drsoran.moloko.prefs.SyncAtStartUpPreference 
+      android:title="@string/moloko_prefs_sync_at_startup_title"
+      android:key="@string/key_sync_at_startup"
+      android:defaultValue="true" />
 
    <dev.drsoran.moloko.prefs.TaskSortPreference
       android:title="@string/moloko_prefs_def_sort_title"

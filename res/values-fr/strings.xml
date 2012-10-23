@@ -416,6 +416,8 @@
 	   <string name="moloko_prefs_startup_view_def_list_name">Liste par défaut (%1$s)</string>
 	   <string name="moloko_prefs_def_sort_title">Trier les tâches</string>
 	   <string name="moloko_prefs_def_sort_summary">par %s</string>
+	   <string name="moloko_prefs_sync_at_startup_title">Sync at startup</string>
+	   <string name="moloko_prefs_sync_at_startup_summary_disabled">Sync at startup is prevented by manual sync interval</string>
 	   
 	   <!-- Notification settings -->
 	   <string name="moloko_prefs_notification_title">Notification</string>

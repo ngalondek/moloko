@@ -89,6 +89,14 @@ public final class SyncUtils
    
    public final static void requestManualSync( FragmentActivity activity )
    {
+      requestManualSync( activity, false );
+   }
+   
+   
+   
+   public final static void requestManualSync( FragmentActivity activity,
+                                               boolean silent )
+   {
       if ( ConnectionUtil.isConnected( activity ) )
       {
          final Account account = AccountUtils.getRtmAccount( activity );
@@ -97,12 +105,13 @@ public final class SyncUtils
          {
             SyncUtils.requestManualSync( account );
          }
-         else
+         
+         else if ( !silent )
          {
             UIUtils.showNoAccountDialog( activity );
          }
       }
-      else
+      else if ( !silent )
       {
          UIUtils.showNotConnectedDialog( activity );
       }

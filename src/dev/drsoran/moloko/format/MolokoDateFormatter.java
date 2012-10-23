@@ -225,7 +225,7 @@ public final class MolokoDateFormatter
       // Time
       if ( time )
       {
-         final String timePattern = ( MolokoApp.getSettings( context ).Is24hTimeformat() )
+         final String timePattern = ( MolokoApp.getSettings( context ).is24hTimeformat() )
                                                                                           ? context.getString( R.string.time_pattern_24 )
                                                                                           : context.getString( R.string.time_pattern_12 );
          

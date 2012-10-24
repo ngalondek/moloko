@@ -39,6 +39,7 @@ import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -333,6 +334,19 @@ abstract class AbstractDueTaskNotificationPresenter implements
       builder.setSmallIcon( R.drawable.notification_due_task,
                             tasksCursor.getCount() );
       
+      if ( AccountUtils.isWriteableAccess( getContext() ) )
+      {
+         addNotificationActions( tasksCursor, builder );
+      }
+      
+      return builder;
+   }
+   
+   
+   
+   private void addNotificationActions( Cursor tasksCursor,
+                                        INotificationBuilder builder )
+   {
       final Task task = TasksProviderPart.createTask( tasksCursor );
       
       builder.addAction( R.drawable.ic_menu_complete,
@@ -344,8 +358,6 @@ abstract class AbstractDueTaskNotificationPresenter implements
                          getContext().getString( R.string.app_task_postpone ),
                          Intents.createTaskPostponedFromNotificationIntent( getContext(),
                                                                             task ) );
-      
-      return builder;
    }
    
    

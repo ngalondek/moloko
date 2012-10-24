@@ -32,6 +32,7 @@ import android.graphics.BitmapFactory;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -156,6 +157,19 @@ class HoneycombPermanentNotificationPresenter extends
                                                              R.drawable.ic_notify_permanent_expanded );
       builder.setLargeIcon( largeIcon );
       
+      if ( AccountUtils.isWriteableAccess( getContext() ) )
+      {
+         addNotificationActions( tasksCursor, builder );
+      }
+      
+      return builder.build();
+   }
+   
+   
+   
+   private void addNotificationActions( Cursor tasksCursor,
+                                        INotificationBuilder builder )
+   {
       tasksCursor.moveToFirst();
       final Task task = TasksProviderPart.createTask( tasksCursor );
       
@@ -168,8 +182,6 @@ class HoneycombPermanentNotificationPresenter extends
                          getContext().getString( R.string.app_task_postpone ),
                          Intents.createTaskPostponedFromNotificationIntent( getContext(),
                                                                             task ) );
-      
-      return builder.build();
    }
    
    

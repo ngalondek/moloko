@@ -25,8 +25,10 @@ package dev.drsoran.moloko.notification;
 import java.util.HashMap;
 import java.util.Locale;
 
+import android.accounts.Account;
 import android.content.Intent;
 import android.content.res.Configuration;
+import dev.drsoran.moloko.IAccountUpdatedListener;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -35,7 +37,7 @@ import dev.drsoran.moloko.util.Intents.Extras;
 
 
 class MolokoNotificationManager implements IOnTimeChangedListener,
-         IOnSettingsChangedListener
+         IOnSettingsChangedListener, IAccountUpdatedListener
 {
    private final NotifierContext context;
    
@@ -105,6 +107,14 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    
    
+   @Override
+   public void onAccountUpdated( int what, Account account )
+   {
+      recreateNotifications();
+   }
+   
+   
+   
    public void onNotificationClicked( Intent intent )
    {
       int notificationId = getNotificationId( intent );
@@ -162,12 +172,14 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
       context.registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
       context.registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
                                                  this );
+      context.registerAccountUpdatedListener( this );
    }
    
    
    
    private void unregisterListeners()
    {
+      context.unregisterAccountUpdatedListener( this );
       context.unregisterOnTimeChangedListener( this );
       context.unregisterOnSettingsChangedListener( this );
    }

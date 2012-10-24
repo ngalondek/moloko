@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import android.content.ContentProviderClient;
@@ -388,8 +387,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
       if ( which == IOnSettingsChangedListener.RTM_SETTINGS_SYNCED )
       {

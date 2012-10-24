@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -174,8 +172,7 @@ public abstract class MolokoFragment extends SherlockFragment implements
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
    }
    

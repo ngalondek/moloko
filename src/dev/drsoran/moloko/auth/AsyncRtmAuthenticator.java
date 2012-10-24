@@ -274,8 +274,6 @@ public class AsyncRtmAuthenticator
       @Override
       protected final void onPostExecute( Result result )
       {
-         AsyncRtmAuthenticator.this.runningTask = null;
-         
          if ( authSequenceRef.get() != null )
          {
             postExecuteImpl( result );
@@ -294,7 +292,9 @@ public class AsyncRtmAuthenticator
       private void postExecuteImpl( Result result )
       {
          runPostExecute( result );
+         
          notifyPostExecute = false;
+         AsyncRtmAuthenticator.this.runningTask = null;
       }
       
       

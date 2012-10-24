@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.fragments.base.impl;
 
-import java.util.HashMap;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -123,8 +121,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
       if ( isLoaderDataFound() && support.getContentView() != null )
          support.initContent( support.getContentView() );

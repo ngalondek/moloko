@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.notification;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import android.accounts.Account;
@@ -96,8 +95,7 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
       for ( IStatusbarNotifier notifier : notifiers )
       {

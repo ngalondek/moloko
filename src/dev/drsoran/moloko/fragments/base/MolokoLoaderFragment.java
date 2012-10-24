@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -177,10 +175,9 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
-      loaderImpl.onSettingsChanged( which, oldValues );
+      loaderImpl.onSettingsChanged( which );
    }
    
    

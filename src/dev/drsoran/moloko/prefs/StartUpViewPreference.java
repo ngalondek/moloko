@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.prefs;
 
-import java.util.HashMap;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentProviderClient;
@@ -77,8 +75,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
       setEntries( createEntries() );
       

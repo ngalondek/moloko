@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -241,10 +240,9 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
-      loaderImpl.onSettingsChanged( which, oldValues );
+      loaderImpl.onSettingsChanged( which );
    }
    
    

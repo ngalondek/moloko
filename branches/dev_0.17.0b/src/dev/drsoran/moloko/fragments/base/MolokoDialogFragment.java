@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -146,8 +144,7 @@ public abstract class MolokoDialogFragment extends SherlockDialogFragment
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
    }
    

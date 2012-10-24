@@ -88,12 +88,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      
       authenticatorActivity = (AuthenticatorActivity) activity;
-      if ( authenticator != null )
-      {
-         authenticator.onAttach( this );
-      }
    }
    
    
@@ -112,15 +107,35 @@ public class RtmWebLoginFragment extends AuthFragment implements
    
    
    @Override
-   public void onDetach()
+   public void onStart()
+   {
+      super.onStart();
+      
+      if ( authenticator != null )
+      {
+         authenticator.onAttach( this );
+      }
+   }
+   
+   
+   
+   @Override
+   public void onStop()
    {
       if ( authenticator != null )
       {
          authenticator.onDetach();
       }
       
+      super.onStop();
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
       authenticatorActivity = null;
-      
       super.onDetach();
    }
    

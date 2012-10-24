@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.sync.periodic;
 
-import java.util.HashMap;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
@@ -58,8 +56,7 @@ abstract class AbstractPeriodicSyncHandler implements IPeriodicSyncHandler,
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
       if ( which == IOnSettingsChangedListener.SYNC_INTERVAL )
       {

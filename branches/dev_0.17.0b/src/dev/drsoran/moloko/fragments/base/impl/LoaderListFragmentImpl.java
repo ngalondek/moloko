@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.fragments.base.impl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import android.os.Bundle;
@@ -75,8 +74,7 @@ public class LoaderListFragmentImpl< D > extends
    
    
    
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
       notifyDataSetChanged();
    }

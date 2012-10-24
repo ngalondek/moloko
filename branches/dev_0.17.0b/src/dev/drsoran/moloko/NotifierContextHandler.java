@@ -81,14 +81,14 @@ public abstract class NotifierContextHandler
    
    
    
-   public void onSettingChanged( final int what, final Object oldValues )
+   public void onSettingChanged( final int what )
    {
       postIfNotReleased( new Runnable()
       {
          @Override
          public void run()
          {
-            handleSettingChanged( what, oldValues );
+            handleSettingChanged( what );
          }
       } );
    }
@@ -122,7 +122,7 @@ public abstract class NotifierContextHandler
    
    
    
-   protected abstract void handleSettingChanged( int what, Object oldValues );
+   protected abstract void handleSettingChanged( int what );
    
    
    

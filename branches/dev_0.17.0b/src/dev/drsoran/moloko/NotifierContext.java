@@ -382,9 +382,9 @@ public class NotifierContext extends ContextWrapper
       
       
       @Override
-      protected void handleSettingChanged( int what, Object oldValues )
+      protected void handleSettingChanged( int what )
       {
-         settingsChangedListeners.notifyListeners( what, oldValues );
+         settingsChangedListeners.notifyListeners( what );
       }
       
       

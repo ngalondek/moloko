@@ -172,6 +172,10 @@ public class HomeActivity extends MolokoFragmentActivity implements
       {
          getSupportActionBar().setSubtitle( account.name );
       }
+      else
+      {
+         getSupportActionBar().setSubtitle( null );
+      }
    }
    
    

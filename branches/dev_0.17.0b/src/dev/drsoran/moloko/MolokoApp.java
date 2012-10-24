@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import org.acra.ACRA;
@@ -333,8 +332,7 @@ public class MolokoApp extends Application implements
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onSettingsChanged( int which )
    {
       if ( areNotificationsActivated() )
       {

@@ -25,7 +25,6 @@ package dev.drsoran.moloko.util;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,13 +118,13 @@ public class ListenerList< T >
       
       
       
-      void notify( int mask, HashMap< Integer, Object > oldValues )
+      void notify( int mask, Object value )
       {
          if ( listener.get() != null )
          {
             try
             {
-               method.invoke( listener.get(), mask, oldValues );
+               method.invoke( listener.get(), mask, value );
             }
             catch ( IllegalArgumentException e )
             {
@@ -264,7 +263,7 @@ public class ListenerList< T >
    
    
    
-   public void notifyListeners( int mask, Object oldValue )
+   public void notifyListeners( int mask, Object value )
    {
       if ( mask > 0 )
       {
@@ -278,19 +277,22 @@ public class ListenerList< T >
             if ( entry.isDead() )
             {
                if ( deadEntries == null )
+               {
                   deadEntries = new LinkedList< ListenerEntry >();
+               }
+               
                deadEntries.add( entry );
             }
             else if ( entry.matches( mask ) )
             {
-               final HashMap< Integer, Object > oldValues = new HashMap< Integer, Object >( 1 );
-               oldValues.put( mask, oldValue );
-               entry.notify( mask, oldValues );
+               entry.notify( mask, value );
             }
          }
          
          if ( deadEntries != null )
+         {
             listeners.removeAll( deadEntries );
+         }
       }
    }
    
@@ -310,13 +312,18 @@ public class ListenerList< T >
             if ( !entry.notifyIfMatches( mask, oldValues ) )
             {
                if ( deadEntries == null )
+               {
                   deadEntries = new LinkedList< ListenerEntry >();
+               }
+               
                deadEntries.add( entry );
             }
          }
          
          if ( deadEntries != null )
+         {
             listeners.removeAll( deadEntries );
+         }
       }
    }
    

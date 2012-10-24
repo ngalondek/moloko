@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import java.util.Collections;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -79,50 +77,41 @@ public class SettingsListener implements OnSharedPreferenceChangeListener
       {
          if ( key.equals( context.getString( R.string.key_task_sort ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.TASK_SORT,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.TASK_SORT );
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.NOTIFY_DUE_TASKS,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.NOTIFY_DUE_TASKS );
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks_before ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.NOTIFY_DUE_TASKS_BEFORE_TIME,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.NOTIFY_DUE_TASKS_BEFORE_TIME );
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks_led ) )
             || key.equals( context.getString( R.string.key_notify_due_tasks_ringtone ) )
             || key.equals( context.getString( R.string.key_notify_due_tasks_vibrate ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.NOTIFY_DUE_TASKS_FEATURE,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.NOTIFY_DUE_TASKS_FEATURE );
          }
          else if ( key.equals( context.getString( R.string.key_notify_permanent ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.NOTIFY_PERMANENT_TASKS,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.NOTIFY_PERMANENT_TASKS );
          }
          else if ( key.equals( context.getString( R.string.key_notify_permanent_overdue ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.NOTIFY_PERMANENT_OVERDUE_TASKS,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.NOTIFY_PERMANENT_OVERDUE_TASKS );
          }
          else if ( key.equals( context.getString( R.string.key_def_list_local ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.RTM_DEFAULTLIST,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.RTM_DEFAULTLIST );
          }
          else if ( key.equals( context.getString( R.string.key_startup_view ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.STARTUP_VIEW,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.STARTUP_VIEW );
          }
          else if ( key.equals( context.getString( R.string.key_sync_inverval ) ) )
          {
-            onSettingChanged( IOnSettingsChangedListener.SYNC_INTERVAL,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.SYNC_INTERVAL );
          }
       }
    }
@@ -158,8 +147,7 @@ public class SettingsListener implements OnSharedPreferenceChangeListener
          @Override
          public void onChange( boolean selfChange )
          {
-            onSettingChanged( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED );
          }
       };
       RtmSettingsProviderPart.registerContentObserver( context,
@@ -189,8 +177,7 @@ public class SettingsListener implements OnSharedPreferenceChangeListener
          @Override
          public void onChange( boolean selfChange )
          {
-            onSettingChanged( IOnSettingsChangedListener.TIMEFORMAT,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.TIMEFORMAT );
          }
       };
       
@@ -203,8 +190,7 @@ public class SettingsListener implements OnSharedPreferenceChangeListener
          @Override
          public void onChange( boolean selfChange )
          {
-            onSettingChanged( IOnSettingsChangedListener.DATEFORMAT,
-                              Collections.emptyMap() );
+            onSettingChanged( IOnSettingsChangedListener.DATEFORMAT );
          }
       };
       
@@ -234,8 +220,8 @@ public class SettingsListener implements OnSharedPreferenceChangeListener
    
    
    
-   private void onSettingChanged( int what, Object oldValues )
+   private void onSettingChanged( int what )
    {
-      notifierHandler.onSettingChanged( what, oldValues );
+      notifierHandler.onSettingChanged( what );
    }
 }

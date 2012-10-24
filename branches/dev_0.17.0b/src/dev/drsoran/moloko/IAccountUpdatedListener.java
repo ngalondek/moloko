@@ -27,9 +27,9 @@ import android.accounts.Account;
 
 public interface IAccountUpdatedListener
 {
-   public final static int ACCOUNT_UPDATED = 0;
+   public final static int ACCOUNT_UPDATED = 1 << 0;
    
-   public final static int ACCOUNT_REMOVED = 1;
+   public final static int ACCOUNT_REMOVED = 1 << 1;
    
    
    

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -88,8 +88,7 @@ public class TitleWithTextLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      textView = !isInEditMode() ? new TextView( context )
-                                : new TextView( context, attrs );
+      textView = new TextView( context, attrs );
       textView.setId( R.id.title_with_text_text );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,

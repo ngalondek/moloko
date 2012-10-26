@@ -76,7 +76,7 @@
             android:layout_height="1dip"
             android:layout_marginTop="2dip" />
 
-        <dev.drsoran.moloko.widgets.LinkifyTextView
+        <dev.drsoran.moloko.widgets.TouchableLinkTextView
             android:id="@+id/note_text"
             style="@style/Note_Text"
             android:layout_width="fill_parent"

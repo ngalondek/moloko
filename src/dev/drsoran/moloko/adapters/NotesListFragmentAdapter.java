@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.MolokoLinkifier;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.base.MultiChoiceModalArrayAdapter;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
@@ -97,6 +98,7 @@ public class NotesListFragmentAdapter extends
       {
          titleView.setVisibility( View.VISIBLE );
          titleView.setText( note.getTitle() );
+         MolokoLinkifier.linkify( titleView );
       }
       else
       {
@@ -109,6 +111,8 @@ public class NotesListFragmentAdapter extends
       {
          noteTextView.setVisibility( View.VISIBLE );
          noteTextView.setText( note.getText() );
+         MolokoLinkifier.linkify( noteTextView );
+         
          simpleLine.setVisibility( View.VISIBLE );
       }
       else

@@ -32,9 +32,10 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 
 
-public class LinkifyTextView extends TextView
+public class TouchableLinkTextView extends TextView
 {
-   public LinkifyTextView( Context context, AttributeSet attrs, int defStyle )
+   public TouchableLinkTextView( Context context, AttributeSet attrs,
+      int defStyle )
    {
       super( context, attrs, defStyle );
       init();
@@ -42,7 +43,7 @@ public class LinkifyTextView extends TextView
    
    
    
-   public LinkifyTextView( Context context, AttributeSet attrs )
+   public TouchableLinkTextView( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       init();
@@ -50,7 +51,7 @@ public class LinkifyTextView extends TextView
    
    
    
-   public LinkifyTextView( Context context )
+   public TouchableLinkTextView( Context context )
    {
       super( context );
       init();

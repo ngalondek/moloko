@@ -146,6 +146,7 @@
                     android:layout_alignWithParentIfMissing="true"
                     android:layout_below="@id/task_participants"
                     android:layout_marginTop="10dip"
+                    android:autoLink="all"
                     moloko:text="http://code.google.com/p/moloko/"
                     moloko:titlePaddingTop="10dip"
                     moloko:titleText="@string/task_url" />

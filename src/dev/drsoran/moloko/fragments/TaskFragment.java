@@ -47,6 +47,7 @@ import dev.drsoran.moloko.fragments.base.IAbsViewPagerSupport;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.MenuItemPreparer;
 import dev.drsoran.moloko.util.UIUtils;
@@ -99,7 +100,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private ViewGroup participantsSection;
    
-   private View urlSection;
+   private TitleWithTextLayout urlSection;
    
    
    
@@ -175,7 +176,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       dateTimeSection = content.findViewById( R.id.task_dateTime );
       locationSection = content.findViewById( R.id.task_location );
       participantsSection = (ViewGroup) content.findViewById( R.id.task_participants );
-      urlSection = content.findViewById( R.id.task_url );
+      urlSection = (TitleWithTextLayout) content.findViewById( R.id.task_url );
       
       return fragmentView;
    }
@@ -376,7 +377,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       if ( !TextUtils.isEmpty( task.getUrl() ) )
       {
          urlSection.setVisibility( View.VISIBLE );
-         ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
+         urlSection.setText( task.getUrl() );
       }
       else
       {

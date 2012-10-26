@@ -34,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoLinkifier;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.widgets.SimpleLineView;
 
@@ -244,6 +245,17 @@ public abstract class TitleWithViewLayout extends LinearLayout
       {
          view.setVisibility( View.VISIBLE );
          view.setText( text );
+         linkify( view );
+      }
+   }
+   
+   
+   
+   private static void linkify( TextView textView )
+   {
+      if ( textView.getAutoLinkMask() != 0 )
+      {
+         MolokoLinkifier.linkify( textView );
       }
    }
 }

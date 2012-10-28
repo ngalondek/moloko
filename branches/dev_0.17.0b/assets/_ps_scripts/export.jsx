@@ -143,12 +143,13 @@ function exportFolder( folder, prefix )
 					var ok = true;
 					var alreadyExported = false;
 					var exportAsIs = false;
+                       var filename = file.name;
 	
                       eval( script );
                     
                       if ( ok && !alreadyExported )
                       {
-                        doExport(file,
+                        doExport(filename,
                                       drawableFolder,
                                       ldpiFolder,
                                       mdpiFolder,
@@ -210,25 +211,25 @@ function trimPrefixLayers( prefix , count )
     return trimmedPrefix;
 }
 
-function doExport(file, drawable, ldpi, mdpi, hdpi, xhdpi, prefix, suffix, exportAsIs)
+function doExport(filename, drawable, ldpi, mdpi, hdpi, xhdpi, prefix, suffix, exportAsIs)
 {    
        if ( drawable != null )
-          exportDrawable( file, drawable, prefix, suffix );
+          exportDrawable( filename, drawable, prefix, suffix );
           
        if ( ldpi != null )
-          exportLDPI( file, ldpi, prefix, suffix, exportAsIs );
+          exportLDPI( filename, ldpi, prefix, suffix, exportAsIs );
        
        if ( mdpi != null )
-          exportMDPI( file, mdpi, prefix, suffix );
+          exportMDPI( filename, mdpi, prefix, suffix );
        
        if ( hdpi != null )
-          exportHDPI( file, hdpi, prefix, suffix, exportAsIs );
+          exportHDPI( filename, hdpi, prefix, suffix, exportAsIs );
        
        if ( xhdpi != null )
-          exportXHDPI( file, xhdpi, prefix, suffix, exportAsIs );
+          exportXHDPI( filename, xhdpi, prefix, suffix, exportAsIs );
 }
 
-function exportDrawable( file, folder, prefix, suffix )
+function exportDrawable( filename, folder, prefix, suffix )
 {	
 	var drawableFolder = new Folder( folder );
 
@@ -239,11 +240,11 @@ function exportDrawable( file, folder, prefix, suffix )
 		
 	if ( drawableFolder != null )
 	{
-		saveForWebPNG24( drawableFolder, file, prefix, suffix );
+		saveForWebPNG24( drawableFolder, filename, prefix, suffix );
 	}
 }
 
-function exportLDPI( file, folder, prefix, suffix, exportAsIs )
+function exportLDPI( filename, folder, prefix, suffix, exportAsIs )
 {	
 	var ldpiFolder = new Folder( folder );
 		
@@ -262,14 +263,14 @@ function exportLDPI( file, folder, prefix, suffix, exportAsIs )
              resizeImage( 75 );
          }
 
-		saveForWebPNG24( ldpiFolder, file, prefix, suffix );
+		saveForWebPNG24( ldpiFolder, filename, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 
 		activeDocument = temp;
 	}
 }
 
-function exportMDPI( file, folder, prefix, suffix )
+function exportMDPI( filename, folder, prefix, suffix )
 {	
 	var mdpiFolder = new Folder( folder );
 	
@@ -280,11 +281,11 @@ function exportMDPI( file, folder, prefix, suffix )
 	
 	if ( mdpiFolder != null )
 	{
-		saveForWebPNG24( mdpiFolder, file, prefix, suffix );
+		saveForWebPNG24( mdpiFolder, filename, prefix, suffix );
 	}
 }
 
-function exportHDPI( file, folder, prefix, suffix, exportAsIs )
+function exportHDPI( filename, folder, prefix, suffix, exportAsIs )
 {	
 	var hdpiFolder = new Folder( folder );
 		
@@ -303,14 +304,14 @@ function exportHDPI( file, folder, prefix, suffix, exportAsIs )
 		   resizeImage( 150 );
          }
 
-		saveForWebPNG24( hdpiFolder, file, prefix, suffix );
+		saveForWebPNG24( hdpiFolder, filename, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
 		activeDocument = temp;
 	}
 }
 
-function exportXHDPI( file, folder, prefix, suffix, exportAsIs )
+function exportXHDPI( filename, folder, prefix, suffix, exportAsIs )
 {	
 	var xhdpiFolder = new Folder( folder );
 		
@@ -329,7 +330,7 @@ function exportXHDPI( file, folder, prefix, suffix, exportAsIs )
 		   resizeImage( 200 );
          }
            
-		saveForWebPNG24( xhdpiFolder, file, prefix, suffix );
+		saveForWebPNG24( xhdpiFolder,filename, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
 		activeDocument = temp;
@@ -369,9 +370,9 @@ function resizeImagePx2( width, height )
     executeAction( idImgS, desc2, DialogModes.NO );
 }
 
-function saveForWebPNG24( folder, file, prefix, suffix )
+function saveForWebPNG24( folder, filename, prefix, suffix )
 {
-	var filename = folder + "/" + prefix + "_" + file.name.replace( /\.psd$/, "" ) + suffix + ".png";
+	var filename = folder + "/" + prefix + "_" + filename.replace( /\.psd$/, "" ) + suffix + ".png";
 	
 	var idExpr = charIDToTypeID( "Expr" );
     var desc36 = new ActionDescriptor();

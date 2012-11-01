@@ -571,7 +571,7 @@ public final class UIUtils
    public final static void showNoAccountDialog( FragmentActivity fragmentActivity )
    {
       new AlertDialogFragment.Builder( R.id.dlg_no_account ).setTitle( fragmentActivity.getString( R.string.dlg_no_account_title ) )
-                                                            .setIcon( R.drawable.rtm )
+                                                            .setIcon( R.drawable.ic_rtm )
                                                             .setMessage( fragmentActivity.getString( R.string.dlg_no_account_text ) )
                                                             .setPositiveButton( R.string.btn_new_account )
                                                             .setNegativeButton( R.string.btn_cancel )

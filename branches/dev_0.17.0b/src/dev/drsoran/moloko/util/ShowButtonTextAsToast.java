@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.Gravity;
@@ -50,6 +51,7 @@ public class ShowButtonTextAsToast
    
    
    
+   @SuppressLint( "ShowToast" )
    public void show( View view, CharSequence text )
    {
       final Toast cheatSheet = Toast.makeText( context,
@@ -86,6 +88,7 @@ public class ShowButtonTextAsToast
                                 0,
                                 height );
       }
+      
       cheatSheet.show();
    }
 }

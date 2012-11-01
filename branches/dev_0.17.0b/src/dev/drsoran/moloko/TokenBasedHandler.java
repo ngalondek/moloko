@@ -23,7 +23,7 @@
 package dev.drsoran.moloko;
 
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
 
 
@@ -39,20 +39,6 @@ public class TokenBasedHandler extends Handler
    public TokenBasedHandler( Callback callback )
    {
       super( callback );
-   }
-   
-   
-   
-   public TokenBasedHandler( Looper looper, Callback callback )
-   {
-      super( looper, callback );
-   }
-   
-   
-   
-   public TokenBasedHandler( Looper looper )
-   {
-      super( looper );
    }
    
    
@@ -130,7 +116,26 @@ public class TokenBasedHandler extends Handler
       
       
       @Override
-      public void removeRunnables()
+      public void sendEmptyMessage( int what )
+      {
+         final Message message = Message.obtain( TokenBasedHandler.this,
+                                                 what,
+                                                 token );
+         TokenBasedHandler.this.sendMessage( message );
+      }
+      
+      
+      
+      @Override
+      public void removeMessages( int what )
+      {
+         TokenBasedHandler.this.removeMessages( what, token );
+      }
+      
+      
+      
+      @Override
+      public void removeRunnablesAndMessages()
       {
          TokenBasedHandler.this.removeCallbacksAndMessages( token );
       }
@@ -153,7 +158,7 @@ public class TokenBasedHandler extends Handler
             throw new IllegalStateException( "Token is already released." );
          }
          
-         removeRunnables();
+         removeRunnablesAndMessages();
          released = true;
       }
    }

@@ -125,7 +125,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    public void stop()
    {
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
-      handlerToken.removeRunnables();
+      handlerToken.removeRunnablesAndMessages();
       
       super.stop();
    }

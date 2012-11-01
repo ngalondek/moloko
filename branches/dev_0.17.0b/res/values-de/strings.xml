@@ -237,8 +237,6 @@
    <string name="task_datetime_err_recurr">Das Wiederholungsmuster konnte nicht ausgewertet werden</string>
    <string name="task_participants">Freigegeben für</string>
    <string name="task_location">Ort</string>
-      <!-- Dialogs -->
-      <string name="task_dlg_choose_location_app">Öffne Ort mit&#8230;</string>      
         
    <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
@@ -403,8 +401,6 @@
    <string name="acc_pref_title">Allgemeine Einstellungen</string>
    <string name="acc_pref_account_summary">Synchronisierung, HTTP(S) Einstellungen</string>
    <string name="acc_pref_sync_interval_title">Synchronisierung</string>   
-   <string name="acc_pref_perm_value">%1$s - zum Ändern klicken</string>    
-   <string name="acc_pref_perm_has_not">Keine Zugangsberechtigung</string>
    <string name="acc_pref_conn_cat_title">Verbindung</string>
    <string name="acc_pref_conn_use_https">HTTPS verwenden (empfohlen)</string>
    

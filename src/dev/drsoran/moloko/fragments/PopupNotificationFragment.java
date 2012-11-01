@@ -186,7 +186,7 @@ public class PopupNotificationFragment extends MolokoFragment
    {
       if ( autoCloseMs > 0 && listener != null )
       {
-         handler.removeRunnables();
+         handler.removeRunnablesAndMessages();
          handler.postDelayed( closePopupRunnable, autoCloseMs );
       }
    }

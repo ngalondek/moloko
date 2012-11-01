@@ -111,7 +111,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    public void stop()
    {
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
-      handlerToken.removeRunnables();
+      handlerToken.removeRunnablesAndMessages();
       
       super.stop();
    }

@@ -200,7 +200,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private void showContentAsync()
    {
-      handler.removeRunnables();
+      handler.removeRunnablesAndMessages();
       handler.post( showContentAsyncRunnable );
    }
    

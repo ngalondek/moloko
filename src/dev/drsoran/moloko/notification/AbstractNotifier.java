@@ -201,7 +201,7 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
    
    private void cancelHandlerMessages()
    {
-      handlerToken.removeRunnables();
+      handlerToken.removeRunnablesAndMessages();
    }
    
    

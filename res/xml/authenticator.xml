@@ -2,7 +2,7 @@
 <account-authenticator
    xmlns:android="http://schemas.android.com/apk/res/android"
 	android:accountType="dev.drsoran.moloko"
-	android:icon="@drawable/rtm"
-	android:smallIcon="@drawable/rtm"
+	android:icon="@drawable/ic_rtm"
+	android:smallIcon="@drawable/ic_rtm"
 	android:label="@string/rtm_full"
 	android:accountPreferences="@xml/authenticator_account_preferences" />

@@ -235,8 +235,6 @@
    <string name="task_datetime_err_recurr">La répétition ne peut pas être calculée</string>
    <string name="task_location">Lieu</string>
    <string name="task_participants">Partagée avec</string>
-      <!-- Dialogs -->
-      <string name="task_dlg_choose_location_app">Afficher le lieu avec&#8230;</string>      
 
    <!-- Task Edit fragment -->
    <string name="task_edit_desc_hint">Nom de la tâche</string>
@@ -396,8 +394,6 @@
    <string name="acc_pref_title">Paramètres généraux</string>
    <string name="acc_pref_account_summary">Synchronisation, Paramètres HTTP(S)</string>
    <string name="acc_pref_sync_interval_title">Synchronisation</string>
-   <string name="acc_pref_perm_value">%1$s - cliquez pour modifier</string>
-   <string name="acc_pref_perm_has_not">Aucune permission</string>
    <string name="acc_pref_conn_cat_title">Connexion</string>
    <string name="acc_pref_conn_use_https">Utiliser HTTPS (recommendé)</string>
 

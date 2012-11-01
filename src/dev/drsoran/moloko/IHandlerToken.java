@@ -40,7 +40,15 @@ public interface IHandlerToken
    
    
    
-   void removeRunnables();
+   void sendEmptyMessage( int what );
+   
+   
+   
+   void removeMessages( int what );
+   
+   
+   
+   void removeRunnablesAndMessages();
    
    
    

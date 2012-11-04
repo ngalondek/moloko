@@ -63,7 +63,7 @@
    <string name="g_settings_src_local">Local setting</string>
    <string name="g_no_account">No RTM credentials available</string>
    <string name="moloko_about_info" formatted="false">
-      &lt;a href="http://code.google.com/p/moloko/">Moloko&lt;/a> is a Remember The Milk client developed by &lt;a href="mailto:ronny.roehricht@gmail.com">Ronny Röhricht&lt;/a>.
+      &lt;a href="http://code.google.com/p/moloko/">Moloko&lt;/a> is a Remember The Milk client developed by &lt;a href="mailto:moloko@gmail.com">Ronny Röhricht&lt;/a>.
       &lt;br>&lt;br>Version: %1$s&lt;br>&lt;br>
       Special thanks to David Vermeille.&lt;br>&lt;br>
       Moloko is implemented by means of:&lt;br>
@@ -505,7 +505,7 @@
    <string name="send_log_aquiring_text">Collecting Moloko dependent log information&#8230;</string>
    <string name="send_log_chooser_title">Please select an application to send the log</string>
    <string name="send_log_failed">Failed to collect the log data for Moloko</string>
-   <string name="send_log_address">ronny.roehricht@gmail.com</string>
+   <string name="send_log_address">moloko@gmail.com</string>
    <string name="send_log_subject">Moloko device log</string>
    <string name="send_log_format">time</string>
    <string name="send_log_content" formatted="false">

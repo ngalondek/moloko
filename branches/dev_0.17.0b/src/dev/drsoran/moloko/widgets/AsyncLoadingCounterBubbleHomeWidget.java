@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -31,29 +31,30 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 
 
-abstract class AsyncLoadingHomeWidget extends LinearLayout implements
-         IMolokoHomeWidget
+abstract class AsyncLoadingCounterBubbleHomeWidget extends LinearLayout
+         implements IMolokoHomeWidget
 {
    private AsyncTask< Void, Void, Integer > query;
    
    
    
-   public AsyncLoadingHomeWidget( Context context, AttributeSet attrs,
-      int defStyle )
+   public AsyncLoadingCounterBubbleHomeWidget( Context context,
+      AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
    }
    
    
    
-   public AsyncLoadingHomeWidget( Context context, AttributeSet attrs )
+   public AsyncLoadingCounterBubbleHomeWidget( Context context,
+      AttributeSet attrs )
    {
       super( context, attrs );
    }
    
    
    
-   public AsyncLoadingHomeWidget( Context context )
+   public AsyncLoadingCounterBubbleHomeWidget( Context context )
    {
       super( context );
    }
@@ -74,13 +75,15 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
    protected void asyncReload()
    {
       if ( query != null )
+      {
          query.cancel( true );
+      }
       
       final View loadingView = findViewById( R.id.loading );
       loadingView.setVisibility( View.VISIBLE );
       
-      final View contentView = findViewById( R.id.content );
-      contentView.setVisibility( View.GONE );
+      final TextView counterBubbleView = (TextView) findViewById( R.id.content );
+      counterBubbleView.setVisibility( View.GONE );
       
       query = new AsyncTask< Void, Void, Integer >()
       {
@@ -95,10 +98,8 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
          @Override
          protected void onPostExecute( Integer result )
          {
-            handleAsyncResult( contentView, result );
-            
             loadingView.setVisibility( View.GONE );
-            contentView.setVisibility( View.VISIBLE );
+            setCounterBubbleValue( counterBubbleView, result );
             
             query = null;
          }
@@ -110,13 +111,15 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
    protected void asyncReloadWithoutSpinner()
    {
       if ( query != null )
+      {
          query.cancel( true );
+      }
       
       final View loadingView = findViewById( R.id.loading );
       loadingView.setVisibility( View.GONE );
       
-      final View contentView = findViewById( R.id.content );
-      contentView.setVisibility( View.VISIBLE );
+      final TextView counterBubbleView = (TextView) findViewById( R.id.content );
+      counterBubbleView.setVisibility( View.VISIBLE );
       
       query = new AsyncTask< Void, Void, Integer >()
       {
@@ -131,8 +134,7 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
          @Override
          protected void onPostExecute( Integer result )
          {
-            handleAsyncResult( contentView, result );
-            
+            setCounterBubbleValue( counterBubbleView, result );
             query = null;
          }
       }.execute();
@@ -144,11 +146,19 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
    
    
    
-   protected void handleAsyncResult( View v, Integer c )
+   private void setCounterBubbleValue( TextView counterBubbleView,
+                                       Integer tasksCount )
    {
-      if ( c != null )
-         ( (TextView) v ).setText( String.valueOf( c ) );
+      if ( tasksCount != null )
+      {
+         counterBubbleView.setText( String.valueOf( tasksCount ) );
+         counterBubbleView.setVisibility( tasksCount > 0 ? View.VISIBLE
+                                                        : View.GONE );
+      }
       else
-         ( (TextView) v ).setText( "?" );
+      {
+         counterBubbleView.setText( "?" );
+         counterBubbleView.setVisibility( View.GONE );
+      }
    }
 }

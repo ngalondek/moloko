@@ -29,7 +29,7 @@ import dev.drsoran.moloko.MolokoApp;
 
 
 public abstract class AsyncTimeDependentHomeWidget extends
-         AsyncLoadingHomeWidget implements IOnTimeChangedListener
+         AsyncLoadingCounterBubbleHomeWidget implements IOnTimeChangedListener
 {
    
    public AsyncTimeDependentHomeWidget( Context context, AttributeSet attrs )

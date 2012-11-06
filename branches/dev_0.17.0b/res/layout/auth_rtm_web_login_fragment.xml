@@ -24,14 +24,16 @@
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
         android:text="@string/design_text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:focusable="false" />
 
     <WebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="1.0"
-        android:layout_margin="10dip" />
+        android:layout_margin="10dip"
+        android:focusable="true" />
 
     <Button
         android:id="@android:id/button2"

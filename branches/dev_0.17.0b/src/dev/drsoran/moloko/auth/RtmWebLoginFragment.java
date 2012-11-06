@@ -167,6 +167,8 @@ public class RtmWebLoginFragment extends AuthFragment implements
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
+      
+      webView.requestFocus();
       authenticator.beginAuthentication( this,
                                          RtmAuth.Perms.valueOf( permission ) );
    }

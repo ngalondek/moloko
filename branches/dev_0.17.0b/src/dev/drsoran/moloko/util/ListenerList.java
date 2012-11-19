@@ -338,8 +338,10 @@ public class ListenerList< T >
       {
          final ListenerEntry entry = i.next();
          
-         if ( listener == entry.listener )
+         if ( listener == entry.listener.get() )
+         {
             entryToRemove = entry;
+         }
       }
       
       return listeners.remove( entryToRemove );

@@ -44,7 +44,8 @@ class DefaultListPreference extends SyncableListPreference
    {
       super( context, attrs );
       
-      final EntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync();
+      final EntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync( RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
+         | RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
       
       if ( entriesAndValues != null )
       {

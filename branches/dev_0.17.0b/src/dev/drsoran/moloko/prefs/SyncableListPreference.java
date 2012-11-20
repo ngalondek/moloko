@@ -26,12 +26,15 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,7 +45,8 @@ import dev.drsoran.moloko.R;
 
 
 abstract class SyncableListPreference extends AutoSummaryListPreference
-         implements OnClickListener
+         implements OnClickListener, OnPreferenceChangeListener,
+         OnSharedPreferenceChangeListener
 {
    protected final String syncWithRtmKey;
    
@@ -80,6 +84,28 @@ abstract class SyncableListPreference extends AutoSummaryListPreference
       {
          throw new IllegalStateException( "SyncableListPreference requires a syncWithRtmKey attribute." );
       }
+   }
+   
+   
+   
+   @Override
+   protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
+   {
+      super.onAttachedToHierarchy( preferenceManager );
+      
+      setOnPreferenceChangeListener( this );
+      getSharedPreferences().registerOnSharedPreferenceChangeListener( this );
+   }
+   
+   
+   
+   @Override
+   public void cleanUp()
+   {
+      getSharedPreferences().unregisterOnSharedPreferenceChangeListener( this );
+      setOnPreferenceChangeListener( null );
+      
+      super.cleanUp();
    }
    
    
@@ -145,10 +171,6 @@ abstract class SyncableListPreference extends AutoSummaryListPreference
          {
             notifyChanged();
          }
-      }
-      else
-      {
-         super.onSharedPreferenceChanged( sharedPreferences, key );
       }
    }
    

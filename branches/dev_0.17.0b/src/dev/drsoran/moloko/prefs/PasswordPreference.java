@@ -24,7 +24,6 @@ package dev.drsoran.moloko.prefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
@@ -33,16 +32,13 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Strings;
 
 
-class PasswordPreference extends AutoSummaryEditTextPreference implements
-         OnSharedPreferenceChangeListener
+class PasswordPreference extends AutoSummaryEditTextPreference
 {
    
    public PasswordPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
-      
-      super.getEditText()
-           .setTransformationMethod( new PasswordTransformationMethod() );
+      getEditText().setTransformationMethod( new PasswordTransformationMethod() );
    }
    
    
@@ -52,57 +48,21 @@ class PasswordPreference extends AutoSummaryEditTextPreference implements
    {
       super.onAttachedToHierarchy( preferenceManager );
       
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
+      setAutoSummaryFormatter( new IAutoSummaryFormatter()
       {
-         prefs.registerOnSharedPreferenceChangeListener( this );
-      }
-   }
-   
-   
-   
-   @Override
-   public void cleanUp()
-   {
-      super.cleanUp();
-      
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
-      {
-         prefs.unregisterOnSharedPreferenceChangeListener( this );
-      }
-   }
-   
-   
-   
-   @Override
-   public CharSequence getSummary()
-   {
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
-      {
-         if ( prefs.contains( getKey() ) )
+         @Override
+         public String format( String summaryPattern )
          {
-            return getContext().getString( R.string.phr_password_set );
+            if ( getSharedPreferences().contains( getKey() ) )
+            {
+               return getContext().getString( R.string.phr_password_set );
+            }
+            else
+            {
+               return Strings.EMPTY_STRING;
+            }
          }
-         else
-         {
-            return Strings.EMPTY_STRING;
-         }
-      }
-      else
-         return Strings.EMPTY_STRING;
-   }
-   
-   
-   
-   @Override
-   public void setSummary( CharSequence summary )
-   {
-      super.setSummary( getSummary() );
+      } );
    }
    
    

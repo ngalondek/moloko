@@ -22,68 +22,50 @@
 
 package dev.drsoran.moloko.notification;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.PermanentNotificationType;
+import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-class LoadPermanentTasksAsyncTask extends AbstractNotificationTasksLoader
+class LoadPermanentTasksAsyncTask extends
+         AbstractFilterBasedNotificationTasksLoader
 {
-   private final boolean includeOverDueTasks;
+   private final Map< PermanentNotificationType, Collection< String >> listIdsOfTasksToNotify;
    
-   private final int type;
+   private volatile String filterString;
    
    
    
-   public LoadPermanentTasksAsyncTask( Context context,
-      ITasksLoadedHandler handler, int type, boolean includeOverdueTasks )
+   public LoadPermanentTasksAsyncTask(
+      Context context,
+      IFilterBasedTasksLoadedHandler handler,
+      Map< PermanentNotificationType, Collection< String >> listIdsOfTasksToNotify )
    {
       super( context, handler );
-      
-      this.type = type;
-      this.includeOverDueTasks = includeOverdueTasks;
+      this.listIdsOfTasksToNotify = listIdsOfTasksToNotify;
    }
    
    
    
+   @Override
    public String getFilterString()
    {
-      String filterString;
-      
-      switch ( type )
-      {
-         case PermanentNotificationType.TODAY:
-            filterString = RtmSmartFilterLexer.OP_DUE_LIT
-               + DateParser.tokenNames[ DateParser.TODAY ];
-            break;
-         
-         case PermanentNotificationType.TOMORROW:
-            filterString = RtmSmartFilterLexer.OP_DUE_LIT
-               + DateParser.tokenNames[ DateParser.TOMORROW ];
-            break;
-         
-         case PermanentNotificationType.TODAY_AND_TOMORROW:
-            filterString = RtmSmartFilterLexer.OP_DUE_WITHIN_LIT
-               + RtmSmartFilterLexer.quotify( "2 of "
-                  + DateParser.tokenNames[ DateParser.TODAY ] );
-            break;
-         
-         default :
-            filterString = Strings.EMPTY_STRING;
-            break;
-      }
-      
-      if ( includeOverDueTasks )
-         filterString = includeOverdueTasks( filterString );
-      
       return filterString;
    }
    
@@ -93,32 +75,37 @@ class LoadPermanentTasksAsyncTask extends AbstractNotificationTasksLoader
    protected Cursor doInBackground( Void... params )
    {
       Cursor result = null;
+      ContentProviderClient client = null;
       
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Tasks.CONTENT_URI );
-      
-      if ( client != null )
+      try
       {
-         final String filterString = getFilterString();
+         client = context.getContentResolver()
+                         .acquireContentProviderClient( Tasks.CONTENT_URI );
+         
+         buildFilterString();
          final String evalFilter = RtmSmartFilter.evaluate( filterString, true );
+         
+         MolokoApp.Log.d( getClass(), filterString );
          
          if ( !TextUtils.isEmpty( evalFilter ) )
          {
-            try
-            {
-               result = client.query( Tasks.CONTENT_URI,
-                                      TasksProviderPart.PROJECTION,
-                                      evalFilter,
-                                      null,
-                                      null );
-            }
-            catch ( RemoteException e )
-            {
-               result = null;
-            }
+            result = client.query( Tasks.CONTENT_URI,
+                                   TasksProviderPart.PROJECTION,
+                                   evalFilter,
+                                   null,
+                                   null );
          }
-         
-         client.release();
+      }
+      catch ( RemoteException e )
+      {
+         result = null;
+      }
+      finally
+      {
+         if ( client != null )
+         {
+            client.release();
+         }
       }
       
       return result;
@@ -126,33 +113,158 @@ class LoadPermanentTasksAsyncTask extends AbstractNotificationTasksLoader
    
    
    
-   private String includeOverdueTasks( String filterSting )
+   /**
+    * This is called from the background thread
+    */
+   private void buildFilterString()
    {
-      if ( TextUtils.isEmpty( filterSting ) )
-         return getOverDueTasksFilter();
+      final StringBuilder filterStringBuilder = new StringBuilder();
+      
+      boolean isFirst = true;
+      for ( Iterator< PermanentNotificationType > i = listIdsOfTasksToNotify.keySet()
+                                                                            .iterator(); i.hasNext(); )
+      {
+         final PermanentNotificationType notificationType = i.next();
+         final Collection< String > taskListIds = listIdsOfTasksToNotify.get( notificationType );
+         
+         if ( !taskListIds.isEmpty() )
+         {
+            final int stringBuilderPosition = filterStringBuilder.length();
+            
+            if ( appendFilterString( notificationType,
+                                     taskListIds,
+                                     filterStringBuilder ) )
+            {
+               if ( !isFirst )
+               {
+                  filterStringBuilder.insert( stringBuilderPosition,
+                                              RtmSmartFilterLexer.OR_LIT + " (" );
+               }
+               else
+               {
+                  filterStringBuilder.insert( stringBuilderPosition, " (" );
+               }
+               
+               filterStringBuilder.append( ") " );
+               
+               isFirst = false;
+            }
+         }
+      }
+      
+      filterString = filterStringBuilder.toString();
+   }
+   
+   
+   
+   private boolean appendFilterString( PermanentNotificationType notificationType,
+                                       Collection< String > taskListIds,
+                                       StringBuilder filterStringBuilder )
+   {
+      boolean hasAppended = false;
+      
+      if ( !taskListIds.contains( Settings.ALL_LISTS ) )
+      {
+         final Collection< String > resolvedListNames = resolveListIdsToListNames( taskListIds );
+         
+         // It may happen that we cannot resolve a list if the list has been deleted by
+         // a background sync but the setting is not up to date. In this case we do not show
+         // anything since the setting has now the meaning of "Off".
+         if ( !resolvedListNames.isEmpty() )
+         {
+            appendDueFilter( notificationType, filterStringBuilder );
+            appendListNamesFilter( resolvedListNames, filterStringBuilder );
+            hasAppended = true;
+         }
+      }
+      
+      // If we have "All" lists to show, then we do not add them to the filter.
       else
-         return appendOverDueTasksFilter( filterSting );
+      {
+         appendDueFilter( notificationType, filterStringBuilder );
+         hasAppended = true;
+      }
+      
+      return hasAppended;
    }
    
    
    
-   private String getOverDueTasksFilter()
+   private void appendDueFilter( PermanentNotificationType notificationType,
+                                 StringBuilder filterStringBuilder )
    {
-      return RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-         + DateParser.tokenNames[ DateParser.NOW ];
+      switch ( notificationType )
+      {
+         case TODAY:
+            filterStringBuilder.append( RtmSmartFilterLexer.OP_DUE_LIT )
+                               .append( DateParser.tokenNames[ DateParser.TODAY ] );
+            break;
+         
+         case TOMORROW:
+            filterStringBuilder.append( RtmSmartFilterLexer.OP_DUE_LIT )
+                               .append( DateParser.tokenNames[ DateParser.TOMORROW ] );
+            break;
+         
+         case OVERDUE:
+            filterStringBuilder.append( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT )
+                               .append( DateParser.tokenNames[ DateParser.NOW ] );
+            break;
+         
+         default :
+            throw new IllegalArgumentException( "Unexpected permanent notification type "
+               + notificationType.toString() );
+      }
    }
    
    
    
-   private String appendOverDueTasksFilter( String filterSting )
+   private void appendListNamesFilter( Collection< String > listNames,
+                                       StringBuilder filterStringBuilder )
    {
-      final StringBuilder stringBuilder = new StringBuilder( filterSting );
+      filterStringBuilder.append( " " )
+                         .append( RtmSmartFilterLexer.AND_LIT )
+                         .append( " (" );
       
-      stringBuilder.append( " " )
-                   .append( RtmSmartFilterLexer.OR_LIT )
-                   .append( " " )
-                   .append( getOverDueTasksFilter() );
+      boolean isFirst = true;
+      for ( String listName : listNames )
+      {
+         if ( !isFirst )
+         {
+            filterStringBuilder.append( " " )
+                               .append( RtmSmartFilterLexer.OR_LIT )
+                               .append( " " );
+         }
+         
+         filterStringBuilder.append( RtmSmartFilterLexer.OP_LIST_LIT )
+                            .append( "\"" )
+                            .append( listName )
+                            .append( "\"" );
+         
+         isFirst = false;
+      }
       
-      return stringBuilder.toString();
+      filterStringBuilder.append( ")" );
+   }
+   
+   
+   
+   private Collection< String > resolveListIdsToListNames( Collection< String > taskListIds )
+   {
+      ContentProviderClient client = null;
+      
+      try
+      {
+         client = context.getContentResolver()
+                         .acquireContentProviderClient( Lists.CONTENT_URI );
+         return RtmListsProviderPart.resolveListIdsToListNames( client,
+                                                                taskListIds );
+      }
+      finally
+      {
+         if ( client != null )
+         {
+            client.release();
+         }
+      }
    }
 }

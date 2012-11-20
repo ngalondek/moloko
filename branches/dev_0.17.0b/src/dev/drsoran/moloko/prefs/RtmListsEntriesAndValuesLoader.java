@@ -40,6 +40,10 @@ import dev.drsoran.provider.Rtm.Lists;
 
 class RtmListsEntriesAndValuesLoader
 {
+   public final static int FLAG_INCLUDE_NONE = 1 << 0;
+   
+   public final static int FLAG_INCLUDE_SMART_LISTS = 1 << 1;
+   
    private final Context context;
    
    
@@ -51,7 +55,7 @@ class RtmListsEntriesAndValuesLoader
    
    
    
-   public EntriesAndValues createEntriesAndValuesSync()
+   public EntriesAndValues createEntriesAndValuesSync( int flags )
    {
       EntriesAndValues entriesAndValues = null;
       
@@ -61,36 +65,30 @@ class RtmListsEntriesAndValuesLoader
       
       if ( client != null )
       {
+         final String selection = getSelectionString( flags );
+         
          final RtmLists lists = RtmListsProviderPart.getAllLists( client,
-                                                                  RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
+                                                                  selection );
          client.release();
          
          if ( lists != null )
          {
             final List< RtmList > plainLists = lists.getListsPlain();
+            final boolean includeNoneElement = ( flags & FLAG_INCLUDE_NONE ) != 0;
             
-            final CharSequence[] entries = new CharSequence[ plainLists.size() + 1 ]; // +1
-            // cause
-            // of
-            // "none"
-            final CharSequence[] entryValues = new CharSequence[ plainLists.size() + 1 ]; // +1
-            // cause
-            // of
-            // "none"
+            entriesAndValues = createEntriesAndValues( plainLists.size(),
+                                                       includeNoneElement );
             
-            entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
-                                                          .getString( R.string.phr_none_f );
-            entryValues[ EntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
-            
+            final int startInsertIndex = includeNoneElement
+                                                           ? EntriesAndValues.NONE_IDX + 1
+                                                           : 0;
             for ( int i = 0, cnt = plainLists.size(); i < cnt; ++i )
             {
-               entryValues[ i + 1 ] = plainLists.get( i ).getId();
-               entries[ i + 1 ] = plainLists.get( i ).getName();
+               entriesAndValues.entries[ i + startInsertIndex ] = plainLists.get( i )
+                                                                            .getName();
+               entriesAndValues.values[ i + startInsertIndex ] = plainLists.get( i )
+                                                                           .getId();
             }
-            
-            entriesAndValues = new EntriesAndValues();
-            entriesAndValues.entries = entries;
-            entriesAndValues.values = entryValues;
          }
          else
          {
@@ -101,6 +99,47 @@ class RtmListsEntriesAndValuesLoader
       {
          LogUtils.logDBError( context, getClass(), "Lists" );
       }
+      
+      return entriesAndValues;
+   }
+   
+   
+   
+   private String getSelectionString( int flags )
+   {
+      final StringBuilder selectionStringBuilder = new StringBuilder( RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
+      
+      if ( ( flags & FLAG_INCLUDE_SMART_LISTS ) == 0 )
+      {
+         selectionStringBuilder.append( " AND " )
+                               .append( Lists.IS_SMART_LIST )
+                               .append( "=0" );
+      }
+      
+      return selectionStringBuilder.toString();
+   }
+   
+   
+   
+   private EntriesAndValues createEntriesAndValues( int elementCount,
+                                                    boolean includeNoneElement )
+   {
+      int finalElementCount = includeNoneElement ? elementCount + 1
+                                                : elementCount; // +1 cause of "none"
+      
+      final CharSequence[] entries = new CharSequence[ finalElementCount ];
+      final CharSequence[] entryValues = new CharSequence[ finalElementCount ];
+      
+      if ( includeNoneElement )
+      {
+         entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
+                                                       .getString( R.string.phr_none_f );
+         entryValues[ EntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
+      }
+      
+      final EntriesAndValues entriesAndValues = new EntriesAndValues();
+      entriesAndValues.entries = entries;
+      entriesAndValues.values = entryValues;
       
       return entriesAndValues;
    }

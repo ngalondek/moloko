@@ -20,15 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.notification;
+package dev.drsoran.moloko.prefs;
 
-public final class PermanentNotificationType
+interface IAutoSummaryPreference< T >
 {
-   public final static int OFF = 0;
-   
-   public final static int TODAY = 1;
-   
-   public final static int TOMORROW = 2;
-   
-   public final static int TODAY_AND_TOMORROW = 3;
+   String getSummaryDisplay();
 }

@@ -22,7 +22,11 @@
 
 package dev.drsoran.moloko;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -32,7 +36,6 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
-import dev.drsoran.moloko.notification.PermanentNotificationType;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmSettings;
 
@@ -40,6 +43,8 @@ import dev.drsoran.rtm.RtmSettings;
 public class Settings implements IOnSettingsChangedListener
 {
    public final static String NO_DEFAULT_LIST_ID = Strings.EMPTY_STRING;
+   
+   public final static String ALL_LISTS = "All";
    
    public final static int STARTUP_VIEW_DEFAULT_LIST = 1 << 0;
    
@@ -75,16 +80,16 @@ public class Settings implements IOnSettingsChangedListener
          throw new IllegalStateException( "SharedPreferences must not be null." );
       }
       
+      setSettingsVersion();
       loadRtmSettings();
-      
-      regsiterRtmSettingsSyncedListener();
+      regsiterSettingsListener();
    }
    
    
    
    public void release()
    {
-      unregsiterRtmSettingsSyncedListener();
+      unregsiterSettingsListener();
    }
    
    
@@ -160,6 +165,19 @@ public class Settings implements IOnSettingsChangedListener
       {
          storeStringIfChanged( context.getString( R.string.key_def_list_local ),
                                rtmSettings.getDefaultListId() );
+      }
+   }
+   
+   
+   
+   private void checkDefaultListUnset()
+   {
+      // If the default list start up has been selected and the default
+      // list has been unset, we switch to the default start up view.
+      if ( getStartupView() == STARTUP_VIEW_DEFAULT_LIST
+         && getDefaultListId() == NO_DEFAULT_LIST_ID )
+      {
+         setStartupView( STARTUP_VIEW_DEFAULT );
       }
    }
    
@@ -282,18 +300,46 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
-   public int getNotifyingPermanentTasksType()
+   /**
+    * Value: Collection of list IDs to notify tasks for, or the constant {@link Settings.ALL_LISTS}.
+    */
+   public Map< PermanentNotificationType, Collection< String > > getNotifyingPermanentTaskLists()
    {
-      return loadInt( context.getString( R.string.key_notify_permanent ),
-                      PermanentNotificationType.OFF );
+      final String todayTaskLists = loadString( context.getString( R.string.key_notify_permanent_today_lists ),
+                                                Strings.EMPTY_STRING );
+      final String tomorrowTaskLists = loadString( context.getString( R.string.key_notify_permanent_tomorrow_lists ),
+                                                   Strings.EMPTY_STRING );
+      final String overdueTaskLists = loadString( context.getString( R.string.key_notify_permanent_overdue_lists ),
+                                                  Strings.EMPTY_STRING );
+      
+      final Map< PermanentNotificationType, Collection< String > > notifyingTaskListsMap = new HashMap< PermanentNotificationType, Collection< String > >( 3 );
+      
+      notifyingTaskListsMap.put( PermanentNotificationType.TODAY,
+                                 Arrays.asList( TextUtils.split( todayTaskLists,
+                                                                 "," ) ) );
+      notifyingTaskListsMap.put( PermanentNotificationType.TOMORROW,
+                                 Arrays.asList( TextUtils.split( tomorrowTaskLists,
+                                                                 "," ) ) );
+      notifyingTaskListsMap.put( PermanentNotificationType.OVERDUE,
+                                 Arrays.asList( TextUtils.split( overdueTaskLists,
+                                                                 "," ) ) );
+      
+      return notifyingTaskListsMap;
    }
    
    
    
-   public boolean isNotifyingPermanentOverdueTasks()
+   public boolean isNotifyingPermanentTasks()
    {
-      return loadBool( context.getString( R.string.key_notify_permanent_overdue ),
-                       false );
+      for ( Collection< String > listIdsToNotify : getNotifyingPermanentTaskLists().values() )
+      {
+         if ( !listIdsToNotify.isEmpty() )
+         {
+            return true;
+         }
+      }
+      
+      return false;
    }
    
    
@@ -389,25 +435,36 @@ public class Settings implements IOnSettingsChangedListener
    @Override
    public void onSettingsChanged( int which )
    {
-      if ( which == IOnSettingsChangedListener.RTM_SETTINGS_SYNCED )
+      switch ( which )
       {
-         loadRtmSettings();
-         checkDefaultListIdChangedBySync();
+         case IOnSettingsChangedListener.RTM_SETTINGS_SYNCED:
+            loadRtmSettings();
+            checkDefaultListIdChangedBySync();
+            break;
+         
+         case IOnSettingsChangedListener.RTM_DEFAULTLIST:
+            checkDefaultListUnset();
+            break;
+         
+         default :
+            throw new IllegalArgumentException( "Unexpected setting changed notification "
+               + which );
       }
    }
    
    
    
-   private void regsiterRtmSettingsSyncedListener()
+   private void regsiterSettingsListener()
    {
       MolokoApp.getNotifierContext( context )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED,
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED
+                                                      | IOnSettingsChangedListener.RTM_DEFAULTLIST,
                                                    this );
    }
    
    
    
-   private void unregsiterRtmSettingsSyncedListener()
+   private void unregsiterSettingsListener()
    {
       MolokoApp.getNotifierContext( context )
                .unregisterOnSettingsChangedListener( this );
@@ -437,6 +494,16 @@ public class Settings implements IOnSettingsChangedListener
    private void setSyncWithRtm( String key, boolean value )
    {
       preferences.edit().putBoolean( key, value ).commit();
+   }
+   
+   
+   
+   private void setSettingsVersion()
+   {
+      preferences.edit()
+                 .putString( context.getString( R.string.key_settings_version ),
+                             MolokoApp.getVersionName( context ) )
+                 .commit();
    }
    
    

@@ -123,8 +123,9 @@
    <string name="phr_delete_with_name">Delete \'%1$s\'</string>
    <string name="phr_ok">OK</string>
    <string name="phr_settings">Settings</string>
-   <string name="phr_none_f">none</string>
-   <string name="phr_nothing">nothing</string>
+   <string name="phr_all_f">All</string>
+   <string name="phr_none_f">None</string>
+   <string name="phr_nothing">Nothing</string>
    <string name="phr_do_sync">Synchronize</string>   
    <string name="phr_on">On</string>
    <string name="phr_off">Off</string>
@@ -465,16 +466,17 @@
 	   <string name="moloko_prefs_notification_title">Notifications</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tasks with due time</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
-	   <string name="moloko_prefs_notification_tasks_w_due_before_title">Reminders</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_reminder_title">Reminder</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_before_default_value">@string/fifteen_min_ms</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Notification tone</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrate</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
 	   <string name="moloko_prefs_notification_permanent_cat_title">Permanent notifications</string>
 	   <string name="moloko_prefs_notification_permanent_today">Tasks due today</string>
-	   <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
-	   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tasks due today and tomorrow</string>
-	   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
+	   <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>	   
+	   <string name="moloko_prefs_notification_permanent_overdue">Overdue tasks</string>
+	   <string name="moloko_prefs_notification_permanent_multiple_selected">from multiple lists</string>
+	   <string name="moloko_prefs_notification_permanent_single_selected">from list \'%1$s\'</string>
 	   
 	   <!-- Development settings -->
 	   <string name="moloko_prefs_support_dev_title">Support development</string>

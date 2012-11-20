@@ -15,11 +15,12 @@
 
 <PreferenceScreen
    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    android:orderingFromXml="true">
 
    <dev.drsoran.moloko.prefs.SyncIntervalPreference
       android:title="@string/acc_pref_sync_interval_title"
-      android:summary="%s"
+      moloko:summaryPattern="%s"
       android:key="@string/key_sync_inverval"
       android:entries="@array/moloko_acc_prefs_sync_interval_entries"
       android:entryValues="@array/moloko_acc_prefs_sync_interval_values"

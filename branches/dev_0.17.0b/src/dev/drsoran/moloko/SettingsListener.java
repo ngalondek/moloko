@@ -93,13 +93,11 @@ public class SettingsListener implements OnSharedPreferenceChangeListener
          {
             onSettingChanged( IOnSettingsChangedListener.NOTIFY_DUE_TASKS_FEATURE );
          }
-         else if ( key.equals( context.getString( R.string.key_notify_permanent ) ) )
+         else if ( key.equals( context.getString( R.string.key_notify_permanent_today_lists ) )
+            || key.equals( context.getString( R.string.key_notify_permanent_tomorrow_lists ) )
+            || key.equals( context.getString( R.string.key_notify_permanent_overdue_lists ) ) )
          {
             onSettingChanged( IOnSettingsChangedListener.NOTIFY_PERMANENT_TASKS );
-         }
-         else if ( key.equals( context.getString( R.string.key_notify_permanent_overdue ) ) )
-         {
-            onSettingChanged( IOnSettingsChangedListener.NOTIFY_PERMANENT_OVERDUE_TASKS );
          }
          else if ( key.equals( context.getString( R.string.key_def_list_local ) ) )
          {

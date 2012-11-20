@@ -95,22 +95,6 @@
       <item>@string/twelve_hours_ms</item>
       <item>@string/twentyfour_hours_ms</item>
    </string-array>
-
-   <string-array
-      name="moloko_prefs_notification_permanent_entries">
-      <item>@string/phr_none_f</item>
-      <item>@string/moloko_prefs_notification_permanent_today</item>
-      <item>@string/moloko_prefs_notification_permanent_tomorrow</item>
-      <item>@string/moloko_prefs_notification_permanent_today_and_tomorrow</item>
-   </string-array>
-
-   <string-array
-      name="moloko_prefs_notification_permanent_values">
-      <item>0</item>
-      <item>1</item>
-      <item>2</item>
-      <item>3</item>
-   </string-array>
    
    <string-array
       name="app_quick_add_task_recurr_sugg_every">
@@ -129,5 +113,5 @@
       <item>@string/app_quick_add_task_recurr_sugg_every_1_month</item>
       <item>@string/app_quick_add_task_recurr_sugg_after_1_year</item>
    </string-array>
-
+   
 </resources>

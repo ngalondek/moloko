@@ -76,7 +76,7 @@
    <declare-styleable name="SimpleLine">
        <attr name="simpleLineStyle" format="reference" />
        <attr name="lineColor" format="reference|color" />
-   </declare-styleable>  
+   </declare-styleable>
    
    <declare-styleable name="WheelView">
        <attr name="wheelViewStyle" format="reference" />
@@ -84,5 +84,9 @@
        <attr name="bottomShadowDrawable" format="reference" />
        <attr name="centerDrawable" format="reference" />
        <attr name="backgroundDrawable" format="reference" />
+   </declare-styleable>
+   
+   <declare-styleable name="AutoSummaryPreference">
+       <attr name="summaryPattern" format="reference|string" />
    </declare-styleable>
 </resources>

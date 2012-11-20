@@ -25,7 +25,6 @@ package dev.drsoran.moloko.fragments.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
@@ -37,6 +36,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
@@ -75,18 +75,6 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
    
    public static View inflateAboutContent( Context context )
    {
-      String version;
-      try
-      {
-         version = context.getPackageManager()
-                          .getPackageInfo( context.getPackageName(), 0 ).versionName;
-         
-      }
-      catch ( NameNotFoundException e )
-      {
-         version = "???";
-      }
-      
       final ContextThemeWrapper themedContext = new ContextThemeWrapper( context,
                                                                          0 );
       themedContext.setTheme( R.style.Theme_Moloko_Dialog );
@@ -97,7 +85,7 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
                                                      false );
       
       final Spanned message = Html.fromHtml( themedContext.getString( R.string.moloko_about_info,
-                                                                      version ) );
+                                                                      MolokoApp.getVersionName( context ) ) );
       
       final TextView messageView = (TextView) aboutMolokoView.findViewById( android.R.id.text1 );
       messageView.setText( message );

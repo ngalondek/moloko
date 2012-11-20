@@ -22,6 +22,7 @@
 -->
 
 <resources>
+   <string name="key_settings_version">version</string>
    <string name="key_sync_inverval">sync_interval</string>
    <string name="key_def_list_local">def_list_local</string>
    <string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
@@ -33,10 +34,16 @@
    <string name="key_notify_due_tasks_ringtone">notify_due_tasks_ringtone</string>
    <string name="key_notify_due_tasks_vibrate">notify_due_tasks_vibrate</string>
    <string name="key_notify_due_tasks_led">notify_due_tasks_led</string>
-   <string name="key_notify_permanent">notify_permanent</string>
-   <string name="key_notify_permanent_overdue">notify_permanent_overdue</string>
+   <string name="key_notify_permanent_today_lists">notify_permanent_today_lists</string>
+   <string name="key_notify_permanent_tomorrow_lists">notify_permanent_tomorrow_lists</string>
+   <string name="key_notify_permanent_overdue_lists">notify_permanent_overdue_lists</string>
    <string name="key_conn_use_https">conn_use_https</string>
    
    <!-- Info dialog aboout multi selection has been shown. -->
    <string name="key_notified_taskslist_multiselection">notified_taskslist_multiselection</string>
+   
+   <!-- Deprecated since 0.17.0b -->
+   <string name="key_deprecated_notify_permanent">notify_permanent</string>
+   <string name="key_deprecated_notify_permanent_overdue">notify_permanent_overdue</string>
+      
 </resources>

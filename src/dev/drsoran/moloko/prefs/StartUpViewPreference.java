@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.prefs;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentProviderClient;
@@ -30,34 +33,36 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.os.RemoteException;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.prefs.DefaultListPreference.EntriesAndValues;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
 
 
 class StartUpViewPreference extends AutoSummaryListPreference implements
-         IOnSettingsChangedListener
+         OnPreferenceChangeListener
 {
    private EntriesAndValues defListEntriesAndValues;
    
+   private String defaultListName;
+   
    private int chosenDefListIdx;
    
-   private int oldValueIdx;
+   private int currentStartUpValueIdx;
    
    
    
    public StartUpViewPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      
+      setDefaultListNameFromDatabase();
       
       final CharSequence[] entryValues =
       { String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST ),
@@ -67,28 +72,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
       setEntries( createEntries() );
       setEntryValues( entryValues );
       
-      MolokoApp.getNotifierContext( getContext() )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DEFAULTLIST,
-                                                   this );
-   }
-   
-   
-   
-   @Override
-   public void onSettingsChanged( int which )
-   {
-      setEntries( createEntries() );
-      
-      // If the default list start up view has been selected and the default
-      // list has
-      // been set to none, we switch to the default start up view.
-      if ( getValue().equals( String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST ) )
-         && MolokoApp.getSettings( getContext() ).getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
-      {
-         setValue( String.valueOf( Settings.STARTUP_VIEW_DEFAULT ) );
-      }
-      
-      notifyChanged();
+      setOnPreferenceChangeListener( this );
    }
    
    
@@ -96,8 +80,8 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    @Override
    public void cleanUp()
    {
-      MolokoApp.getNotifierContext( getContext() )
-               .unregisterOnSettingsChangedListener( this );
+      setOnPreferenceChangeListener( null );
+      super.cleanUp();
    }
    
    
@@ -105,9 +89,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
-      boolean ok = super.onPreferenceChange( preference, newValue );
-      
-      if ( ok && newValue instanceof String )
+      if ( newValue instanceof String )
       {
          final String newValueStr = (String) newValue;
          
@@ -118,7 +100,8 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
                     .equals( newValueStr )
             && MolokoApp.getSettings( getContext() ).getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
          {
-            defListEntriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync();
+            defListEntriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync( RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
+               | RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
             
             if ( defListEntriesAndValues != null )
             {
@@ -145,15 +128,21 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
                   @Override
                   public void onDismiss( DialogInterface dialog )
                   {
-                     final boolean positive = chosenDefListIdx > EntriesAndValues.NONE_IDX
-                        && chosenDefListIdx < defListEntriesAndValues.values.length;
+                     final boolean positive = chosenDefListIdx != EntriesAndValues.NONE_IDX;
                      
                      // Check if the client has chosen a list.
                      if ( positive )
+                     {
                         MolokoApp.getSettings( getContext() )
                                  .setDefaultListId( defListEntriesAndValues.values[ chosenDefListIdx ].toString() );
-                     else
-                        setValueIndex( oldValueIdx );
+                        
+                        defaultListName = defListEntriesAndValues.entries[ chosenDefListIdx ].toString();
+                        currentStartUpValueIdx = 0;
+                        
+                        notifyChanged();
+                     }
+                     
+                     setValueIndex( currentStartUpValueIdx );
                   }
                } );
                
@@ -161,12 +150,16 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
             }
             else
             {
-               setValueIndex( oldValueIdx );
+               setValueIndex( currentStartUpValueIdx );
             }
+         }
+         else
+         {
+            return super.onPreferenceChange( preference, newValueStr );
          }
       }
       
-      return ok;
+      return false;
    }
    
    
@@ -174,67 +167,72 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    @Override
    protected void onDialogClosed( boolean positiveResult )
    {
-      oldValueIdx = findIndexOfValue( getValue() );
+      currentStartUpValueIdx = findIndexOfValue( getValue() );
       super.onDialogClosed( positiveResult );
+   }
+   
+   
+   
+   @Override
+   public String getSummaryDisplay()
+   {
+      if ( findIndexOfValue( getValue() ) == 0 )
+      {
+         return getContext().getResources()
+                            .getString( R.string.moloko_prefs_startup_view_def_list_name,
+                                        defaultListName );
+      }
+      else
+      {
+         return super.getSummaryDisplay();
+      }
    }
    
    
    
    private CharSequence[] createEntries()
    {
-      final String defListName = getDefaultListName();
       final Resources resources = getContext().getResources();
       
       return new CharSequence[]
       {
-       ( defListName != null )
-                              ? resources.getString( R.string.moloko_prefs_startup_view_def_list_name,
-                                                     defListName )
-                              : resources.getString( R.string.moloko_prefs_startup_view_def_list_choose ),
+       ( defaultListName != null )
+                                  ? resources.getString( R.string.moloko_prefs_startup_view_def_list_name,
+                                                         defaultListName )
+                                  : resources.getString( R.string.moloko_prefs_startup_view_def_list_choose ),
        resources.getString( R.string.moloko_prefs_startup_view_lists ),
        resources.getString( R.string.moloko_prefs_startup_view_home ) };
    }
    
    
    
-   private String getDefaultListName()
+   private void setDefaultListNameFromDatabase()
    {
       final String defListId = MolokoApp.getSettings( getContext() )
                                         .getDefaultListId();
-      String defListName = null;
-      
-      if ( defListId != null )
+      if ( !TextUtils.isEmpty( defListId ) )
       {
-         final ContentProviderClient client = getContext().getContentResolver()
-                                                          .acquireContentProviderClient( Lists.CONTENT_URI );
+         ContentProviderClient client = null;
          
-         if ( client != null )
+         try
          {
-            try
+            client = getContext().getContentResolver()
+                                 .acquireContentProviderClient( Lists.CONTENT_URI );
+            
+            final Collection< String > defaultListNameCollection = RtmListsProviderPart.resolveListIdsToListNames( client,
+                                                                                                                   Collections.singleton( defListId ) );
+            if ( !defaultListNameCollection.isEmpty() )
             {
-               final Cursor c = Queries.getItem( client,
-                                                 RtmListsProviderPart.PROJECTION,
-                                                 Lists.CONTENT_URI,
-                                                 defListId );
-               client.release();
-               
-               if ( c != null )
-               {
-                  if ( c.getCount() > 0 && c.moveToFirst() )
-                     defListName = c.getString( RtmListsProviderPart.COL_INDICES.get( Lists.LIST_NAME ) );
-                  
-                  c.close();
-               }
-               
+               defaultListName = defaultListNameCollection.iterator().next();
             }
-            catch ( RemoteException e )
+         }
+         finally
+         {
+            if ( client != null )
             {
-               defListName = null;
+               client.release();
             }
          }
       }
-      
-      return defListName;
    }
-   
 }

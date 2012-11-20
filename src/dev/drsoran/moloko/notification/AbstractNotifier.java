@@ -25,22 +25,21 @@ package dev.drsoran.moloko.notification;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.notification.AbstractNotificationTasksLoader.ITasksLoadedHandler;
 import dev.drsoran.moloko.util.DelayedRun;
 
 
-abstract class AbstractNotifier implements IStatusbarNotifier,
-         ITasksLoadedHandler
+abstract class AbstractNotifier implements IStatusbarNotifier
 {
    protected final Context context;
    
    private final IHandlerToken handlerToken = MolokoNotificationService.acquireHandlerToken();
    
-   private AbstractNotificationTasksLoader tasksLoader;
+   private AsyncTask< Void, Void, Cursor > tasksLoader;
    
    private Cursor currentTasksCursor;
    
@@ -68,17 +67,9 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
    
    
    
-   @Override
-   public void onTasksLoaded( final Cursor result )
+   public IHandlerToken getHandler()
    {
-      handlerToken.post( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            onFinishedLoading( result );
-         }
-      } );
+      return handlerToken;
    }
    
    
@@ -90,7 +81,7 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
    
    
    
-   protected final void startTasksLoader( AbstractNotificationTasksLoader loader )
+   protected final void startTasksLoader( AsyncTask< Void, Void, Cursor > loader )
    {
       stopLoadingTasksToNotify();
       cancelHandlerMessages();
@@ -108,6 +99,15 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
          tasksLoader.cancel( true );
          tasksLoader = null;
       }
+   }
+   
+   
+   
+   protected void onFinishedLoading( Cursor cursor )
+   {
+      closeCurrentCursor();
+      storeNewCursor( cursor );
+      tasksLoader = null;
    }
    
    
@@ -143,18 +143,6 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
          currentTasksCursor.close();
          currentTasksCursor = null;
       }
-   }
-   
-   
-   
-   private void onFinishedLoading( Cursor cursor )
-   {
-      closeCurrentCursor();
-      storeNewCursor( cursor );
-      
-      onFinishedLoadingTasksToNotify( cursor );
-      
-      tasksLoader = null;
    }
    
    
@@ -203,10 +191,6 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
    {
       handlerToken.removeRunnablesAndMessages();
    }
-   
-   
-   
-   protected abstract void onFinishedLoadingTasksToNotify( Cursor cursor );
    
    
    

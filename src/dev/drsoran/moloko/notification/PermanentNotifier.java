@@ -22,18 +22,24 @@
 
 package dev.drsoran.moloko.notification;
 
+import java.util.Collection;
+import java.util.Map;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.PermanentNotificationType;
+import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.notification.AbstractFilterBasedNotificationTasksLoader.IFilterBasedTasksLoadedHandler;
 
 
-class PermanentNotifier extends AbstractNotifier
+class PermanentNotifier extends AbstractNotifier implements
+         IFilterBasedTasksLoadedHandler
 {
    private final IPermanentNotificationPresenter presenter;
-   
-   private String lastLoaderfilterString;
    
    
    
@@ -110,11 +116,64 @@ class PermanentNotifier extends AbstractNotifier
    
    
    @Override
-   protected void onFinishedLoadingTasksToNotify( Cursor cursor )
+   protected void onDatasetChanged()
    {
+      reEvaluatePermanentNotification();
+   }
+   
+   
+   
+   private void reEvaluatePermanentNotification()
+   {
+      final Settings settings = MolokoApp.getSettings( context );
+      
+      if ( !settings.isNotifyingPermanentTasks() )
+      {
+         stopLoadingTasksToNotify();
+         cancelPermanentNotification();
+      }
+      else
+      {
+         loadPermanentTasks( settings.getNotifyingPermanentTaskLists() );
+      }
+   }
+   
+   
+   
+   private void loadPermanentTasks( Map< PermanentNotificationType, Collection< String >> permanentTaskLists )
+   {
+      final LoadPermanentTasksAsyncTask loader = new LoadPermanentTasksAsyncTask( context,
+                                                                                  this,
+                                                                                  permanentTaskLists );
+      
+      startTasksLoader( loader );
+   }
+   
+   
+   
+   @Override
+   public void onTasksLoaded( final String filter, Cursor result )
+   {
+      onFinishedLoading( result );
+      getHandler().post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            onFinishedLoadingTasksToNotify( filter );
+         }
+      } );
+   }
+   
+   
+   
+   private void onFinishedLoadingTasksToNotify( String filterString )
+   {
+      final Cursor cursor = getCurrentTasksCursor();
+      
       if ( cursor != null && cursor.moveToFirst() )
       {
-         buildOrUpdatePermanentNotification( cursor );
+         buildOrUpdatePermanentNotification( filterString, cursor );
       }
       else
       {
@@ -126,49 +185,6 @@ class PermanentNotifier extends AbstractNotifier
    
    
    
-   @Override
-   protected void onDatasetChanged()
-   {
-      reEvaluatePermanentNotification();
-   }
-   
-   
-   
-   private void reEvaluatePermanentNotification()
-   {
-      final int notificationType = getSettings().getNotifyingPermanentTasksType();
-      final boolean showOverDueTasks = getSettings().isNotifyingPermanentOverdueTasks();
-      
-      if ( notificationType == PermanentNotificationType.OFF
-         && !showOverDueTasks )
-      {
-         stopLoadingTasksToNotify();
-         cancelPermanentNotification();
-         
-         lastLoaderfilterString = null;
-      }
-      else
-      {
-         loadPermanentTasks( notificationType, showOverDueTasks );
-      }
-   }
-   
-   
-   
-   private void loadPermanentTasks( int notificationType,
-                                    boolean showOverDueTasks )
-   {
-      final LoadPermanentTasksAsyncTask loader = new LoadPermanentTasksAsyncTask( context,
-                                                                                  this,
-                                                                                  notificationType,
-                                                                                  showOverDueTasks );
-      lastLoaderfilterString = loader.getFilterString();
-      
-      startTasksLoader( loader );
-   }
-   
-   
-   
    private void cancelPermanentNotification()
    {
       presenter.cancelNotification();
@@ -176,8 +192,9 @@ class PermanentNotifier extends AbstractNotifier
    
    
    
-   private void buildOrUpdatePermanentNotification( Cursor cursor )
+   private void buildOrUpdatePermanentNotification( String filterString,
+                                                    Cursor cursor )
    {
-      presenter.showNotificationFor( cursor, lastLoaderfilterString );
+      presenter.showNotificationFor( cursor, filterString );
    }
 }

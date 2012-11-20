@@ -21,20 +21,20 @@
    <PreferenceScreen
       android:key="dev.drsoran.moloko"
       android:title="@string/acc_pref_account_tilte"
-      android:summary="@string/acc_pref_account_summary">
+      moloko:summaryPattern="@string/acc_pref_account_summary">
       <intent
          android:action="dev.drsoran.moloko.prefs.account.MAIN" />
    </PreferenceScreen>
 
    <dev.drsoran.moloko.prefs.DefaultListPreference
       android:title="@string/moloko_prefs_rtm_defaultlist_title"
-      android:summary="%s"
+      moloko:summaryPattern="%s"
       android:key="@string/key_def_list_local"
       moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
 
    <dev.drsoran.moloko.prefs.RtmSyncStatePreference
       android:title="@string/moloko_prefs_rtm_sync_title"
-      android:summary="@string/design_text"
+      moloko:summaryPattern="@string/design_text"
       moloko:infoIcon="@drawable/ic_prefs_refresh"
       moloko:infoWidgetLayout="@layout/moloko_prefs_widget_sync" />
       

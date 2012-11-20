@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.notification;
 
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Map;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -35,6 +37,7 @@ import android.util.Pair;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.PermanentNotificationType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.format.MolokoDateFormatter;
@@ -172,48 +175,49 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    private String getNotificationTitle()
    {
-      final int notificationType = getPermanentNotificationTypeFromSettings();
+      final Map< PermanentNotificationType, Collection< String >> permanetNotifications = MolokoApp.getSettings( getContext() )
+                                                                                                   .getNotifyingPermanentTaskLists();
       
-      switch ( notificationType )
+      final boolean isNotifyingTodayTasks = !permanetNotifications.get( PermanentNotificationType.TODAY )
+                                                                  .isEmpty();
+      final boolean isNotifyingTomorrowTasks = !permanetNotifications.get( PermanentNotificationType.TOMORROW )
+                                                                     .isEmpty();
+      final boolean isNotifyingOverdueTasks = !permanetNotifications.get( PermanentNotificationType.OVERDUE )
+                                                                    .isEmpty();
+      
+      if ( isNotifyingTodayTasks && isNotifyingTomorrowTasks )
       {
-         case PermanentNotificationType.TODAY:
-            return context.getString( R.string.notification_permanent_today_title );
-            
-         case PermanentNotificationType.TOMORROW:
-            return context.getString( R.string.notification_permanent_tomorrow_title );
-            
-         case PermanentNotificationType.TODAY_AND_TOMORROW:
-         {
-            final MolokoCalendar cal = MolokoCalendar.getInstance();
-            
-            final long todayMillis = cal.getTimeInMillis();
-            cal.roll( Calendar.DAY_OF_YEAR, 1 );
-            final long tomorrowMillis = cal.getTimeInMillis();
-            
-            return context.getString( R.string.notification_permanent_today_and_tomorrow_title,
-                                      MolokoDateFormatter.formatDate( context,
-                                                                      todayMillis,
-                                                                      MolokoDateFormatter.FORMAT_NUMERIC ),
-                                      MolokoDateFormatter.formatDate( context,
-                                                                      tomorrowMillis,
-                                                                      MolokoDateFormatter.FORMAT_NUMERIC ) );
-         }
+         final MolokoCalendar cal = MolokoCalendar.getInstance();
          
-         case PermanentNotificationType.OFF:
-         {
-            if ( isNotifyingPermanentOverdueTasks() )
-            {
-               return context.getString( R.string.notification_permanent_overdue_title );
-            }
-            else
-            {
-               return Strings.EMPTY_STRING;
-            }
-         }
+         final long todayMillis = cal.getTimeInMillis();
+         cal.roll( Calendar.DAY_OF_YEAR, 1 );
+         final long tomorrowMillis = cal.getTimeInMillis();
          
-         default :
-            return Strings.EMPTY_STRING;
+         return context.getString( R.string.notification_permanent_today_and_tomorrow_title,
+                                   MolokoDateFormatter.formatDate( context,
+                                                                   todayMillis,
+                                                                   MolokoDateFormatter.FORMAT_NUMERIC ),
+                                   MolokoDateFormatter.formatDate( context,
+                                                                   tomorrowMillis,
+                                                                   MolokoDateFormatter.FORMAT_NUMERIC ) );
       }
+      
+      if ( isNotifyingTodayTasks )
+      {
+         return context.getString( R.string.notification_permanent_today_title );
+      }
+      
+      if ( isNotifyingTomorrowTasks )
+      {
+         return context.getString( R.string.notification_permanent_tomorrow_title );
+      }
+      
+      if ( isNotifyingOverdueTasks )
+      {
+         return context.getString( R.string.notification_permanent_overdue_title );
+      }
+      
+      return Strings.EMPTY_STRING;
    }
    
    
@@ -339,21 +343,6 @@ abstract class AbstractPermanentNotificationPresenter implements
       
       return Pair.create( Integer.valueOf( numHighPrioTasks ),
                           Integer.valueOf( numOverdueTasks ) );
-   }
-   
-   
-   
-   private int getPermanentNotificationTypeFromSettings()
-   {
-      return MolokoApp.getSettings( context ).getNotifyingPermanentTasksType();
-   }
-   
-   
-   
-   private boolean isNotifyingPermanentOverdueTasks()
-   {
-      return MolokoApp.getSettings( context )
-                      .isNotifyingPermanentOverdueTasks();
    }
    
    

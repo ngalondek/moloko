@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko;
 
-
-
 public interface IOnSettingsChangedListener
 {
    public final static int RTM_SETTINGS_SYNCED = 1 << 0;
@@ -48,15 +46,12 @@ public interface IOnSettingsChangedListener
    
    public final static int NOTIFY_PERMANENT_TASKS = 1 << 10;
    
-   public final static int NOTIFY_PERMANENT_OVERDUE_TASKS = 1 << 11;
-   
    public final static int DATE_TIME_RELATED = DATEFORMAT | TIMEFORMAT;
    
    public final static int NOTIFY_DUE_TASKS_RELATED = NOTIFY_DUE_TASKS
       | NOTIFY_DUE_TASKS_BEFORE_TIME | NOTIFY_DUE_TASKS_FEATURE;
    
-   public final static int NOTIFY_PERMANENT_RELATED = NOTIFY_PERMANENT_TASKS
-      | NOTIFY_PERMANENT_OVERDUE_TASKS;
+   public final static int NOTIFY_PERMANENT_RELATED = NOTIFY_PERMANENT_TASKS;
    
    public final static int NOTIFICATION_RELATED = NOTIFY_DUE_TASKS_RELATED
       | NOTIFY_PERMANENT_RELATED;

@@ -20,7 +20,7 @@
 
    <dev.drsoran.moloko.prefs.StartUpViewPreference
       android:title="@string/moloko_prefs_startup_view_title"
-      android:summary="%s"
+      moloko:summaryPattern="%s"
       android:key="@string/key_startup_view" />
    
    <dev.drsoran.moloko.prefs.SyncAtStartUpPreference 
@@ -30,7 +30,7 @@
 
    <dev.drsoran.moloko.prefs.TaskSortPreference
       android:title="@string/moloko_prefs_def_sort_title"
-      android:summary="@string/moloko_prefs_def_sort_summary"
+      moloko:summaryPattern="@string/moloko_prefs_def_sort_summary"
       android:entries="@array/app_sort_options"
       android:key="@string/key_task_sort" />
     

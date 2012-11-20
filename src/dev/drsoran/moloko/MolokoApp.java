@@ -30,12 +30,12 @@ import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
 import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.IDateFormatContext;
-import dev.drsoran.moloko.notification.PermanentNotificationType;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
 import dev.drsoran.moloko.sync.periodic.PeriodicSyncHandlerFactory;
 import dev.drsoran.moloko.util.Intents;
@@ -117,6 +117,36 @@ public class MolokoApp extends Application implements
    public static MolokoApp get( Context context )
    {
       return (MolokoApp) context.getApplicationContext();
+   }
+   
+   
+   
+   public static int getVersionCode( Context context )
+   {
+      try
+      {
+         return context.getPackageManager()
+                       .getPackageInfo( context.getPackageName(), 0 ).versionCode;
+      }
+      catch ( NameNotFoundException e )
+      {
+         throw new RuntimeException( e );
+      }
+   }
+   
+   
+   
+   public static String getVersionName( Context context )
+   {
+      try
+      {
+         return context.getPackageManager()
+                       .getPackageInfo( context.getPackageName(), 0 ).versionName;
+      }
+      catch ( NameNotFoundException e )
+      {
+         throw new RuntimeException( e );
+      }
    }
    
    
@@ -237,8 +267,7 @@ public class MolokoApp extends Application implements
    private void registerNotificationSettingsListener()
    {
       notifierContext.registerOnSettingsChangedListener( IOnSettingsChangedListener.NOTIFY_DUE_TASKS
-                                                            | IOnSettingsChangedListener.NOTIFY_PERMANENT_TASKS
-                                                            | IOnSettingsChangedListener.NOTIFY_PERMANENT_OVERDUE_TASKS,
+                                                            | IOnSettingsChangedListener.NOTIFY_PERMANENT_TASKS,
                                                          this );
    }
    
@@ -365,11 +394,7 @@ public class MolokoApp extends Application implements
       boolean activated = false;
       
       activated = settings.isNotifyingDueTasks();
-      activated |= settings.isNotifyingPermanentOverdueTasks();
-      if ( !activated )
-      {
-         activated = settings.getNotifyingPermanentTasksType() != PermanentNotificationType.OFF;
-      }
+      activated |= settings.isNotifyingPermanentTasks();
       
       return activated;
    }

@@ -30,11 +30,12 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.notification.AbstractNotificationTasksLoader.ITasksLoadedHandler;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-class DueTasksNotifier extends AbstractNotifier
+class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
 {
    private final IDueTaskNotificationPresenter presenter;
    
@@ -130,8 +131,26 @@ class DueTasksNotifier extends AbstractNotifier
    
    
    @Override
-   protected void onFinishedLoadingTasksToNotify( Cursor cursor )
+   public void onTasksLoaded( Cursor result )
    {
+      onFinishedLoading( result );
+      
+      getHandler().post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            onFinishedLoadingTasksToNotify();
+         }
+      } );
+   }
+   
+   
+   
+   private void onFinishedLoadingTasksToNotify()
+   {
+      final Cursor cursor = getCurrentTasksCursor();
+      
       if ( cursor != null && cursor.moveToFirst() )
       {
          evaluateNotificationsRangeAndUpdateNotifications();

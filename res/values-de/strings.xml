@@ -111,8 +111,9 @@
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
    <string name="phr_delete_with_name">Lösche \'%1$s\'</string>
    <string name="phr_settings">Einstellungen</string>
-   <string name="phr_none_f">keine</string>
-   <string name="phr_nothing">nichts</string>
+   <string name="phr_all_f">Alle</string>
+   <string name="phr_none_f">Keine</string>
+   <string name="phr_nothing">Nichts</string>
    <string name="phr_do_sync">Synchronisieren</string>   
    <string name="phr_on">An</string>
    <string name="phr_off">Aus</string>
@@ -123,7 +124,7 @@
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
    <string name="phr_hint">Hinweis</string>
    <string name="phr_yes">Ja</string>
-   <string name="phr_no">Nein</string>
+   <string name="phr_no">Nein</string>   
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -425,16 +426,16 @@
 	   <!-- Notification settings -->
 	   <string name="moloko_prefs_notification_title">Benachrichtigungen</string>	   
 	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Aufgaben mit Fälligkeitszeit</string>
-	   <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigen</string>
-	   <string name="moloko_prefs_notification_tasks_w_due_before_title">Erinnerung</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_reminder_title">Erinnerung</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Benachrichtigungston</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrieren</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
 	   <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
 	   <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
 	   <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
-	   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Heutige und morgige Aufgaben</string>
-	   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">An überfällige Aufgaben erinnern</string>
+	   <string name="moloko_prefs_notification_permanent_overdue">Überfällige Aufgaben</string>
+	   <string name="moloko_prefs_notification_permanent_multiple_selected">aus mehreren Listen</string>
+      <string name="moloko_prefs_notification_permanent_single_selected">der Liste \'%1$s\'</string>
 	   
 	   <!-- Development settings -->
 	   <string name="moloko_prefs_support_dev_title">Helfen Sie bei der Entwicklung</string>

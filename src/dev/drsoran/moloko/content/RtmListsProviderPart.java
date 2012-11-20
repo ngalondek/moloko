@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -303,6 +305,60 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
+   public static Collection< String > resolveListIdsToListNames( ContentProviderClient client,
+                                                                 Collection< String > listIds )
+   {
+      Collection< String > result = null;
+      Cursor c = null;
+      
+      try
+      {
+         final String selectionString = buildListIdsSelectionString( listIds );
+         
+         c = client.query( Rtm.Lists.CONTENT_URI, new String[]
+         { Lists._ID, Lists.LIST_NAME }, selectionString, null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            if ( c.getCount() > 0 )
+            {
+               result = new ArrayList< String >( c.getCount() );
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  result.add( c.getString( 1 ) );
+               }
+            }
+            else
+            {
+               result = Collections.emptyList();
+            }
+         }
+         
+         if ( !ok )
+         {
+            result = null;
+         }
+      }
+      catch ( RemoteException e )
+      {
+         MolokoApp.Log.e( TAG, "Query lists failed. ", e );
+         result = null;
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
+      }
+      
+      return result;
+   }
+   
+   
+   
    public final static int getDeletedListsCount( ContentProviderClient client )
    {
       int cnt = -1;
@@ -502,5 +558,28 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
                                         c.getInt( COL_INDICES.get( Lists.POSITION ) ),
                                         filter );
       return list;
+   }
+   
+   
+   
+   private static String buildListIdsSelectionString( Collection< String > listIds )
+   {
+      final StringBuilder selectionStringBuilder = new StringBuilder();
+      
+      boolean isFirst = true;
+      for ( String listId : listIds )
+      {
+         if ( !isFirst )
+         {
+            selectionStringBuilder.append( " OR " );
+         }
+         
+         selectionStringBuilder.append( Lists._ID )
+                               .append( "=" )
+                               .append( listId );
+         isFirst = false;
+      }
+      
+      return selectionStringBuilder.toString();
    }
 }

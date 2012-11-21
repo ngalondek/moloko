@@ -87,6 +87,15 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    @Override
+   public void onStart()
+   {
+      super.onStart();
+      baseImpl.onStart();
+   }
+   
+   
+   
+   @Override
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
@@ -398,7 +407,9 @@ public abstract class MolokoExpandableListFragment< D > extends
    protected void invalidateOptionsMenu()
    {
       if ( getSherlockActivity() != null )
-         getSherlockActivity().invalidateOptionsMenu();
+      {
+         getSherlockActivity().supportInvalidateOptionsMenu();
+      }
    }
    
    

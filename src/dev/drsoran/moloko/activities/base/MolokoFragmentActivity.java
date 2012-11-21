@@ -86,6 +86,8 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    private boolean showSyncProgressByActionProvider;
    
+   private boolean listenersRegistered;
+   
    
    
    protected MolokoFragmentActivity()
@@ -110,12 +112,19 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       {
          configureBySavedInstanceState( savedInstanceState );
       }
-      
-      MolokoApp.getNotifierContext( this )
-               .registerAccountUpdatedListener( this );
-      
-      MolokoApp.getNotifierContext( this )
-               .registerSyncStatusChangedListener( this );
+   }
+   
+   
+   
+   @Override
+   protected void onStart()
+   {
+      super.onStart();
+      if ( !listenersRegistered )
+      {
+         onRegisterListeners();
+         listenersRegistered = true;
+      }
    }
    
    
@@ -138,6 +147,28 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       
       configureByIntent( intent );
       setIntent( intent );
+   }
+   
+   
+   
+   protected void onRegisterListeners()
+   {
+      MolokoApp.getNotifierContext( this )
+               .registerAccountUpdatedListener( this );
+      
+      MolokoApp.getNotifierContext( this )
+               .registerSyncStatusChangedListener( this );
+   }
+   
+   
+   
+   protected void onUnregisterListeners()
+   {
+      MolokoApp.getNotifierContext( this )
+               .unregisterAccountUpdatedListener( this );
+      
+      MolokoApp.getNotifierContext( this )
+               .unregisterSyncStatusChangedListener( this );
    }
    
    
@@ -194,13 +225,10 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    @Override
    protected void onDestroy()
    {
+      onUnregisterListeners();
+      listenersRegistered = false;
+      
       annotatedConfigSupport.onDetach();
-      
-      MolokoApp.getNotifierContext( this )
-               .unregisterAccountUpdatedListener( this );
-      
-      MolokoApp.getNotifierContext( this )
-               .unregisterSyncStatusChangedListener( this );
       
       super.onDestroy();
    }

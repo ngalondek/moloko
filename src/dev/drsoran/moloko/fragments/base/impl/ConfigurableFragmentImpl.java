@@ -42,6 +42,8 @@ public class ConfigurableFragmentImpl
    
    private final int settingsMask;
    
+   private boolean listenersRegistered;
+   
    
    
    public ConfigurableFragmentImpl( Fragment fragment, int settingsMask )
@@ -63,13 +65,6 @@ public class ConfigurableFragmentImpl
    {
       this.activity = activity;
       this.annotatedConfigSupport.onAttach( this.activity );
-      
-      if ( settingsMask != 0 && fragment instanceof IOnSettingsChangedListener )
-      {
-         MolokoApp.getNotifierContext( this.activity )
-                  .registerOnSettingsChangedListener( settingsMask,
-                                                      (IOnSettingsChangedListener) fragment );
-      }
    }
    
    
@@ -84,15 +79,35 @@ public class ConfigurableFragmentImpl
    
    
    
+   public void onStart()
+   {
+      if ( !listenersRegistered )
+      {
+         if ( settingsMask != 0
+            && fragment instanceof IOnSettingsChangedListener )
+         {
+            MolokoApp.getNotifierContext( this.activity )
+                     .registerOnSettingsChangedListener( settingsMask,
+                                                         (IOnSettingsChangedListener) fragment );
+            
+            listenersRegistered = true;
+         }
+      }
+   }
+   
+   
+   
    public void onDetach()
    {
-      annotatedConfigSupport.onDetach();
-      
-      if ( fragment instanceof IOnSettingsChangedListener )
+      if ( listenersRegistered )
       {
          MolokoApp.getNotifierContext( activity )
                   .unregisterOnSettingsChangedListener( (IOnSettingsChangedListener) fragment );
+         
+         listenersRegistered = false;
       }
+      
+      annotatedConfigSupport.onDetach();
    }
    
    

@@ -72,9 +72,23 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      baseImpl.onAttach( activity );
+      loaderImpl.onAttach( activity );
+      editImpl.onAttach( activity );
+      accessLevelAwareImpl.onAttach( getSherlockActivity() );
+   }
+   
+   
+   
+   @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
       baseImpl.onCreate( savedInstanceState );
       loaderImpl.onCreate( savedInstanceState );
    }
@@ -82,13 +96,10 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    @Override
-   public void onAttach( Activity activity )
+   public void onStart()
    {
-      super.onAttach( activity );
-      baseImpl.onAttach( activity );
-      loaderImpl.onAttach( activity );
-      editImpl.onAttach( activity );
-      accessLevelAwareImpl.onAttach( getSherlockActivity() );
+      super.onStart();
+      baseImpl.onStart();
    }
    
    
@@ -100,6 +111,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
       loaderImpl.onDetach();
       editImpl.onDetach();
       accessLevelAwareImpl.onDetach();
+      
       super.onDetach();
    }
    

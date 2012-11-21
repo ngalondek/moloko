@@ -75,10 +75,20 @@ public abstract class MolokoFragment extends SherlockFragment implements
    
    
    @Override
+   public void onStart()
+   {
+      super.onStart();
+      impl.onStart();
+   }
+   
+   
+   
+   @Override
    public void onDetach()
    {
       impl.onDetach();
       accessLevelAwareImpl.onDetach();
+      
       super.onDetach();
    }
    

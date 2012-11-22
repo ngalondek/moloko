@@ -45,6 +45,8 @@ import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmListsProviderPart.NewRtmListId;
 import dev.drsoran.moloko.fragments.base.MolokoEditDialogFragment;
+import dev.drsoran.moloko.fragments.listeners.IMolokoEditDialogFragmentListener;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
@@ -53,18 +55,13 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public class AddRenameListDialogFragment extends MolokoEditDialogFragment
 {
-   public static class Config
-   {
-      public final static String LIST = "list";
-      
-      public final static String FILTER = "filter";
-   }
-   
-   @InstanceState( key = Config.LIST )
+   @InstanceState( key = Intents.Extras.KEY_LIST )
    private RtmList list;
    
-   @InstanceState( key = Config.FILTER )
+   @InstanceState( key = Intents.Extras.KEY_FILTER )
    private IFilter filter;
+   
+   private IMolokoEditDialogFragmentListener listener;
    
    private TextView listNameEdit;
    
@@ -87,6 +84,19 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    {
       registerAnnotatedConfiguredInstance( this,
                                            AddRenameListDialogFragment.class );
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof IMolokoEditDialogFragmentListener )
+         listener = (IMolokoEditDialogFragmentListener) activity;
+      else
+         listener = null;
    }
    
    
@@ -127,7 +137,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       {
          title = getString( R.string.dlg_rename_list_title );
       }
-      else if ( getFilter() != null )
+      else if ( filter != null )
       {
          title = getString( R.string.dlg_add_smart_list_title );
       }
@@ -146,12 +156,25 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
-                                                                          // TODO: Where are going the changes to?
-                                                                          AddRenameListDialogFragment.this.onFinishEditing();
+                                                                          if ( listener != null )
+                                                                          {
+                                                                             listener.onFinishEditDialogFragment( AddRenameListDialogFragment.this );
+                                                                          }
                                                                        }
                                                                     } )
                                                 .setNegativeButton( R.string.btn_cancel,
-                                                                    null )
+                                                                    new DialogInterface.OnClickListener()
+                                                                    {
+                                                                       @Override
+                                                                       public void onClick( DialogInterface dialog,
+                                                                                            int which )
+                                                                       {
+                                                                          if ( listener != null )
+                                                                          {
+                                                                             listener.onCancelEditDialogFragment( AddRenameListDialogFragment.this );
+                                                                          }
+                                                                       }
+                                                                    } )
                                                 .create();
    }
    
@@ -166,9 +189,18 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    
+   @Override
+   public void onDetach()
+   {
+      listener = null;
+      super.onDetach();
+   }
+   
+   
+   
    private void configureAsRenameListDialog()
    {
-      listNameEdit.setText( getList().getName() );
+      listNameEdit.setText( list.getName() );
       
       // Show only the list name edit, so this will close on IME action
       listNameEdit.setImeActionLabel( filterEdit.getImeActionLabel(),
@@ -180,31 +212,17 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    private void configureAsNewListDialog()
    {
-      final IFilter filter = getFilter();
-      
       if ( filter instanceof RtmSmartFilter )
+      {
          filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
+      }
    }
    
    
    
    private boolean isRenameMode()
    {
-      return getList() != null;
-   }
-   
-   
-   
-   private RtmList getList()
-   {
-      return list;
-   }
-   
-   
-   
-   private IFilter getFilter()
-   {
-      return filter;
+      return list != null;
    }
    
    
@@ -213,13 +231,16 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    public boolean hasChanges()
    {
       final String trimmedListName = UIUtils.getTrimmedText( listNameEdit );
-      final RtmList list = getList();
       
       if ( list != null )
+      {
          return !list.getName().equals( trimmedListName );
+      }
       else
+      {
          return !TextUtils.isEmpty( trimmedListName )
             || !TextUtils.isEmpty( UIUtils.getTrimmedText( filterEdit ) );
+      }
    }
    
    
@@ -227,12 +248,14 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    @Override
    protected ApplyChangesInfo getChanges()
    {
-      final RtmList list = getList();
-      
       if ( list == null )
+      {
          return createNewList();
+      }
       else
+      {
          return renameList( list );
+      }
    }
    
    
@@ -242,8 +265,10 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    {
       ValidationResult result = validateListName();
       
-      if ( result.isOk() && getList() == null )
+      if ( result.isOk() && list == null )
+      {
          result = validateSmartFilter();
+      }
       
       return result;
    }

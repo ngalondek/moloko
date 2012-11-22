@@ -31,7 +31,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.PermanentNotificationType;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
@@ -84,8 +83,6 @@ class LoadPermanentTasksAsyncTask extends
          
          buildFilterString();
          final String evalFilter = RtmSmartFilter.evaluate( filterString, true );
-         
-         MolokoApp.Log.d( getClass(), filterString );
          
          if ( !TextUtils.isEmpty( evalFilter ) )
          {

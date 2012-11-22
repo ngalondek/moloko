@@ -32,11 +32,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
+import dev.drsoran.moloko.fragments.listeners.IMolokoEditDialogFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.RtmListEditUtils;
@@ -45,7 +47,7 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TaskListsActivity extends MolokoEditFragmentActivity implements
-         ITaskListsFragmentListener
+         ITaskListsFragmentListener, IMolokoEditDialogFragmentListener
 {
    private final static class Config
    {
@@ -154,6 +156,31 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    
    
+   @Override
+   public void onValidateDialogFragment( IEditFragment editDialogFragment )
+   {
+      validateFragment( editDialogFragment );
+   }
+   
+   
+   
+   @Override
+   public void onFinishEditDialogFragment( IEditFragment editDialogFragment )
+   {
+      finishFragmentEditing( editDialogFragment );
+   }
+   
+   
+   
+   @Override
+   public void onCancelEditDialogFragment( IEditFragment editDialogFragment )
+   {
+      // In case of a dialog we cannot show a cancel query since the dialog has already gone.
+      editDialogFragment.onCancelEditing();
+   }
+   
+   
+   
    private void showRenameListDialog( RtmListWithTaskCount list )
    {
       createAddRenameListDialogFragment( createRenameListFragmentConfig( list ) );
@@ -165,11 +192,12 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    {
       final Bundle config = new Bundle();
       
-      config.putParcelable( AddRenameListDialogFragment.Config.LIST,
-                            list.getRtmList() );
+      config.putParcelable( Intents.Extras.KEY_LIST, list.getRtmList() );
       if ( list.getRtmList().getSmartFilter() != null )
-         config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
-                               list.getRtmList().getSmartFilter() );
+      {
+         config.putParcelable( Intents.Extras.KEY_FILTER, list.getRtmList()
+                                                              .getSmartFilter() );
+      }
       
       return config;
    }

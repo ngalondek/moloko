@@ -115,6 +115,8 @@ public final class Intents
       public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
          + "tasks";
       
+      public final static String KEY_LIST = "list";
+      
       public final static String KEY_LIST_NAME = "list_name";
       
       public final static String KEY_LIST_ID = "list_id";

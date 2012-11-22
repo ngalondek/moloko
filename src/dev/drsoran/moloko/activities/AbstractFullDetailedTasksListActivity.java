@@ -35,6 +35,7 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -46,6 +47,7 @@ import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IMolokoEditDialogFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
@@ -58,7 +60,7 @@ import dev.drsoran.rtm.Task;
 public abstract class AbstractFullDetailedTasksListActivity extends
          AbstractTasksListActivity implements ITasksListActionModeListener,
          IShowTasksWithTagsListener, IQuickAddTaskActionModeListener,
-         ILoaderFragmentListener
+         ILoaderFragmentListener, IMolokoEditDialogFragmentListener
 {
    @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
    private boolean quickAddTaskActionModeActive;
@@ -283,6 +285,31 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                             .setPositiveButton( R.string.btn_delete )
                                                                             .setNegativeButton( R.string.btn_cancel )
                                                                             .show( this );
+   }
+   
+   
+   
+   @Override
+   public void onValidateDialogFragment( IEditFragment editDialogFragment )
+   {
+      validateFragment( editDialogFragment );
+   }
+   
+   
+   
+   @Override
+   public void onFinishEditDialogFragment( IEditFragment editDialogFragment )
+   {
+      finishFragmentEditing( editDialogFragment );
+   }
+   
+   
+   
+   @Override
+   public void onCancelEditDialogFragment( IEditFragment editDialogFragment )
+   {
+      // In case of a dialog we cannot show a cancel query since the dialog has already gone.
+      editDialogFragment.onCancelEditing();
    }
    
    
@@ -534,8 +561,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    protected void showAddListDialog()
    {
       final Bundle config = new Bundle();
-      config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
-                            getActiveFilter() );
+      config.putParcelable( Intents.Extras.KEY_FILTER, getActiveFilter() );
       
       final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
       UIUtils.showDialogFragment( this,

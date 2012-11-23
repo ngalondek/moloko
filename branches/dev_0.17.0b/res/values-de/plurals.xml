@@ -10,9 +10,8 @@
 		the GNU General Public License for more details. You should have
 		received a copy of the GNU General Public License along with Moloko.
 		If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny
-		Röhricht - implementation
+		Röhricht - implementation
 -->
-
 <resources>
 
     <!-- Globals -->
@@ -67,21 +66,41 @@
 
     <!-- Global Toasts -->
     <!-- Task -->
+    <plurals name="toast_save_task">
+        <item quantity="one">Speiche Änderungen an der Aufgabe&#8230;</item>
+        <item quantity="other">Speiche Änderungen an %1$d Aufgaben&#8230;</item>
+    </plurals>
+    <plurals name="toast_save_task_ok">
+        <item quantity="one">Änderungen an der Aufgabe gespeichert</item>
+        <item quantity="other">Änderungen an %1$d der Aufgabe gespeichert</item>
+    </plurals>
+    <plurals name="toast_save_task_failed">
+        <item quantity="one">Änderungen an der Aufgabe konnten nicht gespeichert werden</item>
+        <item quantity="other">Änderungen an den Aufgaben konnten nicht gespeichert werden</item>
+    </plurals>
     <plurals name="toast_completed_task">
-        <item quantity="one">Aufgabe erledigt</item>
+        <item quantity="one">Aufgabe \'%2$s\' erledigt</item>
         <item quantity="other">%1$d Aufgaben erledigt</item>
     </plurals>
     <plurals name="toast_incompleted_task">
-        <item quantity="one">Aufgabe ist zu erledigen</item>
+        <item quantity="one">Aufgabe \'%2$s\' ist zu erledigen</item>
         <item quantity="other">%1$d Aufgaben sind zu erledigen</item>
     </plurals>
     <plurals name="toast_postponed_task">
-        <item quantity="one">Aufgabe wurde aufgeschoben</item>
+        <item quantity="one">Aufgabe \'%2$s\' wurde aufgeschoben</item>
         <item quantity="other">%1$d Aufgaben wurden aufgeschoben</item>
     </plurals>
+    <plurals name="toast_delete_task">
+        <item quantity="one">Lösche Aufgabe \'%2$s\'&#8230;</item>
+        <item quantity="other">Lösche %1$d Aufgaben&#8230;</item>
+    </plurals>
     <plurals name="toast_deleted_task">
-        <item quantity="one">Aufgabe wurde gelöscht</item>
+        <item quantity="one">Aufgabe \'%2$s\' wurde gelöscht</item>
         <item quantity="other">%1$d Aufgaben wurden gelöscht</item>
+    </plurals>
+    <plurals name="toast_delete_task_failed">
+        <item quantity="one">Aufgabe \'%1$s\' konnte nicht gelöscht werden</item>
+        <item quantity="other">Aufgaben konnten nicht gelöscht werden</item>
     </plurals>
 
     <!-- TaskLists fragment -->

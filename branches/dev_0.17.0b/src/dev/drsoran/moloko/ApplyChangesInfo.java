@@ -94,4 +94,14 @@ public final class ApplyChangesInfo
    {
       return actionItems != null && actionItems.size() > 0;
    }
+   
+   
+   
+   public static ApplyChangesInfo failed( String applyFailedMessage )
+   {
+      return new ApplyChangesInfo( null,
+                                   Strings.EMPTY_STRING,
+                                   Strings.EMPTY_STRING,
+                                   applyFailedMessage );
+   }
 }

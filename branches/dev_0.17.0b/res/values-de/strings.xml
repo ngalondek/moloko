@@ -166,14 +166,9 @@
       
    <!-- Global Toasts -->
       <!-- Task -->   
-      <string name="toast_insert_task">Füge neue Aufgabe hinzu&#8230;</string>
-      <string name="toast_insert_task_ok">Neue Aufgabe hinzugefügt</string>
-      <string name="toast_insert_task_fail">Neue Aufgabe konnte nicht hinzugefügt werden</string>
-      <string name="toast_save_task">Speiche Änderungen an der Aufgabe&#8230;</string>
-      <string name="toast_save_task_ok">Änderungen an der Aufgabe gespeichert</string>
-      <string name="toast_save_task_failed">Änderungen an der Aufgabe konnten nicht gespeichert werden</string>
-      <string name="toast_delete_task">Lösche Aufgabe&#8230;</string>
-      <string name="toast_delete_task_failed">Aufgabe konnte nicht gelöscht werden</string>
+      <string name="toast_insert_task">Füge Aufgabe \'%1$s\' hinzu&#8230;</string>
+      <string name="toast_insert_task_ok">Aufgabe \'%1$s\' hinzugefügt</string>
+      <string name="toast_insert_task_fail">Aufgabe \'%1$s\' konnte nicht hinzugefügt werden</string>            
       <!-- Note -->
       <string name="toast_insert_note">Füge neue Notiz hinzu&#8230;</string>
       <string name="toast_insert_note_ok">Neue Notiz hinzugefügt</string>
@@ -185,15 +180,15 @@
       <string name="toast_delete_note_ok">Notiz gelöscht</string>
       <string name="toast_delete_note_failed">Notiz konnte nicht gelöscht werden</string>
       <!-- List -->
-      <string name="toast_insert_list">Füge neue Liste hinzu&#8230;</string>
-      <string name="toast_insert_list_ok">Neue Liste hinzugefügt</string>
-      <string name="toast_insert_list_fail">Neue Liste konnte nicht hinzugefügt werden</string>
+      <string name="toast_insert_list">Füge neue Liste \'%1$s\' hinzu&#8230;</string>
+      <string name="toast_insert_list_ok">Neue Liste \'%1$s\' hinzugefügt</string>
+      <string name="toast_insert_list_fail">Neue Liste \'%1$s\' konnte nicht hinzugefügt werden</string>
       <string name="toast_save_list">Speiche Änderungen an der Liste&#8230;</string>
       <string name="toast_save_list_ok">Änderungen an der Liste gespeichert</string>
       <string name="toast_save_list_failed">Änderungen an der Liste konnten nicht gespeichert werden</string>
-      <string name="toast_delete_list">Lösche Liste&#8230;</string>
-      <string name="toast_delete_list_ok">Liste gelöscht</string>
-      <string name="toast_delete_list_failed">Liste konnte nicht gelöscht werden</string>
+      <string name="toast_delete_list">Lösche Liste \'%1$s\'&#8230;</string>
+      <string name="toast_delete_list_ok">Liste \'%1$s\' gelöscht</string>
+      <string name="toast_delete_list_failed">Liste \'%1$s\' konnte nicht gelöscht werden</string>
       <string name="toast_delete_locked_list">Die Liste \'%1$s\' ist gesperrt and kann nicht gelöscht werden</string>
       
    <!-- Add/Rename list dialog fragment -->

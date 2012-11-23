@@ -78,21 +78,22 @@ public final class RtmListEditUtils
    {
       final ContentProviderClient client = context.getContentResolver()
                                                   .acquireContentProviderClient( Lists.CONTENT_URI );
-      
-      if ( client != null )
+      try
       {
          final RtmList list = RtmListsProviderPart.getListByName( client,
                                                                   listName );
-         client.release();
-         
          if ( list != null )
+         {
             return deleteList( context, list );
+         }
+      }
+      finally
+      {
+         client.release();
       }
       
-      return new ApplyChangesInfo( null,
-                                   context.getString( R.string.toast_delete_list ),
-                                   context.getString( R.string.toast_delete_list_ok ),
-                                   context.getString( R.string.toast_delete_list_failed ) );
+      return ApplyChangesInfo.failed( context.getString( R.string.toast_delete_list_failed,
+                                                         listName ) );
    }
    
    
@@ -111,12 +112,19 @@ public final class RtmListEditUtils
                                                                    list.getCreatedDate()
                                                                        .getTime() ) );
       if ( !ok )
+      {
          actionItemList = null;
+      }
+      
+      final String listname = list.getName();
       
       return new ApplyChangesInfo( actionItemList,
-                                   context.getString( R.string.toast_insert_list ),
-                                   context.getString( R.string.toast_insert_list_ok ),
-                                   context.getString( R.string.toast_insert_list_fail ) );
+                                   context.getString( R.string.toast_insert_list,
+                                                      listname ),
+                                   context.getString( R.string.toast_insert_list_ok,
+                                                      listname ),
+                                   context.getString( R.string.toast_insert_list_fail,
+                                                      listname ) );
    }
    
    
@@ -125,7 +133,8 @@ public final class RtmListEditUtils
                                                     RtmList list )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
-      ApplyChangesInfo applyChangesInfo;
+      final String listName = list.getName();
+      final String errorFeedbackMessage;
       
       if ( list.getLocked() == 0 )
       {
@@ -147,9 +156,12 @@ public final class RtmListEditUtils
                                                                                                                                listId,
                                                                                                                                context.getString( R.string.app_list_name_inbox ) );
             ok = moveTasksToInboxOps != null;
-            ok = ok
-               && actionItemList.addAll( ContentProviderAction.Type.UPDATE,
-                                         moveTasksToInboxOps );
+            
+            if ( ok && moveTasksToInboxOps.size() > 0 )
+            {
+               ok = actionItemList.addAll( ContentProviderAction.Type.UPDATE,
+                                           moveTasksToInboxOps );
+            }
          }
          
          ok = ok
@@ -176,19 +188,21 @@ public final class RtmListEditUtils
             actionItemList = null;
          }
          
-         applyChangesInfo = new ApplyChangesInfo( actionItemList,
-                                                  context.getString( R.string.toast_delete_list ),
-                                                  context.getString( R.string.toast_delete_list_ok ),
-                                                  context.getString( R.string.toast_delete_list_failed ) );
+         errorFeedbackMessage = context.getString( R.string.toast_delete_list_failed,
+                                                   listName );
       }
       else
       {
-         applyChangesInfo = new ApplyChangesInfo( actionItemList,
-                                                  context.getString( R.string.toast_delete_list ),
-                                                  context.getString( R.string.toast_delete_list_ok ),
-                                                  context.getString( R.string.toast_delete_locked_list ) );
+         errorFeedbackMessage = context.getString( R.string.toast_delete_locked_list,
+                                                   listName );
       }
       
+      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( actionItemList,
+                                                                      context.getString( R.string.toast_delete_list,
+                                                                                         listName ),
+                                                                      context.getString( R.string.toast_delete_list_ok,
+                                                                                         listName ),
+                                                                      errorFeedbackMessage );
       return applyChangesInfo;
    }
 }

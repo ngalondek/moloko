@@ -181,14 +181,9 @@
 
    <!-- Global Toasts -->
       <!-- Task -->
-      <string name="toast_insert_task">Adding new task&#8230;</string>
-      <string name="toast_insert_task_ok">New task added</string>
-      <string name="toast_insert_task_fail">Failed to add new task</string>
-      <string name="toast_save_task">Saving task changes&#8230;</string>
-      <string name="toast_save_task_ok">Changes to the task have been saved</string>
-      <string name="toast_save_task_failed">Failed to save task changes</string>      
-      <string name="toast_delete_task">Deleting task&#8230;</string>
-      <string name="toast_delete_task_failed">Failed to delete the task</string>
+      <string name="toast_insert_task">Adding task \'%1$s\'&#8230;</string>
+      <string name="toast_insert_task_ok">Task \'%1$s\' added</string>
+      <string name="toast_insert_task_fail">Failed to add task \'%1$s\'</string>
       <!-- Note -->
       <string name="toast_insert_note">Adding new note&#8230;</string>
       <string name="toast_insert_note_ok">New note added</string>
@@ -200,15 +195,15 @@
       <string name="toast_delete_note_ok">Note has been deleted</string>
       <string name="toast_delete_note_failed">Failed to delete the note</string>
       <!-- List -->
-      <string name="toast_insert_list">Adding new list&#8230;</string>
-      <string name="toast_insert_list_ok">New list added</string>
-      <string name="toast_insert_list_fail">Failed to add new list</string>
+      <string name="toast_insert_list">Adding new list \'%1$s\'&#8230;</string>
+      <string name="toast_insert_list_ok">New list \'%1$s\' added</string>
+      <string name="toast_insert_list_fail">Failed to add new list \'%1$s\'</string>
       <string name="toast_save_list">Saving list changes&#8230;</string>
       <string name="toast_save_list_ok">Changes to the list have been saved</string>
       <string name="toast_save_list_failed">Failed to save list changes</string>
-      <string name="toast_delete_list">Deleting list&#8230;</string>
-      <string name="toast_delete_list_ok">List has been deleted</string>
-      <string name="toast_delete_list_failed">Failed to delete the list</string>
+      <string name="toast_delete_list">Deleting list \'%1$s\'&#8230;</string>
+      <string name="toast_delete_list_ok">List \'%1$s\' has been deleted</string>
+      <string name="toast_delete_list_failed">Failed to delete list \'%1$s\'</string>
       <string name="toast_delete_locked_list">The list \'%1$s\' is locked and cannot be deleted</string>
 
    <!-- Add/Rename list dialog -->

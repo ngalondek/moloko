@@ -12,7 +12,7 @@
 		If not, see <http://www.gnu.org/licenses/>.
       
       Contributors:
-         David Vermeille - implementation
+         David Vermeille - implementation
 -->
 
 <resources>
@@ -69,6 +69,18 @@
 
     <!-- Global Toasts -->
     <!-- Task -->
+    <plurals name="toast_save_task">
+        <item quantity="one">Enregistrement des modifications de la tâche&#8230;</item>
+        <item quantity="other">Enregistrement des modifications de la tâche&#8230;</item>
+    </plurals>
+    <plurals name="toast_save_task_ok">
+        <item quantity="one">Modifications de la tâche enregistrées</item>
+        <item quantity="other">Modifications de la tâche enregistrées</item>
+    </plurals>
+    <plurals name="toast_save_task_failed">
+        <item quantity="one">Echec d\'enregistrement des modifications de la tâche</item>
+        <item quantity="other">Echec d\'enregistrement des modifications de la tâche</item>
+    </plurals>
     <plurals name="toast_completed_task">
         <item quantity="one">Tâche marquée faite</item>
         <item quantity="other">%1$d tâches marquées faites</item>
@@ -81,9 +93,17 @@
         <item quantity="one">Tâche reportée</item>
         <item quantity="other">%1$d tâches reportées</item>
     </plurals>
+    <plurals name="toast_delete_task">
+        <item quantity="one">Suppression d\'une tâche&#8230;</item>
+        <item quantity="other">Suppression d\'une tâche&#8230;</item>
+    </plurals>
     <plurals name="toast_deleted_task">
         <item quantity="one">Tâche supprimée</item>
         <item quantity="other">%1$d tâches supprimées</item>
+    </plurals>
+    <plurals name="toast_delete_task_failed">
+        <item quantity="one">Echec de supression de la tâche</item>
+        <item quantity="other">Echec de supression de la tâche</item>
     </plurals>
 
     <!-- TaskLists fragment -->

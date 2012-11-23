@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.Resources;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentProviderAction;
@@ -84,15 +85,23 @@ public final class TaskEditUtils
          }
       }
       
+      final Resources resources = context.getResources();
+      final int tasksCount = tasks.size();
+      final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
+                                             : Strings.EMPTY_STRING;
+      
       return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
-                                   context.getString( R.string.toast_save_task ),
-                                   context.getResources()
-                                          .getQuantityString( complete
-                                                                      ? R.plurals.toast_completed_task
-                                                                      : R.plurals.toast_incompleted_task,
-                                                              tasks.size(),
-                                                              tasks.size() ),
-                                   context.getString( R.string.toast_save_task_failed ) );
+                                   resources.getQuantityString( R.plurals.toast_save_task,
+                                                                tasksCount,
+                                                                tasksCount ),
+                                   resources.getQuantityString( complete
+                                                                        ? R.plurals.toast_completed_task
+                                                                        : R.plurals.toast_incompleted_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                tasksCount ) );
    }
    
    
@@ -175,13 +184,21 @@ public final class TaskEditUtils
          }
       }
       
+      final Resources resources = context.getResources();
+      final int tasksCount = tasks.size();
+      final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
+                                             : Strings.EMPTY_STRING;
+      
       return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
-                                   context.getString( R.string.toast_save_task ),
-                                   context.getResources()
-                                          .getQuantityString( R.plurals.toast_postponed_task,
-                                                              tasks.size(),
-                                                              tasks.size() ),
-                                   context.getString( R.string.toast_save_task_failed ) );
+                                   resources.getQuantityString( R.plurals.toast_save_task,
+                                                                tasksCount,
+                                                                tasksCount ),
+                                   resources.getQuantityString( R.plurals.toast_postponed_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                tasksCount ) );
    }
    
    
@@ -206,12 +223,18 @@ public final class TaskEditUtils
                                                                        .getTime() ) );
       
       if ( !ok )
+      {
          actionItemList = null;
+      }
       
+      final String taskName = task.getName();
       return new ApplyChangesInfo( actionItemList,
-                                   context.getString( R.string.toast_insert_task ),
-                                   context.getString( R.string.toast_insert_task_ok ),
-                                   context.getString( R.string.toast_insert_task_fail ) );
+                                   context.getString( R.string.toast_insert_task,
+                                                      taskName ),
+                                   context.getString( R.string.toast_insert_task_ok,
+                                                      taskName ),
+                                   context.getString( R.string.toast_insert_task_fail,
+                                                      taskName ) );
    }
    
    
@@ -255,14 +278,26 @@ public final class TaskEditUtils
       }
       
       if ( !ok )
+      {
          actionItemList = null;
+      }
+      
+      final Resources resources = context.getResources();
+      final int tasksCount = tasks.size();
+      final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
+                                             : Strings.EMPTY_STRING;
       
       return new ApplyChangesInfo( actionItemList,
-                                   context.getString( R.string.toast_delete_task ),
-                                   context.getResources()
-                                          .getQuantityString( R.plurals.toast_deleted_task,
-                                                              tasks.size(),
-                                                              tasks.size() ),
-                                   context.getString( R.string.toast_delete_task_failed ) );
+                                   resources.getQuantityString( R.plurals.toast_delete_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_deleted_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_delete_task_failed,
+                                                                tasksCount,
+                                                                taskName ) );
    }
 }

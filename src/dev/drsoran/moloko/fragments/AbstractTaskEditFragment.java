@@ -28,6 +28,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Editable;
@@ -48,6 +49,7 @@ import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
@@ -916,7 +918,33 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   protected ModificationSet createModificationSet( List< Task > tasks )
+   @Override
+   protected ApplyChangesInfo getApplyChangesInfo()
+   {
+      saveChanges();
+      
+      final List< Task > editedTasks = getEditedTasks();
+      final int editedTasksCount = editedTasks.size();
+      
+      final ModificationSet modificationSet = createModificationSet( editedTasks );
+      final Resources resources = getResources();
+      
+      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( modificationSet.toContentProviderActionItemList(),
+                                                                      resources.getQuantityString( R.plurals.toast_save_task,
+                                                                                                   editedTasksCount,
+                                                                                                   editedTasksCount ),
+                                                                      resources.getQuantityString( R.plurals.toast_save_task_ok,
+                                                                                                   editedTasksCount,
+                                                                                                   editedTasksCount ),
+                                                                      resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                                   editedTasksCount ) );
+      
+      return applyChangesInfo;
+   }
+   
+   
+   
+   private ModificationSet createModificationSet( List< Task > tasks )
    {
       final ModificationSet modifications = new ModificationSet();
       

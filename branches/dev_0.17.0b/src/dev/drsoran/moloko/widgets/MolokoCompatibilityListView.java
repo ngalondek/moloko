@@ -42,6 +42,8 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.moloko.MolokoApp;
+
 
 public class MolokoCompatibilityListView extends MolokoListView implements
          OnItemLongClickListener
@@ -108,7 +110,7 @@ public class MolokoCompatibilityListView extends MolokoListView implements
       
       
       @Override
-      public void onItemCheckedStateChanged( ActionMode mode,
+      public void onItemCheckedStateChanged( final ActionMode mode,
                                              int position,
                                              long id,
                                              boolean checked )
@@ -118,7 +120,20 @@ public class MolokoCompatibilityListView extends MolokoListView implements
          // If there are no items selected we no longer need the selection mode.
          if ( checkedItemCount == 0 )
          {
-            mode.finish();
+            // The ActionMode finish can not be executed synchronously
+            // because this may be called by an Adapter.notifyChanged()
+            // and may lead an unregister during notification that is
+            // not supported for API level < 11.
+            // So we defer the finish call until the notification is
+            // done.
+            MolokoApp.getHandler().postAtFrontOfQueue( new Runnable()
+            {
+               @Override
+               public void run()
+               {
+                  mode.finish();
+               }
+            } );
          }
       }
    }

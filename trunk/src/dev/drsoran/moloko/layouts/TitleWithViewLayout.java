@@ -26,7 +26,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +34,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoLinkifier;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 
 
 public abstract class TitleWithViewLayout extends LinearLayout
@@ -73,6 +75,27 @@ public abstract class TitleWithViewLayout extends LinearLayout
    
    
    
+   public void setTitle( String title )
+   {
+      setTextViewText( getTitleView(), title );
+   }
+   
+   
+   
+   public void setTitle( int resId )
+   {
+      setTextViewText( getTitleView(), getContext().getString( resId ) );
+   }
+   
+   
+   
+   public void showTopLine( boolean show )
+   {
+      getTopLineView().setVisibility( show ? View.VISIBLE : View.GONE );
+   }
+   
+   
+   
    public abstract View getView();
    
    
@@ -97,26 +120,12 @@ public abstract class TitleWithViewLayout extends LinearLayout
       setImage( array.getDrawable( R.styleable.TitleWithView_imageSrc ) );
       
       // Top line
-      {
-         final View topLine = findViewById( R.id.title_with_view_top_line );
-         
-         if ( array.getBoolean( R.styleable.TitleWithView_showTopLine, true ) )
-         {
-            ( (GradientDrawable) topLine.getBackground() ).setColor( array.getColor( R.styleable.TitleWithView_topLineColor,
-                                                                                     R.color.app_default_line ) );
-            topLine.getLayoutParams().height = array.getDimensionPixelSize( R.styleable.TitleWithView_topLineHeight,
-                                                                            1 );
-         }
-         else
-         {
-            topLine.setVisibility( View.GONE );
-         }
-      }
+      setTopLine( array );
       
-      final TextView text = (TextView) findViewById( R.id.title_with_view_title );
+      final TextView titleView = (TextView) findViewById( R.id.title_with_view_title );
       
       // Title
-      setAttr( context, text, array, new int[]
+      setAttr( context, titleView, array, new int[]
       { R.styleable.TitleWithView_titleText,
        R.styleable.TitleWithView_titleColor,
        R.styleable.TitleWithView_titleSize,
@@ -134,8 +143,8 @@ public abstract class TitleWithViewLayout extends LinearLayout
       // Margin
       if ( array.hasValue( R.styleable.TitleWithView_viewMarginTop ) )
       {
-         ( (LinearLayout.LayoutParams) text.getLayoutParams() ).bottomMargin = array.getDimensionPixelSize( R.styleable.TitleWithView_viewMarginTop,
-                                                                                                            0 );
+         ( (LinearLayout.LayoutParams) titleView.getLayoutParams() ).bottomMargin = array.getDimensionPixelSize( R.styleable.TitleWithView_viewMarginTop,
+                                                                                                                 0 );
       }
       
       array.recycle();
@@ -160,6 +169,32 @@ public abstract class TitleWithViewLayout extends LinearLayout
    
    
    
+   private void setTopLine( TypedArray array )
+   {
+      final View topLine = getTopLineView();
+      
+      if ( array.getBoolean( R.styleable.TitleWithView_showTopLine, true ) )
+      {
+         ( (SimpleLineView) topLine ).setLineColor( array.getColor( R.styleable.TitleWithView_topLineColor,
+                                                                    R.color.app_default_line ) );
+         topLine.getLayoutParams().height = array.getDimensionPixelSize( R.styleable.TitleWithView_topLineHeight,
+                                                                         1 );
+      }
+      else
+      {
+         topLine.setVisibility( View.GONE );
+      }
+   }
+   
+   
+   
+   private View getTopLineView()
+   {
+      return findViewById( R.id.title_with_view_top_line );
+   }
+   
+   
+   
    protected final static void setAttr( Context context,
                                         TextView view,
                                         TypedArray array,
@@ -167,10 +202,7 @@ public abstract class TitleWithViewLayout extends LinearLayout
    {
       final String text = array.getString( attrs[ 0 ] );
       
-      if ( text == null )
-         view.setVisibility( View.GONE );
-      else
-         view.setText( text );
+      setTextViewText( view, text );
       
       if ( array.hasValue( attrs[ 1 ] ) )
       {
@@ -198,6 +230,32 @@ public abstract class TitleWithViewLayout extends LinearLayout
                           array.getDimensionPixelOffset( attrs[ 4 ], 0 ),
                           0,
                           0 );
+      }
+   }
+   
+   
+   
+   protected static void setTextViewText( TextView view, String text )
+   {
+      if ( TextUtils.isEmpty( text ) )
+      {
+         view.setVisibility( View.GONE );
+      }
+      else
+      {
+         view.setVisibility( View.VISIBLE );
+         view.setText( text );
+         linkify( view );
+      }
+   }
+   
+   
+   
+   private static void linkify( TextView textView )
+   {
+      if ( textView.getAutoLinkMask() != 0 )
+      {
+         MolokoLinkifier.linkify( textView );
       }
    }
 }

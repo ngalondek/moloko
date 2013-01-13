@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -63,7 +63,6 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
       
       this.calendar = MolokoCalendar.getInstance();
       this.calendar.setTimeInMillis( cal.getTimeInMillis() );
-      
       this.type = type;
       
       switch ( type )
@@ -126,9 +125,13 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
    protected void configureTextView( TextView view )
    {
       if ( lastIndex == 0 )
+      {
          view.setTextColor( context.getResources()
                                    .getColor( R.color.app_dlg_due_picker_weekday ) );
+      }
       else
+      {
          super.configureTextView( view );
+      }
    }
 }

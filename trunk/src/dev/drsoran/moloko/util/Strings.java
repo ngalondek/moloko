@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -31,44 +31,89 @@ public final class Strings
    public final static String EMPTY_STRING = "";
    
    
-
+   
    private Strings()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   
    public final static String getTrimmed( Editable editable )
    {
       return editable.toString().trim();
    }
    
-
-
+   
+   
    public final static String emptyIfNull( String string )
    {
       return ( string == null ) ? EMPTY_STRING : string;
    }
    
-
-
+   
+   
    public final static CharSequence emptyIfNull( CharSequence string )
    {
       return ( string == null ) ? EMPTY_STRING : string;
    }
    
-
-
+   
+   
    public final static String nullIfEmpty( String string )
    {
       return ( TextUtils.isEmpty( string ) ) ? null : string;
    }
    
-
-
+   
+   
    public final static CharSequence nullIfEmpty( CharSequence string )
    {
       return ( string == null || string.length() == 0 ) ? null : string;
+   }
+   
+   
+   
+   public final static boolean equals( String lhs, String rhs )
+   {
+      return ( lhs == rhs ) || ( lhs != null && lhs.equals( rhs ) );
+   }
+   
+   
+   
+   public final static Object convertTo( String value, Class< ? > valueClass )
+   {
+      if ( valueClass == String.class )
+      {
+         return value;
+      }
+      
+      else if ( valueClass == Long.class || valueClass == long.class )
+      {
+         return Long.parseLong( value );
+      }
+      
+      else if ( valueClass == Integer.class || valueClass == int.class )
+      {
+         return Integer.parseInt( value );
+      }
+      
+      else if ( valueClass == Boolean.class || valueClass == boolean.class )
+      {
+         return Boolean.parseBoolean( value );
+      }
+      
+      else if ( valueClass == Float.class || valueClass == float.class )
+      {
+         return Float.parseFloat( value );
+      }
+      
+      else if ( valueClass == Double.class || valueClass == double.class )
+      {
+         return Double.parseDouble( value );
+      }
+      
+      throw new IllegalArgumentException( "The type " + valueClass.getName()
+         + " is not supported" );
    }
 }

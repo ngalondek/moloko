@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,39 +25,19 @@ package dev.drsoran.moloko.util;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import android.util.Log;
+import android.os.Bundle;
 
 
 public class ListenerList< T >
 {
-   private final static String TAG = "Moloko."
-      + ListenerList.class.getSimpleName();
-   
    public final Method method;
    
    
-   public final static class MessgageObject< T >
-   {
-      public final Class< T > type;
-      
-      public final Object value;
-      
-      
-
-      public MessgageObject( Class< T > type, Object value )
-      {
-         this.type = type;
-         this.value = value;
-      }
-   }
-   
-
    private final class ListenerEntry
    {
       public final int mask;
@@ -65,29 +45,29 @@ public class ListenerList< T >
       public final WeakReference< T > listener;
       
       
-
+      
       public ListenerEntry( int mask, T listener )
       {
          this.mask = mask;
          this.listener = new WeakReference< T >( listener );
       }
       
-
-
+      
+      
       boolean isDead()
       {
          return listener.get() == null;
       }
       
-
-
+      
+      
       boolean matches( int setting )
       {
          return ( ( mask & setting ) != 0 );
       }
       
-
-
+      
+      
       void notifyEmpty()
       {
          if ( listener.get() != null )
@@ -98,21 +78,21 @@ public class ListenerList< T >
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw e;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
          }
       }
       
-
-
+      
+      
       void notify( int mask )
       {
          if ( listener.get() != null )
@@ -123,24 +103,51 @@ public class ListenerList< T >
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw e;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
          }
       }
       
-
-
-      void notify( int mask, HashMap< Integer, Object > oldValues )
+      
+      
+      void notify( int mask, Object value )
       {
          if ( listener.get() != null )
+         {
+            try
+            {
+               method.invoke( listener.get(), mask, value );
+            }
+            catch ( IllegalArgumentException e )
+            {
+               throw e;
+            }
+            catch ( IllegalAccessException e )
+            {
+               throw new RuntimeException( e );
+            }
+            catch ( InvocationTargetException e )
+            {
+               throw new RuntimeException( e );
+            }
+         }
+      }
+      
+      
+      
+      boolean notifyIfMatches( int mask, Bundle oldValues )
+      {
+         boolean ok = !isDead();
+         
+         if ( ok && matches( mask ) )
          {
             try
             {
@@ -148,42 +155,17 @@ public class ListenerList< T >
             }
             catch ( IllegalArgumentException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw e;
             }
             catch ( IllegalAccessException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
             catch ( InvocationTargetException e )
             {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
+               throw new RuntimeException( e );
             }
          }
-      }
-      
-
-
-      boolean notifyIfMatches( int mask, HashMap< Integer, Object > oldValues )
-      {
-         boolean ok = !isDead();
-         
-         if ( ok && matches( mask ) )
-            try
-            {
-               method.invoke( listener.get(), mask, oldValues );
-            }
-            catch ( IllegalArgumentException e )
-            {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
-            }
-            catch ( IllegalAccessException e )
-            {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
-            }
-            catch ( InvocationTargetException e )
-            {
-               Log.e( TAG, Strings.EMPTY_STRING, e );
-            }
          
          return ok;
       }
@@ -196,14 +178,14 @@ public class ListenerList< T >
    private final List< ListenerEntry > listeners = new CopyOnWriteArrayList< ListenerEntry >();
    
    
-
+   
    public ListenerList( Method method )
    {
       this.method = method;
    }
    
-
-
+   
+   
    public void registerListener( int which, T listener )
    {
       if ( listener != null )
@@ -212,8 +194,8 @@ public class ListenerList< T >
       }
    }
    
-
-
+   
+   
    public void unregisterListener( T listener )
    {
       if ( listener != null )
@@ -222,8 +204,15 @@ public class ListenerList< T >
       }
    }
    
-
-
+   
+   
+   public void clear()
+   {
+      listeners.clear();
+   }
+   
+   
+   
    public void notifyListeners()
    {
       List< ListenerEntry > deadEntries = null;
@@ -247,8 +236,8 @@ public class ListenerList< T >
          listeners.removeAll( deadEntries );
    }
    
-
-
+   
+   
    public void notifyListeners( int mask )
    {
       List< ListenerEntry > deadEntries = null;
@@ -272,9 +261,9 @@ public class ListenerList< T >
          listeners.removeAll( deadEntries );
    }
    
-
-
-   public void notifyListeners( int mask, Object oldValue )
+   
+   
+   public void notifyListeners( int mask, Object value )
    {
       if ( mask > 0 )
       {
@@ -288,25 +277,28 @@ public class ListenerList< T >
             if ( entry.isDead() )
             {
                if ( deadEntries == null )
+               {
                   deadEntries = new LinkedList< ListenerEntry >();
+               }
+               
                deadEntries.add( entry );
             }
             else if ( entry.matches( mask ) )
             {
-               final HashMap< Integer, Object > oldValues = new HashMap< Integer, Object >( 1 );
-               oldValues.put( mask, oldValue );
-               entry.notify( mask, oldValues );
+               entry.notify( mask, value );
             }
          }
          
          if ( deadEntries != null )
+         {
             listeners.removeAll( deadEntries );
+         }
       }
    }
    
-
-
-   public void notifyListeners( int mask, HashMap< Integer, Object > oldValues )
+   
+   
+   public void notifyListeners( int mask, Bundle oldValues )
    {
       if ( mask > 0 )
       {
@@ -320,18 +312,23 @@ public class ListenerList< T >
             if ( !entry.notifyIfMatches( mask, oldValues ) )
             {
                if ( deadEntries == null )
+               {
                   deadEntries = new LinkedList< ListenerEntry >();
+               }
+               
                deadEntries.add( entry );
             }
          }
          
          if ( deadEntries != null )
+         {
             listeners.removeAll( deadEntries );
+         }
       }
    }
    
-
-
+   
+   
    public boolean removeListener( T listener )
    {
       ListenerEntry entryToRemove = null;
@@ -341,8 +338,10 @@ public class ListenerList< T >
       {
          final ListenerEntry entry = i.next();
          
-         if ( listener == entry.listener )
+         if ( listener == entry.listener.get() )
+         {
             entryToRemove = entry;
+         }
       }
       
       return listeners.remove( entryToRemove );

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,8 +22,10 @@
 
 package dev.drsoran.moloko.util;
 
-import android.support.v4.app.FragmentActivity;
-import android.util.Pair;
+import java.util.Collection;
+import java.util.Iterator;
+
+import android.content.Context;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -47,10 +49,10 @@ public final class NoteEditUtils
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > setNoteTitleAndText( FragmentActivity activity,
-                                                                                                    String noteId,
-                                                                                                    String title,
-                                                                                                    String text )
+   public final static ApplyChangesInfo setNoteTitleAndText( Context context,
+                                                             String noteId,
+                                                             String title,
+                                                             String text )
    {
       final ModificationSet modifications = new ModificationSet();
       
@@ -64,16 +66,16 @@ public final class NoteEditUtils
                                                        text ) );
       modifications.add( Modification.newNoteModified( noteId ) );
       
-      return Pair.create( modifications.toContentProviderActionItemList(),
-                          new ApplyChangesInfo( activity.getString( R.string.toast_save_note ),
-                                                activity.getString( R.string.toast_save_note_ok ),
-                                                activity.getString( R.string.toast_save_note_failed ) ) );
+      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+                                   context.getString( R.string.toast_save_note ),
+                                   context.getString( R.string.toast_save_note_ok ),
+                                   context.getString( R.string.toast_save_note_failed ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > insertNote( FragmentActivity activity,
-                                                                                           RtmTaskNote note )
+   public final static ApplyChangesInfo insertNote( Context context,
+                                                    RtmTaskNote note )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
@@ -89,39 +91,43 @@ public final class NoteEditUtils
       if ( !ok )
          actionItemList = null;
       
-      return Pair.create( actionItemList,
-                          new ApplyChangesInfo( activity.getString( R.string.toast_insert_note ),
-                                                activity.getString( R.string.toast_insert_note_ok ),
-                                                activity.getString( R.string.toast_insert_note_fail ) ) );
+      return new ApplyChangesInfo( actionItemList,
+                                   context.getString( R.string.toast_insert_note ),
+                                   context.getString( R.string.toast_insert_note_ok ),
+                                   context.getString( R.string.toast_insert_note_fail ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteNote( FragmentActivity activity,
-                                                                                           String noteId )
+   public final static ApplyChangesInfo deleteNotes( Context context,
+                                                     Collection< RtmTaskNote > notes )
    {
       boolean ok = true;
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
-      final ModificationSet modifications = new ModificationSet();
-      
-      modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                                              noteId ),
-                                                                    Notes.NOTE_DELETED,
-                                                                    System.currentTimeMillis() ) );
-      modifications.add( Modification.newNoteModified( noteId ) );
-      
-      ok = actionItemList.add( ContentProviderAction.Type.DELETE,
-                               CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                                               noteId ) ) );
-      actionItemList.add( 0, modifications );
+      for ( Iterator< RtmTaskNote > i = notes.iterator(); ok && i.hasNext(); )
+      {
+         final String noteId = i.next().getId();
+         final ModificationSet modifications = new ModificationSet();
+         
+         modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                 noteId ),
+                                                                       Notes.NOTE_DELETED,
+                                                                       System.currentTimeMillis() ) );
+         modifications.add( Modification.newNoteModified( noteId ) );
+         
+         ok = actionItemList.add( ContentProviderAction.Type.DELETE,
+                                  CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                  noteId ) ) );
+         actionItemList.add( modifications );
+      }
       
       if ( !ok )
          actionItemList = null;
       
-      return Pair.create( actionItemList,
-                          new ApplyChangesInfo( activity.getString( R.string.toast_delete_note ),
-                                                activity.getString( R.string.toast_delete_note_ok ),
-                                                activity.getString( R.string.toast_delete_note_failed ) ) );
+      return new ApplyChangesInfo( actionItemList,
+                                   context.getString( R.string.toast_delete_note ),
+                                   context.getString( R.string.toast_delete_note_ok ),
+                                   context.getString( R.string.toast_delete_note_failed ) );
    }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,41 +22,46 @@
 
 package dev.drsoran.moloko.fragments;
 
+import android.app.Activity;
+import android.database.ContentObserver;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.util.Pair;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.IEditableFragment;
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.fragments.listeners.INoteEditFragmentListener;
+import dev.drsoran.moloko.loaders.RtmTaskNoteLoader;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.NoteEditUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.provider.Rtm.Notes;
 
 
-public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
+public class NoteEditFragment extends AbstractNoteEditFragment implements
+         LoaderCallbacks< RtmTaskNote >
 {
-   public static class Config
-   {
-      public final static String NOTE = "note";
-   }
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
-   private EditText title;
+   @InstanceState( key = Intents.Extras.KEY_NOTE )
+   private RtmTaskNote note;
    
-   private EditText text;
+   private ContentObserver noteChangesObserver;
+   
+   private INoteEditFragmentListener listener;
    
    
    
@@ -71,19 +76,49 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    
    
    
+   public NoteEditFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, NoteEditFragment.class );
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof INoteEditFragmentListener )
+      {
+         listener = (INoteEditFragmentListener) activity;
+      }
+      else
+      {
+         listener = null;
+      }
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      registerForNoteDeletedByBackgroundSync();
+   }
+   
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState )
    {
-      final View fragmentView = inflater.inflate( R.layout.note_edit_fragment,
-                                                  container,
-                                                  false );
+      final View fragmentView = super.onCreateView( inflater,
+                                                    container,
+                                                    savedInstanceState );
       
-      title = (EditText) fragmentView.findViewById( R.id.note_edit_title );
-      text = (EditText) fragmentView.findViewById( R.id.note_edit_text );
-      
-      showNote( fragmentView, getConfiguredNoteAssertNotNull() );
+      showNote( fragmentView, getNoteAssertNotNull() );
       
       return fragmentView;
    }
@@ -100,17 +135,26 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    
    
    @Override
-   public void takeConfigurationFrom( Bundle config )
+   public void onDestroy()
    {
-      super.takeConfigurationFrom( config );
+      unregisterForNoteDeletedByBackgroundSync();
+      handler.release();
       
-      if ( config.containsKey( Config.NOTE ) )
-         configuration.putParcelable( Config.NOTE,
-                                      config.getParcelable( Config.NOTE ) );
+      super.onDestroy();
    }
    
    
    
+   @Override
+   public void onDetach()
+   {
+      listener = null;
+      super.onDetach();
+   }
+   
+   
+   
+   @Override
    public String getNoteTitle()
    {
       return title.getText().toString();
@@ -118,6 +162,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    
    
    
+   @Override
    public String getNoteText()
    {
       return text.getText().toString();
@@ -128,20 +173,18 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    private void showNote( View content, RtmTaskNote note )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
-                                                           note.getCreatedDate()
-                                                               .getTime(),
-                                                           MolokoDateUtils.FORMAT_WITH_YEAR ) );
+      createdDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
+                                                               note.getCreatedDate()
+                                                                   .getTime(),
+                                                               MolokoDateFormatter.FORMAT_WITH_YEAR ) );
       title.setText( note.getTitle() );
       text.setText( note.getText() );
    }
    
    
    
-   public RtmTaskNote getConfiguredNoteAssertNotNull()
+   public RtmTaskNote getNoteAssertNotNull()
    {
-      final RtmTaskNote note = configuration.getParcelable( Config.NOTE );
-      
       if ( note == null )
          throw new IllegalStateException( "note must not be null" );
       
@@ -153,7 +196,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    @Override
    public boolean hasChanges()
    {
-      final RtmTaskNote note = getConfiguredNoteAssertNotNull();
+      final RtmTaskNote note = getNoteAssertNotNull();
       
       return SyncUtils.hasChanged( Strings.nullIfEmpty( note.getTitle() ),
                                    Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ) )
@@ -164,46 +207,89 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    
    
    @Override
-   protected boolean saveChanges()
+   protected ApplyChangesInfo getChanges()
    {
-      boolean ok = true;
-      
       final String title = UIUtils.getTrimmedText( this.title );
       final String text = UIUtils.getTrimmedText( this.text );
       
-      ok = !TextUtils.isEmpty( title ) || !TextUtils.isEmpty( text );
+      final RtmTaskNote note = getNoteAssertNotNull();
+      final ApplyChangesInfo modifications = NoteEditUtils.setNoteTitleAndText( getSherlockActivity(),
+                                                                                note.getId(),
+                                                                                title,
+                                                                                text );
       
-      if ( !ok )
-      {
-         this.text.requestFocus();
-         Toast.makeText( getFragmentActivity(),
-                         R.string.note_edit_toast_title_and_text_empty,
-                         Toast.LENGTH_LONG ).show();
-      }
-      else
-      {
-         final RtmTaskNote note = getConfiguredNoteAssertNotNull();
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.setNoteTitleAndText( getFragmentActivity(),
-                                                                                                                          note.getId(),
-                                                                                                                          title,
-                                                                                                                          text );
-         applyModifications( modifications );
-      }
-      
-      return ok;
+      return modifications;
    }
    
    
    
    @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   public Loader< RtmTaskNote > onCreateLoader( int id, Bundle args )
    {
-      final Bundle config = new Bundle();
+      return new RtmTaskNoteLoader( getSherlockActivity(),
+                                    getNoteAssertNotNull().getId() );
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< RtmTaskNote > loader, RtmTaskNote data )
+   {
+      // If the database changed by a background sync and the assigned note
+      // has been deleted, then we ask the user if he wants to keep his changes
+      // or drop the note.
+      if ( data == null )
+      {
+         handler.post( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               if ( listener != null )
+               {
+                  listener.onBackgroundDeletion( getNoteAssertNotNull() );
+               }
+            }
+         } );
+      }
+   }
+   
+   
+   
+   @Override
+   public void onLoaderReset( Loader< RtmTaskNote > loader )
+   {
+   }
+   
+   
+   
+   private void registerForNoteDeletedByBackgroundSync()
+   {
+      noteChangesObserver = new ContentObserver( MolokoApp.getHandler() )
+      {
+         @Override
+         public void onChange( boolean selfChange )
+         {
+            getSherlockActivity().getSupportLoaderManager()
+                                 .initLoader( RtmTaskNoteLoader.ID,
+                                              Bundle.EMPTY,
+                                              NoteEditFragment.this );
+         }
+      };
       
-      config.putString( NoteFragment.Config.NOTE_ID,
-                        getConfiguredNoteAssertNotNull().getId() );
-      
-      final NoteFragment fragment = NoteFragment.newInstance( config );
-      return fragment;
+      getSherlockActivity().getContentResolver()
+                           .registerContentObserver( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                               getNoteAssertNotNull().getId() ),
+                                                     false,
+                                                     noteChangesObserver );
+   }
+   
+   
+   
+   private void unregisterForNoteDeletedByBackgroundSync()
+   {
+      getSherlockActivity().getContentResolver()
+                           .unregisterContentObserver( noteChangesObserver );
+      noteChangesObserver = null;
    }
 }

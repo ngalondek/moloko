@@ -36,8 +36,10 @@ import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.util.Intents;
 
 
 public class Authenticator extends AbstractAccountAuthenticator
@@ -162,7 +164,8 @@ public class Authenticator extends AbstractAccountAuthenticator
             Service service = null;
             try
             {
-               service = ServiceImpl.getInstance( context,
+               service = ServiceImpl.getInstance( MolokoApp.getSettings( context )
+                                                           .isUsingHttps(),
                                                   new ApplicationInfo( apiKey,
                                                                        sharedSecret,
                                                                        null ) );
@@ -225,11 +228,9 @@ public class Authenticator extends AbstractAccountAuthenticator
             configureIntent( context, intent, account );
             
             if ( missingCredential )
-               intent.putExtra( AuthenticatorActivity.PARAM_MISSINGCREDENTIALS,
-                                true );
+               intent.putExtra( Intents.Extras.AUTH_MISSINGCREDENTIALS, true );
             else if ( authTokenExpired )
-               intent.putExtra( AuthenticatorActivity.PARAM_AUTH_TOKEN_EXPIRED,
-                                true );
+               intent.putExtra( Intents.Extras.AUTH_TOKEN_EXPIRED, true );
             
             intent.putExtra( AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
                              response );

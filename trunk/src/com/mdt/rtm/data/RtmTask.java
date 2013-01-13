@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.rtm.ParcelableDate;
 
@@ -37,17 +37,17 @@ import dev.drsoran.rtm.ParcelableDate;
  */
 public class RtmTask extends RtmData
 {
-   private static final String TAG = "Moloko." + RtmTask.class.getSimpleName();
-   
    public static final Parcelable.Creator< RtmTask > CREATOR = new Parcelable.Creator< RtmTask >()
    {
+      @Override
       public RtmTask createFromParcel( Parcel source )
       {
          return new RtmTask( source );
       }
       
-
-
+      
+      
+      @Override
       public RtmTask[] newArray( int size )
       {
          return new RtmTask[ size ];
@@ -83,7 +83,7 @@ public class RtmTask extends RtmData
    }
    
    
-
+   
    public static String convertPriority( Priority priority )
    {
       switch ( priority )
@@ -97,13 +97,14 @@ public class RtmTask extends RtmData
          case High:
             return "1";
          default :
-            Log.e( TAG, "Unrecognized RTM task priority: '" + priority + "'" );
+            MolokoApp.Log.e( RtmTask.class, "Unrecognized RTM task priority: '"
+               + priority + "'" );
             return "n";
       }
    }
    
-
-
+   
+   
    public static Priority convertPriority( String priority )
    {
       if ( TextUtils.isEmpty( priority ) )
@@ -121,13 +122,14 @@ public class RtmTask extends RtmData
          case '1':
             return Priority.High;
          default :
-            Log.e( TAG, "Unrecognized RTM task priority: '" + priority + "'" );
+            MolokoApp.Log.e( RtmTask.class, "Unrecognized RTM task priority: '"
+               + priority + "'" );
             return Priority.None;
       }
    }
    
-
-
+   
+   
    public RtmTask( String id, String taskSeriesId, Date due, int hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
       int postponed, String estimate, long estimateMillis )
@@ -146,8 +148,8 @@ public class RtmTask extends RtmData
       this.estimateMillis = estimateMillis;
    }
    
-
-
+   
+   
    public RtmTask( Element elt, String taskSeriesId, String listId )
    {
       id = elt.getAttribute( "id" );
@@ -202,8 +204,8 @@ public class RtmTask extends RtmData
       parseEstimate();
    }
    
-
-
+   
+   
    public RtmTask( Element elt, String taskSeriesId, String listId,
       boolean deleted )
    {
@@ -220,8 +222,8 @@ public class RtmTask extends RtmData
       estimateMillis = -1;
    }
    
-
-
+   
+   
    public RtmTask( Parcel source )
    {
       this.id = source.readString();
@@ -237,114 +239,116 @@ public class RtmTask extends RtmData
       this.estimateMillis = source.readLong();
    }
    
-
-
+   
+   
    public String getId()
    {
       return id;
    }
    
-
-
+   
+   
    public String getTaskSeriesId()
    {
       return taskSeriesId;
    }
    
-
-
+   
+   
    public Date getDue()
    {
       return ( due != null ) ? due.getDate() : null;
    }
    
-
-
+   
+   
    public int getHasDueTime()
    {
       return hasDueTime;
    }
    
-
-
+   
+   
    public Date getAdded()
    {
       return ( added != null ) ? added.getDate() : null;
    }
    
-
-
+   
+   
    public Date getCompleted()
    {
       return ( completed != null ) ? completed.getDate() : null;
    }
    
-
-
+   
+   
    public Date getCreatedDate()
    {
       return getAdded();
    }
    
-
-
+   
+   
    public Date getDeletedDate()
    {
       return ( deleted != null ) ? deleted.getDate() : null;
    }
    
-
-
+   
+   
    public boolean isDeleted()
    {
       return deleted != null;
    }
    
-
-
+   
+   
    public Priority getPriority()
    {
       return priority;
    }
    
-
-
+   
+   
    public int getPostponed()
    {
       return postponed;
    }
    
-
-
+   
+   
    public String getEstimate()
    {
       return estimate;
    }
    
-
-
+   
+   
    public long getEstimateMillis()
    {
       return estimateMillis;
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {
       return "Task<" + id + ">";
    }
    
-
-
+   
+   
+   @Override
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
@@ -360,8 +364,8 @@ public class RtmTask extends RtmData
       dest.writeLong( estimateMillis );
    }
    
-
-
+   
+   
    private void parseEstimate()
    {
       if ( !TextUtils.isEmpty( estimate ) )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -25,10 +25,7 @@ package dev.drsoran.moloko.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Message;
-import dev.drsoran.moloko.IOnBootCompletedListener;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.util.ListenerList;
 
 
 public class BootReceiver extends BroadcastReceiver
@@ -36,14 +33,7 @@ public class BootReceiver extends BroadcastReceiver
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      final Message msg = new Message();
-      msg.obj = new ListenerList.MessgageObject< IOnBootCompletedListener >( IOnBootCompletedListener.class,
-                                                                             null );
-      msg.what = Integer.MAX_VALUE;
-      
-      MolokoApp.get( context.getApplicationContext() )
-               .getHandler()
-               .sendMessage( msg );
+      MolokoApp.get( context.getApplicationContext() ).onBootCompleted();
    }
    
 }

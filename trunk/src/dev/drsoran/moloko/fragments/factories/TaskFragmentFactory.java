@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -34,7 +34,7 @@ import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 
 
-public final class TaskFragmentFactory extends AbstractFragmentFactory
+public final class TaskFragmentFactory extends AbstractIntentFragmentFactory
 {
    private final static List< Class< ? extends Fragment > > FRAGMENT_CLASSES = new ArrayList< Class< ? extends Fragment > >();
    
@@ -46,17 +46,14 @@ public final class TaskFragmentFactory extends AbstractFragmentFactory
    }
    
    
-
+   
    public final static Fragment newFragment( Context context,
                                              Intent intent,
                                              Bundle config )
    {
       if ( config != null )
       {
-         if ( intent.getExtras() != null )
-            intent.getExtras().putAll( config );
-         else
-            intent.putExtras( config );
+         intent.putExtras( config );
       }
       
       return resolveIntentToFragment( context, intent, FRAGMENT_CLASSES );

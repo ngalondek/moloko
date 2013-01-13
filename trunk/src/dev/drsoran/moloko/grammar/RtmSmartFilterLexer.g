@@ -93,6 +93,14 @@ options
    public final static String TRUE_LIT = "true";
 
    public final static String FALSE_LIT = "false";
+   
+   public final static String PRIO_HIGH_LIT = "1";
+   
+   public final static String PRIO_MED_LIT = "2";
+   
+   public final static String PRIO_LOW_LIT = "3";
+   
+   public final static String PRIO_NONE_LIT = "n";
 
    public final static String L_PARENTH_LIT = "(";
 
@@ -233,7 +241,7 @@ options
             result.append( cal.getTimeInMillis() );
             result.append( " AND " );
 
-            cal.roll( Calendar.DAY_OF_YEAR, true );
+            cal.add( Calendar.DAY_OF_YEAR, 1 );
 
             result.append( column );
             result.append( " < " );
@@ -370,14 +378,14 @@ OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
                   lexedOperator = false;
                };
 
-OP_PRIORITY :  'priority:' s=STRING
+OP_PRIORITY :  'priority:' ( p=PRIO_HIGH | p=PRIO_MED | p=PRIO_LOW | p=PRIO_NONE )
                {
                   ensureOperator();
-                  
                   result.append( Tasks.PRIORITY );
-                  likeStringParam( firstCharOf( unquotify( $s.getText() ) ) );
-                  
-                  addRtmToken( OP_PRIORITY, $s.getText() );
+
+                  likeStringParam( $p.getText() );
+
+                  addRtmToken( OP_PRIORITY, $p.getText() );
                   lexedOperator = false;
                };
 
@@ -840,6 +848,14 @@ INCOMPLETE  : 'incomplete';
 TRUE        : 'true';
 
 FALSE       : 'false';
+
+PRIO_HIGH   : '1';
+
+PRIO_MED    : '2';
+
+PRIO_LOW	   : '3';
+
+PRIO_NONE	: 'n' | 'N';	
 
 L_PARENTH   : '('
                {

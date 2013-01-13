@@ -31,15 +31,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Strings;
 
 
 class HttpUrlRtmConnection implements IRtmConnection
 {
-   private static final String TAG = "Moloko."
-      + HttpUrlRtmConnection.class.getSimpleName();
-   
    private final String scheme;
    
    private final String host;
@@ -67,7 +64,7 @@ class HttpUrlRtmConnection implements IRtmConnection
       }
       catch ( MalformedURLException e )
       {
-         Log.e( TAG, "Invalid request URI " + requestUri, e );
+         MolokoApp.Log.e( getClass(), "Invalid request URI " + requestUri, e );
          throw new IOException( Strings.EMPTY_STRING, e );
       }
       
@@ -79,7 +76,7 @@ class HttpUrlRtmConnection implements IRtmConnection
                                                                4096 );
       
       final Reader decoratedReader = new LoggingReader( new InputStreamReader( inputStream ),
-                                                        TAG );
+                                                        getClass() );
       
       final Reader reader = new HttpUrlConnectionReader( decoratedReader,
                                                          urlConnection );
@@ -104,6 +101,6 @@ class HttpUrlRtmConnection implements IRtmConnection
    
    private void logRequest( URL url )
    {
-      Log.i( TAG, "Executing the method:" + url.getFile() );
+      MolokoApp.Log.d( getClass(), "Executing the method:" + url.getFile() );
    }
 }

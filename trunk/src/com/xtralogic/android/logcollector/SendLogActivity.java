@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -51,14 +50,15 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 
 
-public class SendLogActivity extends Activity
+public class SendLogActivity extends MolokoFragmentActivity
 {
-   public final static String TAG = "Moloko." + SendLogActivity.class.getSimpleName();//$NON-NLS-1$
-   
    public final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
    
    public static final String ACTION_SEND_LOG = "com.xtralogic.logcollector.intent.action.SEND_LOG";//$NON-NLS-1$
@@ -83,8 +83,6 @@ public class SendLogActivity extends Activity
    
    final int MAX_LOG_MESSAGE_LENGTH = 100000;
    
-   private AlertDialog mMainDialog;
-   
    private Intent mSendIntent;
    
    private CollectLogTask mCollectLogTask;
@@ -104,7 +102,7 @@ public class SendLogActivity extends Activity
    private String mRegex;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -121,7 +119,8 @@ public class SendLogActivity extends Activity
             String extraSendAction = intent.getStringExtra( EXTRA_SEND_INTENT_ACTION );
             if ( extraSendAction == null )
             {
-               Log.e( TAG, "Quiting, EXTRA_SEND_INTENT_ACTION is not supplied" );//$NON-NLS-1$
+               MolokoApp.Log.e( getClass(),
+                                "Quiting, EXTRA_SEND_INTENT_ACTION is not supplied" );//$NON-NLS-1$
                finish();
                return;
             }
@@ -189,27 +188,12 @@ public class SendLogActivity extends Activity
       
       if ( mShowUi )
       {
-         mMainDialog = new AlertDialog.Builder( this ).setTitle( getString( R.string.app_name ) )
+         new AlertDialogFragment.Builder( View.NO_ID ).setTitle( getString( R.string.moloko_prefs_send_log_text ) )
+                                                      .setIcon( R.drawable.ic_prefs_send_log )
                                                       .setMessage( getString( R.string.send_log_dialog_text ) )
-                                                      .setPositiveButton( android.R.string.ok,
-                                                                          new DialogInterface.OnClickListener()
-                                                                          {
-                                                                             public void onClick( DialogInterface dialog,
-                                                                                                  int whichButton )
-                                                                             {
-                                                                                collectAndSendLog();
-                                                                             }
-                                                                          } )
-                                                      .setNegativeButton( android.R.string.cancel,
-                                                                          new DialogInterface.OnClickListener()
-                                                                          {
-                                                                             public void onClick( DialogInterface dialog,
-                                                                                                  int whichButton )
-                                                                             {
-                                                                                finish();
-                                                                             }
-                                                                          } )
-                                                      .show();
+                                                      .setPositiveButton( android.R.string.ok )
+                                                      .setNegativeButton( android.R.string.cancel )
+                                                      .show( this );
       }
       else
       {
@@ -217,8 +201,28 @@ public class SendLogActivity extends Activity
       }
    }
    
-
-
+   
+   
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   {
+      switch ( which )
+      {
+         case AlertDialog.BUTTON_POSITIVE:
+            collectAndSendLog();
+            break;
+         
+         case AlertDialog.BUTTON_NEGATIVE:
+            finish();
+            break;
+         
+         default :
+            break;
+      }
+   }
+   
+   
+   
    @SuppressWarnings( "unchecked" )
    void collectAndSendLog()
    {
@@ -244,7 +248,7 @@ public class SendLogActivity extends Activity
        * 
        * If not specified with -v, format is set from ANDROID_PRINTF_LOG or defaults to "brief"
        */
-
+      
       ArrayList< String > list = new ArrayList< String >();
       
       if ( mFormat != null )
@@ -280,8 +284,8 @@ public class SendLogActivity extends Activity
          showProgressDialog( getString( R.string.send_log_aquiring_text ) );
       }
       
-
-
+      
+      
       @Override
       protected StringBuilder doInBackground( ArrayList< String >... params )
       {
@@ -311,14 +315,15 @@ public class SendLogActivity extends Activity
          }
          catch ( IOException e )
          {
-            Log.e( TAG, "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
+            MolokoApp.Log.e( getClass(),
+                             "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
          }
          
          return log;
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( StringBuilder log )
       {
@@ -341,7 +346,6 @@ public class SendLogActivity extends Activity
             startActivity( Intent.createChooser( mSendIntent,
                                                  getString( R.string.send_log_chooser_title ) ) );
             dismissProgressDialog();
-            dismissMainDialog();
             finish();
          }
          else
@@ -351,8 +355,8 @@ public class SendLogActivity extends Activity
          }
       }
       
-
-
+      
+      
       private void doFilter( StringBuilder builder, BufferedReader reader )
       {
          String line;
@@ -366,12 +370,13 @@ public class SendLogActivity extends Activity
          }
          catch ( IOException e )
          {
-            Log.e( TAG, "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
+            MolokoApp.Log.e( getClass(),
+                             "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
          }
       }
       
-
-
+      
+      
       private void doRegEx( StringBuilder builder, BufferedReader reader )
       {
          final Pattern pattern = Pattern.compile( mRegex );
@@ -392,13 +397,14 @@ public class SendLogActivity extends Activity
          }
          catch ( IOException e )
          {
-            Log.e( TAG, "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
+            MolokoApp.Log.e( getClass(),
+                             "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
          }
       }
    }
    
    
-
+   
    void showErrorDialog( String errorMessage )
    {
       new AlertDialog.Builder( this ).setTitle( getString( R.string.app_name ) )
@@ -407,6 +413,7 @@ public class SendLogActivity extends Activity
                                      .setPositiveButton( android.R.string.ok,
                                                          new DialogInterface.OnClickListener()
                                                          {
+                                                            @Override
                                                             public void onClick( DialogInterface dialog,
                                                                                  int whichButton )
                                                             {
@@ -416,19 +423,8 @@ public class SendLogActivity extends Activity
                                      .show();
    }
    
-
-
-   void dismissMainDialog()
-   {
-      if ( null != mMainDialog && mMainDialog.isShowing() )
-      {
-         mMainDialog.dismiss();
-         mMainDialog = null;
-      }
-   }
    
-
-
+   
    void showProgressDialog( String message )
    {
       mProgressDialog = new ProgressDialog( this );
@@ -437,6 +433,7 @@ public class SendLogActivity extends Activity
       mProgressDialog.setCancelable( true );
       mProgressDialog.setOnCancelListener( new DialogInterface.OnCancelListener()
       {
+         @Override
          public void onCancel( DialogInterface dialog )
          {
             cancellCollectTask();
@@ -446,8 +443,8 @@ public class SendLogActivity extends Activity
       mProgressDialog.show();
    }
    
-
-
+   
+   
    private void dismissProgressDialog()
    {
       if ( null != mProgressDialog && mProgressDialog.isShowing() )
@@ -457,8 +454,8 @@ public class SendLogActivity extends Activity
       }
    }
    
-
-
+   
+   
    void cancellCollectTask()
    {
       if ( mCollectLogTask != null
@@ -469,20 +466,19 @@ public class SendLogActivity extends Activity
       }
    }
    
-
-
+   
+   
    @Override
    protected void onPause()
    {
       cancellCollectTask();
       dismissProgressDialog();
-      dismissMainDialog();
       
       super.onPause();
    }
    
-
-
+   
+   
    private String getDefaultAdditionalInfo()
    {
       return getString( R.string.send_log_content,
@@ -504,8 +500,8 @@ public class SendLogActivity extends Activity
                         Build.USER );
    }
    
-
-
+   
+   
    private static String getVersionNumber( Context context )
    {
       String version = "?";
@@ -523,4 +519,11 @@ public class SendLogActivity extends Activity
       return version;
    }
    
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return new int[] {};
+   }
 }

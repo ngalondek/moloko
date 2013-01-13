@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,15 +29,11 @@ public interface IMolokoHomeWidget
 {
    public Intent getIntent();
    
-
-
-   public Runnable getRunnable();
    
-
-
+   
    public void start();
    
-
-
+   
+   
    public void stop();
 }

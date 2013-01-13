@@ -48,6 +48,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -112,7 +113,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       if ( convertView == null )
          view = LayoutInflater.from( context )
-                              .inflate( android.R.layout.simple_dropdown_item_1line,
+                              .inflate( R.layout.sherlock_spinner_dropdown_item,
                                         parent,
                                         false );
       else
@@ -216,14 +217,14 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                      final MolokoCalendar cal = MolokoCalendar.getInstance();
                      
                      // Tomorrow
-                     cal.roll( Calendar.DAY_OF_YEAR, true );
+                     cal.add( Calendar.DAY_OF_YEAR, 1 );
                      due_dates.add( Pair.create( context.getString( R.string.phr_tomorrow ),
                                                  Long.valueOf( cal.getTimeInMillis() ) ) );
                      
                      // The next 5 days after tomorrow
                      for ( int i = 0; i < 5; ++i )
                      {
-                        cal.roll( Calendar.DAY_OF_YEAR, true );
+                        cal.add( Calendar.DAY_OF_YEAR, 1 );
                         final String weekDay = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
                                                                                    false );
                         due_dates.add( Pair.create( weekDay,
@@ -475,8 +476,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       private void addEstimate( long estimate )
       {
-         estimates.add( Pair.create( MolokoDateUtils.formatEstimated( context,
-                                                                      estimate ),
+         estimates.add( Pair.create( MolokoDateFormatter.formatEstimated( context,
+                                                                          estimate ),
                                      Long.valueOf( estimate ) ) );
       }
    }

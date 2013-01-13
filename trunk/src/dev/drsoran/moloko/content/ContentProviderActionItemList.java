@@ -30,7 +30,7 @@ import java.util.ListIterator;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.LogUtils;
 
 
@@ -319,8 +319,7 @@ public class ContentProviderActionItemList implements
       
       if ( transactionalAccess == null )
       {
-         Log.e( LogUtils.toTag( ContentProviderActionItemList.class ),
-                "Failed to create transactions." );
+         MolokoApp.Log.e( getClass(), "Failed to create transactions." );
          ok = false;
       }
       
@@ -344,9 +343,7 @@ public class ContentProviderActionItemList implements
          }
          catch ( Throwable e )
          {
-            Log.e( LogUtils.toTag( ContentProviderActionItemList.class ),
-                   LogUtils.GENERIC_DB_ERROR,
-                   e );
+            MolokoApp.Log.e( getClass(), LogUtils.GENERIC_DB_ERROR, e );
             ok = false;
          }
          finally

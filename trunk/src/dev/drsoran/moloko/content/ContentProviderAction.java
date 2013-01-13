@@ -29,7 +29,7 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 
@@ -176,9 +176,7 @@ public class ContentProviderAction implements IContentProviderActionItem
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( ContentProviderAction.class ),
-                LogUtils.GENERIC_DB_ERROR,
-                e );
+         MolokoApp.Log.e( getClass(), LogUtils.GENERIC_DB_ERROR, e );
          return false;
       }
       finally
@@ -208,9 +206,7 @@ public class ContentProviderAction implements IContentProviderActionItem
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( ContentProviderAction.class ),
-                LogUtils.GENERIC_DB_ERROR,
-                e );
+         MolokoApp.Log.e( getClass(), LogUtils.GENERIC_DB_ERROR, e );
          return false;
       }
       finally
@@ -244,8 +240,8 @@ public class ContentProviderAction implements IContentProviderActionItem
    {
       for ( ContentProviderOperation op : operations )
       {
-         Log.d( LogUtils.toTag( ContentProviderAction.class ),
-                String.format( "%s %s", operationType, op.toString() ) );
+         MolokoApp.Log.d( getClass(),
+                          String.format( "%s %s", operationType, op.toString() ) );
       }
    }
    

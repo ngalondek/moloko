@@ -27,8 +27,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.support.v4.app.FragmentActivity;
-import android.util.Pair;
+import android.content.Context;
+import android.content.res.Resources;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentProviderAction;
@@ -51,20 +51,20 @@ public final class TaskEditUtils
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > setTaskCompletion( FragmentActivity activity,
-                                                                                                  Task task,
-                                                                                                  boolean complete )
+   public final static ApplyChangesInfo setTaskCompletion( Context context,
+                                                           Task task,
+                                                           boolean complete )
    {
-      return setTasksCompletion( activity,
+      return setTasksCompletion( context,
                                  Collections.singletonList( task ),
                                  complete );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > setTasksCompletion( FragmentActivity activity,
-                                                                                                   List< ? extends Task > tasks,
-                                                                                                   boolean complete )
+   public final static ApplyChangesInfo setTasksCompletion( Context context,
+                                                            List< ? extends Task > tasks,
+                                                            boolean complete )
    {
       final ModificationSet modifications = new ModificationSet();
       
@@ -85,29 +85,36 @@ public final class TaskEditUtils
          }
       }
       
-      return Pair.create( modifications.toContentProviderActionItemList(),
-                          new ApplyChangesInfo( activity.getString( R.string.toast_save_task ),
-                                                activity.getResources()
-                                                        .getQuantityString( complete
-                                                                                    ? R.plurals.toast_completed_task
-                                                                                    : R.plurals.toast_incompleted_task,
-                                                                            tasks.size(),
-                                                                            tasks.size() ),
-                                                activity.getString( R.string.toast_save_task_failed ) ) );
+      final Resources resources = context.getResources();
+      final int tasksCount = tasks.size();
+      final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
+                                             : Strings.EMPTY_STRING;
+      
+      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+                                   resources.getQuantityString( R.plurals.toast_save_task,
+                                                                tasksCount,
+                                                                tasksCount ),
+                                   resources.getQuantityString( complete
+                                                                        ? R.plurals.toast_completed_task
+                                                                        : R.plurals.toast_incompleted_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                tasksCount ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > postponeTask( FragmentActivity activity,
-                                                                                             Task task )
+   public final static ApplyChangesInfo postponeTask( Context context, Task task )
    {
-      return postponeTasks( activity, Collections.singletonList( task ) );
+      return postponeTasks( context, Collections.singletonList( task ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > postponeTasks( FragmentActivity activity,
-                                                                                              List< ? extends Task > tasks )
+   public final static ApplyChangesInfo postponeTasks( Context context,
+                                                       List< ? extends Task > tasks )
    {
       /**
        * NOTE: RTM has no API to set the postponed count. One can only postpone a task and the count is the number of
@@ -138,8 +145,8 @@ public final class TaskEditUtils
                                                                              RawTasks.DUE_DATE,
                                                                              cal.getTimeInMillis() ) );
             }
-            else if ( MolokoDateUtils.isBefore( due.getTime(),
-                                                cal.getTimeInMillis() ) )
+            else if ( MolokoDateUtils.isDaysBefore( due.getTime(),
+                                                    cal.getTimeInMillis() ) )
             {
                final MolokoCalendar tmp = MolokoDateUtils.newCalendarUTC( due.getTime() );
                
@@ -160,7 +167,7 @@ public final class TaskEditUtils
             else
             {
                cal.setTime( due );
-               cal.roll( Calendar.DAY_OF_YEAR, true );
+               cal.add( Calendar.DAY_OF_YEAR, 1 );
                
                modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
                                                                              task.getId(),
@@ -177,19 +184,26 @@ public final class TaskEditUtils
          }
       }
       
-      return Pair.create( modifications.toContentProviderActionItemList(),
-                          new ApplyChangesInfo( activity.getString( R.string.toast_save_task ),
-                                                activity.getResources()
-                                                        .getQuantityString( R.plurals.toast_postponed_task,
-                                                                            tasks.size(),
-                                                                            tasks.size() ),
-                                                activity.getString( R.string.toast_save_task_failed ) ) );
+      final Resources resources = context.getResources();
+      final int tasksCount = tasks.size();
+      final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
+                                             : Strings.EMPTY_STRING;
+      
+      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+                                   resources.getQuantityString( R.plurals.toast_save_task,
+                                                                tasksCount,
+                                                                tasksCount ),
+                                   resources.getQuantityString( R.plurals.toast_postponed_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                tasksCount ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > insertTask( FragmentActivity activity,
-                                                                                           Task task )
+   public final static ApplyChangesInfo insertTask( Context context, Task task )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
@@ -209,26 +223,31 @@ public final class TaskEditUtils
                                                                        .getTime() ) );
       
       if ( !ok )
+      {
          actionItemList = null;
+      }
       
-      return Pair.create( actionItemList,
-                          new ApplyChangesInfo( activity.getString( R.string.toast_insert_task ),
-                                                activity.getString( R.string.toast_insert_task_ok ),
-                                                activity.getString( R.string.toast_insert_task_fail ) ) );
+      final String taskName = task.getName();
+      return new ApplyChangesInfo( actionItemList,
+                                   context.getString( R.string.toast_insert_task,
+                                                      taskName ),
+                                   context.getString( R.string.toast_insert_task_ok,
+                                                      taskName ),
+                                   context.getString( R.string.toast_insert_task_fail,
+                                                      taskName ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteTask( FragmentActivity activity,
-                                                                                           Task task )
+   public final static ApplyChangesInfo deleteTask( Context context, Task task )
    {
-      return deleteTasks( activity, Collections.singletonList( task ) );
+      return deleteTasks( context, Collections.singletonList( task ) );
    }
    
    
    
-   public final static Pair< ContentProviderActionItemList, ApplyChangesInfo > deleteTasks( FragmentActivity activity,
-                                                                                            List< ? extends Task > tasks )
+   public final static ApplyChangesInfo deleteTasks( Context context,
+                                                     List< ? extends Task > tasks )
    {
       boolean ok = true;
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
@@ -259,14 +278,26 @@ public final class TaskEditUtils
       }
       
       if ( !ok )
+      {
          actionItemList = null;
+      }
       
-      return Pair.create( actionItemList,
-                          new ApplyChangesInfo( activity.getString( R.string.toast_delete_task ),
-                                                activity.getResources()
-                                                        .getQuantityString( R.plurals.toast_deleted_task,
-                                                                            tasks.size(),
-                                                                            tasks.size() ),
-                                                activity.getString( R.string.toast_delete_task_failed ) ) );
+      final Resources resources = context.getResources();
+      final int tasksCount = tasks.size();
+      final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
+                                             : Strings.EMPTY_STRING;
+      
+      return new ApplyChangesInfo( actionItemList,
+                                   resources.getQuantityString( R.plurals.toast_delete_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_deleted_task,
+                                                                tasksCount,
+                                                                tasksCount,
+                                                                taskName ),
+                                   resources.getQuantityString( R.plurals.toast_delete_task_failed,
+                                                                tasksCount,
+                                                                taskName ) );
    }
 }

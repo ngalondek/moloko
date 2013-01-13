@@ -40,11 +40,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskSeries;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
@@ -61,8 +61,7 @@ import dev.drsoran.rtm.Task;
 
 public class TasksProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = "Moloko."
-      + TasksProviderPart.class.getSimpleName();
+   private static final Class< TasksProviderPart > TAG = TasksProviderPart.class;
    
    
    public final static class NewTaskIds
@@ -318,7 +317,7 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query task failed. ", e );
+         MolokoApp.Log.e( TAG, "Query task failed. ", e );
          task = null;
       }
       finally
@@ -371,7 +370,7 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query tasks failed. ", e );
+         MolokoApp.Log.e( TAG, "Query tasks failed. ", e );
          tasks = null;
       }
       finally
@@ -609,7 +608,7 @@ public class TasksProviderPart extends AbstractProviderPart
    
    
    
-   private final static Task createTask( Cursor c )
+   public final static Task createTask( Cursor c )
    {
       final String taskSeriesId = c.getString( COL_INDICES.get( Tasks.TASKSERIES_ID ) );
       
@@ -704,10 +703,11 @@ public class TasksProviderPart extends AbstractProviderPart
             }
             else
             {
-               Log.e( TAG,
-                      "Expected equal lengths for participant fields. Has IDs:"
-                         + splitIds.length + ", Names:" + splitFullnames.length
-                         + ", User:" + splitUsernames.length );
+               MolokoApp.Log.e( TAG,
+                                "Expected equal lengths for participant fields. Has IDs:"
+                                   + splitIds.length + ", Names:"
+                                   + splitFullnames.length + ", User:"
+                                   + splitUsernames.length );
             }
          }
       }

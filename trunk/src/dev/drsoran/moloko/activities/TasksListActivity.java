@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -24,78 +24,102 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
-import android.app.Dialog;
-import android.content.Intent;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.RtmListEditUtils;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TasksListActivity extends AbstractFullDetailedTasksListActivity
 {
-   private static class OptionsMenu
-   {
-      public final static int ADD_LIST = R.id.menu_add_list;
-      
-      public final static int DELETE_LIST = R.id.menu_delete_list;
-   }
-   
-   private Boolean showAddSmartListMenu;
-   
-   
-   
    @Override
-   protected void onNewIntent( Intent intent )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      super.onNewIntent( intent );
+      if ( isWritableAccess() )
+      {
+         getSupportMenuInflater().inflate( R.menu.taskslist_activity_rwd, menu );
+      }
+      else
+      {
+         getSupportMenuInflater().inflate( R.menu.taskslist_activity, menu );
+      }
       
-      // if we receive a new intent then we have to re-evaluate the
-      // condition.
-      showAddSmartListMenu = null;
-   }
-   
-   
-   
-   @Override
-   public boolean onCreateOptionsMenu( Menu menu )
-   {
-      super.onCreateOptionsMenu( menu );
-      
-      if ( showAddSmartListMenu == null )
-         evaluateAddSmartListMenuVisibility();
-      
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ADD_LIST,
-                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_list,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   showAddSmartListMenu.booleanValue()
-                                      && AccountUtils.isWriteableAccess( this ) );
-      
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.DELETE_LIST,
-                                   getString( R.string.taskslist_menu_opt_delete_list ),
-                                   MenuCategory.ALTERNATIVE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_trash,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   isConfiguredWithListName()
-                                      && !AccountUtils.isReadOnlyAccess( this ) );
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      super.onPrepareOptionsMenu( menu );
+      
+      if ( isWritableAccess() )
+      {
+         final MenuItem addSmartListItem = menu.findItem( R.id.menu_add_list );
+         prepareAddSmartListMenuVisibility( addSmartListItem );
+      }
+      
+      final MenuItem toggleDefaultListItem = menu.findItem( R.id.menu_toggle_default_list );
+      prepareToggleDefaultListMenu( toggleDefaultListItem );
+      
+      return true;
+   }
+   
+   
+   
+   private void prepareAddSmartListMenuVisibility( MenuItem addSmartListItem )
+   {
+      final RtmSmartFilter filter = geActiveRtmSmartFilter();
+      boolean show = filter != null;
+      
+      // the active, selected item is an already existing list, then we
+      // don't need to add a new list.
+      show = show && !isRealList( getActiveListId() );
+      
+      if ( show )
+      {
+         final List< RtmSmartFilterToken > unAmbigiousTokens = RtmSmartFilterParsing.removeAmbiguousTokens( filter.getTokens() );
+         show = unAmbigiousTokens.size() > 0;
+      }
+      
+      addSmartListItem.setVisible( show );
+   }
+   
+   
+   
+   private void prepareToggleDefaultListMenu( MenuItem toggleDefaultListItem )
+   {
+      final String listIdOfTasksList = getActiveListId();
+      
+      toggleDefaultListItem.setVisible( listIdOfTasksList != null
+         && isRealList( listIdOfTasksList ) );
+      
+      if ( toggleDefaultListItem.isVisible() )
+      {
+         if ( isDefaultList() )
+         {
+            toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_remove_def_list );
+            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag_unset );
+         }
+         else
+         {
+            toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_make_def_list );
+            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag );
+         }
+      }
    }
    
    
@@ -105,13 +129,19 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.DELETE_LIST:
-            final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-            UIUtils.showDeleteElementDialog( this, listName );
+         case R.id.menu_add_list:
+            showAddListDialog();
             return true;
             
-         case OptionsMenu.ADD_LIST:
-            showAddListDialog();
+         case R.id.menu_toggle_default_list:
+            if ( isDefaultList() )
+            {
+               resetDefaultList();
+            }
+            else
+            {
+               setAsDefaultList();
+            }
             return true;
             
          default :
@@ -122,35 +152,65 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    
    @Override
-   protected void handleDeleteElementDialogClick( String tag, int which )
+   public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
-      if ( which == Dialog.BUTTON_POSITIVE )
+      supportInvalidateOptionsMenu();
+      return super.onNavigationItemSelected( itemPosition, itemId );
+   }
+   
+   
+   
+   @Override
+   protected Fragment createTasksListFragment( Bundle config )
+   {
+      return FullDetailedTasksListFragment.newInstance( config );
+   }
+   
+   
+   
+   private RtmSmartFilter geActiveRtmSmartFilter()
+   {
+      final IFilter activeFilter = getActiveFilter();
+      if ( activeFilter instanceof RtmSmartFilter )
       {
-         final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-         
-         RtmListEditUtils.deleteListByName( TasksListActivity.this, listName );
-         finish();
+         return (RtmSmartFilter) activeFilter;
+      }
+      else
+      {
+         return null;
       }
    }
    
    
    
-   private void evaluateAddSmartListMenuVisibility()
+   /**
+    * Checks if the list ID belongs to a list from the database or is a custom navigation item ID. E.g. a search query.
+    */
+   private static boolean isRealList( String listId )
    {
-      final IFilter filter = getConfiguredFilter();
-      boolean show = filter instanceof RtmSmartFilter;
-      
-      // if we are configured with a list name then we already are in a list
-      // and do not need to add a new one.
-      show = show && !isConfiguredWithListName();
-      
-      if ( show )
-      {
-         final RtmSmartFilter rtmSmartFilter = (RtmSmartFilter) filter;
-         final List< RtmSmartFilterToken > unAmbigiousTokens = RtmSmartFilterParsing.removeAmbiguousTokens( rtmSmartFilter.getTokens() );
-         show = unAmbigiousTokens.size() > 0;
-      }
-      
-      showAddSmartListMenu = Boolean.valueOf( show );
+      return !String.valueOf( CUSTOM_NAVIGATION_ITEM_ID ).equals( listId );
+   }
+   
+   
+   
+   private boolean isDefaultList()
+   {
+      return getActiveListId().equals( MolokoApp.getSettings( this )
+                                                .getDefaultListId() );
+   }
+   
+   
+   
+   private void setAsDefaultList()
+   {
+      MolokoApp.getSettings( this ).setDefaultListId( getActiveListId() );
+   }
+   
+   
+   
+   private void resetDefaultList()
+   {
+      MolokoApp.getSettings( this )
+               .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
 }

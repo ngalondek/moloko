@@ -52,36 +52,41 @@
       <attr name="spinnerValues" format="reference" />
    </declare-styleable>
 
-	<declare-styleable name="SyncableListPreference">
-		<attr name="syncWithRtmKey" format="reference|string" />
-	</declare-styleable>
+   <declare-styleable name="SyncableListPreference">
+      <attr name="syncWithRtmKey" format="reference|string" />
+   </declare-styleable>
 
-	<declare-styleable name="InfoTextPreference">
-		<attr name="infoText" format="reference|string" />
-		<attr name="infoWidget" format="reference" />
-	</declare-styleable>
+   <declare-styleable name="InfoTextPreference">
+      <attr name="infoIcon" format="reference" />
+      <attr name="infoWidgetLayout" format="reference" />
+   </declare-styleable>
 
-	<declare-styleable name="WrappingLayout">
+   <declare-styleable name="WrappingLayout">
       <attr name="wrappingLayoutStyle" format="reference"/>
-		<attr name="horizontal_spacing" format="reference|dimension" />
-		<attr name="vertical_spacing" format="reference|dimension" />
-	</declare-styleable>
-   
+      <attr name="horizontal_spacing" format="reference|dimension" />
+      <attr name="vertical_spacing" format="reference|dimension" />
+   </declare-styleable>
+
    <declare-styleable name="ClearButtonCompoundDrawable">
        <attr name="clearButtonStyle" format="reference" />
        <attr name="drawablePressed" format="reference"/>
-       <attr name="drawableUnpressed" format="reference"/>       
+       <attr name="drawableUnpressed" format="reference"/>
    </declare-styleable>
    
-   <declare-styleable name="BottomButtonBarLayout">
-      <attr name="bottomButtonBarStyle" format="reference" />
-      <attr name="stretchSingleButton" format="boolean" />
-      <attr name="button1Text" format="reference|string" />
-      <attr name="button2Text" format="reference|string" />
-      <attr name="button1Drawable" format="reference" />
-      <attr name="button2Drawable" format="reference" />
-      <attr name="button1OnClick" format="reference|string" />
-      <attr name="button2OnClick" format="reference|string" />
-      <attr name="backgroundColor" format="reference|color" />
+   <declare-styleable name="SimpleLine">
+       <attr name="simpleLineStyle" format="reference" />
+       <attr name="lineColor" format="reference|color" />
+   </declare-styleable>
+   
+   <declare-styleable name="WheelView">
+       <attr name="wheelViewStyle" format="reference" />
+       <attr name="topShadowDrawable" format="reference" />
+       <attr name="bottomShadowDrawable" format="reference" />
+       <attr name="centerDrawable" format="reference" />
+       <attr name="backgroundDrawable" format="reference" />
+   </declare-styleable>
+   
+   <declare-styleable name="AutoSummaryPreference">
+       <attr name="summaryPattern" format="reference|string" />
    </declare-styleable>
 </resources>

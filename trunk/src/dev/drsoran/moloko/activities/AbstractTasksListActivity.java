@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -23,61 +23,81 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ActionBar;
-import android.support.v4.app.ActionBar.OnNavigationListener;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.BackStackEntry;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
-import android.widget.SpinnerAdapter;
+import android.util.SparseArray;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+
 import dev.drsoran.moloko.IFilter;
-import dev.drsoran.moloko.QuickAddTaskActionBarSwitcher;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
-import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
-import dev.drsoran.moloko.fragments.QuickAddTaskActionBarFragment;
-import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
-import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskActionBarFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
+import dev.drsoran.moloko.activities.base.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.adapters.TasksListNavigationAdapter;
+import dev.drsoran.moloko.adapters.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.fragments.ITasksListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmListWithTaskCount;
+import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 import dev.drsoran.rtm.Task;
 
 
-abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
-         implements ITasksListFragmentListener, OnNavigationListener,
-         IQuickAddTaskActionBarFragmentListener,
-         IQuickAddTaskButtonBarFragmentListener,
+public abstract class AbstractTasksListActivity extends
+         MolokoEditFragmentActivity implements ITasksListFragmentListener,
+         OnNavigationListener, OnBackStackChangedListener,
          LoaderCallbacks< List< RtmListWithTaskCount > >
 {
-   private final static int[] FRAGMENT_IDS =
-   { R.id.frag_quick_add_task_action_bar, R.id.frag_taskslist,
-    R.id.frag_quick_add_task_button_bar };
+   protected final static long CUSTOM_NAVIGATION_ITEM_ID = 0L;
+   
+   private final static int INITIAL_FRAGMENT_BACK_STACK_ID = -1;
+   
+   @InstanceState( key = Intents.Extras.KEY_ACTIVITY_TITLE,
+                   defaultValue = InstanceState.NULL )
+   private String title;
+   
+   @InstanceState( key = Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
+                   defaultValue = InstanceState.NULL )
+   private String subTitle;
+   
+   @InstanceState( key = "sel_nav_item",
+                   defaultValue = InstanceState.NO_DEFAULT )
+   private SelectedNavigationItem selectedNavigationItem;
+   
+   @InstanceState( key = "backstack_nav_items",
+                   defaultValue = InstanceState.NO_DEFAULT )
+   private SparseArray< SelectedNavigationItem > backStackNavigationItems;
+   
+   private List< RtmListWithTaskCount > loadedRtmLists;
+   
+   private TasksListNavigationAdapter actionBarNavigationAdapter;
+   
+   private boolean updateNavigationAdapter;
    
    
-   public static class Config
+   
+   protected AbstractTasksListActivity()
    {
-      public final static String TITLE = "title";
-      
-      public final static String SUB_TITLE = "sub_title";
-      
-      public final static String LIST_NAME = Lists.LIST_NAME;
+      registerAnnotatedConfiguredInstance( this,
+                                           AbstractTasksListActivity.class );
    }
-   
-   private final static int LISTS_LOADER_ID = 1;
-   
-   private QuickAddTaskActionBarSwitcher quickAddTaskActionBarSwitcher;
-   
-   private SpinnerAdapter actionBarNavigationAdapter;
    
    
    
@@ -87,246 +107,441 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.taskslist_activity );
+      setTitle( title );
+      initialize();
+   }
+   
+   
+   
+   protected void initialize()
+   {
+      initializeHomeNavigation();
+      initializeTitle();
+      initializeTasksListFragment();
       
-      quickAddTaskActionBarSwitcher = new QuickAddTaskActionBarSwitcher( this,
-                                                                         savedInstanceState );
+      // Initialize the ActionBar, and possible list navigation,
+      // after the initial fragment has been added.
       initializeActionBar();
-      
-      if ( savedInstanceState == null )
-         initTasksListWithConfiguration( getIntent(), configuration );
    }
    
    
    
-   @Override
-   protected void onSaveInstanceState( Bundle outState )
+   protected void initializeHomeNavigation()
    {
-      super.onSaveInstanceState( outState );
-      quickAddTaskActionBarSwitcher.saveInstanceState( outState );
-   }
-   
-   
-   
-   @Override
-   protected void onRestoreInstanceState( Bundle state )
-   {
-      super.onRestoreInstanceState( state );
-      quickAddTaskActionBarSwitcher.restoreInstanceState( state );
-   }
-   
-   
-   
-   @Override
-   protected void onNewIntent( Intent intent )
-   {
-      super.onNewIntent( intent );
-      setTitleAndNavigationMode();
-   }
-   
-   
-   
-   private void initializeActionBar()
-   {
-      quickAddTaskActionBarSwitcher.showInLastState();
-      setTitleAndNavigationMode();
-   }
-   
-   
-   
-   private void setTitleAndNavigationMode()
-   {
-      getSupportActionBar().setTitle( getConfiguredTitle() );
-      getSupportActionBar().setSubtitle( getConfiguredSubTitle() );
-      setActionBarNavigationMode();
-   }
-   
-   
-   
-   @Override
-   public void onBackPressed()
-   {
-      if ( isQuickAddTaskFragmentOpen() )
-         showQuickAddTaskActionBarFragment( false );
-      else
-         super.onBackPressed();
-   }
-   
-   
-   
-   protected void setActionBarNavigationMode()
-   {
-      // If we are opened for a list, then we show the other lists as navigation
-      // alternative
-      if ( isConfiguredWithListName() )
+      if ( Intents.HomeAction.BACK.equals( getHomeAction() )
+         || Intents.HomeAction.ACTIVITY.equals( getHomeAction() ) )
       {
-         getSupportLoaderManager().initLoader( LISTS_LOADER_ID,
-                                               Bundle.EMPTY,
-                                               this );
+         getSupportActionBar().setDisplayHomeAsUpEnabled( true );
       }
       else
       {
-         setDropDownNavigationMode( null );
+         getSupportActionBar().setDisplayHomeAsUpEnabled( false );
       }
    }
    
    
    
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
+   protected void initializeTitle()
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TITLE ) )
-         configuration.putString( Config.TITLE, config.getString( Config.TITLE ) );
-      if ( config.containsKey( Config.SUB_TITLE ) )
-         configuration.putString( Config.SUB_TITLE,
-                                  config.getString( Config.SUB_TITLE ) );
-      if ( config.containsKey( Config.LIST_NAME ) )
-         configuration.putString( Config.LIST_NAME,
-                                  config.getString( Config.LIST_NAME ) );
+      if ( TextUtils.isEmpty( getTitle() ) )
+      {
+         final String intentListName = getListNameFromIntent();
+         if ( !TextUtils.isEmpty( intentListName ) )
+         {
+            setTitle( intentListName );
+         }
+      }
+   }
+   
+   
+   
+   protected void initializeActionBar()
+   {
+      setStandardNavigationMode();
+      startLoadingRtmLists();
    }
    
    
    
    @Override
-   public void putDefaultConfigurationTo( Bundle bundle )
+   public void onBackStackChanged()
    {
-      super.putDefaultConfigurationTo( bundle );
+      final BackStackEntry topOfStack = getTopOfBackStack();
+      final int backStackId = topOfStack != null
+                                                ? topOfStack.getId()
+                                                : INITIAL_FRAGMENT_BACK_STACK_ID;
       
-      bundle.putString( Config.TITLE, getString( R.string.app_name ) );
+      final SelectedNavigationItem backStackSelectedItem = backStackNavigationItems.get( backStackId );
+      
+      // Push to stack
+      if ( backStackSelectedItem == null )
+      {
+         backStackNavigationItems.append( backStackId, selectedNavigationItem );
+      }
+      
+      // Pop of stack
+      else if ( !backStackSelectedItem.equals( selectedNavigationItem ) )
+      {
+         updateNavigationAdapter = backStackSelectedItem.id != selectedNavigationItem.id;
+         
+         backStackNavigationItems.removeAt( backStackNavigationItems.size() - 1 );
+         selectedNavigationItem = backStackSelectedItem;
+         
+         // TODO: What happens if the list is already deleted by a background sync?
+      }
+      
+      if ( updateNavigationAdapter )
+      {
+         setNavigationAdapter();
+         updateNavigationAdapter = false;
+      }
+      else
+      {
+         getSupportActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
+      }
    }
    
    
    
-   private Bundle getCurrentTasksListFragmentConfiguration()
+   private BackStackEntry getTopOfBackStack()
+   {
+      final FragmentManager fragmentManager = getSupportFragmentManager();
+      final int backStackSize = fragmentManager.getBackStackEntryCount();
+      
+      return backStackSize > 0
+                              ? fragmentManager.getBackStackEntryAt( backStackSize - 1 )
+                              : null;
+   }
+   
+   
+   
+   private void startLoadingRtmLists()
+   {
+      getSupportLoaderManager().initLoader( RtmListWithTaskCountLoader.ID,
+                                            Bundle.EMPTY,
+                                            this );
+   }
+   
+   
+   
+   public Bundle getCurrentTasksListFragmentConfiguration()
    {
       return getFragmentConfigurations( R.id.frag_taskslist );
    }
    
    
    
-   private Bundle getCurrentActivityAndFragmentsConfiguration()
-   {
-      return getActivityAndFragmentsConfiguration( R.id.frag_taskslist );
-   }
-   
-   
-   
-   @Override
-   public void onTaskSortChanged( int newTaskSort )
-   {
-      final Bundle config = getCurrentTasksListFragmentConfiguration();
-      config.putInt( AbstractTasksListFragment.Config.TASK_SORT_ORDER,
-                     newTaskSort );
-      
-      newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
-   }
-   
-   
-   
-   protected final Task getTask( int pos )
+   public final Task getTask( int pos )
    {
       return getTasksListFragment().getTask( pos );
    }
    
    
    
-   protected int getTaskSort()
+   public final Task getTask( String taskId )
    {
-      return getTasksListFragment().getTaskSortConfiguration();
+      return getTasksListFragment().getTask( taskId );
    }
    
    
    
-   protected boolean isSameTaskSortLikeCurrent( int sortOrder )
+   public int getTaskSort()
    {
-      return getTasksListFragment().getTaskSortConfiguration() == sortOrder;
+      return getTasksListFragment().getTaskSort();
    }
    
    
    
-   protected IFilter getConfiguredFilter()
+   public boolean isSameTaskSortLikeCurrent( int sortOrder )
+   {
+      return getTasksListFragment().getTaskSort() == sortOrder;
+   }
+   
+   
+   
+   public IFilter getActiveFilter()
    {
       return getTasksListFragment().getFilter();
    }
    
    
    
-   protected String getConfiguredListName()
+   public boolean hasListNameInIntent()
    {
-      return configuration.getString( Config.LIST_NAME );
+      return getIntent().getExtras().containsKey( Intents.Extras.KEY_LIST_NAME );
    }
    
    
    
-   protected void configuredTitle( String title )
+   public String getListNameFromIntent()
    {
-      configuration.putString( Config.TITLE, title );
+      final String listName = getIntent().getExtras()
+                                         .getString( Intents.Extras.KEY_LIST_NAME );
+      return listName;
    }
    
    
    
-   protected String getConfiguredTitle()
+   public String getListIdFromIntent()
    {
-      final String title = configuration.getString( Config.TITLE );
-      return !TextUtils.isEmpty( title ) ? title
-                                        : getString( R.string.app_name );
+      final String listId = getIntent().getExtras()
+                                       .getString( Intents.Extras.KEY_LIST_ID );
+      return listId;
    }
    
    
    
-   protected String getConfiguredSubTitle()
+   public String getActiveListId()
    {
-      return Strings.nullIfEmpty( configuration.getString( Config.SUB_TITLE ) );
-   }
-   
-   
-   
-   protected boolean isConfiguredWithListName()
-   {
-      return !TextUtils.isEmpty( getConfiguredListName() );
-   }
-   
-   
-   
-   protected boolean isInDropDownNavigationMode()
-   {
-      return getSupportActionBar() != null
-         && getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
-   }
-   
-   
-   
-   protected void setDropDownNavigationMode( SpinnerAdapter spinnerAdapter )
-   {
-      if ( getSupportActionBar() != null )
+      if ( isListNavigationMode() )
       {
-         if ( spinnerAdapter != null )
+         return String.valueOf( selectedNavigationItem.id );
+      }
+      else
+      {
+         return getListIdFromIntent();
+      }
+   }
+   
+   
+   
+   protected IItem getNavigationItem( int position )
+   {
+      if ( !isListNavigationMode() )
+      {
+         throw new UnsupportedOperationException( "No list navigation mode." );
+      }
+      
+      return actionBarNavigationAdapter.getItem( position );
+   }
+   
+   
+   
+   protected int getSelectedNavigationItemPosition()
+   {
+      if ( !isListNavigationMode() )
+      {
+         throw new UnsupportedOperationException( "No list navigation mode." );
+      }
+      
+      return selectedNavigationItem.position;
+   }
+   
+   
+   
+   protected void setStandardNavigationMode()
+   {
+      final ActionBar actionBar = getSupportActionBar();
+      
+      actionBar.setSubtitle( subTitle );
+      actionBar.setDisplayShowTitleEnabled( true );
+      actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+      actionBar.setListNavigationCallbacks( null, null );
+      
+      if ( isListNavigationMode() )
+      {
+         getSupportFragmentManager().removeOnBackStackChangedListener( this );
+         selectedNavigationItem = null;
+         backStackNavigationItems = null;
+         actionBarNavigationAdapter = null;
+      }
+   }
+   
+   
+   
+   public boolean isStandardNavigationMode()
+   {
+      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_STANDARD;
+   }
+   
+   
+   
+   protected void setListNavigationMode()
+   {
+      final ActionBar actionBar = getSupportActionBar();
+      
+      actionBar.setDisplayShowTitleEnabled( false );
+      actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
+      
+      initializeListNavigation();
+   }
+   
+   
+   
+   private void initializeListNavigation()
+   {
+      getSupportFragmentManager().addOnBackStackChangedListener( this );
+      
+      final boolean isFirstInitialization = selectedNavigationItem == null;
+      if ( isFirstInitialization )
+      {
+         selectedNavigationItem = new SelectedNavigationItem();
+         setSelectedNavigationItemIdFromIntent();
+         setSelectedNavigationItemPositionFromSubTitle();
+         
+         backStackNavigationItems = new SparseArray< SelectedNavigationItem >();
+         
+         // The initial fragment gets the back stack ID -1 because it was added
+         // without back stack.
+         backStackNavigationItems.append( INITIAL_FRAGMENT_BACK_STACK_ID,
+                                          selectedNavigationItem );
+      }
+      
+      setNavigationAdapter();
+      
+      getSupportActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
+   }
+   
+   
+   
+   private void setSelectedNavigationItemIdFromIntent()
+   {
+      final String listIdFromIntent = getListIdFromIntent();
+      selectedNavigationItem.id = !TextUtils.isEmpty( listIdFromIntent )
+                                                                        ? Long.valueOf( listIdFromIntent )
+                                                                        : CUSTOM_NAVIGATION_ITEM_ID;
+   }
+   
+   
+   
+   private void setSelectedNavigationItemPositionFromSubTitle()
+   {
+      if ( !TextUtils.isEmpty( subTitle ) )
+      {
+         if ( getCompletedSubtitle().equals( subTitle ) )
          {
-            getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
-            getSupportActionBar().setListNavigationCallbacks( spinnerAdapter,
-                                                              this );
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS;
+         }
+         else if ( getOverdueSubtitle().equals( subTitle ) )
+         {
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_OVERDUE_TASKS;
+         }
+         else if ( getDueTodaySubtitle().equals( subTitle ) )
+         {
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_TODAY_TASKS;
+         }
+         else if ( getDueTomorrowSubtitle().equals( subTitle ) )
+         {
+            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_TOMORROW_TASKS;
+         }
+      }
+   }
+   
+   
+   
+   public boolean isListNavigationMode()
+   {
+      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
+   }
+   
+   
+   
+   private List< IItem > createActionBarNavigationItems()
+   {
+      final Context context = getSupportActionBar().getThemedContext();
+      
+      final List< IItem > actionBarNavigationItems = new ArrayList< IItem >( loadedRtmLists.size() );
+      for ( Iterator< RtmListWithTaskCount > i = loadedRtmLists.iterator(); i.hasNext(); )
+      {
+         final RtmListWithTaskCount list = i.next();
+         
+         if ( Long.valueOf( list.getId() ) != selectedNavigationItem.id )
+         {
+            final IItem newListItem = new TasksListNavigationAdapter.RtmListItem( context,
+                                                                                  list );
+            actionBarNavigationItems.add( newListItem );
          }
          else
          {
-            getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+            final ExtendedListInfo extendedListInfo = list.getExtendedListInfo( this );
+            
+            Bundle config = Intents.Extras.createOpenListExtras( context,
+                                                                 list,
+                                                                 null );
+            actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_DEFAULT_TASKS,
+                                          new TasksListNavigationAdapter.RtmListItem( context,
+                                                                                      list ) );
+            
+            config = Intents.Extras.createOpenListExtras( context,
+                                                          list,
+                                                          RtmSmartFilterLexer.OP_STATUS_LIT
+                                                             + RtmSmartFilterLexer.COMPLETED_LIT );
+            actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS,
+                                          new TasksListNavigationAdapter.ExtendedRtmListItem( context,
+                                                                                              getCompletedSubtitle(),
+                                                                                              list,
+                                                                                              extendedListInfo.completedTaskCount ).setTasksListConfig( config ) );
+            
+            config = Intents.Extras.createOpenListExtras( context,
+                                                          list,
+                                                          RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
+                                                             + DateParser.tokenNames[ DateParser.TODAY ] );
+            actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_OVERDUE_TASKS,
+                                          new TasksListNavigationAdapter.ExtendedRtmListItem( context,
+                                                                                              getOverdueSubtitle(),
+                                                                                              list,
+                                                                                              extendedListInfo.overDueTaskCount ).setTasksListConfig( config ) );
+            
+            config = Intents.Extras.createOpenListExtras( context,
+                                                          list,
+                                                          RtmSmartFilterLexer.OP_DUE_LIT
+                                                             + DateParser.tokenNames[ DateParser.TODAY ] );
+            actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_TODAY_TASKS,
+                                          new TasksListNavigationAdapter.ExtendedRtmListItem( context,
+                                                                                              getDueTodaySubtitle(),
+                                                                                              list,
+                                                                                              extendedListInfo.dueTodayTaskCount ).setTasksListConfig( config ) );
+            
+            config = Intents.Extras.createOpenListExtras( context,
+                                                          list,
+                                                          RtmSmartFilterLexer.OP_DUE_LIT
+                                                             + DateParser.tokenNames[ DateParser.TOMORROW ] );
+            actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_TOMORROW_TASKS,
+                                          new TasksListNavigationAdapter.ExtendedRtmListItem( context,
+                                                                                              getDueTomorrowSubtitle(),
+                                                                                              list,
+                                                                                              extendedListInfo.dueTomorrowTaskCount ).setTasksListConfig( config ) );
          }
       }
+      
+      if ( selectedNavigationItem.id == CUSTOM_NAVIGATION_ITEM_ID )
+      {
+         actionBarNavigationItems.add( 0,
+                                       new TasksListNavigationAdapter.CustomItem( CUSTOM_NAVIGATION_ITEM_ID,
+                                                                                  getTitle().toString(),
+                                                                                  null,
+                                                                                  getIntent().getExtras() ) );
+      }
+      
+      return actionBarNavigationItems;
    }
    
    
    
-   protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
+   private String getCompletedSubtitle()
    {
-      final List< String > items = new ArrayList< String >( lists.size() );
-      
-      for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
-      {
-         items.add( rtmListWithTaskCount.getName() );
-      }
-      
-      actionBarNavigationAdapter = new ActionBarNavigationAdapter( this, items );
-      return actionBarNavigationAdapter;
+      return getString( R.string.taskslist_actionbar_subtitle_completed );
+   }
+   
+   
+   
+   private String getOverdueSubtitle()
+   {
+      return getString( R.string.taskslist_actionbar_subtitle_overdue );
+   }
+   
+   
+   
+   private String getDueTodaySubtitle()
+   {
+      return getString( R.string.taskslist_actionbar_subtitle_due_today );
+   }
+   
+   
+   
+   private String getDueTomorrowSubtitle()
+   {
+      return getString( R.string.taskslist_actionbar_subtitle_due_tomorrow );
    }
    
    
@@ -335,7 +550,10 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public Loader< List< RtmListWithTaskCount >> onCreateLoader( int id,
                                                                 Bundle args )
    {
-      return new RtmListWithTaskCountLoader( this );
+      final RtmListWithTaskCountLoader loader = new RtmListWithTaskCountLoader( this );
+      loader.setPreExpandExtendedListInfoAfterLoad( true );
+      
+      return loader;
    }
    
    
@@ -344,28 +562,38 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public void onLoadFinished( Loader< List< RtmListWithTaskCount >> loader,
                                List< RtmListWithTaskCount > data )
    {
-      if ( data.size() > 1 )
+      loadedRtmLists = data;
+      
+      if ( loadedRtmLists != null && loadedRtmLists.size() > 1 )
       {
-         setDropDownNavigationMode( createActionBarNavigationAdapterForResult( data ) );
-         
-         final String configuredListName = Strings.emptyIfNull( getConfiguredListName() );
-         
-         int pos = -1;
-         for ( int i = 0, cnt = data.size(); i < cnt && pos == -1; i++ )
+         if ( actionBarNavigationAdapter == null )
          {
-            final RtmListWithTaskCount list = data.get( i );
-            if ( list.getName().equalsIgnoreCase( configuredListName ) )
-               pos = i;
+            setListNavigationMode();
          }
-         
-         if ( pos != -1 )
+         else
          {
-            getSupportActionBar().setTitle( null );
-            getSupportActionBar().setSelectedNavigationItem( pos );
+            final List< IItem > navigationItems = createActionBarNavigationItems();
+            actionBarNavigationAdapter.swap( navigationItems );
          }
-         
-         invalidateOptionsMenu();
       }
+   }
+   
+   
+   
+   private void setNavigationAdapter()
+   {
+      createActionBarNavigationAdapter();
+      getSupportActionBar().setListNavigationCallbacks( actionBarNavigationAdapter,
+                                                        this );
+   }
+   
+   
+   
+   private void createActionBarNavigationAdapter()
+   {
+      final List< IItem > navigationItems = createActionBarNavigationItems();
+      actionBarNavigationAdapter = new TasksListNavigationAdapter( getSupportActionBar().getThemedContext(),
+                                                                   navigationItems );
    }
    
    
@@ -373,7 +601,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    @Override
    public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
    {
-      setDropDownNavigationMode( null );
+      setStandardNavigationMode();
    }
    
    
@@ -381,19 +609,28 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    @Override
    public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
-      boolean handled = false;
+      final boolean hasChangedSelectedItemId = itemId != selectedNavigationItem.id;
+      final boolean handled = hasChangedSelectedItemId
+         || itemPosition != selectedNavigationItem.position;
       
-      final String item = (String) actionBarNavigationAdapter.getItem( itemPosition );
-      
-      if ( !item.equalsIgnoreCase( getConfiguredListName() ) )
+      if ( handled )
       {
-         final Bundle newConfig = getCurrentActivityAndFragmentsConfiguration();
-         newConfig.putAll( Intents.Extras.createOpenListExtrasByName( this,
-                                                                      item,
-                                                                      null ) );
-         reloadTasksListWithConfiguration( newConfig );
+         final Bundle newConfig = getCurrentTasksListFragmentConfiguration();
+         newConfig.putAll( actionBarNavigationAdapter.getTasksListConfigForItem( itemPosition ) );
          
-         handled = true;
+         // We set the selected position to 0 in the case of an ID change because the back stack change (see
+         // onBackStackChanged() will cause a recreation of the spinner adapter that causes the selected
+         // item position to be and we do not want a reload again due to changed position.
+         if ( hasChangedSelectedItemId )
+         {
+            itemPosition = 0;
+         }
+         
+         selectedNavigationItem = new SelectedNavigationItem( itemId,
+                                                              itemPosition );
+         updateNavigationAdapter = hasChangedSelectedItemId;
+         
+         reloadTasksListWithConfiguration( newConfig );
       }
       
       return handled;
@@ -401,80 +638,33 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   protected void showQuickAddTaskActionBarFragment( boolean show )
+   protected ITasksListFragment< ? extends Task > getTasksListFragment()
    {
-      if ( show )
+      final Fragment fragment = findAddedFragmentById( R.id.frag_taskslist );
+      
+      if ( fragment instanceof ITasksListFragment )
       {
-         quickAddTaskActionBarSwitcher.showSwitched( createQuickAddTaskActionBarFragmentConfiguration() );
+         @SuppressWarnings( "unchecked" )
+         final ITasksListFragment< ? extends Task > tasksListFragment = (ITasksListFragment< ? extends Task >) fragment;
+         return tasksListFragment;
       }
       else
       {
-         quickAddTaskActionBarSwitcher.showUnswitched();
+         return null;
       }
    }
    
    
    
-   @Override
-   public void onCloseQuickAddTaskFragment()
+   private void initializeTasksListFragment()
    {
-      showQuickAddTaskActionBarFragment( false );
-   }
-   
-   
-   
-   protected boolean isQuickAddTaskFragmentOpen()
-   {
-      return quickAddTaskActionBarSwitcher.isSwitched();
-   }
-   
-   
-   
-   protected Bundle createQuickAddTaskActionBarFragmentConfiguration()
-   {
-      final Bundle config = new Bundle();
-      
-      config.putParcelable( QuickAddTaskActionBarFragment.Config.FILTER,
-                            getConfiguredFilter() );
-      return config;
-   }
-   
-   
-   
-   @Override
-   public void onQuickAddAddNewTask( Bundle parsedValues )
-   {
-      showQuickAddTaskActionBarFragment( false );
-      startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
-   }
-   
-   
-   
-   @Override
-   public void onQuickAddTaskOperatorSelected( char operator )
-   {
-      quickAddTaskActionBarSwitcher.insertOperator( operator );
-   }
-   
-   
-   
-   @SuppressWarnings( "unchecked" )
-   protected AbstractTasksListFragment< ? extends Task > getTasksListFragment()
-   {
-      return (AbstractTasksListFragment< ? extends Task >) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
-   }
-   
-   
-   
-   private void initTasksListWithConfiguration( Intent intent, Bundle config )
-   {
-      final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
-      
-      if ( newTasksListFragment != null )
+      if ( findAddedFragmentById( R.id.frag_taskslist ) == null )
       {
-         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-         transaction.add( R.id.frag_taskslist, newTasksListFragment );
+         final Fragment fragment = createTasksListFragment( getIntent().getExtras() );
          
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         transaction.add( R.id.frag_taskslist, fragment );
+         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
          transaction.commit();
       }
    }
@@ -483,43 +673,13 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    protected void reloadTasksListWithConfiguration( Bundle config )
    {
-      final Intent newIntent = getNewConfiguredIntent( config );
+      final Fragment fragment = createTasksListFragment( config );
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       
-      onNewIntent( newIntent );
-      newTasksListFragmentbyIntent( newIntent );
-   }
-   
-   
-   
-   protected void newTasksListFragmentbyIntent( Intent intent )
-   {
-      final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
-      
-      if ( newTasksListFragment != null )
-      {
-         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-         transaction.replace( R.id.frag_taskslist, newTasksListFragment );
-         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
-         
-         transaction.commit();
-      }
-   }
-   
-   
-   
-   protected Fragment getNewTasksListFragmentInstance( Intent intent )
-   {
-      return TasksListFragmentFactory.newFragment( this, intent );
-   }
-   
-   
-   
-   private Intent getNewConfiguredIntent( Bundle config )
-   {
-      final Intent newIntent = getTasksListFragment().newDefaultIntent();
-      newIntent.putExtras( config );
-      
-      return newIntent;
+      transaction.replace( R.id.frag_taskslist, fragment );
+      transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+      transaction.addToBackStack( null );
+      transaction.commit();
    }
    
    
@@ -527,6 +687,116 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    @Override
    protected int[] getFragmentIds()
    {
-      return FRAGMENT_IDS;
+      return new int[]
+      { R.id.frag_taskslist };
+   }
+   
+   
+   
+   protected abstract Fragment createTasksListFragment( Bundle config );
+   
+   
+   private final static class SelectedNavigationItem implements Parcelable
+   {
+      @SuppressWarnings( "unused" )
+      public static final Parcelable.Creator< SelectedNavigationItem > CREATOR = new Parcelable.Creator< SelectedNavigationItem >()
+      {
+         
+         @Override
+         public SelectedNavigationItem createFromParcel( Parcel source )
+         {
+            return new SelectedNavigationItem( source );
+         }
+         
+         
+         
+         @Override
+         public SelectedNavigationItem[] newArray( int size )
+         {
+            return new SelectedNavigationItem[ size ];
+         }
+         
+      };
+      
+      public long id = -1L;
+      
+      public int position;
+      
+      
+      
+      public SelectedNavigationItem()
+      {
+      }
+      
+      
+      
+      public SelectedNavigationItem( long id, int position )
+      {
+         this.id = id;
+         this.position = position;
+      }
+      
+      
+      
+      public SelectedNavigationItem( Parcel source )
+      {
+         this( source.readLong(), source.readInt() );
+      }
+      
+      
+      
+      @Override
+      public void writeToParcel( Parcel dest, int flags )
+      {
+         dest.writeLong( id );
+         dest.writeInt( position );
+      }
+      
+      
+      
+      @Override
+      public int describeContents()
+      {
+         return 0;
+      }
+      
+      
+      
+      @Override
+      public boolean equals( Object o )
+      {
+         if ( o == null )
+         {
+            return false;
+         }
+         
+         if ( o == this )
+         {
+            return true;
+         }
+         
+         if ( o.getClass() != getClass() )
+         {
+            return false;
+         }
+         
+         final SelectedNavigationItem other = (SelectedNavigationItem) o;
+         return id == other.id && position == other.position;
+      }
+      
+      
+      
+      @Override
+      public String toString()
+      {
+         return format( id, position );
+      }
+      
+      
+      
+      public static String format( long id, int position )
+      {
+         return String.format( "%d;%d", id, position );
+      }
    }
 }

@@ -37,7 +37,7 @@
       android:layout_toRightOf="@id/taskslist_listitem_check"
       android:layout_toLeftOf="@+id/taskslist_listitem_due_date"
       android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
-      android:text="task_desc"
+      android:text="@string/design_text"
       android:focusable="false" />
 
    <TextView
@@ -51,7 +51,7 @@
       android:layout_marginTop="5dip"
       android:layout_marginLeft="5dip"
       android:layout_marginRight="?android:attr/scrollbarSize"      
-      android:text="due_date"
+      android:text="@string/design_text"
       android:singleLine="true"
       android:focusable="false" />
 

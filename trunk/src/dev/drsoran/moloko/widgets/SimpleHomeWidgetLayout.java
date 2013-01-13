@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -37,34 +37,26 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
 {
    private final Intent intent;
    
-   private final Runnable runnable;
-   
    
    
    public SimpleHomeWidgetLayout( Context context )
    {
       this( context, null, 0 );
    }
-
-
-
+   
+   
+   
    public SimpleHomeWidgetLayout( Context context, AttributeSet attrs )
    {
       this( context, attrs, 0 );
    }
-
-
-
+   
+   
+   
    public SimpleHomeWidgetLayout( Context context, AttributeSet attrs,
       int defStyle )
    {
-      this( context, attrs, 0, 0, new Runnable()
-      {
-         @Override
-         public void run()
-         {
-         }
-      } );
+      this( context, attrs, 0, 0, null );
    }
    
    
@@ -77,20 +69,6 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
       initUi( context, labelId, imgId );
       
       this.intent = intent;
-      this.runnable = null;
-   }
-   
-   
-   
-   public SimpleHomeWidgetLayout( Context context, AttributeSet attrs,
-      int labelId, int imgId, Runnable runnable )
-   {
-      super( context, attrs );
-      
-      initUi( context, labelId, imgId );
-      
-      this.intent = null;
-      this.runnable = runnable;
    }
    
    
@@ -99,14 +77,6 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    public Intent getIntent()
    {
       return intent;
-   }
-   
-   
-   
-   @Override
-   public Runnable getRunnable()
-   {
-      return runnable;
    }
    
    

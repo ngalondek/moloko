@@ -38,7 +38,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
@@ -55,8 +55,7 @@ import dev.drsoran.rtm.Task;
 
 public class ListOverviewsProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = "Moloko."
-      + ListOverviewsProviderPart.class.getSimpleName();
+   private static final Class< ListOverviewsProviderPart > TAG = ListOverviewsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -139,7 +138,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    }
    
    
-
+   
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -150,16 +149,16 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
              .registerContentObserver( TaskSeries.CONTENT_URI, true, observer );
    }
    
-
-
+   
+   
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-
-
+   
+   
    public final static RtmListWithTaskCount getListOverview( ContentProviderClient client,
                                                              String selection )
    {
@@ -182,7 +181,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query lists overview failed. ", e );
+         MolokoApp.Log.e( TAG, "Query lists overview failed. ", e );
          list = null;
       }
       finally
@@ -194,8 +193,8 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       return list;
    }
    
-
-
+   
+   
    public final static List< RtmListWithTaskCount > getListsOverview( ContentProviderClient client,
                                                                       String selection )
    {
@@ -236,7 +235,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query lists overview failed. ", e );
+         MolokoApp.Log.e( TAG, "Query lists overview failed. ", e );
          lists = null;
       }
       finally
@@ -248,8 +247,8 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       return lists;
    }
    
-
-
+   
+   
    public final static ExtendedListInfo getExtendedOverview( ContentResolver contentResolver,
                                                              String listId,
                                                              String filter )
@@ -273,9 +272,9 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
             }
             else
             {
-               Log.e( TAG,
-                      "Unable to query extended list info with invalid filter "
-                         + filter );
+               MolokoApp.Log.e( TAG,
+                                "Unable to query extended list info with invalid filter "
+                                   + filter );
             }
          }
          else
@@ -335,15 +334,15 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       return extendedOverview;
    }
    
-
-
+   
+   
    public ListOverviewsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, ListOverviews.PATH );
    }
    
-
-
+   
+   
    @Override
    public Cursor query( String id,
                         String[] projection,
@@ -380,61 +379,64 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       return cursor;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return null;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return ListOverviews.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return ListOverviews.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return ListOverviews.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
    private final static RtmListWithTaskCount createListOverview( ContentProviderClient client,
                                                                  Cursor c )
    {
@@ -455,8 +457,8 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                          : c.getInt( COL_INDICES.get( ListOverviews.TASKS_COUNT ) ) );
    }
    
-
-
+   
+   
    private final static int getSmartFilterTaskCount( ContentProviderClient client,
                                                      RtmSmartFilter filter )
    {
@@ -484,12 +486,13 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
          }
          catch ( SQLiteException e )
          {
-            Log.e( TAG, "Tried to QUERY with Bad RTM filter: " + evalFilter, e );
+            MolokoApp.Log.e( TAG, "Tried to QUERY with Bad RTM filter: "
+               + evalFilter, e );
             badFilter = true;
          }
          catch ( RemoteException e )
          {
-            Log.e( TAG, "Unable to QUERY tasks with filter.", e );
+            MolokoApp.Log.e( TAG, "Unable to QUERY tasks with filter.", e );
             badFilter = true;
          }
       }

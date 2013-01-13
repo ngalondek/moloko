@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,46 +22,34 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Pair;
-import android.view.LayoutInflater;
+import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
-public abstract class MolokoEditDialogFragment< T extends Fragment > extends
-         MolokoDialogFragment implements IEditFragment< T >
+public abstract class MolokoEditDialogFragment extends
+         MolokoContentDialogFragment implements IEditFragment
 {
-   private final Handler handler = new Handler();
+   private final EditFragmentImpl impl;
    
-   private IEditFragmentListener listener;
    
-   private ViewGroup dialogView;
    
-   private IBinder windowToken;
+   protected MolokoEditDialogFragment()
+   {
+      impl = new EditFragmentImpl( this );
+   }
    
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      
-      if ( activity instanceof IEditFragmentListener )
-         listener = (IEditFragmentListener) activity;
-      else
-         listener = null;
+      impl.onAttach( activity );
    }
    
    
@@ -69,8 +57,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      listener = null;
    }
    
    
@@ -78,64 +66,42 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    @Override
    public void onDestroyView()
    {
-      if ( windowToken != null )
-      {
-         handler.post( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               final Context context = getFragmentActivity();
-               if ( context != null )
-                  UIUtils.hideSoftInput( context, windowToken );
-            }
-         } );
-      }
-      
+      impl.onDestroyView();
       super.onDestroyView();
    }
    
    
    
    @Override
-   public final Dialog onCreateDialog( Bundle savedInstanceState )
+   public void onDestroy()
    {
-      if ( savedInstanceState != null )
-         configure( savedInstanceState );
-      
-      dialogView = createContent( LayoutInflater.from( getFragmentActivity() ) );
-      windowToken = dialogView.getWindowToken();
-      
-      onContentCreated( dialogView );
-      
-      final Dialog dialog = createDialog( dialogView );
-      
-      return dialog;
-   }
-   
-   
-   
-   public View getDialogView()
-   {
-      return dialogView;
+      impl.onDestroy();
+      super.onDestroy();
    }
    
    
    
    @Override
-   public final boolean onFinishEditing()
+   public final ApplyChangesInfo onFinishEditing()
    {
-      boolean ok = validateInput();
+      ApplyChangesInfo changes = ApplyChangesInfo.EMPTY;
       
-      if ( ok && hasChanges() )
+      if ( hasChanges() )
       {
-         ok = saveChanges();
+         changes = getChanges();
       }
       
-      if ( ok )
-         getDialog().dismiss();
+      getDialog().dismiss();
       
-      return ok;
+      return changes;
+   }
+   
+   
+   
+   @Override
+   public ValidationResult validate()
+   {
+      return ValidationResult.OK;
    }
    
    
@@ -143,78 +109,24 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    @Override
    public final void onCancelEditing()
    {
-      if ( hasChanges() )
-      {
-         requestCancelEditing();
-      }
-      else
-      {
-         getDialog().cancel();
-      }
    }
    
    
    
-   public void showShoftInput( final View view )
+   public void showShoftInput( View view )
    {
-      handler.post( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            if ( isAdded() )
-               UIUtils.showSoftInput( view );
-         }
-      } );
+      impl.showShoftInput( view );
    }
    
    
    
-   protected boolean validateInput()
+   @Override
+   protected void onDialogViewCreated( ViewGroup dialogView )
    {
-      return true;
+      impl.setWindowToken( dialogView.getWindowToken() );
    }
    
    
    
-   protected boolean applyModifications( ContentProviderActionItemList actionItemList,
-                                         ApplyChangesInfo applyChangesInfo )
-   {
-      boolean ok = listener != null;
-      return ok
-         && listener.applyModifications( actionItemList, applyChangesInfo );
-   }
-   
-   
-   
-   protected void requestCancelEditing()
-   {
-      if ( listener != null )
-         listener.requestCancelEditing( getTag() );
-   }
-   
-   
-   
-   protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
-   {
-      return applyModifications( modifications.first, modifications.second );
-   }
-   
-   
-   
-   protected void onContentCreated( ViewGroup dialogView )
-   {
-   }
-   
-   
-   
-   abstract protected ViewGroup createContent( LayoutInflater inflater );
-   
-   
-   
-   abstract protected Dialog createDialog( View fragmentView );
-   
-   
-   
-   protected abstract boolean saveChanges();
+   protected abstract ApplyChangesInfo getChanges();
 }

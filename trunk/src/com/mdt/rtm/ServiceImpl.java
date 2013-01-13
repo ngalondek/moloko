@@ -29,11 +29,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -50,7 +46,6 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.connection.DefaultRtmConnectionFactory;
 import dev.drsoran.moloko.connection.IRtmConnection;
 import dev.drsoran.moloko.util.Strings;
@@ -66,9 +61,6 @@ import dev.drsoran.rtm.RtmSettings;
  */
 public class ServiceImpl implements Service
 {
-   private final static String TAG = "Moloko.*"
-      + ServiceImpl.class.getSimpleName();
-   
    public final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
    
    public final static int SERVER_PORT_NUMBER_HTTP = 80;
@@ -89,20 +81,9 @@ public class ServiceImpl implements Service
    
    
    
-   public static ServiceImpl getInstance( Context context,
+   public static ServiceImpl getInstance( boolean useHttps,
                                           ApplicationInfo applicationInfo ) throws ServiceInternalException
    {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      
-      if ( prefs == null )
-      {
-         Log.w( TAG, "Unable to access the settings." );
-      }
-      
-      final boolean useHttps = prefs == null
-         || prefs.getBoolean( context.getString( R.string.key_conn_use_https ),
-                              true );
-      
       final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
                                                        !useHttps );
       

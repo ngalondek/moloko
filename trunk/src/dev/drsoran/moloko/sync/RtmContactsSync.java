@@ -26,12 +26,12 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderClient;
-import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -44,11 +44,10 @@ import dev.drsoran.rtm.RtmContacts;
 
 public final class RtmContactsSync
 {
-   private final static String TAG = "Moloko."
-      + RtmContactsSync.class.getSimpleName();
+   private final static Class< RtmContactsSync > TAG = RtmContactsSync.class;
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       Date lastSync,
@@ -61,7 +60,7 @@ public final class RtmContactsSync
       if ( local_ListOfContacts == null )
       {
          syncResult.androidSyncResult.databaseError = true;
-         Log.e( TAG, "Getting local contacts failed." );
+         MolokoApp.Log.e( TAG, "Getting local contacts failed." );
          return false;
       }
       
@@ -73,7 +72,7 @@ public final class RtmContactsSync
       }
       catch ( ServiceException e )
       {
-         Log.e( TAG, "Getting server contacts failed.", e );
+         MolokoApp.Log.e( TAG, "Getting server contacts failed.", e );
          
          switch ( e.responseCode )
          {

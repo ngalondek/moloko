@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -27,17 +27,18 @@ import android.os.Bundle;
 
 public interface IConfigurable
 {
+   
+   < T > void registerAnnotatedConfiguredInstance( T instance, Class< T > clazz );
+   
+   
+   
    Bundle getConfiguration();
    
-
-
+   
+   
    void configure( Bundle config );
    
-
-
-   void clearConfiguration();
    
-
-
-   Bundle createDefaultConfiguration();
+   
+   void clearConfiguration();
 }

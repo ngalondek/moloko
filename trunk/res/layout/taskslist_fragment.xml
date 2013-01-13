@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko 
+<!--
+   Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko 
    is free software: you can redistribute it and/or modify it under the terms 
    of the GNU General Public License as published by the Free Software Foundation, 
    either version 3 of the License, or (at your option) any later version. Moloko 
@@ -8,35 +9,30 @@
    PURPOSE. See the GNU General Public License for more details. You should 
    have received a copy of the GNU General Public License along with Moloko. 
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+   - implementation
+-->
 
-<LinearLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
 
-   <ListView
-      android:id="@android:id/list"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent" />
+	<include
+		android:id="@android:id/list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		layout="@layout/listview" >
 
-   <TextView
-      android:id="@android:id/empty"
-      style="@style/No_List_Elements_Text"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:text="@string/abstaskslist_no_tasks" />
+		<!--
+            Preview: 
+           listitem=@layout/fulldetailed_taskslist_listitem
+		-->
+	</include>
 
-   <include
-      android:id="@+id/loading_spinner"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      layout="@layout/app_loading_spinner"
-      android:visibility="gone" />
-      
-   <dev.drsoran.moloko.layouts.TitleWithTextLayout
-      android:id="@+id/error"
-      style="@style/Error"
-      android:visibility="gone" />
-</LinearLayout>
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@android:id/empty"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+	</LinearLayout>
+	
+</FrameLayout>

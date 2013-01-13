@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -27,19 +27,21 @@ import android.app.Dialog;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Intents.HomeAction;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
@@ -47,22 +49,19 @@ import dev.drsoran.provider.Rtm.Lists;
 
 public class StartUpActivity extends MolokoFragmentActivity
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + StartUpActivity.class.getSimpleName();
-   
    private final static String STATE_INDEX_KEY = "state_index";
-   
-   private final static int MSG_STATE_CHANGED = 0;
    
    private final static int STATE_CHECK_ACCOUNT = 0;
    
    private final static int STATE_DETERMINE_STARTUP_VIEW = 1;
    
-   private final static int STATE_COMPLETED = 2;
+   private final static int STATE_CHECK_SYNC_AT_STARTUP = 2;
+   
+   private final static int STATE_COMPLETED = 3;
    
    private final static int[] STATE_SEQUENCE =
-   { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW, STATE_COMPLETED };
+   { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW,
+    STATE_CHECK_SYNC_AT_STARTUP, STATE_COMPLETED };
    
    private int stateIndex = 0;
    
@@ -77,19 +76,11 @@ public class StartUpActivity extends MolokoFragmentActivity
       setTitle( R.string.app_startup );
       
       if ( savedInstanceState != null )
+      {
          stateIndex = savedInstanceState.getInt( STATE_INDEX_KEY, 0 );
+      }
       
       reEvaluateCurrentState();
-   }
-   
-   
-   
-   @Override
-   protected void onDestroy()
-   {
-      handler.removeMessages( MSG_STATE_CHANGED );
-      
-      super.onDestroy();
    }
    
    
@@ -98,7 +89,6 @@ public class StartUpActivity extends MolokoFragmentActivity
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      
       outState.putInt( STATE_INDEX_KEY, stateIndex );
    }
    
@@ -124,9 +114,9 @@ public class StartUpActivity extends MolokoFragmentActivity
          switchToNextState();
       }
       else if ( dialogId == R.id.dlg_startup_default_list_not_exists
-         && which == Dialog.BUTTON_POSITIVE )
+         && which == Dialog.BUTTON_NEUTRAL )
       {
-         final Settings settings = MolokoApp.getSettings();
+         final Settings settings = MolokoApp.getSettings( this );
          
          settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
          settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
@@ -155,23 +145,25 @@ public class StartUpActivity extends MolokoFragmentActivity
    private void checkAccount()
    {
       boolean switchToNextState = true;
-      final Account account = AccountUtils.getRtmAccount( this );
+      final Account account = AccountUtils.getRtmAccount( StartUpActivity.this );
       
       if ( account == null )
       {
-         UIUtils.showNoAccountDialog( this );
+         UIUtils.showNoAccountDialog( StartUpActivity.this );
          switchToNextState = false;
       }
       
       if ( switchToNextState )
+      {
          switchToNextState();
+      }
    }
    
    
    
    private void determineStartupView()
    {
-      final Settings settings = MolokoApp.getSettings();
+      final Settings settings = MolokoApp.getSettings( this );
       
       if ( settings != null )
       {
@@ -192,16 +184,23 @@ public class StartUpActivity extends MolokoFragmentActivity
                                                                                              .setNeutralButton( R.string.btn_continue )
                                                                                              .show( this );
                }
+               else
+               {
+                  switchToNextState();
+               }
             }
             catch ( RemoteException e )
             {
                // We simply ignore the exception and start with default view.
                // Perhaps next time it works again.
                settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
+               switchToNextState();
             }
          }
-         
-         switchToNextState();
+         else
+         {
+            switchToNextState();
+         }
       }
       else
       {
@@ -211,22 +210,39 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    
    
+   private void checkAndPerformSyncAtStartUp()
+   {
+      final Settings molokoSettings = MolokoApp.getSettings( this );
+      
+      if ( molokoSettings.isSyncAtStartup()
+         && !molokoSettings.isManualSyncOnly() )
+      {
+         SyncUtils.requestManualSync( this, true /* silent */);
+      }
+      
+      switchToNextState();
+   }
+   
+   
+   
    private void onStartUpCompleted()
    {
-      final int startUpView = MolokoApp.getSettings().getStartupView();
+      final Settings settings = MolokoApp.getSettings( this );
+      final int startUpView = settings.getStartupView();
       
       switch ( startUpView )
       {
          case Settings.STARTUP_VIEW_DEFAULT_LIST:
-            startActivity( Intents.createOpenListIntentById( this,
-                                                             MolokoApp.getSettings()
-                                                                      .getDefaultListId(),
-                                                             null ) );
+            startActivityWithHomeAction( Intents.createOpenListIntentById( this,
+                                                                           settings.getDefaultListId(),
+                                                                           null ),
+                                         HomeAction.HOME );
             break;
          
          case Settings.STARTUP_VIEW_LISTS:
-            startActivity( new Intent( Intent.ACTION_VIEW,
-                                       ListOverviews.CONTENT_URI ) );
+            startActivityWithHomeAction( new Intent( Intent.ACTION_VIEW,
+                                                     ListOverviews.CONTENT_URI ),
+                                         HomeAction.HOME );
             break;
          
          case Settings.STARTUP_VIEW_HOME:
@@ -235,7 +251,6 @@ public class StartUpActivity extends MolokoFragmentActivity
          
          default :
             throw new IllegalStateException( "Unknown state: " + startUpView );
-            
       }
       
       finish();
@@ -260,27 +275,59 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    private void reEvaluateCurrentState()
    {
-      handler.sendEmptyMessage( MSG_STATE_CHANGED );
+      switch ( stateIndex )
+      {
+         case STATE_CHECK_ACCOUNT:
+            checkAccount();
+            break;
+         
+         case STATE_DETERMINE_STARTUP_VIEW:
+            determineStartupView();
+            break;
+         
+         case STATE_CHECK_SYNC_AT_STARTUP:
+            checkAndPerformSyncAtStartUp();
+            break;
+         
+         case STATE_COMPLETED:
+            onStartUpCompleted();
+            break;
+         
+         default :
+            throw new IllegalStateException( "Unknown state: " + stateIndex );
+      }
    }
    
    
    
    private boolean existsList( String id ) throws RemoteException
    {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
-      
-      boolean exists = client != null;
+      boolean exists = !TextUtils.isEmpty( id );
       
       if ( exists )
       {
-         final RtmList list = RtmListsProviderPart.getList( client, id );
-         exists = list != null;
-         exists &= list.getArchived() == 0;
-         exists &= list.getDeletedDate() == null;
+         ContentProviderClient client = null;
+         try
+         {
+            client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
+            exists = client != null;
+            
+            if ( exists )
+            {
+               final RtmList list = RtmListsProviderPart.getList( client, id );
+               exists = list != null;
+               exists = exists && list.getArchived() == 0;
+               exists = exists && list.getDeletedDate() == null;
+            }
+         }
+         finally
+         {
+            if ( client != null )
+            {
+               client.release();
+            }
+         }
       }
-      
-      if ( client != null )
-         client.release();
       
       return exists;
    }
@@ -290,40 +337,6 @@ public class StartUpActivity extends MolokoFragmentActivity
    @Override
    protected int[] getFragmentIds()
    {
-      return null;
+      return new int[] {};
    }
-   
-   private final Handler handler = new Handler()
-   {
-      @Override
-      public void handleMessage( Message msg )
-      {
-         switch ( msg.what )
-         {
-            case MSG_STATE_CHANGED:
-               switch ( stateIndex )
-               {
-                  case STATE_CHECK_ACCOUNT:
-                     checkAccount();
-                     break;
-                  
-                  case STATE_DETERMINE_STARTUP_VIEW:
-                     determineStartupView();
-                     break;
-                  
-                  case STATE_COMPLETED:
-                     onStartUpCompleted();
-                     break;
-                  
-                  default :
-                     throw new IllegalStateException( "Unknown state: "
-                        + stateIndex );
-               }
-               break;
-            
-            default :
-               super.handleMessage( msg );
-         }
-      }
-   };
 }

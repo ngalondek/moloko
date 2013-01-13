@@ -26,63 +26,37 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.MenuItem.OnMenuItemClickListener;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
-import android.text.style.UnderlineSpan;
-import android.util.Log;
+import android.text.style.ClickableSpan;
 import android.util.Pair;
 import android.view.InflateException;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import android.widget.Toast;
-
-import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
-
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.layouts.ActionBarMenuItemView;
-import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
 
 public final class UIUtils
 {
-   /**
-    * If a tag has been clicked then it makes no sense to click it in the result again.
-    */
-   public static final String DISABLE_TAGS_EQUALS = "disable_tags_equals";
-   
    public static final String REMOVE_TAGS_EQUALS = "remove_tags_equals";
-   
-   public static final String DISABLE_ALL_TAGS = "disable_all_tags";
    
    public static final String REMOVE_ALL_TAGS = "remove_all_tags";
    
@@ -180,7 +154,8 @@ public final class UIUtils
          final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
          if ( imm != null )
          {
-            imm.hideSoftInputFromWindow( windowToken, 0 );
+            imm.hideSoftInputFromWindow( windowToken,
+                                         InputMethodManager.HIDE_NOT_ALWAYS );
          }
       }
    }
@@ -221,60 +196,10 @@ public final class UIUtils
    
    
    
-   public final static void setTaskDescription( TextView view,
-                                                Task task,
-                                                Time timeBase )
-   {
-      if ( timeBase == null )
-      {
-         timeBase = MolokoDateUtils.newTime();
-      }
-      
-      view.setText( task.getName() );
-      
-      boolean setTypeFace = false;
-      
-      // description
-      if ( task.getDue() != null )
-      {
-         final long dueDateMillis = task.getDue().getTime();
-         
-         // Make bold if the task is today
-         if ( MolokoDateUtils.isToday( dueDateMillis ) )
-         {
-            view.setTypeface( Typeface.DEFAULT_BOLD );
-            view.setText( task.getName() );
-            setTypeFace = true;
-         }
-         
-         // Make underline and bold if overdue
-         else
-         {
-            final Time dueTime = MolokoDateUtils.newTime( task.getDue()
-                                                              .getTime() );
-            
-            if ( timeBase.after( dueTime ) )
-            {
-               final SpannableString content = new SpannableString( task.getName() );
-               
-               content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
-               view.setTypeface( Typeface.DEFAULT_BOLD );
-               view.setText( content );
-               setTypeFace = true;
-            }
-         }
-      }
-      
-      if ( !setTypeFace )
-         view.setTypeface( Typeface.DEFAULT );
-   }
-   
-   
-   
    public final static void setListTasksCountView( TextView tasksCount,
                                                    RtmListWithTaskCount list )
    {
-      final int numTasks = list.getIncompleteTaskCount();
+      final int numTasks = list.getTaskCount();
       tasksCount.setText( String.valueOf( numTasks ) );
       
       if ( list.hasSmartFilter() )
@@ -300,69 +225,46 @@ public final class UIUtils
    public final static void inflateTags( Context context,
                                          ViewGroup container,
                                          Collection< String > tags,
-                                         Bundle configuration,
-                                         OnClickListener listener ) throws InflateException
+                                         Bundle configuration )
    {
       if ( configuration == null )
-         configuration = new Bundle();
+      {
+         configuration = Bundle.EMPTY;
+      }
       
       final int tagPos = getTaggedViewPos( container, "tag_name" );
       
       if ( tagPos != -1 )
+      {
          container.removeViews( tagPos, container.getChildCount() - tagPos );
+      }
       
       // inflate the stub and add tags
       if ( tags.size() > 0 && !configuration.containsKey( REMOVE_ALL_TAGS ) )
       {
          try
          {
-            if ( configuration.containsKey( DISABLE_ALL_TAGS ) )
+            final String[] tagsToRemove = configuration.getStringArray( REMOVE_TAGS_EQUALS );
+            
+            for ( String tagText : tags )
             {
-               for ( String tagText : tags )
+               boolean remove = false;
+               
+               if ( tagsToRemove != null )
+               {
+                  for ( int i = 0; i < tagsToRemove.length && !remove; i++ )
+                  {
+                     remove = tagsToRemove[ i ].equalsIgnoreCase( tagText );
+                  }
+               }
+               
+               if ( !remove )
                {
                   final TextView tagView = (TextView) View.inflate( context,
                                                                     R.layout.tag_button,
                                                                     null );
-                  tagView.setClickable( false );
                   tagView.setText( tagText );
                   container.addView( tagView );
-               }
-            }
-            else
-            {
-               final String[] tagsToDisable = configuration.getStringArray( DISABLE_TAGS_EQUALS );
-               final String[] tagsToRemove = configuration.getStringArray( REMOVE_TAGS_EQUALS );
-               
-               for ( String tagText : tags )
-               {
-                  boolean remove = false;
-                  
-                  if ( tagsToRemove != null )
-                     for ( int i = 0; i < tagsToRemove.length && !remove; i++ )
-                     {
-                        remove = tagsToRemove[ i ].equalsIgnoreCase( tagText );
-                     }
-                  
-                  if ( !remove )
-                  {
-                     boolean disable = false;
-                     
-                     if ( tagsToDisable != null )
-                        for ( int i = 0; i < tagsToDisable.length && !disable; i++ )
-                        {
-                           disable = tagsToDisable[ i ].equalsIgnoreCase( tagText );
-                        }
-                     
-                     final TextView tagView = (TextView) View.inflate( context,
-                                                                       R.layout.tag_button,
-                                                                       null );
-                     tagView.setClickable( !disable );
-                     tagView.setText( tagText );
-                     container.addView( tagView );
-                     
-                     if ( !disable && listener != null )
-                        tagView.setOnClickListener( listener );
-                  }
                }
             }
          }
@@ -380,24 +282,38 @@ public final class UIUtils
    
    
    
-   public final static void setPriorityColor( View view, Task task )
+   public final static void setPriorityColor( Context context,
+                                              SimpleLineView view,
+                                              Task task )
    {
       switch ( task.getPriority() )
       {
          case High:
-            view.setBackgroundResource( R.color.priority_1 );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_1 ) );
             break;
          case Medium:
-            view.setBackgroundResource( R.color.priority_2 );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_2 ) );
             break;
          case Low:
-            view.setBackgroundResource( R.color.priority_3 );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_3 ) );
             break;
          case None:
          default :
-            view.setBackgroundResource( R.color.priority_none );
+            view.setLineColor( context.getResources()
+                                      .getColor( R.color.priority_none ) );
             break;
       }
+   }
+   
+   
+   
+   public final static void setNoElementsText( View noElementsView, int resId )
+   {
+      final TextView noElementsTextView = (TextView) noElementsView.findViewById( R.id.no_elements );
+      noElementsTextView.setText( resId );
    }
    
    
@@ -415,327 +331,82 @@ public final class UIUtils
    
    
    
-   public final static boolean initializeTitleWithViewLayout( View layout,
-                                                              String title )
+   public final static void initializeTitleWithViewLayout( View layout,
+                                                           String title )
    {
-      boolean ok = layout != null;
+      final TextView titleView = (TextView) layout.findViewById( R.id.title_with_view_title );
       
-      if ( ok )
-         try
-         {
-            final TextView titleView = (TextView) layout.findViewById( R.id.title_with_view_title );
-            
-            if ( TextUtils.isEmpty( title ) )
-            {
-               titleView.setVisibility( View.GONE );
-            }
-            else
-            {
-               titleView.setVisibility( View.VISIBLE );
-               titleView.setText( title );
-            }
-         }
-         catch ( ClassCastException e )
-         {
-            ok = false;
-         }
-      
-      return ok;
-   }
-   
-   
-   
-   public final static boolean initializeTitleWithTextLayout( View layout,
-                                                              String title,
-                                                              String text )
-   {
-      boolean ok = layout != null
-         && initializeTitleWithViewLayout( layout, title );
-      
-      if ( ok )
-         try
-         {
-            final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
-            
-            if ( TextUtils.isEmpty( text ) )
-            {
-               textView.setVisibility( View.GONE );
-            }
-            else
-            {
-               textView.setVisibility( View.VISIBLE );
-               textView.setText( text );
-            }
-         }
-         catch ( ClassCastException e )
-         {
-            ok = false;
-         }
-      
-      return ok;
-   }
-   
-   
-   
-   public final static boolean initializeTitleWithTextLayout( View layout,
-                                                              String title,
-                                                              Spannable text )
-   {
-      boolean ok = initializeTitleWithTextLayout( layout,
-                                                  title,
-                                                  text.toString() );
-      
-      if ( ok && text != null )
-         try
-         {
-            final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
-            applySpannable( textView, text );
-         }
-         catch ( ClassCastException e )
-         {
-            ok = false;
-         }
-      
-      return ok;
-   }
-   
-   
-   
-   public final static void inflateErrorWithIcon( Context context,
-                                                  ViewGroup container,
-                                                  int errorMsgResId,
-                                                  Object... params )
-   {
-      final View view = LayoutInflater.from( context )
-                                      .inflate( R.layout.error_with_icon,
-                                                container,
-                                                true );
-      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
-      final String msg = context.getResources().getString( errorMsgResId,
-                                                           params );
-      text.setText( msg );
-      
-      Log.e( LogUtils.toTag( Context.class ), msg );
-   }
-   
-   
-   
-   public final static void inflateErrorWithIcon( Context context,
-                                                  ViewGroup container,
-                                                  Spanned errorText )
-   {
-      final View view = LayoutInflater.from( context )
-                                      .inflate( R.layout.error_with_icon,
-                                                container,
-                                                true );
-      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
-      text.setText( errorText );
-      
-      Log.e( LogUtils.toTag( Context.class ), errorText.toString() );
-   }
-   
-   
-   
-   public final static void applySpannable( TextView textView, Spannable text )
-   {
-      textView.setMovementMethod( LinkMovementMethod.getInstance() );
-      textView.setText( text, BufferType.SPANNABLE );
-   }
-   
-   
-   
-   public final static MenuItem addSettingsMenuItem( final Context context,
-                                                     Menu menu,
-                                                     int menuOrder,
-                                                     int showAsActionFlags )
-   {
-      final MenuItem menuItem = addOptionalMenuItem( context,
-                                                     menu,
-                                                     R.id.menu_settings,
-                                                     context.getString( R.string.phr_settings ),
-                                                     menuOrder,
-                                                     Menu.NONE,
-                                                     R.drawable.ic_menu_settings,
-                                                     showAsActionFlags,
-                                                     new Intent( context,
-                                                                 MolokoPreferencesActivity.class ),
-                                                     true );
-      return menuItem;
-   }
-   
-   
-   
-   public final static MenuItem addSearchMenuItem( final Activity activity,
-                                                   Menu menu,
-                                                   int menuOrder,
-                                                   int showAsActionFlags )
-   {
-      final MenuItem menuItem = addOptionalMenuItem( activity,
-                                                     menu,
-                                                     R.id.menu_search_tasks,
-                                                     activity.getString( R.string.search_hint ),
-                                                     menuOrder,
-                                                     Menu.NONE,
-                                                     R.drawable.ic_menu_search,
-                                                     showAsActionFlags,
-                                                     true );
-      
-      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+      if ( TextUtils.isEmpty( title ) )
       {
-         @Override
-         public boolean onMenuItemClick( MenuItem item )
-         {
-            return activity.onSearchRequested();
-         }
-      } );
-      
-      return menuItem;
-   }
-   
-   
-   
-   public final static MenuItem addSyncMenuItem( final FragmentActivity activity,
-                                                 Menu menu,
-                                                 int menuOrder,
-                                                 int showAsActionFlags )
-   {
-      final MenuItem menuItem = addOptionalMenuItem( activity,
-                                                     menu,
-                                                     R.id.menu_sync,
-                                                     activity.getString( R.string.phr_do_sync ),
-                                                     menuOrder,
-                                                     Menu.NONE,
-                                                     R.drawable.ic_menu_refresh,
-                                                     showAsActionFlags,
-                                                     true );
-      
-      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
-      {
-         @Override
-         public boolean onMenuItemClick( MenuItem item )
-         {
-            SyncUtils.requestManualSync( activity );
-            return true;
-         }
-      } );
-      
-      return menuItem;
-   }
-   
-   
-   
-   public final static MenuItem addOptionalMenuItem( Context context,
-                                                     Menu menu,
-                                                     int itemId,
-                                                     String title,
-                                                     int order,
-                                                     int groupId,
-                                                     int iconId,
-                                                     int showAsActionFlags,
-                                                     boolean show )
-   {
-      return addOptionalMenuItem( context,
-                                  menu,
-                                  itemId,
-                                  title,
-                                  order,
-                                  groupId,
-                                  iconId,
-                                  showAsActionFlags,
-                                  null,
-                                  show );
-   }
-   
-   
-   
-   public final static MenuItem addOptionalMenuItem( Context context,
-                                                     Menu menu,
-                                                     int itemId,
-                                                     String title,
-                                                     int order,
-                                                     int groupId,
-                                                     int iconId,
-                                                     int showAsActionFlags,
-                                                     Intent intent,
-                                                     boolean show )
-   {
-      MenuItem item = null;
-      
-      if ( show )
-      {
-         item = menu.findItem( itemId );
-         
-         if ( item == null )
-         {
-            item = menu.add( groupId, itemId, order, title );
-            
-            if ( iconId != -1 )
-               item.setIcon( iconId );
-         }
-         
-         item.setTitle( title );
-         
-         if ( intent != null )
-         {
-            item.setIntent( intent );
-         }
-         
-         item.setShowAsAction( showAsActionFlags );
-         
-         if ( showAsActionFlags != MenuItem.SHOW_AS_ACTION_NEVER )
-         {
-            addCompatibilityActionView( context, menu, item );
-         }
+         titleView.setVisibility( View.GONE );
       }
       else
       {
-         menu.removeItem( itemId );
+         titleView.setVisibility( View.VISIBLE );
+         titleView.setText( title );
       }
-      
-      return item;
    }
    
    
    
-   public static void addCompatibilityActionView( Context context,
-                                                  Menu menu,
-                                                  MenuItem item )
+   public final static void initializeTitleWithTextLayout( View layout,
+                                                           String title,
+                                                           String text )
    {
-      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) == false )
+      initializeTitleWithViewLayout( layout, title );
+      
+      final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
+      
+      if ( TextUtils.isEmpty( text ) )
       {
-         
-         final ActionBarMenuItemView actionBarMenuItemView = (ActionBarMenuItemView) LayoutInflater.from( context )
-                                                                                                   .inflate( R.layout.app_action_bar_item_view,
-                                                                                                             null );
-         actionBarMenuItemView.initialize( (MenuItemImpl) item, 0 );
-         actionBarMenuItemView.setInvokeTarget( menu, item.getItemId() );
-         
-         item.setActionView( actionBarMenuItemView );
+         textView.setVisibility( View.GONE );
+      }
+      else
+      {
+         textView.setVisibility( View.VISIBLE );
+         textView.setText( text );
       }
    }
    
    
    
-   public final static void addOptionsMenuIntent( Context context,
-                                                  Menu menu,
-                                                  int id,
-                                                  Class< ? > activityClass )
+   public final static void initializeTitleWithTextLayoutAsLink( View layout,
+                                                                 String title,
+                                                                 Spannable text,
+                                                                 ClickableSpan onClickHandler )
    {
-      addOptionsMenuIntent( context, menu, id, new Intent( context,
-                                                           activityClass ) );
+      initializeTitleWithTextLayout( layout, title, text.toString() );
+      
+      if ( text != null )
+      {
+         final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
+         makeLink( textView, text, onClickHandler );
+      }
    }
    
    
    
-   public final static void addOptionsMenuIntent( Context context,
-                                                  Menu menu,
-                                                  int id,
-                                                  Intent intent )
+   public final static void makeLink( TextView textView,
+                                      String text,
+                                      ClickableSpan onClickHandler )
    {
-      final MenuItem item = menu.findItem( id );
+      final SpannableString spannableText = new SpannableString( text );
+      makeLink( textView, spannableText, onClickHandler );
+   }
+   
+   
+   
+   public final static void makeLink( TextView textView,
+                                      Spannable text,
+                                      ClickableSpan onClickHandler )
+   {
+      if ( onClickHandler != null )
+      {
+         text.setSpan( onClickHandler, 0, text.length(), 0 );
+      }
       
-      if ( item != null )
-         item.setIntent( intent );
+      textView.setMovementMethod( LinkMovementMethod.getInstance() );
+      textView.setText( text, BufferType.SPANNABLE );
    }
    
    
@@ -842,6 +513,7 @@ public final class UIUtils
    
    
    
+   @Deprecated
    public final static void showCancelWithChangesDialog( FragmentActivity activity,
                                                          String tag )
    {
@@ -899,7 +571,7 @@ public final class UIUtils
    public final static void showNoAccountDialog( FragmentActivity fragmentActivity )
    {
       new AlertDialogFragment.Builder( R.id.dlg_no_account ).setTitle( fragmentActivity.getString( R.string.dlg_no_account_title ) )
-                                                            .setIcon( R.drawable.rtm )
+                                                            .setIcon( R.drawable.ic_rtm )
                                                             .setMessage( fragmentActivity.getString( R.string.dlg_no_account_text ) )
                                                             .setPositiveButton( R.string.btn_new_account )
                                                             .setNegativeButton( R.string.btn_cancel )
@@ -935,31 +607,5 @@ public final class UIUtils
    {
       return fragmentActivity.getSupportFragmentManager()
                              .findFragmentByTag( fragmentTag ) != null;
-   }
-   
-   
-   
-   public final static boolean reportStatus( Context context,
-                                             int resIdOk,
-                                             int resIdFailed,
-                                             boolean ok )
-   {
-      Toast.makeText( context, ok ? resIdOk : resIdFailed, Toast.LENGTH_LONG )
-           .show();
-      
-      return ok;
-   }
-   
-   
-   
-   public final static boolean reportStatus( Context context,
-                                             CharSequence strOk,
-                                             CharSequence strFailed,
-                                             boolean ok )
-   {
-      Toast.makeText( context, ok ? strOk : strFailed, Toast.LENGTH_LONG )
-           .show();
-      
-      return ok;
    }
 }

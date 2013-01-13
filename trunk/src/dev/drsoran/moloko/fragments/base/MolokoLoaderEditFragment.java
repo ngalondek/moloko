@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,32 +22,42 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Pair;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.fragments.listeners.IEditFragmentListener;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
-public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
-         MolokoLoaderFragment< D > implements IEditFragment< T >
+public abstract class MolokoLoaderEditFragment< D > extends
+         MolokoLoaderFragment< D > implements IEditFragment
 {
-   private IEditFragmentListener listener;
+   private final EditFragmentImpl impl;
+   
+   
+   
+   protected MolokoLoaderEditFragment()
+   {
+      impl = new EditFragmentImpl( this );
+   }
    
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      
-      if ( activity instanceof IEditFragmentListener )
-         listener = (IEditFragmentListener) activity;
-      else
-         listener = null;
+      impl.onAttach( activity );
+   }
+   
+   
+   
+   @Override
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      super.onViewCreated( view, savedInstanceState );
+      impl.onViewCreated( view, savedInstanceState );
    }
    
    
@@ -55,8 +65,8 @@ public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      listener = null;
    }
    
    
@@ -64,24 +74,30 @@ public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
    @Override
    public void onDestroyView()
    {
-      UIUtils.hideSoftInput( getContentView() );
-      
+      impl.onDestroyView();
       super.onDestroyView();
    }
    
    
    
    @Override
-   public final boolean onFinishEditing()
+   public void onDestroy()
    {
-      boolean ok = true;
-      
+      impl.onDestroy();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
+   public final ApplyChangesInfo onFinishEditing()
+   {
       if ( hasChanges() )
       {
-         ok = saveChanges();
+         return getApplyChangesInfo();
       }
       
-      return ok;
+      return ApplyChangesInfo.EMPTY;
    }
    
    
@@ -93,22 +109,5 @@ public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
    
    
    
-   protected boolean applyModifications( ContentProviderActionItemList actionItemList,
-                                         ApplyChangesInfo applyChangesInfo )
-   {
-      boolean ok = listener != null;
-      return ok
-         && listener.applyModifications( actionItemList, applyChangesInfo );
-   }
-   
-   
-   
-   protected boolean applyModifications( Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications )
-   {
-      return applyModifications( modifications.first, modifications.second );
-   }
-   
-   
-   
-   protected abstract boolean saveChanges();
+   protected abstract ApplyChangesInfo getApplyChangesInfo();
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,47 +29,50 @@ import android.net.Uri;
 
 import com.mdt.rtm.data.RtmLists;
 
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.provider.Rtm.Lists;
 
 
 public class RtmListsLoader extends AbstractLoader< RtmLists >
 {
+   public final static int ID = R.id.loader_lists;
+   
    private final String slelection;
    
    
-
+   
    public RtmListsLoader( Context context )
    {
       this( context, Lists.LIST_DELETED + " IS NULL" );
    }
    
-
-
+   
+   
    public RtmListsLoader( Context context, String selection )
    {
       super( context );
       this.slelection = selection;
    }
    
-
-
+   
+   
    @Override
    protected RtmLists queryResultInBackground( ContentProviderClient client )
    {
       return RtmListsProviderPart.getAllLists( client, slelection );
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Lists.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
@@ -77,8 +80,8 @@ public class RtmListsLoader extends AbstractLoader< RtmLists >
                   .registerContentObserver( getContentUri(), true, observer );
    }
    
-
-
+   
+   
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {

@@ -38,11 +38,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -50,8 +50,7 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmNotesProviderPart.class.getSimpleName();
+   private static final Class< RtmNotesProviderPart > TAG = RtmNotesProviderPart.class;
    
    
    public final static class NewNoteId
@@ -121,25 +120,14 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       {
          c = client.query( Notes.CONTENT_URI, PROJECTION, null, null, null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
          {
-            notes = new ArrayList< RtmTaskNote >( c.getCount() );
-            
-            if ( c.getCount() > 0 )
-            {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final RtmTaskNote taskNote = createNote( c );
-                  notes.add( taskNote );
-               }
-            }
+            notes = fromCursor( c );
          }
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
          notes = null;
       }
       finally
@@ -173,28 +161,15 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
          {
-            final ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
-            
-            if ( c.getCount() > 0 )
-            {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final RtmTaskNote taskNote = createNote( c );
-                  taskNotes.add( taskNote );
-               }
-            }
-            
-            if ( ok )
-               notes = new RtmTaskNotes( taskNotes );
+            final List< RtmTaskNote > taskNotes = fromCursor( c );
+            notes = new RtmTaskNotes( taskNotes );
          }
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
          notes = null;
       }
       finally
@@ -228,16 +203,14 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c != null && c.moveToFirst();
-         
-         if ( ok )
+         if ( c != null && c.moveToFirst() )
          {
             note = createNote( c );
          }
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query note failed. ", e );
+         MolokoApp.Log.e( TAG, "Query note failed. ", e );
          note = null;
       }
       finally
@@ -277,28 +250,14 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
                                  null,
                                  null );
                
-               boolean ok = c != null;
-               
-               if ( ok )
+               if ( c != null )
                {
-                  notes = new ArrayList< RtmTaskNote >( c.getCount() );
-                  
-                  if ( c.getCount() > 0 )
-                  {
-                     for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-                     {
-                        final RtmTaskNote note = createNote( c );
-                        ok = note != null;
-                        
-                        if ( ok )
-                           notes.add( note );
-                     }
-                  }
+                  notes = fromCursor( c );
                }
             }
             catch ( final RemoteException e )
             {
-               Log.e( TAG, "Query notes failed. ", e );
+               MolokoApp.Log.e( TAG, "Query notes failed. ", e );
                notes = null;
             }
             finally
@@ -325,14 +284,12 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
          c = client.query( Notes.CONTENT_URI, new String[]
          { Notes._ID }, Notes.NOTE_DELETED + " IS NOT NULL", null, null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
             cnt = c.getCount();
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
       }
       finally
       {
@@ -356,33 +313,42 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
          c = client.query( Notes.CONTENT_URI, PROJECTION, Notes.NOTE_DELETED
             + " IS NOT NULL", null, null );
          
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( c != null )
          {
-            notes = new ArrayList< RtmTaskNote >( c.getCount() );
-            
-            if ( c.getCount() > 0 )
-            {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final RtmTaskNote note = createNote( c );
-                  ok = note != null;
-                  
-                  if ( ok )
-                     notes.add( note );
-               }
-            }
+            notes = fromCursor( c );
          }
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
       }
       finally
       {
          if ( c != null )
             c.close();
+      }
+      
+      return notes;
+   }
+   
+   
+   
+   public final static List< RtmTaskNote > fromCursor( Cursor cursor )
+   {
+      final List< RtmTaskNote > notes = new ArrayList< RtmTaskNote >( cursor.getCount() );
+      
+      if ( cursor.getCount() > 0 )
+      {
+         for ( boolean ok = cursor.moveToFirst(); ok && !cursor.isAfterLast(); cursor.moveToNext() )
+         {
+            final RtmTaskNote note = createNote( cursor );
+            ok = note != null;
+            
+            if ( ok )
+            {
+               notes.add( note );
+            }
+         }
       }
       
       return notes;

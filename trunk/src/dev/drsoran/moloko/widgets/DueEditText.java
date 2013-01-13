@@ -28,21 +28,21 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.widget.Toast;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
 import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 public class DueEditText extends ClearableEditText
 {
-   private final static int FORMAT = MolokoDateUtils.FORMAT_NUMERIC
-      | MolokoDateUtils.FORMAT_WITH_YEAR;
+   private final static int FORMAT = MolokoDateFormatter.FORMAT_NUMERIC
+      | MolokoDateFormatter.FORMAT_WITH_YEAR;
    
    public final static String EDIT_DUE_TEXT = "edit_due_text";
    
@@ -114,7 +114,7 @@ public class DueEditText extends ClearableEditText
    
    
    
-   public boolean validate()
+   public ValidationResult validate()
    {
       if ( isSupportingFreeTextInput )
       {
@@ -123,7 +123,7 @@ public class DueEditText extends ClearableEditText
       }
       else
       {
-         return true;
+         return ValidationResult.OK;
       }
    }
    
@@ -146,7 +146,7 @@ public class DueEditText extends ClearableEditText
       {
          setDueCalendarByParseString( getTextTrimmed() );
          
-         final boolean inputValid = validateCalendar( dueCalendar );
+         final boolean inputValid = validateCalendar( dueCalendar ).isOk();
          stayInEditText = !inputValid;
          
          if ( inputValid )
@@ -187,15 +187,15 @@ public class DueEditText extends ClearableEditText
          }
          else if ( dueCalendar.hasTime() )
          {
-            setText( MolokoDateUtils.formatDateTime( getContext(),
-                                                     dueCalendar.getTimeInMillis(),
-                                                     FORMAT ) );
+            setText( MolokoDateFormatter.formatDateTime( getContext(),
+                                                         dueCalendar.getTimeInMillis(),
+                                                         FORMAT ) );
          }
          else
          {
-            setText( MolokoDateUtils.formatDate( getContext(),
-                                                 dueCalendar.getTimeInMillis(),
-                                                 FORMAT ) );
+            setText( MolokoDateFormatter.formatDate( getContext(),
+                                                     dueCalendar.getTimeInMillis(),
+                                                     FORMAT ) );
          }
       }
    }
@@ -265,21 +265,17 @@ public class DueEditText extends ClearableEditText
    
    
    
-   private boolean validateCalendar( MolokoCalendar cal )
+   private ValidationResult validateCalendar( MolokoCalendar cal )
    {
       final boolean valid = cal != null;
       if ( !valid )
       {
-         Toast.makeText( getContext(),
-                         getContext().getString( R.string.task_edit_validate_due,
-                                                 getTextTrimmed() ),
-                         Toast.LENGTH_LONG )
-              .show();
-         
-         requestFocus();
+         return new ValidationResult( getContext().getString( R.string.task_edit_validate_due,
+                                                              getTextTrimmed() ),
+                                      this );
       }
       
-      return valid;
+      return ValidationResult.OK;
    }
    
    

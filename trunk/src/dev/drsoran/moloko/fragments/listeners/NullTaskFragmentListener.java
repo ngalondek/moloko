@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,18 +22,56 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
+import dev.drsoran.rtm.Task;
+
+
 public class NullTaskFragmentListener implements ITaskFragmentListener
 {
    
    @Override
-   public void onOpenLocation( String locationId )
+   public void onOpenLocation( Task task )
    {
    }
    
-
-
+   
+   
    @Override
    public void onOpenContact( String fullname, String username )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onCompleteTask( Task task )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onIncompleteTask( Task task )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onPostponeTask( Task task )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onDeleteTask( Task task )
+   {
+   }
+   
+   
+   
+   @Override
+   public void onEditTask( Task task )
    {
    }
 }

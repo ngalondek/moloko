@@ -25,7 +25,6 @@ package dev.drsoran.moloko.adapters;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,23 +32,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
+import dev.drsoran.moloko.fragments.ChangeTagsFragment;
 
 
 public class ChangeTagsAdapter extends
-         ArrayAdapter< ChangeTagsDialogFragment.ChangeTag >
+         ArrayAdapter< ChangeTagsFragment.ChangeTag >
 {
-   private final static String TAG = "Moloko."
-      + ChangeTagsAdapter.class.getName();
-   
    private final int resourceId;
    
    private final LayoutInflater inflater;
    
    
-
+   
    public ChangeTagsAdapter( Context context, int resourceId,
-      List< ChangeTagsDialogFragment.ChangeTag > tags )
+      List< ChangeTagsFragment.ChangeTag > tags )
    {
       super( context, 0, tags );
       
@@ -57,29 +53,20 @@ public class ChangeTagsAdapter extends
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
+      {
          convertView = inflater.inflate( resourceId, parent, false );
-      
-      ImageView icon;
-      TextView tagText;
-      
-      try
-      {
-         icon = (ImageView) convertView.findViewById( R.id.change_tags_activity_listitem_icon );
-         tagText = (TextView) convertView.findViewById( R.id.change_tags_activity_listitem_tag );
-      }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
       }
       
-      final ChangeTagsDialogFragment.ChangeTag tag = getItem( position );
+      final ImageView icon = (ImageView) convertView.findViewById( R.id.change_tags_activity_listitem_icon );
+      final TextView tagText = (TextView) convertView.findViewById( R.id.change_tags_activity_listitem_tag );
+      
+      final ChangeTagsFragment.ChangeTag tag = getItem( position );
       
       icon.setImageResource( tag.isAvailable
                                             ? R.drawable.ic_list_change_tags_tag_add

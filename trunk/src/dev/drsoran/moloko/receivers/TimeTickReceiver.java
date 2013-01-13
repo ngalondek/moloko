@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,15 +25,23 @@ package dev.drsoran.moloko.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Message;
 import android.text.format.Time;
 import dev.drsoran.moloko.IOnTimeChangedListener;
-import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.util.ListenerList;
+import dev.drsoran.moloko.NotifierContextHandler;
 
 
 public class TimeTickReceiver extends BroadcastReceiver
 {
+   private final NotifierContextHandler handler;
+   
+   
+   
+   public TimeTickReceiver( NotifierContextHandler handler )
+   {
+      this.handler = handler;
+   }
+   
+   
    
    @Override
    public void onReceive( Context context, Intent intent )
@@ -43,23 +51,9 @@ public class TimeTickReceiver extends BroadcastReceiver
       
       if ( now.hour == 0 && now.minute == 0 )
       {
-         final Message msg = new Message();
-         msg.obj = new ListenerList.MessgageObject< IOnTimeChangedListener >( IOnTimeChangedListener.class,
-                                                                              null );
-         msg.what = IOnTimeChangedListener.MIDNIGHT;
-         
-         MolokoApp.get( context.getApplicationContext() )
-                  .getHandler()
-                  .sendMessage( msg );
+         handler.onTimeChanged( IOnTimeChangedListener.MIDNIGHT );
       }
       
-      final Message msg = new Message();
-      msg.obj = new ListenerList.MessgageObject< IOnTimeChangedListener >( IOnTimeChangedListener.class,
-                                                                           null );
-      msg.what = IOnTimeChangedListener.MINUTE_TICK;
-      
-      MolokoApp.get( context.getApplicationContext() )
-               .getHandler()
-               .sendMessage( msg );
+      handler.onTimeChanged( IOnTimeChangedListener.MINUTE_TICK );
    }
 }

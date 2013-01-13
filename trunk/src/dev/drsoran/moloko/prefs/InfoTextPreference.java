@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -24,16 +24,18 @@ package dev.drsoran.moloko.prefs;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageView;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 
 
 public class InfoTextPreference extends Preference implements IMolokoPreference
 {
-   private String infoText;
+   private View preferenceView;
    
    
    
@@ -41,20 +43,29 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
    {
       super( context, attrs );
       
-      setLayoutResource( R.layout.moloko_prefs_info_preference );
-      
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.InfoTextPreference,
                                                                0,
                                                                0 );
       
-      infoText = array.getString( R.styleable.InfoTextPreference_infoText );
-      
-      final int widgetLayout = array.getResourceId( R.styleable.InfoTextPreference_infoWidget,
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
+      {
+         final int iconResId = array.getResourceId( R.styleable.InfoTextPreference_infoIcon,
                                                     -1 );
-      
-      if ( widgetLayout != -1 )
-         setWidgetLayoutResource( widgetLayout );
+         if ( iconResId != -1 )
+         {
+            setIcon( iconResId );
+         }
+      }
+      else
+      {
+         final int widgetLayoutResId = array.getResourceId( R.styleable.InfoTextPreference_infoWidgetLayout,
+                                                            -1 );
+         if ( widgetLayoutResId != -1 )
+         {
+            setWidgetLayoutResource( widgetLayoutResId );
+         }
+      }
       
       array.recycle();
    }
@@ -62,12 +73,14 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
    
    
    @Override
-   protected void onBindView( View view )
+   protected final void onBindView( View view )
    {
-      super.onBindView( view );
+      preferenceView = view;
+      setupPreference( view );
       
-      if ( infoText != null )
-         ( (TextView) view.findViewById( R.id.text ) ).setText( infoText );
+      // This has to be called as last step, otherwise the summary
+      // can not be set by derived classes.
+      super.onBindView( view );
    }
    
    
@@ -86,23 +99,23 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
    
    
    
-   public String getInfoText()
+   @Override
+   public void setIcon( int iconResId )
    {
-      return infoText;
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
+      {
+         super.setIcon( iconResId );
+      }
+      else
+      {
+         final ImageView widget = (ImageView) preferenceView.findViewById( R.id.moloko_prefs_widget_sync );
+         widget.setImageResource( R.drawable.ic_prefs_refresh );
+      }
    }
    
    
    
-   public void setInfoText( String infoText )
+   protected void setupPreference( View view )
    {
-      this.infoText = infoText;
-      notifyChanged();
-   }
-   
-   
-   
-   public void setInfoText( int resId )
-   {
-      setInfoText( getContext().getResources().getString( resId ) );
    }
 }

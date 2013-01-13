@@ -27,7 +27,11 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.content.res.Resources.Theme;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,25 +40,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.TasksListActivity;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TaskListsAdapter extends BaseExpandableListAdapter
 {
-   private final static String TAG = "Moloko."
-      + TaskListsAdapter.class.getName();
-   
-   
    public interface IOnGroupIndicatorClickedListener
    {
       void onGroupIndicatorClicked( View groupView );
    }
+   
+   /** State indicating the group is expanded. */
+   private static final int[] GROUP_EXPANDED_STATE_SET =
+   { android.R.attr.state_expanded };
    
    private final Context context;
    
@@ -90,6 +93,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    
    private final ArrayList< RtmListWithTaskCount > lists;
    
+   private StateListDrawable groupIndicatorDrawable;
+   
    private IOnGroupIndicatorClickedListener groupIndicatorClickedListener;
    
    
@@ -97,16 +102,13 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    public TaskListsAdapter( Context context, int groupId, int childId,
       List< RtmListWithTaskCount > lists )
    {
-      super();
-      
-      if ( lists == null )
-         throw new NullPointerException( "lists must not be null" );
-      
       this.context = context;
       this.groupId = groupId;
       this.childId = childId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
       this.lists = new ArrayList< RtmListWithTaskCount >( lists );
+      
+      obtainGroupIndicatorDrawable();
    }
    
    
@@ -136,9 +138,9 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
             return Integer.valueOf( lists.get( groupPosition )
                                          .getExtendedListInfo( context ).completedTaskCount );
          case SUM_ESTIMATE:
-            return MolokoDateUtils.formatEstimated( context,
-                                                    lists.get( groupPosition )
-                                                         .getExtendedListInfo( context ).sumEstimated );
+            return MolokoDateFormatter.formatEstimated( context,
+                                                        lists.get( groupPosition )
+                                                             .getExtendedListInfo( context ).sumEstimated );
          default :
             return null;
       }
@@ -158,7 +160,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_due_today ) );
             break;
          
@@ -167,7 +169,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TOMORROW ] );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_due_tomorrow ) );
             break;
          
@@ -176,7 +178,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_overdue ) );
             break;
          
@@ -185,17 +187,13 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_STATUS_LIT
                                                       + RtmSmartFilterLexer.COMPLETED_LIT );
-            intent.putExtra( TasksListActivity.Config.SUB_TITLE,
+            intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_completed ) );
             break;
          
          default :
             break;
       }
-      
-      if ( intent != null )
-         // We have to remove the list name cause we want prevent the list navigation mode
-         intent.removeExtra( TasksListActivity.Config.LIST_NAME );
       
       return intent;
    }
@@ -333,55 +331,36 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          view = inflater.inflate( groupId, null, false );
       }
       
-      if ( view != null )
-      {
-         ImageView groupIndicator;
-         TextView listName;
-         TextView tasksCount;
-         ViewGroup iconsContainer;
-         
-         try
-         {
-            groupIndicator = (ImageView) view.findViewById( R.id.tasklists_group_indicator );
-            groupIndicator.setOnClickListener( iconExpandCollapseListener );
-            
-            listName = (TextView) view.findViewById( R.id.tasklists_group_list_name );
-            tasksCount = (TextView) view.findViewById( R.id.tasklists_group_num_tasks );
-            iconsContainer = (ViewGroup) view.findViewById( R.id.tasklists_group_icons_container );
-         }
-         catch ( ClassCastException e )
-         {
-            Log.e( TAG, "Invalid layout spec.", e );
-            throw e;
-         }
-         
-         if ( isExpanded )
-         {
-            groupIndicator.setImageResource( R.drawable.expander_ic_maximized );
-         }
-         else
-         {
-            groupIndicator.setImageResource( R.drawable.expander_ic_minimized );
-         }
-         
-         final RtmListWithTaskCount rtmList = lists.get( groupPosition );
-         
-         final String listNameStr = rtmList.getName();
-         listName.setText( listNameStr );
-         
-         UIUtils.setListTasksCountView( tasksCount, rtmList );
-         
-         addConditionalIcon( iconsContainer,
-                             R.drawable.ic_list_tasklists_flag,
-                             ID_ICON_DEFAULT_LIST,
-                             rtmList.getId()
-                                    .equals( MolokoApp.getSettings()
-                                                      .getDefaultListId() ) );
-         addConditionalIcon( iconsContainer,
-                             R.drawable.ic_list_tasklists_lock,
-                             ID_ICON_LOCKED,
-                             rtmList.getLocked() != 0 );
-      }
+      final ImageView groupIndicator = (ImageView) view.findViewById( R.id.tasklists_group_indicator );
+      final TextView listName = (TextView) view.findViewById( R.id.tasklists_group_list_name );
+      final TextView tasksCount = (TextView) view.findViewById( R.id.tasklists_group_num_tasks );
+      final ViewGroup iconsContainer = (ViewGroup) view.findViewById( R.id.tasklists_group_icons_container );
+      
+      groupIndicatorDrawable.setState( isExpanded ? GROUP_EXPANDED_STATE_SET
+                                                 : new int[] {} );
+      
+      groupIndicator.setOnClickListener( iconExpandCollapseListener );
+      
+      final Drawable drawable = groupIndicatorDrawable.getCurrent();
+      groupIndicator.setImageDrawable( drawable );
+      
+      final RtmListWithTaskCount rtmList = lists.get( groupPosition );
+      final String listNameStr = rtmList.getName();
+      
+      listName.setText( listNameStr );
+      
+      UIUtils.setListTasksCountView( tasksCount, rtmList );
+      
+      addConditionalIcon( iconsContainer,
+                          R.drawable.ic_list_tasklists_flag,
+                          ID_ICON_DEFAULT_LIST,
+                          rtmList.getId()
+                                 .equals( MolokoApp.getSettings( context )
+                                                   .getDefaultListId() ) );
+      addConditionalIcon( iconsContainer,
+                          R.drawable.ic_list_tasklists_lock,
+                          ID_ICON_LOCKED,
+                          rtmList.getLocked() != 0 );
       
       return view;
    }
@@ -400,6 +379,34 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    public boolean isChildSelectable( int groupPosition, int childPosition )
    {
       return childPosition != SUM_ESTIMATE;
+   }
+   
+   
+   
+   private void obtainGroupIndicatorDrawable()
+   {
+      TypedArray a = null;
+      try
+      {
+         final Theme theme = context.getTheme();
+         final TypedValue outValue = new TypedValue();
+         context.getTheme()
+                .resolveAttribute( android.R.attr.expandableListViewStyle,
+                                   outValue,
+                                   true );
+         a = theme.obtainStyledAttributes( outValue.resourceId, new int[]
+         { android.R.attr.groupIndicator } );
+         
+         groupIndicatorDrawable = (StateListDrawable) a.getDrawable( 0 );
+      }
+      finally
+      {
+         if ( a != null )
+         {
+            a.recycle();
+            a = null;
+         }
+      }
    }
    
    

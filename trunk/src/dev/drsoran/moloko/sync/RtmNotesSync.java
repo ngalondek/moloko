@@ -29,7 +29,6 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
@@ -38,6 +37,7 @@ import com.mdt.rtm.TimeLineResult;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -57,8 +57,7 @@ import dev.drsoran.provider.Rtm.Notes;
 
 public final class RtmNotesSync
 {
-   private final static String TAG = "Moloko."
-      + RtmNotesSync.class.getSimpleName();
+   private final static Class< RtmNotesSync > TAG = RtmNotesSync.class;
    
    
    
@@ -98,7 +97,7 @@ public final class RtmNotesSync
          else
          {
             syncResult.androidSyncResult.databaseError = true;
-            Log.e( TAG, "Getting new created local notes failed." );
+            MolokoApp.Log.e( TAG, "Getting new created local notes failed." );
          }
       }
       
@@ -109,7 +108,7 @@ public final class RtmNotesSync
          if ( notes == null )
          {
             syncResult.androidSyncResult.databaseError = true;
-            Log.e( TAG, "Getting local notes failed." );
+            MolokoApp.Log.e( TAG, "Getting local notes failed." );
             return false;
          }
          else
@@ -128,7 +127,7 @@ public final class RtmNotesSync
          }
          catch ( Throwable e )
          {
-            Log.e( TAG, "Retrieving modifications failed", e );
+            MolokoApp.Log.e( TAG, "Retrieving modifications failed", e );
             modifications = new ModificationSet();
          }
          
@@ -144,7 +143,7 @@ public final class RtmNotesSync
          
          if ( doOutSync )
          {
-            Log.i( TAG, "Retrieved " + modifications.size()
+            MolokoApp.Log.d( TAG, "Retrieved " + modifications.size()
                + " modification(s) and " + numDeleted + " deletion(s)" );
             
             RtmTimeline timeline = null;
@@ -253,7 +252,7 @@ public final class RtmNotesSync
    {
       if ( newNotes.size() > 0 )
       {
-         Log.i( TAG, "Sending " + newNotes.size() + " new note(s)" );
+         MolokoApp.Log.d( TAG, "Sending " + newNotes.size() + " new note(s)" );
          
          RtmTimeline timeline = null;
          
@@ -263,7 +262,7 @@ public final class RtmNotesSync
          }
          catch ( ServiceException e )
          {
-            Log.e( TAG, "Creating new time line failed", e );
+            MolokoApp.Log.e( TAG, "Creating new time line failed", e );
             handleResponseCode( syncResult, e );
             return false;
          }
@@ -305,9 +304,9 @@ public final class RtmNotesSync
          }
          catch ( Throwable e )
          {
-            Log.e( TAG,
-                   "Applying local changes after sending new note failed",
-                   e );
+            MolokoApp.Log.e( TAG,
+                             "Applying local changes after sending new note failed",
+                             e );
          }
          finally
          {
@@ -341,7 +340,7 @@ public final class RtmNotesSync
       }
       catch ( ServiceException e )
       {
-         Log.e( TAG, "Executing server operation failed", e );
+         MolokoApp.Log.e( TAG, "Executing server operation failed", e );
       }
       
       return resultNote;
@@ -368,7 +367,7 @@ public final class RtmNotesSync
             }
             catch ( ServiceException e )
             {
-               Log.e( TAG, "Applying server operation failed", e );
+               MolokoApp.Log.e( TAG, "Applying server operation failed", e );
                throw e;
             }
          }

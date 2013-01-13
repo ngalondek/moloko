@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,6 +28,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -37,49 +38,71 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 public class RtmListWithTaskCountLoader extends
          AbstractLoader< List< RtmListWithTaskCount > >
 {
+   public final static int ID = R.id.loader_lists_with_task_count;
+   
    private final String slelection;
    
+   private boolean expandLists;
    
-
+   
+   
    public RtmListWithTaskCountLoader( Context context )
    {
-      this( context, RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
+      this( context,
+            RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
    }
    
-
-
+   
+   
    public RtmListWithTaskCountLoader( Context context, String selection )
    {
       super( context );
       this.slelection = selection;
    }
    
-
-
+   
+   
+   public void setPreExpandExtendedListInfoAfterLoad( boolean expandLists )
+   {
+      this.expandLists = expandLists;
+   }
+   
+   
+   
    @Override
    protected List< RtmListWithTaskCount > queryResultInBackground( ContentProviderClient client )
    {
-      return ListOverviewsProviderPart.getListsOverview( client, slelection );
+      final List< RtmListWithTaskCount > lists = ListOverviewsProviderPart.getListsOverview( client,
+                                                                                             slelection );
+      if ( lists != null && expandLists )
+      {
+         for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
+         {
+            rtmListWithTaskCount.getExtendedListInfo( getContext() );
+         }
+      }
+      
+      return lists;
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return ListOverviews.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
       ListOverviewsProviderPart.registerContentObserver( getContext(), observer );
    }
    
-
-
+   
+   
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {

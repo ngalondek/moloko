@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -24,19 +24,14 @@ package dev.drsoran.moloko.util;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
 
 import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.util.Log;
-import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.moloko.MolokoApp;
 
 
 public final class Queries
@@ -49,23 +44,6 @@ public final class Queries
    private Queries()
    {
       throw new AssertionError( "This class should not be instantiated." );
-   }
-   
-   
-   
-   public final static String resolveTaskSortToSqlite( int sortValue )
-   {
-      switch ( sortValue )
-      {
-         case Settings.TASK_SORT_PRIORITY:
-            return Tasks.SORT_PRIORITY;
-         case Settings.TASK_SORT_DUE_DATE:
-            return Tasks.SORT_DUE_DATE;
-         case Settings.TASK_SORT_NAME:
-            return Tasks.SORT_TASK_NAME;
-         default :
-            return null;
-      }
    }
    
    
@@ -117,10 +95,9 @@ public final class Queries
    
    public final static Uri contentUriWithId( Uri contentUri, String id )
    {
-      
       return ( !TextUtils.isEmpty( id ) ) ? contentUri.buildUpon()
                                                       .appendEncodedPath( id )
-                                                      .build() : null;
+                                                      .build() : contentUri;
    }
    
    
@@ -190,9 +167,7 @@ public final class Queries
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( Queries.class ),
-                "Generating new ID failed. ",
-                e );
+         MolokoApp.Log.e( Queries.class, "Generating new ID failed. ", e );
       }
       finally
       {
@@ -296,40 +271,5 @@ public final class Queries
       }
       
       return res;
-   }
-   
-   
-   
-   public final static boolean applyActionItemList( FragmentActivity activity,
-                                                    ContentProviderActionItemList actionItemList,
-                                                    String progressText )
-   {
-      boolean ok = true;
-      
-      if ( actionItemList.size() > 0 )
-      {
-         try
-         {
-            ok = new ApplyContentProviderActionItemsTask( activity,
-                                                          progressText ).execute( actionItemList )
-                                                                        .get();
-         }
-         catch ( InterruptedException e )
-         {
-            Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying ContentProviderActionItemList failed",
-                   e );
-            ok = false;
-         }
-         catch ( ExecutionException e )
-         {
-            Log.e( LogUtils.toTag( Queries.class ),
-                   "Applying ContentProviderActionItemList failed",
-                   e );
-            ok = false;
-         }
-      }
-      
-      return ok;
    }
 }

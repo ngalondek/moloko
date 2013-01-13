@@ -26,13 +26,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
@@ -54,8 +54,11 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    
    private final ContentObserver dbObserver;
    
+   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
+   
    private final Runnable reloadRunnable = new Runnable()
    {
+      @Override
       public void run()
       {
          asyncReload();
@@ -63,7 +66,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    };
    
    
-
+   
    public OverDueTasksHomeWidget( Context context, AttributeSet attrs,
       int labelId )
    {
@@ -82,41 +85,39 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       label = (TextView) view.findViewById( R.id.text );
       label.setText( labelId );
       
-      final Handler handler = MolokoApp.getHandler( context );
-      
-      dbObserver = new ContentObserver( handler )
+      dbObserver = new ContentObserver( null )
       {
          @Override
          public void onChange( boolean selfChange )
          {
             // Aggregate several calls to a single update.
-            DelayedRun.run( handler, reloadRunnable, 1000 );
+            DelayedRun.run( handlerToken, reloadRunnable, 1000 );
          }
       };
    }
    
-
-
+   
+   
    @Override
    public void start()
    {
       super.start();
-      
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
    }
    
-
-
+   
+   
    @Override
    public void stop()
    {
-      super.stop();
-      
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
+      handlerToken.removeRunnablesAndMessages();
+      
+      super.stop();
    }
    
-
-
+   
+   
    public View getWidgetView()
    {
       final View view = LayoutInflater.from( getContext() )
@@ -125,8 +126,9 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       return view;
    }
    
-
-
+   
+   
+   @Override
    public Intent getIntent()
    {
       final SqlSelectionFilter filter = new SqlSelectionFilter( getSelection() );
@@ -136,15 +138,8 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
                                                      label.getText().toString() );
    }
    
-
-
-   public Runnable getRunnable()
-   {
-      return null;
-   }
    
-
-
+   
    @Override
    protected Integer doBackgroundQuery()
    {
@@ -163,24 +158,24 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       return null;
    }
    
-
-
+   
+   
    @Override
    protected void onMinuteTick()
    {
       asyncReloadWithoutSpinner();
    }
    
-
-
+   
+   
    @Override
    protected void onSystemTimeChanged()
    {
       asyncReloadWithoutSpinner();
    }
    
-
-
+   
+   
    private final String getSelection()
    {
       final String tasksDueBeforeToday = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT

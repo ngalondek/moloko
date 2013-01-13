@@ -22,265 +22,73 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
-import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
-         implements ITaskEditFragmentListener
+public class TaskEditMultipleActivity extends AbstractTaskEditActivity
 {
-   public static class Config extends TaskEditMultipleFragment.Config
-   {
-   }
+   @InstanceState( key = Intents.Extras.KEY_TASKS,
+                   defaultValue = InstanceState.NULL )
+   private ArrayList< Task > tasks;
    
-
-   private static class OptionsMenu
-   {
-      public final static int SAVE = R.id.menu_save;
-      
-      public final static int ABORT = R.id.menu_abort_edit;
-   }
    
-
-   private enum FinishEditMode
+   
+   public TaskEditMultipleActivity()
    {
-      SAVE, CANCELED
+      registerAnnotatedConfiguredInstance( this, TaskEditMultipleActivity.class );
    }
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.task_edit_multiple_activity );
-      
-      final List< Task > tasks = getConfiguredTasksFromIntentConfigAssertNotNull();
-      
-      setTitle( getString( R.string.edit_multiple_tasks_titlebar,
-                           tasks.size(),
-                           getResources().getQuantityString( R.plurals.g_task,
-                                                             tasks.size() ) ) );
-      
-      if ( savedInstanceState == null )
-         createTaskEditMultipleFragment( getIntent().getExtras() );
+      addFragment();
    }
    
-
-
-   @Override
-   public boolean onCreateOptionsMenu( Menu menu )
-   {
-      super.onCreateOptionsMenu( menu );
-      
-      final boolean hasRtmWriteAccess = AccountUtils.isWriteableAccess( this );
-      
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.SAVE,
-                                   getString( R.string.app_save ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_disc,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   hasRtmWriteAccess );
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ABORT,
-                                   getString( R.string.phr_cancel_sync ),
-                                   MenuCategory.NONE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_cancel,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   hasRtmWriteAccess );
-      return true;
-   }
    
-
-
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
+   
+   private void addFragment()
    {
-      switch ( item.getItemId() )
+      if ( findAddedFragmentById( R.id.frag_task_edit ) == null )
       {
-         case OptionsMenu.SAVE:
-            if ( finishEditing( FinishEditMode.SAVE ) )
-               finish();
-            
-            return true;
-            
-         case OptionsMenu.ABORT:
-            if ( finishEditing( FinishEditMode.CANCELED ) )
-               finish();
-            
-            return true;
-            
-         default :
-            return super.onOptionsItemSelected( item );
-      }
-   }
-   
-
-
-   @Override
-   public void onBackPressed()
-   {
-      if ( finishEditing( FinishEditMode.CANCELED ) )
-         super.onBackPressed();
-   }
-   
-
-
-   @Override
-   public void onChangeTags( List< String > tags )
-   {
-   }
-   
-
-
-   @Override
-   public void onEditDueByPicker()
-   {
-   }
-   
-
-
-   @Override
-   public void onEditRecurrenceByPicker()
-   {
-   }
-   
-
-
-   @Override
-   public void onEditEstimateByPicker()
-   {
-   }
-   
-
-
-   private boolean finishEditing( FinishEditMode how )
-   {
-      boolean finished = true;
-      
-      switch ( how )
-      {
-         case SAVE:
-            finished = saveChanges();
-            break;
+         final Fragment fragment = createTaskEditMultipleFragment();
          
-         case CANCELED:
-            finished = cancelChanges();
-            break;
-         
-         default :
-            break;
-      }
-      
-      return finished;
-   }
-   
-
-
-   @Override
-   protected boolean onFinishActivityByHome()
-   {
-      return finishEditing( FinishEditMode.CANCELED );
-   }
-   
-
-
-   private boolean saveChanges()
-   {
-      final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
-      return taskEditMultipleFragment.onFinishEditing();
-   }
-   
-
-
-   private boolean cancelChanges()
-   {
-      final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
-      
-      boolean finish = true;
-      if ( taskEditMultipleFragment.hasChanges() )
-      {
-         finish = false;
-         UIUtils.showCancelWithChangesDialog( this );
-      }
-      else
-      {
-         taskEditMultipleFragment.onCancelEditing();
-      }
-      
-      return finish;
-   }
-   
-
-
-   @Override
-   protected void handleCancelWithChangesDialogClick( String tag, int which )
-   {
-      if ( which == Dialog.BUTTON_POSITIVE )
-      {
-         final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
-         taskEditMultipleFragment.onCancelEditing();
-         
-         finish();
+         getSupportFragmentManager().beginTransaction()
+                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                                    .add( R.id.frag_task_edit, fragment )
+                                    .commit();
       }
    }
    
-
-
-   private void createTaskEditMultipleFragment( Bundle fragmentConfig )
+   
+   
+   private Fragment createTaskEditMultipleFragment()
    {
-      final Fragment fragment = TaskEditMultipleFragment.newInstance( fragmentConfig );
-      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-      
-      transaction.add( R.id.frag_task_edit_multiple, fragment, null );
-      
-      transaction.commit();
+      final Fragment fragment = TaskEditMultipleFragment.newInstance( createTaskEditMultipleFragmentConfig() );
+      return fragment;
    }
    
-
-
-   private TaskEditMultipleFragment getTaskEditMultipleFragment()
-   {
-      return (TaskEditMultipleFragment) getSupportFragmentManager().findFragmentById( R.id.frag_task_edit_multiple );
-   }
    
-
-
-   private List< Task > getConfiguredTasksFromIntentConfigAssertNotNull()
+   
+   private Bundle createTaskEditMultipleFragmentConfig()
    {
-      final List< Task > tasks = getIntent().getExtras()
-                                            .getParcelableArrayList( Config.TASKS );
-      if ( tasks == null )
-         throw new AssertionError( "expected tasks to be not null" );
+      final Bundle config = new Bundle();
       
-      return tasks;
-   }
-   
-
-
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_task_edit_multiple };
+      config.putParcelableArrayList( Intents.Extras.KEY_TASKS, tasks );
+      
+      return config;
    }
 }

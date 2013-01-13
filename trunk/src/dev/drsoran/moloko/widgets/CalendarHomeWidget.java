@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -24,29 +24,31 @@ package dev.drsoran.moloko.widgets;
 
 import java.util.Calendar;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
+@SuppressLint( "ViewConstructor" )
 public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
 {
    private final ViewGroup widgetContainer;
@@ -61,6 +63,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    private final ContentObserver dbObserver;
    
+   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
+   
    private final Runnable reloadRunnable = new Runnable()
    {
       @Override
@@ -71,7 +75,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    };
    
    
-
+   
    public CalendarHomeWidget( Context context, AttributeSet attrs, int labelId,
       int type )
    {
@@ -93,43 +97,41 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       label = (TextView) view.findViewById( R.id.text );
       label.setText( labelId );
       
-      final Handler handler = MolokoApp.getHandler( context );
-      
-      dbObserver = new ContentObserver( handler )
+      dbObserver = new ContentObserver( null )
       {
          @Override
          public void onChange( boolean selfChange )
          {
             // Aggregate several calls to a single update.
-            DelayedRun.run( handler, reloadRunnable, 1000 );
+            DelayedRun.run( handlerToken, reloadRunnable, 1000 );
          }
       };
    }
    
-
-
+   
+   
    @Override
    public void start()
    {
       super.start();
       
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
-      
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    @Override
    public void stop()
    {
-      super.stop();
-      
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
+      handlerToken.removeRunnablesAndMessages();
+      
+      super.stop();
    }
    
-
-
+   
+   
    public View getWidgetView()
    {
       final View view = LayoutInflater.from( getContext() )
@@ -138,8 +140,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return view;
    }
    
-
-
+   
+   
    private MolokoCalendar getCalendar()
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -147,7 +149,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       switch ( type )
       {
          case TOMORROW:
-            cal.roll( Calendar.DAY_OF_YEAR, true );
+            cal.add( Calendar.DAY_OF_YEAR, 1 );
          case TODAY:
          default :
             break;
@@ -156,8 +158,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return cal;
    }
    
-
-
+   
+   
    @Override
    public Intent getIntent()
    {
@@ -167,23 +169,15 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       final String title = getContext().getString( ( ( type == TODAY )
                                                                       ? R.string.phr_today_with_date
                                                                       : R.string.phr_tomorrow_with_date ),
-                                                   MolokoDateUtils.formatDate( getContext(),
-                                                                               cal.getTimeInMillis(),
-                                                                               0 ) );
+                                                   MolokoDateFormatter.formatDate( getContext(),
+                                                                                   cal.getTimeInMillis(),
+                                                                                   0 ) );
       
       return Intents.createSmartFilterIntent( getContext(), filter, title );
    }
    
-
-
-   @Override
-   public Runnable getRunnable()
-   {
-      return null;
-   }
    
-
-
+   
    @Override
    protected Integer doBackgroundQuery()
    {
@@ -206,8 +200,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return null;
    }
    
-
-
+   
+   
    @Override
    protected void onMidnight()
    {
@@ -215,8 +209,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    @Override
    protected void onSystemTimeChanged()
    {
@@ -224,19 +218,19 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    private String getFilterExpression( final MolokoCalendar cal )
    {
       return RtmSmartFilterLexer.OP_DUE_LIT
-         + RtmSmartFilterLexer.quotify( MolokoDateUtils.formatDate( getContext(),
-                                                                    cal.getTimeInMillis(),
-                                                                    MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                       | MolokoDateUtils.FORMAT_NUMERIC ) );
+         + RtmSmartFilterLexer.quotify( MolokoDateFormatter.formatDate( getContext(),
+                                                                        cal.getTimeInMillis(),
+                                                                        MolokoDateFormatter.FORMAT_WITH_YEAR
+                                                                           | MolokoDateFormatter.FORMAT_NUMERIC ) );
    }
    
-
-
+   
+   
    private void setCalendarDayInWidget()
    {
       final MolokoCalendar cal = getCalendar();

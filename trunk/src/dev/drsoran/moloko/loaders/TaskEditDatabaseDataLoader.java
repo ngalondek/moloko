@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -32,6 +32,7 @@ import android.net.Uri;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.fragments.AbstractTaskEditFragment.TaskEditDatabaseData;
@@ -43,18 +44,20 @@ import dev.drsoran.provider.Rtm.Locations;
 public class TaskEditDatabaseDataLoader extends
          AbstractLoader< TaskEditDatabaseData >
 {
+   public final static int ID = R.id.loader_taskedit_data;
+   
    private final static String LISTS_SELECTION = Lists.IS_SMART_LIST
       + "=0 AND " + Lists.LIST_DELETED + " IS NULL";
    
    
-
+   
    public TaskEditDatabaseDataLoader( Context context )
    {
       super( context );
    }
    
-
-
+   
+   
    @Override
    protected TaskEditDatabaseData queryResultInBackground( ContentProviderClient client )
    {
@@ -75,8 +78,8 @@ public class TaskEditDatabaseDataLoader extends
       return data;
    }
    
-
-
+   
+   
    @Override
    protected ContentProviderClient getContentProviderClient()
    {
@@ -84,16 +87,16 @@ public class TaskEditDatabaseDataLoader extends
                          .acquireContentProviderClient( Rtm.AUTHORITY );
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Uri.EMPTY;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
@@ -105,8 +108,8 @@ public class TaskEditDatabaseDataLoader extends
                                             observer );
    }
    
-
-
+   
+   
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {

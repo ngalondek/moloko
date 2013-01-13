@@ -26,13 +26,13 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderClient;
-import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmLocation;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -43,11 +43,10 @@ import dev.drsoran.moloko.sync.util.SyncUtils;
 
 public final class RtmLocationsSync
 {
-   private final static String TAG = "Moloko."
-      + RtmLocationsSync.class.getSimpleName();
+   private final static Class< RtmLocationsSync > TAG = RtmLocationsSync.class;
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       Date lastSync,
@@ -59,7 +58,7 @@ public final class RtmLocationsSync
       if ( local_Locations == null )
       {
          syncResult.androidSyncResult.databaseError = true;
-         Log.e( TAG, "Getting local locations failed." );
+         MolokoApp.Log.e( TAG, "Getting local locations failed." );
          return false;
       }
       
@@ -71,7 +70,7 @@ public final class RtmLocationsSync
       }
       catch ( ServiceException e )
       {
-         Log.e( TAG, "Getting server lists failed.", e );
+         MolokoApp.Log.e( TAG, "Getting server lists failed.", e );
          
          switch ( e.responseCode )
          {

@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,16 +39,16 @@ import android.widget.AutoCompleteTextView;
 
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditMultipleFragment extends
-         AbstractTaskEditFragment< TaskEditMultipleFragment >
+public class TaskEditMultipleFragment extends AbstractTaskEditFragment
 {
    private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
    
@@ -58,6 +57,16 @@ public class TaskEditMultipleFragment extends
    public final static String TAGS_MULTI_VALUE = "multi_tag";
    
    private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
+   
+   /**
+    * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
+    * 
+    * e.g. Map< Tasks.TASKSERIES_NAME, Map< "Task Name", 2 > >
+    */
+   private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
+   
+   @InstanceState( key = Intents.Extras.KEY_TASKS )
+   private final ArrayList< Task > tasks = new ArrayList< Task >();
    
    
    
@@ -71,24 +80,18 @@ public class TaskEditMultipleFragment extends
    }
    
    
-   public static class Config
-   {
-      public final static String TASKS = "tasks";
-   }
    
-   /**
-    * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
-    * 
-    * e.g. Map< Tasks.TASKSERIES_NAME, Map< "Task Name", 2 > >
-    */
-   private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
+   public TaskEditMultipleFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, TaskEditMultipleFragment.class );
+   }
    
    
    
    @Override
-   protected Bundle getInitialValues()
+   public Bundle determineInitialValues()
    {
-      final List< Task > tasks = getConfiguredTasksAssertNotNull();
+      final List< Task > tasks = getTasksAssertNotNull();
       
       joinAttributes( tasks );
       
@@ -190,7 +193,7 @@ public class TaskEditMultipleFragment extends
    
    
    @Override
-   protected void initContent( ViewGroup content )
+   public void initContent( ViewGroup content )
    {
       super.initContent( content );
       
@@ -201,7 +204,7 @@ public class TaskEditMultipleFragment extends
          
          if ( nameEditText instanceof AutoCompleteTextView )
          {
-            final List< Task > tasks = getConfiguredTasksAssertNotNull();
+            final List< Task > tasks = getTasksAssertNotNull();
             final Set< String > names = new HashSet< String >( tasks.size() );
             
             for ( Task task : tasks )
@@ -209,7 +212,7 @@ public class TaskEditMultipleFragment extends
             
             final List< String > uniqueTaskNames = new ArrayList< String >( names );
             
-            ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getFragmentActivity(),
+            ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getSherlockActivity(),
                                                                                             android.R.layout.simple_dropdown_item_1line,
                                                                                             android.R.id.text1,
                                                                                             uniqueTaskNames ) );
@@ -231,7 +234,7 @@ public class TaskEditMultipleFragment extends
    @Override
    protected void initializeHeadSection()
    {
-      final List< Task > tasks = getConfiguredTasksAssertNotNull();
+      final List< Task > tasks = getTasksAssertNotNull();
       
       if ( !isMultiTask() && tasks.size() > 0 )
       {
@@ -339,22 +342,8 @@ public class TaskEditMultipleFragment extends
    
    
    
-   @Override
-   public void takeConfigurationFrom( Bundle config )
+   public List< Task > getTasksAssertNotNull()
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TASKS ) )
-         configuration.putParcelableArrayList( Config.TASKS,
-                                               config.getParcelableArrayList( Config.TASKS ) );
-   }
-   
-   
-   
-   public List< Task > getConfiguredTasksAssertNotNull()
-   {
-      final List< Task > tasks = configuration.getParcelableArrayList( Config.TASKS );
-      
       if ( tasks == null )
          throw new AssertionError( "expected tasks to be not null" );
       
@@ -364,40 +353,20 @@ public class TaskEditMultipleFragment extends
    
    
    @Override
-   protected boolean validateName()
+   protected ValidationResult validateName()
    {
       if ( hasChange( Tasks.TASKSERIES_NAME ) )
          return super.validateName();
       else
-         return true;
+         return ValidationResult.OK;
    }
    
    
    
    @Override
-   protected boolean saveChanges()
+   protected List< Task > getEditedTasks()
    {
-      boolean ok = super.saveChanges();
-      
-      if ( ok )
-      {
-         final ModificationSet modifications = createModificationSet( getConfiguredTasksAssertNotNull() );
-         
-         if ( modifications != null && modifications.size() > 0 )
-         {
-            applyModifications( modifications );
-         }
-      }
-      
-      return ok;
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
-   {
-      return null;
+      return getTasksAssertNotNull();
    }
    
    
@@ -475,6 +444,6 @@ public class TaskEditMultipleFragment extends
    
    private final boolean isMultiTask()
    {
-      return getConfiguredTasksAssertNotNull().size() > 1;
+      return getTasksAssertNotNull().size() > 1;
    }
 }

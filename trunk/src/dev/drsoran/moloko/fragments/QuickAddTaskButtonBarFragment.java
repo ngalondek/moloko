@@ -1,7 +1,28 @@
+/* 
+ * Copyright (c) 2012 Ronny Röhricht
+ *
+ * This file is part of Moloko.
+ *
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contributors:
+ * Ronny Röhricht - implementation
+ */
+
 package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +30,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskButtonBarFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.util.ShowButtonTextAsToast;
 
 
 public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
-         View.OnClickListener
+         View.OnClickListener, View.OnLongClickListener
 {
    public final static QuickAddTaskButtonBarFragment newInstance( Bundle config )
    {
@@ -28,23 +50,17 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onDetach()
    {
-      super.onAttach( activity );
-      
-      if ( activity instanceof IQuickAddTaskButtonBarFragmentListener )
-         listener = (IQuickAddTaskButtonBarFragmentListener) activity;
-      else
-         listener = null;
+      listener = null;
+      super.onDetach();
    }
    
    
    
-   @Override
-   public void onDetach()
+   public void setQuickAddTaskButtonBarFragmentListener( IQuickAddTaskButtonBarFragmentListener listener )
    {
-      super.onDetach();
-      listener = null;
+      this.listener = listener;
    }
    
    
@@ -67,18 +83,12 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
    {
       super.onViewCreated( view, savedInstanceState );
       
-      view.findViewById( R.id.quick_add_task_btn_due_date )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_prio )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_list_tags )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_location )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_repeat )
-          .setOnClickListener( this );
-      view.findViewById( R.id.quick_add_task_btn_estimate )
-          .setOnClickListener( this );
+      setListener( view, R.id.quick_add_task_btn_due_date );
+      setListener( view, R.id.quick_add_task_btn_prio );
+      setListener( view, R.id.quick_add_task_btn_list_tags );
+      setListener( view, R.id.quick_add_task_btn_location );
+      setListener( view, R.id.quick_add_task_btn_repeat );
+      setListener( view, R.id.quick_add_task_btn_estimate );
    }
    
    
@@ -115,6 +125,39 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
          default :
             break;
       }
+   }
+   
+   
+   
+   @Override
+   public boolean onLongClick( View view )
+   {
+      switch ( view.getId() )
+      {
+         case R.id.quick_add_task_btn_due_date:
+         case R.id.quick_add_task_btn_prio:
+         case R.id.quick_add_task_btn_list_tags:
+         case R.id.quick_add_task_btn_location:
+         case R.id.quick_add_task_btn_repeat:
+         case R.id.quick_add_task_btn_estimate:
+         {
+            new ShowButtonTextAsToast( getSherlockActivity() ).show( view,
+                                                                     (CharSequence) view.getTag() );
+            return true;
+         }
+         
+         default :
+            return false;
+      }
+   }
+   
+   
+   
+   private void setListener( View parent, int buttonId )
+   {
+      final View button = parent.findViewById( buttonId );
+      button.setOnClickListener( this );
+      button.setOnLongClickListener( this );
    }
    
    

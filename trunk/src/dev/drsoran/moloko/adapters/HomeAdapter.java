@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -32,8 +32,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.ContactsListActivity;
-import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.activities.TagCloudActivity;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
@@ -46,8 +46,8 @@ public class HomeAdapter extends BaseAdapter
    private final List< IMolokoHomeWidget > widgets = new ArrayList< IMolokoHomeWidget >( 7 );
    
    
-
-   public HomeAdapter( final Context context )
+   
+   public HomeAdapter( Context context )
    {
       widgets.add( new CalendarHomeWidget( context,
                                            null,
@@ -88,44 +88,43 @@ public class HomeAdapter extends BaseAdapter
                                                null,
                                                R.string.app_preferences,
                                                R.drawable.ic_home_settings,
-                                               new Intent( context,
-                                                           MolokoPreferencesActivity.class ) ) );
+                                               Intents.createOpenPreferencesIntent( context ) ) );
    }
    
-
-
+   
+   
    @Override
    public int getCount()
    {
       return widgets.size();
    }
    
-
-
+   
+   
    @Override
    public Object getItem( int position )
    {
       return null;
    }
    
-
-
+   
+   
    @Override
    public long getItemId( int position )
    {
       return 0;
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
       return (View) widgets.get( position );
    }
    
-
-
+   
+   
    public Intent getIntentForWidget( int position )
    {
       if ( position < widgets.size() )
@@ -134,26 +133,16 @@ public class HomeAdapter extends BaseAdapter
          return null;
    }
    
-
-
-   public Runnable getRunnableForWidget( int position )
-   {
-      if ( position < widgets.size() )
-         return ( widgets.get( position ) ).getRunnable();
-      else
-         return null;
-   }
    
-
-
+   
    public void startWidgets()
    {
       for ( IMolokoHomeWidget widget : widgets )
          widget.start();
    }
    
-
-
+   
+   
    public void addWidget( IMolokoHomeWidget widget )
    {
       widgets.add( widget );
@@ -162,8 +151,8 @@ public class HomeAdapter extends BaseAdapter
       notifyDataSetChanged();
    }
    
-
-
+   
+   
    public void removeWidget( IMolokoHomeWidget widget )
    {
       widget.stop();
@@ -172,8 +161,8 @@ public class HomeAdapter extends BaseAdapter
       notifyDataSetChanged();
    }
    
-
-
+   
+   
    public void stopWidgets()
    {
       for ( IMolokoHomeWidget widget : widgets )

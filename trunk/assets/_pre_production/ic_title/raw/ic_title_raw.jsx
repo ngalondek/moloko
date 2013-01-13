@@ -1,1 +1,0 @@
-resizeImagePx( 40 );

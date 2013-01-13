@@ -40,7 +40,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -49,8 +49,7 @@ import dev.drsoran.provider.Rtm.Modifications;
 
 public class ModificationsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + ModificationsProviderPart.class.getSimpleName();
+   private static final Class< ModificationsProviderPart > TAG = ModificationsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -150,7 +149,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
          modification = null;
       }
       finally
@@ -219,7 +218,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
          modifications = null;
       }
       finally
@@ -254,7 +253,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
          throw e;
       }
       finally
@@ -275,7 +274,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       
       if ( transactionalAccess == null )
       {
-         Log.e( TAG, "Failed to create transactions." );
+         MolokoApp.Log.e( TAG, "Failed to create transactions." );
          ok = false;
       }
       
@@ -293,7 +292,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
          }
          catch ( Throwable e )
          {
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+            MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
             ok = false;
          }
          finally
@@ -388,19 +387,19 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
             }
             catch ( RemoteException e )
             {
-               Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+               MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
                ok = false;
             }
             catch ( OperationApplicationException e )
             {
-               Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+               MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
                ok = false;
             }
          }
       }
       else
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
       }
       
       if ( client != null )
@@ -440,7 +439,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
          throw e;
       }
       finally
@@ -459,15 +458,16 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       
       if ( insertUri != null )
       {
-         Log.d( TAG,
-                String.format( "INSERT id=%s, %s",
-                               insertUri.getLastPathSegment(),
-                               initialValues.toString() ) );
+         MolokoApp.Log.d( TAG,
+                          String.format( "INSERT id=%s, %s",
+                                         insertUri.getLastPathSegment(),
+                                         initialValues.toString() ) );
       }
       else
       {
-         Log.d( TAG,
-                String.format( "INSERT of %s failed", initialValues.toString() ) );
+         MolokoApp.Log.e( TAG,
+                          String.format( "INSERT of %s failed",
+                                         initialValues.toString() ) );
       }
       
       return insertUri;
@@ -481,9 +481,9 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                       String where,
                       String[] whereArgs )
    {
-      Log.d( TAG, String.format( "UPDATE %s, %s",
-                                 ( id != null ? id : where ),
-                                 values.toString() ) );
+      MolokoApp.Log.d( TAG, String.format( "UPDATE %s, %s",
+                                           ( id != null ? id : where ),
+                                           values.toString() ) );
       
       return super.update( id, values, where, whereArgs );
    }
@@ -493,8 +493,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    @Override
    public int delete( String id, String where, String[] whereArgs )
    {
-      Log.d( TAG, String.format( "DELETE %s", ( id != null ? id : where ) ) );
-      
+      MolokoApp.Log.d( TAG,
+                       String.format( "DELETE %s", ( id != null ? id : where ) ) );
       return super.delete( id, where, whereArgs );
    }
    

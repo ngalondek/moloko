@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,7 +25,7 @@ package dev.drsoran.moloko.fragments.dialogs;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.view.View;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
 
@@ -36,8 +36,11 @@ public class ProgressDialogFragment extends MolokoDialogFragment
       public final static String MESSAGE_ID = "message_id";
    }
    
+   @InstanceState( key = Config.MESSAGE_ID, defaultValue = "-1" )
+   private int messageId;
    
-
+   
+   
    public final static ProgressDialogFragment newInstance( int messageResId )
    {
       final Bundle config = new Bundle( 1 );
@@ -46,8 +49,8 @@ public class ProgressDialogFragment extends MolokoDialogFragment
       return newInstance( config );
    }
    
-
-
+   
+   
    public final static ProgressDialogFragment newInstance( Bundle config )
    {
       final ProgressDialogFragment fragment = new ProgressDialogFragment();
@@ -57,36 +60,33 @@ public class ProgressDialogFragment extends MolokoDialogFragment
       return fragment;
    }
    
-
-
+   
+   
+   public ProgressDialogFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, ProgressDialogFragment.class );
+   }
+   
+   
+   
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
-      ProgressDialog progressDialog = new ProgressDialog( getFragmentActivity() );
+      final ProgressDialog progressDialog = new ProgressDialog( getSherlockActivity() );
       
-      progressDialog.setMessage( getFragmentActivity().getString( getProgressMessageId() ) );
+      progressDialog.setMessage( getSherlockActivity().getString( getProgressMessageId() ) );
       progressDialog.setCancelable( false );
       
       return progressDialog;
    }
    
-
-
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      if ( config.containsKey( Config.MESSAGE_ID ) )
-         configuration.putInt( Config.MESSAGE_ID,
-                               config.getInt( Config.MESSAGE_ID ) );
-   }
    
-
-
+   
    private int getProgressMessageId()
    {
-      return configuration.getInt( Config.MESSAGE_ID, View.NO_ID );
+      return messageId;
    }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -34,14 +34,12 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -58,11 +56,6 @@ import dev.drsoran.provider.Rtm.Sync;
 
 public final class SyncUtils
 {
-   private static final String TAG = "Moloko."
-      + SyncUtils.class.getSimpleName();
-   
-   
-   
    private SyncUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
@@ -71,14 +64,14 @@ public final class SyncUtils
    
    
    public final static void handleServiceInternalException( ServiceInternalException exception,
-                                                            String tag,
+                                                            Class< ? > tag,
                                                             SyncResult syncResult )
    {
       final Exception internalException = exception.getEnclosedException();
       
       if ( internalException != null )
       {
-         Log.e( TAG, exception.responseMessage, internalException );
+         MolokoApp.Log.e( tag, exception.responseMessage, internalException );
          
          if ( internalException instanceof IOException )
             ++syncResult.stats.numIoExceptions;
@@ -87,7 +80,7 @@ public final class SyncUtils
       }
       else
       {
-         Log.e( TAG, exception.responseMessage );
+         MolokoApp.Log.e( tag, exception.responseMessage );
          ++syncResult.stats.numIoExceptions;
       }
    }
@@ -96,20 +89,29 @@ public final class SyncUtils
    
    public final static void requestManualSync( FragmentActivity activity )
    {
+      requestManualSync( activity, false );
+   }
+   
+   
+   
+   public final static void requestManualSync( FragmentActivity activity,
+                                               boolean silent )
+   {
       if ( ConnectionUtil.isConnected( activity ) )
       {
          final Account account = AccountUtils.getRtmAccount( activity );
          
          if ( account != null )
          {
-            SyncUtils.requestManualSync( activity, account );
+            SyncUtils.requestManualSync( account );
          }
-         else
+         
+         else if ( !silent )
          {
             UIUtils.showNoAccountDialog( activity );
          }
       }
-      else
+      else if ( !silent )
       {
          UIUtils.showNotConnectedDialog( activity );
       }
@@ -117,8 +119,7 @@ public final class SyncUtils
    
    
    
-   public final static void requestManualSync( FragmentActivity activity,
-                                               Account account )
+   public final static void requestManualSync( Account account )
    {
       final Bundle bundle = new Bundle();
       
@@ -153,8 +154,7 @@ public final class SyncUtils
    
    
    
-   public final static void requestScheduledSync( Context context,
-                                                  Account account )
+   public final static void requestScheduledSync( Account account )
    {
       final Bundle bundle = new Bundle();
       
@@ -212,7 +212,7 @@ public final class SyncUtils
     */
    public final static void schedulePeriodicSync( Context context )
    {
-      final long interval = SyncIntervalPreference.getSyncInterval( context );
+      final long interval = MolokoApp.getSettings( context ).getSyncInterval();
       
       if ( interval != Constants.SYNC_INTERVAL_MANUAL )
          SyncUtils.schedulePeriodicSync( context, interval );
@@ -364,7 +364,9 @@ public final class SyncUtils
             }
             catch ( ServiceException e )
             {
-               Log.e( TAG, "Applying server operation failed", e );
+               MolokoApp.Log.e( SyncUtils.class,
+                                "Applying server operation failed",
+                                e );
                throw e;
             }
          }

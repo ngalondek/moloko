@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,11 +38,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
@@ -51,8 +53,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmListsProviderPart.class.getSimpleName();
+   private static final Class< RtmListsProviderPart > TAG = RtmListsProviderPart.class;
    
    
    public final static class NewRtmListId
@@ -145,7 +146,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query list failed. ", e );
+         MolokoApp.Log.e( TAG, "Query list failed. ", e );
          list = null;
       }
       finally
@@ -177,7 +178,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query list failed. ", e );
+         MolokoApp.Log.e( TAG, "Query list failed. ", e );
          list = null;
       }
       finally
@@ -227,7 +228,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query lists failed. ", e );
+         MolokoApp.Log.e( TAG, "Query lists failed. ", e );
          lists = null;
       }
       finally
@@ -288,7 +289,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
             }
             catch ( final RemoteException e )
             {
-               Log.e( TAG, "Query lists failed. ", e );
+               MolokoApp.Log.e( TAG, "Query lists failed. ", e );
                lists = null;
             }
             finally
@@ -300,6 +301,60 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       }
       
       return lists;
+   }
+   
+   
+   
+   public static Collection< String > resolveListIdsToListNames( ContentProviderClient client,
+                                                                 Collection< String > listIds )
+   {
+      Collection< String > result = null;
+      Cursor c = null;
+      
+      try
+      {
+         final String selectionString = buildListIdsSelectionString( listIds );
+         
+         c = client.query( Rtm.Lists.CONTENT_URI, new String[]
+         { Lists._ID, Lists.LIST_NAME }, selectionString, null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            if ( c.getCount() > 0 )
+            {
+               result = new ArrayList< String >( c.getCount() );
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  result.add( c.getString( 1 ) );
+               }
+            }
+            else
+            {
+               result = Collections.emptyList();
+            }
+         }
+         
+         if ( !ok )
+         {
+            result = null;
+         }
+      }
+      catch ( RemoteException e )
+      {
+         MolokoApp.Log.e( TAG, "Query lists failed. ", e );
+         result = null;
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
+      }
+      
+      return result;
    }
    
    
@@ -322,7 +377,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query lists failed. ", e );
+         MolokoApp.Log.e( TAG, "Query lists failed. ", e );
       }
       finally
       {
@@ -503,5 +558,28 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
                                         c.getInt( COL_INDICES.get( Lists.POSITION ) ),
                                         filter );
       return list;
+   }
+   
+   
+   
+   private static String buildListIdsSelectionString( Collection< String > listIds )
+   {
+      final StringBuilder selectionStringBuilder = new StringBuilder();
+      
+      boolean isFirst = true;
+      for ( String listId : listIds )
+      {
+         if ( !isFirst )
+         {
+            selectionStringBuilder.append( " OR " );
+         }
+         
+         selectionStringBuilder.append( Lists._ID )
+                               .append( "=" )
+                               .append( listId );
+         isFirst = false;
+      }
+      
+      return selectionStringBuilder.toString();
    }
 }

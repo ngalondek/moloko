@@ -44,16 +44,59 @@ public final class RtmSmartFilterParsing
    
    public final static class RtmSmartFilterReturn
    {
-      public final String result;
+      public final String queryString;
       
       public final boolean hasCompletedOperator;
       
       
       
-      public RtmSmartFilterReturn( String result, boolean hasCompletedOperator )
+      public RtmSmartFilterReturn( String queryString,
+         boolean hasCompletedOperator )
       {
-         this.result = result;
+         this.queryString = queryString;
          this.hasCompletedOperator = hasCompletedOperator;
+      }
+      
+      
+      
+      @Override
+      public boolean equals( Object o )
+      {
+         if ( o == this )
+         {
+            return true;
+         }
+         
+         if ( o == null || o.getClass() != getClass() )
+         {
+            return false;
+         }
+         
+         final RtmSmartFilterReturn other = (RtmSmartFilterReturn) o;
+         
+         return other.queryString.equals( queryString )
+            && other.hasCompletedOperator == hasCompletedOperator;
+      }
+      
+      
+      
+      @Override
+      public int hashCode()
+      {
+         int code = queryString.hashCode();
+         code = code * 31 ^ ( hasCompletedOperator ? 0 : 1 );
+         
+         return code;
+      }
+      
+      
+      
+      @Override
+      public String toString()
+      {
+         return String.format( "%s, complOp: %b",
+                               queryString,
+                               hasCompletedOperator );
       }
    }
    

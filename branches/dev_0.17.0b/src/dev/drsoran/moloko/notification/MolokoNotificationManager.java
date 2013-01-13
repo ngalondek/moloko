@@ -44,6 +44,8 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    private Locale lastUsedLocale;
    
+   private boolean started;
+   
    
    
    public MolokoNotificationManager( NotifierContext context )
@@ -58,21 +60,38 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    public void start()
    {
-      recreateNotifications();
+      if ( !started )
+      {
+         recreateNotificationsImpl();
+         started = true;
+      }
+   }
+   
+   
+   
+   public boolean isStarted()
+   {
+      return started;
    }
    
    
    
    public void shutdown()
    {
-      unregisterListeners();
-      shutdownNotifiers();
+      if ( started )
+      {
+         unregisterListeners();
+         shutdownNotifiers();
+         started = false;
+      }
    }
    
    
    
    public void onConfigurationChanged( Configuration newConfig )
    {
+      checkMolokoNotificationManagerIsStarted();
+      
       final Locale currentLocale = getCurrentNotificatonLocale();
       if ( !currentLocale.equals( lastUsedLocale ) )
       {
@@ -86,6 +105,8 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    @Override
    public void onTimeChanged( int which )
    {
+      checkMolokoNotificationManagerIsStarted();
+      
       for ( IStatusbarNotifier notifier : notifiers )
       {
          notifier.onTimeChanged( which );
@@ -97,6 +118,8 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    @Override
    public void onSettingsChanged( int which )
    {
+      checkMolokoNotificationManagerIsStarted();
+      
       for ( IStatusbarNotifier notifier : notifiers )
       {
          notifier.onSettingsChanged( which );
@@ -108,6 +131,7 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    @Override
    public void onAccountUpdated( int what, Account account )
    {
+      checkMolokoNotificationManagerIsStarted();
       recreateNotifications();
    }
    
@@ -115,10 +139,12 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    public void onNotificationClicked( Intent intent )
    {
+      checkMolokoNotificationManagerIsStarted();
+      
       int notificationId = getNotificationId( intent );
-      for ( int i = 0; i < notifiers.length; i++ )
+      for ( IStatusbarNotifier notifier : notifiers )
       {
-         notifiers[ i ].onNotificationClicked( notificationId, intent );
+         notifier.onNotificationClicked( notificationId, intent );
       }
    }
    
@@ -126,10 +152,12 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    public void onNotificationCleared( Intent intent )
    {
+      checkMolokoNotificationManagerIsStarted();
+      
       int notificationId = getNotificationId( intent );
-      for ( int i = 0; i < notifiers.length; i++ )
+      for ( IStatusbarNotifier notifier : notifiers )
       {
-         notifiers[ i ].onNotificationCleared( notificationId, intent );
+         notifier.onNotificationCleared( notificationId, intent );
       }
    }
    
@@ -137,8 +165,8 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    public void recreateNotifications()
    {
-      shutdownNotifiers();
-      createNotifiers();
+      checkMolokoNotificationManagerIsStarted();
+      recreateNotificationsImpl();
    }
    
    
@@ -165,6 +193,14 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    
    
+   private void recreateNotificationsImpl()
+   {
+      shutdownNotifiers();
+      createNotifiers();
+   }
+   
+   
+   
    private void registerListeners()
    {
       context.registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
@@ -187,6 +223,17 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    private Locale getCurrentNotificatonLocale()
    {
       return MolokoApp.getSettings( context ).getLocale();
+   }
+   
+   
+   
+   private void checkMolokoNotificationManagerIsStarted()
+   {
+      if ( !started )
+      {
+         throw new IllegalStateException( getClass().getSimpleName()
+            + " is not started" );
+      }
    }
    
    

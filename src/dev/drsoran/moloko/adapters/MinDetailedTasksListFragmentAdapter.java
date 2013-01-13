@@ -22,60 +22,23 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.widgets.MolokoListView;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.Task;
 
 
-public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
+public class MinDetailedTasksListFragmentAdapter extends
+         AbstractTasksListFragmentAdapter
 {
-   private final static String TAG = "Moloko."
-      + MinDetailedTasksListFragmentAdapter.class.getName();
-   
-   private final Context context;
-   
-   private final int resourceId;
-   
-   private final MolokoCalendar setDueDateCalendar = MolokoCalendar.getInstance();
-   
-   
-   
-   public MinDetailedTasksListFragmentAdapter( Context context, int resourceId )
+   public MinDetailedTasksListFragmentAdapter( MolokoListView listView )
    {
-      this( context, resourceId, Collections.< Task > emptyList() );
-   }
-   
-   
-   
-   public MinDetailedTasksListFragmentAdapter( Context context, int resourceId,
-      List< Task > tasks )
-   {
-      super( context, View.NO_ID, tasks );
-      
-      this.context = context;
-      this.resourceId = resourceId;
-   }
-   
-   
-   
-   public int getLayoutRessource()
-   {
-      return resourceId;
+      super( listView,
+             R.layout.mindetailed_taskslist_listitem,
+             R.layout.mindetailed_selectable_taskslist_listitem );
    }
    
    
@@ -83,163 +46,31 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      if ( convertView == null )
-         convertView = ( (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE ) ).inflate( resourceId,
-                                                                                                                 parent,
-                                                                                                                 false );
-      final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
+      convertView = super.getView( position, convertView, parent );
       
-      ImageView completed;
-      TextView description;
-      TextView dueDate;
-      
-      try
+      if ( !isInMultiChoiceModalActionMode() )
       {
-         completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
-         description = (TextView) convertView.findViewById( R.id.taskslist_listitem_desc );
-         dueDate = (TextView) convertView.findViewById( R.id.taskslist_listitem_due_date );
+         final SimpleLineView priority = (SimpleLineView) convertView.findViewById( R.id.taskslist_listitem_priority );
+         final Task task = getItem( position );
+         
+         UIUtils.setPriorityColor( getContext(), priority, task );
       }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
-      }
-      
-      final Task task = getItem( position );
-      
-      UIUtils.setTaskDescription( description, task, MolokoDateUtils.newTime() );
-      
-      setDueDate( dueDate, task );
-      
-      UIUtils.setPriorityColor( priority, task );
-      
-      setCompleted( completed, task );
       
       return convertView;
    }
    
    
    
-   private void setDueDate( TextView view, Task task )
+   @Override
+   protected boolean mustSwitchLayout( View convertView )
    {
-      Date dateToSet = task.getCompleted();
-      
-      if ( dateToSet == null )
-         dateToSet = task.getDue();
-      
-      if ( dateToSet != null )
-         setDueDateCalendar.setTime( dateToSet );
-      
-      setDueDateCalendar.setHasDate( dateToSet != null );
-      setDueDateCalendar.setHasTime( task.hasDueTime() );
-      
-      setDueDate( view, setDueDateCalendar );
-   }
-   
-   
-   
-   private void setDueDate( TextView view, MolokoCalendar cal )
-   {
-      // if has a due date
-      if ( cal.hasDate() )
+      if ( isInMultiChoiceModalActionMode() )
       {
-         view.setVisibility( View.VISIBLE );
-         
-         String dueText = null;
-         
-         final long dueMillis = cal.getTimeInMillis();
-         final boolean hasDueTime = cal.hasTime();
-         
-         // Today
-         if ( MolokoDateUtils.isToday( dueMillis ) )
-         {
-            // If it has a time, we show the time
-            if ( hasDueTime )
-               dueText = MolokoDateUtils.formatTime( context, dueMillis );
-            else
-               // We only show the 'Today' phrase
-               dueText = context.getString( R.string.phr_today );
-         }
-         
-         // Not today
-         else
-         {
-            final long nowMillis = System.currentTimeMillis();
-            MolokoCalendar nowCal = MolokoDateUtils.newCalendar( nowMillis );
-            
-            // If it is the same year
-            if ( cal.get( Calendar.YEAR ) == nowCal.get( Calendar.YEAR ) )
-            {
-               // If the same week
-               if ( nowCal.get( Calendar.WEEK_OF_YEAR ) == cal.get( Calendar.WEEK_OF_YEAR ) )
-               {
-                  // is in the past?
-                  if ( cal.before( nowCal ) )
-                  {
-                     // we show the date but w/o year
-                     dueText = MolokoDateUtils.formatDate( context,
-                                                           dueMillis,
-                                                           MolokoDateUtils.FORMAT_ABR_MONTH );
-                  }
-                  
-                  // later this week
-                  else
-                  {
-                     // we only show the week day
-                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
-                                                                   false );
-                  }
-               }
-               
-               // Is it in the range [today + 1, today + 6]?
-               else
-               {
-                  final MolokoCalendar calWeekdayRange = nowCal;
-                  calWeekdayRange.add( Calendar.DAY_OF_MONTH, 6 );
-                  nowCal = null;
-                  
-                  if ( calWeekdayRange.get( Calendar.DAY_OF_YEAR ) >= cal.get( Calendar.DAY_OF_YEAR ) )
-                  {
-                     // we only show the week day
-                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
-                                                                   false );
-                  }
-                  
-                  // Not the same week and not in the range [today + 1, today + 6]
-                  else
-                  {
-                     // we show the date but w/o year
-                     dueText = MolokoDateUtils.formatDate( context,
-                                                           dueMillis,
-                                                           MolokoDateUtils.FORMAT_ABR_MONTH );
-                  }
-               }
-               
-            }
-            
-            // Not the same year
-            else
-            {
-               // we show the full date with year
-               dueText = MolokoDateUtils.formatDate( context,
-                                                     dueMillis,
-                                                     MolokoDateUtils.FORMAT_ABR_MONTH
-                                                        | MolokoDateUtils.FORMAT_WITH_YEAR );
-            }
-         }
-         
-         view.setText( dueText );
+         return convertView.findViewById( R.id.taskslist_selectable_mindetailed_listitem ) == null;
       }
-      
-      // has no due date
       else
-         view.setVisibility( View.GONE );
-   }
-   
-   
-   
-   private void setCompleted( ImageView view, Task task )
-   {
-      view.setEnabled( task.getCompleted() != null );
+      {
+         return convertView.findViewById( R.id.taskslist_mindetailed_listitem ) == null;
+      }
    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -25,70 +25,85 @@ package dev.drsoran.moloko.activities;
 import java.util.Collections;
 
 import android.os.Bundle;
+
+import com.actionbarsherlock.view.Menu;
+import com.mdt.rtm.data.RtmLocation;
+
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.fragments.listeners.ITagCloudFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TagCloudActivity extends MolokoFragmentActivity implements
          ITagCloudFragmentListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TagCloudActivity.class.getSimpleName();
-   
-   
-
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       setContentView( R.layout.tagcloud_activity );
    }
    
-
-
+   
+   
+   @Override
+   public boolean onActivityCreateOptionsMenu( Menu menu )
+   {
+      getSupportMenuInflater().inflate( R.menu.sync_only, menu );
+      super.onActivityCreateOptionsMenu( menu );
+      
+      return true;
+   }
+   
+   
+   
+   @Override
+   public void onOpenList( RtmListWithTaskCount list )
+   {
+      startActivityWithHomeAction( Intents.createOpenListIntent( this,
+                                                                 list,
+                                                                 null ),
+                                   getClass() );
+   }
+   
+   
+   
+   @Override
+   public void onOpenTag( String tag )
+   {
+      startActivityWithHomeAction( Intents.createOpenTagsIntent( this,
+                                                                 Collections.singletonList( tag ),
+                                                                 RtmSmartFilterLexer.AND_LIT ),
+                                   getClass() );
+   }
+   
+   
+   
+   @Override
+   public void onOpenLocation( RtmLocation location )
+   {
+      startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
+                                                                           location.name ),
+                                   getClass() );
+   }
+   
+   
+   
+   @Override
+   public void onOpenLocationWithOtherApp( RtmLocation location )
+   {
+      startActivity( Intents.createOpenLocationWithOtherAppChooser( location ) );
+   }
+   
+   
+   
    @Override
    protected int[] getFragmentIds()
    {
       return new int[]
       { R.id.frag_tag_cloud };
-   }
-   
-
-
-   @Override
-   public void onListNameClicked( String listName )
-   {
-      startActivity( Intents.createOpenListIntentByName( this, listName, null ) );
-   }
-   
-
-
-   @Override
-   public void onLocationNameClicked( String locationName )
-   {
-      startActivity( Intents.createOpenLocationIntentByName( this, locationName ) );
-   }
-   
-
-
-   @Override
-   public void onLocationNameLongClicked( String locationName )
-   {
-      LocationChooserDialogFragment.showChooser( this, locationName );
-   }
-   
-
-
-   @Override
-   public void onTagNameClicked( String tagName )
-   {
-      startActivity( Intents.createOpenTagsIntent( this,
-                                                   Collections.singletonList( tagName ),
-                                                   RtmSmartFilterLexer.AND_LIT ) );
    }
 }

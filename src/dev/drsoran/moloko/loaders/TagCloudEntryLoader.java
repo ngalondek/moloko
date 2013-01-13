@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,10 +29,14 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.content.LocationOverviewsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.fragments.TagCloudFragment.ListTagCloudEntry;
+import dev.drsoran.moloko.fragments.TagCloudFragment.LocationTagCloudEntry;
 import dev.drsoran.moloko.fragments.TagCloudFragment.TagCloudEntry;
+import dev.drsoran.moloko.fragments.TagCloudFragment.TagTagCloudEntry;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -43,13 +47,17 @@ import dev.drsoran.rtm.TagWithTaskCount;
 
 public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
 {
+   public final static int ID = R.id.loader_tag_cloud_entry;
+   
+   
+   
    public TagCloudEntryLoader( Context context )
    {
       super( context );
    }
    
-
-
+   
+   
    @Override
    protected List< TagCloudEntry > queryResultInBackground( ContentProviderClient client )
    {
@@ -62,9 +70,7 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                                                                 + " = 0" );
          if ( lists == null )
          {
-            LogUtils.logDBError( getContext(),
-                                 LogUtils.toTag( TagCloudEntryLoader.class ),
-                                 "Lists" );
+            LogUtils.logDBError( getContext(), getClass(), "Lists" );
          }
       }
       
@@ -75,9 +81,7 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
          
          if ( tags == null )
          {
-            LogUtils.logDBError( getContext(),
-                                 LogUtils.toTag( TagCloudEntryLoader.class ),
-                                 "Tags" );
+            LogUtils.logDBError( getContext(), getClass(), "Tags" );
          }
       }
       
@@ -88,9 +92,7 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                                                                          null );
          if ( locations == null )
          {
-            LogUtils.logDBError( getContext(),
-                                 LogUtils.toTag( TagCloudEntryLoader.class ),
-                                 "Locations" );
+            LogUtils.logDBError( getContext(), getClass(), "Locations" );
          }
       }
       
@@ -103,41 +105,39 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
          
          for ( RtmListWithTaskCount list : lists )
          {
-            if ( list.getIncompleteTaskCount() > 0 )
-               cloudEntries.add( new TagCloudEntry( TagCloudEntry.LIST,
-                                                    list.getName(),
-                                                    list.getIncompleteTaskCount() ) );
+            if ( list.getTaskCount() > 0 )
+            {
+               cloudEntries.add( new ListTagCloudEntry( list ) );
+            }
          }
          
          for ( TagWithTaskCount tag : tags )
          {
-            cloudEntries.add( new TagCloudEntry( TagCloudEntry.TAG,
-                                                 tag.getTag(),
-                                                 tag.getTaskCount() ) );
+            cloudEntries.add( new TagTagCloudEntry( tag ) );
          }
          
          for ( LocationWithTaskCount location : locations )
          {
             if ( location.getIncompleteTaskCount() > 0 )
-               cloudEntries.add( new TagCloudEntry( TagCloudEntry.LOCATION,
-                                                    location.getRtmLocation().name,
-                                                    location.getIncompleteTaskCount() ) );
+            {
+               cloudEntries.add( new LocationTagCloudEntry( location ) );
+            }
          }
       }
       
       return cloudEntries;
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Uri.EMPTY;
    }
    
-
-
+   
+   
    @Override
    protected ContentProviderClient getContentProviderClient()
    {
@@ -145,8 +145,8 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                          .acquireContentProviderClient( Rtm.AUTHORITY );
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
@@ -156,8 +156,8 @@ public class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
                                                              observer );
    }
    
-
-
+   
+   
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {

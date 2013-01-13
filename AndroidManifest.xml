@@ -13,13 +13,13 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"   
-   android:versionName="0.16.3b"
-   android:versionCode="90115"
+   android:versionName="0.17.0b"
+   android:versionCode="94208"
    android:installLocation="internalOnly">
 
    <uses-sdk
       android:minSdkVersion="8"
-      android:targetSdkVersion="13" />
+      android:targetSdkVersion="15"/>
    
    <uses-permission
       android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -61,26 +61,22 @@
       android:hardwareAccelerated="true"
       android:allowBackup="true">
 
-      <!-- Declare the default searchable Activity for the whole app -->
-      <meta-data
-         android:name="android.app.default_searchable"
-         android:value=".activities.TaskSearchResultActivity" />
-
       <!-- Content Provider -->
       <provider
          android:name=".content.RtmProvider"
          android:authorities="dev.drsoran.provider.Rtm"
-         android:syncable="true" />
+         android:syncable="true"
+         android:exported="false" />
 
       <provider
          android:name=".search.TasksSearchRecentSuggestionsProvider"
-         android:authorities="dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider" />
+         android:authorities="dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider"
+         android:exported="false" />
 
       <!-- Activities -->
       <activity
          android:label="@string/app_name"
-         android:name=".activities.StartUpActivity"
-         android:theme="@style/Theme.Moloko.Home">
+         android:name=".activities.StartUpActivity">
          <intent-filter>
             <action
                android:name="android.intent.action.MAIN" />
@@ -91,16 +87,18 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".activities.HomeActivity"
-         android:theme="@style/Theme.Moloko.Home">
+         android:name=".activities.HomeActivity">
+         <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activities.TaskSearchResultActivity" />
       </activity>
 
       <activity
          android:label="@string/app_name"
          android:name=".activities.TasksListActivity"
          android:theme="@style/Theme.Moloko.TasksList"
-         android:windowSoftInputMode="adjustResize"
-         android:launchMode="singleTop">
+         android:exported="false"
+         android:windowSoftInputMode="adjustResize">
          <intent-filter>
             <!-- Show a list of tasks -->
             <action
@@ -110,11 +108,24 @@
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
+         <intent-filter>
+            <!-- Choose multiple tasks from a list of tasks -->
+            <action
+               android:name="android.intent.action.PICK" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
+         </intent-filter>
+         <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activities.TaskSearchResultActivity" />
       </activity>
 
       <activity
          android:label="@string/app_tasklists"
-         android:name=".activities.TaskListsActivity">
+         android:name=".activities.TaskListsActivity"
+         android:exported="false">
          <intent-filter>
             <!-- Show an overview of task lists -->
             <action
@@ -134,12 +145,16 @@
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.list" />
          </intent-filter>
+         <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activities.TaskSearchResultActivity" />
       </activity>
 
       <activity
          android:label="@string/app_name"
          android:name=".activities.TaskSearchResultActivity"
          android:theme="@style/Theme.Moloko.TasksList"
+         android:exported="false"
          android:launchMode="singleTop"> <!-- SingleTop due to searchable -->
          <intent-filter>
             <!-- Handle search queries -->
@@ -152,24 +167,11 @@
       </activity>
       
       <activity
-         android:label="@string/app_task_select_multiple"
-         android:name=".activities.SelectMultipleTasksActivity"
-         android:theme="@style/Theme.Moloko.SelectMultipleTasks">
-         <intent-filter>
-            <!-- Choose multiple tasks from a list of tasks -->
-            <action
-               android:name="android.intent.action.PICK" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
-         </intent-filter>
-      </activity>
-
-      <activity
          android:label="@string/app_task"
          android:name=".activities.TaskActivity"
-         android:theme="@style/Theme.Moloko.Task">
+         android:theme="@style/Theme.Moloko.Task"
+         android:exported="false"
+         android:uiOptions="splitActionBarWhenNarrow">
          
          <!-- Show a single task -->
          <intent-filter>
@@ -180,6 +182,14 @@
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
+      </activity>
+      
+      <activity
+         android:name=".activities.TaskEditActivity"
+         android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
+         android:exported="false"
+         android:uiOptions="splitActionBarWhenNarrow"         
+         android:windowSoftInputMode="adjustResize">
          
          <!-- Edit a single task -->
          <intent-filter>
@@ -191,7 +201,7 @@
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
          
-         <!-- Insert a new task -->      
+         <!-- Insert a new task -->
          <intent-filter>
             <action
                android:name="android.intent.action.INSERT" />
@@ -203,10 +213,11 @@
       </activity>
 
       <activity
-         android:label="@string/app_task_edit_multiple"
          android:name=".activities.TaskEditMultipleActivity"
-         android:launchMode="singleTop"
-         android:theme="@style/Theme.Moloko.Task.EditMultiple">
+         android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
+         android:exported="false"
+         android:uiOptions="splitActionBarWhenNarrow"
+         android:windowSoftInputMode="adjustResize">
          <intent-filter>
             <!-- Edit a list of tasks -->
             <action
@@ -218,16 +229,38 @@
          </intent-filter>
       </activity>
       
-      <activity         
-         android:name=".activities.ChangeTagsActivity"
-         android:launchMode="singleTop"
-         android:excludeFromRecents="true"
-         android:theme="@style/Theme.Moloko.Task">
+      <activity
+         android:name=".activities.NoteEditActivity"
+         android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
+         android:exported="false"
+         android:uiOptions="splitActionBarWhenNarrow"
+         android:windowSoftInputMode="adjustResize">
+         
+         <!-- Edit a single note -->
+         <intent-filter>
+            <action
+               android:name="android.intent.action.EDIT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />
+         </intent-filter>
+         
+         <!-- Insert a new note -->      
+         <intent-filter>
+            <action
+               android:name="android.intent.action.INSERT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.note" />
+         </intent-filter>
       </activity>
-
+       
       <activity
          android:label="@string/app_contacts"
-         android:name=".activities.ContactsListActivity">
+         android:name=".activities.ContactsListActivity"
+         android:exported="false">
          <intent-filter>
             <!-- Show all contacts -->
             <action
@@ -238,6 +271,23 @@
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.contact" />
          </intent-filter>
       </activity>
+      
+      <activity
+         android:label="@string/app_change_tags"
+         android:name=".activities.ChangeTagsActivity"
+         android:theme="@style/Theme.Moloko.ChangeTags"
+         android:windowSoftInputMode="adjustResize"
+         android:exported="false">
+         <intent-filter>
+            <!-- Pick tags -->
+            <action
+               android:name="android.intent.action.PICK" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.tags" />
+         </intent-filter>
+      </activity>
 
       <activity
          android:label="@string/app_tagcloud"
@@ -246,9 +296,9 @@
 
       <activity
          android:label="@string/app_preferences"
-         android:name=".activities.MolokoPreferencesActivity"
-         android:theme="@style/Theme.Moloko.Preferences"
-         android:excludeFromRecents="true">
+         android:name=".prefs.activities.MainPreferencesActivity"
+         android:excludeFromRecents="true"
+         android:exported="false">
          <intent-filter>
             <action
                android:name="android.intent.action.VIEW" />
@@ -256,11 +306,63 @@
                android:name="android.intent.category.PREFERENCE" />
          </intent-filter>
       </activity>
+      
+      <activity
+         android:label="@string/moloko_prefs_rtm_title"
+         android:name=".prefs.activities.RtmPreferencesActivity"
+         android:excludeFromRecents="true"
+         android:exported="false">         
+         <intent-filter>
+            <action
+               android:name="dev.drsoran.moloko.prefs.rtm.MAIN" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>         
+      </activity>
+      
+      <activity
+         android:label="@string/moloko_prefs_notification_title"
+         android:name=".prefs.activities.NotificationPreferencesActivity"
+         android:excludeFromRecents="true"
+         android:exported="false">         
+         <intent-filter>
+            <action
+               android:name="dev.drsoran.moloko.prefs.notification.MAIN" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>         
+      </activity>
+      
+      <activity
+         android:label="@string/moloko_prefs_general_title"
+         android:name=".prefs.activities.GeneralPreferencesActivity"
+         android:excludeFromRecents="true"
+         android:exported="false">         
+         <intent-filter>
+            <action
+               android:name="dev.drsoran.moloko.prefs.general.MAIN" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>         
+      </activity>
+      
+      <activity
+         android:label="@string/moloko_prefs_support_dev_title"
+         android:name=".prefs.activities.DevelopmentPreferencesActivity"
+         android:excludeFromRecents="true"
+         android:exported="false">         
+         <intent-filter>
+            <action
+               android:name="dev.drsoran.moloko.prefs.development.MAIN" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>         
+      </activity>
 
       <activity
          android:label="@string/app_account_preferences"
-         android:name=".auth.prefs.AccountPreferencesActivity"
-         android:theme="@style/Theme.Moloko.Preferences"
+         android:name=".prefs.activities.AccountPreferencesActivity"
+         android:theme="@style/Theme.Moloko"         
          android:taskAffinity="android.system"
          android:launchMode="singleTask"
          android:noHistory="true"
@@ -268,7 +370,7 @@
          android:exported="true">
          <intent-filter>
             <action
-               android:name="dev.drsoran.moloko.auth.prefs.account.MAIN" />
+               android:name="dev.drsoran.moloko.prefs.account.MAIN" />
             <category
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
@@ -277,31 +379,19 @@
       <activity
          android:name=".auth.AuthenticatorActivity"
          android:label="@string/rtm_full"
-         android:theme="@style/Theme.Moloko.Authenticator"
          android:excludeFromRecents="true" />
-
-      <activity
-         android:name=".auth.RtmWebLoginActivity"
-         android:label="@string/rtm_full"
-         android:theme="@style/Theme.Moloko.Authenticator"
-         android:excludeFromRecents="true" />
-
-      <!-- 
-      <activity
-         android:name=".activities.RtmSmartFilterTestActivity"
-         android:label="Grammar tests"
-         android:excludeFromRecents="true" /> -->
 
       <activity
          android:name="org.acra.CrashReportDialog"
-         android:theme="@android:style/Theme.Dialog"
+         android:theme="@style/Theme.Moloko.Dialog"
          android:launchMode="singleInstance"
          android:excludeFromRecents="true"
          android:finishOnTaskLaunch="true" />
 
       <activity
          android:name="com.xtralogic.android.logcollector.SendLogActivity"
-         android:theme="@android:style/Theme.Translucent.NoTitleBar"
+         android:theme="@style/Theme.Moloko.SendLog"
+         android:exported="false"
          android:excludeFromRecents="true">
          <intent-filter>
             <action
@@ -336,28 +426,18 @@
             android:name="android.content.SyncAdapter"
             android:resource="@xml/syncadapter" />
       </service>
+      
+      <service 
+         android:name=".notification.MolokoNotificationService"
+         android:label="@string/svc_notification"
+         android:exported="false">
+      </service>
 
       <!-- Broadcast receivers -->
 
       <receiver
          android:name=".receivers.SyncAlarmReceiver" />
 
-      <receiver
-         android:name=".receivers.NetworkStatusReceiver">
-         <intent-filter>
-            <action
-               android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>
-         <intent-filter>
-            <action
-               android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>
-      </receiver>
-    
       <receiver
          android:name=".receivers.BootReceiver">
          <intent-filter>
@@ -367,22 +447,24 @@
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
       </receiver>
-
+      
       <receiver
-         android:name=".receivers.TimeChangedReceiver">
+         android:name=".receivers.NotificationActionReceiver"
+         android:exported="false">
          <intent-filter>
             <action
-               android:name="android.intent.action.TIME_SET" />            
+               android:name="dev.drsoran.moloko.util.Intents.Action.TASK_COMPLETED_FROM_NOTIFICATION" />
             <category
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
          <intent-filter>
             <action
-               android:name="android.intent.action.DATE_CHANGED" />            
+               android:name="dev.drsoran.moloko.util.Intents.Action.TASK_POSTPONED_FROM_NOTIFICATION" />
             <category
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
       </receiver>
+  
    </application>
 
 </manifest> 

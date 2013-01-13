@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,63 +22,141 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
+import dev.drsoran.moloko.fragments.TaskSearchResultFailedFragment;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TaskSearchResultActivity extends
-         AbstractFullDetailedTasksListActivity implements
-         ITasksSearchResultListFragmentListener
+         AbstractFullDetailedTasksListActivity
 {
-   private static class OptionsMenu
-   {
-      public final static int ADD_LIST = R.id.menu_add_list;
-      
-      public final static int CLEAR_HISTORY = R.id.menu_clear_search_history;
-   }
+   @InstanceState( key = "query_stack", defaultValue = InstanceState.NO_DEFAULT )
+   private final ArrayList< QueryStackItem > queryStack = new ArrayList< QueryStackItem >();
    
-   private boolean lastQuerySucceeded = true;
+   
+   
+   public TaskSearchResultActivity()
+   {
+      registerAnnotatedConfiguredInstance( this, TaskSearchResultActivity.class );
+   }
    
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public void onCreate( Bundle savedInstanceState )
    {
-      super.onCreateOptionsMenu( menu );
+      super.onCreate( savedInstanceState );
+      getSupportFragmentManager().addOnBackStackChangedListener( this );
+   }
+   
+   
+   
+   @Override
+   protected void onDestroy()
+   {
+      getSupportFragmentManager().removeOnBackStackChangedListener( this );
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
+   public void onBackStackChanged()
+   {
+      setTitle( getTopQuery().query );
+   }
+   
+   
+   
+   @Override
+   public void onBackPressed()
+   {
+      if ( queryStack.size() > 0 )
+      {
+         popQuery();
+      }
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ADD_LIST,
-                                   getString( R.string.tasksearchresult_menu_add_smart_list ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_list,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   lastQuerySucceeded
-                                      && AccountUtils.isWriteableAccess( this ) );
+      super.onBackPressed();
+   }
+   
+   
+   
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      super.onNewIntent( intent );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.CLEAR_HISTORY,
-                                   getString( R.string.tasksearchresult_menu_opt_clear_history_title ),
-                                   MenuCategory.ALTERNATIVE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_delete,
-                                   MenuItem.SHOW_AS_ACTION_NEVER,
-                                   true );
+      final String lastQuery = getTopQuery().query;
+      if ( !lastQuery.equalsIgnoreCase( getQueryFromIntent() ) )
+      {
+         reloadWithNewQuery();
+      }
+   }
+   
+   
+   
+   @Override
+   protected void initializeTitle()
+   {
+      setTitle( getQueryFromIntent() );
+   }
+   
+   
+   
+   @Override
+   protected void initializeActionBar()
+   {
+      setStandardNavigationMode();
+   }
+   
+   
+   
+   @Override
+   public boolean onActivityCreateOptionsMenu( Menu menu )
+   {
+      if ( isWritableAccess() )
+      {
+         getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity_rwd,
+                                           menu );
+      }
+      else
+      {
+         getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity,
+                                           menu );
+      }
+      
+      super.onActivityCreateOptionsMenu( menu );
+      
+      return true;
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      super.onPrepareOptionsMenu( menu );
+      menu.setGroupVisible( R.id.menu_group_tasksearchresult_query_succeeded,
+                            getTopQuery().succeeded );
+      
       return true;
    }
    
@@ -89,7 +167,7 @@ public class TaskSearchResultActivity extends
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.CLEAR_HISTORY:
+         case R.id.menu_clear_search_history:
             getRecentSuggestions().clearHistory();
             
             Toast.makeText( this,
@@ -97,7 +175,7 @@ public class TaskSearchResultActivity extends
                             Toast.LENGTH_SHORT ).show();
             return true;
             
-         case OptionsMenu.ADD_LIST:
+         case R.id.menu_add_list:
             showAddListDialog();
             return true;
             
@@ -108,68 +186,199 @@ public class TaskSearchResultActivity extends
    
    
    
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( SearchManager.QUERY ) )
-         configuration.putString( Config.TITLE,
-                                  config.getString( SearchManager.QUERY ) );
-   }
-   
-   
-   
-   @Override
-   public void onQuerySucceeded( String queryString )
-   {
-      getRecentSuggestions().saveRecentQuery( queryString, null );
-      
-      lastQuerySucceeded = true;
-      invalidateOptionsMenu();
-   }
-   
-   
-   
-   @Override
-   public void onQueryFailed( String queryString )
-   {
-      lastQuerySucceeded = false;
-      invalidateOptionsMenu();
-   }
-   
-   
-   
-   @Override
-   public void onOpenList( int pos, String listId )
-   {
-      startActivity( Intents.createOpenListIntentById( this, listId, null ) );
-   }
-   
-   
-   
-   @Override
-   public void onOpenLocation( int pos, String locationId )
-   {
-      startActivity( Intents.createOpenLocationIntentByName( this,
-                                                             getTask( pos ).getLocationName() ) );
-   }
-   
-   
-   
-   @Override
-   protected void onOpenChoosenTags( List< String > tags,
-                                     String logicalOperation )
-   {
-      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
-   }
-   
-   
-   
-   private final SearchRecentSuggestions getRecentSuggestions()
+   private SearchRecentSuggestions getRecentSuggestions()
    {
       return new SearchRecentSuggestions( this,
                                           TasksSearchRecentSuggestionsProvider.AUTHORITY,
                                           TasksSearchRecentSuggestionsProvider.MODE );
+   }
+   
+   
+   
+   private void evaluateAndStoreQuery()
+   {
+      final RtmSmartFilter filter = evaluateRtmSmartFilter();
+      if ( filter != null )
+      {
+         onQuerySucceeded();
+      }
+      else
+      {
+         onQueryFailed();
+      }
+   }
+   
+   
+   
+   private RtmSmartFilter evaluateRtmSmartFilter()
+   {
+      RtmSmartFilter filter = new RtmSmartFilter( getQueryFromIntent() );
+      
+      // Collect tokens for the quick add task fragment
+      final String evalQuery = filter.getEvaluatedFilterString( true );
+      
+      if ( evalQuery == null )
+      {
+         filter = null;
+      }
+      
+      return filter;
+   }
+   
+   
+   
+   private void reloadWithNewQuery()
+   {
+      final Bundle config = getCurrentTasksListFragmentConfiguration();
+      reloadTasksListWithConfiguration( config );
+   }
+   
+   
+   
+   private Bundle putTransformedQueryFromSmartFilter( Bundle config )
+   {
+      config.putParcelable( Intents.Extras.KEY_FILTER, evaluateRtmSmartFilter() );
+      return config;
+   }
+   
+   
+   
+   private String getQueryFromIntent()
+   {
+      return getIntent().getExtras().getString( SearchManager.QUERY );
+   }
+   
+   
+   
+   private QueryStackItem getTopQuery()
+   {
+      return queryStack.get( queryStack.size() - 1 );
+   }
+   
+   
+   
+   private void pushQuery( QueryStackItem query )
+   {
+      queryStack.add( query );
+   }
+   
+   
+   
+   private QueryStackItem popQuery()
+   {
+      return queryStack.remove( queryStack.size() - 1 );
+   }
+   
+   
+   
+   private void onQuerySucceeded()
+   {
+      final String queryString = getQueryFromIntent();
+      getRecentSuggestions().saveRecentQuery( queryString, null );
+      
+      pushQuery( new QueryStackItem( queryString, true ) );
+      
+      invalidateOptionsMenu();
+   }
+   
+   
+   
+   private void onQueryFailed()
+   {
+      final String queryString = getQueryFromIntent();
+      
+      pushQuery( new QueryStackItem( queryString, false ) );
+      
+      invalidateOptionsMenu();
+   }
+   
+   
+   
+   @Override
+   protected Fragment createTasksListFragment( Bundle config )
+   {
+      evaluateAndStoreQuery();
+      
+      if ( getTopQuery().succeeded )
+      {
+         putTransformedQueryFromSmartFilter( config );
+         
+         return FullDetailedTasksListFragment.newInstance( config );
+      }
+      else
+      {
+         config = new Bundle( 1 );
+         config.putString( SearchManager.QUERY, getQueryFromIntent() );
+         
+         return TaskSearchResultFailedFragment.newInstance( config );
+      }
+   }
+   
+   
+   private final static class QueryStackItem implements Parcelable
+   {
+      @SuppressWarnings( "unused" )
+      public static final Parcelable.Creator< QueryStackItem > CREATOR = new Parcelable.Creator< QueryStackItem >()
+      {
+         
+         @Override
+         public QueryStackItem createFromParcel( Parcel source )
+         {
+            return new QueryStackItem( source );
+         }
+         
+         
+         
+         @Override
+         public QueryStackItem[] newArray( int size )
+         {
+            return new QueryStackItem[ size ];
+         }
+         
+      };
+      
+      public String query;
+      
+      public boolean succeeded;
+      
+      
+      
+      public QueryStackItem( String query, boolean succeeded )
+      {
+         this.query = query;
+         this.succeeded = succeeded;
+      }
+      
+      
+      
+      public QueryStackItem( Parcel source )
+      {
+         this( source.readString(), source.readByte() != 0 );
+      }
+      
+      
+      
+      @Override
+      public void writeToParcel( Parcel dest, int flags )
+      {
+         dest.writeString( query );
+         dest.writeByte( (byte) ( succeeded ? 1 : 0 ) );
+      }
+      
+      
+      
+      @Override
+      public int describeContents()
+      {
+         return 0;
+      }
+      
+      
+      
+      @Override
+      public String toString()
+      {
+         return query;
+      }
    }
 }

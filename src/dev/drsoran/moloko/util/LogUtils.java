@@ -23,8 +23,8 @@
 package dev.drsoran.moloko.util;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 
 
@@ -36,42 +36,39 @@ public final class LogUtils
    public final static String DB_READ_ONLY_ERROR = "Cannot modify the RTM database with read only permission level";
    
    
-
+   
    private LogUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
-   public final static < T > String toTag( Class< T > c )
-   {
-      return "Moloko." + c.getSimpleName();
-   }
    
-
-
+   
    public final static void logDBError( Context context,
-                                        String tag,
+                                        Class< ? > tag,
                                         String entity )
    {
       logDBError( context, tag, entity, null );
    }
    
-
-
+   
+   
    public final static void logDBError( Context context,
-                                        String tag,
+                                        Class< ? > tag,
                                         String entity,
                                         Throwable e )
    {
       final String message = context.getString( R.string.err_db_typed, entity );
       
       if ( e != null )
-         Log.e( tag, message, e );
+      {
+         MolokoApp.Log.e( tag, message, e );
+      }
       else
-         Log.e( tag, message );
+      {
+         MolokoApp.Log.e( tag, message );
+      }
       
-      Toast.makeText( context, message, Toast.LENGTH_SHORT );
+      Toast.makeText( context, message, Toast.LENGTH_SHORT ).show();
    }
 }

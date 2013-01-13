@@ -23,15 +23,11 @@
 package dev.drsoran.moloko.adapters;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,19 +38,16 @@ import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
+import dev.drsoran.moloko.widgets.MolokoListView;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
 public class FullDetailedTasksListFragmentAdapter extends
-         MinDetailedTasksListFragmentAdapter
+         AbstractTasksListFragmentAdapter
 {
-   private final static String TAG = "Moloko."
-      + FullDetailedTasksListFragmentAdapter.class.getName();
-   
    public final static int FLAG_SHOW_ALL = 1 << 0;
-   
-   public final static int FLAG_NO_CLICKABLES = 1 << 1;
    
    private final RtmSmartFilter filter;
    
@@ -62,27 +55,14 @@ public class FullDetailedTasksListFragmentAdapter extends
    
    private final int flags;
    
-   private final OnClickListener onClickListener;
    
    
-   
-   public FullDetailedTasksListFragmentAdapter( Context context, int resourceId )
+   public FullDetailedTasksListFragmentAdapter( MolokoListView listView,
+      IFilter filter, int flags )
    {
-      this( context,
-            resourceId,
-            Collections.< Task > emptyList(),
-            null,
-            0,
-            null );
-   }
-   
-   
-   
-   public FullDetailedTasksListFragmentAdapter( Context context,
-      int resourceId, List< Task > tasks, IFilter filter, int flags,
-      OnClickListener onClickListener )
-   {
-      super( context, resourceId, tasks );
+      super( listView,
+             R.layout.fulldetailed_taskslist_listitem,
+             R.layout.mindetailed_selectable_taskslist_listitem );
       
       this.flags = flags;
       this.filter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
@@ -110,8 +90,6 @@ public class FullDetailedTasksListFragmentAdapter extends
       {
          this.tagsToRemove = null;
       }
-      
-      this.onClickListener = onClickListener;
    }
    
    
@@ -121,50 +99,41 @@ public class FullDetailedTasksListFragmentAdapter extends
    {
       convertView = super.getView( position, convertView, parent );
       
-      ViewGroup additionalsLayout;
-      TextView listName;
-      TextView location;
-      ImageView recurrent;
-      ImageView hasNotes;
-      ImageView postponed;
-      
-      try
+      if ( !isInMultiChoiceModalActionMode() )
       {
-         additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
-         listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
-         location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
-         recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
-         hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
-         postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
+         final SimpleLineView priority = (SimpleLineView) convertView.findViewById( R.id.taskslist_listitem_priority );
+         final ViewGroup additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
+         final TextView listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
+         final TextView location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
+         final ImageView recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
+         final ImageView hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
+         final ImageView postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
+         
+         final Task task = getItem( position );
+         
+         UIUtils.setPriorityColor( getContext(), priority, task );
+         
+         if ( task.getRecurrence() != null )
+            recurrent.setVisibility( View.VISIBLE );
+         else
+            recurrent.setVisibility( View.GONE );
+         
+         if ( task.getNumberOfNotes() > 0 )
+            hasNotes.setVisibility( View.VISIBLE );
+         else
+            hasNotes.setVisibility( View.GONE );
+         
+         if ( task.getPosponed() > 0 )
+            postponed.setVisibility( View.VISIBLE );
+         else
+            postponed.setVisibility( View.GONE );
+         
+         setListName( listName, task );
+         
+         setTags( additionalsLayout, task );
+         
+         setLocation( location, task );
       }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
-      }
-      
-      final Task task = getItem( position );
-      
-      if ( task.getRecurrence() != null )
-         recurrent.setVisibility( View.VISIBLE );
-      else
-         recurrent.setVisibility( View.GONE );
-      
-      if ( task.getNumberOfNotes() > 0 )
-         hasNotes.setVisibility( View.VISIBLE );
-      else
-         hasNotes.setVisibility( View.GONE );
-      
-      if ( task.getPosponed() > 0 )
-         postponed.setVisibility( View.VISIBLE );
-      else
-         postponed.setVisibility( View.GONE );
-      
-      setListName( listName, task );
-      
-      setTags( additionalsLayout, task );
-      
-      setLocation( location, task );
       
       return convertView;
    }
@@ -181,14 +150,11 @@ public class FullDetailedTasksListFragmentAdapter extends
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getListName() );
-         
-         if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
-            view.setClickable( false );
-         else
-            view.setOnClickListener( onClickListener );
       }
       else
+      {
          view.setVisibility( View.GONE );
+      }
    }
    
    
@@ -208,11 +174,6 @@ public class FullDetailedTasksListFragmentAdapter extends
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getLocationName() );
-         
-         if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
-            view.setClickable( false );
-         else
-            view.setOnClickListener( onClickListener );
       }
    }
    
@@ -225,13 +186,21 @@ public class FullDetailedTasksListFragmentAdapter extends
       if ( tagsToRemove != null && tagsToRemove.length > 0 )
          tagsConfig.putStringArray( UIUtils.REMOVE_TAGS_EQUALS, tagsToRemove );
       
-      if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
-         tagsConfig.putBoolean( UIUtils.DISABLE_ALL_TAGS, Boolean.TRUE );
-      
-      UIUtils.inflateTags( getContext(),
-                           tagsLayout,
-                           task.getTags(),
-                           tagsConfig,
-                           onClickListener );
+      UIUtils.inflateTags( getContext(), tagsLayout, task.getTags(), tagsConfig );
+   }
+   
+   
+   
+   @Override
+   protected boolean mustSwitchLayout( View convertView )
+   {
+      if ( isInMultiChoiceModalActionMode() )
+      {
+         return convertView.findViewById( R.id.taskslist_selectable_mindetailed_listitem ) == null;
+      }
+      else
+      {
+         return convertView.findViewById( R.id.taskslist_fulldetailed_listitem ) == null;
+      }
    }
 }

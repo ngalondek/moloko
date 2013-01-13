@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   
+   <!-- Time constants -->
+   <string name="five_min_ms">300000</string>
+   <string name="fifteen_min_ms">900000</string>
+   <string name="thirty_min_ms">1800000</string>
+   <string name="one_hour_ms">3600000</string>
+   <string name="twelve_hours_ms">43200000</string>
+   <string name="twentyfour_hours_ms">86400000</string>
+   
+   <!-- Account preferences -->
+   <string name="acc_prefs_sync_interval_off">-1</string>
+   
+   <!-- Delay values -->
+   <integer name="popup_notification_delay_on_ms">1000</integer>
+      
+</resources>

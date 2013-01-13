@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -39,10 +39,11 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils.EstimateStruct;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
@@ -58,12 +59,17 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    private final static int UNIT_MINUTE = 2;
    
+   private final static long DEFAULT_ESTIMATE_MILLIS = DateUtils.DAY_IN_MILLIS;
+   
+   @InstanceState( key = Config.ESTIMATE_MILLIS )
+   private long estimateMillis = DEFAULT_ESTIMATE_MILLIS;
+   
    private WheelView numberWheel;
    
    private WheelView unitWheel;
    
    
-
+   
    public final static void show( FragmentActivity activity, long estimateMillis )
    {
       final Bundle config = new Bundle( 1 );
@@ -72,8 +78,8 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       show( activity, config );
    }
    
-
-
+   
+   
    public final static void show( FragmentActivity activity, Bundle config )
    {
       final EstimatePickerDialogFragment frag = newInstance( config );
@@ -82,8 +88,8 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
                                   EstimatePickerDialogFragment.class.getName() );
    }
    
-
-
+   
+   
    public final static EstimatePickerDialogFragment newInstance( Bundle config )
    {
       final EstimatePickerDialogFragment frag = new EstimatePickerDialogFragment();
@@ -93,63 +99,46 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       return frag;
    }
    
-
-
-   @Override
-   public void onSaveInstanceState( Bundle outState )
+   
+   
+   public EstimatePickerDialogFragment()
    {
-      if ( configuration != null )
-      {
-         configuration.putLong( Config.ESTIMATE_MILLIS, getMillis() );
-      }
-      
-      super.onSaveInstanceState( outState );
+      registerAnnotatedConfiguredInstance( this,
+                                           EstimatePickerDialogFragment.class );
    }
    
-
-
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.ESTIMATE_MILLIS ) )
-         configuration.putLong( Config.ESTIMATE_MILLIS,
-                                config.getLong( Config.ESTIMATE_MILLIS ) );
-   }
    
-
-
-   @Override
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putLong( Config.ESTIMATE_MILLIS, DateUtils.DAY_IN_MILLIS );
-   }
    
-
-
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
-      final Pair< Integer, Integer > configuredValueAndUnit = getValueAndUnitFromConfiguredMillis();
-      final View content = initWheels( configuredValueAndUnit.first,
-                                       configuredValueAndUnit.second );
+      ensureValidEstimateMillis();
+      
+      final Pair< Integer, Integer > valueAndUnit = getValueAndUnitFromMillis();
+      final View content = initWheels( valueAndUnit.first, valueAndUnit.second );
       
       final Dialog dialog = createDialogImpl( content );
       return dialog;
    }
    
-
-
-   private Pair< Integer, Integer > getValueAndUnitFromConfiguredMillis()
+   
+   
+   private void ensureValidEstimateMillis()
    {
-      final long configuredMillis = configuration.getLong( Config.ESTIMATE_MILLIS );
-      final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( configuredMillis );
+      if ( estimateMillis == -1 )
+      {
+         estimateMillis = DEFAULT_ESTIMATE_MILLIS;
+      }
+   }
+   
+   
+   
+   private Pair< Integer, Integer > getValueAndUnitFromMillis()
+   {
+      final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( estimateMillis );
       
       int value = 1;
       int unit = UNIT_DAY;
@@ -175,19 +164,19 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       return Pair.create( Integer.valueOf( value ), Integer.valueOf( unit ) );
    }
    
-
-
+   
+   
    private View initWheels( int initialValue, int unit )
    {
       if ( initialValue == 0 )
          initialValue = 1;
       
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.estimate_picker_dialog, null );
       
       numberWheel = (WheelView) view.findViewById( R.id.estimate_dlg_number_wheel );
-      numberWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 999 ) );
+      numberWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 365 ) );
       numberWheel.setCurrentItem( initialValue - 1 );
       
       unitWheel = (WheelView) view.findViewById( R.id.estimate_dlg_unit_wheel );
@@ -196,16 +185,35 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       
       // Connect this as last otherwise it will be called when setting
       // the initial value
-      numberWheel.addScrollingListener( new OnWheelScrollListener()
+      unitWheel.addScrollingListener( new OnWheelScrollListener()
       {
+         @Override
          public void onScrollingStarted( WheelView wheel )
          {
          }
          
-
-
+         
+         
+         @Override
          public void onScrollingFinished( WheelView wheel )
          {
+            calculateMillis();
+         }
+      } );
+      
+      numberWheel.addScrollingListener( new OnWheelScrollListener()
+      {
+         @Override
+         public void onScrollingStarted( WheelView wheel )
+         {
+         }
+         
+         
+         
+         @Override
+         public void onScrollingFinished( WheelView wheel )
+         {
+            calculateMillis();
             // 0-based
             // Set the right texts if the value changes. E.g. 1 day - 2 days
             setUnits( wheel.getCurrentItem() + 1 );
@@ -215,11 +223,11 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       return view;
    }
    
-
-
+   
+   
    private Dialog createDialogImpl( View contentView )
    {
-      final Activity activity = getFragmentActivity();
+      final Activity activity = getSherlockActivity();
       
       return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_thumb )
                                                 .setTitle( R.string.dlg_estimate_picker_title )
@@ -227,6 +235,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
                                                 .setPositiveButton( R.string.btn_ok,
                                                                     new DialogInterface.OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
@@ -236,6 +245,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
                                                 .setNegativeButton( R.string.btn_cancel,
                                                                     new DialogInterface.OnClickListener()
                                                                     {
+                                                                       @Override
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
@@ -245,26 +255,32 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
                                                 .create();
    }
    
-
-
+   
+   
    public int getValue()
    {
       return numberWheel.getCurrentItem() + 1;
    }
    
-
-
+   
+   
    public int getUnit()
    {
       return unitWheel.getCurrentItem();
    }
    
-
-
+   
+   
    public long getMillis()
    {
+      return estimateMillis;
+   }
+   
+   
+   
+   private void calculateMillis()
+   {
       long millis = 1000 * getValue(); // s -> ms
-      
       final int unit = getUnit();
       
       switch ( unit )
@@ -279,17 +295,17 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
             millis = millis * 60;
             break;
          default :
-            return -1;
+            throw new IllegalStateException( "Unexpected wheel unit " + unit );
       }
       
-      return millis;
+      estimateMillis = millis;
    }
    
-
-
+   
+   
    private void setUnits( int pos )
    {
-      final Context context = getFragmentActivity();
+      final Context context = getSherlockActivity();
       final Resources res = context.getResources();
       
       unitWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,

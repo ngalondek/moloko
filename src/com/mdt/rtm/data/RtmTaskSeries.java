@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -46,9 +46,6 @@ import dev.drsoran.rtm.ParticipantList;
  */
 public class RtmTaskSeries extends RtmData
 {
-   private final static String TAG = "Moloko."
-      + RtmTaskSeries.class.getSimpleName();
-   
    public static final Parcelable.Creator< RtmTaskSeries > CREATOR = new Parcelable.Creator< RtmTaskSeries >()
    {
       @Override
@@ -203,7 +200,9 @@ public class RtmTaskSeries extends RtmData
             recurrence = null;
             isEveryRecurrence = false;
             
-            Log.e( TAG, "Error reading recurrence pattern from XML", nfe );
+            MolokoApp.Log.e( this.getClass(),
+                             "Error reading recurrence pattern from XML",
+                             nfe );
          }
       }
       

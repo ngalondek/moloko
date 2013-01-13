@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -23,50 +23,41 @@
 package dev.drsoran.moloko.fragments;
 
 import java.util.Collections;
+import java.util.List;
 
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
+import android.database.ContentObserver;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.IEditableFragment;
+import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.loaders.TaskLoader;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditFragment extends
-         AbstractTaskEditFragment< TaskEditFragment >
+public class TaskEditFragment extends AbstractTaskEditFragment
 {
-   private final static IntentFilter INTENT_FILTER;
+   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
-   static
-   {
-      try
-      {
-         INTENT_FILTER = new IntentFilter( Intent.ACTION_EDIT,
-                                           "vnd.android.cursor.item/vnd.rtm.task" );
-         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
-      }
-      catch ( MalformedMimeTypeException e )
-      {
-         throw new RuntimeException( e );
-      }
-   }
+   private final TaskLoaderHandler taskLoaderHandler = new TaskLoaderHandler();
    
+   @InstanceState( key = Intents.Extras.KEY_TASK )
+   private Task task;
    
-   public static class Config
-   {
-      public final static String TASK = "task";
-   }
+   private ContentObserver taskChangesObserver;
    
    
    
@@ -81,17 +72,37 @@ public class TaskEditFragment extends
    
    
    
-   public static IntentFilter getIntentFilter()
+   public TaskEditFragment()
    {
-      return INTENT_FILTER;
+      registerAnnotatedConfiguredInstance( this, TaskEditFragment.class );
    }
    
    
    
    @Override
-   protected Bundle getInitialValues()
+   public void onCreate( Bundle savedInstanceState )
    {
-      final Task task = getConfiguredTaskAssertNotNull();
+      super.onCreate( savedInstanceState );
+      registerForTaskDeletedByBackgroundSync();
+   }
+   
+   
+   
+   @Override
+   public void onDestroy()
+   {
+      unregisterForTaskDeletedByBackgroundSync();
+      handler.release();
+      
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
+   public Bundle determineInitialValues()
+   {
+      final Task task = getTaskAssertNotNull();
       
       final Bundle initialValues = new Bundle();
       
@@ -122,8 +133,7 @@ public class TaskEditFragment extends
    @Override
    protected void initializeHeadSection()
    {
-      final Task task = getConfiguredTaskAssertNotNull();
-      
+      final Task task = getTaskAssertNotNull();
       defaultInitializeHeadSectionImpl( task );
    }
    
@@ -147,22 +157,8 @@ public class TaskEditFragment extends
    
    
    
-   @Override
-   public void takeConfigurationFrom( Bundle config )
+   public Task getTaskAssertNotNull()
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TASK ) )
-         configuration.putParcelable( Config.TASK,
-                                      config.getParcelable( Config.TASK ) );
-   }
-   
-   
-   
-   public Task getConfiguredTaskAssertNotNull()
-   {
-      final Task task = configuration.getParcelable( Config.TASK );
-      
       if ( task == null )
          throw new AssertionError( "expected task to be not null" );
       
@@ -172,34 +168,82 @@ public class TaskEditFragment extends
    
    
    @Override
-   protected boolean saveChanges()
+   protected List< Task > getEditedTasks()
    {
-      boolean ok = super.saveChanges();
-      
-      if ( ok )
-      {
-         final ModificationSet modifications = createModificationSet( Collections.singletonList( getConfiguredTaskAssertNotNull() ) );
-         
-         if ( modifications != null && modifications.size() > 0 )
-         {
-            ok = applyModifications( modifications );
-         }
-      }
-      
-      return ok;
+      return Collections.singletonList( getTaskAssertNotNull() );
    }
    
    
    
-   @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   private void registerForTaskDeletedByBackgroundSync()
    {
-      final Bundle config = new Bundle();
+      taskChangesObserver = new ContentObserver( MolokoApp.getHandler() )
+      {
+         @Override
+         public void onChange( boolean selfChange )
+         {
+            getSherlockActivity().getSupportLoaderManager()
+                                 .initLoader( TaskLoader.ID,
+                                              Bundle.EMPTY,
+                                              TaskEditFragment.this.taskLoaderHandler );
+         }
+      };
       
-      config.putString( TaskFragment.Config.TASK_ID,
-                        getConfiguredTaskAssertNotNull().getId() );
+      getSherlockActivity().getContentResolver()
+                           .registerContentObserver( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                               getTaskAssertNotNull().getId() ),
+                                                     false,
+                                                     taskChangesObserver );
+   }
+   
+   
+   
+   private void unregisterForTaskDeletedByBackgroundSync()
+   {
+      getSherlockActivity().getContentResolver()
+                           .unregisterContentObserver( taskChangesObserver );
+      taskChangesObserver = null;
+   }
+   
+   
+   private class TaskLoaderHandler implements LoaderCallbacks< Task >
+   {
+      @Override
+      public Loader< Task > onCreateLoader( int id, Bundle args )
+      {
+         return new TaskLoader( getSherlockActivity(),
+                                getTaskAssertNotNull().getId() );
+      }
       
-      final TaskFragment fragment = TaskFragment.newInstance( config );
-      return fragment;
+      
+      
+      @Override
+      public void onLoadFinished( Loader< Task > loader, Task data )
+      {
+         // If the database changed by a background sync and the assigned note
+         // has been deleted, then we ask the user if he wants to keep his changes
+         // or drop the note.
+         if ( data == null )
+         {
+            handler.post( new Runnable()
+            {
+               @Override
+               public void run()
+               {
+                  if ( listener != null )
+                  {
+                     listener.onBackgroundDeletion( getTaskAssertNotNull() );
+                  }
+               }
+            } );
+         }
+      }
+      
+      
+      
+      @Override
+      public void onLoaderReset( Loader< Task > loader )
+      {
+      }
    }
 }

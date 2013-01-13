@@ -40,7 +40,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -51,6 +50,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -66,8 +66,7 @@ import dev.drsoran.rtm.ParticipantList;
 public class RtmTaskSeriesProviderPart extends
          AbstractModificationsRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmTaskSeriesProviderPart.class.getSimpleName();
+   private static final Class< RtmTaskSeriesProviderPart > TAG = RtmTaskSeriesProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -87,7 +86,7 @@ public class RtmTaskSeriesProviderPart extends
    }
    
    
-
+   
    public final static ContentValues getContentValues( RtmTaskSeries taskSeries,
                                                        boolean withId )
    {
@@ -147,8 +146,8 @@ public class RtmTaskSeriesProviderPart extends
       return values;
    }
    
-
-
+   
+   
    public final static RtmTaskSeries getTaskSeries( ContentProviderClient client,
                                                     String id )
    {
@@ -167,7 +166,7 @@ public class RtmTaskSeriesProviderPart extends
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query taskseries failed. ", e );
+         MolokoApp.Log.e( TAG, "Query taskseries failed. ", e );
          taskSeries = null;
       }
       finally
@@ -179,8 +178,8 @@ public class RtmTaskSeriesProviderPart extends
       return taskSeries;
    }
    
-
-
+   
+   
    public final static List< RtmTaskSeries > getLocalCreatedTaskSeries( ContentProviderClient client )
    {
       List< RtmTaskSeries > taskSerieses = null;
@@ -229,7 +228,7 @@ public class RtmTaskSeriesProviderPart extends
             }
             catch ( final RemoteException e )
             {
-               Log.e( TAG, "Query taskseries failed. ", e );
+               MolokoApp.Log.e( TAG, "Query taskseries failed. ", e );
                taskSerieses = null;
             }
             finally
@@ -243,8 +242,8 @@ public class RtmTaskSeriesProviderPart extends
       return taskSerieses;
    }
    
-
-
+   
+   
    public final static RtmTaskList getAllTaskSeriesForList( ContentProviderClient client,
                                                             String listId )
    {
@@ -278,7 +277,7 @@ public class RtmTaskSeriesProviderPart extends
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query taskserieses failed.", e );
+         MolokoApp.Log.e( TAG, "Query taskserieses failed.", e );
          taskList = null;
       }
       finally
@@ -290,8 +289,8 @@ public class RtmTaskSeriesProviderPart extends
       return taskList;
    }
    
-
-
+   
+   
    public final static RtmTasks getAllTaskSeries( ContentProviderClient client )
    {
       RtmTasks tasksLists = null;
@@ -329,8 +328,8 @@ public class RtmTaskSeriesProviderPart extends
       return tasksLists;
    }
    
-
-
+   
+   
    public final static ArrayList< ContentProviderOperation > moveTaskSeriesToInbox( ContentResolver contentResolver,
                                                                                     String fromListId,
                                                                                     String nameInbox )
@@ -346,7 +345,7 @@ public class RtmTaskSeriesProviderPart extends
             client.release();
          }
          else
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+            MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
       }
       
       if ( inbox != null )
@@ -374,16 +373,20 @@ public class RtmTaskSeriesProviderPart extends
             }
          }
          else
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         {
+            MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+         }
       }
       else
-         Log.e( TAG, "Query Inbox list failed" );
+      {
+         MolokoApp.Log.e( TAG, "Query Inbox list failed" );
+      }
       
       return operations;
    }
    
-
-
+   
+   
    public final static List< ContentProviderOperation > insertTaskSeries( RtmTaskSeries taskSeries )
    {
       if ( taskSeries == null )
@@ -437,8 +440,8 @@ public class RtmTaskSeriesProviderPart extends
       return operations;
    }
    
-
-
+   
+   
    private final static RtmTaskSeries createRtmTaskSeries( ContentProviderClient client,
                                                            Cursor c )
    {
@@ -499,15 +502,15 @@ public class RtmTaskSeriesProviderPart extends
          return null;
    }
    
-
-
+   
+   
    public RtmTaskSeriesProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, TaskSeries.PATH );
    }
    
-
-
+   
+   
    @Override
    public Object getElement( Uri uri )
    {
@@ -517,8 +520,9 @@ public class RtmTaskSeriesProviderPart extends
       return null;
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + TaskSeries._ID
@@ -568,8 +572,8 @@ public class RtmTaskSeriesProviderPart extends
       createModificationsTrigger( db );
    }
    
-
-
+   
+   
    @Override
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
@@ -582,54 +586,57 @@ public class RtmTaskSeriesProviderPart extends
       return initialValues;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return TaskSeries.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return TaskSeries.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return TaskSeries.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return TaskSeries.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -23,21 +23,28 @@
 package dev.drsoran.moloko.prefs;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
-public class AutoSummaryEditTextPreference extends EditTextPreference implements
-         IMolokoPreference, OnPreferenceChangeListener
+class AutoSummaryEditTextPreference extends EditTextPreference implements
+         IMolokoPreference, IAutoSummaryPreference< String >,
+         OnSharedPreferenceChangeListener, OnPreferenceChangeListener
 {
+   private final AutoSummary< String > autoSummaryImpl;
+   
+   
    
    public AutoSummaryEditTextPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      autoSummaryImpl = new AutoSummary< String >( context, attrs, this );
    }
    
    
@@ -46,7 +53,7 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
    protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
    {
       super.onAttachedToHierarchy( preferenceManager );
-      
+      getSharedPreferences().registerOnSharedPreferenceChangeListener( this );
       setOnPreferenceChangeListener( this );
    }
    
@@ -63,6 +70,7 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
    public void cleanUp()
    {
       setOnPreferenceChangeListener( null );
+      getSharedPreferences().unregisterOnSharedPreferenceChangeListener( this );
    }
    
    
@@ -70,35 +78,47 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
    @Override
    public CharSequence getSummary()
    {
-      final CharSequence summary = super.getSummary();
-      final CharSequence entry = super.getText();
-      
-      if ( summary == null || entry == null )
-      {
-         return String.format( summary.toString(), Strings.EMPTY_STRING );
-      }
-      else
-      {
-         return String.format( summary.toString(), entry.toString() );
-      }
+      return autoSummaryImpl.getSummary();
    }
    
    
    
    @Override
-   public void setSummary( CharSequence summary )
+   public String getSummaryDisplay()
    {
-      super.setSummary( summary );
-      
-      final CharSequence lSummary = getSummary();
-      
-      if ( summary == null && lSummary != null )
+      return getText();
+   }
+   
+   
+   
+   public IAutoSummaryFormatter getAutoSummaryFormatter()
+   {
+      return autoSummaryImpl.getAutoSummaryFormatter();
+   }
+   
+   
+   
+   public void setAutoSummaryFormatter( IAutoSummaryFormatter formatter )
+   {
+      autoSummaryImpl.setAutoSummaryFormatter( formatter );
+   }
+   
+   
+   
+   @Override
+   public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
+                                          String key )
+   {
+      if ( key != null && key.equals( getKey() ) )
       {
-         setSummary( null );
-      }
-      else if ( summary != null && !summary.equals( lSummary ) )
-      {
-         setSummary( summary.toString() );
+         final String currentValue = getText();
+         final String persistedValue = getPersistedString( currentValue );
+         
+         if ( SyncUtils.hasChanged( currentValue, persistedValue ) )
+         {
+            setText( persistedValue );
+            notifyChanged();
+         }
       }
    }
    
@@ -107,8 +127,7 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
    @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
-      if ( newValue != null && newValue instanceof String
-         && !( (String) newValue ).equals( getText() ) )
+      if ( newValue != null && newValue.equals( getText() ) )
       {
          notifyChanged();
       }

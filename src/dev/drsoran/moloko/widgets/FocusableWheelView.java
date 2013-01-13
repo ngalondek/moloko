@@ -32,7 +32,6 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
-import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -43,22 +42,22 @@ public class FocusableWheelView extends WheelView implements Checkable
       boolean checked;
       
       
-
+      
       SavedState( Parcelable superState )
       {
          super( superState );
       }
       
-
-
+      
+      
       private SavedState( Parcel in )
       {
          super( in );
          checked = (Boolean) in.readValue( null );
       }
       
-
-
+      
+      
       @Override
       public void writeToParcel( Parcel out, int flags )
       {
@@ -66,8 +65,8 @@ public class FocusableWheelView extends WheelView implements Checkable
          out.writeValue( checked );
       }
       
-
-
+      
+      
       @Override
       public String toString()
       {
@@ -78,13 +77,15 @@ public class FocusableWheelView extends WheelView implements Checkable
       
       public static final Parcelable.Creator< SavedState > CREATOR = new Parcelable.Creator< SavedState >()
       {
+         @Override
          public SavedState createFromParcel( Parcel in )
          {
             return new SavedState( in );
          }
          
-
-
+         
+         
+         @Override
          public SavedState[] newArray( int size )
          {
             return new SavedState[ size ];
@@ -95,31 +96,31 @@ public class FocusableWheelView extends WheelView implements Checkable
    private boolean checked = false;
    
    
-
+   
    public FocusableWheelView( Context context )
    {
       super( context );
       init();
    }
    
-
-
+   
+   
    public FocusableWheelView( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       init();
    }
    
-
-
+   
+   
    public FocusableWheelView( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
       init();
    }
    
-
-
+   
+   
    private void init()
    {
       setFocusable( true );
@@ -127,15 +128,17 @@ public class FocusableWheelView extends WheelView implements Checkable
       setClickable( true );
    }
    
-
-
+   
+   
+   @Override
    public boolean isChecked()
    {
       return checked;
    }
    
-
-
+   
+   
+   @Override
    public void setChecked( boolean checked )
    {
       if ( checked != this.checked )
@@ -145,15 +148,16 @@ public class FocusableWheelView extends WheelView implements Checkable
       }
    }
    
-
-
+   
+   
+   @Override
    public void toggle()
    {
       setChecked( !checked );
    }
    
-
-
+   
+   
    @Override
    public boolean performClick()
    {
@@ -161,8 +165,8 @@ public class FocusableWheelView extends WheelView implements Checkable
       return super.performClick();
    }
    
-
-
+   
+   
    @Override
    public boolean dispatchPopulateAccessibilityEvent( AccessibilityEvent event )
    {
@@ -176,8 +180,8 @@ public class FocusableWheelView extends WheelView implements Checkable
       return populated;
    }
    
-
-
+   
+   
    @Override
    public Parcelable onSaveInstanceState()
    {
@@ -188,8 +192,8 @@ public class FocusableWheelView extends WheelView implements Checkable
       return ss;
    }
    
-
-
+   
+   
    @Override
    public void onRestoreInstanceState( Parcelable state )
    {
@@ -200,8 +204,8 @@ public class FocusableWheelView extends WheelView implements Checkable
       requestLayout();
    }
    
-
-
+   
+   
    @Override
    protected void onFocusChanged( boolean gainFocus,
                                   int direction,
@@ -213,8 +217,8 @@ public class FocusableWheelView extends WheelView implements Checkable
          setChecked( false );
    }
    
-
-
+   
+   
    @Override
    public boolean onKeyDown( int keyCode, KeyEvent event )
    {
@@ -235,8 +239,8 @@ public class FocusableWheelView extends WheelView implements Checkable
       return super.onKeyDown( keyCode, event );
    }
    
-
-
+   
+   
    @Override
    protected int[] onCreateDrawableState( int extraSpace )
    {
@@ -248,16 +252,16 @@ public class FocusableWheelView extends WheelView implements Checkable
       return drawableState;
    }
    
-
-
+   
+   
    @Override
    protected boolean verifyDrawable( Drawable who )
    {
       return super.verifyDrawable( who ) || who == getCenterDrawable();
    }
    
-
-
+   
+   
    @Override
    protected void drawableStateChanged()
    {
@@ -272,21 +276,5 @@ public class FocusableWheelView extends WheelView implements Checkable
          
          invalidateWheel( false );
       }
-   }
-   
-
-
-   @Override
-   protected int getCenterDrawableResId()
-   {
-      return R.drawable.wheel_selector_val;
-   }
-   
-
-
-   @Override
-   protected int getBackgroundResId()
-   {
-      return R.drawable.wheel_selector_bgnd;
    }
 }

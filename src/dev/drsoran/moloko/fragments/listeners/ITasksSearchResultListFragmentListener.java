@@ -22,12 +22,15 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
+import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
+
+
 public interface ITasksSearchResultListFragmentListener extends
-         IFullDetailedTasksListFragmentListener
+         ITasksListActionModeListener
 {
    void onQuerySucceeded( String queryString );
    
-
-
+   
+   
    void onQueryFailed( String queryString );
 }

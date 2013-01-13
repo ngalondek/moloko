@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,24 +22,46 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
-
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.SupportActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.actionbarsherlock.app.SherlockFragment;
+import com.mdt.rtm.data.RtmAuth;
+
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 
-public abstract class MolokoFragment extends Fragment implements IConfigurable
+public abstract class MolokoFragment extends SherlockFragment implements
+         IConfigurable, IOnSettingsChangedListener, IRtmAccessLevelAware
 {
-   private IOnSettingsChangedListener onSettingsChangedListener;
+   private final ConfigurableFragmentImpl impl;
    
-   protected Bundle configuration;
+   private final RtmAccessLevelAwareFragmentImpl accessLevelAwareImpl;
+   
+   
+   
+   protected MolokoFragment()
+   {
+      impl = new ConfigurableFragmentImpl( this, getSettingsMask() );
+      accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      impl.onAttach( activity );
+      accessLevelAwareImpl.onAttach( getSherlockActivity() );
+   }
    
    
    
@@ -47,43 +69,16 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
-      configure( getArguments() );
+      impl.onCreate( savedInstanceState );
    }
    
    
    
    @Override
-   public final void onAttach( SupportActivity activity )
+   public void onStart()
    {
-      super.onAttach( activity );
-      
-      onAttach( (FragmentActivity) activity );
-   }
-   
-   
-   
-   public void onAttach( FragmentActivity activity )
-   {
-      final int settingsMask = getSettingsMask();
-      
-      if ( settingsMask != 0 )
-      {
-         onSettingsChangedListener = new IOnSettingsChangedListener()
-         {
-            @Override
-            public void onSettingsChanged( int which,
-                                           HashMap< Integer, Object > oldValues )
-            {
-               if ( isAdded() && !isDetached() )
-                  MolokoFragment.this.onSettingsChanged( which, oldValues );
-            }
-         };
-         
-         MolokoApp.get( activity )
-                  .registerOnSettingsChangedListener( settingsMask,
-                                                      onSettingsChangedListener );
-      }
+      super.onStart();
+      impl.onStart();
    }
    
    
@@ -91,22 +86,10 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public void onDetach()
    {
-      super.onDetach();
+      impl.onDetach();
+      accessLevelAwareImpl.onDetach();
       
-      if ( onSettingsChangedListener != null )
-      {
-         MolokoApp.get( getFragmentActivity() )
-                  .unregisterOnSettingsChangedListener( onSettingsChangedListener );
-         
-         onSettingsChangedListener = null;
-      }
-   }
-   
-   
-   
-   public FragmentActivity getFragmentActivity()
-   {
-      return (FragmentActivity) getSupportActivity();
+      super.onDetach();
    }
    
    
@@ -115,8 +98,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    public void setArguments( Bundle args )
    {
       super.setArguments( args );
-      
-      configure( args );
+      impl.setArguments( args );
    }
    
    
@@ -125,8 +107,38 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    public void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      
-      outState.putAll( getConfiguration() );
+      impl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   @Override
+   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      accessLevelAwareImpl.reEvaluateRtmAccessLevel( currentAccessLevel );
+   }
+   
+   
+   
+   public boolean isReadOnlyAccess()
+   {
+      return accessLevelAwareImpl.isReadOnlyAccess();
+   }
+   
+   
+   
+   public boolean isWritableAccess()
+   {
+      return accessLevelAwareImpl.isWritableAccess();
+   }
+   
+   
+   
+   @Override
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz )
+   {
+      impl.registerAnnotatedConfiguredInstance( instance, clazz );
    }
    
    
@@ -134,7 +146,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public final Bundle getConfiguration()
    {
-      return new Bundle( configuration );
+      return impl.getConfiguration();
    }
    
    
@@ -142,69 +154,49 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    @Override
    public final void configure( Bundle config )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-         takeConfigurationFrom( config );
+      impl.configure( config );
    }
    
    
    
    @Override
-   public void clearConfiguration()
+   public final void clearConfiguration()
    {
-      if ( configuration != null )
-         configuration.clear();
+      impl.setDefaultConfiguration();
    }
    
    
    
-   @Override
-   public final Bundle createDefaultConfiguration()
+   public Bundle getDefaultConfiguration()
    {
-      final Bundle bundle = new Bundle();
-      
-      putDefaultConfigurationTo( bundle );
-      
-      return bundle;
-   }
-   
-   
-   
-   protected void takeConfigurationFrom( Bundle config )
-   {
-   }
-   
-   
-   
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
+      return impl.getDefaultConfiguration();
    }
    
    
    
    public final ViewGroup getContentView()
    {
-      final View root = getView();
-      
-      if ( root != null )
-         return (ViewGroup) root.findViewById( android.R.id.content );
-      else
-         return null;
+      return impl.getContentView();
    }
    
    
    
-   protected void onSettingsChanged( int which,
-                                     HashMap< Integer, Object > oldValues )
+   @Override
+   public void onSettingsChanged( int which )
    {
    }
    
    
    
-   public int getSettingsMask()
+   protected int getSettingsMask()
    {
       return 0;
    }
+   
+   
+   
+   @Override
+   public abstract View onCreateView( LayoutInflater inflater,
+                                      ViewGroup container,
+                                      Bundle savedInstanceState );
 }

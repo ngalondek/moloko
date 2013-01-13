@@ -41,35 +41,35 @@ public abstract class Language
    protected final HashMap< String, String > dictionary;
    
    
-
+   
    protected Language()
    {
       dictionary = new HashMap< String, String >();
    }
    
-
-
+   
+   
    protected Language( Language other )
    {
       dictionary = new HashMap< String, String >( other.dictionary );
    }
    
-
-
+   
+   
    public String getString( String key )
    {
       return dictionary.get( key );
    }
    
-
-
+   
+   
    public String getPluralString( String key, String unit, int qty )
    {
       return getPluralString( key, unit, String.valueOf( qty ) );
    }
    
-
-
+   
+   
    public String getPluralString( String key, String unit, String qty )
    {
       key = key + "_" + unit + "_";
@@ -82,8 +82,8 @@ public abstract class Language
       return res;
    }
    
-
-
+   
+   
    public List< String > getStings( String key )
    {
       final String entry = getString( key );
@@ -97,15 +97,15 @@ public abstract class Language
          return Collections.emptyList();
    }
    
-
-
+   
+   
    public List< String > getPluralStings( String key, String unit, int qty )
    {
       return getPluralStrings( key, unit, String.valueOf( qty ) );
    }
    
-
-
+   
+   
    public List< String > getPluralStrings( String key, String unit, String qty )
    {
       final String entry = getPluralString( key, unit, qty );
@@ -119,8 +119,8 @@ public abstract class Language
          return Collections.emptyList();
    }
    
-
-
+   
+   
    protected void fromResources( Resources resources, int resId ) throws ParseException
    {
       final XmlResourceParser xmlParser = resources.getXml( resId );
@@ -166,8 +166,8 @@ public abstract class Language
       xmlParser.close();
    }
    
-
-
+   
+   
    protected void readSimpleEntry( XmlResourceParser xmlParser ) throws ParseException
    {
       final int attribCount = xmlParser.getAttributeCount();
@@ -206,48 +206,62 @@ public abstract class Language
             + xmlParser.getLineNumber(), xmlParser.getLineNumber() );
    }
    
-
-
+   
+   
    protected void readPluralEntry( XmlResourceParser xmlParser ) throws ParseException,
                                                                 XmlPullParserException,
                                                                 IOException
-
+   
    {
       final int attribCount = xmlParser.getAttributeCount();
       
       if ( attribCount < 2 )
+      {
          throw new ParseException( "Unexpected number of attributes in 'entryPl' tag. "
                                       + attribCount,
                                    xmlParser.getLineNumber() );
+      }
+      
+      final HashMap< String, String > attributes = new HashMap< String, String >( attribCount );
       
       String key = null;
-      
       for ( int i = 0; i < attribCount; ++i )
       {
          final String attribName = xmlParser.getAttributeName( i );
-         
          if ( attribName.equalsIgnoreCase( "key" ) )
          {
             key = xmlParser.getAttributeValue( i );
          }
          else
          {
-            final String value = xmlParser.getAttributeValue( i );
-            
-            addToDictionary( xmlParser, key + "_" + attribName, value );
+            final String attribValue = xmlParser.getAttributeValue( i );
+            attributes.put( attribName, attribValue );
          }
+      }
+      
+      if ( key == null )
+      {
+         throw new ParseException( "Expected a 'key' attribute in 'entryPl' tag. ",
+                                   xmlParser.getLineNumber() );
+      }
+      
+      for ( String attributeName : attributes.keySet() )
+      {
+         addToDictionary( xmlParser,
+                          key + "_" + attributeName,
+                          attributes.get( attributeName ) );
       }
    }
    
-
-
+   
+   
    protected void validate( XmlPullParser xmlParser, String key, String value ) throws ParseException
    {
       
    }
    
-
-
+   
+   
    private void addToDictionary( XmlResourceParser xmlParser,
                                  String key,
                                  String value ) throws ParseException

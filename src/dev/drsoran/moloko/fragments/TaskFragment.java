@@ -1,6 +1,5 @@
 /* 
-
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -23,12 +22,8 @@
 
 package dev.drsoran.moloko.fragments;
 
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -37,48 +32,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import dev.drsoran.moloko.IEditFragment;
-import dev.drsoran.moloko.IEditableFragment;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.format.RtmStyleTaskDescTextViewFormatter;
+import dev.drsoran.moloko.fragments.base.IAbsViewPagerSupport;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
-import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.loaders.TaskLoader;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.MenuItemPreparer;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.widgets.SimpleLineView;
 import dev.drsoran.rtm.Participant;
 import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
 public class TaskFragment extends MolokoLoaderFragment< Task > implements
-         IEditableFragment< TaskFragment >
+         IAbsViewPagerSupport
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + TaskFragment.class.getSimpleName();
-   
-   private final static IntentFilter INTENT_FILTER;
-   
-   static
-   {
-      try
-      {
-         INTENT_FILTER = new IntentFilter( Intent.ACTION_VIEW,
-                                           "vnd.android.cursor.item/vnd.rtm.task" );
-         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
-      }
-      catch ( MalformedMimeTypeException e )
-      {
-         throw new RuntimeException( e );
-      }
-   }
-   
-   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   public final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
    
    
    public static class Config
@@ -86,11 +69,16 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       public final static String TASK_ID = "task_id";
    }
    
-   private final static int TASK_LOADER_ID = 1;
+   private boolean enableAbsViewPagerWorkaround;
    
    private ITaskFragmentListener listener;
    
+   @InstanceState( key = Config.TASK_ID )
+   private String taskId;
+   
    private ViewGroup content;
+   
+   private SimpleLineView priorityBar;
    
    private TextView addedDate;
    
@@ -112,10 +100,10 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private ViewGroup participantsSection;
    
-   private View urlSection;
+   private TitleWithTextLayout urlSection;
    
    
-
+   
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -125,17 +113,28 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       return fragment;
    }
    
-
-
-   public static IntentFilter getIntentFilter()
+   
+   
+   public TaskFragment()
    {
-      return INTENT_FILTER;
+      registerAnnotatedConfiguredInstance( this, TaskFragment.class );
    }
    
-
-
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onCreate( Bundle savedInstanceState )
+   {
+      enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
+      
+      super.onCreate( savedInstanceState );
+      setHasOptionsMenu( !enableAbsViewPagerWorkaround );
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -145,17 +144,17 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          listener = new NullTaskFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -166,6 +165,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                                                   false );
       
       content = (ViewGroup) fragmentView.findViewById( android.R.id.content );
+      priorityBar = (SimpleLineView) content.findViewById( R.id.task_overview_priority_bar );
       addedDate = (TextView) content.findViewById( R.id.task_overview_added_date );
       completedDate = (TextView) content.findViewById( R.id.task_overview_completed_date );
       source = (TextView) content.findViewById( R.id.task_overview_src );
@@ -176,49 +176,164 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       dateTimeSection = content.findViewById( R.id.task_dateTime );
       locationSection = content.findViewById( R.id.task_location );
       participantsSection = (ViewGroup) content.findViewById( R.id.task_participants );
-      urlSection = content.findViewById( R.id.task_url );
+      urlSection = (TitleWithTextLayout) content.findViewById( R.id.task_url );
       
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
-   public void takeConfigurationFrom( Bundle config )
+   public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TASK_ID ) )
-         configuration.putString( Config.TASK_ID,
-                                  config.getString( Config.TASK_ID ) );
+      super.onCreateOptionsMenu( menu, inflater );
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         onCreateOptionsMenuImpl( menu, inflater );
+      }
    }
    
-
-
-   public String getConfiguredTaskId()
+   
+   
+   @Override
+   public boolean onCreateOptionsMenuViewPagerSupportWorkaround( Menu menu,
+                                                                 MenuInflater inflater )
    {
-      return configuration.getString( Config.TASK_ID );
+      onCreateOptionsMenuImpl( menu, inflater );
+      return true;
    }
    
-
-
+   
+   
+   private void onCreateOptionsMenuImpl( Menu menu, MenuInflater inflater )
+   {
+      final Task task = getLoaderData();
+      if ( task != null && isWritableAccess() )
+      {
+         inflater.inflate( R.menu.task_fragment_rwd, menu );
+      }
+   }
+   
+   
+   
+   @Override
+   public void onPrepareOptionsMenu( Menu menu )
+   {
+      super.onPrepareOptionsMenu( menu );
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         onPrepareOptionsMenuImpl( menu );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenuViewPagerSupportWorkaround( Menu menu )
+   {
+      onPrepareOptionsMenuImpl( menu );
+      return true;
+   }
+   
+   
+   
+   private void onPrepareOptionsMenuImpl( Menu menu )
+   {
+      final Task task = getLoaderData();
+      if ( task != null )
+      {
+         final boolean taskIsCompleted = task.getCompleted() != null;
+         final MenuItemPreparer preparer = new MenuItemPreparer( menu );
+         
+         preparer.setVisible( R.id.menu_complete_selected_tasks,
+                              !taskIsCompleted );
+         preparer.setVisible( R.id.menu_uncomplete_selected_tasks,
+                              taskIsCompleted );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      if ( !enableAbsViewPagerWorkaround )
+      {
+         return onOptionsItemSelectedImpl( item );
+      }
+      else
+      {
+         return super.onOptionsItemSelected( item );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onOptionsItemSelectedViewPagerSupportWorkaround( MenuItem item )
+   {
+      return onOptionsItemSelectedImpl( item );
+   }
+   
+   
+   
+   private boolean onOptionsItemSelectedImpl( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case R.id.menu_complete_selected_tasks:
+            listener.onCompleteTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case R.id.menu_uncomplete_selected_tasks:
+            listener.onIncompleteTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case R.id.menu_postpone_selected_tasks:
+            listener.onPostponeTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case R.id.menu_delete_selected:
+            listener.onDeleteTask( getLoaderDataAssertNotNull() );
+            return true;
+            
+         case R.id.menu_edit_selected:
+            listener.onEditTask( getLoaderDataAssertNotNull() );
+            
+         default :
+            return false;
+      }
+   }
+   
+   
+   
+   public String getTaskId()
+   {
+      return taskId;
+   }
+   
+   
+   
    @Override
    public void initContent( ViewGroup container )
    {
       final Task task = getLoaderDataAssertNotNull();
+      final SherlockFragmentActivity activity = getSherlockActivity();
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
-                                                         task.getAdded()
-                                                             .getTime(),
-                                                         FULL_DATE_FLAGS ) );
+      UIUtils.setPriorityColor( activity, priorityBar, task );
+      
+      addedDate.setText( MolokoDateFormatter.formatDateTime( activity,
+                                                             task.getAdded()
+                                                                 .getTime(),
+                                                             FULL_DATE_FLAGS ) );
       
       if ( task.getCompleted() != null )
       {
          completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
-                                                                task.getCompleted()
-                                                                    .getTime(),
-                                                                FULL_DATE_FLAGS ) );
+         completedDate.setText( MolokoDateFormatter.formatDateTime( activity,
+                                                                    task.getCompleted()
+                                                                        .getTime(),
+                                                                    FULL_DATE_FLAGS ) );
       }
       else
       {
@@ -245,15 +360,13 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       else
          source.setText( "?" );
       
-      UIUtils.setTaskDescription( description, task, null );
+      RtmStyleTaskDescTextViewFormatter.setTaskDescription( description,
+                                                            task,
+                                                            null );
       
       listName.setText( task.getListName() );
       
-      UIUtils.inflateTags( getFragmentActivity(),
-                           tagsLayout,
-                           task.getTags(),
-                           null,
-                           null );
+      UIUtils.inflateTags( activity, tagsLayout, task.getTags(), null );
       
       setDateTimeSection( dateTimeSection, task );
       
@@ -264,16 +377,18 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       if ( !TextUtils.isEmpty( task.getUrl() ) )
       {
          urlSection.setVisibility( View.VISIBLE );
-         ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
+         urlSection.setText( task.getUrl() );
       }
       else
       {
          urlSection.setVisibility( View.GONE );
       }
+      
+      activity.invalidateOptionsMenu();
    }
    
-
-
+   
+   
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -295,24 +410,24 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             if ( task.hasDueTime() )
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( getFragmentActivity(),
-                                                                        task.getDue()
-                                                                            .getTime(),
-                                                                        MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                           | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
+                                        MolokoDateFormatter.formatDateTime( getSherlockActivity(),
+                                                                            task.getDue()
+                                                                                .getTime(),
+                                                                            MolokoDateFormatter.FORMAT_WITH_YEAR
+                                                                               | MolokoDateFormatter.FORMAT_SHOW_WEEKDAY ) );
             else
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( getFragmentActivity(),
-                                                                    task.getDue()
-                                                                        .getTime(),
-                                                                    MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                       | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
+                                        MolokoDateFormatter.formatDate( getSherlockActivity(),
+                                                                        task.getDue()
+                                                                            .getTime(),
+                                                                        MolokoDateFormatter.FORMAT_WITH_YEAR
+                                                                           | MolokoDateFormatter.FORMAT_SHOW_WEEKDAY ) );
             
          }
          
          if ( isRecurrent )
          {
-            final String sentence = RecurrenceParsing.parseRecurrencePattern( getFragmentActivity(),
+            final String sentence = RecurrenceParsing.parseRecurrencePattern( getSherlockActivity(),
                                                                               task.getRecurrence(),
                                                                               task.isEveryRecurrence() );
             
@@ -340,8 +455,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             UIUtils.appendAtNewLine( textBuffer,
                                      getString( R.string.task_datetime_estimate_inline,
-                                                MolokoDateUtils.formatEstimated( getFragmentActivity(),
-                                                                                 task.getEstimateMillis() ) ) );
+                                                MolokoDateFormatter.formatEstimated( getSherlockActivity(),
+                                                                                     task.getEstimateMillis() ) ) );
          }
          
          // Determine the section title
@@ -354,15 +469,14 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          else
             titleId = R.string.task_datetime_title_recurr;
          
-         if ( !UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( titleId ),
-                                                      textBuffer.toString() ) )
-            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+         UIUtils.initializeTitleWithTextLayout( view,
+                                                getString( titleId ),
+                                                textBuffer.toString() );
       }
    }
    
-
-
+   
+   
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -402,42 +516,30 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          
          if ( locationIsClickable )
          {
-            // Check if we can click the location
-            if ( LocationChooserDialogFragment.hasIntentHandler( getFragmentActivity(),
-                                                                 task.getLocationAddress() ) )
-            {
-               final SpannableString clickableLocation = new SpannableString( locationName );
-               clickableLocation.setSpan( new ClickableSpan()
-               {
-                  @Override
-                  public void onClick( View widget )
-                  {
-                     listener.onOpenLocation( task.getLocationId() );
-                  }
-               }, 0, clickableLocation.length(), 0 );
-               
-               UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( R.string.task_location ),
-                                                      clickableLocation );
-            }
-            else
-            {
-               locationIsClickable = false;
-            }
-         }
-         
-         if ( !locationIsClickable )
-         {
-            if ( !UIUtils.initializeTitleWithTextLayout( view,
+            final SpannableString clickableLocation = new SpannableString( locationName );
+            UIUtils.initializeTitleWithTextLayoutAsLink( view,
                                                          getString( R.string.task_location ),
-                                                         locationName ) )
-               throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+                                                         clickableLocation,
+                                                         new ClickableSpan()
+                                                         {
+                                                            @Override
+                                                            public void onClick( View widget )
+                                                            {
+                                                               listener.onOpenLocation( task );
+                                                            }
+                                                         } );
+         }
+         else
+         {
+            UIUtils.initializeTitleWithTextLayout( view,
+                                                   getString( R.string.task_location ),
+                                                   locationName );
          }
       }
    }
    
-
-
+   
+   
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -448,20 +550,18 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          
          for ( final Participant participant : participants.getParticipants() )
          {
-            final SpannableString clickableContact = new SpannableString( participant.getFullname() );
-            
-            clickableContact.setSpan( new ClickableSpan()
-            {
-               @Override
-               public void onClick( View widget )
-               {
-                  listener.onOpenContact( participant.getFullname(),
-                                          participant.getUsername() );
-               }
-            }, 0, clickableContact.length(), 0 );
-            
-            final TextView textView = new TextView( getFragmentActivity() );
-            UIUtils.applySpannable( textView, clickableContact );
+            final TextView textView = new TextView( getSherlockActivity() );
+            UIUtils.makeLink( textView,
+                              participant.getFullname(),
+                              new ClickableSpan()
+                              {
+                                 @Override
+                                 public void onClick( View widget )
+                                 {
+                                    listener.onOpenContact( participant.getFullname(),
+                                                            participant.getUsername() );
+                                 }
+                              } );
             
             view.addView( textView );
          }
@@ -472,59 +572,50 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    @Override
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskLoader( getFragmentActivity(),
+      return new TaskLoader( getSherlockActivity(),
                              args.getString( Config.TASK_ID ) );
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_task );
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
-      return TASK_LOADER_ID;
+      return TaskLoader.ID;
    }
    
-
-
+   
+   
    @Override
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
    
-
-
-   @Override
-   public boolean canBeEdited()
+   
+   
+   public Task getTask()
    {
-      return getLoaderData() != null
-         && AccountUtils.isWriteableAccess( getFragmentActivity() );
+      return getLoaderData();
    }
    
-
-
-   @Override
-   public IEditFragment< ? extends Fragment > createEditFragmentInstance()
+   
+   
+   public Task getTaskAssertNotNull()
    {
-      final Bundle config = new Bundle();
-      
-      config.putParcelable( TaskEditFragment.Config.TASK,
-                            getLoaderDataAssertNotNull() );
-      
-      final TaskEditFragment fragment = TaskEditFragment.newInstance( config );
-      return fragment;
+      return getLoaderDataAssertNotNull();
    }
 }

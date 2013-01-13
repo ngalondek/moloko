@@ -17,25 +17,31 @@
    <dimen
       name="app_listPreferredItemHeight">70dip</dimen>
    <dimen
-      name="app_actionbar_height">45dip</dimen>
-   <dimen
       name="app_actionbar_text_size">14sp</dimen>
-   <dimen
-      name="app_actionbar_subtitle_size">12sp</dimen>
-   <dimen
-      name="app_actionbar_actionItem_width">24dip</dimen>
-   <dimen
-      name="app_actionbar_actionItem_heigth">@dimen/app_actionbar_actionItem_width</dimen>
    <dimen
       name="app_title_with_text_textSize">14sp</dimen>
    <dimen
-      name="task_overview_corner_radius">3dip</dimen>
-   <dimen
-      name="task_overview_stroke_width">1dip</dimen>
+      name="task_overview_priority_bar_heigth">5dip</dimen>
    <dimen
       name="tasklists_group_height">45dip</dimen>
    <dimen
       name="taskslist_listitem_row_space">12dip</dimen>
    <dimen
       name="taskslist_listitem_widget_space_lrg">10dip</dimen>
+   <dimen
+      name="moloko_prefs_marginLeft">15dip</dimen>
+   <dimen
+      name="moloko_prefs_marginRight">6dip</dimen>
+   <dimen
+      name="moloko_prefs_marginTop">6dip</dimen>
+   <dimen
+      name="moloko_prefs_marginBottom">6dip</dimen>
+   <dimen
+      name="wheel_text_size">24dip</dimen>
+   <dimen
+      name="due_date_picker_weekday_text_size">24dip</dimen>
+   <dimen
+      name="due_date_picker_wheel_height">140dip</dimen>
+   <dimen
+      name="due_time_picker_wheel_height">140dip</dimen>
 </resources>

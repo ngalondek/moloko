@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko.
       Moloko is free software: you can redistribute it and/or modify it
       under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
@@ -14,28 +14,20 @@
       implementation
    -->
 
-<LinearLayout
+<FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
    <ExpandableListView
       android:id="@android:id/list"
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent" />
-
-   <TextView
-      android:id="@android:id/empty"
-      style="@style/No_List_Elements_Text"
-      android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:text="@string/tasklists_no_lists" />
+      android:groupIndicator="@null" />
 
-   <include
-      android:id="@+id/loading_spinner"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      layout="@layout/app_loading_spinner"
-      android:visibility="gone" />
-</LinearLayout>
+   <include android:id="@android:id/empty"
+      layout="@layout/app_empty_list_container"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"/>
+</FrameLayout>

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -26,6 +26,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -33,6 +34,9 @@ import dev.drsoran.rtm.Task;
 
 public class TaskLoader extends AbstractLoader< Task >
 {
+   public final static int ID = R.id.loader_task;
+   
+   
    public static class Config
    {
       public final static String TASK_ID = "task_id";

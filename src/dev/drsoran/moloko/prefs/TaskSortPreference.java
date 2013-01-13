@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -24,28 +24,36 @@ package dev.drsoran.moloko.prefs;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.Settings;
 
 
-public class TaskSortPreference extends AutoSummaryListPreference
+class TaskSortPreference extends AutoSummaryListPreference
 {
    public final static String[] SORT_ORDER_VALUES =
-   {
-    String.valueOf( Settings.TASK_SORT_PRIORITY ),
+   { String.valueOf( Settings.TASK_SORT_PRIORITY ),
     String.valueOf( Settings.TASK_SORT_DUE_DATE ),
     String.valueOf( Settings.TASK_SORT_NAME ) };
    
    
-
+   
    public TaskSortPreference( Context context, AttributeSet attrs )
    {
-      super( context, attrs );
-      
+      super( context, attrs );      
       setEntryValues( SORT_ORDER_VALUES );
    }
    
-
-
+   
+   
+   @Override
+   protected void onAttachedToActivity()
+   {
+      super.onAttachedToActivity();
+      ensureTaskSortSetting();
+   }
+   
+   
+   
    public final static int getIndexOfValue( int value )
    {
       for ( int i = 0; i < SORT_ORDER_VALUES.length; i++ )
@@ -57,8 +65,8 @@ public class TaskSortPreference extends AutoSummaryListPreference
       return -1;
    }
    
-
-
+   
+   
    public final static int getValueOfIndex( int idx )
    {
       if ( idx > -1 && idx < SORT_ORDER_VALUES.length )
@@ -66,4 +74,12 @@ public class TaskSortPreference extends AutoSummaryListPreference
       else
          return -1;
    }
+   
+   
+   
+   private void ensureTaskSortSetting()
+   {
+      MolokoApp.getSettings( getContext() ).getTaskSort();
+   }
+   
 }

@@ -1,10 +1,8 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g 2012-03-18 11:21:42
+// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g 2013-01-13 13:41:15
 
 package dev.drsoran.moloko.grammar.datetime;
 
-import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
-import org.antlr.runtime.DFA;
 import org.antlr.runtime.EarlyExitException;
 import org.antlr.runtime.Lexer;
 import org.antlr.runtime.MismatchedSetException;
@@ -15,71 +13,73 @@ import org.antlr.runtime.RecognizerSharedState;
 import dev.drsoran.moloko.grammar.LexerException;
 
 
+@SuppressWarnings(
+{ "all", "warnings", "unchecked" } )
 public class DateLexer extends Lexer
 {
    public static final int EOF = -1;
    
-   public static final int NOW = 4;
+   public static final int A = 4;
    
-   public static final int NEVER = 5;
+   public static final int AND = 5;
    
-   public static final int INT = 6;
+   public static final int COLON = 6;
    
-   public static final int NUM_STR = 7;
+   public static final int COMMA = 7;
    
-   public static final int A = 8;
+   public static final int DATE_SEP = 8;
    
-   public static final int DAYS = 9;
+   public static final int DATE_TIME_SEPARATOR = 9;
    
-   public static final int WEEKS = 10;
+   public static final int DAYS = 10;
    
-   public static final int MONTHS = 11;
+   public static final int DOT = 11;
    
-   public static final int YEARS = 12;
+   public static final int END = 12;
    
-   public static final int OF = 13;
+   public static final int IN = 13;
    
-   public static final int DOT = 14;
+   public static final int INT = 14;
    
    public static final int MINUS = 15;
    
-   public static final int DATE_SEP = 16;
+   public static final int MINUS_A = 16;
    
-   public static final int ON = 17;
+   public static final int MONTH = 17;
    
-   public static final int STs = 18;
+   public static final int MONTHS = 18;
    
-   public static final int MINUS_A = 19;
+   public static final int NEVER = 19;
    
-   public static final int COMMA = 20;
+   public static final int NEXT = 20;
    
-   public static final int MONTH = 21;
+   public static final int NOW = 21;
    
-   public static final int NEXT = 22;
+   public static final int NUM_STR = 22;
    
-   public static final int WEEKDAY = 23;
+   public static final int OF = 23;
    
-   public static final int IN = 24;
+   public static final int ON = 24;
    
-   public static final int AND = 25;
+   public static final int STs = 25;
    
-   public static final int END = 26;
+   public static final int THE = 26;
    
-   public static final int THE = 27;
+   public static final int TODAY = 27;
    
-   public static final int TODAY = 28;
+   public static final int TOMORROW = 28;
    
    public static final int TONIGHT = 29;
    
-   public static final int TOMORROW = 30;
+   public static final int WEEKDAY = 30;
    
-   public static final int YESTERDAY = 31;
+   public static final int WEEKS = 31;
    
-   public static final int COLON = 32;
+   public static final int WS = 32;
    
-   public static final int DATE_TIME_SEPARATOR = 33;
+   public static final int YEARS = 33;
    
-   public static final int WS = 34;
+   public static final int YESTERDAY = 34;
    
    
    
@@ -93,10 +93,15 @@ public class DateLexer extends Lexer
    
    // delegates
    // delegators
+   public Lexer[] getDelegates()
+   {
+      return new Lexer[] {};
+   }
+   
+   
    
    public DateLexer()
    {
-      ;
    }
    
    
@@ -111,15 +116,13 @@ public class DateLexer extends Lexer
    public DateLexer( CharStream input, RecognizerSharedState state )
    {
       super( input, state );
-      
    }
    
    
    
-   @Override
    public String getGrammarFileName()
    {
-      return "D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g";
+      return "C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g";
    }
    
    
@@ -131,9 +134,9 @@ public class DateLexer extends Lexer
       {
          int _type = A;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:11:
          // ( 'a' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:13:
          // 'a'
          {
             match( 'a' );
@@ -145,6 +148,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -159,9 +163,9 @@ public class DateLexer extends Lexer
       {
          int _type = OF;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:11:
          // ( 'of' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:13:
          // 'of'
          {
             match( "of" );
@@ -173,6 +177,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -187,9 +192,9 @@ public class DateLexer extends Lexer
       {
          int _type = ON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:11:
          // ( 'on' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:13:
          // 'on'
          {
             match( "on" );
@@ -201,6 +206,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -215,9 +221,9 @@ public class DateLexer extends Lexer
       {
          int _type = IN;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:11:
          // ( 'in' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:13:
          // 'in'
          {
             match( "in" );
@@ -229,6 +235,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -243,9 +250,9 @@ public class DateLexer extends Lexer
       {
          int _type = AND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:11:
          // ( 'and' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:13:
          // 'and'
          {
             match( "and" );
@@ -257,6 +264,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -271,9 +279,9 @@ public class DateLexer extends Lexer
       {
          int _type = END;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:11:
          // ( 'end' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:13:
          // 'end'
          {
             match( "end" );
@@ -285,6 +293,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -299,9 +308,9 @@ public class DateLexer extends Lexer
       {
          int _type = THE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:11:
          // ( 'the' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:13:
          // 'the'
          {
             match( "the" );
@@ -313,6 +322,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -327,9 +337,9 @@ public class DateLexer extends Lexer
       {
          int _type = NOW;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:11:
          // ( 'now' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:13:
          // 'now'
          {
             match( "now" );
@@ -341,6 +351,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -355,7 +366,7 @@ public class DateLexer extends Lexer
       {
          int _type = TONIGHT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:11:
          // ( 'tonight' | 'ton' )
          int alt1 = 2;
          int LA1_0 = input.LA( 1 );
@@ -389,6 +400,7 @@ public class DateLexer extends Lexer
                                                                         input );
                   
                   throw nvae;
+                  
                }
             }
             else
@@ -399,6 +411,7 @@ public class DateLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -409,11 +422,12 @@ public class DateLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt1 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:13:
             // 'tonight'
             {
                match( "tonight" );
@@ -421,7 +435,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:25:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:25:
             // 'ton'
             {
                match( "ton" );
@@ -435,6 +449,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -449,9 +464,9 @@ public class DateLexer extends Lexer
       {
          int _type = NEVER;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:11:
          // ( 'never' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:13:
          // 'never'
          {
             match( "never" );
@@ -463,6 +478,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -477,7 +493,7 @@ public class DateLexer extends Lexer
       {
          int _type = TODAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:11:
          // ( 'today' | 'tod' )
          int alt2 = 2;
          int LA2_0 = input.LA( 1 );
@@ -511,6 +527,7 @@ public class DateLexer extends Lexer
                                                                         input );
                   
                   throw nvae;
+                  
                }
             }
             else
@@ -521,6 +538,7 @@ public class DateLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -531,11 +549,12 @@ public class DateLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt2 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:13:
             // 'today'
             {
                match( "today" );
@@ -543,7 +562,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:23:
             // 'tod'
             {
                match( "tod" );
@@ -557,6 +576,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -571,7 +591,7 @@ public class DateLexer extends Lexer
       {
          int _type = TOMORROW;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:11:
          // ( 'tomorrow' | 'tom' | 'tmr' )
          int alt3 = 3;
          int LA3_0 = input.LA( 1 );
@@ -605,6 +625,7 @@ public class DateLexer extends Lexer
                                                                         input );
                   
                   throw nvae;
+                  
                }
             }
             else if ( ( LA3_1 == 'm' ) )
@@ -619,6 +640,7 @@ public class DateLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -629,11 +651,12 @@ public class DateLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt3 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:13:
             // 'tomorrow'
             {
                match( "tomorrow" );
@@ -641,7 +664,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:26:
             // 'tom'
             {
                match( "tom" );
@@ -649,7 +672,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:34:
             // 'tmr'
             {
                match( "tmr" );
@@ -663,6 +686,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -677,9 +701,9 @@ public class DateLexer extends Lexer
       {
          int _type = YESTERDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:11:
          // ( 'yesterday' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:13:
          // 'yesterday'
          {
             match( "yesterday" );
@@ -691,6 +715,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -705,9 +730,9 @@ public class DateLexer extends Lexer
       {
          int _type = NEXT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:11:
          // ( 'next' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:13:
          // 'next'
          {
             match( "next" );
@@ -719,6 +744,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -733,7 +759,7 @@ public class DateLexer extends Lexer
       {
          int _type = STs;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:11:
          // ( 'st' | 'th' | 'rd' | 'nd' )
          int alt4 = 4;
          switch ( input.LA( 1 ) )
@@ -765,12 +791,13 @@ public class DateLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
          }
          
          switch ( alt4 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:13:
             // 'st'
             {
                match( "st" );
@@ -778,7 +805,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:20:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:20:
             // 'th'
             {
                match( "th" );
@@ -786,7 +813,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:27:
             // 'rd'
             {
                match( "rd" );
@@ -794,7 +821,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:34:
             // 'nd'
             {
                match( "nd" );
@@ -808,6 +835,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -822,14 +850,96 @@ public class DateLexer extends Lexer
       {
          int _type = YEARS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:11:
          // ( 'years' | 'year' | 'yrs' | 'yr' )
          int alt5 = 4;
-         alt5 = dfa5.predict( input );
+         int LA5_0 = input.LA( 1 );
+         
+         if ( ( LA5_0 == 'y' ) )
+         {
+            int LA5_1 = input.LA( 2 );
+            
+            if ( ( LA5_1 == 'e' ) )
+            {
+               int LA5_2 = input.LA( 3 );
+               
+               if ( ( LA5_2 == 'a' ) )
+               {
+                  int LA5_4 = input.LA( 4 );
+                  
+                  if ( ( LA5_4 == 'r' ) )
+                  {
+                     int LA5_7 = input.LA( 5 );
+                     
+                     if ( ( LA5_7 == 's' ) )
+                     {
+                        alt5 = 1;
+                     }
+                     else
+                     {
+                        alt5 = 2;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           5,
+                                                                           4,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        5,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+            else if ( ( LA5_1 == 'r' ) )
+            {
+               int LA5_3 = input.LA( 3 );
+               
+               if ( ( LA5_3 == 's' ) )
+               {
+                  alt5 = 3;
+               }
+               else
+               {
+                  alt5 = 4;
+               }
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     5,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+               
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  5,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+            
+         }
          switch ( alt5 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:13:
             // 'years'
             {
                match( "years" );
@@ -837,7 +947,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:23:
             // 'year'
             {
                match( "year" );
@@ -845,7 +955,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:32:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:32:
             // 'yrs'
             {
                match( "yrs" );
@@ -853,7 +963,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:40:
             // 'yr'
             {
                match( "yr" );
@@ -867,6 +977,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -881,14 +992,98 @@ public class DateLexer extends Lexer
       {
          int _type = MONTHS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:11:
          // ( 'months' | 'month' | 'mons' | 'mon' )
          int alt6 = 4;
-         alt6 = dfa6.predict( input );
+         int LA6_0 = input.LA( 1 );
+         
+         if ( ( LA6_0 == 'm' ) )
+         {
+            int LA6_1 = input.LA( 2 );
+            
+            if ( ( LA6_1 == 'o' ) )
+            {
+               int LA6_2 = input.LA( 3 );
+               
+               if ( ( LA6_2 == 'n' ) )
+               {
+                  switch ( input.LA( 4 ) )
+                  {
+                     case 't':
+                     {
+                        int LA6_4 = input.LA( 5 );
+                        
+                        if ( ( LA6_4 == 'h' ) )
+                        {
+                           int LA6_7 = input.LA( 6 );
+                           
+                           if ( ( LA6_7 == 's' ) )
+                           {
+                              alt6 = 1;
+                           }
+                           else
+                           {
+                              alt6 = 2;
+                           }
+                        }
+                        else
+                        {
+                           NoViableAltException nvae = new NoViableAltException( "",
+                                                                                 6,
+                                                                                 4,
+                                                                                 input );
+                           
+                           throw nvae;
+                           
+                        }
+                     }
+                        break;
+                     case 's':
+                     {
+                        alt6 = 3;
+                     }
+                        break;
+                     default :
+                        alt6 = 4;
+                  }
+                  
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        6,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     6,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+               
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  6,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+            
+         }
          switch ( alt6 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:13:
             // 'months'
             {
                match( "months" );
@@ -896,7 +1091,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:24:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:24:
             // 'month'
             {
                match( "month" );
@@ -904,7 +1099,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:34:
             // 'mons'
             {
                match( "mons" );
@@ -912,7 +1107,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:43:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:43:
             // 'mon'
             {
                match( "mon" );
@@ -926,6 +1121,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -940,14 +1136,96 @@ public class DateLexer extends Lexer
       {
          int _type = WEEKS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:11:
          // ( 'weeks' | 'week' | 'wks' | 'wk' )
          int alt7 = 4;
-         alt7 = dfa7.predict( input );
+         int LA7_0 = input.LA( 1 );
+         
+         if ( ( LA7_0 == 'w' ) )
+         {
+            int LA7_1 = input.LA( 2 );
+            
+            if ( ( LA7_1 == 'e' ) )
+            {
+               int LA7_2 = input.LA( 3 );
+               
+               if ( ( LA7_2 == 'e' ) )
+               {
+                  int LA7_4 = input.LA( 4 );
+                  
+                  if ( ( LA7_4 == 'k' ) )
+                  {
+                     int LA7_7 = input.LA( 5 );
+                     
+                     if ( ( LA7_7 == 's' ) )
+                     {
+                        alt7 = 1;
+                     }
+                     else
+                     {
+                        alt7 = 2;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           4,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+            else if ( ( LA7_1 == 'k' ) )
+            {
+               int LA7_3 = input.LA( 3 );
+               
+               if ( ( LA7_3 == 's' ) )
+               {
+                  alt7 = 3;
+               }
+               else
+               {
+                  alt7 = 4;
+               }
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     7,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+               
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  7,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+            
+         }
          switch ( alt7 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:13:
             // 'weeks'
             {
                match( "weeks" );
@@ -955,7 +1233,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:23:
             // 'week'
             {
                match( "week" );
@@ -963,7 +1241,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:32:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:32:
             // 'wks'
             {
                match( "wks" );
@@ -971,7 +1249,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:40:
             // 'wk'
             {
                match( "wk" );
@@ -985,6 +1263,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -999,7 +1278,7 @@ public class DateLexer extends Lexer
       {
          int _type = DAYS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:11:
          // ( 'days' | 'day' | 'd' )
          int alt8 = 3;
          int LA8_0 = input.LA( 1 );
@@ -1033,6 +1312,7 @@ public class DateLexer extends Lexer
                                                                         input );
                   
                   throw nvae;
+                  
                }
             }
             else
@@ -1048,11 +1328,12 @@ public class DateLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt8 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:13:
             // 'days'
             {
                match( "days" );
@@ -1060,7 +1341,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:22:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:22:
             // 'day'
             {
                match( "day" );
@@ -1068,7 +1349,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:30:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:30:
             // 'd'
             {
                match( 'd' );
@@ -1082,6 +1363,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1096,16 +1378,461 @@ public class DateLexer extends Lexer
       {
          int _type = MONTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:11:
          // ( 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' |
          // 'july' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' |
          // 'december' | 'dec' )
          int alt9 = 24;
-         alt9 = dfa9.predict( input );
+         switch ( input.LA( 1 ) )
+         {
+            case 'j':
+            {
+               int LA9_1 = input.LA( 2 );
+               
+               if ( ( LA9_1 == 'a' ) )
+               {
+                  int LA9_9 = input.LA( 3 );
+                  
+                  if ( ( LA9_9 == 'n' ) )
+                  {
+                     int LA9_19 = input.LA( 4 );
+                     
+                     if ( ( LA9_19 == 'u' ) )
+                     {
+                        alt9 = 1;
+                     }
+                     else
+                     {
+                        alt9 = 2;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           9,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else if ( ( LA9_1 == 'u' ) )
+               {
+                  int LA9_10 = input.LA( 3 );
+                  
+                  if ( ( LA9_10 == 'n' ) )
+                  {
+                     int LA9_20 = input.LA( 4 );
+                     
+                     if ( ( LA9_20 == 'e' ) )
+                     {
+                        alt9 = 10;
+                     }
+                     else
+                     {
+                        alt9 = 11;
+                     }
+                  }
+                  else if ( ( LA9_10 == 'l' ) )
+                  {
+                     int LA9_21 = input.LA( 4 );
+                     
+                     if ( ( LA9_21 == 'y' ) )
+                     {
+                        alt9 = 12;
+                     }
+                     else
+                     {
+                        alt9 = 13;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           10,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        1,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'f':
+            {
+               int LA9_2 = input.LA( 2 );
+               
+               if ( ( LA9_2 == 'e' ) )
+               {
+                  int LA9_11 = input.LA( 3 );
+                  
+                  if ( ( LA9_11 == 'b' ) )
+                  {
+                     int LA9_22 = input.LA( 4 );
+                     
+                     if ( ( LA9_22 == 'r' ) )
+                     {
+                        alt9 = 3;
+                     }
+                     else
+                     {
+                        alt9 = 4;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           11,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'm':
+            {
+               int LA9_3 = input.LA( 2 );
+               
+               if ( ( LA9_3 == 'a' ) )
+               {
+                  int LA9_12 = input.LA( 3 );
+                  
+                  if ( ( LA9_12 == 'r' ) )
+                  {
+                     int LA9_23 = input.LA( 4 );
+                     
+                     if ( ( LA9_23 == 'c' ) )
+                     {
+                        alt9 = 5;
+                     }
+                     else
+                     {
+                        alt9 = 6;
+                     }
+                  }
+                  else if ( ( LA9_12 == 'y' ) )
+                  {
+                     alt9 = 9;
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           12,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        3,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'a':
+            {
+               int LA9_4 = input.LA( 2 );
+               
+               if ( ( LA9_4 == 'p' ) )
+               {
+                  int LA9_13 = input.LA( 3 );
+                  
+                  if ( ( LA9_13 == 'r' ) )
+                  {
+                     int LA9_25 = input.LA( 4 );
+                     
+                     if ( ( LA9_25 == 'i' ) )
+                     {
+                        alt9 = 7;
+                     }
+                     else
+                     {
+                        alt9 = 8;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           13,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else if ( ( LA9_4 == 'u' ) )
+               {
+                  int LA9_14 = input.LA( 3 );
+                  
+                  if ( ( LA9_14 == 'g' ) )
+                  {
+                     int LA9_26 = input.LA( 4 );
+                     
+                     if ( ( LA9_26 == 'u' ) )
+                     {
+                        alt9 = 14;
+                     }
+                     else
+                     {
+                        alt9 = 15;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           14,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        4,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 's':
+            {
+               int LA9_5 = input.LA( 2 );
+               
+               if ( ( LA9_5 == 'e' ) )
+               {
+                  int LA9_15 = input.LA( 3 );
+                  
+                  if ( ( LA9_15 == 'p' ) )
+                  {
+                     int LA9_27 = input.LA( 4 );
+                     
+                     if ( ( LA9_27 == 't' ) )
+                     {
+                        int LA9_45 = input.LA( 5 );
+                        
+                        if ( ( LA9_45 == 'e' ) )
+                        {
+                           alt9 = 16;
+                        }
+                        else
+                        {
+                           alt9 = 17;
+                        }
+                     }
+                     else
+                     {
+                        alt9 = 18;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           15,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        5,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'o':
+            {
+               int LA9_6 = input.LA( 2 );
+               
+               if ( ( LA9_6 == 'c' ) )
+               {
+                  int LA9_16 = input.LA( 3 );
+                  
+                  if ( ( LA9_16 == 't' ) )
+                  {
+                     int LA9_28 = input.LA( 4 );
+                     
+                     if ( ( LA9_28 == 'o' ) )
+                     {
+                        alt9 = 19;
+                     }
+                     else
+                     {
+                        alt9 = 20;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           16,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        6,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'n':
+            {
+               int LA9_7 = input.LA( 2 );
+               
+               if ( ( LA9_7 == 'o' ) )
+               {
+                  int LA9_17 = input.LA( 3 );
+                  
+                  if ( ( LA9_17 == 'v' ) )
+                  {
+                     int LA9_29 = input.LA( 4 );
+                     
+                     if ( ( LA9_29 == 'e' ) )
+                     {
+                        alt9 = 21;
+                     }
+                     else
+                     {
+                        alt9 = 22;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           17,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        7,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'd':
+            {
+               int LA9_8 = input.LA( 2 );
+               
+               if ( ( LA9_8 == 'e' ) )
+               {
+                  int LA9_18 = input.LA( 3 );
+                  
+                  if ( ( LA9_18 == 'c' ) )
+                  {
+                     int LA9_30 = input.LA( 4 );
+                     
+                     if ( ( LA9_30 == 'e' ) )
+                     {
+                        alt9 = 23;
+                     }
+                     else
+                     {
+                        alt9 = 24;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           9,
+                                                                           18,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        9,
+                                                                        8,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            default :
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     9,
+                                                                     0,
+                                                                     input );
+               
+               throw nvae;
+               
+         }
+         
          switch ( alt9 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:13:
             // 'january'
             {
                match( "january" );
@@ -1113,7 +1840,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:27:
             // 'jan'
             {
                match( "jan" );
@@ -1121,7 +1848,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:36:
             // 'february'
             {
                match( "february" );
@@ -1129,7 +1856,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:49:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:49:
             // 'feb'
             {
                match( "feb" );
@@ -1137,7 +1864,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 5:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:61:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:61:
             // 'march'
             {
                match( "march" );
@@ -1145,7 +1872,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 6:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:71:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:71:
             // 'mar'
             {
                match( "mar" );
@@ -1153,7 +1880,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 7:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:84:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:84:
             // 'april'
             {
                match( "april" );
@@ -1161,7 +1888,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 8:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:94:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:94:
             // 'apr'
             {
                match( "apr" );
@@ -1169,7 +1896,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 9:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:13:
             // 'may'
             {
                match( "may" );
@@ -1177,7 +1904,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 10:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:27:
             // 'june'
             {
                match( "june" );
@@ -1185,7 +1912,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 11:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:36:
             // 'jun'
             {
                match( "jun" );
@@ -1193,7 +1920,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 12:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:49:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:49:
             // 'july'
             {
                match( "july" );
@@ -1201,7 +1928,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 13:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:61:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:61:
             // 'jul'
             {
                match( "jul" );
@@ -1209,7 +1936,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 14:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:71:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:71:
             // 'august'
             {
                match( "august" );
@@ -1217,7 +1944,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 15:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:84:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:84:
             // 'aug'
             {
                match( "aug" );
@@ -1225,7 +1952,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 16:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:13:
             // 'september'
             {
                match( "september" );
@@ -1233,7 +1960,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 17:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:27:
             // 'sept'
             {
                match( "sept" );
@@ -1241,7 +1968,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 18:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:36:
             // 'sep'
             {
                match( "sep" );
@@ -1249,7 +1976,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 19:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:49:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:49:
             // 'october'
             {
                match( "october" );
@@ -1257,7 +1984,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 20:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:61:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:61:
             // 'oct'
             {
                match( "oct" );
@@ -1265,7 +1992,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 21:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:71:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:71:
             // 'november'
             {
                match( "november" );
@@ -1273,7 +2000,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 22:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:84:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:84:
             // 'nov'
             {
                match( "nov" );
@@ -1281,7 +2008,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 23:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:13:
             // 'december'
             {
                match( "december" );
@@ -1289,7 +2016,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 24:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:27:
             // 'dec'
             {
                match( "dec" );
@@ -1303,6 +2030,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1317,15 +2045,302 @@ public class DateLexer extends Lexer
       {
          int _type = WEEKDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:11:
          // ( 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' |
          // 'saturday' | 'sat' | 'sunday' | 'sun' )
          int alt10 = 14;
-         alt10 = dfa10.predict( input );
+         switch ( input.LA( 1 ) )
+         {
+            case 'm':
+            {
+               int LA10_1 = input.LA( 2 );
+               
+               if ( ( LA10_1 == 'o' ) )
+               {
+                  int LA10_6 = input.LA( 3 );
+                  
+                  if ( ( LA10_6 == 'n' ) )
+                  {
+                     int LA10_13 = input.LA( 4 );
+                     
+                     if ( ( LA10_13 == 'd' ) )
+                     {
+                        alt10 = 1;
+                     }
+                     else
+                     {
+                        alt10 = 2;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           10,
+                                                                           6,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        10,
+                                                                        1,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 't':
+            {
+               int LA10_2 = input.LA( 2 );
+               
+               if ( ( LA10_2 == 'u' ) )
+               {
+                  int LA10_7 = input.LA( 3 );
+                  
+                  if ( ( LA10_7 == 'e' ) )
+                  {
+                     int LA10_14 = input.LA( 4 );
+                     
+                     if ( ( LA10_14 == 's' ) )
+                     {
+                        alt10 = 3;
+                     }
+                     else
+                     {
+                        alt10 = 4;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           10,
+                                                                           7,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else if ( ( LA10_2 == 'h' ) )
+               {
+                  int LA10_8 = input.LA( 3 );
+                  
+                  if ( ( LA10_8 == 'u' ) )
+                  {
+                     int LA10_15 = input.LA( 4 );
+                     
+                     if ( ( LA10_15 == 'r' ) )
+                     {
+                        alt10 = 7;
+                     }
+                     else
+                     {
+                        alt10 = 8;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           10,
+                                                                           8,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        10,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'w':
+            {
+               int LA10_3 = input.LA( 2 );
+               
+               if ( ( LA10_3 == 'e' ) )
+               {
+                  int LA10_9 = input.LA( 3 );
+                  
+                  if ( ( LA10_9 == 'd' ) )
+                  {
+                     int LA10_16 = input.LA( 4 );
+                     
+                     if ( ( LA10_16 == 'n' ) )
+                     {
+                        alt10 = 5;
+                     }
+                     else
+                     {
+                        alt10 = 6;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           10,
+                                                                           9,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        10,
+                                                                        3,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'f':
+            {
+               int LA10_4 = input.LA( 2 );
+               
+               if ( ( LA10_4 == 'r' ) )
+               {
+                  int LA10_10 = input.LA( 3 );
+                  
+                  if ( ( LA10_10 == 'i' ) )
+                  {
+                     int LA10_17 = input.LA( 4 );
+                     
+                     if ( ( LA10_17 == 'd' ) )
+                     {
+                        alt10 = 9;
+                     }
+                     else
+                     {
+                        alt10 = 10;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           10,
+                                                                           10,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        10,
+                                                                        4,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 's':
+            {
+               int LA10_5 = input.LA( 2 );
+               
+               if ( ( LA10_5 == 'a' ) )
+               {
+                  int LA10_11 = input.LA( 3 );
+                  
+                  if ( ( LA10_11 == 't' ) )
+                  {
+                     int LA10_18 = input.LA( 4 );
+                     
+                     if ( ( LA10_18 == 'u' ) )
+                     {
+                        alt10 = 11;
+                     }
+                     else
+                     {
+                        alt10 = 12;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           10,
+                                                                           11,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else if ( ( LA10_5 == 'u' ) )
+               {
+                  int LA10_12 = input.LA( 3 );
+                  
+                  if ( ( LA10_12 == 'n' ) )
+                  {
+                     int LA10_19 = input.LA( 4 );
+                     
+                     if ( ( LA10_19 == 'd' ) )
+                     {
+                        alt10 = 13;
+                     }
+                     else
+                     {
+                        alt10 = 14;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           10,
+                                                                           12,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        10,
+                                                                        5,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            default :
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     10,
+                                                                     0,
+                                                                     input );
+               
+               throw nvae;
+               
+         }
+         
          switch ( alt10 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:13:
             // 'monday'
             {
                match( "monday" );
@@ -1333,7 +2348,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:26:
             // 'mon'
             {
                match( "mon" );
@@ -1341,7 +2356,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:34:
             // 'tuesday'
             {
                match( "tuesday" );
@@ -1349,7 +2364,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:46:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:46:
             // 'tue'
             {
                match( "tue" );
@@ -1357,7 +2372,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 5:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:54:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:54:
             // 'wednesday'
             {
                match( "wednesday" );
@@ -1365,7 +2380,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 6:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:68:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:68:
             // 'wed'
             {
                match( "wed" );
@@ -1373,7 +2388,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 7:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:13:
             // 'thursday'
             {
                match( "thursday" );
@@ -1381,7 +2396,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 8:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:26:
             // 'thu'
             {
                match( "thu" );
@@ -1389,7 +2404,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 9:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:34:
             // 'friday'
             {
                match( "friday" );
@@ -1397,7 +2412,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 10:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:46:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:46:
             // 'fri'
             {
                match( "fri" );
@@ -1405,7 +2420,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 11:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:54:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:54:
             // 'saturday'
             {
                match( "saturday" );
@@ -1413,7 +2428,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 12:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:68:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:68:
             // 'sat'
             {
                match( "sat" );
@@ -1421,7 +2436,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 13:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:13:
             // 'sunday'
             {
                match( "sunday" );
@@ -1429,7 +2444,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 14:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:26:
             // 'sun'
             {
                match( "sun" );
@@ -1443,6 +2458,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1457,14 +2473,119 @@ public class DateLexer extends Lexer
       {
          int _type = NUM_STR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:11:
          // ( 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' )
          int alt11 = 10;
-         alt11 = dfa11.predict( input );
+         switch ( input.LA( 1 ) )
+         {
+            case 'o':
+            {
+               alt11 = 1;
+            }
+               break;
+            case 't':
+            {
+               switch ( input.LA( 2 ) )
+               {
+                  case 'w':
+                  {
+                     alt11 = 2;
+                  }
+                     break;
+                  case 'h':
+                  {
+                     alt11 = 3;
+                  }
+                     break;
+                  case 'e':
+                  {
+                     alt11 = 10;
+                  }
+                     break;
+                  default :
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           11,
+                                                                           2,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+               }
+               
+            }
+               break;
+            case 'f':
+            {
+               int LA11_3 = input.LA( 2 );
+               
+               if ( ( LA11_3 == 'o' ) )
+               {
+                  alt11 = 4;
+               }
+               else if ( ( LA11_3 == 'i' ) )
+               {
+                  alt11 = 5;
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        11,
+                                                                        3,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 's':
+            {
+               int LA11_4 = input.LA( 2 );
+               
+               if ( ( LA11_4 == 'i' ) )
+               {
+                  alt11 = 6;
+               }
+               else if ( ( LA11_4 == 'e' ) )
+               {
+                  alt11 = 7;
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        11,
+                                                                        4,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'e':
+            {
+               alt11 = 8;
+            }
+               break;
+            case 'n':
+            {
+               alt11 = 9;
+            }
+               break;
+            default :
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     11,
+                                                                     0,
+                                                                     input );
+               
+               throw nvae;
+               
+         }
+         
          switch ( alt11 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:13:
             // 'one'
             {
                match( "one" );
@@ -1472,7 +2593,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:21:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:21:
             // 'two'
             {
                match( "two" );
@@ -1480,7 +2601,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:29:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:29:
             // 'three'
             {
                match( "three" );
@@ -1488,7 +2609,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:39:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:39:
             // 'four'
             {
                match( "four" );
@@ -1496,7 +2617,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 5:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:48:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:48:
             // 'five'
             {
                match( "five" );
@@ -1504,7 +2625,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 6:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:57:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:57:
             // 'six'
             {
                match( "six" );
@@ -1512,7 +2633,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 7:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:65:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:65:
             // 'seven'
             {
                match( "seven" );
@@ -1520,7 +2641,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 8:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:75:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:75:
             // 'eight'
             {
                match( "eight" );
@@ -1528,7 +2649,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 9:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:85:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:85:
             // 'nine'
             {
                match( "nine" );
@@ -1536,7 +2657,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 10:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:94:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:94:
             // 'ten'
             {
                match( "ten" );
@@ -1550,6 +2671,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1564,15 +2686,14 @@ public class DateLexer extends Lexer
       {
          int _type = DATE_SEP;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:469:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:469:11:
          // ( '/' | '\\u5E74' | '\\u6708' | '\\u65E5' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:
          {
             if ( input.LA( 1 ) == '/' || input.LA( 1 ) == '\u5E74'
                || input.LA( 1 ) == '\u65E5' || input.LA( 1 ) == '\u6708' )
             {
                input.consume();
-               
             }
             else
             {
@@ -1589,6 +2710,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1603,9 +2725,9 @@ public class DateLexer extends Lexer
       {
          int _type = DOT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:11:
          // ( '.' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:13:
          // '.'
          {
             match( '.' );
@@ -1617,6 +2739,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1631,9 +2754,9 @@ public class DateLexer extends Lexer
       {
          int _type = COLON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:11:
          // ( ':' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:13:
          // ':'
          {
             match( ':' );
@@ -1645,6 +2768,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1659,9 +2783,9 @@ public class DateLexer extends Lexer
       {
          int _type = MINUS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:11:
          // ( '-' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:13:
          // '-'
          {
             match( '-' );
@@ -1673,6 +2797,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1687,9 +2812,9 @@ public class DateLexer extends Lexer
       {
          int _type = MINUS_A;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:11:
          // ( '-a' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:13:
          // '-a'
          {
             match( "-a" );
@@ -1701,6 +2826,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1715,9 +2841,9 @@ public class DateLexer extends Lexer
       {
          int _type = COMMA;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:11:
          // ( ',' )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:13:
          // ','
          {
             match( ',' );
@@ -1729,6 +2855,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1743,7 +2870,7 @@ public class DateLexer extends Lexer
       {
          int _type = DATE_TIME_SEPARATOR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:21:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:21:
          // ( '@' | 'at' | COMMA )
          int alt12 = 3;
          switch ( input.LA( 1 ) )
@@ -1770,12 +2897,13 @@ public class DateLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
          }
          
          switch ( alt12 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:23:
             // '@'
             {
                match( '@' );
@@ -1783,7 +2911,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:29:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:29:
             // 'at'
             {
                match( "at" );
@@ -1791,7 +2919,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:36:
             // COMMA
             {
                mCOMMA();
@@ -1805,6 +2933,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1819,12 +2948,12 @@ public class DateLexer extends Lexer
       {
          int _type = INT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:11:
          // ( ( '0' .. '9' )+ )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
          // ( '0' .. '9' )+
          {
-            // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
             // ( '0' .. '9' )+
             int cnt13 = 0;
             loop13: do
@@ -1840,10 +2969,19 @@ public class DateLexer extends Lexer
                switch ( alt13 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
-                  // '0' .. '9'
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:
                   {
-                     matchRange( '0', '9' );
+                     if ( ( input.LA( 1 ) >= '0' && input.LA( 1 ) <= '9' ) )
+                     {
+                        input.consume();
+                     }
+                     else
+                     {
+                        MismatchedSetException mse = new MismatchedSetException( null,
+                                                                                 input );
+                        recover( mse );
+                        throw mse;
+                     }
                      
                   }
                      break;
@@ -1865,6 +3003,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1879,16 +3018,15 @@ public class DateLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:11:
          // ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:13:
          // ( ' ' | '\\t' | '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
                || input.LA( 1 ) == '\r' || input.LA( 1 ) == ' ' )
             {
                input.consume();
-               
             }
             else
             {
@@ -1907,6 +3045,7 @@ public class DateLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1914,19 +3053,596 @@ public class DateLexer extends Lexer
    
    // $ANTLR end "WS"
    
-   @Override
    public void mTokens() throws RecognitionException
    {
-      // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:8:
+      // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:8:
       // ( A | OF | ON | IN | AND | END | THE | NOW | TONIGHT | NEVER | TODAY | TOMORROW | YESTERDAY | NEXT | STs |
       // YEARS | MONTHS | WEEKS | DAYS | MONTH | WEEKDAY | NUM_STR | DATE_SEP | DOT | COLON | MINUS | MINUS_A | COMMA |
       // DATE_TIME_SEPARATOR | INT | WS )
       int alt14 = 31;
-      alt14 = dfa14.predict( input );
+      switch ( input.LA( 1 ) )
+      {
+         case 'a':
+         {
+            switch ( input.LA( 2 ) )
+            {
+               case 'n':
+               {
+                  alt14 = 5;
+               }
+                  break;
+               case 'p':
+               case 'u':
+               {
+                  alt14 = 20;
+               }
+                  break;
+               case 't':
+               {
+                  alt14 = 29;
+               }
+                  break;
+               default :
+                  alt14 = 1;
+            }
+            
+         }
+            break;
+         case 'o':
+         {
+            switch ( input.LA( 2 ) )
+            {
+               case 'f':
+               {
+                  alt14 = 2;
+               }
+                  break;
+               case 'n':
+               {
+                  int LA14_26 = input.LA( 3 );
+                  
+                  if ( ( LA14_26 == 'e' ) )
+                  {
+                     alt14 = 22;
+                  }
+                  else
+                  {
+                     alt14 = 3;
+                  }
+               }
+                  break;
+               case 'c':
+               {
+                  alt14 = 20;
+               }
+                  break;
+               default :
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+            }
+            
+         }
+            break;
+         case 'i':
+         {
+            alt14 = 4;
+         }
+            break;
+         case 'e':
+         {
+            int LA14_4 = input.LA( 2 );
+            
+            if ( ( LA14_4 == 'n' ) )
+            {
+               alt14 = 6;
+            }
+            else if ( ( LA14_4 == 'i' ) )
+            {
+               alt14 = 22;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     14,
+                                                                     4,
+                                                                     input );
+               
+               throw nvae;
+               
+            }
+         }
+            break;
+         case 't':
+         {
+            switch ( input.LA( 2 ) )
+            {
+               case 'h':
+               {
+                  switch ( input.LA( 3 ) )
+                  {
+                     case 'e':
+                     {
+                        alt14 = 7;
+                     }
+                        break;
+                     case 'u':
+                     {
+                        alt14 = 21;
+                     }
+                        break;
+                     case 'r':
+                     {
+                        alt14 = 22;
+                     }
+                        break;
+                     default :
+                        alt14 = 15;
+                  }
+                  
+               }
+                  break;
+               case 'o':
+               {
+                  switch ( input.LA( 3 ) )
+                  {
+                     case 'n':
+                     {
+                        alt14 = 9;
+                     }
+                        break;
+                     case 'd':
+                     {
+                        alt14 = 11;
+                     }
+                        break;
+                     case 'm':
+                     {
+                        alt14 = 12;
+                     }
+                        break;
+                     default :
+                        NoViableAltException nvae = new NoViableAltException( "",
+                                                                              14,
+                                                                              30,
+                                                                              input );
+                        
+                        throw nvae;
+                        
+                  }
+                  
+               }
+                  break;
+               case 'm':
+               {
+                  alt14 = 12;
+               }
+                  break;
+               case 'u':
+               {
+                  alt14 = 21;
+               }
+                  break;
+               case 'e':
+               case 'w':
+               {
+                  alt14 = 22;
+               }
+                  break;
+               default :
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        5,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+            }
+            
+         }
+            break;
+         case 'n':
+         {
+            switch ( input.LA( 2 ) )
+            {
+               case 'o':
+               {
+                  int LA14_33 = input.LA( 3 );
+                  
+                  if ( ( LA14_33 == 'w' ) )
+                  {
+                     alt14 = 8;
+                  }
+                  else if ( ( LA14_33 == 'v' ) )
+                  {
+                     alt14 = 20;
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           14,
+                                                                           33,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+                  break;
+               case 'e':
+               {
+                  int LA14_34 = input.LA( 3 );
+                  
+                  if ( ( LA14_34 == 'v' ) )
+                  {
+                     alt14 = 10;
+                  }
+                  else if ( ( LA14_34 == 'x' ) )
+                  {
+                     alt14 = 14;
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           14,
+                                                                           34,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+                  break;
+               case 'd':
+               {
+                  alt14 = 15;
+               }
+                  break;
+               case 'i':
+               {
+                  alt14 = 22;
+               }
+                  break;
+               default :
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        6,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+            }
+            
+         }
+            break;
+         case 'y':
+         {
+            int LA14_7 = input.LA( 2 );
+            
+            if ( ( LA14_7 == 'e' ) )
+            {
+               int LA14_35 = input.LA( 3 );
+               
+               if ( ( LA14_35 == 's' ) )
+               {
+                  alt14 = 13;
+               }
+               else if ( ( LA14_35 == 'a' ) )
+               {
+                  alt14 = 16;
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        35,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+            else if ( ( LA14_7 == 'r' ) )
+            {
+               alt14 = 16;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     14,
+                                                                     7,
+                                                                     input );
+               
+               throw nvae;
+               
+            }
+         }
+            break;
+         case 's':
+         {
+            switch ( input.LA( 2 ) )
+            {
+               case 't':
+               {
+                  alt14 = 15;
+               }
+                  break;
+               case 'e':
+               {
+                  int LA14_37 = input.LA( 3 );
+                  
+                  if ( ( LA14_37 == 'p' ) )
+                  {
+                     alt14 = 20;
+                  }
+                  else if ( ( LA14_37 == 'v' ) )
+                  {
+                     alt14 = 22;
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           14,
+                                                                           37,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+                  break;
+               case 'a':
+               case 'u':
+               {
+                  alt14 = 21;
+               }
+                  break;
+               case 'i':
+               {
+                  alt14 = 22;
+               }
+                  break;
+               default :
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        8,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+            }
+            
+         }
+            break;
+         case 'r':
+         {
+            alt14 = 15;
+         }
+            break;
+         case 'm':
+         {
+            int LA14_10 = input.LA( 2 );
+            
+            if ( ( LA14_10 == 'o' ) )
+            {
+               int LA14_38 = input.LA( 3 );
+               
+               if ( ( LA14_38 == 'n' ) )
+               {
+                  int LA14_53 = input.LA( 4 );
+                  
+                  if ( ( LA14_53 == 'd' ) )
+                  {
+                     alt14 = 21;
+                  }
+                  else
+                  {
+                     alt14 = 17;
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        38,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+            else if ( ( LA14_10 == 'a' ) )
+            {
+               alt14 = 20;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     14,
+                                                                     10,
+                                                                     input );
+               
+               throw nvae;
+               
+            }
+         }
+            break;
+         case 'w':
+         {
+            int LA14_11 = input.LA( 2 );
+            
+            if ( ( LA14_11 == 'e' ) )
+            {
+               int LA14_39 = input.LA( 3 );
+               
+               if ( ( LA14_39 == 'e' ) )
+               {
+                  alt14 = 18;
+               }
+               else if ( ( LA14_39 == 'd' ) )
+               {
+                  alt14 = 21;
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        39,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+            else if ( ( LA14_11 == 'k' ) )
+            {
+               alt14 = 18;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     14,
+                                                                     11,
+                                                                     input );
+               
+               throw nvae;
+               
+            }
+         }
+            break;
+         case 'd':
+         {
+            int LA14_12 = input.LA( 2 );
+            
+            if ( ( LA14_12 == 'e' ) )
+            {
+               alt14 = 20;
+            }
+            else
+            {
+               alt14 = 19;
+            }
+         }
+            break;
+         case 'j':
+         {
+            alt14 = 20;
+         }
+            break;
+         case 'f':
+         {
+            switch ( input.LA( 2 ) )
+            {
+               case 'e':
+               {
+                  alt14 = 20;
+               }
+                  break;
+               case 'r':
+               {
+                  alt14 = 21;
+               }
+                  break;
+               case 'i':
+               case 'o':
+               {
+                  alt14 = 22;
+               }
+                  break;
+               default :
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        14,
+                                                                        14,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+            }
+            
+         }
+            break;
+         case '/':
+         case '\u5E74':
+         case '\u65E5':
+         case '\u6708':
+         {
+            alt14 = 23;
+         }
+            break;
+         case '.':
+         {
+            alt14 = 24;
+         }
+            break;
+         case ':':
+         {
+            alt14 = 25;
+         }
+            break;
+         case '-':
+         {
+            int LA14_18 = input.LA( 2 );
+            
+            if ( ( LA14_18 == 'a' ) )
+            {
+               alt14 = 27;
+            }
+            else
+            {
+               alt14 = 26;
+            }
+         }
+            break;
+         case ',':
+         {
+            alt14 = 28;
+         }
+            break;
+         case '@':
+         {
+            alt14 = 29;
+         }
+            break;
+         case '0':
+         case '1':
+         case '2':
+         case '3':
+         case '4':
+         case '5':
+         case '6':
+         case '7':
+         case '8':
+         case '9':
+         {
+            alt14 = 30;
+         }
+            break;
+         case '\t':
+         case '\n':
+         case '\r':
+         case ' ':
+         {
+            alt14 = 31;
+         }
+            break;
+         default :
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  14,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+            
+      }
+      
       switch ( alt14 )
       {
          case 1:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:10:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:10:
          // A
          {
             mA();
@@ -1934,7 +3650,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 2:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:12:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:12:
          // OF
          {
             mOF();
@@ -1942,7 +3658,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 3:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:15:
          // ON
          {
             mON();
@@ -1950,7 +3666,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 4:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:18:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:18:
          // IN
          {
             mIN();
@@ -1958,7 +3674,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 5:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:21:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:21:
          // AND
          {
             mAND();
@@ -1966,7 +3682,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 6:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:25:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:25:
          // END
          {
             mEND();
@@ -1974,7 +3690,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 7:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:29:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:29:
          // THE
          {
             mTHE();
@@ -1982,7 +3698,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 8:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:33:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:33:
          // NOW
          {
             mNOW();
@@ -1990,7 +3706,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 9:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:37:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:37:
          // TONIGHT
          {
             mTONIGHT();
@@ -1998,7 +3714,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 10:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:45:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:45:
          // NEVER
          {
             mNEVER();
@@ -2006,7 +3722,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 11:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:51:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:51:
          // TODAY
          {
             mTODAY();
@@ -2014,7 +3730,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 12:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:57:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:57:
          // TOMORROW
          {
             mTOMORROW();
@@ -2022,7 +3738,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 13:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:66:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:66:
          // YESTERDAY
          {
             mYESTERDAY();
@@ -2030,7 +3746,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 14:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:76:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:76:
          // NEXT
          {
             mNEXT();
@@ -2038,7 +3754,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 15:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:81:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:81:
          // STs
          {
             mSTs();
@@ -2046,7 +3762,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 16:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:85:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:85:
          // YEARS
          {
             mYEARS();
@@ -2054,7 +3770,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 17:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:91:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:91:
          // MONTHS
          {
             mMONTHS();
@@ -2062,7 +3778,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 18:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:98:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:98:
          // WEEKS
          {
             mWEEKS();
@@ -2070,7 +3786,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 19:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:104:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:104:
          // DAYS
          {
             mDAYS();
@@ -2078,7 +3794,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 20:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:109:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:109:
          // MONTH
          {
             mMONTH();
@@ -2086,7 +3802,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 21:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:115:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:115:
          // WEEKDAY
          {
             mWEEKDAY();
@@ -2094,7 +3810,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 22:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:123:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:123:
          // NUM_STR
          {
             mNUM_STR();
@@ -2102,7 +3818,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 23:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:131:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:131:
          // DATE_SEP
          {
             mDATE_SEP();
@@ -2110,7 +3826,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 24:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:140:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:140:
          // DOT
          {
             mDOT();
@@ -2118,7 +3834,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 25:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:144:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:144:
          // COLON
          {
             mCOLON();
@@ -2126,7 +3842,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 26:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:150:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:150:
          // MINUS
          {
             mMINUS();
@@ -2134,7 +3850,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 27:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:156:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:156:
          // MINUS_A
          {
             mMINUS_A();
@@ -2142,7 +3858,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 28:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:164:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:164:
          // COMMA
          {
             mCOMMA();
@@ -2150,7 +3866,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 29:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:170:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:170:
          // DATE_TIME_SEPARATOR
          {
             mDATE_TIME_SEPARATOR();
@@ -2158,7 +3874,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 30:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:190:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:190:
          // INT
          {
             mINT();
@@ -2166,7 +3882,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 31:
-         // D:\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:194:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:194:
          // WS
          {
             mWS();
@@ -2176,532 +3892,6 @@ public class DateLexer extends Lexer
       
       }
       
-   }
-   
-   protected DFA5 dfa5 = new DFA5( this );
-   
-   protected DFA6 dfa6 = new DFA6( this );
-   
-   protected DFA7 dfa7 = new DFA7( this );
-   
-   protected DFA9 dfa9 = new DFA9( this );
-   
-   protected DFA10 dfa10 = new DFA10( this );
-   
-   protected DFA11 dfa11 = new DFA11( this );
-   
-   protected DFA14 dfa14 = new DFA14( this );
-   
-   static final String DFA5_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
-   
-   static final String DFA5_eofS = "\12\uffff";
-   
-   static final String DFA5_minS = "\1\171\1\145\1\141\1\163\1\162\2\uffff\1\163\2\uffff";
-   
-   static final String DFA5_maxS = "\1\171\1\162\1\141\1\163\1\162\2\uffff\1\163\2\uffff";
-   
-   static final String DFA5_acceptS = "\5\uffff\1\3\1\4\1\uffff\1\1\1\2";
-   
-   static final String DFA5_specialS = "\12\uffff}>";
-   
-   static final String[] DFA5_transitionS =
-   { "\1\1", "\1\2\14\uffff\1\3", "\1\4", "\1\5", "\1\7", "", "", "\1\10", "",
-    "" };
-   
-   static final short[] DFA5_eot = DFA.unpackEncodedString( DFA5_eotS );
-   
-   static final short[] DFA5_eof = DFA.unpackEncodedString( DFA5_eofS );
-   
-   static final char[] DFA5_min = DFA.unpackEncodedStringToUnsignedChars( DFA5_minS );
-   
-   static final char[] DFA5_max = DFA.unpackEncodedStringToUnsignedChars( DFA5_maxS );
-   
-   static final short[] DFA5_accept = DFA.unpackEncodedString( DFA5_acceptS );
-   
-   static final short[] DFA5_special = DFA.unpackEncodedString( DFA5_specialS );
-   
-   static final short[][] DFA5_transition;
-   
-   static
-   {
-      int numStates = DFA5_transitionS.length;
-      DFA5_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA5_transition[ i ] = DFA.unpackEncodedString( DFA5_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA5 extends DFA
-   {
-      
-      public DFA5( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 5;
-         this.eot = DFA5_eot;
-         this.eof = DFA5_eof;
-         this.min = DFA5_min;
-         this.max = DFA5_max;
-         this.accept = DFA5_accept;
-         this.special = DFA5_special;
-         this.transition = DFA5_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "450:1: YEARS : ( 'years' | 'year' | 'yrs' | 'yr' );";
-      }
-   }
-   
-   static final String DFA6_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
-   
-   static final String DFA6_eofS = "\12\uffff";
-   
-   static final String DFA6_minS = "\1\155\1\157\1\156\1\163\1\150\2\uffff\1\163\2\uffff";
-   
-   static final String DFA6_maxS = "\1\155\1\157\1\156\1\164\1\150\2\uffff\1\163\2\uffff";
-   
-   static final String DFA6_acceptS = "\5\uffff\1\3\1\4\1\uffff\1\1\1\2";
-   
-   static final String DFA6_specialS = "\12\uffff}>";
-   
-   static final String[] DFA6_transitionS =
-   { "\1\1", "\1\2", "\1\3", "\1\5\1\4", "\1\7", "", "", "\1\10", "", "" };
-   
-   static final short[] DFA6_eot = DFA.unpackEncodedString( DFA6_eotS );
-   
-   static final short[] DFA6_eof = DFA.unpackEncodedString( DFA6_eofS );
-   
-   static final char[] DFA6_min = DFA.unpackEncodedStringToUnsignedChars( DFA6_minS );
-   
-   static final char[] DFA6_max = DFA.unpackEncodedStringToUnsignedChars( DFA6_maxS );
-   
-   static final short[] DFA6_accept = DFA.unpackEncodedString( DFA6_acceptS );
-   
-   static final short[] DFA6_special = DFA.unpackEncodedString( DFA6_specialS );
-   
-   static final short[][] DFA6_transition;
-   
-   static
-   {
-      int numStates = DFA6_transitionS.length;
-      DFA6_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA6_transition[ i ] = DFA.unpackEncodedString( DFA6_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA6 extends DFA
-   {
-      
-      public DFA6( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 6;
-         this.eot = DFA6_eot;
-         this.eof = DFA6_eof;
-         this.min = DFA6_min;
-         this.max = DFA6_max;
-         this.accept = DFA6_accept;
-         this.special = DFA6_special;
-         this.transition = DFA6_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "452:1: MONTHS : ( 'months' | 'month' | 'mons' | 'mon' );";
-      }
-   }
-   
-   static final String DFA7_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
-   
-   static final String DFA7_eofS = "\12\uffff";
-   
-   static final String DFA7_minS = "\1\167\2\145\1\163\1\153\2\uffff\1\163\2\uffff";
-   
-   static final String DFA7_maxS = "\1\167\1\153\1\145\1\163\1\153\2\uffff\1\163\2\uffff";
-   
-   static final String DFA7_acceptS = "\5\uffff\1\3\1\4\1\uffff\1\1\1\2";
-   
-   static final String DFA7_specialS = "\12\uffff}>";
-   
-   static final String[] DFA7_transitionS =
-   { "\1\1", "\1\2\5\uffff\1\3", "\1\4", "\1\5", "\1\7", "", "", "\1\10", "",
-    "" };
-   
-   static final short[] DFA7_eot = DFA.unpackEncodedString( DFA7_eotS );
-   
-   static final short[] DFA7_eof = DFA.unpackEncodedString( DFA7_eofS );
-   
-   static final char[] DFA7_min = DFA.unpackEncodedStringToUnsignedChars( DFA7_minS );
-   
-   static final char[] DFA7_max = DFA.unpackEncodedStringToUnsignedChars( DFA7_maxS );
-   
-   static final short[] DFA7_accept = DFA.unpackEncodedString( DFA7_acceptS );
-   
-   static final short[] DFA7_special = DFA.unpackEncodedString( DFA7_specialS );
-   
-   static final short[][] DFA7_transition;
-   
-   static
-   {
-      int numStates = DFA7_transitionS.length;
-      DFA7_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA7_transition[ i ] = DFA.unpackEncodedString( DFA7_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA7 extends DFA
-   {
-      
-      public DFA7( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 7;
-         this.eot = DFA7_eot;
-         this.eof = DFA7_eof;
-         this.min = DFA7_min;
-         this.max = DFA7_max;
-         this.accept = DFA7_accept;
-         this.special = DFA7_special;
-         this.transition = DFA7_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "454:1: WEEKS : ( 'weeks' | 'week' | 'wks' | 'wk' );";
-      }
-   }
-   
-   static final String DFA9_eotS = "\23\uffff\1\40\1\42\1\44\1\46\1\50\1\uffff\1\52\1\54\1\56\1\60"
-      + "\1\62\1\64\16\uffff\1\66\11\uffff";
-   
-   static final String DFA9_eofS = "\67\uffff";
-   
-   static final String DFA9_minS = "\2\141\1\145\1\141\1\160\1\145\1\143\1\157\1\145\1\156\1\154\1"
-      + "\142\2\162\1\147\1\160\1\164\1\166\1\143\1\165\1\145\1\171\1\162"
-      + "\1\143\1\uffff\1\151\1\165\1\164\1\157\2\145\16\uffff\1\145\11\uffff";
-   
-   static final String DFA9_maxS = "\1\163\1\165\1\145\1\141\1\165\1\145\1\143\1\157\1\145\2\156\1"
-      + "\142\1\171\1\162\1\147\1\160\1\164\1\166\1\143\1\165\1\145\1\171"
-      + "\1\162\1\143\1\uffff\1\151\1\165\1\164\1\157\2\145\16\uffff\1\145"
-      + "\11\uffff";
-   
-   static final String DFA9_acceptS = "\30\uffff\1\11\6\uffff\1\1\1\2\1\12\1\13\1\14\1\15\1\3\1\4\1\5"
-      + "\1\6\1\7\1\10\1\16\1\17\1\uffff\1\22\1\23\1\24\1\25\1\26\1\27\1"
-      + "\30\1\20\1\21";
-   
-   static final String DFA9_specialS = "\67\uffff}>";
-   
-   static final String[] DFA9_transitionS =
-   {
-    "\1\4\2\uffff\1\10\1\uffff\1\2\3\uffff\1\1\2\uffff\1\3\1\7\1"
-       + "\6\3\uffff\1\5", "\1\11\23\uffff\1\12", "\1\13", "\1\14",
-    "\1\15\4\uffff\1\16", "\1\17", "\1\20", "\1\21", "\1\22", "\1\23",
-    "\1\25\1\uffff\1\24", "\1\26", "\1\27\6\uffff\1\30", "\1\31", "\1\32",
-    "\1\33", "\1\34", "\1\35", "\1\36", "\1\37", "\1\41", "\1\43", "\1\45",
-    "\1\47", "", "\1\51", "\1\53", "\1\55", "\1\57", "\1\61", "\1\63", "", "",
-    "", "", "", "", "", "", "", "", "", "", "", "", "\1\65", "", "", "", "",
-    "", "", "", "", "" };
-   
-   static final short[] DFA9_eot = DFA.unpackEncodedString( DFA9_eotS );
-   
-   static final short[] DFA9_eof = DFA.unpackEncodedString( DFA9_eofS );
-   
-   static final char[] DFA9_min = DFA.unpackEncodedStringToUnsignedChars( DFA9_minS );
-   
-   static final char[] DFA9_max = DFA.unpackEncodedStringToUnsignedChars( DFA9_maxS );
-   
-   static final short[] DFA9_accept = DFA.unpackEncodedString( DFA9_acceptS );
-   
-   static final short[] DFA9_special = DFA.unpackEncodedString( DFA9_specialS );
-   
-   static final short[][] DFA9_transition;
-   
-   static
-   {
-      int numStates = DFA9_transitionS.length;
-      DFA9_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA9_transition[ i ] = DFA.unpackEncodedString( DFA9_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA9 extends DFA
-   {
-      
-      public DFA9( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 9;
-         this.eot = DFA9_eot;
-         this.eof = DFA9_eof;
-         this.min = DFA9_min;
-         this.max = DFA9_max;
-         this.accept = DFA9_accept;
-         this.special = DFA9_special;
-         this.transition = DFA9_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "458:1: MONTH : ( 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' | 'july' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' | 'december' | 'dec' );";
-      }
-   }
-   
-   static final String DFA10_eotS = "\15\uffff\1\25\1\27\1\31\1\33\1\35\1\37\1\41\16\uffff";
-   
-   static final String DFA10_eofS = "\42\uffff";
-   
-   static final String DFA10_minS = "\1\146\1\157\1\150\1\145\1\162\1\141\1\156\1\145\1\165\1\144\1"
-      + "\151\1\164\1\156\1\144\1\163\1\162\1\156\1\144\1\165\1\144\16\uffff";
-   
-   static final String DFA10_maxS = "\1\167\1\157\1\165\1\145\1\162\1\165\1\156\1\145\1\165\1\144\1"
-      + "\151\1\164\1\156\1\144\1\163\1\162\1\156\1\144\1\165\1\144\16\uffff";
-   
-   static final String DFA10_acceptS = "\24\uffff\1\1\1\2\1\3\1\4\1\7\1\10\1\5\1\6\1\11\1\12\1\13\1\14"
-      + "\1\15\1\16";
-   
-   static final String DFA10_specialS = "\42\uffff}>";
-   
-   static final String[] DFA10_transitionS =
-   { "\1\4\6\uffff\1\1\5\uffff\1\5\1\2\2\uffff\1\3", "\1\6",
-    "\1\10\14\uffff\1\7", "\1\11", "\1\12", "\1\13\23\uffff\1\14", "\1\15",
-    "\1\16", "\1\17", "\1\20", "\1\21", "\1\22", "\1\23", "\1\24", "\1\26",
-    "\1\30", "\1\32", "\1\34", "\1\36", "\1\40", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "" };
-   
-   static final short[] DFA10_eot = DFA.unpackEncodedString( DFA10_eotS );
-   
-   static final short[] DFA10_eof = DFA.unpackEncodedString( DFA10_eofS );
-   
-   static final char[] DFA10_min = DFA.unpackEncodedStringToUnsignedChars( DFA10_minS );
-   
-   static final char[] DFA10_max = DFA.unpackEncodedStringToUnsignedChars( DFA10_maxS );
-   
-   static final short[] DFA10_accept = DFA.unpackEncodedString( DFA10_acceptS );
-   
-   static final short[] DFA10_special = DFA.unpackEncodedString( DFA10_specialS );
-   
-   static final short[][] DFA10_transition;
-   
-   static
-   {
-      int numStates = DFA10_transitionS.length;
-      DFA10_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA10_transition[ i ] = DFA.unpackEncodedString( DFA10_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA10 extends DFA
-   {
-      
-      public DFA10( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 10;
-         this.eot = DFA10_eot;
-         this.eof = DFA10_eof;
-         this.min = DFA10_min;
-         this.max = DFA10_max;
-         this.accept = DFA10_accept;
-         this.special = DFA10_special;
-         this.transition = DFA10_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "463:1: WEEKDAY : ( 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' | 'saturday' | 'sat' | 'sunday' | 'sun' );";
-      }
-   }
-   
-   static final String DFA11_eotS = "\16\uffff";
-   
-   static final String DFA11_eofS = "\16\uffff";
-   
-   static final String DFA11_minS = "\1\145\1\uffff\1\145\1\151\1\145\11\uffff";
-   
-   static final String DFA11_maxS = "\1\164\1\uffff\1\167\1\157\1\151\11\uffff";
-   
-   static final String DFA11_acceptS = "\1\uffff\1\1\3\uffff\1\10\1\11\1\2\1\3\1\12\1\4\1\5\1\6\1\7";
-   
-   static final String DFA11_specialS = "\16\uffff}>";
-   
-   static final String[] DFA11_transitionS =
-   { "\1\5\1\3\7\uffff\1\6\1\1\3\uffff\1\4\1\2", "",
-    "\1\11\2\uffff\1\10\16\uffff\1\7", "\1\13\5\uffff\1\12",
-    "\1\15\3\uffff\1\14", "", "", "", "", "", "", "", "", "" };
-   
-   static final short[] DFA11_eot = DFA.unpackEncodedString( DFA11_eotS );
-   
-   static final short[] DFA11_eof = DFA.unpackEncodedString( DFA11_eofS );
-   
-   static final char[] DFA11_min = DFA.unpackEncodedStringToUnsignedChars( DFA11_minS );
-   
-   static final char[] DFA11_max = DFA.unpackEncodedStringToUnsignedChars( DFA11_maxS );
-   
-   static final short[] DFA11_accept = DFA.unpackEncodedString( DFA11_acceptS );
-   
-   static final short[] DFA11_special = DFA.unpackEncodedString( DFA11_specialS );
-   
-   static final short[][] DFA11_transition;
-   
-   static
-   {
-      int numStates = DFA11_transitionS.length;
-      DFA11_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA11_transition[ i ] = DFA.unpackEncodedString( DFA11_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA11 extends DFA
-   {
-      
-      public DFA11( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 11;
-         this.eot = DFA11_eot;
-         this.eof = DFA11_eof;
-         this.min = DFA11_min;
-         this.max = DFA11_max;
-         this.accept = DFA11_accept;
-         this.special = DFA11_special;
-         this.transition = DFA11_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "467:1: NUM_STR : ( 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' );";
-      }
-   }
-   
-   static final String DFA14_eotS = "\1\uffff\1\30\12\uffff\1\51\5\uffff\1\53\7\uffff\1\55\2\uffff\1"
-      + "\11\27\uffff\1\66\1\uffff";
-   
-   static final String DFA14_eofS = "\67\uffff";
-   
-   static final String DFA14_minS = "\1\11\1\156\1\143\1\uffff\1\151\1\145\1\144\1\145\1\141\1\uffff"
-      + "\1\141\2\145\1\uffff\1\145\3\uffff\1\141\7\uffff\1\145\2\uffff\1"
-      + "\145\1\144\2\uffff\2\166\1\141\1\uffff\1\160\1\156\1\144\15\uffff"
-      + "\1\144\1\uffff";
-   
-   static final String DFA14_maxS = "\1\u6708\1\165\1\156\1\uffff\1\156\1\167\1\157\1\162\1\165\1\uffff"
-      + "\1\157\1\153\1\145\1\uffff\1\162\3\uffff\1\141\7\uffff\1\145\2\uffff"
-      + "\1\165\1\156\2\uffff\1\167\1\170\1\163\1\uffff\1\166\1\156\1\145"
-      + "\15\uffff\1\144\1\uffff";
-   
-   static final String DFA14_acceptS = "\3\uffff\1\4\5\uffff\1\17\3\uffff\1\24\1\uffff\1\27\1\30\1\31\1"
-      + "\uffff\1\34\1\35\1\36\1\37\1\5\1\1\1\2\1\uffff\1\6\1\26\2\uffff"
-      + "\1\14\1\25\3\uffff\1\20\3\uffff\1\22\1\23\1\33\1\32\1\34\1\3\1\7"
-      + "\1\11\1\13\1\10\1\12\1\16\1\15\1\uffff\1\21";
-   
-   static final String DFA14_specialS = "\67\uffff}>";
-   
-   static final String[] DFA14_transitionS =
-   {
-    "\2\26\2\uffff\1\26\22\uffff\1\26\13\uffff\1\23\1\22\1\20\1"
-       + "\17\12\25\1\21\5\uffff\1\24\40\uffff\1\1\2\uffff\1\14\1\4\1"
-       + "\16\2\uffff\1\3\1\15\2\uffff\1\12\1\6\1\2\2\uffff\1\11\1\10"
-       + "\1\5\2\uffff\1\13\1\uffff\1\7\u5dfa\uffff\1\17\u0770\uffff\1"
-       + "\17\u0122\uffff\1\17",
-    "\1\27\1\uffff\1\15\3\uffff\1\24\1\15",
-    "\1\15\2\uffff\1\31\7\uffff\1\32",
-    "",
-    "\1\34\4\uffff\1\33",
-    "\1\34\2\uffff\1\35\4\uffff\1\37\1\uffff\1\36\5\uffff\1\40"
-       + "\1\uffff\1\34", "\1\11\1\42\3\uffff\1\34\5\uffff\1\41",
-    "\1\43\14\uffff\1\44",
-    "\1\40\3\uffff\1\45\3\uffff\1\34\12\uffff\1\11\1\40", "",
-    "\1\15\15\uffff\1\46", "\1\47\5\uffff\1\50", "\1\15", "",
-    "\1\15\3\uffff\1\34\5\uffff\1\34\2\uffff\1\40", "", "", "", "\1\52", "",
-    "", "", "", "", "", "", "\1\34", "", "",
-    "\1\56\14\uffff\1\34\2\uffff\1\40", "\1\60\10\uffff\1\37\1\57", "", "",
-    "\1\15\1\61", "\1\62\1\uffff\1\63", "\1\44\21\uffff\1\64", "",
-    "\1\15\5\uffff\1\34", "\1\65", "\1\40\1\50", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "\1\40", "" };
-   
-   static final short[] DFA14_eot = DFA.unpackEncodedString( DFA14_eotS );
-   
-   static final short[] DFA14_eof = DFA.unpackEncodedString( DFA14_eofS );
-   
-   static final char[] DFA14_min = DFA.unpackEncodedStringToUnsignedChars( DFA14_minS );
-   
-   static final char[] DFA14_max = DFA.unpackEncodedStringToUnsignedChars( DFA14_maxS );
-   
-   static final short[] DFA14_accept = DFA.unpackEncodedString( DFA14_acceptS );
-   
-   static final short[] DFA14_special = DFA.unpackEncodedString( DFA14_specialS );
-   
-   static final short[][] DFA14_transition;
-   
-   static
-   {
-      int numStates = DFA14_transitionS.length;
-      DFA14_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA14_transition[ i ] = DFA.unpackEncodedString( DFA14_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA14 extends DFA
-   {
-      
-      public DFA14( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 14;
-         this.eot = DFA14_eot;
-         this.eof = DFA14_eof;
-         this.min = DFA14_min;
-         this.max = DFA14_max;
-         this.accept = DFA14_accept;
-         this.special = DFA14_special;
-         this.transition = DFA14_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "1:1: Tokens : ( A | OF | ON | IN | AND | END | THE | NOW | TONIGHT | NEVER | TODAY | TOMORROW | YESTERDAY | NEXT | STs | YEARS | MONTHS | WEEKS | DAYS | MONTH | WEEKDAY | NUM_STR | DATE_SEP | DOT | COLON | MINUS | MINUS_A | COMMA | DATE_TIME_SEPARATOR | INT | WS );";
-      }
    }
    
 }

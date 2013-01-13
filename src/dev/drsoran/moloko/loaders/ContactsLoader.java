@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -32,6 +32,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContactOverviewsProviderPart;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.ContactOverviews;
@@ -41,6 +42,8 @@ import dev.drsoran.rtm.RtmContactWithTaskCount;
 
 public class ContactsLoader extends AbstractLoader< List< Contact > >
 {
+   public final static int ID = R.id.loader_contacts;
+   
    private final static String CONTACTS_NOTE_CONTAINS_RTM;
    
    static
@@ -56,22 +59,22 @@ public class ContactsLoader extends AbstractLoader< List< Contact > >
    private final String selection;
    
    
-
+   
    public ContactsLoader( Context context )
    {
       this( context, null );
    }
    
-
-
+   
+   
    public ContactsLoader( Context context, String selection )
    {
       super( context );
       this.selection = selection;
    }
    
-
-
+   
+   
    @Override
    protected List< Contact > queryResultInBackground( ContentProviderClient client )
    {
@@ -92,16 +95,16 @@ public class ContactsLoader extends AbstractLoader< List< Contact > >
       return contacts;
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return ContactOverviews.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
@@ -109,8 +112,8 @@ public class ContactsLoader extends AbstractLoader< List< Contact > >
                                                             observer );
    }
    
-
-
+   
+   
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {
@@ -118,8 +121,8 @@ public class ContactsLoader extends AbstractLoader< List< Contact > >
                                                               observer );
    }
    
-
-
+   
+   
    private Contact linkRtmContact( RtmContactWithTaskCount rtmContact )
    {
       Contact contact = new Contact( rtmContact );
@@ -193,8 +196,8 @@ public class ContactsLoader extends AbstractLoader< List< Contact > >
       return contact;
    }
    
-
-
+   
+   
    private void setContactPhoto( String photoId, Contact contact )
    {
       Cursor photoCursor = null;

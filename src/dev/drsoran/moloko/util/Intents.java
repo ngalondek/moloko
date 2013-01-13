@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,27 +31,31 @@ import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
-import dev.drsoran.moloko.IFilter;
+
+import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTaskNote;
+
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.HomeActivity;
-import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
-import dev.drsoran.moloko.activities.TaskActivity;
-import dev.drsoran.moloko.activities.TaskEditMultipleActivity;
-import dev.drsoran.moloko.activities.TasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.notification.MolokoNotificationService;
+import dev.drsoran.moloko.prefs.activities.MainPreferencesActivity;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
-import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -67,15 +72,80 @@ public final class Intents
    
    public final static class Action
    {
-      public final static String TASKS_LISTS_MIN_DETAILED = "dev.drsoran.moloko.util.Intents.Action.TASKS_LISTS_MIN_DETAILED";
-      
       public final static String SYNC_STATUS_UPDATE = "dev.drsoran.moloko.util.Intents.Action.SYNC_STATUS_UPDATE";
+      
+      public final static String SETTINGS_CHANGED = "dev.drsoran.moloko.util.Intents.Action.SETTINGS_CHANGED";
+      
+      public final static String NOTIFICATION_SERVICE_START = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_START";
+      
+      public final static String NOTIFICATION_SERVICE_NOTIFICATION_CLICKED = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED";
+      
+      public final static String NOTIFICATION_SERVICE_NOTIFICATON_CLEARED = "dev.drsoran.moloko.util.Intents.Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED";
+      
+      public final static String TASK_POSTPONED_FROM_NOTIFICATION = "dev.drsoran.moloko.util.Intents.Action.TASK_POSTPONED_FROM_NOTIFICATION";
+      
+      public final static String TASK_COMPLETED_FROM_NOTIFICATION = "dev.drsoran.moloko.util.Intents.Action.TASK_COMPLETED_FROM_NOTIFICATION";
+   }
+   
+   
+   public final static class HomeAction
+   {
+      public final static String NONE = "none";
+      
+      public final static String BACK = "back";
+      
+      public final static String HOME = "home";
+      
+      public final static String ACTIVITY = "activity";
    }
    
    
    public final static class Extras
    {
+      public final static String HOME_ACTION = "home_action";
+      
+      public final static String HOME_AS_UP_ACTIVITY = "home_as_up_activity";
+      
+      public final static String KEY_ACTIVITY_TITLE = "activity_title";
+      
+      public final static String KEY_ACTIVITY_SUB_TITLE = "activity_sub_title";
+      
+      public final static String KEY_TASK = "task";
+      
+      public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
+         + "tasks";
+      
+      public final static String KEY_LIST = "list";
+      
+      public final static String KEY_LIST_NAME = "list_name";
+      
+      public final static String KEY_LIST_ID = "list_id";
+      
+      public final static String KEY_NOTE = "note";
+      
+      public final static String KEY_NOTE_TITLE = "note_title";
+      
+      public final static String KEY_NOTE_TEXT = "note_text";
+      
+      public final static String KEY_FILTER = "filter";
+      
+      public final static String KEY_TAGS = "tags";
+      
+      public final static String KEY_TASK_SORT_ORDER = "tasks_sort_order";
+      
       public final static String KEY_SYNC_STATUS = "sync_status";
+      
+      public final static String KEY_NOTIFICATION_ID = "notification_id";
+      
+      public final static String KEY_FROM_NOTIFICATION = "from_notification";
+      
+      public static final String AUTH_TOKEN_EXPIRED = "authTokenExpired";
+      
+      public static final String AUTH_MISSINGCREDENTIALS = "missingCredentials";
+      
+      public static final String AUTH_CONFIRMCREDENTIALS = "confirmCredentials";
+      
+      public static final String AUTH_UPDATECREDENTIALS = "updateCredentials";
       
       
       
@@ -94,71 +164,60 @@ public final class Intents
       {
          final Bundle bundle = new Bundle( 1 );
          
-         bundle.putParcelable( TaskActivity.Config.TASK, task );
+         bundle.putParcelable( Extras.KEY_TASK, task );
          
          return bundle;
       }
       
       
       
-      public final static Bundle createOpenListExtrasById( Context context,
-                                                           String id,
-                                                           String additionalFilter )
+      public final static Bundle createEditNoteExtras( Task task,
+                                                       RtmTaskNote note )
       {
-         Bundle extras = null;
+         final Bundle bundle = new Bundle( 2 );
          
-         final ContentProviderClient client = context.getContentResolver()
-                                                     .acquireContentProviderClient( ListOverviews.CONTENT_URI );
+         bundle.putParcelable( Extras.KEY_TASK, task );
+         bundle.putParcelable( Extras.KEY_NOTE, note );
          
-         if ( client != null )
-         {
-            final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                         ListOverviews._ID
-                                                                                            + "="
-                                                                                            + id );
-            
-            if ( list != null )
-               extras = createOpenListExtras( context, list, additionalFilter );
-            
-            client.release();
-         }
-         
-         return extras;
+         return bundle;
       }
       
       
       
-      public final static Bundle createOpenListExtrasByName( Context context,
-                                                             String name,
-                                                             String additionalFilter )
+      public final static Bundle createAddNoteExtras( Task task,
+                                                      String title,
+                                                      String text )
       {
-         Bundle extras = null;
+         final Bundle bundle = new Bundle( 3 );
          
-         final ContentProviderClient client = context.getContentResolver()
-                                                     .acquireContentProviderClient( ListOverviews.CONTENT_URI );
+         bundle.putParcelable( Extras.KEY_TASK, task );
          
-         if ( client != null )
-         {
-            final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                         ListOverviews.LIST_NAME
-                                                                                            + "='"
-                                                                                            + name
-                                                                                            + "'" );
-            
-            if ( list != null )
-               extras = createOpenListExtras( context, list, additionalFilter );
-            
-            client.release();
-         }
+         if ( !TextUtils.isEmpty( title ) )
+            bundle.putString( Extras.KEY_NOTE_TITLE, title );
          
-         return extras;
+         if ( !TextUtils.isEmpty( text ) )
+            bundle.putString( Extras.KEY_NOTE_TEXT, text );
+         
+         return bundle;
+      }
+      
+      
+      
+      public final static Bundle createChooseTagsExtras( Collection< String > preselectedTags )
+      {
+         final Bundle bundle = new Bundle( 1 );
+         
+         bundle.putStringArrayList( Extras.KEY_TAGS,
+                                    new ArrayList< String >( preselectedTags ) );
+         
+         return bundle;
       }
       
       
       
       public final static Bundle createOpenListExtras( Context context,
                                                        RtmListWithTaskCount list,
-                                                       String additionalFilter )
+                                                       String additionalSmartFilter )
       {
          String filterString = Strings.EMPTY_STRING;
          
@@ -175,20 +234,22 @@ public final class Intents
             filterString = list.getSmartFilter().getFilterString();
          }
          
-         if ( additionalFilter != null )
+         if ( additionalSmartFilter != null )
          {
             if ( filterString.length() > 0 )
                filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " ("
-                  + additionalFilter + ")" );
+                  + additionalSmartFilter + ")" );
             else
-               filterString = additionalFilter;
+               filterString = additionalSmartFilter;
          }
          
          final Bundle extras = createSmartFilterExtras( context,
                                                         new RtmSmartFilter( filterString ),
                                                         context.getString( R.string.taskslist_actionbar,
                                                                            list.getName() ) );
-         extras.putString( Lists.LIST_NAME, list.getName() );
+         extras.putString( Intents.Extras.KEY_LIST_NAME, list.getName() );
+         extras.putString( Intents.Extras.KEY_LIST_ID, list.getId() );
+         
          return extras;
       }
       
@@ -267,13 +328,13 @@ public final class Intents
       {
          final Bundle extras = new Bundle();
          
-         extras.putString( TasksListActivity.Config.TITLE,
+         extras.putString( Extras.KEY_ACTIVITY_TITLE,
                            context.getString( R.string.taskslist_actionbar,
                                               ( title != null )
                                                                ? title
                                                                : context.getString( R.string.app_name ) ) );
          
-         extras.putParcelable( AbstractTasksListFragment.Config.FILTER, filter );
+         extras.putParcelable( Extras.KEY_FILTER, filter );
          
          return extras;
       }
@@ -286,12 +347,12 @@ public final class Intents
       {
          final Bundle extras = new Bundle();
          
-         extras.putString( TasksListActivity.Config.TITLE,
+         extras.putString( Extras.KEY_ACTIVITY_TITLE,
                            context.getString( R.string.taskslist_actionbar,
                                               ( title != null )
                                                                ? title
                                                                : filter.getFilterString() ) );
-         extras.putParcelable( AbstractTasksListFragment.Config.FILTER, filter );
+         extras.putParcelable( Extras.KEY_FILTER, filter );
          
          return extras;
       }
@@ -300,6 +361,17 @@ public final class Intents
    
    
    /** INTENTS **/
+   
+   public final static Intent createStartNotificationServiceIntent( MolokoApp molokoApp )
+   {
+      final Intent intent = new Intent( molokoApp,
+                                        MolokoNotificationService.class );
+      intent.setAction( Action.NOTIFICATION_SERVICE_START );
+      
+      return intent;
+   }
+   
+   
    
    public final static PendingIntent createSyncAlarmIntent( Context context )
    {
@@ -332,29 +404,106 @@ public final class Intents
    
    
    
-   public final static PendingIntent createNotificationIntent( Context context,
-                                                               Intent onClickIntent )
+   public final static PendingIntent createPermanentNotificationIntent( Context context,
+                                                                        int notificationId )
    {
-      onClickIntent.setFlags( onClickIntent.getFlags()
-         | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-      return PendingIntent.getActivity( context,
-                                        0,
-                                        onClickIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT );
+      final Intent onClickIntent = new Intent( context,
+                                               MolokoNotificationService.class );
+      
+      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
+      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      
+      return PendingIntent.getService( context,
+                                       0,
+                                       onClickIntent,
+                                       PendingIntent.FLAG_CANCEL_CURRENT );
    }
    
    
    
-   public final static Intent createOpenHomeIntent( Context context )
+   public final static PendingIntent createDueTasksNotificationIntent( Context context,
+                                                                       int notificationId )
    {
-      return new Intent( context, HomeActivity.class ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+      final Intent onClickIntent = new Intent( context,
+                                               MolokoNotificationService.class );
+      
+      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
+      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      
+      return PendingIntent.getService( context,
+                                       1,
+                                       onClickIntent,
+                                       PendingIntent.FLAG_CANCEL_CURRENT
+                                          | PendingIntent.FLAG_ONE_SHOT );
+   }
+   
+   
+   
+   public final static PendingIntent createNotificationClearedIntent( Context context,
+                                                                      int notificationId )
+   {
+      final Intent onClickIntent = new Intent( context,
+                                               MolokoNotificationService.class );
+      
+      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED );
+      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      
+      return PendingIntent.getService( context,
+                                       2,
+                                       onClickIntent,
+                                       PendingIntent.FLAG_CANCEL_CURRENT );
+   }
+   
+   
+   
+   public final static PendingIntent createTaskPostponedFromNotificationIntent( Context context,
+                                                                                Task task )
+   {
+      final Intent broadcastIntent = new Intent( Action.TASK_POSTPONED_FROM_NOTIFICATION );
+      
+      broadcastIntent.putExtra( Extras.KEY_TASK, task );
+      
+      return PendingIntent.getBroadcast( context,
+                                         0,
+                                         broadcastIntent,
+                                         PendingIntent.FLAG_CANCEL_CURRENT );
+   }
+   
+   
+   
+   public final static PendingIntent createTaskCompletedFromNotificationIntent( Context context,
+                                                                                Task task )
+   {
+      final Intent broadcastIntent = new Intent( Action.TASK_COMPLETED_FROM_NOTIFICATION );
+      
+      broadcastIntent.putExtra( Extras.KEY_TASK, task );
+      
+      return PendingIntent.getBroadcast( context,
+                                         0,
+                                         broadcastIntent,
+                                         PendingIntent.FLAG_CANCEL_CURRENT );
+   }
+   
+   
+   
+   public final static Intent createHomeIntent( Context context )
+   {
+      return createHomeAsUpIntent( context, HomeActivity.class );
+   }
+   
+   
+   
+   public final static Intent createHomeAsUpIntent( Context context,
+                                                    Class< ? > homeAsUpTarget )
+   {
+      return new Intent( context, homeAsUpTarget ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
    }
    
    
    
    public final static Intent createOpenPreferencesIntent( Context context )
    {
-      return new Intent( context, MolokoPreferencesActivity.class );
+      return new Intent( context, MainPreferencesActivity.class );
    }
    
    
@@ -411,41 +560,13 @@ public final class Intents
    
    
    
-   public final static Intent createOpenListIntentByName( Context context,
-                                                          String name,
-                                                          String filter )
-   {
-      Intent intent = null;
-      
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( ListOverviews.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                      ListOverviews.LIST_NAME
-                                                                                         + "='"
-                                                                                         + name
-                                                                                         + "'" );
-         
-         if ( list != null )
-            intent = createOpenListIntent( context, list, filter );
-         
-         client.release();
-      }
-      
-      return intent;
-   }
-   
-   
-   
    public final static Intent createOpenListIntent( Context context,
                                                     RtmListWithTaskCount list,
-                                                    String filter )
+                                                    String additionalSmartFilter )
    {
       return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenListExtras( context,
                                                                                                          list,
-                                                                                                         filter ) );
+                                                                                                         additionalSmartFilter ) );
    }
    
    
@@ -466,6 +587,61 @@ public final class Intents
    {
       return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenLocationExtras( context,
                                                                                                              name ) );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppIntent( float lon,
+                                                                    float lat,
+                                                                    int zoom )
+   {
+      return new Intent( Intent.ACTION_VIEW, Uri.parse( "geo:" + lat + ","
+         + lon + "?z=" + zoom ) );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppIntent( String address )
+   {
+      return new Intent( Intent.ACTION_VIEW, Uri.parse( "geo:0,0?q=" + address ) );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppChooser( float lon,
+                                                                     float lat,
+                                                                     int zoom )
+   {
+      return Intent.createChooser( createOpenLocationWithOtherAppIntent( lon,
+                                                                         lat,
+                                                                         zoom ),
+                                   null );
+   }
+   
+   
+   
+   public final static Intent createOpenLocationWithOtherAppChooser( RtmLocation location )
+   {
+      // Determine the type of the location. If we have coordinates
+      // we use these cause they are more precise than the
+      // address.
+      if ( location.longitude != 0.0f || location.latitude != 0.0f )
+      {
+         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.longitude,
+                                                                            location.latitude,
+                                                                            location.zoom ),
+                                      null );
+      }
+      else if ( !TextUtils.isEmpty( location.address ) )
+      {
+         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.address ),
+                                      null );
+      }
+      
+      else
+      {
+         return null;
+      }
    }
    
    
@@ -510,6 +686,15 @@ public final class Intents
    
    
    
+   public final static Intent createOpenTaskIntentFromNotification( Context context,
+                                                                    String taskId )
+   {
+      return createOpenTaskIntent( context, taskId ).putExtra( Extras.KEY_FROM_NOTIFICATION,
+                                                               true );
+   }
+   
+   
+   
    public final static Intent createEditTaskIntent( Context context, Task task )
    {
       return new Intent( Intent.ACTION_EDIT,
@@ -523,34 +708,8 @@ public final class Intents
                                                              List< ? extends Task > tasks )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT, Tasks.CONTENT_URI );
-      intent.putParcelableArrayListExtra( TaskEditMultipleActivity.Config.TASKS,
+      intent.putParcelableArrayListExtra( Extras.KEY_TASKS,
                                           new ArrayList< Task >( tasks ) );
-      
-      return intent;
-   }
-   
-   
-   
-   public final static Intent createSelectMultipleTasksIntent( Context context,
-                                                               IFilter filter,
-                                                               int sortOrder )
-   {
-      final Intent intent;
-      
-      if ( filter instanceof SqlSelectionFilter )
-         intent = createSqlSelectionFilterIntent( context,
-                                                  (SqlSelectionFilter) filter,
-                                                  context.getString( R.string.select_multiple_tasks_titlebar ) );
-      else
-         intent = createSmartFilterIntent( context,
-                                           (RtmSmartFilter) filter,
-                                           context.getString( R.string.select_multiple_tasks_titlebar ) );
-      
-      intent.setAction( Intent.ACTION_PICK );
-      
-      if ( sortOrder != -1 )
-         intent.putExtra( AbstractTasksListFragment.Config.TASK_SORT_ORDER,
-                          sortOrder );
       
       return intent;
    }
@@ -560,10 +719,49 @@ public final class Intents
    public final static Intent createAddTaskIntent( Context context,
                                                    Bundle initialValues )
    {
-      final Intent intent = new Intent( Intent.ACTION_INSERT, Tasks.CONTENT_URI );
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Tasks.CONTENT_URI ).putExtras( initialValues != null
+                                                                                                                  ? initialValues
+                                                                                                                  : Bundle.EMPTY );
       
-      if ( initialValues != null )
-         intent.putExtras( initialValues );
+      return intent;
+   }
+   
+   
+   
+   public final static Intent createEditNoteIntent( Context context,
+                                                    Task task,
+                                                    RtmTaskNote note )
+   {
+      final Intent intent = new Intent( Intent.ACTION_EDIT,
+                                        Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                  note.getId() ) );
+      
+      intent.putExtras( Extras.createEditNoteExtras( task, note ) );
+      
+      return intent;
+   }
+   
+   
+   
+   public final static Intent createAddNoteIntent( Context context,
+                                                   Task task,
+                                                   String title,
+                                                   String text )
+   {
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Notes.CONTENT_URI );
+      
+      intent.putExtras( Extras.createAddNoteExtras( task, title, text ) );
+      
+      return intent;
+   }
+   
+   
+   
+   public final static Intent createChooseTagsIntent( Collection< String > preselectedTags )
+   {
+      final Intent intent = new Intent( Intent.ACTION_PICK, Tags.CONTENT_URI );
+      
+      intent.putExtras( Extras.createChooseTagsExtras( preselectedTags ) );
       
       return intent;
    }
@@ -579,5 +777,30 @@ public final class Intents
       intent.putExtras( Extras.createSmartFilterExtras( context, filter, title ) );
       
       return intent;
+   }
+   
+   
+   
+   public static Intent getFirstResolvable( Context context, Intent[] intents )
+   {
+      final PackageManager pm = context.getPackageManager();
+      
+      Intent firstResolvedIntent = null;
+      for ( int i = 0; i < intents.length && firstResolvedIntent == null; i++ )
+      {
+         final Intent intent = intents[ i ];
+         
+         if ( intent != null )
+         {
+            final List< ResolveInfo > resolveInfos = pm.queryIntentActivities( intent,
+                                                                               PackageManager.MATCH_DEFAULT_ONLY );
+            if ( resolveInfos != null && resolveInfos.size() > 0 )
+            {
+               firstResolvedIntent = intent;
+            }
+         }
+      }
+      
+      return firstResolvedIntent;
    }
 }

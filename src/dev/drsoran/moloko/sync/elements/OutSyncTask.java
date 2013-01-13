@@ -28,13 +28,13 @@ import java.util.List;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
@@ -58,33 +58,31 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 public class OutSyncTask extends SyncTaskBase implements
          IServerSyncable< OutSyncTask, RtmTaskList >
 {
-   private final static String TAG = OutSyncTask.class.getSimpleName();
-   
    public final static LessIdComperator< OutSyncTask > LESS_ID = new LessIdComperator< OutSyncTask >();
    
    
-
+   
    public OutSyncTask( RtmTaskSeries taskSeries, RtmTask task )
    {
       super( taskSeries, task );
    }
    
-
-
+   
+   
    public OutSyncTask( RtmTaskSeries taskSeries, String taskId )
    {
       super( taskSeries, taskId );
    }
    
-
-
+   
+   
    public OutSyncTask( RtmTaskSeries taskSeries )
    {
       super( taskSeries );
    }
    
-
-
+   
+   
    public final static List< OutSyncTask > fromTaskSeries( RtmTaskSeries taskSeries )
    {
       final List< OutSyncTask > result = new ArrayList< OutSyncTask >();
@@ -95,8 +93,8 @@ public class OutSyncTask extends SyncTaskBase implements
       return result;
    }
    
-
-
+   
+   
    @Override
    public boolean hasModification( ModificationSet modificationSet )
    {
@@ -107,8 +105,8 @@ public class OutSyncTask extends SyncTaskBase implements
       
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation handleAfterServerInsert( OutSyncTask serverElement )
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
@@ -146,8 +144,8 @@ public class OutSyncTask extends SyncTaskBase implements
       return operation.build();
    }
    
-
-
+   
+   
    /**
     * This stores only outgoing differences between the local task and the server task as modification.
     * 
@@ -252,8 +250,9 @@ public class OutSyncTask extends SyncTaskBase implements
       return operation.build();
    }
    
-
-
+   
+   
+   @Override
    public IServerSyncOperation< RtmTaskList > computeServerUpdateOperation( RtmTimeline timeline,
                                                                             ModificationSet modifications,
                                                                             OutSyncTask serverElement )
@@ -488,7 +487,8 @@ public class OutSyncTask extends SyncTaskBase implements
                   else
                   {
                      serverPostponed = localPostponed;
-                     Log.e( TAG, "Expected postponed modification" );
+                     MolokoApp.Log.e( getClass(),
+                                      "Expected postponed modification" );
                   }
                }
                else
@@ -520,8 +520,9 @@ public class OutSyncTask extends SyncTaskBase implements
       return operation.build( TaskServerSyncOperation.class );
    }
    
-
-
+   
+   
+   @Override
    public IServerSyncOperation< RtmTaskList > computeServerDeleteOperation( RtmTimeline timeLine )
    {
       return ServerSyncOperation.newDelete( timeLine.tasks_delete( taskSeries.getListId(),

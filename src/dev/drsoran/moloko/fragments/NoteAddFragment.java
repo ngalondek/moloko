@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,50 +25,50 @@ package dev.drsoran.moloko.fragments;
 import java.util.Date;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.format.Time;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
-import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.rtm.Task;
 
 
-public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
+public class NoteAddFragment extends AbstractNoteEditFragment
 {
-   public static class Config
-   {
-      public final static String TASKSERIES_ID = Notes.TASKSERIES_ID;
-      
-      public final static String NEW_NOTE_TITLE = Notes.NOTE_TITLE;
-      
-      public final static String NEW_NOTE_TEXT = Notes.NOTE_TEXT;
-      
-      private final static String NEW_NOTE_ID = "new_note_id";
-   }
-   
-   private EditText title;
-   
-   private EditText text;
+   private final static String NEW_NOTE_ID = "new_note_id";
    
    private final Time created = MolokoDateUtils.newTime();
+   
+   @InstanceState( key = Intents.Extras.KEY_TASK,
+                   defaultValue = InstanceState.NO_DEFAULT )
+   private Task task;
+   
+   @InstanceState( key = Intents.Extras.KEY_NOTE_TITLE,
+                   defaultValue = Strings.EMPTY_STRING )
+   private String newTitle;
+   
+   @InstanceState( key = Intents.Extras.KEY_NOTE_TEXT,
+                   defaultValue = Strings.EMPTY_STRING )
+   private String newText;
+   
+   @InstanceState( key = NEW_NOTE_ID, defaultValue = Strings.EMPTY_STRING )
+   private String newNoteId;
    
    
    
@@ -83,58 +83,38 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    
    
+   public NoteAddFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, NoteAddFragment.class );
+   }
+   
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState )
    {
-      final View fragmentView = createFragmentView( inflater,
+      final View fragmentView = super.onCreateView( inflater,
                                                     container,
                                                     savedInstanceState );
-      return fragmentView;
-   }
-   
-   
-   
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
-   {
-      final View fragmentView = inflater.inflate( R.layout.note_edit_fragment,
-                                                  container,
-                                                  false );
       
-      final TextView createdDate = (TextView) fragmentView.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
-                                                           created.toMillis( true ),
-                                                           MolokoDateUtils.FORMAT_WITH_YEAR ) );
-      
-      title = (EditText) fragmentView.findViewById( R.id.note_edit_title );
-      text = (EditText) fragmentView.findViewById( R.id.note_edit_text );
+      showNote( fragmentView );
       
       return fragmentView;
    }
    
    
    
-   @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
+   private void showNote( View content )
    {
-      super.onViewCreated( view, savedInstanceState );
+      final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
+      createdDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
+                                                               created.toMillis( true ),
+                                                               MolokoDateFormatter.FORMAT_WITH_YEAR ) );
       
-      final Bundle configuration = getConfiguration();
-      
-      if ( configuration.containsKey( Config.NEW_NOTE_TITLE ) )
-      {
-         title.setText( configuration.getString( Config.NEW_NOTE_TITLE ) );
-         configuration.remove( Config.NEW_NOTE_TITLE );
-      }
-      
-      if ( configuration.containsKey( Config.NEW_NOTE_TEXT ) )
-      {
-         text.setText( configuration.getString( Config.NEW_NOTE_TEXT ) );
-         configuration.remove( Config.NEW_NOTE_TEXT );
-      }
+      title.setText( newTitle );
+      text.setText( newText );
       
       title.requestFocus();
    }
@@ -142,43 +122,36 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    
    
    @Override
-   public void takeConfigurationFrom( Bundle config )
+   public void onSaveInstanceState( Bundle outState )
    {
-      super.takeConfigurationFrom( config );
+      newTitle = getNoteTitle();
+      newText = getNoteText();
       
-      if ( config.containsKey( Config.TASKSERIES_ID ) )
-         configuration.putString( Config.TASKSERIES_ID,
-                                  config.getString( Config.TASKSERIES_ID ) );
-      if ( config.containsKey( Config.NEW_NOTE_ID ) )
-         configuration.putString( Config.NEW_NOTE_ID,
-                                  config.getString( Config.NEW_NOTE_ID ) );
-      if ( config.containsKey( Config.NEW_NOTE_TITLE ) )
-         configuration.putString( Config.NEW_NOTE_TITLE,
-                                  config.getString( Config.NEW_NOTE_TITLE ) );
-      if ( config.containsKey( Config.NEW_NOTE_TEXT ) )
-         configuration.putString( Config.NEW_NOTE_TEXT,
-                                  config.getString( Config.NEW_NOTE_TEXT ) );
+      super.onSaveInstanceState( outState );
    }
    
    
    
-   public String getConfiguredTaskSeriesId()
+   public Task getTaskAssertNotNull()
    {
-      return configuration.getString( Config.TASKSERIES_ID );
+      if ( task == null )
+         throw new AssertionError( "Expected task to be not null." );
+      
+      return task;
    }
    
    
    
-   public String getConfiguredNewNoteId()
+   public String getNewNoteId()
    {
-      return configuration.getString( Config.NEW_NOTE_ID );
+      return newNoteId;
    }
    
    
    
-   private void setConfiguredNewNoteId( String newNoteId )
+   private void setNewNoteId( String newNoteId )
    {
-      configuration.putString( Config.NEW_NOTE_ID, newNoteId );
+      this.newNoteId = newNoteId;
    }
    
    
@@ -186,69 +159,39 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    @Override
    public boolean hasChanges()
    {
-      if ( getView() != null )
-         return !TextUtils.isEmpty( UIUtils.getTrimmedText( title ) )
-            || !TextUtils.isEmpty( UIUtils.getTrimmedText( text ) );
-      else
-         return false;
+      return !TextUtils.isEmpty( UIUtils.getTrimmedText( title ) )
+         || !TextUtils.isEmpty( UIUtils.getTrimmedText( text ) );
    }
    
    
    
    @Override
-   protected boolean saveChanges()
+   protected ApplyChangesInfo getChanges()
    {
-      boolean ok = true;
+      final NewNoteId newNoteId = createNewNoteId();
+      final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
+                                                   getTaskAssertNotNull().getTaskSeriesId(),
+                                                   new Date( created.toMillis( true ) ),
+                                                   new Date( created.toMillis( true ) ),
+                                                   null,
+                                                   Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
+                                                   Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
       
-      if ( getView() != null )
+      final ApplyChangesInfo modifications = NoteEditUtils.insertNote( getSherlockActivity(),
+                                                                       newNote );
+      if ( modifications.getActionItems() != null )
       {
-         final NewNoteId newNoteId = createNewNoteId();
-         final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
-                                                      getConfiguredTaskSeriesId(),
-                                                      new Date( created.toMillis( true ) ),
-                                                      new Date( created.toMillis( true ) ),
-                                                      null,
-                                                      Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
-                                                      Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
-         
-         final Pair< ContentProviderActionItemList, ApplyChangesInfo > modifications = NoteEditUtils.insertNote( getFragmentActivity(),
-                                                                                                                 newNote );
-         ok = applyModifications( modifications );
-         
-         if ( ok )
-         {
-            setConfiguredNewNoteId( newNote.getId() );
-         }
+         setNewNoteId( newNote.getId() );
       }
       
-      return ok;
+      return modifications;
    }
    
    
    
    private NewNoteId createNewNoteId()
    {
-      return RtmNotesProviderPart.createNewNoteId( getFragmentActivity().getContentResolver()
+      return RtmNotesProviderPart.createNewNoteId( getSherlockActivity().getContentResolver()
                                                                         .acquireContentProviderClient( Notes.CONTENT_URI ) );
-   }
-   
-   
-   
-   @Override
-   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
-   {
-      NoteFragment fragment = null;
-      final String newNoteId = getConfiguredNewNoteId();
-      
-      if ( newNoteId != null )
-      {
-         final Bundle config = new Bundle();
-         
-         config.putString( NoteFragment.Config.NOTE_ID, newNoteId );
-         
-         fragment = NoteFragment.newInstance( config );
-      }
-      
-      return fragment;
    }
 }

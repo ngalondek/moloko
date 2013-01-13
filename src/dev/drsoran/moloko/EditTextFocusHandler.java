@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import android.os.Handler;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
@@ -31,7 +30,7 @@ import dev.drsoran.moloko.util.UIUtils;
 
 public final class EditTextFocusHandler implements OnFocusChangeListener
 {
-   private Handler handler;
+   private final IHandlerToken handlerToken;
    
    private Runnable showSoftInputRunnable;
    
@@ -39,8 +38,9 @@ public final class EditTextFocusHandler implements OnFocusChangeListener
    
    
    
-   public EditTextFocusHandler( EditText client )
+   public EditTextFocusHandler( EditText client, IHandlerToken handlerToken )
    {
+      this.handlerToken = handlerToken;
       this.client = client;
       this.client.setOnFocusChangeListener( this );
    }
@@ -52,18 +52,8 @@ public final class EditTextFocusHandler implements OnFocusChangeListener
    {
       if ( hasFocus && v == client )
       {
-         getHandler().post( getShowSoftInputRunnable() );
+         handlerToken.post( getShowSoftInputRunnable() );
       }
-   }
-   
-   
-   
-   private Handler getHandler()
-   {
-      if ( handler == null )
-         handler = new Handler();
-      
-      return handler;
    }
    
    

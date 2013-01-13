@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,12 +29,15 @@ import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.provider.Rtm.Notes;
 
 
 public class RtmTaskNoteLoader extends AbstractLoader< RtmTaskNote >
 {
+   public final static int ID = R.id.loader_note;
+   
    private final String noteId;
    
    

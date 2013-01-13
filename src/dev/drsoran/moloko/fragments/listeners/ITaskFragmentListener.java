@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,11 +22,34 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
+import dev.drsoran.rtm.Task;
+
+
 public interface ITaskFragmentListener
 {
-   void onOpenLocation( String locationId );
+   void onCompleteTask( Task task );
    
-
-
+   
+   
+   void onIncompleteTask( Task task );
+   
+   
+   
+   void onPostponeTask( Task task );
+   
+   
+   
+   void onDeleteTask( Task task );
+   
+   
+   
+   void onEditTask( Task task );
+   
+   
+   
+   void onOpenLocation( Task task );
+   
+   
+   
    void onOpenContact( String fullname, String username );
 }

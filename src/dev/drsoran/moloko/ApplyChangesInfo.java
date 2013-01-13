@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,56 +22,86 @@
 
 package dev.drsoran.moloko;
 
-import android.content.Context;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.util.Strings;
 
 
 public final class ApplyChangesInfo
 {
+   private final ContentProviderActionItemList actionItems;
+   
    private final String progressMessage;
    
    private final String applySuccessMessage;
    
    private final String applyFailedMessage;
    
+   public final static ApplyChangesInfo EMPTY = new ApplyChangesInfo( new ContentProviderActionItemList( 0 ),
+                                                                      Strings.EMPTY_STRING,
+                                                                      Strings.EMPTY_STRING,
+                                                                      Strings.EMPTY_STRING );
    
-
-   public ApplyChangesInfo( String progressMessage, String applySuccessMessage,
+   
+   
+   public ApplyChangesInfo( ContentProviderActionItemList actionItems,
+      String progressMessage, String applySuccessMessage,
       String applyFailedMessage )
    {
+      this.actionItems = actionItems;
       this.progressMessage = progressMessage;
       this.applySuccessMessage = applySuccessMessage;
       this.applyFailedMessage = applyFailedMessage;
    }
    
-
-
+   
+   
    public String getProgressMessage()
    {
       return progressMessage;
    }
    
-
-
+   
+   
    public String getApplySuccessMessage()
    {
       return applySuccessMessage;
    }
    
-
-
+   
+   
    public String getApplyFailedMessage()
    {
       return applyFailedMessage;
    }
    
-
-
-   public void showApplyResultToast( Context context, boolean result )
+   
+   
+   public ContentProviderActionItemList getActionItems()
    {
-      UIUtils.reportStatus( context,
-                            getApplySuccessMessage(),
-                            getApplyFailedMessage(),
-                            result );
+      return actionItems;
+   }
+   
+   
+   
+   public boolean hasDatabaseError()
+   {
+      return actionItems == null;
+   }
+   
+   
+   
+   public boolean hasChanges()
+   {
+      return actionItems != null && actionItems.size() > 0;
+   }
+   
+   
+   
+   public static ApplyChangesInfo failed( String applyFailedMessage )
+   {
+      return new ApplyChangesInfo( null,
+                                   Strings.EMPTY_STRING,
+                                   Strings.EMPTY_STRING,
+                                   applyFailedMessage );
    }
 }

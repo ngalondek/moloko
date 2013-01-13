@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-	<!--
+<!--
 		Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko
 		is free software: you can redistribute it and/or modify it under the
 		terms of the GNU General Public License as published by the Free
@@ -12,101 +12,123 @@
 		If not, see <http://www.gnu.org/licenses/>.
       
       Contributors:
-         David Vermeille - implementation
-	-->
+         David Vermeille - implementation
+-->
 
 <resources>
-   <!-- Globals -->
-   <plurals name="g_year">
-      <item quantity="one">année</item>
-      <item quantity="other">années</item>
-   </plurals>
-   <plurals name="g_month">
-      <item quantity="one">mois</item>
-      <item quantity="other">mois</item>
-   </plurals>
-   <plurals name="g_week">
-      <item quantity="one">semaine</item>
-      <item quantity="other">semaines</item>
-   </plurals>
-   <plurals name="g_day">
-      <item quantity="one">jour</item>
-      <item quantity="other">jours</item>
-   </plurals>
-   <plurals name="g_hour">
-      <item quantity="one">heure</item>
-      <item quantity="other">heures</item>
-   </plurals>
-   <plurals name="g_minute">
-      <item quantity="one">minute</item>
-      <item quantity="other">minutes</item>
-   </plurals>
-   <plurals name="g_task">
-      <item quantity="one">tâche</item>
-      <item quantity="other">tâches</item>
-   </plurals>
-   
-   <!-- Global Toasts -->
-      <!-- Task -->
-      <plurals name="toast_completed_task">
-         <item quantity="one">Tâche marquée faite</item>
-         <item quantity="other">%1$d tâches marquées faites</item>
-      </plurals>
-      <plurals name="toast_incompleted_task">
-         <item quantity="one">Tâche marquée à faire</item>
-         <item quantity="other">%1$d tâches marquées à faire</item>
-      </plurals>
-      <plurals name="toast_postponed_task">
-         <item quantity="one">Tâche reportée</item>
-         <item quantity="other">%1$d tâches reportées</item>
-      </plurals>
-      <plurals name="toast_deleted_task">
-         <item quantity="one">Tâche supprimée</item>
-         <item quantity="other">%1$d tâches supprimées</item>
-      </plurals>
-   
-   <!-- TaskLists fragment -->
-   <plurals name="tasklists_child_due_today">
-      <item quantity="one">1 à faire aujourd\'hui</item>
-      <item quantity="other">%1$d à faire aujourd\'hui</item>
-   </plurals>
-   <plurals name="tasklists_child_due_tomorrow">
-      <item quantity="one">1 à faire demain</item>
-      <item quantity="other">%1$d à faire demain</item>
-   </plurals>
-   <plurals name="tasklists_child_overdue">
-      <item quantity="one">1 en retard</item>
-      <item quantity="other">%1$d en retard</item>
-   </plurals>
-   <plurals name="tasklists_child_completed">
-      <item quantity="one">1 faite</item>
-      <item quantity="other">%1$d faites</item>
-   </plurals>
-   
-   <!-- SelectMultipleTasks fragment -->
-      <!-- Dialogs -->
-      <plurals name="select_multiple_tasks_dlg_complete">
-         <item quantity="one">Marquer 1 tâche faite ?</item>
-         <item quantity="other">Marquer %1$d tâches faites ?</item>
-      </plurals>
-      <plurals name="select_multiple_tasks_dlg_incomplete">
-         <item quantity="one">Marquer 1 tâche à faire ?</item>
-         <item quantity="other">Marquer %1$d tâches à faire ?</item>
-      </plurals>
-      <plurals name="select_multiple_tasks_dlg_postpone">
-         <item quantity="one">Reporter 1 tâche ?</item>
-         <item quantity="other">Reporter %1$d tâches ?</item>
-      </plurals>
-      <plurals name="select_multiple_tasks_dlg_delete">
-         <item quantity="one">Supprimer 1 tâche ?</item>
-         <item quantity="other">Supprimer %1$d tâches ?</item>
-      </plurals>
 
-   <!-- TasksList activity -->
-   	<!-- Menus -->
-   	<plurals name="taskslist_listitem_ctx_tags">
-   		<item quantity="one">Afficher les tâches avec \'%1$s\'</item>
-   		<item quantity="other">Afficher les tâches marquées avec...</item>
-   	</plurals>
-   
+    <!-- Globals -->
+    <plurals name="g_year">
+        <item quantity="one">année</item>
+        <item quantity="other">années</item>
+    </plurals>
+    <plurals name="g_month">
+        <item quantity="one">mois</item>
+        <item quantity="other">mois</item>
+    </plurals>
+    <plurals name="g_week">
+        <item quantity="one">semaine</item>
+        <item quantity="other">semaines</item>
+    </plurals>
+    <plurals name="g_day">
+        <item quantity="one">jour</item>
+        <item quantity="other">jours</item>
+    </plurals>
+    <plurals name="g_hour">
+        <item quantity="one">heure</item>
+        <item quantity="other">heures</item>
+    </plurals>
+    <plurals name="g_minute">
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+    <plurals name="g_task">
+        <item quantity="one">tâche</item>
+        <item quantity="other">tâches</item>
+    </plurals>
+    <plurals name="tasks_complete">
+        <item quantity="one">Marquer 1 tâche faite ?</item>
+        <item quantity="other">Marquer %1$d tâches faites ?</item>
+    </plurals>
+    <plurals name="tasks_incomplete">
+        <item quantity="one">Marquer 1 tâche à faire ?</item>
+        <item quantity="other">Marquer %1$d tâches à faire ?</item>
+    </plurals>
+    <plurals name="tasks_postpone">
+        <item quantity="one">Reporter 1 tâche ?</item>
+        <item quantity="other">Reporter %1$d tâches ?</item>
+    </plurals>
+    <plurals name="tasks_delete">
+        <item quantity="one">Supprimer 1 tâche ?</item>
+        <item quantity="other">Supprimer %1$d tâches ?</item>
+    </plurals>
+    <plurals name="notes_delete">
+        <item quantity="one">Delete note?</item>
+        <item quantity="other">Delete %1$d notes?</item>
+    </plurals>
+
+    <!-- Global Toasts -->
+    <!-- Task -->
+    <plurals name="toast_save_task">
+        <item quantity="one">Enregistrement des modifications de la tâche&#8230;</item>
+        <item quantity="other">Enregistrement des modifications de la tâche&#8230;</item>
+    </plurals>
+    <plurals name="toast_save_task_ok">
+        <item quantity="one">Modifications de la tâche enregistrées</item>
+        <item quantity="other">Modifications de la tâche enregistrées</item>
+    </plurals>
+    <plurals name="toast_save_task_failed">
+        <item quantity="one">Echec d\'enregistrement des modifications de la tâche</item>
+        <item quantity="other">Echec d\'enregistrement des modifications de la tâche</item>
+    </plurals>
+    <plurals name="toast_completed_task">
+        <item quantity="one">Tâche marquée faite</item>
+        <item quantity="other">%1$d tâches marquées faites</item>
+    </plurals>
+    <plurals name="toast_incompleted_task">
+        <item quantity="one">Tâche marquée à faire</item>
+        <item quantity="other">%1$d tâches marquées à faire</item>
+    </plurals>
+    <plurals name="toast_postponed_task">
+        <item quantity="one">Tâche reportée</item>
+        <item quantity="other">%1$d tâches reportées</item>
+    </plurals>
+    <plurals name="toast_delete_task">
+        <item quantity="one">Suppression d\'une tâche&#8230;</item>
+        <item quantity="other">Suppression d\'une tâche&#8230;</item>
+    </plurals>
+    <plurals name="toast_deleted_task">
+        <item quantity="one">Tâche supprimée</item>
+        <item quantity="other">%1$d tâches supprimées</item>
+    </plurals>
+    <plurals name="toast_delete_task_failed">
+        <item quantity="one">Echec de supression de la tâche</item>
+        <item quantity="other">Echec de supression de la tâche</item>
+    </plurals>
+
+    <!-- TaskLists fragment -->
+    <plurals name="tasklists_child_due_today">
+        <item quantity="one">1 à faire aujourd\'hui</item>
+        <item quantity="other">%1$d à faire aujourd\'hui</item>
+    </plurals>
+    <plurals name="tasklists_child_due_tomorrow">
+        <item quantity="one">1 à faire demain</item>
+        <item quantity="other">%1$d à faire demain</item>
+    </plurals>
+    <plurals name="tasklists_child_overdue">
+        <item quantity="one">1 en retard</item>
+        <item quantity="other">%1$d en retard</item>
+    </plurals>
+    <plurals name="tasklists_child_completed">
+        <item quantity="one">1 faite</item>
+        <item quantity="other">%1$d faites</item>
+    </plurals>
+
+    <!-- TasksList -->
+    <!-- Menus -->
+    <plurals name="taskslist_open_tags">
+        <item quantity="one">Tâches avec \'%1$s\'</item>
+        <item quantity="other">Tâches marquées avec...</item>
+    </plurals>
+
 </resources>

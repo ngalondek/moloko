@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -23,19 +23,15 @@
 package dev.drsoran.rtm;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmList;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 
 
 public class RtmListWithTaskCount
 {
-   private final static String TAG = "Moloko."
-      + RtmListWithTaskCount.class.getSimpleName();
-   
-   
    public final static class ExtendedListInfo
    {
       public int dueTodayTaskCount;
@@ -49,7 +45,7 @@ public class RtmListWithTaskCount
       public int completedTaskCount;
       
       
-
+      
       public ExtendedListInfo()
       {
          this.dueTodayTaskCount = 0;
@@ -59,8 +55,8 @@ public class RtmListWithTaskCount
          this.completedTaskCount = 0;
       }
       
-
-
+      
+      
       public ExtendedListInfo( int dueTodayTaskCount, int dueTomorrowTaskCount,
          int overDueTaskCount, long sumEstimated, int completedTaskCount )
       {
@@ -79,7 +75,7 @@ public class RtmListWithTaskCount
    private ExtendedListInfo extendedListInfo = null;
    
    
-
+   
    public RtmListWithTaskCount( RtmList impl, int taskCount )
       throws NullPointerException
    {
@@ -90,8 +86,8 @@ public class RtmListWithTaskCount
       this.incompletedTaskCount = taskCount;
    }
    
-
-
+   
+   
    public RtmListWithTaskCount( String id, String name, int locked,
       int archived, int position, RtmSmartFilter smartFilter,
       int incompletedTaskCount )
@@ -108,78 +104,78 @@ public class RtmListWithTaskCount
       this.incompletedTaskCount = incompletedTaskCount;
    }
    
-
-
+   
+   
    public RtmList getRtmList()
    {
       return impl;
    }
    
-
-
+   
+   
    public String getId()
    {
       return impl.getId();
    }
    
-
-
+   
+   
    public String getName()
    {
       return impl.getName();
    }
    
-
-
+   
+   
    public int getLocked()
    {
       return impl.getLocked();
    }
    
-
-
+   
+   
    public int getArchived()
    {
       return impl.getArchived();
    }
    
-
-
+   
+   
    public int getPosition()
    {
       return impl.getPosition();
    }
    
-
-
+   
+   
    public RtmSmartFilter getSmartFilter()
    {
       return impl.getSmartFilter();
    }
    
-
-
+   
+   
    public boolean hasSmartFilter()
    {
       return impl.getSmartFilter() != null;
    }
    
-
-
+   
+   
    public boolean isSmartFilterValid()
    {
       return !hasSmartFilter() || incompletedTaskCount > -1;
    }
    
-
-
-   public int getIncompleteTaskCount()
+   
+   
+   public int getTaskCount()
    {
       return incompletedTaskCount;
    }
    
-
-
+   
+   
    public ExtendedListInfo getExtendedListInfo( Context context )
    {
       if ( extendedListInfo == null )
@@ -195,7 +191,7 @@ public class RtmListWithTaskCount
          
          if ( extendedListInfo == null )
          {
-            Log.e( TAG, "Unable to create ExtendedListInfo." );
+            MolokoApp.Log.w( getClass(), "Unable to create ExtendedListInfo." );
             
             // RETURN: Create temporary empty instance
             return new ExtendedListInfo();
@@ -205,8 +201,8 @@ public class RtmListWithTaskCount
       return extendedListInfo;
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {

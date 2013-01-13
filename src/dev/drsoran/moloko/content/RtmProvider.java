@@ -37,13 +37,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 
 
 public class RtmProvider extends ContentProvider
 {
-   private final static String TAG = "Moloko."
-      + RtmProvider.class.getSimpleName();
+   private final static Class< RtmProvider > TAG = RtmProvider.class;
    
    public final static String DATABASE_NAME = "rtm.db";
    
@@ -140,6 +139,13 @@ public class RtmProvider extends ContentProvider
    public TransactionalAccess newTransactionalAccess() throws SQLException
    {
       return TransactionalAccess.newTransactionalAccess( dbHelper );
+   }
+   
+   
+   
+   public Cursor querySql( String sqlString )
+   {
+      return dbHelper.getReadableDatabase().rawQuery( sqlString, null );
    }
    
    
@@ -263,7 +269,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
-            Log.e( TAG, "Unknown URI " + uri );
+            MolokoApp.Log.e( TAG, "Unknown URI " + uri );
             break;
       }
       
@@ -301,7 +307,7 @@ public class RtmProvider extends ContentProvider
          }
          catch ( Throwable e )
          {
-            Log.e( TAG, "Clearing database failed", e );
+            MolokoApp.Log.e( TAG, "Clearing database failed", e );
             throw new OperationApplicationException( e );
          }
          finally
@@ -338,7 +344,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
-            Log.e( TAG, "Unknown URI " + uri );
+            MolokoApp.Log.e( TAG, "Unknown URI " + uri );
             break;
       }
       

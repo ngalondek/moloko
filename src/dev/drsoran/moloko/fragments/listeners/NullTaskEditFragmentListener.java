@@ -24,6 +24,8 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
+import dev.drsoran.rtm.Task;
+
 
 public class NullTaskEditFragmentListener implements ITaskEditFragmentListener
 {
@@ -50,6 +52,13 @@ public class NullTaskEditFragmentListener implements ITaskEditFragmentListener
    
    @Override
    public void onEditEstimateByPicker()
+   {
+   }
+   
+   
+   
+   @Override
+   public void onBackgroundDeletion( Task oldTask )
    {
    }
 }

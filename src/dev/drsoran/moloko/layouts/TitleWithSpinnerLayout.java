@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -40,10 +40,6 @@ import dev.drsoran.moloko.util.Strings;
 
 public class TitleWithSpinnerLayout extends TitleWithViewLayout
 {
-   private final String TAG = "Moloko."
-      + TitleWithSpinnerLayout.class.getSimpleName();
-   
-   
    public interface StringConverter
    {
       String convertToString( Object object );
@@ -180,7 +176,9 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    public void setValues( List< String > values )
    {
       if ( values == null )
-         throw new NullPointerException( "values are null" );
+      {
+         throw new IllegalArgumentException( "values are null" );
+      }
       
       this.values = new String[ values.size() ];
       for ( int i = 0; i < values.size(); ++i )
@@ -194,7 +192,9 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    public void setValues( String[] values )
    {
       if ( values == null )
-         throw new NullPointerException( "values are null" );
+      {
+         throw new IllegalArgumentException( "values are null" );
+      }
       
       this.values = new String[ values.length ];
       for ( int i = 0; i < values.length; ++i )
@@ -208,7 +208,9 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    public void setValues( Cursor c, int colIdx )
    {
       if ( c == null )
-         throw new NullPointerException( "cursor is null" );
+      {
+         throw new IllegalArgumentException( "cursor is null" );
+      }
       
       this.values = new String[ c.getCount() ];
       
@@ -223,7 +225,7 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
          if ( !ok )
          {
             this.values = null;
-            LogUtils.logDBError( getContext(), TAG, Strings.EMPTY_STRING );
+            LogUtils.logDBError( getContext(), getClass(), Strings.EMPTY_STRING );
          }
       }
    }

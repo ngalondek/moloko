@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -23,27 +23,23 @@
 package dev.drsoran.rtm;
 
 import java.util.Date;
-import java.util.Locale;
 
 import org.w3c.dom.Element;
 
 import android.content.ContentProviderOperation;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.format.DateFormat;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmData;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Settings;
 
@@ -51,18 +47,18 @@ import dev.drsoran.provider.Rtm.Settings;
 public class RtmSettings extends RtmData implements
          IContentProviderSyncable< RtmSettings >
 {
-   private final String TAG = "Moloko." + RtmSettings.class.getSimpleName();
-   
    public static final Parcelable.Creator< RtmSettings > CREATOR = new Parcelable.Creator< RtmSettings >()
    {
       
+      @Override
       public RtmSettings createFromParcel( Parcel source )
       {
          return new RtmSettings( source );
       }
       
-
-
+      
+      
+      @Override
       public RtmSettings[] newArray( int size )
       {
          return new RtmSettings[ size ];
@@ -83,33 +79,7 @@ public class RtmSettings extends RtmData implements
    private final String language;
    
    
-
-   public static RtmSettings createDefaultSettings( Context context )
-   {
-      final String timeZone = MolokoCalendar.getInstance()
-                                            .getTimeZone()
-                                            .getID();
-      
-      final char[] order = DateFormat.getDateFormatOrder( context );
-      
-      final int dateformat = ( order.length > 0 && order[ 0 ] == DateFormat.DATE )
-                                                                                  ? 0
-                                                                                  : 1;
-      
-      final int timeformat = ( !DateFormat.is24HourFormat( context ) ) ? 0 : 1;
-      
-      final String language = Locale.getDefault().getLanguage();
-      
-      return new RtmSettings( new Date(),
-                              timeZone,
-                              dateformat,
-                              timeformat,
-                              null,
-                              language );
-   }
    
-
-
    public RtmSettings( Date syncTimeStamp, String timezone, int dateFormat,
       int timeFormat, String defaultListId, String language )
    {
@@ -123,8 +93,8 @@ public class RtmSettings extends RtmData implements
       this.language = language;
    }
    
-
-
+   
+   
    public RtmSettings( Element elt )
    {
       this.syncTimeStamp = new ParcelableDate( new Date() );
@@ -144,7 +114,7 @@ public class RtmSettings extends RtmData implements
       catch ( NumberFormatException nfe )
       {
          this.dateFormat = 0;
-         Log.e( TAG, "Invalid dateformat setting.", nfe );
+         MolokoApp.Log.w( getClass(), "Invalid dateformat setting.", nfe );
       }
       
       try
@@ -154,15 +124,15 @@ public class RtmSettings extends RtmData implements
       catch ( NumberFormatException nfe )
       {
          this.timeFormat = 0;
-         Log.e( TAG, "Invalid timeformat setting.", nfe );
+         MolokoApp.Log.w( getClass(), "Invalid timeformat setting.", nfe );
       }
       
       this.defaultListId = textNullIfEmpty( child( elt, "defaultlist" ) );
       this.language = textNullIfEmpty( child( elt, "language" ) );
    }
    
-
-
+   
+   
    public RtmSettings( Parcel source )
    {
       this.syncTimeStamp = ParcelableDate.fromParcel( source );
@@ -173,57 +143,59 @@ public class RtmSettings extends RtmData implements
       this.language = source.readString();
    }
    
-
-
+   
+   
    public Date getSyncTimeStamp()
    {
       return syncTimeStamp.getDate();
    }
    
-
-
+   
+   
    public String getTimezone()
    {
       return timezone;
    }
    
-
-
+   
+   
    public int getDateFormat()
    {
       return dateFormat;
    }
    
-
-
+   
+   
    public int getTimeFormat()
    {
       return timeFormat;
    }
    
-
-
+   
+   
    public String getDefaultListId()
    {
       return defaultListId;
    }
    
-
-
+   
+   
    public String getLanguage()
    {
       return language;
    }
    
-
-
+   
+   
+   @Override
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeParcelable( syncTimeStamp, flags );
@@ -234,30 +206,33 @@ public class RtmSettings extends RtmData implements
       dest.writeString( language );
    }
    
-
-
+   
+   
    public Uri getContentUriWithId()
    {
       return Queries.contentUriWithId( Settings.CONTENT_URI,
                                        RtmSettingsProviderPart.SETTINGS_ID );
    }
    
-
-
+   
+   
+   @Override
    public Date getDeletedDate()
    {
       return null;
    }
    
-
-
+   
+   
+   @Override
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       return NoopContentProviderSyncOperation.INSTANCE;
    }
    
-
-
+   
+   
+   @Override
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Settings.CONTENT_URI )
@@ -266,8 +241,9 @@ public class RtmSettings extends RtmData implements
                                          .build();
    }
    
-
-
+   
+   
+   @Override
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmSettings update )
    {
       final Uri settingsUri = getContentUriWithId();

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.antlr.runtime.RecognitionException;
 
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -39,24 +39,64 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public final class RtmSmartFilterParsing
 {
-   private final static String TAG = "Moloko."
-      + RtmSmartFilterParsing.class.getSimpleName();
-   
    private final static RtmSmartFilterLexer rtmSmartFilterLexer = new RtmSmartFilterLexer();
    
    
    public final static class RtmSmartFilterReturn
    {
-      public final String result;
+      public final String queryString;
       
       public final boolean hasCompletedOperator;
       
       
       
-      public RtmSmartFilterReturn( String result, boolean hasCompletedOperator )
+      public RtmSmartFilterReturn( String queryString,
+         boolean hasCompletedOperator )
       {
-         this.result = result;
+         this.queryString = queryString;
          this.hasCompletedOperator = hasCompletedOperator;
+      }
+      
+      
+      
+      @Override
+      public boolean equals( Object o )
+      {
+         if ( o == this )
+         {
+            return true;
+         }
+         
+         if ( o == null || o.getClass() != getClass() )
+         {
+            return false;
+         }
+         
+         final RtmSmartFilterReturn other = (RtmSmartFilterReturn) o;
+         
+         return other.queryString.equals( queryString )
+            && other.hasCompletedOperator == hasCompletedOperator;
+      }
+      
+      
+      
+      @Override
+      public int hashCode()
+      {
+         int code = queryString.hashCode();
+         code = code * 31 ^ ( hasCompletedOperator ? 0 : 1 );
+         
+         return code;
+      }
+      
+      
+      
+      @Override
+      public String toString()
+      {
+         return String.format( "%s, complOp: %b",
+                               queryString,
+                               hasCompletedOperator );
       }
    }
    
@@ -85,7 +125,8 @@ public final class RtmSmartFilterParsing
       }
       catch ( RecognitionException e )
       {
-         Log.e( TAG, "Failed to lex " + filterString, e );
+         MolokoApp.Log.w( RtmSmartFilterParsing.class, "Failed to lex "
+            + filterString, e );
          return null;
       }
    }

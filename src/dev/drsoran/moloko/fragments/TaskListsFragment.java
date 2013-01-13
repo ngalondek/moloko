@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,19 +22,15 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItem;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
@@ -49,33 +45,14 @@ import dev.drsoran.moloko.adapters.TaskListsAdapter.IOnGroupIndicatorClickedList
 import dev.drsoran.moloko.fragments.base.MolokoExpandableListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
-import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.loaders.RtmListsLoader;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TaskListsFragment extends
-         MolokoExpandableListFragment< List< RtmListWithTaskCount > > implements
+         MolokoExpandableListFragment< RtmListWithTaskCount > implements
          IOnGroupIndicatorClickedListener
 {
-   private static class CtxtMenu
-   {
-      public final static int OPEN_LIST = R.id.ctx_menu_open_list;
-      
-      public final static int EXPAND = R.id.ctx_menu_expand;
-      
-      public final static int COLLAPSE = R.id.ctx_menu_collapse;
-      
-      public final static int DELETE = R.id.ctx_menu_delete_list;
-      
-      public final static int RENAME = R.id.ctx_menu_rename_list;
-      
-      public final static int MAKE_DEFAULT_LIST = R.id.ctx_menu_set_default_list;
-      
-      public final static int REMOVE_DEFAULT_LIST = R.id.ctx_menu_unset_default_list;
-   }
-   
-   private final static int LISTS_LOADER_ID = 1;
-   
    private ITaskListsFragmentListener listener;
    
    
@@ -91,8 +68,15 @@ public class TaskListsFragment extends
    
    
    
+   public TaskListsFragment()
+   {
+      setNoElementsResourceId( R.string.tasklists_no_lists );
+   }
+   
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -116,30 +100,21 @@ public class TaskListsFragment extends
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
    
    @Override
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   public View onCreateView( LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.tasklists_fragment,
                                                   container,
                                                   false );
-      
       return fragmentView;
-   }
-   
-   
-   
-   @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
-   {
-      super.onViewCreated( view, savedInstanceState );
    }
    
    
@@ -153,101 +128,88 @@ public class TaskListsFragment extends
       
       final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
       final RtmListWithTaskCount list = getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
+      final String listName = list.getName();
+      final boolean listIsLocked = list.getLocked() != 0;
+      
+      if ( isWritableAccess() && !listIsLocked )
+      {
+         getSherlockActivity().getMenuInflater()
+                              .inflate( R.menu.tasklists_group_context_rwd,
+                                        menu );
+         
+         menu.findItem( R.id.ctx_menu_delete_list )
+             .setTitle( getString( R.string.phr_delete_with_name, listName ) );
+         
+         menu.findItem( R.id.ctx_menu_rename_list )
+             .setTitle( getString( R.string.tasklists_menu_ctx_rename_list,
+                                   listName ) );
+      }
+      else
+      {
+         getSherlockActivity().getMenuInflater()
+                              .inflate( R.menu.tasklists_group_context, menu );
+      }
       
       if ( getExpandableListView().isGroupExpanded( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) )
       {
-         // show collapse before open
-         menu.add( Menu.NONE,
-                   CtxtMenu.COLLAPSE,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_collapse,
-                              list.getName() ) );
-         menu.add( Menu.NONE,
-                   CtxtMenu.OPEN_LIST,
-                   Menu.NONE,
-                   getString( R.string.phr_open_with_name, list.getName() ) );
+         menu.findItem( R.id.ctx_menu_collapse )
+             .setVisible( true )
+             .setTitle( getString( R.string.tasklists_menu_ctx_collapse,
+                                   listName ) );
+         
+         menu.findItem( R.id.ctx_menu_expand ).setVisible( false );
       }
       else
       {
-         menu.add( Menu.NONE,
-                   CtxtMenu.OPEN_LIST,
-                   Menu.NONE,
-                   getString( R.string.phr_open_with_name, list.getName() ) );
+         menu.findItem( R.id.ctx_menu_expand )
+             .setVisible( true )
+             .setTitle( getString( R.string.tasklists_menu_ctx_expand, listName ) );
          
-         menu.add( Menu.NONE,
-                   CtxtMenu.EXPAND,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_expand,
-                              list.getName() ) );
+         menu.findItem( R.id.ctx_menu_collapse ).setVisible( false );
       }
       
-      if ( list.getLocked() == 0
-         && AccountUtils.isWriteableAccess( getFragmentActivity() ) )
-      {
-         menu.add( Menu.NONE,
-                   CtxtMenu.DELETE,
-                   Menu.NONE,
-                   getString( R.string.phr_delete_with_name, list.getName() ) );
-         
-         menu.add( Menu.NONE,
-                   CtxtMenu.RENAME,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_rename_list,
-                              list.getName() ) );
-      }
-      
-      if ( list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
-         menu.add( Menu.NONE,
-                   CtxtMenu.REMOVE_DEFAULT_LIST,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_remove_def_list ) );
-      else
-         menu.add( Menu.NONE,
-                   CtxtMenu.MAKE_DEFAULT_LIST,
-                   Menu.NONE,
-                   getString( R.string.tasklists_menu_ctx_make_def_list ) );
+      final boolean isDefaultList = list.getId()
+                                        .equals( MolokoApp.getSettings( getSherlockActivity() )
+                                                          .getDefaultListId() );
+      menu.findItem( R.id.ctx_menu_set_default_list )
+          .setVisible( !isDefaultList );
+      menu.findItem( R.id.ctx_menu_unset_default_list )
+          .setVisible( isDefaultList );
    }
    
    
    
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
       
       switch ( item.getItemId() )
       {
-         case CtxtMenu.OPEN_LIST:
-            if ( listener != null )
-               listener.openList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
-            return true;
-            
-         case CtxtMenu.EXPAND:
+         case R.id.ctx_menu_expand:
             getExpandableListView().expandGroup( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
             return true;
             
-         case CtxtMenu.COLLAPSE:
+         case R.id.ctx_menu_collapse:
             getExpandableListView().collapseGroup( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
             return true;
             
-         case CtxtMenu.DELETE:
+         case R.id.ctx_menu_delete_list:
             if ( listener != null )
                listener.deleteList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
             return true;
             
-         case CtxtMenu.RENAME:
+         case R.id.ctx_menu_rename_list:
             if ( listener != null )
                listener.renameList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
             return true;
             
-         case CtxtMenu.MAKE_DEFAULT_LIST:
-            MolokoApp.getSettings()
-                     .setDefaultListId( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getId() );
+         case R.id.ctx_menu_set_default_list:
+            setAsDefaultList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
             return true;
             
-         case CtxtMenu.REMOVE_DEFAULT_LIST:
-            MolokoApp.getSettings()
-                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+         case R.id.ctx_menu_unset_default_list:
+            resetDefaultList();
             return true;
             
          default :
@@ -292,8 +254,8 @@ public class TaskListsFragment extends
                                 int childPosition,
                                 long id )
    {
-      final Intent intent = ( getExpandableListAdapter() ).getChildIntent( groupPosition,
-                                                                           childPosition );
+      final Intent intent = getExpandableListAdapter().getChildIntent( groupPosition,
+                                                                       childPosition );
       
       if ( intent != null )
       {
@@ -302,7 +264,9 @@ public class TaskListsFragment extends
          return true;
       }
       else
+      {
          return super.onChildClick( parent, v, groupPosition, childPosition, id );
+      }
    }
    
    
@@ -317,31 +281,9 @@ public class TaskListsFragment extends
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
    {
-      final ExpandableListView expandableListView = getExpandableListView();
-      if ( expandableListView != null )
-         expandableListView.requestLayout();
-   }
-   
-   
-   
-   @Override
-   protected ExpandableListAdapter createEmptyExpandableListAdapter()
-   {
-      return new TaskListsAdapter( getFragmentActivity(),
-                                   R.layout.tasklists_fragment_group,
-                                   R.layout.tasklists_fragment_child,
-                                   Collections.< RtmListWithTaskCount > emptyList() );
-   }
-   
-   
-   
-   @Override
-   protected ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
-   {
-      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getFragmentActivity(),
+      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getSherlockActivity(),
                                                                       R.layout.tasklists_fragment_group,
                                                                       R.layout.tasklists_fragment_child,
                                                                       result );
@@ -353,10 +295,10 @@ public class TaskListsFragment extends
    
    
    @Override
-   protected Loader< List< RtmListWithTaskCount >> newLoaderInstance( int id,
-                                                                      Bundle config )
+   public Loader< List< RtmListWithTaskCount >> newLoaderInstance( int id,
+                                                                   Bundle config )
    {
-      return new RtmListWithTaskCountLoader( getFragmentActivity() );
+      return new RtmListWithTaskCountLoader( getSherlockActivity() );
    }
    
    
@@ -372,7 +314,7 @@ public class TaskListsFragment extends
    @Override
    public int getLoaderId()
    {
-      return LISTS_LOADER_ID;
+      return RtmListsLoader.ID;
    }
    
    
@@ -388,5 +330,21 @@ public class TaskListsFragment extends
    public RtmListWithTaskCount getRtmList( int flatPos )
    {
       return (RtmListWithTaskCount) getExpandableListAdapter().getGroup( flatPos );
+   }
+   
+   
+   
+   private void setAsDefaultList( int pos )
+   {
+      MolokoApp.getSettings( getSherlockActivity() )
+               .setDefaultListId( getRtmList( pos ).getId() );
+   }
+   
+   
+   
+   private void resetDefaultList()
+   {
+      MolokoApp.getSettings( getSherlockActivity() )
+               .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
 }

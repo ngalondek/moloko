@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,12 +22,9 @@
 
 package dev.drsoran.moloko;
 
-import java.util.HashMap;
-
-
 public interface IOnSettingsChangedListener
 {
-   public final static int TIMEZONE = 1 << 0;
+   public final static int RTM_SETTINGS_SYNCED = 1 << 0;
    
    public final static int DATEFORMAT = 1 << 1;
    
@@ -35,17 +32,33 @@ public interface IOnSettingsChangedListener
    
    public final static int RTM_DEFAULTLIST = 1 << 3;
    
-   public final static int RTM_LANGUAGE = 1 << 4;
+   public final static int TASK_SORT = 1 << 4;
    
-   public final static int TASK_SORT = 1 << 5;
+   public final static int STARTUP_VIEW = 1 << 5;
    
-   public final static int DATE_TIME_RELATED = TIMEZONE | DATEFORMAT
-      | TIMEFORMAT;
+   public final static int SYNC_INTERVAL = 1 << 6;
+   
+   public final static int NOTIFY_DUE_TASKS = 1 << 7;
+   
+   public final static int NOTIFY_DUE_TASKS_BEFORE_TIME = 1 << 8;
+   
+   public final static int NOTIFY_DUE_TASKS_FEATURE = 1 << 9;
+   
+   public final static int NOTIFY_PERMANENT_TASKS = 1 << 10;
+   
+   public final static int DATE_TIME_RELATED = DATEFORMAT | TIMEFORMAT;
+   
+   public final static int NOTIFY_DUE_TASKS_RELATED = NOTIFY_DUE_TASKS
+      | NOTIFY_DUE_TASKS_BEFORE_TIME | NOTIFY_DUE_TASKS_FEATURE;
+   
+   public final static int NOTIFY_PERMANENT_RELATED = NOTIFY_PERMANENT_TASKS;
+   
+   public final static int NOTIFICATION_RELATED = NOTIFY_DUE_TASKS_RELATED
+      | NOTIFY_PERMANENT_RELATED;
    
    public final static int ALL = Integer.MAX_VALUE;
    
    
-
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues );
+   
+   public void onSettingsChanged( int which );
 }

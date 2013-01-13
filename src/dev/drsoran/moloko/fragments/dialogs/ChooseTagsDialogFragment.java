@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -34,6 +34,7 @@ import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
 import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener.LogicalOperation;
@@ -47,13 +48,19 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
    {
       public final static String TAG_STRINGS = "tag_strings";
       
-      private final static String CHECK_STATE = "check_state";
+      private final static String SELECTION_STATE = "selection_state";
    }
    
    private IShowTasksWithTagsListener listener;
    
+   @InstanceState( key = Config.TAG_STRINGS )
+   private final String[] tagStrings = new String[ 0 ];
    
-
+   @InstanceState( key = Config.SELECTION_STATE )
+   private final boolean[] selectionState = new boolean[ tagStrings.length ];
+   
+   
+   
    public final static void show( FragmentActivity activity,
                                   Collection< String > tags )
    {
@@ -63,14 +70,14 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
       tagsArray = tags.toArray( tagsArray );
       
       config.putStringArray( Config.TAG_STRINGS, tagsArray );
-      config.putBooleanArray( Config.CHECK_STATE,
+      config.putBooleanArray( Config.SELECTION_STATE,
                               new boolean[ tagsArray.length ] );
       
       show( activity, config );
    }
    
-
-
+   
+   
    public final static void show( FragmentActivity activity, Bundle config )
    {
       final ChooseTagsDialogFragment frag = newInstance( config );
@@ -79,8 +86,8 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
                                   ChooseTagsDialogFragment.class.getName() );
    }
    
-
-
+   
+   
    public final static ChooseTagsDialogFragment newInstance( Bundle config )
    {
       final ChooseTagsDialogFragment frag = new ChooseTagsDialogFragment();
@@ -90,10 +97,17 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
       return frag;
    }
    
-
-
+   
+   
+   public ChooseTagsDialogFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, ChooseTagsDialogFragment.class );
+   }
+   
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -103,43 +117,17 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
-
-
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TAG_STRINGS ) )
-         configuration.putStringArray( Config.TAG_STRINGS,
-                                       config.getStringArray( Config.TAG_STRINGS ) );
-      if ( config.containsKey( Config.CHECK_STATE ) )
-         configuration.putBooleanArray( Config.CHECK_STATE,
-                                        config.getBooleanArray( Config.CHECK_STATE ) );
-   }
    
-
-
-   @Override
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putStringArray( Config.TAG_STRINGS, new String[ 0 ] );
-      bundle.putBooleanArray( Config.CHECK_STATE, new boolean[ 0 ] );
-   }
    
-
-
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
@@ -155,16 +143,13 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
          }
       };
       
-      final String[] tags = configuration.getStringArray( Config.TAG_STRINGS );
-      final boolean[] checkState = configuration.getBooleanArray( Config.CHECK_STATE );
+      final Activity activity = getSherlockActivity();
       
-      final Activity activity = getFragmentActivity();
-      
-      final Dialog dialog = new AlertDialog.Builder( activity ).setTitle( getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
-                                                                                                            tags.length ) )
+      final Dialog dialog = new AlertDialog.Builder( activity ).setTitle( getResources().getQuantityString( R.plurals.taskslist_open_tags,
+                                                                                                            tagStrings.length ) )
                                                                .setIcon( R.drawable.ic_dialog_tag )
-                                                               .setMultiChoiceItems( tags,
-                                                                                     checkState,
+                                                               .setMultiChoiceItems( tagStrings,
+                                                                                     selectionState,
                                                                                      this )
                                                                .setPositiveButton( R.string.abstaskslist_dlg_show_tags_and,
                                                                                    onShowTagsClickListener )
@@ -176,16 +161,16 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
       return dialog;
    }
    
-
-
+   
+   
    @Override
    public void onClick( DialogInterface dialog, int which, boolean isChecked )
    {
-      configuration.getBooleanArray( Config.CHECK_STATE )[ which ] = isChecked;
+      selectionState[ which ] = isChecked;
    }
    
-
-
+   
+   
    private void notifyOnShowTagsClicked( int which )
    {
       if ( listener != null )
@@ -211,20 +196,17 @@ public class ChooseTagsDialogFragment extends MolokoDialogFragment implements
       }
    }
    
-
-
+   
+   
    private List< String > getSelectedTags()
    {
-      final String[] tags = configuration.getStringArray( Config.TAG_STRINGS );
-      final boolean[] checkState = configuration.getBooleanArray( Config.CHECK_STATE );
-      
       final List< String > selectedTags = new ArrayList< String >();
       
-      for ( int i = 0; i < checkState.length; i++ )
+      for ( int i = 0; i < selectionState.length; i++ )
       {
-         if ( checkState[ i ] )
+         if ( selectionState[ i ] )
          {
-            selectedTags.add( tags[ i ] );
+            selectedTags.add( tagStrings[ i ] );
          }
       }
       

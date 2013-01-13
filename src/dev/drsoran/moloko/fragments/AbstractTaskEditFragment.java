@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -43,7 +43,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -54,8 +53,11 @@ import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
@@ -80,113 +82,17 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public abstract class AbstractTaskEditFragment< T extends Fragment >
+public abstract class AbstractTaskEditFragment
          extends
-         MolokoLoaderEditFragment< T, AbstractTaskEditFragment.TaskEditDatabaseData >
+         MolokoLoaderEditFragment< AbstractTaskEditFragment.TaskEditDatabaseData >
          implements IChangesTarget
 {
-   protected final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   protected final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
    
-   
-   public final static class TaskEditDatabaseData
-   {
-      public final RtmLists lists;
-      
-      public final List< RtmLocation > locations;
-      
-      
-      
-      public TaskEditDatabaseData( RtmLists lists, List< RtmLocation > locations )
-      {
-         this.lists = lists;
-         this.locations = locations;
-      }
-      
-      
-      
-      public List< Pair< String, String > > getListIdsToListNames()
-      {
-         final List< Pair< String, String > > listIdToListName = new ArrayList< Pair< String, String > >();
-         
-         if ( lists != null )
-         {
-            final List< Pair< String, RtmList > > listIdToList = lists.getLists();
-            for ( Pair< String, RtmList > list : listIdToList )
-               listIdToListName.add( Pair.create( list.first,
-                                                  list.second.getName() ) );
-         }
-         
-         return listIdToListName;
-      }
-      
-      
-      
-      public List< String > getListIds()
-      {
-         return lists.getListIds();
-      }
-      
-      
-      
-      public List< String > getListNames()
-      {
-         return lists.getListNames();
-      }
-      
-      
-      
-      public List< Pair< String, String > > getLocationIdsToLocationNames()
-      {
-         final List< Pair< String, String > > locationIdToLocationName = new ArrayList< Pair< String, String > >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationIdToLocationName.add( Pair.create( location.id,
-                                                          location.name ) );
-         }
-         
-         return locationIdToLocationName;
-      }
-      
-      
-      
-      public List< String > getLocationIds()
-      {
-         final List< String > locationIds = new ArrayList< String >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationIds.add( location.id );
-         }
-         
-         return locationIds;
-      }
-      
-      
-      
-      public List< String > getLocationNames()
-      {
-         final List< String > locationNames = new ArrayList< String >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationNames.add( location.name );
-         }
-         
-         return locationNames;
-      }
-   }
-   
-   private final static String KEY_CHANGES = "changes";
-   
-   private final static int TASK_EDIT_LOADER = 1;
+   @InstanceState( key = "changes", defaultValue = InstanceState.NO_DEFAULT )
+   private Bundle changes;
    
    private Bundle initialValues;
-   
-   private Bundle changes;
    
    protected ITaskEditFragmentListener listener;
    
@@ -226,22 +132,15 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   @Override
-   public void onCreate( Bundle savedInstanceState )
+   protected AbstractTaskEditFragment()
    {
-      super.onCreate( savedInstanceState );
-      
-      if ( savedInstanceState != null )
-      {
-         if ( savedInstanceState.containsKey( KEY_CHANGES ) )
-            changes = savedInstanceState.getBundle( KEY_CHANGES );
-      }
+      registerAnnotatedConfiguredInstance( this, AbstractTaskEditFragment.class );
    }
    
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -254,21 +153,19 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   public void onDetach()
+   public void onSaveInstanceState( Bundle outState )
    {
-      super.onDetach();
-      listener = null;
+      saveChanges();
+      super.onSaveInstanceState( outState );
    }
    
    
    
    @Override
-   public void onSaveInstanceState( Bundle outState )
+   public void onDetach()
    {
-      super.onSaveInstanceState( outState );
-      
-      if ( changes != null )
-         outState.putBundle( KEY_CHANGES, changes );
+      listener = null;
+      super.onDetach();
    }
    
    
@@ -281,15 +178,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       final View fragmentView = inflater.inflate( R.layout.task_edit_fragment,
                                                   container,
                                                   false );
-      return fragmentView;
-   }
-   
-   
-   
-   @Override
-   public void onViewCreated( View view, Bundle savedInstanceState )
-   {
-      final View content = view.findViewById( android.R.id.content );
+      
+      final View content = fragmentView.findViewById( android.R.id.content );
       addedDate = (TextView) content.findViewById( R.id.task_edit_added_date );
       completedDate = (TextView) content.findViewById( R.id.task_edit_completed_date );
       source = (TextView) content.findViewById( R.id.task_edit_src );
@@ -310,16 +200,31 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       locationSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_location );
       urlEditText = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
       
-      super.onViewCreated( view, savedInstanceState );
+      return fragmentView;
+   }
+   
+   
+   
+   public Bundle getInitialValues()
+   {
+      return initialValues;
+   }
+   
+   
+   
+   public Bundle getChanges()
+   {
+      return changes == null ? Bundle.EMPTY : changes;
    }
    
    
    
    @Override
-   protected void initContent( ViewGroup content )
+   public void initContent( ViewGroup content )
    {
-      initialValues = getInitialValues();
-      putInitialChanges();
+      initialValues = determineInitialValues();
+      
+      determineInitialChanges();
       
       if ( initialValues != null )
       {
@@ -327,8 +232,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          
          nameEditText.setText( getCurrentValue( Tasks.TASKSERIES_NAME,
                                                 String.class ) );
-         nameEditText.requestFocus();
-         
          initializePrioritySpinner();
          initializeListSpinner();
          initializeLocationSpinner();
@@ -345,11 +248,13 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          
          putExtaInitialValues();
       }
+      
+      nameEditText.requestFocus();
    }
    
    
    
-   protected void putInitialChanges()
+   protected void determineInitialChanges()
    {
    }
    
@@ -372,19 +277,19 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    protected void defaultInitializeHeadSectionImpl( Task task )
    {
-      final Context context = getFragmentActivity();
+      final Context context = getSherlockActivity();
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( context,
-                                                         task.getAdded()
-                                                             .getTime(),
-                                                         FULL_DATE_FLAGS ) );
+      addedDate.setText( MolokoDateFormatter.formatDateTime( context,
+                                                             task.getAdded()
+                                                                 .getTime(),
+                                                             FULL_DATE_FLAGS ) );
       
       if ( task.getCompleted() != null )
       {
-         completedDate.setText( MolokoDateUtils.formatDateTime( context,
-                                                                task.getCompleted()
-                                                                    .getTime(),
-                                                                FULL_DATE_FLAGS ) );
+         completedDate.setText( MolokoDateFormatter.formatDateTime( context,
+                                                                    task.getCompleted()
+                                                                        .getTime(),
+                                                                    FULL_DATE_FLAGS ) );
          completedDate.setVisibility( View.VISIBLE );
       }
       else
@@ -404,11 +309,13 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
       
       if ( !TextUtils.isEmpty( task.getSource() ) )
-         source.setText( getString( R.string.task_source,
-                                    UIUtils.convertSource( getFragmentActivity(),
-                                                           task.getSource() ) ) );
+      {
+         source.setText( getString( R.string.task_source, task.getSource() ) );
+      }
       else
+      {
          source.setText( "?" );
+      }
    }
    
    
@@ -551,7 +458,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected void createListSpinnerAdapterForValues( List< String > listIds,
                                                      List< String > listNames )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getFragmentActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          listNames );
@@ -584,11 +491,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    protected void initializeTagsSection()
    {
-      UIUtils.inflateTags( getFragmentActivity(),
-                           tagsLayout,
-                           getTags(),
-                           null,
-                           null );
+      UIUtils.inflateTags( getSherlockActivity(), tagsLayout, getTags(), null );
    }
    
    
@@ -596,7 +499,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected void createLocationSpinnerAdapterForValues( List< String > locationIds,
                                                          List< String > locationNames )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getFragmentActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          new ArrayList< String >( locationNames ) );
@@ -630,7 +533,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected void createPrioritySpinnerAdapterForValues( List< String > texts,
                                                          List< String > values )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getFragmentActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          texts );
@@ -711,38 +614,17 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected boolean validateInput()
-   {
-      // Task name
-      boolean ok = validateName();
-      
-      // Due
-      ok = ok && validateDue();
-      
-      // Recurrence
-      ok = ok && validateRecurrence();
-      
-      // Estimate
-      ok = ok && validateEstimate();
-      
-      return ok;
-   }
-   
-   
-   
-   protected boolean validateName()
+   protected ValidationResult validateName()
    {
       final boolean ok = !TextUtils.isEmpty( getCurrentValue( Tasks.TASKSERIES_NAME,
                                                               String.class ) );
       if ( !ok )
       {
-         Toast.makeText( getFragmentActivity(),
-                         R.string.task_edit_validate_empty_name,
-                         Toast.LENGTH_LONG ).show();
-         nameEditText.requestFocus();
+         return new ValidationResult( getString( R.string.task_edit_validate_empty_name ),
+                                      nameEditText );
       }
       
-      return ok;
+      return ValidationResult.OK;
    }
    
    
@@ -759,11 +641,12 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    public void setDue( MolokoCalendar due )
    {
       dueEditText.setDue( due.getTimeInMillis(), due.hasTime() );
+      dueEditText.requestFocus();
    }
    
    
    
-   protected boolean validateDue()
+   protected ValidationResult validateDue()
    {
       return dueEditText.validate();
    }
@@ -821,7 +704,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected boolean validateRecurrence()
+   protected ValidationResult validateRecurrence()
    {
       return recurrEditText.validate();
    }
@@ -875,7 +758,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected boolean validateEstimate()
+   protected ValidationResult validateEstimate()
    {
       return estimateEditText.validate();
    }
@@ -899,8 +782,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       
       if ( estimateMillis.longValue() != -1 )
       {
-         final String estEditText = MolokoDateUtils.formatEstimated( getFragmentActivity(),
-                                                                     estimateMillis.longValue() );
+         final String estEditText = MolokoDateFormatter.formatEstimated( getSherlockActivity(),
+                                                                         estimateMillis.longValue() );
          putChange( Tasks.ESTIMATE, estEditText, String.class );
          putChange( Tasks.ESTIMATE_MILLIS, estimateMillis, Long.class );
       }
@@ -909,6 +792,15 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          putChange( Tasks.ESTIMATE, (String) null, String.class );
          putChange( Tasks.ESTIMATE_MILLIS, Long.valueOf( -1 ), Long.class );
       }
+   }
+   
+   
+   
+   private void commitValues()
+   {
+      commitEditDue();
+      commitEditEstimate();
+      commitEditRecurrence();
    }
    
    
@@ -955,23 +847,33 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   @Override
-   protected boolean saveChanges()
+   public void saveChanges()
    {
-      commitEditDue();
-      commitEditRecurrence();
-      commitEditEstimate();
+      saveDueChanges();
+      saveRecurrenceChanges();
+      saveEstimateChanges();
+   }
+   
+   
+   
+   @Override
+   public ValidationResult validate()
+   {
+      commitValues();
       
-      boolean ok = validateInput();
+      // Task name
+      ValidationResult validationResult = validateName();
       
-      if ( ok )
-      {
-         saveDueChanges();
-         saveRecurrenceChanges();
-         saveEstimateChanges();
-      }
+      // Due
+      validationResult = validationResult.and( validateDue() );
       
-      return ok;
+      // Recurrence
+      validationResult = validationResult.and( validateRecurrence() );
+      
+      // Estimate
+      validationResult = validationResult.and( validateEstimate() );
+      
+      return validationResult;
    }
    
    
@@ -1016,7 +918,33 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected ModificationSet createModificationSet( List< Task > tasks )
+   @Override
+   protected ApplyChangesInfo getApplyChangesInfo()
+   {
+      saveChanges();
+      
+      final List< Task > editedTasks = getEditedTasks();
+      final int editedTasksCount = editedTasks.size();
+      
+      final ModificationSet modificationSet = createModificationSet( editedTasks );
+      final Resources resources = getResources();
+      
+      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( modificationSet.toContentProviderActionItemList(),
+                                                                      resources.getQuantityString( R.plurals.toast_save_task,
+                                                                                                   editedTasksCount,
+                                                                                                   editedTasksCount ),
+                                                                      resources.getQuantityString( R.plurals.toast_save_task_ok,
+                                                                                                   editedTasksCount,
+                                                                                                   editedTasksCount ),
+                                                                      resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                                   editedTasksCount ) );
+      
+      return applyChangesInfo;
+   }
+   
+   
+   
+   private ModificationSet createModificationSet( List< Task > tasks )
    {
       final ModificationSet modifications = new ModificationSet();
       
@@ -1221,19 +1149,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected boolean applyModifications( ModificationSet modificationSet )
-   {
-      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( getString( R.string.toast_save_task ),
-                                                                      getString( R.string.toast_save_task_ok ),
-                                                                      getString( R.string.toast_save_task_failed ) );
-      return applyModifications( modificationSet.toContentProviderActionItemList(),
-                                 applyChangesInfo );
-   }
-   
-   
-   
    @Override
-   protected String getLoaderDataName()
+   public String getLoaderDataName()
    {
       return TaskEditDatabaseData.class.getSimpleName();
    }
@@ -1241,21 +1158,119 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    @Override
-   protected int getLoaderId()
+   public int getLoaderId()
    {
-      return TASK_EDIT_LOADER;
+      return TaskEditDatabaseDataLoader.ID;
    }
    
    
    
    @Override
-   protected Loader< TaskEditDatabaseData > newLoaderInstance( int id,
-                                                               Bundle args )
+   public Loader< TaskEditDatabaseData > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskEditDatabaseDataLoader( getFragmentActivity() );
+      return new TaskEditDatabaseDataLoader( getSherlockActivity() );
    }
    
    
    
-   abstract protected Bundle getInitialValues();
+   protected abstract Bundle determineInitialValues();
+   
+   
+   
+   protected abstract List< Task > getEditedTasks();
+   
+   
+   public final static class TaskEditDatabaseData
+   {
+      public final RtmLists lists;
+      
+      public final List< RtmLocation > locations;
+      
+      
+      
+      public TaskEditDatabaseData( RtmLists lists, List< RtmLocation > locations )
+      {
+         this.lists = lists;
+         this.locations = locations;
+      }
+      
+      
+      
+      public List< Pair< String, String > > getListIdsToListNames()
+      {
+         final List< Pair< String, String > > listIdToListName = new ArrayList< Pair< String, String > >();
+         
+         if ( lists != null )
+         {
+            final List< Pair< String, RtmList > > listIdToList = lists.getLists();
+            for ( Pair< String, RtmList > list : listIdToList )
+            {
+               listIdToListName.add( Pair.create( list.first,
+                                                  list.second.getName() ) );
+            }
+         }
+         
+         return listIdToListName;
+      }
+      
+      
+      
+      public List< String > getListIds()
+      {
+         return lists.getListIds();
+      }
+      
+      
+      
+      public List< String > getListNames()
+      {
+         return lists.getListNames();
+      }
+      
+      
+      
+      public List< Pair< String, String > > getLocationIdsToLocationNames()
+      {
+         final List< Pair< String, String > > locationIdToLocationName = new ArrayList< Pair< String, String > >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationIdToLocationName.add( Pair.create( location.id,
+                                                          location.name ) );
+         }
+         
+         return locationIdToLocationName;
+      }
+      
+      
+      
+      public List< String > getLocationIds()
+      {
+         final List< String > locationIds = new ArrayList< String >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationIds.add( location.id );
+         }
+         
+         return locationIds;
+      }
+      
+      
+      
+      public List< String > getLocationNames()
+      {
+         final List< String > locationNames = new ArrayList< String >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationNames.add( location.name );
+         }
+         
+         return locationNames;
+      }
+   }
 }

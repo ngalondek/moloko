@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
       free software: you can redistribute it and/or modify it under the terms of
       the GNU General Public License as published by the Free Software
       Foundation, either version 3 of the License, or (at your option) any later
@@ -65,12 +65,12 @@
    -->
    <string-array
       name="moloko_acc_prefs_sync_interval_values">
-      <item>-1</item>
-      <item>900000</item>
-      <item>1800000</item>
-      <item>3600000</item>
-      <item>43200000</item>
-      <item>86400000</item>
+      <item>@string/acc_prefs_sync_interval_off</item>
+      <item>@string/fifteen_min_ms</item>
+      <item>@string/thirty_min_ms</item>
+      <item>@string/one_hour_ms</item>
+      <item>@string/twelve_hours_ms</item>
+      <item>@string/twentyfour_hours_ms</item>
    </string-array>
 
    <string-array
@@ -88,28 +88,12 @@
    -->
    <string-array
       name="moloko_prefs_notification_task_due_before_values">
-      <item>300000</item>
-      <item>900000</item>
-      <item>1800000</item>
-      <item>3600000</item>
-      <item>43200000</item>
-      <item>86400000</item>
-   </string-array>
-
-   <string-array
-      name="moloko_prefs_notification_permanent_entries">
-      <item>@string/phr_none_f</item>
-      <item>@string/moloko_prefs_notification_permanent_today</item>
-      <item>@string/moloko_prefs_notification_permanent_tomorrow</item>
-      <item>@string/moloko_prefs_notification_permanent_today_and_tomorrow</item>
-   </string-array>
-
-   <string-array
-      name="moloko_prefs_notification_permanent_values">
-      <item>0</item>
-      <item>1</item>
-      <item>2</item>
-      <item>3</item>
+      <item>@string/five_min_ms</item>
+      <item>@string/fifteen_min_ms</item>
+      <item>@string/thirty_min_ms</item>
+      <item>@string/one_hour_ms</item>
+      <item>@string/twelve_hours_ms</item>
+      <item>@string/twentyfour_hours_ms</item>
    </string-array>
    
    <string-array
@@ -129,5 +113,5 @@
       <item>@string/app_quick_add_task_recurr_sugg_every_1_month</item>
       <item>@string/app_quick_add_task_recurr_sugg_after_1_year</item>
    </string-array>
-
+   
 </resources>

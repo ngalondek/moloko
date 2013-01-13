@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -34,16 +34,17 @@ import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
 public class AutoSummaryListPreference extends ListPreference implements
-         IMolokoPreference, OnSharedPreferenceChangeListener,
-         OnPreferenceChangeListener
+         IMolokoPreference, IAutoSummaryPreference< String >,
+         OnSharedPreferenceChangeListener, OnPreferenceChangeListener
 {
-   private int clickedDialogIndex;
+   private final AutoSummary< String > autoSummaryImpl;
    
    
    
    public AutoSummaryListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      autoSummaryImpl = new AutoSummary< String >( context, attrs, this );
    }
    
    
@@ -53,13 +54,8 @@ public class AutoSummaryListPreference extends ListPreference implements
    {
       super.onAttachedToHierarchy( preferenceManager );
       
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
-      {
-         prefs.registerOnSharedPreferenceChangeListener( this );
-         setOnPreferenceChangeListener( this );
-      }
+      getSharedPreferences().registerOnSharedPreferenceChangeListener( this );
+      setOnPreferenceChangeListener( this );
    }
    
    
@@ -75,13 +71,7 @@ public class AutoSummaryListPreference extends ListPreference implements
    public void cleanUp()
    {
       setOnPreferenceChangeListener( null );
-      
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
-      {
-         prefs.unregisterOnSharedPreferenceChangeListener( this );
-      }
+      getSharedPreferences().unregisterOnSharedPreferenceChangeListener( this );
    }
    
    
@@ -89,47 +79,29 @@ public class AutoSummaryListPreference extends ListPreference implements
    @Override
    public CharSequence getSummary()
    {
-      final CharSequence summary = super.getSummary();
-      final CharSequence entry = getEntry();
-      
-      if ( summary == null || entry == null )
-      {
-         return summary;
-      }
-      else
-      {
-         return String.format( summary.toString(), entry.toString() );
-      }
+      return autoSummaryImpl.getSummary();
    }
    
    
    
    @Override
-   public void setSummary( CharSequence summary )
+   public String getSummaryDisplay()
    {
-      super.setSummary( summary );
-      
-      final CharSequence lSummary = getSummary();
-      
-      if ( summary == null && lSummary != null )
-      {
-         setSummary( null );
-      }
-      else if ( summary != null && !summary.equals( lSummary ) )
-      {
-         setSummary( summary.toString() );
-      }
+      return getEntry().toString();
    }
    
    
    
-   public String getClickedDialogValue()
+   public IAutoSummaryFormatter getAutoSummaryFormatter()
    {
-      if ( clickedDialogIndex > -1
-         && clickedDialogIndex < getEntryValues().length )
-         return getEntryValues()[ clickedDialogIndex ].toString();
-      else
-         return null;
+      return autoSummaryImpl.getAutoSummaryFormatter();
+   }
+   
+   
+   
+   public void setAutoSummaryFormatter( IAutoSummaryFormatter formatter )
+   {
+      autoSummaryImpl.setAutoSummaryFormatter( formatter );
    }
    
    
@@ -141,8 +113,7 @@ public class AutoSummaryListPreference extends ListPreference implements
       if ( key != null && key.equals( getKey() ) )
       {
          final String currentValue = getValue();
-         final String persistedValue = sharedPreferences.getString( key,
-                                                                    currentValue );
+         final String persistedValue = getPersistedString( currentValue );
          
          if ( SyncUtils.hasChanged( currentValue, persistedValue ) )
          {
@@ -157,8 +128,7 @@ public class AutoSummaryListPreference extends ListPreference implements
    @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
-      if ( newValue != null && newValue instanceof String
-         && !( (String) newValue ).equals( getValue() ) )
+      if ( newValue != null && !newValue.equals( getValue() ) )
       {
          notifyChanged();
       }

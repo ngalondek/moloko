@@ -36,18 +36,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmLocation;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Locations;
 
 
 public class RtmLocationsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = "Moloko."
-      + RtmLocationsProviderPart.class.getSimpleName();
+   private static final Class< RtmLocationsProviderPart > TAG = RtmLocationsProviderPart.class;
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -65,7 +64,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( RtmLocation location,
                                                        boolean withId )
    {
@@ -94,8 +93,8 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static RtmLocation getLocation( ContentProviderClient client,
                                                 String selection )
    {
@@ -119,7 +118,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         Log.e( TAG, "Query location failed. ", e );
+         MolokoApp.Log.e( TAG, "Query location failed. ", e );
          location = null;
       }
       finally
@@ -131,8 +130,8 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       return location;
    }
    
-
-
+   
+   
    public final static List< RtmLocation > getAllLocations( ContentProviderClient client )
    {
       List< RtmLocation > locations = null;
@@ -166,7 +165,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query locations failed. ", e );
+         MolokoApp.Log.e( TAG, "Query locations failed. ", e );
          locations = null;
       }
       finally
@@ -178,8 +177,8 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       return locations;
    }
    
-
-
+   
+   
    private static RtmLocation createLocation( Cursor c )
    {
       return new RtmLocation( c.getString( COL_INDICES.get( Locations._ID ) ),
@@ -196,15 +195,16 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                                                  0 ) );
    }
    
-
-
+   
+   
    public RtmLocationsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Locations.PATH );
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Locations._ID
@@ -217,54 +217,57 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
          + " );" );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Locations.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Locations.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Locations.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Locations.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

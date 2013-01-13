@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,80 +22,54 @@
 
 package dev.drsoran.moloko.adapters;
 
-import java.util.List;
-
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
+import dev.drsoran.moloko.fragments.ContactsListFragment;
 import dev.drsoran.rtm.Contact;
 
 
-public class ContactsListAdapter extends ArrayAdapter< Contact >
+public class ContactsListAdapter extends SwappableArrayAdapter< Contact >
 {
-   private final static String TAG = "Moloko."
-      + ContactsListAdapter.class.getName();
-   
-   private final Context context;
-   
-   private final int resourceId;
+   private final ContactsListFragment context;
    
    private final LayoutInflater inflater;
    
    
-
-   public ContactsListAdapter( Context context, int resourceId,
-      List< Contact > contacts )
+   
+   public ContactsListAdapter( ContactsListFragment context )
    {
-      super( context, 0, contacts );
+      super( context.getSherlockActivity() );
       
       this.context = context;
-      this.resourceId = resourceId;
-      this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+      inflater = context.getSherlockActivity().getLayoutInflater();
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
       {
-         convertView = inflater.inflate( resourceId, parent, false );
+         convertView = inflater.inflate( R.layout.contactslist_fragment_listitem,
+                                         parent,
+                                         false );
       }
       
-      ImageView picture;
-      TextView fullname;
-      TextView username;
-      TextView numSharedTasks;
-      View callButton;
-      
-      try
-      {
-         picture = (ImageView) convertView.findViewById( R.id.contactslist_listitem_contact_pic );
-         fullname = (TextView) convertView.findViewById( R.id.contactslist_listitem_fullname );
-         username = (TextView) convertView.findViewById( R.id.contactslist_listitem_username );
-         numSharedTasks = (TextView) convertView.findViewById( R.id.contactslist_listitem_num_shared );
-         callButton = convertView.findViewById( R.id.contactslist_listitem_btn_call );
-      }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
-      }
+      final ImageView picture = (ImageView) convertView.findViewById( R.id.contactslist_listitem_contact_pic );
+      final TextView fullname = (TextView) convertView.findViewById( R.id.contactslist_listitem_fullname );
+      final TextView username = (TextView) convertView.findViewById( R.id.contactslist_listitem_username );
+      final TextView numSharedTasks = (TextView) convertView.findViewById( R.id.contactslist_listitem_num_shared );
+      final View callButton = convertView.findViewById( R.id.contactslist_listitem_btn_call );
       
       final Contact contact = getItem( position );
-      
       final Bitmap photo = contact.getPhoto();
       
       if ( photo != null )
@@ -118,22 +92,27 @@ public class ContactsListAdapter extends ArrayAdapter< Contact >
                                                               ? setCallButton( callButton,
                                                                                contact )
                                                               : View.GONE );
-      
       return convertView;
    }
    
-
-
+   
+   
+   @Override
+   public long getItemId( int position )
+   {
+      return Long.parseLong( getItem( position ).getId() );
+   }
+   
+   
+   
    private int setCallButton( final View view, final Contact contact )
    {
       view.setOnClickListener( new OnClickListener()
       {
+         @Override
          public void onClick( final View v )
          {
-            final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                              Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_LOOKUP_URI,
-                                                                    contact.getLookUpKey() ) );
-            context.startActivity( intent );
+            context.onCallButtonClicked( contact );
          }
       } );
       

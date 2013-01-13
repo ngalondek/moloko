@@ -37,13 +37,15 @@ public class RtmSmartFilterToken implements Parcelable
    public static final Parcelable.Creator< RtmSmartFilterToken > CREATOR = new Parcelable.Creator< RtmSmartFilterToken >()
    {
       
+      @Override
       public RtmSmartFilterToken createFromParcel( Parcel source )
       {
          return new RtmSmartFilterToken( source );
       }
       
-
-
+      
+      
+      @Override
       public RtmSmartFilterToken[] newArray( int size )
       {
          return new RtmSmartFilterToken[ size ];
@@ -52,7 +54,7 @@ public class RtmSmartFilterToken implements Parcelable
    };
    
    
-
+   
    public RtmSmartFilterToken( int operatorType, String value, boolean negated )
    {
       this.operatorType = operatorType;
@@ -60,8 +62,8 @@ public class RtmSmartFilterToken implements Parcelable
       this.isNegated = negated;
    }
    
-
-
+   
+   
    public RtmSmartFilterToken( Parcel source )
    {
       this.operatorType = source.readInt();
@@ -69,19 +71,70 @@ public class RtmSmartFilterToken implements Parcelable
       this.isNegated = source.readInt() != 0;
    }
    
-
-
+   
+   
+   @Override
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeInt( operatorType );
       dest.writeString( value );
       dest.writeInt( isNegated ? 1 : 0 );
+   }
+   
+   
+   
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( o == this )
+      {
+         return true;
+      }
+      
+      if ( o == null )
+      {
+         return false;
+      }
+      
+      if ( o.getClass() != getClass() )
+      {
+         return false;
+      }
+      
+      final RtmSmartFilterToken other = (RtmSmartFilterToken) o;
+      
+      return other.operatorType == operatorType && other.value.equals( value )
+         && other.isNegated == isNegated;
+   }
+   
+   
+   
+   @Override
+   public int hashCode()
+   {
+      int hashCode = operatorType;
+      hashCode = 31 * hashCode ^ value.hashCode();
+      hashCode = 31 * hashCode ^ ( isNegated ? 0 : 1 );
+      
+      return hashCode;
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Op: %d, %s, neg: %b",
+                            operatorType,
+                            value,
+                            isNegated );
    }
 }

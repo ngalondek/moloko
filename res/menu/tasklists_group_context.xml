@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@id/ctx_menu_collapse"
+        android:title="@string/tasklists_menu_ctx_collapse"/>
+    <item
+        android:id="@id/ctx_menu_expand"
+        android:title="@string/tasklists_menu_ctx_expand"/>
+    <item
+        android:id="@id/ctx_menu_unset_default_list"
+        android:title="@string/tasklists_menu_ctx_remove_def_list"/>
+    <item
+        android:id="@id/ctx_menu_set_default_list"
+        android:title="@string/tasklists_menu_ctx_make_def_list"/>
+
+</menu>

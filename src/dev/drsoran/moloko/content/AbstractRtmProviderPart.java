@@ -31,7 +31,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 
 
@@ -44,33 +44,37 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
       + AbstractRtmProviderPart.class.getSimpleName();
    
    
-
+   
    public AbstractRtmProviderPart( Context context, SQLiteOpenHelper dbAccess,
       String tableName )
    {
       super( context, dbAccess, tableName );
    }
    
-
-
+   
+   
+   @Override
    public void upgrade( SQLiteDatabase db, int oldVersion, int newVersion ) throws SQLException
    {
-      Log.w( path, "Upgrading database from version " + oldVersion + " to "
-         + newVersion + ", which will destroy all old data" );
+      MolokoApp.Log.w( getClass(), "Upgrading database '" + path
+         + "' from version " + oldVersion + " to " + newVersion
+         + ", which will destroy all old data" );
       
       drop( db );
       create( db );
    }
    
-
-
+   
+   
+   @Override
    public void drop( SQLiteDatabase db )
    {
       db.execSQL( "DROP TABLE IF EXISTS " + path );
    }
    
-
-
+   
+   
+   @Override
    public Uri insert( ContentValues initialValues )
    {
       Uri uri = null;
@@ -98,15 +102,16 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
       return uri;
    }
    
-
-
+   
+   
    protected int getInsertConflictAlgorithm()
    {
       return SQLiteDatabase.CONFLICT_REPLACE;
    }
    
-
-
+   
+   
+   @Override
    public int update( String id,
                       ContentValues values,
                       String where,
@@ -143,15 +148,16 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
       return count;
    }
    
-
-
+   
+   
    protected int getUpdateConflictAlgorithm()
    {
       return SQLiteDatabase.CONFLICT_REPLACE;
    }
    
-
-
+   
+   
+   @Override
    public int delete( String id, String where, String[] whereArgs )
    {
       SQLiteDatabase db = dbAccess.getWritableDatabase();
@@ -177,15 +183,16 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
       return count;
    }
    
-
-
+   
+   
+   @Override
    public String getTableName()
    {
       return path;
    }
    
-
-
+   
+   
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
       return initialValues;

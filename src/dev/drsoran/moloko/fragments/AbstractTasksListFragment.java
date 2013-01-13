@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -24,87 +24,105 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.List;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.SubMenu;
 import android.text.Spanned;
-import android.text.format.DateUtils;
-import android.view.MenuInflater;
+import android.text.TextUtils;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.mdt.rtm.data.RtmAuth;
+import com.actionbarsherlock.internal.view.menu.MenuWrapper;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.fragments.base.MolokoListFragment;
+import dev.drsoran.moloko.actionmodes.BaseMultiChoiceModeListener;
+import dev.drsoran.moloko.actionmodes.TasksListActionModeCallback;
+import dev.drsoran.moloko.actionmodes.listener.ITasksListActionModeListener;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
+import dev.drsoran.moloko.annotations.InstanceState;
+import dev.drsoran.moloko.fragments.base.MolokoMultiChoiceModalListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
-import dev.drsoran.moloko.layouts.TitleWithTextLayout;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.loaders.TasksLoader;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.widgets.MolokoListView;
+import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
-         MolokoListFragment< List< T > > implements IRtmAccessLevelAware
+         MolokoMultiChoiceModalListFragment< T > implements
+         ITasksListFragment< T >
 {
-   public static class Config
+   private ITasksListFragmentListener fragmentListener;
+   
+   private ITasksListActionModeListener actionModeListener;
+   
+   @InstanceState( key = Intents.Extras.KEY_FILTER )
+   private IFilter filter;
+   
+   @InstanceState( key = Intents.Extras.KEY_TASK_SORT_ORDER,
+                   settingsValue = "getTaskSort" )
+   private int tasksSort;
+   
+   
+   
+   public AbstractTasksListFragment()
    {
-      public final static String FILTER = "filter";
-      
-      public final static String TASK_SORT_ORDER = "task_sort_order";
+      registerAnnotatedConfiguredInstance( this,
+                                           AbstractTasksListFragment.class );
+      setNoElementsResourceId( R.string.abstaskslist_no_tasks );
    }
-   
-   
-   protected static class OptionsMenu
-   {
-      public final static int SORT = R.id.menu_sort;
-      
-      public final static int SORT_PRIO = R.id.menu_sort_priority;
-      
-      public final static int SORT_DUE = R.id.menu_sort_due;
-      
-      public final static int SORT_NAME = R.id.menu_sort_task_name;
-      
-      public final static int SETTINGS = R.id.menu_settings;
-   }
-   
-   
-   protected static class OptionsMenuGroup
-   {
-      public final static int SORT = R.id.menu_group_sort;
-   }
-   
-   protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
-   
-   private final static int TASKS_LOADER_ID = 1;
-   
-   private ITasksListFragmentListener listener;
    
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
       if ( activity instanceof ITasksListFragmentListener )
-         listener = (ITasksListFragmentListener) activity;
+         fragmentListener = (ITasksListFragmentListener) activity;
       else
-         listener = new NullTasksListFragmentListener();
+         fragmentListener = null;
+      
+      if ( activity instanceof ITasksListActionModeListener )
+         actionModeListener = (ITasksListActionModeListener) activity;
+      else
+         actionModeListener = null;
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      ensureFilter();
+   }
+   
+   
+   
+   @Override
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      super.onViewCreated( view, savedInstanceState );
+      if ( isReadOnlyAccess() )
+      {
+         registerForContextMenu( getListView() );
+      }
    }
    
    
@@ -112,8 +130,10 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onDetach()
    {
+      fragmentListener = null;
+      actionModeListener = null;
+      
       super.onDetach();
-      listener = null;
    }
    
    
@@ -122,51 +142,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
-      
       setHasOptionsMenu( true );
-   }
-   
-   
-   
-   protected CharSequence getEmptyListText()
-   {
-      return getString( R.string.abstaskslist_no_tasks );
-   }
-   
-   
-   
-   @Override
-   public void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.FILTER ) )
-         configuration.putParcelable( Config.FILTER,
-                                      config.getParcelable( Config.FILTER ) );
-      configuration.putInt( Config.TASK_SORT_ORDER,
-                            config.getInt( Config.TASK_SORT_ORDER,
-                                           configuration.getInt( Config.TASK_SORT_ORDER ) ) );
-   }
-   
-   
-   
-   @Override
-   public void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putParcelable( Config.FILTER,
-                            new RtmSmartFilter( Strings.EMPTY_STRING ) );
-      bundle.putInt( Config.TASK_SORT_ORDER, getDefaultTaskSort() );
-   }
-   
-   
-   
-   @Override
-   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
-   {
-      if ( getFragmentActivity() != null )
-         getFragmentActivity().invalidateOptionsMenu();
    }
    
    
@@ -174,14 +150,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      final SubMenu subMenu = createTasksSortSubMenu( menu );
-      if ( subMenu != null )
-      {
-         subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
-         
-         final int currentTaskSort = getTaskSortConfiguration();
-         initializeTasksSortSubMenu( subMenu, currentTaskSort );
-      }
+      inflater.inflate( R.menu.tasks_sort, menu );
+      super.onCreateOptionsMenu( menu, inflater );
    }
    
    
@@ -189,12 +159,20 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public final void onPrepareOptionsMenu( Menu menu )
    {
-      final MenuItem sortMenuItem = menu.findItem( OptionsMenu.SORT );
+      final MenuItem sortMenuItem = menu.findItem( R.id.menu_sort );
       
       if ( sortMenuItem != null )
       {
-         final int currentTaskSort = getTaskSortConfiguration();
-         initializeTasksSortSubMenu( sortMenuItem.getSubMenu(), currentTaskSort );
+         if ( hasMultipleTasks() )
+         {
+            final int currentTaskSort = getTaskSort();
+            initializeTasksSortSubMenu( sortMenuItem.getSubMenu(),
+                                        currentTaskSort );
+         }
+         else
+         {
+            sortMenuItem.setVisible( false );
+         }
       }
    }
    
@@ -205,18 +183,21 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       switch ( item.getItemId() )
       {
-         case OptionsMenu.SORT_PRIO:
-            resortTasks( Settings.TASK_SORT_PRIORITY );
+         case R.id.menu_sort_priority:
+            tasksSort = Settings.TASK_SORT_PRIORITY;
+            resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
-         case OptionsMenu.SORT_DUE:
-            resortTasks( Settings.TASK_SORT_DUE_DATE );
+         case R.id.menu_sort_due:
+            tasksSort = Settings.TASK_SORT_DUE_DATE;
+            resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
-         case OptionsMenu.SORT_NAME:
-            resortTasks( Settings.TASK_SORT_NAME );
+         case R.id.menu_sort_task_name:
+            tasksSort = Settings.TASK_SORT_NAME;
+            resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
@@ -227,47 +208,90 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected SubMenu createTasksSortSubMenu( Menu menu )
+   @Override
+   public void onCreateContextMenu( ContextMenu menu,
+                                    View v,
+                                    ContextMenuInfo menuInfo )
    {
-      SubMenu subMenu = null;
+      super.onCreateContextMenu( menu, v, menuInfo );
       
-      if ( hasMultipleTasks() )
-      {
-         subMenu = menu.addSubMenu( OptionsMenuGroup.SORT,
-                                    OptionsMenu.SORT,
-                                    MenuCategory.SECONDARY,
-                                    R.string.abstaskslist_menu_opt_sort );
-         
-         subMenu.setIcon( R.drawable.ic_menu_sort );
-         subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
-         
-         UIUtils.addCompatibilityActionView( getFragmentActivity(),
-                                             menu,
-                                             subMenu.getItem() );
-         
-         subMenu.add( OptionsMenuGroup.SORT,
-                      OptionsMenu.SORT_PRIO,
-                      Menu.NONE,
-                      R.string.app_sort_prio );
-         
-         subMenu.add( OptionsMenuGroup.SORT,
-                      OptionsMenu.SORT_DUE,
-                      Menu.NONE,
-                      R.string.app_sort_due_date );
-         
-         subMenu.add( OptionsMenuGroup.SORT,
-                      OptionsMenu.SORT_NAME,
-                      Menu.NONE,
-                      R.string.app_sort_alpha );
-      }
+      getSherlockActivity().getMenuInflater()
+                           .inflate( R.menu.taskslist_listitem_context, menu );
       
-      return subMenu;
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+      final Task selectedTask = getTask( info.position );
+      
+      prepareSingleTaskActionMenu( new MenuWrapper( menu ), selectedTask );
    }
    
    
    
-   protected void initializeTasksSortSubMenu( SubMenu subMenu,
-                                              int currentTaskSort )
+   public void prepareSingleTaskActionMenu( Menu menu, Task selectedTask )
+   {
+      final List< String > tags = selectedTask.getTags();
+      final int tagsCount = tags.size();
+      
+      final MenuItem openTagsMenuItem = menu.findItem( R.id.menu_open_tags )
+                                            .setVisible( tagsCount > 0 );
+      if ( openTagsMenuItem.isVisible() )
+      {
+         openTagsMenuItem.setTitle( getResources().getQuantityString( R.plurals.taskslist_open_tags,
+                                                                      tagsCount,
+                                                                      tags.get( 0 ) ) );
+      }
+      
+      final MenuItem tasksAtLocationMenuItem = menu.findItem( R.id.menu_open_tasks_at_loc );
+      final String locationName = selectedTask.getLocationName();
+      final boolean hasLoction = !TextUtils.isEmpty( locationName );
+      
+      tasksAtLocationMenuItem.setVisible( hasLoction );
+      if ( hasLoction )
+      {
+         tasksAtLocationMenuItem.setTitle( getString( R.string.abstaskslist_listitem_ctx_tasks_at_location,
+                                                      locationName ) );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean onContextItemSelected( android.view.MenuItem item )
+   {
+      boolean handled = false;
+      
+      if ( actionModeListener != null )
+      {
+         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+         final Task selectedTask = getTask( info.position );
+         
+         switch ( item.getItemId() )
+         {
+            case R.id.menu_open_tags:
+               actionModeListener.onShowTasksWithTags( selectedTask.getTags() );
+               handled = true;
+               break;
+            
+            case R.id.menu_open_tasks_at_loc:
+               actionModeListener.onOpenTaskLocation( selectedTask );
+               handled = true;
+               break;
+            
+            default :
+               break;
+         }
+      }
+      
+      if ( !handled )
+      {
+         return super.onContextItemSelected( item );
+      }
+      
+      return true;
+   }
+   
+   
+   
+   protected void initializeTasksSortSubMenu( Menu menu, int currentTaskSort )
    {
       // INFO: These items are exclusive checkable. Setting one will reset the other.
       // The setChecked() call parameter gets ignored. Only the call matters and
@@ -275,15 +299,15 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       switch ( currentTaskSort )
       {
          case Settings.TASK_SORT_PRIORITY:
-            subMenu.findItem( OptionsMenu.SORT_PRIO ).setChecked( true );
+            menu.findItem( R.id.menu_sort_priority ).setChecked( true );
             break;
          
          case Settings.TASK_SORT_DUE_DATE:
-            subMenu.findItem( OptionsMenu.SORT_DUE ).setChecked( true );
+            menu.findItem( R.id.menu_sort_due ).setChecked( true );
             break;
          
          case Settings.TASK_SORT_NAME:
-            subMenu.findItem( OptionsMenu.SORT_NAME ).setChecked( true );
+            menu.findItem( R.id.menu_sort_task_name ).setChecked( true );
             break;
          
          default :
@@ -296,50 +320,48 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
-      listener.onOpenTask( position );
+      if ( fragmentListener != null )
+      {
+         fragmentListener.onOpenTask( position );
+      }
    }
    
    
    
-   protected void resortTasks( int newTaskSort )
-   {
-      if ( shouldResortTasks( newTaskSort ) )
-         listener.onTaskSortChanged( newTaskSort );
-   }
-   
-   
-   
+   @Override
    public IFilter getFilter()
    {
-      return configuration.getParcelable( Config.FILTER );
+      return filter;
    }
    
    
    
+   @Override
    public RtmSmartFilter getRtmSmartFilter()
    {
       final IFilter filter = getFilter();
-      
       return ( filter instanceof RtmSmartFilter ) ? (RtmSmartFilter) filter
                                                  : null;
    }
    
    
    
-   public boolean hasTasks()
+   private void ensureFilter()
    {
-      return getListAdapter() != null && getListAdapter().getCount() > 0;
+      if ( filter == null )
+         filter = new RtmSmartFilter( Strings.EMPTY_STRING );
    }
    
    
    
-   public boolean hasMultipleTasks()
+   private boolean hasMultipleTasks()
    {
       return getListAdapter() != null && getListAdapter().getCount() > 1;
    }
    
    
    
+   @Override
    @SuppressWarnings( "unchecked" )
    public T getTask( int pos )
    {
@@ -348,6 +370,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public int getTaskPos( View view )
    {
       return getListView().getPositionForView( view );
@@ -355,6 +378,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
+   @Override
    public T getTask( View view )
    {
       return getTask( getTaskPos( view ) );
@@ -362,54 +386,59 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public void reload()
+   @Override
+   public T getTask( String taskId )
    {
-      getLoaderManager().restartLoader( TASKS_LOADER_ID,
-                                        getConfiguration(),
-                                        this );
+      T task = null;
+      
+      final ListAdapter adapter = getListAdapter();
+      final int itemCount = adapter.getCount();
+      for ( int i = 0; i < itemCount && task == null; i++ )
+      {
+         @SuppressWarnings(
+         { "unchecked" } )
+         final T temp = (T) adapter.getItem( i );
+         if ( temp.getId().equals( taskId ) )
+         {
+            task = temp;
+         }
+      }
+      
+      return task;
    }
    
    
    
-   public int getTaskSortConfiguration()
+   @Override
+   public int getTaskCount()
    {
-      return configuration.getInt( Config.TASK_SORT_ORDER );
+      return getListAdapter() != null ? getListAdapter().getCount() : 0;
    }
    
    
    
-   public boolean shouldResortTasks( int taskSort )
+   @Override
+   public int getTaskSort()
    {
-      return getTaskSortConfiguration() != taskSort;
+      return tasksSort;
    }
    
    
    
-   protected String resolveTaskSortToSqlite( int taskSort )
-   {
-      return Queries.resolveTaskSortToSqlite( taskSort );
-   }
-   
-   
-   
+   @Override
    public void showError( CharSequence errorMessage )
    {
-      final TextView errorTextView = prepareErrorViewAndGetMessageView();
-      if ( errorTextView != null )
-         errorTextView.setText( errorMessage );
-      
-      getLoaderManager().destroyLoader( TASKS_LOADER_ID );
+      super.showError( errorMessage );
+      getLoaderManager().destroyLoader( getLoaderId() );
    }
    
    
    
+   @Override
    public void showError( Spanned errorMessage )
    {
-      final TextView errorTextView = prepareErrorViewAndGetMessageView();
-      if ( errorTextView != null )
-         errorTextView.setText( errorMessage );
-      
-      getLoaderManager().destroyLoader( TASKS_LOADER_ID );
+      super.showError( errorMessage );
+      getLoaderManager().destroyLoader( getLoaderId() );
    }
    
    
@@ -420,16 +449,11 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       super.onLoadFinished( loader, data );
       
       invalidateOptionsMenu();
-   }
-   
-   
-   
-   @Override
-   public void onLoaderReset( Loader< List< T >> loader )
-   {
-      super.onLoaderReset( loader );
       
-      invalidateOptionsMenu();
+      if ( data != null )
+      {
+         resortTasks( tasksSort );
+      }
    }
    
    
@@ -437,13 +461,13 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public int getLoaderId()
    {
-      return TASKS_LOADER_ID;
+      return TasksLoader.ID;
    }
    
    
    
    @Override
-   public int getSettingsMask()
+   protected int getSettingsMask()
    {
       return super.getSettingsMask()
          | IOnSettingsChangedListener.DATE_TIME_RELATED;
@@ -460,62 +484,57 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   protected ListAdapter createListAdapterForResult( List< T > result )
+   public SwappableArrayAdapter< T > createListAdapter()
    {
-      return createListAdapterForResult( result, getFilter() );
+      return createListAdapter( getFilter() );
    }
    
    
    
-   private TitleWithTextLayout getErrorView()
+   protected static String resolveTaskSortToSqlite( int sortValue )
    {
-      View errorView = null;
-      
-      if ( getView() != null )
-         errorView = getView().findViewById( R.id.error );
-      
-      return (TitleWithTextLayout) errorView;
-   }
-   
-   
-   
-   private void showErrorView( boolean show )
-   {
-      final View errorView = getErrorView();
-      if ( errorView != null )
-         errorView.setVisibility( show ? View.VISIBLE : View.GONE );
-   }
-   
-   
-   
-   private TextView prepareErrorViewAndGetMessageView()
-   {
-      TextView errorTextView = null;
-      final TitleWithTextLayout errorView = getErrorView();
-      
-      if ( errorView != null )
+      switch ( sortValue )
       {
-         showEmptyView( false );
-         showListView( false );
-         showLoadingSpinner( false );
-         showErrorView( true );
-         
-         errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
+         case Settings.TASK_SORT_PRIORITY:
+            return Tasks.SORT_PRIORITY;
+         case Settings.TASK_SORT_DUE_DATE:
+            return Tasks.SORT_DUE_DATE;
+         case Settings.TASK_SORT_NAME:
+            return Tasks.SORT_TASK_NAME;
+         default :
+            return null;
       }
-      
-      return errorTextView;
    }
    
    
    
-   public abstract Intent newDefaultIntent();
+   @Override
+   public int getChoiceMode()
+   {
+      return isWritableAccess() ? MolokoListView.CHOICE_MODE_MULTIPLE_MODAL
+                               : MolokoListView.CHOICE_MODE_NONE;
+   }
    
    
    
-   protected abstract int getDefaultTaskSort();
+   @Override
+   public BaseMultiChoiceModeListener< Task > createMultiCoiceModalModeListener()
+   {
+      final TasksListActionModeCallback callback = new TasksListActionModeCallback( this );
+      callback.setTasksListActionModeListener( actionModeListener );
+      
+      return callback;
+   }
    
    
    
-   protected abstract ListAdapter createListAdapterForResult( List< T > result,
-                                                              IFilter filter );
+   @Override
+   public Fragment getFragment()
+   {
+      return this;
+   }
+   
+   
+   
+   protected abstract SwappableArrayAdapter< T > createListAdapter( IFilter filter );
 }

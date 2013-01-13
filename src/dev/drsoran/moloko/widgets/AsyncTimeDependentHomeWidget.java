@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -29,7 +29,7 @@ import dev.drsoran.moloko.MolokoApp;
 
 
 public abstract class AsyncTimeDependentHomeWidget extends
-         AsyncLoadingHomeWidget implements IOnTimeChangedListener
+         AsyncLoadingCounterBubbleHomeWidget implements IOnTimeChangedListener
 {
    
    public AsyncTimeDependentHomeWidget( Context context, AttributeSet attrs )
@@ -37,26 +37,27 @@ public abstract class AsyncTimeDependentHomeWidget extends
       super( context, attrs );
    }
    
-
-
+   
+   
    public void start()
    {
       asyncReload();
       
-      MolokoApp.get( getContext() )
+      MolokoApp.getNotifierContext( getContext() )
                .registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
    }
    
-
-
+   
+   
    @Override
    public void stop()
    {
-      MolokoApp.get( getContext() ).unregisterOnTimeChangedListener( this );
+      MolokoApp.getNotifierContext( getContext() )
+               .unregisterOnTimeChangedListener( this );
    }
    
-
-
+   
+   
    public void onTimeChanged( int which )
    {
       switch ( which )
@@ -75,24 +76,21 @@ public abstract class AsyncTimeDependentHomeWidget extends
       }
    }
    
-
-
+   
+   
    protected void onMinuteTick()
    {
-      
    }
    
-
-
+   
+   
    protected void onSystemTimeChanged()
    {
-      
    }
    
-
-
+   
+   
    protected void onMidnight()
    {
-      
    }
 }

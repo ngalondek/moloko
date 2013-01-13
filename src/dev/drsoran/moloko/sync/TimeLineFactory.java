@@ -22,31 +22,28 @@
 
 package dev.drsoran.moloko.sync;
 
-import android.util.Log;
-
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.MolokoApp;
+
 
 public final class TimeLineFactory
 {
-   private final static String TAG = "Moloko."
-      + TimeLineFactory.class.getSimpleName();
-   
    private final Service service;
    
    private RtmTimeline timeline;
    
    
-
+   
    public TimeLineFactory( Service service )
    {
       this.service = service;
    }
    
-
-
+   
+   
    public final RtmTimeline createTimeline() throws ServiceException
    {
       if ( timeline == null )
@@ -55,19 +52,20 @@ public final class TimeLineFactory
       return timeline;
    }
    
-
-
+   
+   
    public final RtmTimeline createOneShotTimeline() throws ServiceException
    {
       return createTimelineImpl();
    }
    
-
-
+   
+   
    private final RtmTimeline createTimelineImpl() throws ServiceException
    {
       final RtmTimeline newTimeline = service.timelines_create();
-      Log.i( TAG, "Created new time line " + newTimeline );
+      MolokoApp.Log.i( getClass(), "Created new time line " + newTimeline );
+      
       return newTimeline;
    }
 }

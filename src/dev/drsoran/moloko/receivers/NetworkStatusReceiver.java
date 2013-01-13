@@ -1,5 +1,5 @@
 /* 
-	Copyright (c) 2010 Ronny Röhricht
+	Copyright (c) 2012 Ronny Röhricht
 
 	This file is part of Moloko.
 
@@ -26,50 +26,40 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.os.Message;
+import android.net.NetworkInfo;
 import dev.drsoran.moloko.IOnNetworkStatusChangedListener;
-import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.util.ListenerList;
+import dev.drsoran.moloko.NotifierContextHandler;
 
 
 public class NetworkStatusReceiver extends BroadcastReceiver
 {
+   private final NotifierContextHandler handler;
+   
+   
+   
+   public NetworkStatusReceiver( NotifierContextHandler handler )
+   {
+      this.handler = handler;
+   }
+   
+   
    
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      // Check if we musn't use background data any more
-      if ( intent.getAction()
-                 .equals( ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED ) )
+      final ConnectivityManager cm = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
+      if ( cm != null )
       {
-         final ConnectivityManager cm = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
-         
-         if ( cm != null )
-         {
-            final Message msg = new Message();
-            msg.what = Integer.valueOf( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS );
-            
-            msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
-                                                                                          Boolean.valueOf( cm.getBackgroundDataSetting() ) );
-            
-            MolokoApp.get( context.getApplicationContext() )
-                     .getHandler()
-                     .sendMessage( msg );
-         }
+         handler.onNetworkStatusChanged( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS,
+                                         isConnected( cm ) );
       }
-      else if ( intent.getAction()
-                      .equals( ConnectivityManager.CONNECTIVITY_ACTION ) )
-      {
-         final Message msg = new Message();
-         msg.what = Integer.valueOf( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS );
-         
-         msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
-                                                                                       Boolean.valueOf( intent.getBooleanExtra( ConnectivityManager.EXTRA_NO_CONNECTIVITY,
-                                                                                                                                false ) ) );
-         
-         MolokoApp.get( context.getApplicationContext() )
-                  .getHandler()
-                  .sendMessage( msg );
-      }
+   }
+   
+   
+   
+   private boolean isConnected( ConnectivityManager connectivityManager )
+   {
+      final NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+      return activeNetworkInfo != null && activeNetworkInfo.isConnected();
    }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,21 +22,20 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
-
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.SupportActivity;
+
+import com.actionbarsherlock.app.SherlockDialogFragment;
+
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.fragments.base.impl.MolokoDialogFragmentImpl;
 
 
-public abstract class MolokoDialogFragment extends DialogFragment implements
-         IConfigurable
+public abstract class MolokoDialogFragment extends SherlockDialogFragment
+         implements IConfigurable, IOnSettingsChangedListener
 {
    
    private final DialogInterface.OnClickListener genericListener = new OnClickListener()
@@ -48,9 +47,14 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
       }
    };
    
-   private IOnSettingsChangedListener onSettingsChangedListener;
+   private final MolokoDialogFragmentImpl impl;
    
-   protected Bundle configuration;
+   
+   
+   protected MolokoDialogFragment()
+   {
+      impl = new MolokoDialogFragmentImpl( this, getSettingsMask() );
+   }
    
    
    
@@ -58,46 +62,16 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
-      if ( savedInstanceState == null )
-         configure( getArguments() );
-      else
-         configure( savedInstanceState );
+      impl.onCreate( savedInstanceState );
    }
    
    
    
    @Override
-   public final void onAttach( SupportActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      
-      onAttach( (FragmentActivity) activity );
-   }
-   
-   
-   
-   public void onAttach( FragmentActivity activity )
-   {
-      final int settingsMask = getSettingsMask();
-      
-      if ( settingsMask != 0 )
-      {
-         onSettingsChangedListener = new IOnSettingsChangedListener()
-         {
-            @Override
-            public void onSettingsChanged( int which,
-                                           HashMap< Integer, Object > oldValues )
-            {
-               if ( isAdded() && !isDetached() )
-                  MolokoDialogFragment.this.onSettingsChanged( which, oldValues );
-            }
-         };
-         
-         MolokoApp.get( activity )
-                  .registerOnSettingsChangedListener( settingsMask,
-                                                      onSettingsChangedListener );
-      }
+      impl.onAttach( activity );
    }
    
    
@@ -105,15 +79,8 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      
-      if ( onSettingsChangedListener != null )
-      {
-         MolokoApp.get( getFragmentActivity() )
-                  .unregisterOnSettingsChangedListener( onSettingsChangedListener );
-         
-         onSettingsChangedListener = null;
-      }
    }
    
    
@@ -122,8 +89,7 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public void setArguments( Bundle args )
    {
       super.setArguments( args );
-      
-      configure( args );
+      impl.setArguments( args );
    }
    
    
@@ -132,41 +98,16 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    public void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      
-      outState.putAll( getConfiguration() );
+      impl.onSaveInstanceState( outState );
    }
    
    
    
    @Override
-   public final void configure( Bundle config )
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-         takeConfigurationFrom( config );
-   }
-   
-   
-   
-   @Override
-   public void clearConfiguration()
-   {
-      if ( configuration != null )
-         configuration.clear();
-   }
-   
-   
-   
-   @Override
-   public final Bundle createDefaultConfiguration()
-   {
-      final Bundle bundle = new Bundle();
-      
-      putDefaultConfigurationTo( bundle );
-      
-      return bundle;
+      impl.registerAnnotatedConfiguredInstance( instance, clazz );
    }
    
    
@@ -174,40 +115,44 @@ public abstract class MolokoDialogFragment extends DialogFragment implements
    @Override
    public Bundle getConfiguration()
    {
-      return new Bundle( configuration );
+      return impl.getConfiguration();
    }
    
    
    
-   protected void takeConfigurationFrom( Bundle config )
+   @Override
+   public final void configure( Bundle config )
+   {
+      impl.configure( config );
+   }
+   
+   
+   
+   @Override
+   public void clearConfiguration()
+   {
+      impl.setDefaultConfiguration();
+   }
+   
+   
+   
+   public Bundle getDefaultConfiguration()
+   {
+      return impl.getDefaultConfiguration();
+   }
+   
+   
+   
+   @Override
+   public void onSettingsChanged( int which )
    {
    }
    
    
    
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
-   }
-   
-   
-   
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
-   {
-   }
-   
-   
-   
-   public int getSettingsMask()
+   protected int getSettingsMask()
    {
       return 0;
-   }
-   
-   
-   
-   public FragmentActivity getFragmentActivity()
-   {
-      return (FragmentActivity) getSupportActivity();
    }
    
    

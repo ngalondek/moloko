@@ -25,18 +25,21 @@ package dev.drsoran.moloko.activities;
 import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
+import dev.drsoran.moloko.IAccountUpdatedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.Intents.HomeAction;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
@@ -45,13 +48,6 @@ import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
 public class HomeActivity extends MolokoFragmentActivity implements
          OnItemClickListener
 {
-   private static class OptionsMenu
-   {
-      public final static int ADD_TASK = R.id.menu_quick_add_task;
-   }
-   
-   private final Handler handler = new Handler();
-   
    private IMolokoHomeWidget addAccountWidget;
    
    
@@ -60,9 +56,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.home_activity );
       
-      setAccountNameAsSubTitle();
+      setContentView( R.layout.home_activity );
       
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setOnItemClickListener( this );
@@ -76,6 +71,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
    protected void onResume()
    {
       super.onResume();
+      
+      setAccountNameAsSubTitle();
       
       final HomeAdapter homeAdapter = getHomeAdapter();
       
@@ -92,40 +89,30 @@ public class HomeActivity extends MolokoFragmentActivity implements
    @Override
    protected void onStop()
    {
-      super.onStop();
-      
       final HomeAdapter homeAdapter = getHomeAdapter();
-      
       if ( homeAdapter != null )
+      {
          homeAdapter.stopWidgets();
+      }
+      
+      super.onStop();
    }
    
    
    
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      super.onCreateOptionsMenu( menu );
+      if ( isWritableAccess() )
+      {
+         getSupportMenuInflater().inflate( R.menu.home_activity_rwd, menu );
+      }
+      else
+      {
+         getSupportMenuInflater().inflate( R.menu.home_activity, menu );
+      }
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.ADD_TASK,
-                                   getString( R.string.app_task_add ),
-                                   MenuCategory.CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_add_task,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   AccountUtils.isWriteableAccess( this ) );
-      
-      UIUtils.addSearchMenuItem( this,
-                                 menu,
-                                 MenuCategory.ALTERNATIVE,
-                                 MenuItem.SHOW_AS_ACTION_ALWAYS );
-      
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               MenuCategory.ALTERNATIVE,
-                               MenuItem.SHOW_AS_ACTION_ALWAYS );
+      super.onActivityCreateOptionsMenu( menu );
       
       return true;
    }
@@ -141,7 +128,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
             UIUtils.showAboutMolokoDialog( this );
             return true;
             
-         case OptionsMenu.ADD_TASK:
+         case R.id.menu_quick_add_task:
             onAddTask();
             return true;
             
@@ -160,11 +147,10 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onAccountsUpdated( Account[] accounts )
+   public void onAccountUpdated( int what, Account account )
    {
-      super.onAccountsUpdated( accounts );
-      
-      showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
+      super.onAccountUpdated( what, account );
+      showAddAccountWidget( what == IAccountUpdatedListener.ACCOUNT_REMOVED );
    }
    
    
@@ -185,6 +171,10 @@ public class HomeActivity extends MolokoFragmentActivity implements
       if ( account != null )
       {
          getSupportActionBar().setSubtitle( account.name );
+      }
+      else
+      {
+         getSupportActionBar().setSubtitle( null );
       }
    }
    
@@ -209,15 +199,9 @@ public class HomeActivity extends MolokoFragmentActivity implements
       final HomeAdapter adapter = (HomeAdapter) ( (GridView) adapterView ).getAdapter();
       
       final Intent intent = adapter.getIntentForWidget( pos );
-      
       if ( intent != null )
-         startActivity( intent );
-      else
       {
-         final Runnable runnable = adapter.getRunnableForWidget( pos );
-         
-         if ( runnable != null )
-            handler.post( runnable );
+         startActivityWithHomeAction( intent, HomeAction.HOME );
       }
    }
    

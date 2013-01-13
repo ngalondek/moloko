@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -26,10 +26,15 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,14 +44,15 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 
 
-public class SyncableListPreference extends AutoSummaryListPreference implements
-         OnClickListener
+abstract class SyncableListPreference extends AutoSummaryListPreference
+         implements OnClickListener, OnPreferenceChangeListener,
+         OnSharedPreferenceChangeListener
 {
-   private CheckBox checkBox;
-   
-   private TextView settingSourceText;
-   
    protected final String syncWithRtmKey;
+   
+   private final ISyncStateViewManager viewManager;
+   
+   private CheckBox checkBox;
    
    
    
@@ -54,8 +60,16 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    {
       super( context, attrs );
       
-      setLayoutResource( R.layout.moloko_prefs_rtm_list_preference );
-      setDialogLayoutResource( R.layout.moloko_prefs_rtm_sync_button );
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
+      {
+         viewManager = new HoneycombViewManager();
+      }
+      else
+      {
+         viewManager = new PreHoneycombViewManager();
+      }
+      
+      setDialogLayoutResource( R.layout.moloko_prefs_take_from_rtm_checkbox );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.SyncableListPreference,
@@ -67,7 +81,31 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       array.recycle();
       
       if ( syncWithRtmKey == null )
+      {
          throw new IllegalStateException( "SyncableListPreference requires a syncWithRtmKey attribute." );
+      }
+   }
+   
+   
+   
+   @Override
+   protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
+   {
+      super.onAttachedToHierarchy( preferenceManager );
+      
+      setOnPreferenceChangeListener( this );
+      getSharedPreferences().registerOnSharedPreferenceChangeListener( this );
+   }
+   
+   
+   
+   @Override
+   public void cleanUp()
+   {
+      getSharedPreferences().unregisterOnSharedPreferenceChangeListener( this );
+      setOnPreferenceChangeListener( null );
+      
+      super.cleanUp();
    }
    
    
@@ -75,11 +113,10 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    @Override
    protected void onBindView( View view )
    {
+      viewManager.onBindView( view );
+      viewManager.updateUi();
+      
       super.onBindView( view );
-      
-      settingSourceText = (TextView) view.findViewById( R.id.sync_list_setting_source_text );
-      
-      updateUi();
    }
    
    
@@ -120,14 +157,20 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {
-      if ( key != null && key.equals( getKey() ) && isSyncWithRtm() )
+      if ( key != null )
       {
-         setValue( sharedPreferences.getString( getKey(), getValue() ) );
-         notifyChanged();
-      }
-      else
-      {
-         super.onSharedPreferenceChanged( sharedPreferences, key );
+         if ( key.equals( getKey() ) )
+         {
+            final String value = sharedPreferences.getString( getKey(),
+                                                              getValue() );
+            
+            setValue( value );
+            notifyChanged();
+         }
+         else if ( key.equals( syncWithRtmKey ) )
+         {
+            notifyChanged();
+         }
       }
    }
    
@@ -136,69 +179,17 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
-      updateUi();
+      viewManager.updateUi();
       notifyChanged();
-      return true;
-   }
-   
-   
-   
-   private void updateUi()
-   {
-      if ( settingSourceText != null )
-      {
-         if ( isSyncWithRtm()
-            && MolokoApp.getSettings().getRtmSettings() != null )
-         {
-            settingSourceText.setText( R.string.g_settings_src_rtm );
-            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_refresh ),
-                                                    null,
-                                                    null,
-                                                    null );
-         }
-         else
-         {
-            settingSourceText.setText( R.string.g_settings_src_local );
-            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_user ),
-                                                    null,
-                                                    null,
-                                                    null );
-         }
-      }
-   }
-   
-   
-   
-   protected void setSyncWithRtm( boolean value )
-   {
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null && callChangeListener( Boolean.valueOf( value ) ) )
-      {
-         prefs.edit().putBoolean( syncWithRtmKey, value ).commit();
-         
-         // if the user checked the box we have reset the current value
-         // cause we loaded the RTM setting in the background and must
-         // notify the list.
-         if ( value )
-         {
-            setValue( prefs.getString( getKey(), getValue() ) );
-         }
-      }
-   }
-   
-   
-   
-   protected boolean isSyncWithRtm()
-   {
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
-      {
-         return prefs.getBoolean( syncWithRtmKey, true );
-      }
       
       return true;
+   }
+   
+   
+   
+   protected boolean hasRtmSettings()
+   {
+      return MolokoApp.getSettings( getContext() ).getRtmSettings() != null;
    }
    
    
@@ -209,7 +200,9 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       super.onPrepareDialogBuilder( builder );
       
       if ( checkBox != null )
+      {
          checkBox.setChecked( isSyncWithRtm() );
+      }
    }
    
    
@@ -218,30 +211,127 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    protected void onDialogClosed( boolean positiveResult )
    {
       // in case of a positive result a list item has been
-      // clicked an we switch to user setting
+      // clicked and we switch to user setting
       if ( positiveResult )
+      {
          setSyncWithRtm( false );
+      }
       
       super.onDialogClosed( positiveResult );
    }
    
    
    
-   private Drawable createLeftDrawable( int resId )
+   abstract protected boolean isSyncWithRtm();
+   
+   
+   
+   abstract protected void setSyncWithRtm( boolean value );
+   
+   
+   private interface ISyncStateViewManager
    {
-      final Drawable[] drawables = settingSourceText.getCompoundDrawables();
       
-      BitmapDrawable drawable = null;
+      void onBindView( View view );
       
-      if ( drawables[ 0 ] != null )
+      
+      
+      void updateUi();
+      
+   }
+   
+   
+   private final class PreHoneycombViewManager implements ISyncStateViewManager
+   {
+      private TextView settingSourceText;
+      
+      
+      
+      public PreHoneycombViewManager()
       {
-         drawable = new BitmapDrawable( getContext().getResources()
-                                                    .openRawResource( resId ) );
-         
-         if ( drawable != null )
-            drawable.setBounds( drawables[ 0 ].getBounds() );
+         setLayoutResource( R.layout.moloko_prefs_rtm_list_preference );
       }
       
-      return drawable;
+      
+      
+      @Override
+      public void onBindView( View view )
+      {
+         settingSourceText = (TextView) view.findViewById( R.id.sync_list_setting_source_text );
+      }
+      
+      
+      
+      @Override
+      public void updateUi()
+      {
+         if ( settingSourceText != null )
+         {
+            if ( isSyncWithRtm() && hasRtmSettings() )
+            {
+               settingSourceText.setText( R.string.g_settings_src_rtm );
+               settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_refresh ),
+                                                       null,
+                                                       null,
+                                                       null );
+            }
+            else
+            {
+               settingSourceText.setText( R.string.g_settings_src_local );
+               settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_user ),
+                                                       null,
+                                                       null,
+                                                       null );
+            }
+         }
+      }
+      
+      
+      
+      private Drawable createLeftDrawable( int resId )
+      {
+         final Drawable[] drawables = settingSourceText.getCompoundDrawables();
+         
+         BitmapDrawable drawable = null;
+         
+         if ( drawables[ 0 ] != null )
+         {
+            final Resources resources = getContext().getResources();
+            drawable = new BitmapDrawable( resources,
+                                           resources.openRawResource( resId ) );
+            
+            if ( drawable != null )
+            {
+               drawable.setBounds( drawables[ 0 ].getBounds() );
+            }
+         }
+         
+         return drawable;
+      }
+   }
+   
+   
+   private final class HoneycombViewManager implements ISyncStateViewManager
+   {
+      
+      @Override
+      public void onBindView( View view )
+      {
+      }
+      
+      
+      
+      @Override
+      public void updateUi()
+      {
+         if ( isSyncWithRtm() && hasRtmSettings() )
+         {
+            setIcon( R.drawable.ic_rtm_outline );
+         }
+         else
+         {
+            setIcon( R.drawable.ic_prefs_user );
+         }
+      }
    }
 }

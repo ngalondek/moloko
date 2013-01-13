@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,57 +25,56 @@ package dev.drsoran.moloko.grammar.lang;
 import java.text.ParseException;
 
 import android.content.res.Resources;
-import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 
 
 public class RecurrPatternLanguage extends Language
 {
-   private final static String TAG = "Moloko."
-      + RecurrPatternLanguage.class.getSimpleName();
-   
-   
-
    public RecurrPatternLanguage( Resources resources, int langResId )
       throws ParseException
    {
       fromResources( resources, langResId );
    }
    
-
-
+   
+   
    public RecurrPatternLanguage( RecurrPatternLanguage other )
    {
       super( other );
    }
    
-
-
+   
+   
    public void add( StringBuilder sb, String key )
    {
       final String res = dictionary.get( key );
       
       if ( res != null )
+      {
          sb.append( res );
+      }
       else
-         Log.e( TAG, "No dict entry for " + key );
+      {
+         MolokoApp.Log.e( getClass(), "No dict entry for " + key );
+      }
    }
    
-
-
+   
+   
    public void addEvery( StringBuilder sb, String unit, String quantity )
    {
       addPlural( sb, "every", unit, quantity );
    }
    
-
-
+   
+   
    public void addAfter( StringBuilder sb, String unit, String quantity )
    {
       addPlural( sb, "after", unit, quantity );
    }
    
-
-
+   
+   
    public void addStToX( StringBuilder sb, int x )
    {
       final String xStr = String.valueOf( x );
@@ -115,8 +114,8 @@ public class RecurrPatternLanguage extends Language
       }
    }
    
-
-
+   
+   
    private void addPlural( StringBuilder sb,
                            String prefix,
                            String unit,
@@ -129,6 +128,9 @@ public class RecurrPatternLanguage extends Language
          sb.append( String.format( res, quantity ) );
       }
       else
-         Log.e( TAG, "No dict entry for " + prefix + "_" + unit );
+      {
+         MolokoApp.Log.e( getClass(), "No dict entry for " + prefix + "_"
+            + unit );
+      }
    }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -32,19 +32,19 @@ import com.xtralogic.android.logcollector.SendLogActivity;
 import dev.drsoran.moloko.R;
 
 
-public class SendLogPreference extends InfoTextPreference
+class SendLogPreference extends InfoTextPreference
 {
    private final static String LOG_PATTERN = "E/AndroidRuntime|[VDIWEFS]/Moloko";
    
    
-
+   
    public SendLogPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
    }
    
-
-
+   
+   
    @Override
    protected void onClick()
    {
@@ -56,8 +56,9 @@ public class SendLogPreference extends InfoTextPreference
       intent.putExtra( SendLogActivity.EXTRA_SEND_INTENT_ACTION,
                        Intent.ACTION_SENDTO );
       
-      intent.putExtra( SendLogActivity.EXTRA_DATA, Uri.parse( "mailto:"
-         + context.getString( R.string.send_log_address ) ) );
+      intent.putExtra( SendLogActivity.EXTRA_DATA,
+                       Uri.parse( "mailto:"
+                          + context.getString( R.string.send_log_address ) ) );
       
       intent.putExtra( Intent.EXTRA_SUBJECT,
                        context.getString( R.string.send_log_subject ) );

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,8 +25,4 @@ package dev.drsoran.moloko.fragments.listeners;
 public interface ITasksListFragmentListener
 {
    void onOpenTask( int pos );
-   
-
-
-   void onTaskSortChanged( int newTaskSort );
 }

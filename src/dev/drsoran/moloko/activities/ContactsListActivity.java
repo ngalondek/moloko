@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Ronny Röhricht
+ * Copyright (c) 2012 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -23,67 +23,57 @@
 package dev.drsoran.moloko.activities;
 
 import android.os.Bundle;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
+
+import com.actionbarsherlock.view.Menu;
+
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MenuCategory;
-import dev.drsoran.moloko.util.UIUtils;
 
 
 public class ContactsListActivity extends MolokoFragmentActivity implements
          IContactsListFragmentListener
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + ContactsListActivity.class.getSimpleName();
-   
-   
-
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       setContentView( R.layout.contactslist_activity );
    }
    
-
-
+   
+   
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      UIUtils.addSettingsMenuItem( this,
-                                   menu,
-                                   MenuCategory.ALTERNATIVE,
-                                   MenuItem.SHOW_AS_ACTION_NEVER );
+      getSupportMenuInflater().inflate( R.menu.sync_only, menu );
+      super.onActivityCreateOptionsMenu( menu );
       
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               MenuCategory.NONE,
-                               MenuItem.SHOW_AS_ACTION_IF_ROOM );
       return true;
    }
    
-
-
+   
+   
    @Override
    public void onShowPhoneBookEntryOfContact( String lookUpKey )
    {
       startActivity( Intents.createShowPhonebookContactIntent( lookUpKey ) );
    }
    
-
-
+   
+   
    @Override
    public void onShowTasksOfContact( String fullname, String username )
    {
-      startActivity( Intents.createOpenContactIntent( this, fullname, username ) );
+      startActivityWithHomeAction( Intents.createOpenContactIntent( this,
+                                                                    fullname,
+                                                                    username ),
+                                   getClass() );
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {

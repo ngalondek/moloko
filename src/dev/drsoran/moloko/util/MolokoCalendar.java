@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,11 +22,10 @@
 
 package dev.drsoran.moloko.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-
-import dev.drsoran.moloko.MolokoApp;
 
 
 public final class MolokoCalendar
@@ -306,7 +305,14 @@ public final class MolokoCalendar
    @Override
    public String toString()
    {
-      return impl.toString();
+      if ( hasTime )
+      {
+         return impl.getTime().toString();
+      }
+      else
+      {
+         return new SimpleDateFormat( "EEE, dd.MM.yyyy" ).format( getTime() );
+      }
    }
    
    
@@ -360,7 +366,7 @@ public final class MolokoCalendar
    
    public final static MolokoCalendar getInstance()
    {
-      return new MolokoCalendar( MolokoApp.getSettings().getTimezone() );
+      return new MolokoCalendar( TimeZone.getDefault() );
    }
    
    

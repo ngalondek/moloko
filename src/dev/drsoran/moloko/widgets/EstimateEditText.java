@@ -28,12 +28,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.widget.Toast;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ValidationResult;
+import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
@@ -103,7 +103,7 @@ public class EstimateEditText extends ClearableEditText
    
    
    
-   public boolean validate()
+   public ValidationResult validate()
    {
       if ( isSupportingFreeTextInput )
       {
@@ -112,7 +112,7 @@ public class EstimateEditText extends ClearableEditText
       }
       else
       {
-         return true;
+         return ValidationResult.OK;
       }
    }
    
@@ -135,7 +135,7 @@ public class EstimateEditText extends ClearableEditText
       {
          setEstimateByString( getTextTrimmed() );
          
-         final boolean inputValid = validateEstimate( estimateMillis );
+         final boolean inputValid = validateEstimate( estimateMillis ).isOk();
          stayInEditText = !inputValid;
          
          if ( inputValid )
@@ -176,8 +176,8 @@ public class EstimateEditText extends ClearableEditText
          }
          else
          {
-            setText( MolokoDateUtils.formatEstimated( getContext(),
-                                                      estimateMillis.longValue() ) );
+            setText( MolokoDateFormatter.formatEstimated( getContext(),
+                                                          estimateMillis.longValue() ) );
          }
       }
    }
@@ -226,21 +226,17 @@ public class EstimateEditText extends ClearableEditText
    
    
    
-   private boolean validateEstimate( Long estimate )
+   private ValidationResult validateEstimate( Long estimate )
    {
       final boolean valid = estimate != null;
       if ( !valid )
       {
-         Toast.makeText( getContext(),
-                         getContext().getString( R.string.task_edit_validate_estimate,
-                                                 getTextTrimmed() ),
-                         Toast.LENGTH_LONG )
-              .show();
-         
-         requestFocus();
+         return new ValidationResult( getContext().getString( R.string.task_edit_validate_estimate,
+                                                              getTextTrimmed() ),
+                                      this );
       }
       
-      return valid;
+      return ValidationResult.OK;
    }
    
    

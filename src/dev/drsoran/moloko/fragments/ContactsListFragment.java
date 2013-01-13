@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,39 +22,32 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItem;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import com.actionbarsherlock.view.Menu;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ContactsListAdapter;
+import dev.drsoran.moloko.adapters.base.SwappableArrayAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.loaders.ContactsLoader;
 import dev.drsoran.rtm.Contact;
 
 
-public class ContactsListFragment extends MolokoListFragment< List< Contact > >
+public class ContactsListFragment extends MolokoListFragment< Contact >
 {
-   private static class CtxtMenu
-   {
-      public final static int SHOW_PHONEBOOK_CONTACT = R.id.ctx_menu_show_phonebook_contact;
-   }
-   
-   private final static int CONTACTS_LOADER_ID = 1;
-   
    private IContactsListFragmentListener listener;
    
    
@@ -70,8 +63,15 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    
+   public ContactsListFragment()
+   {
+      setNoElementsResourceId( R.string.contactslist_no_contacts );
+   }
+   
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -87,7 +87,6 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
-      
       registerForContextMenu( getListView() );
    }
    
@@ -96,21 +95,20 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    @Override
    public void onDetach()
    {
-      super.onDetach();
       listener = null;
+      super.onDetach();
    }
    
    
    
    @Override
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   public View onCreateView( LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.contactslist_fragment,
                                                   container,
                                                   false );
-      
       return fragmentView;
    }
    
@@ -129,9 +127,8 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
       if ( contact.getLookUpKey() != null )
       {
          final String fullname = contact.getFullname();
-         
          menu.add( Menu.NONE,
-                   CtxtMenu.SHOW_PHONEBOOK_CONTACT,
+                   R.id.ctx_menu_show_phonebook_contact,
                    Menu.NONE,
                    getString( R.string.contactslist_listitem_show_phonebook_contact,
                               fullname ) );
@@ -141,13 +138,13 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
       
       switch ( item.getItemId() )
       {
-         case CtxtMenu.SHOW_PHONEBOOK_CONTACT:
+         case R.id.ctx_menu_show_phonebook_contact:
             final Contact contact = getListAdapter().getItem( info.position );
             
             if ( listener != null )
@@ -176,29 +173,17 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    
    
    @Override
-   protected ListAdapter createEmptyListAdapter()
+   public SwappableArrayAdapter< Contact > createListAdapter()
    {
-      return new ContactsListAdapter( getFragmentActivity(),
-                                      R.layout.contactslist_activity_listitem,
-                                      Collections.< Contact > emptyList() );
+      return new ContactsListAdapter( this );
    }
    
    
    
    @Override
-   protected ListAdapter createListAdapterForResult( List< Contact > result )
+   public Loader< List< Contact >> newLoaderInstance( int id, Bundle config )
    {
-      return new ContactsListAdapter( getFragmentActivity(),
-                                      R.layout.contactslist_activity_listitem,
-                                      result );
-   }
-   
-   
-   
-   @Override
-   protected Loader< List< Contact >> newLoaderInstance( int id, Bundle config )
-   {
-      return new ContactsLoader( getFragmentActivity() );
+      return new ContactsLoader( getSherlockActivity() );
    }
    
    
@@ -214,7 +199,7 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    @Override
    public int getLoaderId()
    {
-      return CONTACTS_LOADER_ID;
+      return ContactsLoader.ID;
    }
    
    
@@ -223,5 +208,15 @@ public class ContactsListFragment extends MolokoListFragment< List< Contact > >
    public ContactsListAdapter getListAdapter()
    {
       return (ContactsListAdapter) super.getListAdapter();
+   }
+   
+   
+   
+   public void onCallButtonClicked( Contact contact )
+   {
+      if ( listener != null )
+      {
+         listener.onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
+      }
    }
 }

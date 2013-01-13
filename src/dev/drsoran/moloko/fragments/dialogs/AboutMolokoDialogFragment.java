@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,19 +22,27 @@
 
 package dev.drsoran.moloko.fragments.dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
 
 public class AboutMolokoDialogFragment extends MolokoDialogFragment
 {
-   
    public final static AboutMolokoDialogFragment newInstance( Bundle config )
    {
       final AboutMolokoDialogFragment fragment = new AboutMolokoDialogFragment();
@@ -49,27 +57,40 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      final Activity context = getFragmentActivity();
+      final SherlockFragmentActivity context = getSherlockActivity();
       
-      CharSequence message = null;
-      
-      try
-      {
-         message = Html.fromHtml( context.getString( R.string.moloko_about_info,
-                                                     context.getPackageManager()
-                                                            .getPackageInfo( context.getPackageName(),
-                                                                             0 ).versionName ) );
-      }
-      catch ( NameNotFoundException e )
-      {
-      }
+      final View aboutMolokoView = inflateAboutContent( context );
       
       final Dialog dialog = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_launcher )
                                                               .setTitle( context.getString( R.string.moloko_about_text ) )
-                                                              .setMessage( message )
+                                                              .setView( aboutMolokoView )
                                                               .setNeutralButton( context.getString( R.string.phr_ok ),
                                                                                  null )
                                                               .create();
+      
       return dialog;
+   }
+   
+   
+   
+   public static View inflateAboutContent( Context context )
+   {
+      final ContextThemeWrapper themedContext = new ContextThemeWrapper( context,
+                                                                         0 );
+      themedContext.setTheme( R.style.Theme_Moloko_Dialog );
+      
+      final LayoutInflater inflater = LayoutInflater.from( themedContext );
+      final View aboutMolokoView = inflater.inflate( R.layout.about_dialog_fragment,
+                                                     null,
+                                                     false );
+      
+      final Spanned message = Html.fromHtml( themedContext.getString( R.string.moloko_about_info,
+                                                                      MolokoApp.getVersionName( context ) ) );
+      
+      final TextView messageView = (TextView) aboutMolokoView.findViewById( android.R.id.text1 );
+      messageView.setText( message );
+      messageView.setMovementMethod( LinkMovementMethod.getInstance() );
+      
+      return aboutMolokoView;
    }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,61 +22,59 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import java.util.HashMap;
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.view.View;
+import android.app.Activity;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
-import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.IEditFragment;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
 
 
-public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
-         extends MolokoEditDialogFragment< T > implements LoaderCallbacks< D >
+public abstract class MolokoLoaderEditDialogFragment< D > extends
+         MolokoLoaderDialogFragment< D > implements IEditFragment
 {
-   private final static class Config
+   private final EditFragmentImpl impl;
+   
+   
+   
+   public MolokoLoaderEditDialogFragment()
    {
-      public final static String LOADER_RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
-   }
-   
-   private final Handler handler = new Handler();
-   
-   private ILoaderFragmentListener loaderListener;
-   
-   private D loaderData;
-   
-   private boolean loaderNotDataFound;
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      if ( getLoaderData() == null )
-         startLoader();
+      impl = new EditFragmentImpl( this );
    }
    
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onDialogViewCreated( ViewGroup dialogView )
+   {
+      super.onDialogViewCreated( dialogView );
+      impl.onViewCreated( dialogView, null );
+   }
+   
+   
+   
+   @Override
+   public void onDestroyView()
+   {
+      impl.onDestroyView();
+      super.onDestroyView();
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      
-      if ( activity instanceof ILoaderFragmentListener )
-         loaderListener = (ILoaderFragmentListener) activity;
-      else
-         loaderListener = new NullLoaderFragmentListener();
+      impl.onAttach( activity );
+   }
+   
+   
+   
+   @Override
+   public void onDestroy()
+   {
+      impl.onDestroy();
+      super.onDestroy();
    }
    
    
@@ -84,249 +82,31 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    @Override
    public void onDetach()
    {
+      impl.onDetach();
       super.onDetach();
-      loaderListener = null;
    }
    
    
    
    @Override
-   public void onContentCreated( ViewGroup dialogView )
+   public final ApplyChangesInfo onFinishEditing()
    {
-      super.onContentCreated( dialogView );
-      
-      if ( loaderNotDataFound )
-         showElementNotFoundError();
-      else if ( getLoaderData() != null )
-         showContent();
-      else
-         showLoadingSpinner();
-   }
-   
-   
-   
-   @Override
-   protected void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.LOADER_RESPECT_CONTENT_CHANGES ) )
-         configuration.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
-                                   config.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES ) );
-   }
-   
-   
-   
-   @Override
-   protected void putDefaultConfigurationTo( Bundle bundle )
-   {
-      super.putDefaultConfigurationTo( bundle );
-      
-      bundle.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, true );
-   }
-   
-   
-   
-   public D getLoaderData()
-   {
-      return loaderData;
-   }
-   
-   
-   
-   public D getLoaderDataAssertNotNull()
-   {
-      if ( getLoaderData() == null )
-         throw new IllegalStateException( "loader data must not be null" );
-      
-      return getLoaderData();
-   }
-   
-   
-   
-   public boolean hasLoaderDataFound()
-   {
-      return !loaderNotDataFound;
-   }
-   
-   
-   
-   protected final void showLoadingSpinner()
-   {
-      if ( getDialogView() != null )
+      if ( hasChanges() )
       {
-         final View content = getContentView();
-         if ( content != null )
-            content.setVisibility( View.GONE );
-         
-         final View spinner = getDialogView().findViewById( R.id.loading_spinner );
-         if ( spinner != null )
-            spinner.setVisibility( View.VISIBLE );
+         return getChanges();
       }
-   }
-   
-   
-   
-   protected final void showContent()
-   {
-      if ( getDialogView() != null )
-      {
-         final View spinner = getDialogView().findViewById( R.id.loading_spinner );
-         if ( spinner != null )
-            spinner.setVisibility( View.GONE );
-         
-         final ViewGroup content = getContentView();
-         if ( content != null )
-         {
-            initContent( content );
-            content.setVisibility( View.VISIBLE );
-         }
-      }
-   }
-   
-   
-   
-   protected final void showContentAsync()
-   {
-      handler.post( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            if ( isAdded() )
-               showContent();
-         }
-      } );
-   }
-   
-   
-   
-   protected final void showElementNotFoundError()
-   {
-      if ( getDialogView() != null )
-      {
-         final View spinner = getDialogView().findViewById( R.id.loading_spinner );
-         if ( spinner != null )
-            spinner.setVisibility( View.GONE );
-         
-         final ViewGroup content = getContentView();
-         if ( content != null )
-         {
-            content.removeAllViews();
-            
-            UIUtils.inflateErrorWithIcon( getFragmentActivity(),
-                                          content,
-                                          R.string.err_entity_not_found,
-                                          getLoaderDataName() );
-            content.setVisibility( View.VISIBLE );
-         }
-      }
-   }
-   
-   
-   
-   private ViewGroup getContentView()
-   {
-      return (ViewGroup) getDialogView().findViewById( android.R.id.content );
+      
+      return ApplyChangesInfo.EMPTY;
    }
    
    
    
    @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
+   public void onCancelEditing()
    {
-      if ( !loaderNotDataFound && getContentView() != null )
-         initContent( getContentView() );
    }
    
    
    
-   public final void startLoader()
-   {
-      getLoaderManager().initLoader( getLoaderId(), getConfiguration(), this );
-   }
-   
-   
-   
-   public final void setRespectContentChanges( boolean respect )
-   {
-      configuration.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, respect );
-      
-      if ( isAdded() )
-      {
-         final Loader< D > loader = getLoaderManager().getLoader( getLoaderId() );
-         
-         if ( loader instanceof AbstractLoader< ? > )
-            ( (AbstractLoader< ? >) loader ).setRespectContentChanges( respect );
-      }
-   }
-   
-   
-   
-   public final boolean isRespectingContentChanges()
-   {
-      return configuration.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
-                                       false );
-   }
-   
-   
-   
-   @Override
-   public final Loader< D > onCreateLoader( int id, Bundle args )
-   {
-      showLoadingSpinner();
-      
-      final Loader< D > loader = newLoaderInstance( id, args );
-      
-      if ( loader instanceof AbstractLoader< ? > )
-         ( (AbstractLoader< ? >) loader ).setRespectContentChanges( isRespectingContentChanges() );
-      
-      loaderListener.onFragmentLoadStarted( getId(), getTag() );
-      
-      return loader;
-   }
-   
-   
-   
-   @Override
-   public void onLoadFinished( Loader< D > loader, D data )
-   {
-      loaderData = data;
-      loaderNotDataFound = loaderData == null;
-      
-      if ( loaderNotDataFound )
-         showElementNotFoundError();
-      else
-         showContentAsync();
-      
-      loaderListener.onFragmentLoadFinished( getId(),
-                                             getTag(),
-                                             !loaderNotDataFound );
-   }
-   
-   
-   
-   @Override
-   public void onLoaderReset( Loader< D > loader )
-   {
-      loaderData = null;
-      loaderNotDataFound = false;
-   }
-   
-   
-   
-   abstract protected void initContent( ViewGroup content );
-   
-   
-   
-   abstract protected Loader< D > newLoaderInstance( int id, Bundle args );
-   
-   
-   
-   abstract protected String getLoaderDataName();
-   
-   
-   
-   abstract protected int getLoaderId();
+   protected abstract ApplyChangesInfo getChanges();
 }

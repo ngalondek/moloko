@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,26 +22,109 @@
 
 package dev.drsoran.moloko.fragments.base;
 
+import java.util.List;
+
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.BaseExpandableListAdapter;
+import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
+
+import com.actionbarsherlock.app.SherlockListFragment;
+import com.mdt.rtm.data.RtmAuth;
+
+import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.LoaderExpandableListFragmentImpl;
+import dev.drsoran.moloko.fragments.base.impl.RtmAccessLevelAwareFragmentImpl;
 
 
 public abstract class MolokoExpandableListFragment< D > extends
-         MolokoListFragment< D > implements
+         SherlockListFragment implements IConfigurable,
+         IOnSettingsChangedListener, LoaderCallbacks< List< D > >,
+         LoaderExpandableListFragmentImpl.Support< D >, IRtmAccessLevelAware,
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
          ExpandableListView.OnGroupCollapseListener,
          ExpandableListView.OnGroupExpandListener
 {
+   private final ConfigurableFragmentImpl baseImpl;
+   
+   private final LoaderExpandableListFragmentImpl< D > loaderImpl;
+   
+   private final EditFragmentImpl editImpl;
+   
+   private final RtmAccessLevelAwareFragmentImpl accessLevelAwareImpl;
+   
+   
+   
+   protected MolokoExpandableListFragment()
+   {
+      baseImpl = new ConfigurableFragmentImpl( this, getSettingsMask() );
+      loaderImpl = new LoaderExpandableListFragmentImpl< D >( this );
+      editImpl = new EditFragmentImpl( this );
+      accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      baseImpl.onCreate( savedInstanceState );
+      loaderImpl.onCreate( savedInstanceState );
+   }
+   
+   
+   
+   @Override
+   public void onStart()
+   {
+      super.onStart();
+      baseImpl.onStart();
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      baseImpl.onAttach( activity );
+      loaderImpl.onAttach( activity );
+      editImpl.onAttach( activity );
+      accessLevelAwareImpl.onAttach( getSherlockActivity() );
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
+      baseImpl.onDetach();
+      loaderImpl.onDetach();
+      editImpl.onDetach();
+      accessLevelAwareImpl.onDetach();
+      super.onDetach();
+   }
+   
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
+      loaderImpl.onViewCreated( view, savedInstanceState );
+      editImpl.onViewCreated( view, savedInstanceState );
       
       final ExpandableListView expandableListView = getExpandableListView();
       
@@ -51,21 +134,135 @@ public abstract class MolokoExpandableListFragment< D > extends
       expandableListView.setOnGroupExpandListener( this );
    }
    
-
-
+   
+   
    @Override
-   public View getEmptyView()
+   public void onDestroyView()
    {
-      View emptyView = null;
-      
-      if ( getView() != null && getExpandableListView() != null )
-         emptyView = getExpandableListView().getEmptyView();
-      
-      return emptyView;
+      editImpl.onDestroyView();
+      super.onDestroyView();
    }
    
-
-
+   
+   
+   @Override
+   public void onDestroy()
+   {
+      editImpl.onDestroy();
+      super.onDestroy();
+   }
+   
+   
+   
+   @Override
+   public void setArguments( Bundle args )
+   {
+      super.setArguments( args );
+      baseImpl.setArguments( args );
+   }
+   
+   
+   
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      baseImpl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   public int getNoElementsResourceId()
+   {
+      return loaderImpl.getNoElementsResourceId();
+   }
+   
+   
+   
+   public void setNoElementsResourceId( int resId )
+   {
+      loaderImpl.setNoElementsResourceId( resId );
+   }
+   
+   
+   
+   @Override
+   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      accessLevelAwareImpl.reEvaluateRtmAccessLevel( currentAccessLevel );
+   }
+   
+   
+   
+   public boolean isReadOnlyAccess()
+   {
+      return accessLevelAwareImpl.isReadOnlyAccess();
+   }
+   
+   
+   
+   public boolean isWritableAccess()
+   {
+      return accessLevelAwareImpl.isWritableAccess();
+   }
+   
+   
+   
+   @Override
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz )
+   {
+      baseImpl.registerAnnotatedConfiguredInstance( instance, clazz );
+   }
+   
+   
+   
+   @Override
+   public final Bundle getConfiguration()
+   {
+      return baseImpl.getConfiguration();
+   }
+   
+   
+   
+   @Override
+   public final void configure( Bundle config )
+   {
+      baseImpl.configure( config );
+   }
+   
+   
+   
+   @Override
+   public void clearConfiguration()
+   {
+      baseImpl.setDefaultConfiguration();
+   }
+   
+   
+   
+   public Bundle getDefaultConfiguration()
+   {
+      return baseImpl.getDefaultConfiguration();
+   }
+   
+   
+   
+   @Override
+   public void onSettingsChanged( int which )
+   {
+      loaderImpl.onSettingsChanged( which );
+   }
+   
+   
+   
+   protected int getSettingsMask()
+   {
+      return 0;
+   }
+   
+   
+   
    @Override
    public boolean onGroupClick( ExpandableListView parent,
                                 View v,
@@ -75,8 +272,8 @@ public abstract class MolokoExpandableListFragment< D > extends
       return false;
    }
    
-
-
+   
+   
    @Override
    public boolean onChildClick( ExpandableListView parent,
                                 View v,
@@ -87,115 +284,177 @@ public abstract class MolokoExpandableListFragment< D > extends
       return false;
    }
    
-
-
+   
+   
    @Override
    public void onGroupExpand( int groupPosition )
    {
    }
    
-
-
+   
+   
    @Override
    public void onGroupCollapse( int groupPosition )
    {
    }
    
-
-
+   
+   
    public ExpandableListView getExpandableListView()
    {
       return (ExpandableListView) super.getListView();
    }
    
-
-
+   
+   
    public void setExpandableListAdapter( ExpandableListAdapter adapter )
    {
       getExpandableListView().setAdapter( adapter );
    }
    
-
-
+   
+   
+   @Override
    public ExpandableListAdapter getExpandableListAdapter()
    {
       return getExpandableListView().getExpandableListAdapter();
    }
    
-
-
-   @Override
+   
+   
    public boolean hasListAdapter()
    {
       return getExpandableListAdapter() != null;
    }
    
-
-
+   
+   
    @Override
-   public final void setListAdapter( ListAdapter adapter )
+   public Loader< List< D > > onCreateLoader( int id, Bundle args )
    {
-      throw new UnsupportedOperationException( "use setExpandableListAdapter" );
+      return loaderImpl.onCreateLoader( id, args );
    }
    
-
-
+   
+   
    @Override
-   public final ListAdapter getListAdapter()
+   public void onLoadFinished( Loader< List< D > > loader, List< D > data )
    {
-      throw new UnsupportedOperationException( "use getExpandableListAdapter" );
+      loaderImpl.onLoadFinished( loader, data );
    }
    
-
-
+   
+   
    @Override
-   public void onLoadFinished( Loader< D > loader, D data )
+   public void onLoaderReset( Loader< List< D > > loader )
    {
-      if ( data != null )
-         setExpandableListAdapter( createExpandableListAdapterForResult( data ) );
-      else
-         getLoaderManager().destroyLoader( getLoaderId() );
+      loaderImpl.onLoaderReset( loader );
    }
    
-
-
+   
+   
    @Override
+   public boolean isReadyToStartLoader()
+   {
+      return true;
+   }
+   
+   
+   
+   @Override
+   public Bundle getLoaderConfig()
+   {
+      return getConfiguration();
+   }
+   
+   
+   
+   public List< D > getLoaderData()
+   {
+      return loaderImpl.getLoaderData();
+   }
+   
+   
+   
+   public List< D > getLoaderDataAssertNotNull()
+   {
+      return loaderImpl.getLoaderDataAssertNotNull();
+   }
+   
+   
+   
+   public boolean isLoaderDataFound()
+   {
+      return loaderImpl.isLoaderDataFound();
+   }
+   
+   
+   
+   public final void setRespectContentChanges( boolean respect )
+   {
+      loaderImpl.setRespectContentChanges( respect );
+   }
+   
+   
+   
+   public final boolean isRespectingContentChanges()
+   {
+      return loaderImpl.isRespectingContentChanges();
+   }
+   
+   
+   
    protected void invalidateOptionsMenu()
    {
-      if ( getFragmentActivity() != null )
-         getFragmentActivity().invalidateOptionsMenu();
+      if ( getSherlockActivity() != null )
+      {
+         getSherlockActivity().supportInvalidateOptionsMenu();
+      }
    }
    
-
-
-   @Override
-   protected void notifyDataSetChanged()
+   
+   
+   public void showError( int messageResId )
    {
-      if ( getExpandableListAdapter() instanceof BaseExpandableListAdapter )
-         ( (BaseExpandableListAdapter) getExpandableListAdapter() ).notifyDataSetChanged();
+      loaderImpl.showError( messageResId );
    }
    
-
-
-   @Override
-   protected final ListAdapter createEmptyListAdapter()
+   
+   
+   public void showError( CharSequence message )
    {
-      throw new UnsupportedOperationException( "use createEmptyExpandableListAdapter" );
+      loaderImpl.showError( message );
    }
    
-
-
-   @Override
-   protected final ListAdapter createListAdapterForResult( D result )
+   
+   
+   public void showError( Spanned message )
    {
-      throw new UnsupportedOperationException( "use createExpandableListAdapterForResult" );
+      loaderImpl.showError( message );
    }
    
-
-
-   abstract protected ExpandableListAdapter createEmptyExpandableListAdapter();
    
-
-
-   abstract protected ExpandableListAdapter createExpandableListAdapterForResult( D result );
+   
+   public void onExpandableListAdapterCreated( ExpandableListAdapter listAdapter,
+                                               List< D > result )
+   {
+   }
+   
+   
+   
+   public void onListAdapterDestroyed()
+   {
+   }
+   
+   
+   
+   @Override
+   public abstract View onCreateView( LayoutInflater inflater,
+                                      ViewGroup container,
+                                      Bundle savedInstanceState );
+   
+   
+   
+   @Override
+   public abstract ExpandableListAdapter createExpandableListAdapterForResult( List< D > result );
 }

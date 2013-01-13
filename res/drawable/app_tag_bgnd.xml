@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (c) 2010 Ronny Röhricht   
+  Copyright (c) 2012 Ronny Röhricht   
   
   This file is part of Moloko.
   
@@ -18,40 +18,20 @@
   along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
   
   Contributors:
-  	Ronny Röhricht - implementation
+  	Ronny Röhricht - implementation
 -->
 
-<selector
-   xmlns:android="http://schemas.android.com/apk/res/android">
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
 
-   <item
-      android:state_pressed="false">
-      <shape
-	      android:shape="rectangle">	     
-	      <solid
-	        android:color="@color/app_tag_bgnd_normal_fill"/>
-	      <padding
-	        android:left="5dip"
-	        android:right="5dip"
-	        android:bottom="2dip"/>     
-	      <corners
-	        android:radius="2dip"/>     
-      </shape>
-	</item>
+    <solid android:color="@color/app_tag_bgnd_normal_fill" />
 
-   <item
-      android:state_pressed="true">
-      <shape
-         android:shape="rectangle">   
-         <solid
-            android:color="@color/app_tag_bgnd_pressed_fill"/>
-         <padding
-            android:left="5dip"
-            android:right="5dip"
-            android:bottom="2dip"/>     
-         <corners
-            android:radius="2dip"/>
-      </shape>
-   </item>
-    
-</selector>
+    <padding
+        android:bottom="2dip"
+        android:left="5dip"
+        android:right="5dip" />
+
+    <corners android:radius="2dip" />
+
+</shape>

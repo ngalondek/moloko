@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <!--
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
+
+<level-list
+   xmlns:android="http://schemas.android.com/apk/res/android">
+
+   <!-- Here we use the permanent expanded icon. This will be shown in
+        case of a stacked due task notification and is the icon for the
+        number of tasks -->
+   <item
+      android:maxLevel="0"
+      android:drawable="@drawable/ic_notify_permanent_expanded" />
+   <item
+      android:maxLevel="1"
+      android:drawable="@drawable/ic_notify_due_task_layer_1" />       
+   <item
+      android:maxLevel="2"
+      android:drawable="@drawable/ic_notify_due_task_layer_2" />         
+   <item
+      android:maxLevel="3"
+      android:drawable="@drawable/ic_notify_due_task_layer_3" />      
+   <item
+      android:maxLevel="4"
+      android:drawable="@drawable/ic_notify_due_task_layer_4" />
+   <item
+      android:maxLevel="5"
+      android:drawable="@drawable/ic_notify_due_task_layer_5" />
+   <item
+      android:maxLevel="6"
+      android:drawable="@drawable/ic_notify_due_task_layer_6" />
+   <item
+      android:maxLevel="7"
+      android:drawable="@drawable/ic_notify_due_task_layer_7" />
+   <item
+      android:maxLevel="8"
+      android:drawable="@drawable/ic_notify_due_task_layer_8" />
+   <item
+      android:maxLevel="9"
+      android:drawable="@drawable/ic_notify_due_task_layer_9" />
+   <item
+      android:minLevel="10"
+      android:maxLevel="2147483647"
+      android:drawable="@drawable/ic_notify_due_task_layer_greater_9" />
+</level-list>

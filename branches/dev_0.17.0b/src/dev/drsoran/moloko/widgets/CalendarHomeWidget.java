@@ -149,7 +149,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       switch ( type )
       {
          case TOMORROW:
-            cal.roll( Calendar.DAY_OF_YEAR, true );
+            cal.add( Calendar.DAY_OF_YEAR, 1 );
          case TODAY:
          default :
             break;

@@ -222,7 +222,7 @@ public class RecurrencePatternTest extends RecurrenceTestBase
    public void every_day_until()
    {
       final Calendar cal = Calendar.getInstance();
-      cal.roll( Calendar.DAY_OF_MONTH, true );
+      cal.add( Calendar.DAY_OF_MONTH, 1 );
       
       cal.set( Calendar.HOUR, 0 );
       cal.set( Calendar.HOUR_OF_DAY, 0 );

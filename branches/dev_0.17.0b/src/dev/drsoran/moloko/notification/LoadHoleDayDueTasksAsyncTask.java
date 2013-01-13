@@ -97,7 +97,7 @@ class LoadHoleDayDueTasksAsyncTask extends AbstractNotificationTasksLoader
       final MolokoCalendar cal = getDateOnlyCalendar();
       final long today = cal.getTimeInMillis();
       
-      cal.roll( Calendar.DAY_OF_YEAR, true );
+      cal.add( Calendar.DAY_OF_YEAR, 1 );
       
       final long tomorrowPlusReminder = cal.getTimeInMillis()
          + remindBeforeMillis;

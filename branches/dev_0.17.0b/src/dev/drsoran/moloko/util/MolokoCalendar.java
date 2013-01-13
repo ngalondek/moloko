@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -304,7 +305,14 @@ public final class MolokoCalendar
    @Override
    public String toString()
    {
-      return impl.toString();
+      if ( hasTime )
+      {
+         return impl.getTime().toString();
+      }
+      else
+      {
+         return new SimpleDateFormat( "EEE, dd.MM.yyyy" ).format( getTime() );
+      }
    }
    
    

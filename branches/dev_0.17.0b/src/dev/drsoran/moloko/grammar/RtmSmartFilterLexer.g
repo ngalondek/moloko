@@ -241,7 +241,7 @@ options
             result.append( cal.getTimeInMillis() );
             result.append( " AND " );
 
-            cal.roll( Calendar.DAY_OF_YEAR, true );
+            cal.add( Calendar.DAY_OF_YEAR, 1 );
 
             result.append( column );
             result.append( " < " );

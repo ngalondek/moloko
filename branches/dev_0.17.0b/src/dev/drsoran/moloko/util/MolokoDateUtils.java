@@ -105,14 +105,14 @@ public class MolokoDateUtils
    
    
    
-   public static boolean isBefore( long when, long reference )
+   public static boolean isDaysBefore( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) > 0 );
    }
    
    
    
-   public static boolean isAfter( long when, long reference )
+   public static boolean isDaysAfter( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) < 0 );
    }

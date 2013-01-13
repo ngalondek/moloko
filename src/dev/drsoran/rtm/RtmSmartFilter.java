@@ -224,7 +224,7 @@ public class RtmSmartFilter extends RtmData implements IFilter
             if ( parserRes != null )
             {
                evalFilter.append( "( " );
-               evalFilter.append( parserRes.result );
+               evalFilter.append( parserRes.queryString );
                
                // SPECIAL CASE: If the filter contains any operator 'completed or status',
                // we include completed tasks. Otherwise we would never show tasks in

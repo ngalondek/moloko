@@ -326,7 +326,7 @@ abstract class AbstractPermanentNotificationPresenter implements
             // If the task has a due time then it can be overdue
             // even today.
             if ( hasDueTime
-               && MolokoDateUtils.isBefore( dueMillis, nowCal.getTimeInMillis() ) )
+               && MolokoDateUtils.isDaysBefore( dueMillis, nowCal.getTimeInMillis() ) )
             {
                ++numOverdueTasks;
             }
@@ -334,7 +334,7 @@ abstract class AbstractPermanentNotificationPresenter implements
             // If the task has no due time then it can be overdue
             // only before today.
             else if ( !MolokoDateUtils.isToday( dueMillis )
-               && !MolokoDateUtils.isAfter( dueMillis, nowCal.getTimeInMillis() ) )
+               && !MolokoDateUtils.isDaysAfter( dueMillis, nowCal.getTimeInMillis() ) )
             {
                ++numOverdueTasks;
             }

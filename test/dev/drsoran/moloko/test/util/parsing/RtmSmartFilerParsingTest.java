@@ -641,7 +641,7 @@ public class RtmSmartFilerParsingTest extends MolokoTestCase
    {
       final Calendar cal = Calendar.getInstance();
       cal.setTime( expectedDate );
-      cal.roll( Calendar.DAY_OF_YEAR, true );
+      cal.add( Calendar.DAY_OF_YEAR, 1 );
       
       return new StringBuilder( "(" ).append( column )
                                      .append( " >= " )

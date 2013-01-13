@@ -145,8 +145,8 @@ public final class TaskEditUtils
                                                                              RawTasks.DUE_DATE,
                                                                              cal.getTimeInMillis() ) );
             }
-            else if ( MolokoDateUtils.isBefore( due.getTime(),
-                                                cal.getTimeInMillis() ) )
+            else if ( MolokoDateUtils.isDaysBefore( due.getTime(),
+                                                    cal.getTimeInMillis() ) )
             {
                final MolokoCalendar tmp = MolokoDateUtils.newCalendarUTC( due.getTime() );
                
@@ -167,7 +167,7 @@ public final class TaskEditUtils
             else
             {
                cal.setTime( due );
-               cal.roll( Calendar.DAY_OF_YEAR, true );
+               cal.add( Calendar.DAY_OF_YEAR, 1 );
                
                modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
                                                                              task.getId(),

@@ -217,14 +217,14 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                      final MolokoCalendar cal = MolokoCalendar.getInstance();
                      
                      // Tomorrow
-                     cal.roll( Calendar.DAY_OF_YEAR, true );
+                     cal.add( Calendar.DAY_OF_YEAR, 1 );
                      due_dates.add( Pair.create( context.getString( R.string.phr_tomorrow ),
                                                  Long.valueOf( cal.getTimeInMillis() ) ) );
                      
                      // The next 5 days after tomorrow
                      for ( int i = 0; i < 5; ++i )
                      {
-                        cal.roll( Calendar.DAY_OF_YEAR, true );
+                        cal.add( Calendar.DAY_OF_YEAR, 1 );
                         final String weekDay = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
                                                                                    false );
                         due_dates.add( Pair.create( weekDay,

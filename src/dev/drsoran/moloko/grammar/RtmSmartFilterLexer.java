@@ -1,4 +1,4 @@
-// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g 2013-01-13 11:31:50
+// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g 2013-01-13 13:39:06
 
 package dev.drsoran.moloko.grammar;
 
@@ -338,7 +338,7 @@ public class RtmSmartFilterLexer extends Lexer
             result.append( cal.getTimeInMillis() );
             result.append( " AND " );
             
-            cal.roll( Calendar.DAY_OF_YEAR, true );
+            cal.add( Calendar.DAY_OF_YEAR, 1 );
             
             result.append( column );
             result.append( " < " );

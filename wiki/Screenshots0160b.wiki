@@ -1,4 +1,3 @@
-#labels Featured
 = Introduction =
 
 This page shows some screens taken from Moloko 0.16.0b.

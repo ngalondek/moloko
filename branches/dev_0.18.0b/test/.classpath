@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding=".apt_generated/|bin/" kind="src" output="bin" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Moloko"/>
+	<classpathentry kind="lib" path="lib/robolectric-1.2-with-dependencies.jar" sourcepath="lib/robolectric-1.2-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/android-15"/>
+	<classpathentry kind="lib" path="/Moloko/libs/antlr-runtime-3.2.jar"/>
+	<classpathentry kind="lib" path="/Moloko/libs/acra-4.3.0.jar"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+</classpath>

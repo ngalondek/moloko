@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Theme.__Moloko" parent="Theme.Sherlock.Light.DarkActionBar">
+
+        <!-- Window attributes -->
+        <item name="android:textColorPrimary">@color/app_default_text_color</item>
+
+        <!-- ProgressBar -->
+        <item name="android:progressBarStyle">@android:style/Widget.ProgressBar.Inverse</item>
+        <item name="android:progressBarStyleSmall">@android:style/Widget.ProgressBar.Small.Inverse</item>
+        <item name="android:progressBarStyleLarge">@android:style/Widget.ProgressBar.Large.Inverse</item>
+        <item name="android:progressBarStyleInverse">@android:style/Widget.ProgressBar</item>
+        <item name="android:progressBarStyleSmallInverse">@android:style/Widget.ProgressBar.Small</item>
+        <item name="android:progressBarStyleLargeInverse">@android:style/Widget.ProgressBar.Large</item>
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
+
+        <!-- Widgets -->
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
+        <item name="android:expandableListViewStyle">@style/ExpandableListViewStyle</item>
+        <item name="android:gridViewStyle">@style/GridViewStyle</item>
+        <item name="android:listPreferredItemHeight">@dimen/app_listPreferredItemHeight</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>        
+        <item name="titleWithViewStyle">@style/TitleWithViewStyle</item>
+        <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text</item>
+        <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
+        <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>
+        <item name="clearButtonStyle">@style/ClearButtonStyle</item>
+        <item name="simpleLineStyle">@style/SimpleLine_Default</item>
+        <item name="wheelViewStyle">@style/WheelViewStyle</item>
+    </style>
+    
+    <style name="Theme.Moloko" parent="@style/Theme.__Moloko" />
+    
+    <style name="Theme.Moloko.NoTitle">
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.NoTitle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.NoTitle</item>
+    </style>
+    
+    <style name="Theme.Moloko.HomeAsUp">
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp</item>
+    </style>
+    
+    <style name="Theme.Moloko.HomeAsUp.NoTitle">
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.HomeAsUp.NoTitle</item>
+    </style>
+        
+    <style name="Theme.Moloko.__TasksList">
+        
+        <!-- ActionBar -->
+        <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
+        <item name="android:actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
+        <item name="spinnerDropDownItemStyle">@style/TasksListSpinnerDropdownItem</item>
+        
+        <!-- Widgets -->
+        <item name="clearButtonStyle">@style/ClearButtonStyle.Inverted</item>
+    </style>
+    
+    <style name="Theme.Moloko.TasksList" parent="@style/Theme.Moloko.__TasksList">
+    </style>
+
+    <style name="Theme.Moloko.Task">
+
+        <!-- ActionBar -->
+        <item name="actionBarStyle">@style/ActionBarStyle.Tab.Collapsed</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle.Tab.Collapsed</item>
+
+        <!-- Widgets -->
+        <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
+        <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>
+        <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
+    </style>
+    
+    <style name="Theme.Moloko.Dialog" parent="@android:style/Theme.Dialog" />
+    
+    <style name="Theme.Moloko.ChangeTags" parent="Theme.Sherlock.Light.Dialog">
+        <item name="android:textColorPrimary">@color/app_default_text_color</item>
+        <item name="android:textColorPrimaryInverse">@color/abs__primary_text_holo_light</item>
+    </style>
+    
+    <style name="Theme.Moloko.SendLog" parent="@style/Theme.Moloko" />
+
+</resources>

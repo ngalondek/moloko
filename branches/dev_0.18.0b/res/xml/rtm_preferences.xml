@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <!--
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
+
+<PreferenceScreen
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+   android:orderingFromXml="true">
+
+   <PreferenceScreen
+      android:key="dev.drsoran.moloko"
+      android:title="@string/acc_pref_account_tilte"
+      moloko:summaryPattern="@string/acc_pref_account_summary">
+      <intent
+         android:action="dev.drsoran.moloko.prefs.account.MAIN" />
+   </PreferenceScreen>
+
+   <dev.drsoran.moloko.prefs.DefaultListPreference
+      android:title="@string/moloko_prefs_rtm_defaultlist_title"
+      moloko:summaryPattern="%s"
+      android:key="@string/key_def_list_local"
+      moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm"
+      android:defaultValue="@string/def_default_list" />
+
+   <dev.drsoran.moloko.prefs.RtmSyncStatePreference
+      android:title="@string/moloko_prefs_rtm_sync_title"
+      moloko:summaryPattern="@string/design_text"
+      moloko:infoIcon="@drawable/ic_prefs_refresh"
+      moloko:infoWidgetLayout="@layout/moloko_prefs_widget_sync" />
+      
+</PreferenceScreen>

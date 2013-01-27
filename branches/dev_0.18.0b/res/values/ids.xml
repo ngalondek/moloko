@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <!--
+      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
+
+<resources>
+   <item
+      type="id"
+      name="app_title_bar" />
+   <item
+      type="id"
+      name="title_with_text_text" />
+   <item
+      type="id"
+      name="title_with_edit_text" />
+   <item
+      type="id"
+      name="title_with_wrapping_layout" />
+   <item
+      type="id"
+      name="title_with_spinner_layout" />
+   
+   <!-- Fragment IDs -->
+   <item
+      type="id"
+      name="frag_taskslist" />
+   <item
+      type="id"
+      name="frag_quick_add_task_button_bar" />
+   <item
+      type="id"
+      name="frag_task" />
+   <item
+      type="id"
+      name="frag_task_edit" />
+   <item
+      type="id"
+      name="frag_note" />
+   <item
+      type="id"
+      name="frag_noteslist" />
+   <item
+      type="id"
+      name="frag_change_tags" />
+   <item
+      type="id"
+      name="frag_tag_cloud" />
+   <item
+      type="id"
+      name="frag_contactslist" />
+   <item
+      type="id"
+      name="frag_tasklists" />
+   <item
+      type="id"
+      name="frag_add_rename_list" />
+   <item
+      type="id"
+      name="frag_about_moloko" />
+   <item
+      type="id"
+      name="frag_multi_container" />
+
+   <!-- Dialog Fragment IDs -->
+   <item
+      type="id"
+      name="dlg_no_account" />
+   <item
+      type="id"
+      name="dlg_not_connected" />
+   <item
+      type="id"
+      name="dlg_read_only_access" />
+   <item
+      type="id"
+      name="dlg_apply_changes" />
+   <item
+      type="id"
+      name="dlg_cancel_with_changes" />
+   <item
+      type="id"
+      name="dlg_delete_element" />
+   <item
+      type="id"
+      name="dlg_request_remove_by_bg_sync" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_complete" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_incomplete" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_postpone" />
+   <item
+      type="id"
+      name="dlg_selectmultipletasks_delete" />
+   <item
+      type="id"
+      name="dlg_startup_default_list_not_exists" />
+   <item
+      type="id"
+      name="dlg_delete_notes" />
+
+   <!-- Menu group IDs -->
+   <item
+      type="id"
+      name="menu_group_sort" />
+
+   <!-- MenuItem IDs -->
+   <item
+      type="id"
+      name="menu_sort" />
+   <item
+      type="id"
+      name="menu_sort_priority" />
+   <item
+      type="id"
+      name="menu_sort_due" />
+   <item
+      type="id"
+      name="menu_sort_task_name" />
+   <item
+      type="id"
+      name="menu_settings" />
+   <item
+      type="id"
+      name="menu_sync" />
+   <item
+      type="id"
+      name="menu_toggle_default_list"/>
+   <item
+      type="id"
+      name="menu_delete_list" />
+   <item
+      type="id"
+      name="menu_selection" />
+   <item
+      type="id"
+      name="menu_select_all" />
+   <item
+      type="id"
+      name="menu_deselect_all" />
+   <item
+      type="id"
+      name="menu_invert_selection" />
+   <item
+      type="id"
+      name="menu_complete_selected_tasks" />
+   <item
+      type="id"
+      name="menu_uncomplete_selected_tasks" />
+   <item
+      type="id"
+      name="menu_postpone_selected_tasks" />
+   <item
+      type="id"
+      name="menu_edit_selected" />   
+   <item
+      type="id"
+      name="menu_delete_selected" />
+   <item
+      type="id"
+      name="menu_search_tasks" />
+   <item
+      type="id"
+      name="menu_clear_search_history" />
+   <item
+      type="id"
+      name="menu_quick_add_task" />
+   <item
+      type="id"
+      name="menu_add_note" />
+   <item
+      type="id"
+      name="menu_save" />
+   <item
+      type="id"
+      name="menu_abort_edit" />
+   <item
+      type="id"
+      name="menu_add_list" />
+   <item
+      type="id"
+      name="menu_quick_add_task_due_date" />
+   <item
+      type="id"
+      name="menu_quick_add_task_prio" />
+   <item
+      type="id"
+      name="menu_quick_add_task_tags" />
+   <item
+      type="id"
+      name="menu_quick_add_task_location" />
+   <item
+      type="id"
+      name="menu_quick_add_task_repeat" />
+   <item
+      type="id"
+      name="menu_quick_add_task_estimate" />
+   <item
+      type="id"
+      name="menu_open_list" />
+   <item
+      type="id"
+      name="menu_open_tags" />
+   <item
+      type="id"
+      name="menu_open_tasks_at_loc" />
+      
+
+   <!-- ContextMenuItem IDs -->
+   <item
+      type="id"
+      name="ctx_menu_show_phonebook_contact" />
+   <item
+      type="id"
+      name="ctx_menu_expand" />
+   <item
+      type="id"
+      name="ctx_menu_collapse" />
+   <item
+      type="id"
+      name="ctx_menu_delete_list" />
+   <item
+      type="id"
+      name="ctx_menu_rename_list" />
+   <item
+      type="id"
+      name="ctx_menu_set_default_list" />
+   <item
+      type="id"
+      name="ctx_menu_unset_default_list" />
+   
+   <!-- Notification IDs -->
+   <item
+      type="id"
+      name="notification_permanent" />
+   <item
+      type="id"
+      name="notification_due_tasks_stacked" />
+   
+   <!-- Loader IDs -->
+   <item
+      type="id"
+      name="loader_task" />
+   <item
+      type="id"
+      name="loader_tasks" />
+   <item
+      type="id"
+      name="loader_selectable_tasks" />
+   <item
+      type="id"
+      name="loader_lists" />
+   <item
+      type="id"
+      name="loader_lists_with_task_count" />
+   <item
+      type="id"
+      name="loader_note" />
+   <item
+      type="id"
+      name="loader_notes" />
+   <item
+      type="id"
+      name="loader_contacts" />
+   <item
+      type="id"
+      name="loader_tags" />
+   <item
+      type="id"
+      name="loader_tag_cloud_entry" />
+   <item
+      type="id"
+      name="loader_taskedit_data" />
+
+</resources>

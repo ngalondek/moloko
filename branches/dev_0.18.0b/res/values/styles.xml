@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko 
+   is free software: you can redistribute it and/or modify it under the terms 
+   of the GNU General Public License as published by the Free Software Foundation, 
+   either version 3 of the License, or (at your option) any later version. Moloko 
+   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+   PURPOSE. See the GNU General Public License for more details. You should 
+   have received a copy of the GNU General Public License along with Moloko. 
+   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
+   - implementation-->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- *********** -->
+    <!-- Application -->
+
+    <style name="WindowTitleStyle" parent="@android:style/TextAppearance.WindowTitle"></style>
+
+    <style name="ActionBarStyle" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        
+        <!-- 
+        <item name="background">@drawable/actionbar_solid</item>
+        <item name="android:background">@drawable/actionbar_solid</item>
+        
+        <item name="backgroundSplit">@drawable/actionbar_bottom_solid</item>
+        <item name="android:backgroundSplit">@drawable/actionbar_bottom_solid</item>
+         -->        
+        
+        <item name="titleTextStyle">@style/ActionBarTextStyle</item>
+        <item name="android:titleTextStyle">@style/ActionBarTextStyle</item>
+        
+        <item name="subtitleTextStyle">@style/ActionBarSubtitleTextStyle</item>
+        <item name="android:subtitleTextStyle">@style/ActionBarSubtitleTextStyle</item>
+        
+        <item name="actionMenuTextColor">@color/app_actionbar_subtitle_color</item>
+        <item name="android:actionMenuTextColor">@color/app_actionbar_subtitle_color</item>
+    </style>
+    
+    <style name="ActionBarStyle.NoTitle">
+        <item name="displayOptions">showHome</item>
+        <item name="android:displayOptions">showHome</item>
+    </style>
+
+    <style name="ActionBarStyle.HomeAsUp">
+        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
+        <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>
+    </style>
+    
+    <style name="ActionBarStyle.HomeAsUp.NoTitle">
+        <item name="displayOptions">showHome|homeAsUp</item>
+        <item name="android:displayOptions">showHome|homeAsUp</item>
+    </style>
+    
+    <style name="ActionBarStyle.Tab">
+        <item name="navigationMode">tabMode</item>
+        <item name="android:navigationMode">tabMode</item>
+    </style>
+    
+    <style name="ActionBarStyle.Tab.Collapsed">
+        <item name="displayOptions"></item>
+        <item name="android:displayOptions"></item>
+    </style>
+    
+    <style name="ActionBarTextStyle" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/app_actionbar_text_size</item>
+        <item name="android:textColor">@color/app_actionbar_text_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ActionBarSubtitleTextStyle" parent="TextAppearance.Sherlock.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">@color/app_actionbar_subtitle_color</item>
+    </style>
+        
+    <style name="Tag">
+        <item name="android:textColor">@color/app_tag_text</item>
+        <item name="android:background">@drawable/app_tag_bgnd</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="No_List_Elements_Text" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/priority_2</item>
+        <item name="android:textStyle">italic|bold</item>
+        <item name="android:padding">5dip</item>
+    </style>
+    
+    <style name="SimpleLine_Default">
+        <item name="lineColor">@color/app_default_line</item>
+    </style>
+
+    <!-- TextViewStyle -->
+
+    <style name="TextViewStyle" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <!-- AutocompleteTextViewStyle -->
+
+    <style name="AutoCompleteTextViewStyle" parent="@android:style/Widget.AutoCompleteTextView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>        
+    </style>
+    
+    <!-- RtmSmartAdd -->
+    
+    <style name="RtmSmartAddTextViewStyle" parent="@style/AutoCompleteTextViewStyle">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+    
+    <!-- ListStyle -->
+   
+    <style name="ListViewStyle" parent="@android:style/Widget.ListView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+    </style>
+   
+    <style name="ExpandableListViewStyle" parent="@android:style/Widget.ExpandableListView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+    </style>
+   
+    <!-- GridViewStyle -->
+   
+    <style name="GridViewStyle" parent="@android:style/Widget.GridView">
+       <item name="android:listSelector">@drawable/abs__list_selector_holo_light</item>
+    </style>
+    
+    <!-- TextWith...Styles -->
+
+    <style name="TitleWithViewStyle">
+        <item name="showTopLine">true</item>
+        <item name="topLineColor">@color/task_overview_bgnd_stroke</item>
+        <item name="topLineHeight">1dip</item>
+        <item name="titleSize">@dimen/app_title_with_text_textSize</item>
+        <item name="titleStyle">bold</item>
+    </style>
+
+    <style name="TitleWithViewStyle.Text">
+        <item name="textSize">@dimen/app_title_with_text_textSize</item>
+        <item name="textStyle">normal</item>
+    </style>
+
+    <style name="TitleWithViewStyle.Text.NoLine">
+        <item name="showTopLine">false</item>
+    </style>
+
+    <style name="TitleWithViewStyle.Spinner"></style>
+
+    <style name="TitleWithViewStyle.Spinner.NoLine">
+        <item name="showTopLine">false</item>
+    </style>
+
+    <!-- WrappingLayoutStyle -->
+
+    <style name="WrappingLayoutStyle">
+        <item name="horizontal_spacing">2dip</item>
+        <item name="vertical_spacing">3dip</item>
+    </style>
+
+    <!-- ClearButtonStyle -->
+
+    <style name="ClearButtonStyle">
+        <item name="drawablePressed">@drawable/ic_button_edittext_pressed_delete</item>
+        <item name="drawableUnpressed">@drawable/ic_button_edittext_delete</item>
+    </style>
+
+    <style name="ClearButtonStyle.Inverted">
+        <item name="drawableUnpressed">@drawable/ic_button_edittext_pressed_delete</item>
+        <item name="drawablePressed">@drawable/ic_button_edittext_delete</item>
+    </style>
+    
+    <!-- Take preferences from RTM checkbox style --> 
+
+    <style name="TakePrefsFromRtmCheckboxStyle" parent="@android:style/TextAppearance.Small.Inverse">
+    </style>
+    
+    <!-- Own Preferneces layout -->
+    
+    <style name="MolokoPrefsLayoutStyle">
+        <item name="android:layout_marginLeft">15dip</item>
+        <item name="android:layout_marginRight">6dip</item>
+        <item name="android:layout_marginTop">6dip</item>
+        <item name="android:layout_marginBottom">6dip</item>
+    </style>
+    
+    <!-- Dialog button style -->
+    <style name="DialogButton" parent="@android:style/Widget.Button.Small" />
+    
+    <!-- WheelView style -->
+    <style name="WheelViewStyle">
+        <item name="topShadowDrawable">@drawable/wheel_shadow_top</item>
+        <item name="bottomShadowDrawable">@drawable/wheel_shadow_bottom</item>
+        <item name="centerDrawable">@drawable/wheel_selector_val</item>
+        <item name="backgroundDrawable">@drawable/wheel_selector_bgnd</item>
+    </style>    
+    
+    <!-- ********* -->
+    <!-- TasksList -->
+
+    <style name="TasksList_ListItem_Checked">
+        <item name="android:src">@drawable/taskslist_listitem_checked_mark</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="TasksList_ListItem_DescriptionText" parent="@android:style/TextAppearance.Medium">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TasksList_ListItem_ListName" parent="@android:style/TextAppearance.Small">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/taskslist_listitem_listname_text_normal</item>
+        <item name="android:background">@color/taskslist_listitem_listname_text_bgnd</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TasksList_ListItem_DueDate" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+ 
+    <style name="TasksList_ListItem_Location" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/taskslist_listitem_location_text_normal</item>
+        <item name="android:background">@color/taskslist_listitem_location_text_bgnd</item>        
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>   
+    
+    <style name="TasksListSpinnerItem" parent="TextAppearance.Sherlock.Widget.TextView.SpinnerItem">
+    </style>
+    
+    <style name="TasksListSpinnerItem.Active">
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="TextAppearance.TasksListSpinnerDropdownItem" parent="@style/TextAppearance.Sherlock.Widget.DropDownItem">
+    </style>
+    
+    <style name="TextAppearance.TasksListSpinnerDropdownItem.SecondLine" parent="ActionBarSubtitleTextStyle">
+    </style>
+    
+    <style name="TasksListSpinnerDropdownItem" parent="@style/Widget.Sherlock.Light.DropDownItem.Spinner">
+        <item name="android:textAppearance">@style/TextAppearance.TasksListSpinnerDropdownItem</item>
+        <item name="android:paddingLeft">12dp</item>
+    </style>
+    
+    <!-- ********* -->
+    <!-- TaskList -->
+
+    <style name="TaskLists_Group_ListName" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/tasklists_group_listname</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TaskLists_Group_NumTasks_Text" parent="@android:style/TextAppearance.Medium"></style>
+
+    <style name="TaskLists_Child_Text" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/tasklists_child_text</item>
+    </style>
+
+    <!-- ************ -->
+    <!-- ContactsList -->
+
+    <style name="ContactsList_ListItem_Picture">
+        <item name="android:src">@drawable/ic_list_contactslist_user</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="ContactsList_ListItem_Fullname" parent="TasksList_ListItem_DescriptionText" />
+
+    <style name="ContactsList_ListItem_Username" parent="TasksList_ListItem_ListName">
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="ContactsList_ListItem_Num_Shared" parent="TasksList_ListItem_Location">
+        <item name="android:textColor">@color/contactslist_listitem_shared_tasks_text</item>
+    </style>
+
+    <!-- ************** -->
+    <!-- Quick add task -->
+
+    <style name="Quick_Add_Task_Button_Bar_Fragment" parent="Widget.Sherlock.Light.ActionMode">
+        <item name="android:background">?attr/actionModeSplitBackground</item>        
+    </style>
+
+    <!-- ************ -->
+    <!-- Dialogs -->
+    
+    <style name="__WheelTextAppearance" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/app_dlg_due_picker_value</item>
+        <item name="android:textSize">@dimen/wheel_text_size</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    
+    <style name="WheelTextAppearance" parent="__WheelTextAppearance" />
+    
+    <style name="Dlg_DuePicker_Weekday" parent="WheelTextAppearance">
+        <item name="android:textColor">@color/app_dlg_due_picker_weekday</item>
+    </style>
+    
+    <style name="Dlg_About_Moloko_TextAppearence" parent="@android:style/TextAppearance.Theme.Dialog">        
+    </style>
+
+    <!-- ********* -->
+    <!-- Home -->
+
+    <style name="Home_Widget_Text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Home_Widget_Calendar_Date">
+        <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/app_icon_black_fill</item>
+    </style>
+
+    <!-- ********* -->
+    <!-- Task -->
+
+    <style name="Task_Overview_DescriptionText" parent="@style/TasksList_ListItem_DescriptionText">
+        <item name="android:singleLine">false</item>
+        <item name="android:ellipsize">none</item>
+    </style>
+
+    <style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
+
+    <style name="Task_Date_Text" parent="@style/Note_Created_Date_Text" />
+
+    <style name="Task_Source_Text" parent="@style/Note_Created_Date_Text" />
+
+    <style name="WrappingLayoutStyle.Task">
+        <item name="horizontal_spacing">5dip</item>
+        <item name="vertical_spacing">5dip</item>
+    </style>
+
+    <!-- ********* -->
+    <!-- Task Edit -->
+
+    <style name="Task_Edit_Title">
+        <item name="android:textSize">@dimen/app_title_with_text_textSize</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Task_Edit_ButtonBar">
+        <item name="android:background">@color/task_activity_button_bar_bgnd_fill</item>
+    </style>
+
+    <!-- ********* -->
+    <!-- Note -->
+
+    <style name="Note_Title" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/note_title</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    
+    <style name="Note_Text" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">14sp</item>
+    </style>
+    
+    <style name="Note_Created_Date_Text" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/note_created_date_text</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    
+    <style name="Note_Line_Style" parent="@style/SimpleLine_Default">
+        <item name="lineColor">@color/note_header_line</item>
+    </style>
+
+    <!-- ************ -->
+    <!-- Notification -->
+
+    <style name="NotificationTitle">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="NotificationText">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+    </style>
+
+    <style name="NotificationStackCount">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+    </style>
+    
+    <!-- ********* -->
+    <!-- Error -->
+
+    <style name="Error">
+        <item name="android:background">@color/error_bgnd</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="allPadding">10dip</item>
+        <item name="textSize">@dimen/app_title_with_text_textSize</item>
+        <item name="textStyle">normal</item>
+        <item name="showTopLine">false</item>
+        <item name="imageSrc">@drawable/ic_black_error</item>
+        <item name="text">@string/err_error</item>
+    </style>
+
+</resources>

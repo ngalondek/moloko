@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) 2012 Ronny Röhricht
+
+  This file is part of Moloko.
+
+  Moloko is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moloko is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+
+  Contributors:
+  	Ronny Röhricht - implementation
+-->
+
+<resources>
+   <string name="res_language">en</string>
+   <string name="res_country">*</string>
+    
+   <string name="app_name">Moloko</string>
+   <string name="app_home">Home</string>
+   <string name="app_preferences">Settings</string>
+   <string name="app_account_preferences">Account Preferences</string>
+   <string name="app_tasklists">Lists</string>
+   <string name="app_task">Task</string>
+   <string name="app_task_add">New Task</string>
+   <string name="app_task_complete">Complete</string>
+   <string name="app_task_uncomplete">Incomplete</string>   
+   <string name="app_task_postpone">Postpone</string>
+   <string name="app_change_tags">Change tags</string>
+   <string name="app_note">Note</string>
+   <string name="app_tagcloud">Tags</string>
+   <string name="app_contacts">Contacts</string>
+   <string name="app_sort_alpha">Task Name</string>
+   <string name="app_sort_prio">Priority</string>
+   <string name="app_sort_due_date">Due Date</string>   
+   <string name="app_save">Save</string>
+   <string name="app_startup">Launching Moloko &#8230;</string>
+   <string name="app_selected_count">%1$d selected</string>
+   
+   <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
+   <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>
+   <string name="app_list_name_inbox">Inbox</string>
+   <string name="app_list_name_sent">Sent</string>
+
+   <string name="svc_sync">RTM Synchronization</string>
+   <string name="svc_auth">RTM Authentication</string>
+   <string name="svc_notification">Notification Service</string>
+
+   <string name="rtm_full">Remember The Milk</string>
+
+   <!-- Global constants -->
+   <string name="g_settings_src_rtm_btn">Take setting from RTM Server</string>
+   <string name="g_settings_src_rtm">Loaded from RTM Server</string>
+   <string name="g_settings_src_local">Local setting</string>
+   <string name="g_no_account">No RTM credentials available</string>
+   <string name="moloko_about_info" formatted="false">
+      &lt;a href="http://code.google.com/p/moloko/">Moloko&lt;/a> is a Remember The Milk client developed by &lt;a href="mailto:moloko@gmail.com">Ronny Röhricht&lt;/a>.
+      &lt;br>&lt;br>Version: %1$s&lt;br>&lt;br>
+      Special thanks to David Vermeille.&lt;br>&lt;br>
+      Moloko is implemented by means of:&lt;br>
+                - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 3.2
+         &lt;br>- A modified version of &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library
+         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library
+         &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
+         &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a>
+         &lt;br>- &lt;a href="http://actionbarsherlock.com/>ActionBarSherlock&lt;/a>   
+   </string>
+   <string name="g_questionmark">\'?\'</string>
+
+   <!-- Time phrases -->
+   <string name="time_interval_15min">Every 15 min.</string>
+   <string name="time_interval_30min">Every 30 min.</string>
+   <string name="time_interval_1h">Every hour</string>
+   <string name="time_interval_12h">Every 12 hours</string>
+   <string name="time_interval_daily">Once a day</string>
+   <string name="time_5min">5 minutes</string>
+   <string name="time_15min">15 minutes</string>
+   <string name="time_30min">30 minutes</string>
+   <string name="time_1h">1 hour</string>
+   <string name="time_12h">12 hours</string>
+   <string name="time_24h">1 day</string>
+   
+   <!-- Date/Time format -->
+      <!-- Example: 12/25 -->
+      <string name="numeric_date_pattern">%1$s/%2$s</string>
+      <!-- Example: 12/25/2000 -->
+      <string name="numeric_date_pattern_year">%1$s/%2$s/%3$s</string>
+      <!-- Components of the numeric date format -->
+      <string name="numeric_date_format_day">d</string>
+      <string name="numeric_date_format_month">M</string>
+      <string name="numeric_date_format_year">yyyy</string>
+      <!-- %1 - month pattern, MMM or MMMM -->
+      <string name="date_with_text_month">%1$s d</string>
+      <string name="date_with_text_month_year">%1$s d, yyyy</string>
+      <!-- %1 - weekday pattern, EEE or EEEE
+           %2 - month pattern, MMM or MMMM -->
+      <string name="date_with_weekday_text_month">%1$s, %2$s dd</string>
+      <string name="date_with_weekday_text_month_year">%1$s, %2$s d, yyyy</string>
+      <!-- %1 - time
+           %2 - date
+           Example: 12:00am, 12/25/2000 -->
+      <string name="date_with_time_pattern">%1$s, %2$s</string>
+      <string name="time_pattern_12">h:mma</string>
+      <string name="time_pattern_24">k:mm</string>
+
+   <!-- Global phrases -->
+   <string name="phr_now">Now</string>
+   <string name="phr_today">Today</string>
+   <string name="phr_today_with_date">Today %1$s</string>
+   <string name="phr_tomorrow">Tomorrow</string>
+   <string name="phr_tomorrow_with_date">Tomorrow the %1$s</string>
+   <string name="phr_yesterday">Yesterday</string>
+   <string name="phr_establish_connection">Establish an Internet connection to continue.</string>
+   <string name="phr_delete_with_name">Delete \'%1$s\'</string>
+   <string name="phr_ok">OK</string>
+   <string name="phr_settings">Settings</string>
+   <string name="phr_all_f">All</string>
+   <string name="phr_none_f">None</string>
+   <string name="phr_nothing">Nothing</string>
+   <string name="phr_do_sync">Synchronize</string>   
+   <string name="phr_on">On</string>
+   <string name="phr_off">Off</string>
+   <string name="phr_manuell">Manual</string>
+   <string name="phr_password_set">set</string>
+   <string name="phr_loading">Loading&#8230;</string>
+   <string name="phr_edit_dlg_done">Applying changes?</string>
+   <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
+   <string name="phr_hint">Hint</string>
+   <string name="phr_yes">Yes</string>
+   <string name="phr_no">No</string>
+
+   <!-- Global errors -->
+   <string name="err_error">Error</string>
+   <string name="err_not_connected">No connection</string>
+   <string name="err_add_account_canceled">Adding a new account has been canceled</string>
+   <string name="err_unexpected">If you read this RUN AS QUICKLY AS YOU CAN!</string>
+   <string name="err_db_typed">Error during database access of %1$s.</string>
+   <string name="err_entity_not_found">The %1$s could not be retrieved from the database.\n\nPlease check if the element exists.</string>
+   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nData you have changed with Moloko so far remains untouched. Nevertheless your made changes in Moloko are not going to be synchronized with the RTM server and are replaced by the server version, if newer.\n\nYou can change this by removing your RTM account from the device and create a new one with \'Read, Write and Delete\' permission.</string>
+
+	<!-- Global buttons -->
+   <string name="btn_ok">OK</string>
+   <string name="btn_continue">Continue</string>
+   <string name="btn_cancel">Cancel</string>
+   <string name="btn_new_account">New account</string>
+   <string name="btn_account_settings">Account</string>
+   <string name="btn_complete">Complete</string>
+   <string name="btn_uncomplete">Incomplete</string>
+   <string name="btn_postpone">Postpone</string>
+   <string name="btn_delete">Delete</string>
+   <string name="btn_back">Back</string>
+   <string name="btn_discard">Discard</string>
+   
+   <!-- Global menus -->
+   <string name="menu_opt_edit">Edit</string>
+   <string name="menu_opt_delete">Delete</string>
+   <string name="menu_opt_selection">Selection</string>
+   <string name="menu_opt_select_all_male">All</string>
+   <string name="menu_opt_select_all_female">@string/menu_opt_select_all_male</string>
+   <string name="menu_opt_deselect_all_male">None</string>
+   <string name="menu_opt_deselect_all_female">@string/menu_opt_deselect_all_male</string>
+   <string name="menu_opt_inv_selection">Invert</string>
+   <string name="menu_opt_sort">Sort</string>
+
+   <!-- Global Dialogs -->
+   <string name="dlg_estimate_picker_title">How long does it take?</string>
+   <string name="dlg_due_picker_title">Set Due</string>
+   <string name="dlg_due_picker_no_time">---</string>
+   <string name="dlg_recurr_picker_title">Set Recurrence</string>
+   <string name="dlg_recurr_picker_every">Every</string>
+   <string name="dlg_recurr_picker_after">After</string>
+
+   <!-- Global Toasts -->
+      <!-- Task -->
+      <string name="toast_insert_task">Adding task \'%1$s\'&#8230;</string>
+      <string name="toast_insert_task_ok">Task \'%1$s\' added</string>
+      <string name="toast_insert_task_fail">Failed to add task \'%1$s\'</string>
+      <!-- Note -->
+      <string name="toast_insert_note">Adding new note&#8230;</string>
+      <string name="toast_insert_note_ok">New note added</string>
+      <string name="toast_insert_note_fail">Failed to add new task</string>
+      <string name="toast_save_note">Saving note changes&#8230;</string>
+      <string name="toast_save_note_ok">Changes to the note have been saved</string>
+      <string name="toast_save_note_failed">Failed to save note changes</string>
+      <string name="toast_delete_note">Deleting note&#8230;</string>
+      <string name="toast_delete_note_ok">Note has been deleted</string>
+      <string name="toast_delete_note_failed">Failed to delete the note</string>
+      <!-- List -->
+      <string name="toast_insert_list">Adding new list \'%1$s\'&#8230;</string>
+      <string name="toast_insert_list_ok">New list \'%1$s\' added</string>
+      <string name="toast_insert_list_fail">Failed to add new list \'%1$s\'</string>
+      <string name="toast_save_list">Saving list changes&#8230;</string>
+      <string name="toast_save_list_ok">Changes to the list have been saved</string>
+      <string name="toast_save_list_failed">Failed to save list changes</string>
+      <string name="toast_delete_list">Deleting list \'%1$s\'&#8230;</string>
+      <string name="toast_delete_list_ok">List \'%1$s\' has been deleted</string>
+      <string name="toast_delete_list_failed">Failed to delete list \'%1$s\'</string>
+      <string name="toast_delete_locked_list">The list \'%1$s\' is locked and cannot be deleted</string>
+
+   <!-- Add/Rename list dialog -->
+   <string name="dlg_add_list_title">New list</string>
+   <string name="dlg_add_smart_list_title">New Smart List</string>
+   <string name="dlg_rename_list_title">Rename list</string>   
+   <string name="dlg_add_rename_list_list_name_hint">List name</string>
+   <string name="dlg_add_rename_list_smart_filter_hint">SmartList filter</string>
+      <!-- Toasts -->
+      <string name="dlg_add_rename_list_toast_empty_list_name">The name of the list must not be empty</string>
+      <string name="dlg_add_rename_list_toast_invalid_list_name">The name of the list cannot be \'Inbox\' or \'Sent\'</string>
+      <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' is not a valid Smart Filter</string>
+
+   <!-- No account dialog -->
+   <string name="dlg_no_account_title">New Remember The Milk account</string>
+   <string name="dlg_no_account_text">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>
+
+   <!-- Missing default list dialog -->
+   <string name="dlg_missing_def_list_title">Missing default list</string>
+   <string name="dlg_missing_def_list_text">It can not be started with the default list because it does not exist.\n\nIt will be started with the home view.</string>
+
+   <!-- Searchable -->
+   <string name="search_label">@string/app_name</string>
+   <string name="search_hint">Search for tasks</string>
+
+   <!-- Home fragment -->
+   <string name="home_label_today">@string/phr_today</string>
+   <string name="home_label_tomorrow">@string/phr_tomorrow</string>
+   <string name="home_label_overdue">Overdue</string>
+   
+   <!-- Task activity -->
+   <string name="taskactivity_tab_task">@string/app_task</string>
+   <string name="taskactivity_tab_notes">Notes</string>
+   
+   <!-- TaskEdit activity -->
+      <!-- Dialogs -->
+      <string name="taskedit_activity_dlg_removing_editing">The task you are editing is removed by processing a background sync.</string>
+
+   <!-- Task fragment -->
+   <string name="task_source">from %1$s</string>
+   <string name="task_postponed">%1$dx,</string>
+   <string name="task_datetime_title_due">When</string>
+   <string name="task_datetime_title_estimate">Duration</string>
+   <string name="task_datetime_title_recurr">Recurrence</string>
+   <string name="task_datetime_estimate_inline">%1$s estimated</string>
+   <string name="task_datetime_recurr_inline">Repeat %1$s</string>
+   <string name="task_datetime_err_recurr">The recurrence pattern could not be evaluated</string>
+   <string name="task_location">Location</string>
+   <string name="task_participants">Shared with</string>
+   <string name="task_url">URL</string>
+
+   <!-- Task Edit fragment -->
+   <string name="task_edit_desc_hint">Task Name</string>
+   <string name="task_edit_list">List</string>
+   <string name="task_edit_priority">Priority</string>
+   <string name="task_edit_priority_1">1 - High</string>
+   <string name="task_edit_priority_2">2 - Normal</string>
+   <string name="task_edit_priority_3">3 - Low</string>
+   <string name="task_edit_priority_n">@string/phr_none_f</string>
+   <string name="task_edit_tags">Tags</string>
+   <string name="task_edit_due">Due</string>
+   <string name="task_edit_due_never">Never</string>
+   <string name="task_edit_recurrence">Recurrence</string>
+   <string name="task_edit_recurrence_no">Do not repeat</string>
+   <string name="task_edit_estimate">Estimate</string>
+   <string name="task_edit_estimate_nothing">Nothing estimated</string>
+   <string name="task_edit_location_no">Nowhere</string>
+   <string name="task_edit_validate_empty_name">The task name must not be empty</string>
+   <string name="task_edit_validate_estimate">\'%1$s\' is not a valid estimation</string>
+   <string name="task_edit_validate_due">\'%1$s\' is not a valid due date</string>
+   <string name="task_edit_validate_recurrence">\'%1$s\' is not a valid recurrence</string>
+
+    <!-- EditMultipleTasks fragment -->
+   <string name="edit_multiple_tasks_different_task_names">Different names</string>
+   <string name="edit_multiple_tasks_different_lists">Different lists</string>
+   <string name="edit_multiple_tasks_different_priorities">Different priorities</string>
+   <string name="edit_multiple_tasks_different_locations">Different locations</string>
+   <string name="edit_multiple_tasks_different_urls">Different URLs</string>
+   <string name="edit_multiple_tasks_entry_with_count">%1$s (%2$d)</string>
+
+   <!-- Change Tags fragment -->
+   <string name="change_tags_edit_hint">Comma separated tags</string>
+   <string name="change_tags_empty">This task has no tags</string>
+
+   <!-- TaskLists fragment -->
+   <string name="tasklists_no_lists">There are no lists</string>
+     <!-- Menus -->
+     <string name="tasklists_menu_add_list">@string/dlg_add_list_title</string>
+     <string name="tasklists_menu_ctx_expand">Expand \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_collapse">Reduce \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_rename_list">Rename \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_make_def_list">Set as default list</string>
+     <string name="tasklists_menu_ctx_remove_def_list">Reset as default list</string>
+     
+   <!-- TagCloud fragment -->
+   <string name="tagcloud_no_tags">No Tags to display</string>
+
+   <!-- NotificationManager -->
+   <string name="notification_permanent_today_title">Tasks for today</string>
+   <string name="notification_permanent_tomorrow_title">Tasks for tomorrow</string>
+   <string name="notification_permanent_today_and_tomorrow_title">Tasks for %1$s, %2$s</string>
+   <string name="notification_permanent_overdue_title">Overdue tasks</string>
+      <!-- >1 task due, 0 tasks overdue -->
+   <string name="notification_permanent_text_multiple">%1$d due, %2$d high priority</string>
+      <!-- >0 tasks due, >0 tasks overdue -->
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d due, %2$d overdue</string>
+      <!-- 0 tasks due, >1 tasks overdue -->
+   <string name="notification_permanent_text_multiple_overdue">%1$d overdue</string>
+      <!-- 1 task due, show task name -->
+   <string name="notification_permanent_text_one_task">%1$s</string>
+      <!-- 1 task overdue, show task name and due date relative to now -->
+   <string name="notification_permanent_text_one_task_overdue">%1$s (%2$s)</string>
+   <string name="notification_due_ticker">%1$s due %2$s</string>
+   <string name="notification_due">due at %1$s</string>
+   <string name="notification_due_tasks_list_title">Due tasks</string>
+
+   <!-- AbstractTasksList -->
+   <string name="abstaskslist_no_tasks">No tasks to display</string>
+     <!-- Menus -->
+     <string name="abstaskslist_listitem_ctx_tasks_at_location">Tasks at \'%1$s\'</string>
+     <!-- Dialogs -->
+     <string name="abstaskslist_dlg_show_tags_and">and</string>
+     <string name="abstaskslist_dlg_show_tags_or">or</string>
+     <!-- Notifications -->
+     <string name="abstaskslist_notif_multi_selection">To edit multiple tasks at once, long click a task.</string>
+
+   <!-- TasksList fragment -->
+   <string name="taskslist_actionbar">%1$s</string>
+   <string name="taskslist_actionbar_subtitle_due_today">Due today</string>
+   <string name="taskslist_actionbar_subtitle_due_tomorrow">Due tomorrow</string>
+   <string name="taskslist_actionbar_subtitle_overdue">Overdue</string>
+   <string name="taskslist_actionbar_subtitle_completed">Completed</string>
+      <!-- Menus -->
+      <string name="select_multiple_tasks_menu_opt_do_edit">Edit %1$d</string>
+      <string name="select_multiple_tasks_menu_opt_complete">Complete %1$d</string>
+      <string name="select_multiple_tasks_menu_opt_uncomplete">Incomplete %1$d</string>
+      <string name="select_multiple_tasks_menu_opt_postpone">Postpone %1$d</string>
+      <string name="select_multiple_tasks_menu_opt_delete">Delete %1$d</string>
+
+   <!-- TaskSearchResult fragment -->
+   <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the &lt;a href="https://www.rememberthemilk.com/help/answers/search/advanced.rtm">search syntax.&lt;/a></string>
+     <!-- Menus -->
+     <string name="tasksearchresult_menu_add_smart_list">Add smart list</string>
+     <string name="tasksearchresult_menu_opt_clear_history_title">Clear search history</string>
+     <!-- Toasts -->
+     <string name="tasksearchresult_toast_history_cleared">Search history has been cleared</string>
+
+   <!-- ContactsList fragment -->
+   <string name="contactslist_no_contacts">No contacts</string>
+   <string name="contactslist_listitem_num_tasks">%1$d %2$s</string>
+      <!-- Menus -->
+      <string name="contactslist_listitem_show_phonebook_contact">Details of %1$s</string>
+      
+   <!-- Note activity -->
+      <!-- Dialogs -->
+      <string name="note_dlg_removing_editing_note">The note you are editing is removed by processing a background sync. If you continue editing, a new note is inserted with your changes.</string>
+
+   <!-- NoteEdit fragment -->
+   <string name="note_edit_title_hint">Note title</string>
+   <string name="note_edit_text_hint">Enter note here</string>
+      <!-- Toasts -->
+      <string name="note_edit_toast_title_and_text_empty">Please enter a note title or a note text</string>
+      
+   <!-- NotesList fragment -->
+   <string name="noteslist_no_notes">No notes</string>
+      <!-- Menus -->
+      <string name="noteslist_menu_add_note">New note</string>
+
+   <!-- Quick add task fragment -->
+   <string name="quick_add_task_hint">@string/app_task_add</string>
+   <string name="quick_add_task_op_due">@string/task_edit_due</string>
+   <string name="quick_add_task_op_priority">@string/task_edit_priority</string>
+   <string name="quick_add_task_op_list_tags">List or tag</string>
+   <string name="quick_add_task_op_location">@string/task_location</string>
+   <string name="quick_add_task_op_recurrene">@string/task_edit_recurrence</string>
+   <string name="quick_add_task_op_estimate">@string/task_edit_estimate</string>
+
+   <!-- Authenticator fragment -->
+   <string name="auth_permission_choose">Choose permission</string>
+   <string name="auth_info_text">Please confirm your access permission. Your username and password will not be stored locally.</string>
+   <string name="auth_completing">Completing account creation.</string>
+   <string name="auth_missing_credential">Important account information is missing. You can fix this in a few steps.</string>
+   <string name="auth_expired_auth_token">The access permission from Remember The Milk was not confirmed. You can fix this in a few steps.</string>
+   <string name="auth_account_exists">Moloko supports only one Remember The Milk account.\n\nIf you want to change your access permission, please remove your existing account and create a new one. Your data remains untouched.</string>
+   <string name="auth_perm_read">Read</string>
+   <string name="auth_perm_delete">Read, Write and Delete</string>
+   <string name="auth_perm_short_info">By choosing the permission, you can restrict the access to your RTM account for Moloko.</string>
+   <string name="auth_perm_feature_read">
+       &lt;p>
+       With permission &lt;b>Read&lt;/b> you can:&lt;br/>
+       &lt;font color="green">● View tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Synchronize from RTM to Moloko&lt;/font>&lt;br/>
+       &lt;/p>
+       &lt;p>
+       You can not:&lt;br/>
+       &lt;font color="red">● Edit tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="red">● Add or remove tasks, lists, notes&lt;/font>
+       &lt;/p>
+   </string>
+   <string name="auth_perm_feature_read_write">
+       &lt;p>
+       With full permissions you can:&lt;br/>
+       &lt;font color="green">● View tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Edit tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Add or remove tasks, lists, notes&lt;/font>&lt;br/>
+       &lt;font color="green">● Synchronize from RTM to Moloko&lt;/font>&lt;br/>
+       &lt;font color="green">● Send your edits from Moloko to RTM &lt;/font>&lt;br/>
+       &lt;/p>
+   </string>
+       
+      <!-- Dialogs -->
+      <string name="auth_dlg_get_auth_token">Request Auth-Token for access level \'%1$s\'</string>
+      <string name="auth_dlg_permisson_info">By choosing the permission, you can restrict the access to your RTM account for Moloko.\n\n
+                                             If you select \'Read\', then you will not be able to add, edit or delete tasks, lists or notes in Moloko. \'Read\' gives you a read-only
+                                             view to your RTM data. By selecting \'Read, Write and Delete\', you can do almost the same in Moloko as you can do on the RTM website,
+                                             including adding, editing and deleting tasks, lists or notes.\n\nBackground synchronization will take place in both
+                                             access levels. However, in \'Read\' permission mode, data will only be received from RTM server.\n\nYou can change the access
+                                             level any time be removing your RTM account from your device and create a new account, selecting the desired, new access level.</string>
+      <!-- Errors -->
+      <string name="auth_err_with_cause">Failed to create the account. Reason: %1$s</string>
+      <string name="auth_err_cause_inv_auth_token">Invalid Auth-Token was received</string>
+      <string name="auth_err_cause_scurity">Security issue</string>
+      <string name="auth_err_cause_inv_login_url">Invalid Login-URL was received</string>
+
+   <!-- AccountPreferences + activity -->
+   <string name="acc_pref_title">General settings</string>
+   <string name="acc_pref_account_tilte">@string/app_account_preferences</string>
+   <string name="acc_pref_account_summary">Synchronization, HTTP(S) settings</string>
+   <string name="acc_pref_sync_interval_title">Synchronization</string>
+   <string name="acc_pref_conn_cat_title">Connection</string>
+   <string name="acc_pref_conn_use_https">Use HTTPS (recommended)</string>
+   
+   <!-- MolokoPreferences activity -->
+      <!-- RTM settings -->
+	   <string name="moloko_prefs_rtm_title">RTM Settings</string>
+	   <string name="moloko_prefs_rtm_sync_title">Retrieve RTM settings</string>
+	   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s</string>
+	   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click</string>
+	   <string name="moloko_prefs_rtm_defaultlist_title">Default List</string>
+	   
+	   <!-- General settings -->
+	   <string name="moloko_prefs_general_title">General Settings</string>
+	   <string name="moloko_prefs_startup_view_title">Start View</string>
+	   <string name="moloko_prefs_startup_view_def_list_choose">Choose default list&#8230;</string>
+	   <string name="moloko_prefs_startup_view_def_list_name">Default list (%1$s)</string>
+	   <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
+	   <string name="moloko_prefs_startup_view_home">@string/app_home</string>
+	   <string name="moloko_prefs_def_sort_title">Sort tasks</string>
+	   <string name="moloko_prefs_def_sort_summary">by %s</string>
+	   <string name="moloko_prefs_sync_at_startup_title">Sync at startup</string>
+	   <string name="moloko_prefs_sync_at_startup_summary_disabled">Sync at startup is prevented by manual sync interval</string>
+	   
+	   <!-- Notification settings -->
+	   <string name="moloko_prefs_notification_title">Notifications</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tasks with due time</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_reminder_title">Reminder</string>	   
+	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Notification tone</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrate</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
+	   <string name="moloko_prefs_notification_permanent_cat_title">Permanent notifications</string>
+	   <string name="moloko_prefs_notification_permanent_today">Tasks due today</string>
+	   <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>	   
+	   <string name="moloko_prefs_notification_permanent_overdue">Overdue tasks</string>
+	   <string name="moloko_prefs_notification_permanent_multiple_selected">from multiple lists</string>
+	   <string name="moloko_prefs_notification_permanent_single_selected">from list \'%1$s\'</string>
+	   
+	   <!-- Development settings -->
+	   <string name="moloko_prefs_support_dev_title">Support development</string>
+	   <string name="moloko_prefs_acra_title">Enable error reporting</string>
+	   <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
+	   <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
+	   <string name="moloko_prefs_send_log_text">Send Moloko device log</string>
+	   <string name="moloko_prefs_send_db_text">Send Moloko database</string>
+	   <string name="moloko_prefs_clear_db_text">Clear database</string>
+	   <string name="moloko_about_text">About Moloko</string>
+	   
+      <!-- Dialogs -->
+      <string name="moloko_prefs_rtm_sync_dlg_message">Settings are retrieved from the RTM Server</string>
+      <string name="moloko_prefs_clear_db_dlg_title">Swipe database</string>
+      <string name="moloko_prefs_clear_db_dlg_clearing">Clearing database&#8230;</string>
+      <!-- Toasts -->
+      <string name="moloko_prefs_clear_db_toast_cleared">Database cleared</string>
+      <string name="moloko_prefs_clear_db_toast_clearing_failed">Clearing the database failed</string>
+      <string name="moloko_prefs_send_db_toast_failed">Could not access the database</string>
+
+   <!-- Error reporting -->
+   <string name="acra_crash_toast_text">Moloko has entered an unexpected state. Please send an error report.</string>
+   <string name="acra_crash_dialog_title">Moloko error report</string>
+   <string name="acra_crash_dialog_text">We apologize for any inconvenience. Please send a report to support the development and help avoiding the issue in future releases.</string>
+   <string name="acra_crash_comment_prompt">You might add your comments about the issue below:</string>
+   <string name="acra_crash_dialog_ok_toast">Your crash report has been sent. Thank you!</string>
+   <string name="send_log_dialog_text">Creating the log file for Moloko. The collected information will be sent using an application of your choice. You also will have an opportunity to see and modify the data being sent.</string>
+   <string name="send_log_aquiring_text">Collecting Moloko dependent log information&#8230;</string>
+   <string name="send_log_chooser_title">Please select an application to send the log</string>
+   <string name="send_log_failed">Failed to collect the log data for Moloko</string>
+   <string name="send_log_address">moloko@gmail.com</string>
+   <string name="send_log_subject">Moloko device log</string>
+   <string name="send_log_format">time</string>
+   <string name="send_log_content" formatted="false">
+Moloko version: %s\n
+Device model: %s\n
+Firmware version: %s\n
+Board: %s\n
+Brand: %s\n
+Device: %s\n
+Display: %s\n
+Fingerprint: %s\n
+Host: %s\n
+ID: %s\n
+Model: %s\n
+Product: %s\n
+Tags: %s\n
+Time: %s\n
+Type: %s\n
+User: %s\n
+   </string>
+
+   <!-- Suggestions -->
+   <string name="app_quick_add_task_recurr_sugg_every_day">every day</string>
+   <string name="app_quick_add_task_recurr_sugg_every_week">every week</string>
+   <string name="app_quick_add_task_recurr_sugg_every_2_weeks">biweekly</string>
+   <string name="app_quick_add_task_recurr_sugg_every_month">every month</string>
+   <string name="app_quick_add_task_recurr_sugg_every_year">every year</string>
+   <string name="app_quick_add_task_recurr_sugg_after_1_day">after 1 day</string>
+   <string name="app_quick_add_task_recurr_sugg_after_1_week">after 1 week</string>
+   <string name="app_quick_add_task_recurr_sugg_after_2_weeks">after 2 weeks</string>
+   <string name="app_quick_add_task_recurr_sugg_every_1_month">after 1 month</string>
+   <string name="app_quick_add_task_recurr_sugg_after_1_year">after 1 year</string>
+   
+   <!-- Design -->
+   <string name="design_text">Text</string>
+
+</resources>

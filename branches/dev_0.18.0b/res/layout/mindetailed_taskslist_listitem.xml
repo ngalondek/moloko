@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2012 Ronny Röhricht This file is part of Moloko. Moloko is free 
+   software: you can redistribute it and/or modify it under the terms of the GNU General 
+   Public License as published by the Free Software Foundation, either version 3 of 
+   the License, or (at your option) any later version. Moloko is distributed in the 
+   hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public 
+   License for more details. You should have received a copy of the GNU General Public 
+   License along with Moloko. If not, see <http://www.gnu.org/licenses/>. Contributors: 
+   Ronny Röhricht - implementation -->
+
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/taskslist_mindetailed_listitem"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+
+   <dev.drsoran.moloko.widgets.SimpleLineView
+      android:id="@+id/taskslist_listitem_priority"
+      android:layout_width="5dip"
+      android:layout_height="fill_parent"
+      android:layout_marginTop="1dip"
+      android:layout_marginBottom="1dip" />
+
+   <include
+      android:id="@+id/taskslist_listitem_base"
+      layout="@layout/mindetailed_taskslist_listitem_base"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" />
+</LinearLayout>
+

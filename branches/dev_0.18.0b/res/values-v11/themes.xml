@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Moloko" parent="@style/Theme.__Moloko">
+        <!-- Widgets -->
+        <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>        
+    </style>
+    
+    <style name="Theme.Moloko.TasksList" parent="@style/Theme.Moloko.__TasksList">
+        <!-- Widgets -->
+        <item name="clearButtonStyle">@style/ClearButtonStyle</item>
+    </style>
+
+    <style name="Theme.Moloko.Dialog" parent="@android:style/Theme.Holo.Light.Dialog" />
+    
+    <style name="Theme.Moloko.SendLog" parent="@style/Theme.Moloko.Dialog" />
+
+</resources>

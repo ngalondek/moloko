@@ -244,7 +244,7 @@ public class Settings implements IOnSettingsChangedListener
    public long getSyncInterval()
    {
       return loadLong( context.getString( R.string.key_sync_inverval ),
-                       Long.valueOf( context.getString( R.string.acc_pref_sync_interval_default_value ) ) );
+                       Long.valueOf( context.getString( R.string.def_sync_inverval ) ) );
    }
    
    
@@ -267,7 +267,7 @@ public class Settings implements IOnSettingsChangedListener
    public long getNotifyingDueTasksBeforeMs()
    {
       return loadLong( context.getString( R.string.key_notify_due_tasks_before ),
-                       Long.valueOf( context.getString( R.string.moloko_prefs_notification_tasks_w_due_before_default_value ) ) );
+                       Long.valueOf( context.getString( R.string.def_notify_due_tasks_before ) ) );
    }
    
    

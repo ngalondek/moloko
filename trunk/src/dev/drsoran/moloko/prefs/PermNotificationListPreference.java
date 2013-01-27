@@ -38,7 +38,7 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.prefs.DefaultListPreference.EntriesAndValues;
+import dev.drsoran.moloko.util.ListEntriesAndValues;
 
 
 public class PermNotificationListPreference extends MultiSelectListPreference
@@ -61,7 +61,7 @@ public class PermNotificationListPreference extends MultiSelectListPreference
       super( context, attrs );
       autoSummaryImpl = new AutoSummary< String >( context, attrs, this );
       
-      final EntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( context ).createEntriesAndValuesSync( 0 );
+      final ListEntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( context ).createEntriesAndValuesSync( 0 );
       if ( entriesAndValues != null )
       {
          setEntries( entriesAndValues.entries );
@@ -149,14 +149,16 @@ public class PermNotificationListPreference extends MultiSelectListPreference
    {
       final int selectedCount = getSelectedCount();
       
-      if ( selectedCount == getEntries().length )
-      {
-         return getContext().getString( R.string.phr_all_f );
-      }
-      
+      // Do the 0 check before the length check to handle no lists case when not
+      // synced.
       if ( selectedCount == 0 )
       {
          return getContext().getString( R.string.phr_none_f );
+      }
+      
+      if ( selectedCount == getEntries().length )
+      {
+         return getContext().getString( R.string.phr_all_f );
       }
       
       if ( selectedCount > 1 )

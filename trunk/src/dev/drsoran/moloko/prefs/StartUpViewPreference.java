@@ -41,14 +41,14 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
-import dev.drsoran.moloko.prefs.DefaultListPreference.EntriesAndValues;
+import dev.drsoran.moloko.util.ListEntriesAndValues;
 import dev.drsoran.provider.Rtm.Lists;
 
 
 class StartUpViewPreference extends AutoSummaryListPreference implements
          OnPreferenceChangeListener
 {
-   private EntriesAndValues defListEntriesAndValues;
+   private ListEntriesAndValues defListEntriesAndValues;
    
    private String defaultListName;
    
@@ -128,7 +128,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
                   @Override
                   public void onDismiss( DialogInterface dialog )
                   {
-                     final boolean positive = chosenDefListIdx != EntriesAndValues.NONE_IDX;
+                     final boolean positive = chosenDefListIdx != ListEntriesAndValues.NONE_IDX;
                      
                      // Check if the client has chosen a list.
                      if ( positive )

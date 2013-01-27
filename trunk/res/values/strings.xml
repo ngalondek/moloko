@@ -433,7 +433,6 @@
    <string name="acc_pref_account_tilte">@string/app_account_preferences</string>
    <string name="acc_pref_account_summary">Synchronization, HTTP(S) settings</string>
    <string name="acc_pref_sync_interval_title">Synchronization</string>
-   <string name="acc_pref_sync_interval_default_value">@string/twentyfour_hours_ms</string>   
    <string name="acc_pref_conn_cat_title">Connection</string>
    <string name="acc_pref_conn_use_https">Use HTTPS (recommended)</string>
    
@@ -461,8 +460,7 @@
 	   <string name="moloko_prefs_notification_title">Notifications</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tasks with due time</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
-	   <string name="moloko_prefs_notification_tasks_w_due_reminder_title">Reminder</string>
-	   <string name="moloko_prefs_notification_tasks_w_due_before_default_value">@string/fifteen_min_ms</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_reminder_title">Reminder</string>	   
 	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Notification tone</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrate</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>

@@ -26,6 +26,7 @@ import java.util.Collection;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.util.SparseBooleanArray;
 import android.widget.ListAdapter;
 
@@ -33,6 +34,7 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.actionmodes.listener.IBaseSelectableActionModeListener;
 import dev.drsoran.moloko.util.Strings;
@@ -224,7 +226,7 @@ public class BaseMultiChoiceModeListener< T > implements
          listener.onFinishingSelectionMode( mode, this );
       }
       
-      getAdapter().unregisterDataSetObserver( dataSetObserver );
+      unregisterDatasetObserver();
       actionMode = null;
    }
    
@@ -270,5 +272,30 @@ public class BaseMultiChoiceModeListener< T > implements
       }
       
       mode.setTitle( title );
+   }
+   
+   
+   
+   private void unregisterDatasetObserver()
+   {
+      // On post GB devices, a dataset observer can be unregistered in the
+      // notification changed event. This fails on GB devices and throws
+      // a ConcurrentModificationException. To prevent this, we schedule
+      // the unregister.
+      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
+      {
+         getAdapter().unregisterDataSetObserver( dataSetObserver );
+      }
+      else
+      {
+         MolokoApp.getHandler().postAtFrontOfQueue( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               getAdapter().unregisterDataSetObserver( dataSetObserver );
+            }
+         } );
+      }
    }
 }

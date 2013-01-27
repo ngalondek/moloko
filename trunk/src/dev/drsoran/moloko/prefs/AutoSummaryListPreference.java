@@ -87,7 +87,11 @@ public class AutoSummaryListPreference extends ListPreference implements
    @Override
    public String getSummaryDisplay()
    {
-      return getEntry().toString();
+      final CharSequence entry = getEntry();
+      
+      return entry != null
+                          ? entry.toString()
+                          : getContext().getString( android.R.string.unknownName );
    }
    
    

@@ -139,6 +139,17 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    @Override
+   protected void onStop()
+   {
+      onUnregisterListeners();
+      listenersRegistered = false;
+      
+      super.onStop();
+   }
+   
+   
+   
+   @Override
    protected void onNewIntent( Intent intent )
    {
       super.onNewIntent( intent );
@@ -225,11 +236,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    @Override
    protected void onDestroy()
    {
-      onUnregisterListeners();
-      listenersRegistered = false;
-      
       annotatedConfigSupport.onDetach();
-      
       super.onDestroy();
    }
    

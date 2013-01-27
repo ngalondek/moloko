@@ -66,7 +66,7 @@ public class MolokoNotificationService extends Service
             
             if ( Action.NOTIFICATION_SERVICE_START.equals( action ) )
             {
-               notificationManager.start();
+               handleStart();
             }
             else if ( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED.equals( action ) )
             {
@@ -127,6 +127,20 @@ public class MolokoNotificationService extends Service
    public static IHandlerToken acquireHandlerToken()
    {
       return handler.aquireToken();
+   }
+   
+   
+   
+   private void handleStart()
+   {
+      if ( !notificationManager.isStarted() )
+      {
+         notificationManager.start();
+      }
+      else
+      {
+         notificationManager.recreateNotifications();
+      }
    }
    
    

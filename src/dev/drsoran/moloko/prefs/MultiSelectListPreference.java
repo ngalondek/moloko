@@ -23,14 +23,12 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.preference.Preference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.MolokoApp;
 
 
 /**
@@ -272,15 +270,15 @@ class MultiSelectListPreference extends DialogPreference
    protected Object onGetDefaultValue( TypedArray a, int index )
    {
       final Set< String > result = new HashSet< String >();
+      final String defaultValues = a.getString( index );
       
-      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
+      if ( defaultValues != null )
       {
-         final CharSequence[] defaultValues = a.getTextArray( index );
-         final int valueCount = defaultValues.length;
-         
-         for ( int i = 0; i < valueCount; i++ )
+         final String[] splittedValues = TextUtils.split( defaultValues, "," );
+         final int valuesCount = splittedValues.length;
+         for ( int i = 0; i < valuesCount; i++ )
          {
-            result.add( defaultValues[ i ].toString() );
+            result.add( splittedValues[ i ].toString() );
          }
       }
       

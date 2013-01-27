@@ -30,8 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import android.os.Bundle;
-
 
 public class ListenerList< T >
 {
@@ -64,31 +62,6 @@ public class ListenerList< T >
       boolean matches( int setting )
       {
          return ( ( mask & setting ) != 0 );
-      }
-      
-      
-      
-      void notifyEmpty()
-      {
-         if ( listener.get() != null )
-         {
-            try
-            {
-               method.invoke( listener.get() );
-            }
-            catch ( IllegalArgumentException e )
-            {
-               throw e;
-            }
-            catch ( IllegalAccessException e )
-            {
-               throw new RuntimeException( e );
-            }
-            catch ( InvocationTargetException e )
-            {
-               throw new RuntimeException( e );
-            }
-         }
       }
       
       
@@ -140,35 +113,6 @@ public class ListenerList< T >
             }
          }
       }
-      
-      
-      
-      boolean notifyIfMatches( int mask, Bundle oldValues )
-      {
-         boolean ok = !isDead();
-         
-         if ( ok && matches( mask ) )
-         {
-            try
-            {
-               method.invoke( listener.get(), mask, oldValues );
-            }
-            catch ( IllegalArgumentException e )
-            {
-               throw e;
-            }
-            catch ( IllegalAccessException e )
-            {
-               throw new RuntimeException( e );
-            }
-            catch ( InvocationTargetException e )
-            {
-               throw new RuntimeException( e );
-            }
-         }
-         
-         return ok;
-      }
    }
    
    // TODO: No check for double registration, no check for registration of same
@@ -209,31 +153,6 @@ public class ListenerList< T >
    public void clear()
    {
       listeners.clear();
-   }
-   
-   
-   
-   public void notifyListeners()
-   {
-      List< ListenerEntry > deadEntries = null;
-      
-      for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
-      {
-         final ListenerEntry entry = i.next();
-         
-         // Check if we have a dead entry
-         if ( entry.isDead() )
-         {
-            if ( deadEntries == null )
-               deadEntries = new LinkedList< ListenerEntry >();
-            deadEntries.add( entry );
-         }
-         else
-            entry.notifyEmpty();
-      }
-      
-      if ( deadEntries != null )
-         listeners.removeAll( deadEntries );
    }
    
    
@@ -286,37 +205,6 @@ public class ListenerList< T >
             else if ( entry.matches( mask ) )
             {
                entry.notify( mask, value );
-            }
-         }
-         
-         if ( deadEntries != null )
-         {
-            listeners.removeAll( deadEntries );
-         }
-      }
-   }
-   
-   
-   
-   public void notifyListeners( int mask, Bundle oldValues )
-   {
-      if ( mask > 0 )
-      {
-         List< ListenerEntry > deadEntries = null;
-         
-         for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
-         {
-            final ListenerEntry entry = i.next();
-            
-            // Check if we have a dead entry
-            if ( !entry.notifyIfMatches( mask, oldValues ) )
-            {
-               if ( deadEntries == null )
-               {
-                  deadEntries = new LinkedList< ListenerEntry >();
-               }
-               
-               deadEntries.add( entry );
             }
          }
          

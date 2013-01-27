@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (c) 2012 Ronny Röhricht
+  Copyright (c) 2013 Ronny Röhricht
 
   This file is part of Moloko.
 
@@ -38,6 +38,7 @@
    <string name="key_notify_permanent_tomorrow_lists">notify_permanent_tomorrow_lists</string>
    <string name="key_notify_permanent_overdue_lists">notify_permanent_overdue_lists</string>
    <string name="key_conn_use_https">conn_use_https</string>
+   <string name="key_acra_enable">acra.enable</string>
    
    <!-- Info dialog aboout multi selection has been shown. -->
    <string name="key_notified_taskslist_multiselection">notified_taskslist_multiselection</string>
@@ -45,5 +46,22 @@
    <!-- Deprecated since 0.17.0b -->
    <string name="key_deprecated_notify_permanent">notify_permanent</string>
    <string name="key_deprecated_notify_permanent_overdue">notify_permanent_overdue</string>
+   
+   <!-- Defaults -->
+   <string name="def_sync_inverval">@string/twentyfour_hours_ms</string>
+   <string name="def_default_list"></string>
+   <string name="def_default_list_sync_with_rtm">false</string>
+   <string name="def_startup_view">4</string>
+   <string name="def_task_sort">1</string>
+   <string name="def_sync_at_startup">false</string>
+   <string name="def_notify_due_tasks">true</string>
+   <string name="def_notify_due_tasks_before">@string/fifteen_min_ms</string> 
+   <string name="def_notify_due_tasks_vibrate">false</string>
+   <string name="def_notify_due_tasks_led">false</string>
+   <string name="def_notify_permanent_today_lists"></string>
+   <string name="def_notify_permanent_tomorrow_lists"></string>
+   <string name="def_notify_permanent_overdue_lists"></string>
+   <string name="def_conn_use_https">true</string>
+   <string name="def_acra_enable">true</string>
       
 </resources>

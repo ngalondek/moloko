@@ -30,7 +30,8 @@
       android:title="@string/moloko_prefs_rtm_defaultlist_title"
       moloko:summaryPattern="%s"
       android:key="@string/key_def_list_local"
-      moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
+      moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm"
+      android:defaultValue="@string/def_default_list" />
 
    <dev.drsoran.moloko.prefs.RtmSyncStatePreference
       android:title="@string/moloko_prefs_rtm_sync_title"

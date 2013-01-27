@@ -19,12 +19,12 @@
 
     <PreferenceCategory android:title="@string/moloko_prefs_notification_tasks_w_due_cat_title" >
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="@string/def_notify_due_tasks"
             android:key="@string/key_notify_due_tasks"
             android:title="@string/moloko_prefs_notification_tasks_w_due_title" />
 
         <dev.drsoran.moloko.prefs.AutoSummaryListPreference
-            android:defaultValue="@string/moloko_prefs_notification_tasks_w_due_before_default_value"
+            android:defaultValue="@string/def_notify_due_tasks_before"
             android:dependency="@string/key_notify_due_tasks"
             android:entries="@array/moloko_prefs_notification_task_due_before_entries"
             android:entryValues="@array/moloko_prefs_notification_task_due_before_values"
@@ -40,13 +40,13 @@
             android:title="@string/moloko_prefs_notification_tasks_w_due_ringtone_title" />
 
         <dev.drsoran.moloko.prefs.VibrateSwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="@string/def_notify_due_tasks_vibrate"
             android:dependency="@string/key_notify_due_tasks"
             android:key="@string/key_notify_due_tasks_vibrate"
             android:title="@string/moloko_prefs_notification_tasks_w_due_vibrate_title" />
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="@string/def_notify_due_tasks_led"
             android:dependency="@string/key_notify_due_tasks"
             android:key="@string/key_notify_due_tasks_led"
             android:title="@string/moloko_prefs_notification_tasks_w_due_led_title" />
@@ -57,17 +57,20 @@
         <dev.drsoran.moloko.prefs.PermNotificationListPreference
             android:key="@string/key_notify_permanent_today_lists"
             android:title="@string/moloko_prefs_notification_permanent_today"
-            moloko:summaryPattern="%s" />
+            moloko:summaryPattern="%s"
+            android:defaultValue="@string/def_notify_permanent_today_lists" />
         
         <dev.drsoran.moloko.prefs.PermNotificationListPreference
             android:key="@string/key_notify_permanent_tomorrow_lists"
             android:title="@string/moloko_prefs_notification_permanent_tomorrow"
-            moloko:summaryPattern="%s" />
+            moloko:summaryPattern="%s"
+            android:defaultValue="@string/def_notify_permanent_tomorrow_lists" />
         
         <dev.drsoran.moloko.prefs.PermNotificationListPreference
             android:key="@string/key_notify_permanent_overdue_lists"
             android:title="@string/moloko_prefs_notification_permanent_overdue"
-            moloko:summaryPattern="%s" />
+            moloko:summaryPattern="%s"
+            android:defaultValue="@string/def_notify_permanent_overdue_lists" />
     </PreferenceCategory>
 
 </PreferenceScreen>

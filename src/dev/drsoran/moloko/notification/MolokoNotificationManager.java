@@ -90,13 +90,17 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    public void onConfigurationChanged( Configuration newConfig )
    {
-      checkMolokoNotificationManagerIsStarted();
-      
       final Locale currentLocale = getCurrentNotificatonLocale();
       if ( !currentLocale.equals( lastUsedLocale ) )
       {
          lastUsedLocale = currentLocale;
-         recreateNotifications();
+         
+         // Only if the manager is started we recreate the notifications.
+         // Otherwise we simply store the changed locale.
+         if ( isStarted() )
+         {
+            recreateNotifications();
+         }
       }
    }
    

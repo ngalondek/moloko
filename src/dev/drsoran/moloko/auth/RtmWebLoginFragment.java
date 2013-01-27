@@ -393,7 +393,13 @@ public class RtmWebLoginFragment extends AuthFragment implements
       public void onPageStarted( WebView view, String url, Bitmap favicon )
       {
          super.onPageStarted( view, url, favicon );
-         getSherlockActivity().setSupportProgressBarIndeterminateVisibility( true );
+         
+         // This may be null if the callback from the WebView comes while
+         // detaching the fragment.
+         if ( getSherlockActivity() != null )
+         {
+            getSherlockActivity().setSupportProgressBarIndeterminateVisibility( true );
+         }
       }
       
       
@@ -402,7 +408,13 @@ public class RtmWebLoginFragment extends AuthFragment implements
       public void onPageFinished( WebView view, String url )
       {
          super.onPageFinished( view, url );
-         getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
+         
+         // This may be null if the callback from the WebView comes while
+         // detaching the fragment.
+         if ( getSherlockActivity() != null )
+         {
+            getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
+         }
       }
       
       

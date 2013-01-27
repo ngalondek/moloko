@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2012 Ronny Röhricht This file is part of Moloko.
+      Copyright (c) 2013 Ronny Röhricht This file is part of Moloko.
       Moloko is free software: you can redistribute it and/or modify it
       under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
@@ -19,11 +19,11 @@
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko">
 
    <CheckBoxPreference
-      android:key="acra.enable"
+      android:key="@string/key_acra_enable"
       android:title="@string/moloko_prefs_acra_title"
       android:summaryOn="@string/moloko_prefs_acra_summary_on"
       android:summaryOff="@string/moloko_prefs_acra_summary_off"
-      android:defaultValue="true" />
+      android:defaultValue="@string/def_acra_enable" />
 
    <dev.drsoran.moloko.prefs.SendLogPreference
       android:title="@string/moloko_prefs_send_log_text"

@@ -33,7 +33,7 @@ import com.mdt.rtm.data.RtmLists;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
-import dev.drsoran.moloko.prefs.DefaultListPreference.EntriesAndValues;
+import dev.drsoran.moloko.util.ListEntriesAndValues;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Lists;
 
@@ -55,9 +55,9 @@ class RtmListsEntriesAndValuesLoader
    
    
    
-   public EntriesAndValues createEntriesAndValuesSync( int flags )
+   public ListEntriesAndValues createEntriesAndValuesSync( int flags )
    {
-      EntriesAndValues entriesAndValues = null;
+      ListEntriesAndValues entriesAndValues = null;
       
       // get all lists
       final ContentProviderClient client = context.getContentResolver()
@@ -80,7 +80,7 @@ class RtmListsEntriesAndValuesLoader
                                                        includeNoneElement );
             
             final int startInsertIndex = includeNoneElement
-                                                           ? EntriesAndValues.NONE_IDX + 1
+                                                           ? ListEntriesAndValues.NONE_IDX + 1
                                                            : 0;
             for ( int i = 0, cnt = plainLists.size(); i < cnt; ++i )
             {
@@ -121,7 +121,7 @@ class RtmListsEntriesAndValuesLoader
    
    
    
-   private EntriesAndValues createEntriesAndValues( int elementCount,
+   private ListEntriesAndValues createEntriesAndValues( int elementCount,
                                                     boolean includeNoneElement )
    {
       int finalElementCount = includeNoneElement ? elementCount + 1
@@ -132,12 +132,12 @@ class RtmListsEntriesAndValuesLoader
       
       if ( includeNoneElement )
       {
-         entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
+         entries[ ListEntriesAndValues.NONE_IDX ] = context.getResources()
                                                        .getString( R.string.phr_none_f );
-         entryValues[ EntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
+         entryValues[ ListEntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
       }
       
-      final EntriesAndValues entriesAndValues = new EntriesAndValues();
+      final ListEntriesAndValues entriesAndValues = new ListEntriesAndValues();
       entriesAndValues.entries = entries;
       entriesAndValues.values = entryValues;
       

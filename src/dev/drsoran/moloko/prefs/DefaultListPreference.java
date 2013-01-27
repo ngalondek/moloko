@@ -25,26 +25,16 @@ package dev.drsoran.moloko.prefs;
 import android.content.Context;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.util.ListEntriesAndValues;
 
 
 class DefaultListPreference extends SyncableListPreference
 {
-   public final static class EntriesAndValues
-   {
-      public final static int NONE_IDX = 0;
-      
-      public CharSequence[] entries;
-      
-      public CharSequence[] values;
-   }
-   
-   
-   
    public DefaultListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       
-      final EntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync( RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
+      final ListEntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync( RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
          | RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
       
       if ( entriesAndValues != null )

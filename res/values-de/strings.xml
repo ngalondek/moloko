@@ -421,6 +421,7 @@
 	   <!-- Notification settings -->
 	   <string name="moloko_prefs_notification_title">Benachrichtigungen</string>	   
 	   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Aufgaben mit Fälligkeitszeit</string>
+	   <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigungen</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_reminder_title">Erinnerung</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Benachrichtigungston</string>
 	   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrieren</string>

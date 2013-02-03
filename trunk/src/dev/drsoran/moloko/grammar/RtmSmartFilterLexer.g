@@ -259,26 +259,61 @@ options
 
    private void differsTimeParam( String column, String param, boolean before )
    {
-      final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotify( param ) );
-
+      final String unquotParam = unquotify( param );
+      final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotParam );
+      
       if ( cal != null )
       {
-	      result.append( column );
-	      
-   	   // Check if we have 'NEVER'
-      	if ( !cal.hasDate() )
-      	{      	   
+         result.append( column );
+         
+         // Check if we have 'NEVER'
+         if ( !cal.hasDate() )
+         {
             result.append( " IS NOT NULL" );
-      	}
+         }
          else
          {
             result.append( ( before ) ? " < " : " > " );
             result.append( cal.getTimeInMillis() );
          }
       }
+      
+      // If simple time parsing failed, try parse date within
       else
-         // Parser error
-         error = true;
+      {
+         final ParseDateWithinReturn dateWithinReturn = RtmDateTimeParsing.parseDateWithin( unquotParam,
+                                                                                            before );
+         
+         result.append( column );
+         
+         if ( dateWithinReturn != null )
+         {
+            // Check if we have 'NEVER'
+            if ( !dateWithinReturn.endEpoch.hasDate() )
+            {
+               result.append( " IS NOT NULL" );
+            }
+            
+            else
+            {
+               if ( before )
+               {
+                  result.append( " < " );
+               }
+               else
+               {
+                  result.append( " > " );
+               }
+               
+               result.append( dateWithinReturn.endEpoch.getTimeInMillis() );
+            }
+         }
+         else
+         {
+            // Parser error
+            error = true;
+         }
+      }
    }
 
 

@@ -16,12 +16,13 @@
       android:selectAllOnFocus="true" />
 
    <dev.drsoran.moloko.widgets.ClearableEditText
-      android:id="@+id/add_rename_list_smart_filter"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_margin="5dip"
-      android:hint="@string/dlg_add_rename_list_smart_filter_hint"
-      android:inputType="textNoSuggestions"
-      android:imeOptions="actionPrevious"
-      android:selectAllOnFocus="true" />
+       android:id="@+id/add_rename_list_smart_filter"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:layout_margin="5dip"
+       android:hint="@string/dlg_add_rename_list_smart_filter_hint"
+       android:imeOptions="actionPrevious"
+       android:inputType="textMultiLine|textNoSuggestions"
+       android:selectAllOnFocus="true" />
+
 </LinearLayout>

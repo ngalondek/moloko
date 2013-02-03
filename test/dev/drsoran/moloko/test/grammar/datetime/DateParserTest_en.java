@@ -527,6 +527,28 @@ public class DateParserTest_en extends DateParserTestBase
    
    
    @Test
+   public void date_within_day_of_now()
+   {
+      final MolokoCalendar end = MolokoCalendar.getInstance();
+      end.add( Calendar.DAY_OF_YEAR, 1 );
+      
+      final MolokoCalendar start = MolokoCalendar.getInstance();
+      
+      parseDateWithin( "1 day of now",
+                       false,
+                       start.get( Calendar.YEAR ),
+                       start.get( Calendar.MONTH ),
+                       start.get( Calendar.WEEK_OF_YEAR ),
+                       start.get( Calendar.DAY_OF_YEAR ),
+                       end.get( Calendar.YEAR ),
+                       end.get( Calendar.MONTH ),
+                       end.get( Calendar.WEEK_OF_YEAR ),
+                       end.get( Calendar.DAY_OF_YEAR ) );
+   }
+   
+   
+   
+   @Test
    public void date_within_day_of_tomorrow()
    {
       final MolokoCalendar end = DateTimeTestHelper.getDateParserCalendar();

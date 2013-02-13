@@ -332,6 +332,7 @@ public class RtmSmartFilterLexer extends Lexer
             result.append( " == " );
             result.append( cal.getTimeInMillis() );
          }
+         
          else
          {
             result.append( " >= " );

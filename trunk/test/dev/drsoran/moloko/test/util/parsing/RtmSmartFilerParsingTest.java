@@ -533,10 +533,10 @@ public class RtmSmartFilerParsingTest extends MolokoTestCase
    
    
    
-   @Test
    /**
     * https://code.google.com/p/moloko/issues/detail?id=80
     */
+   @Test
    public void sleeperTags() throws ParseException
    {
       evaluateFilter( "(tag:zzz AND dueAfter:now)"

@@ -47,7 +47,7 @@ public final class RtmDateTimeParsing
    private final static String TAG = "Moloko."
       + RtmDateTimeParsing.class.getSimpleName();
    
-   private final static Pattern TIME_PREFIX_PATTERN = Pattern.compile( "^\\s*\\d+(:\\d){0,2}.*[,|\\s]" );
+   private final static Pattern TIME_PREFIX_PATTERN = Pattern.compile( "^\\s*\\d+(:\\d){0,2}.*," );
    
    private static IDateParser dateParser;
    

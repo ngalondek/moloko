@@ -1,4 +1,4 @@
-// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g 2013-01-13 13:41:15
+// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g 2013-02-15 18:54:18
 
 package dev.drsoran.moloko.grammar.datetime;
 
@@ -122,7 +122,7 @@ public class DateLexer extends Lexer
    
    public String getGrammarFileName()
    {
-      return "C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g";
+      return "C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g";
    }
    
    
@@ -134,9 +134,9 @@ public class DateLexer extends Lexer
       {
          int _type = A;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:11:
          // ( 'a' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:420:13:
          // 'a'
          {
             match( 'a' );
@@ -163,9 +163,9 @@ public class DateLexer extends Lexer
       {
          int _type = OF;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:11:
          // ( 'of' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:422:13:
          // 'of'
          {
             match( "of" );
@@ -192,9 +192,9 @@ public class DateLexer extends Lexer
       {
          int _type = ON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:11:
          // ( 'on' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:424:13:
          // 'on'
          {
             match( "on" );
@@ -221,9 +221,9 @@ public class DateLexer extends Lexer
       {
          int _type = IN;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:11:
          // ( 'in' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:426:13:
          // 'in'
          {
             match( "in" );
@@ -250,9 +250,9 @@ public class DateLexer extends Lexer
       {
          int _type = AND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:11:
          // ( 'and' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:428:13:
          // 'and'
          {
             match( "and" );
@@ -279,9 +279,9 @@ public class DateLexer extends Lexer
       {
          int _type = END;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:11:
          // ( 'end' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:430:13:
          // 'end'
          {
             match( "end" );
@@ -308,9 +308,9 @@ public class DateLexer extends Lexer
       {
          int _type = THE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:11:
          // ( 'the' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:432:13:
          // 'the'
          {
             match( "the" );
@@ -337,9 +337,9 @@ public class DateLexer extends Lexer
       {
          int _type = NOW;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:11:
          // ( 'now' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:434:13:
          // 'now'
          {
             match( "now" );
@@ -366,7 +366,7 @@ public class DateLexer extends Lexer
       {
          int _type = TONIGHT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:11:
          // ( 'tonight' | 'ton' )
          int alt1 = 2;
          int LA1_0 = input.LA( 1 );
@@ -427,7 +427,7 @@ public class DateLexer extends Lexer
          switch ( alt1 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:13:
             // 'tonight'
             {
                match( "tonight" );
@@ -435,7 +435,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:25:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:436:25:
             // 'ton'
             {
                match( "ton" );
@@ -464,9 +464,9 @@ public class DateLexer extends Lexer
       {
          int _type = NEVER;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:11:
          // ( 'never' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:438:13:
          // 'never'
          {
             match( "never" );
@@ -493,7 +493,7 @@ public class DateLexer extends Lexer
       {
          int _type = TODAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:11:
          // ( 'today' | 'tod' )
          int alt2 = 2;
          int LA2_0 = input.LA( 1 );
@@ -554,7 +554,7 @@ public class DateLexer extends Lexer
          switch ( alt2 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:13:
             // 'today'
             {
                match( "today" );
@@ -562,7 +562,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:440:23:
             // 'tod'
             {
                match( "tod" );
@@ -591,9 +591,9 @@ public class DateLexer extends Lexer
       {
          int _type = TOMORROW;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:11:
-         // ( 'tomorrow' | 'tom' | 'tmr' )
-         int alt3 = 3;
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:11:
+         // ( 'tom' | 'tmr' | 'tomorrow' | 'tommorow' )
+         int alt3 = 4;
          int LA3_0 = input.LA( 1 );
          
          if ( ( LA3_0 == 't' ) )
@@ -606,16 +606,22 @@ public class DateLexer extends Lexer
                
                if ( ( LA3_2 == 'm' ) )
                {
-                  int LA3_4 = input.LA( 4 );
+                  switch ( input.LA( 4 ) )
+                  {
+                     case 'o':
+                     {
+                        alt3 = 3;
+                     }
+                        break;
+                     case 'm':
+                     {
+                        alt3 = 4;
+                     }
+                        break;
+                     default :
+                        alt3 = 1;
+                  }
                   
-                  if ( ( LA3_4 == 'o' ) )
-                  {
-                     alt3 = 1;
-                  }
-                  else
-                  {
-                     alt3 = 2;
-                  }
                }
                else
                {
@@ -630,7 +636,7 @@ public class DateLexer extends Lexer
             }
             else if ( ( LA3_1 == 'm' ) )
             {
-               alt3 = 3;
+               alt3 = 2;
             }
             else
             {
@@ -656,26 +662,34 @@ public class DateLexer extends Lexer
          switch ( alt3 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:13:
-            // 'tomorrow'
-            {
-               match( "tomorrow" );
-               
-            }
-               break;
-            case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:13:
             // 'tom'
             {
                match( "tom" );
                
             }
                break;
-            case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:34:
+            case 2:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:21:
             // 'tmr'
             {
                match( "tmr" );
+               
+            }
+               break;
+            case 3:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:29:
+            // 'tomorrow'
+            {
+               match( "tomorrow" );
+               
+            }
+               break;
+            case 4:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:442:42:
+            // 'tommorow'
+            {
+               match( "tommorow" );
                
             }
                break;
@@ -701,9 +715,9 @@ public class DateLexer extends Lexer
       {
          int _type = YESTERDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:11:
          // ( 'yesterday' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:444:13:
          // 'yesterday'
          {
             match( "yesterday" );
@@ -730,9 +744,9 @@ public class DateLexer extends Lexer
       {
          int _type = NEXT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:11:
          // ( 'next' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:446:13:
          // 'next'
          {
             match( "next" );
@@ -759,7 +773,7 @@ public class DateLexer extends Lexer
       {
          int _type = STs;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:11:
          // ( 'st' | 'th' | 'rd' | 'nd' )
          int alt4 = 4;
          switch ( input.LA( 1 ) )
@@ -797,7 +811,7 @@ public class DateLexer extends Lexer
          switch ( alt4 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:13:
             // 'st'
             {
                match( "st" );
@@ -805,7 +819,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:20:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:20:
             // 'th'
             {
                match( "th" );
@@ -813,7 +827,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:27:
             // 'rd'
             {
                match( "rd" );
@@ -821,7 +835,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:448:34:
             // 'nd'
             {
                match( "nd" );
@@ -850,7 +864,7 @@ public class DateLexer extends Lexer
       {
          int _type = YEARS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:11:
          // ( 'years' | 'year' | 'yrs' | 'yr' )
          int alt5 = 4;
          int LA5_0 = input.LA( 1 );
@@ -939,7 +953,7 @@ public class DateLexer extends Lexer
          switch ( alt5 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:13:
             // 'years'
             {
                match( "years" );
@@ -947,7 +961,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:23:
             // 'year'
             {
                match( "year" );
@@ -955,7 +969,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:32:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:32:
             // 'yrs'
             {
                match( "yrs" );
@@ -963,7 +977,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:450:40:
             // 'yr'
             {
                match( "yr" );
@@ -992,7 +1006,7 @@ public class DateLexer extends Lexer
       {
          int _type = MONTHS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:11:
          // ( 'months' | 'month' | 'mons' | 'mon' )
          int alt6 = 4;
          int LA6_0 = input.LA( 1 );
@@ -1083,7 +1097,7 @@ public class DateLexer extends Lexer
          switch ( alt6 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:13:
             // 'months'
             {
                match( "months" );
@@ -1091,7 +1105,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:24:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:24:
             // 'month'
             {
                match( "month" );
@@ -1099,7 +1113,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:34:
             // 'mons'
             {
                match( "mons" );
@@ -1107,7 +1121,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:43:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:452:43:
             // 'mon'
             {
                match( "mon" );
@@ -1136,7 +1150,7 @@ public class DateLexer extends Lexer
       {
          int _type = WEEKS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:11:
          // ( 'weeks' | 'week' | 'wks' | 'wk' )
          int alt7 = 4;
          int LA7_0 = input.LA( 1 );
@@ -1225,7 +1239,7 @@ public class DateLexer extends Lexer
          switch ( alt7 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:13:
             // 'weeks'
             {
                match( "weeks" );
@@ -1233,7 +1247,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:23:
             // 'week'
             {
                match( "week" );
@@ -1241,7 +1255,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:32:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:32:
             // 'wks'
             {
                match( "wks" );
@@ -1249,7 +1263,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:454:40:
             // 'wk'
             {
                match( "wk" );
@@ -1278,7 +1292,7 @@ public class DateLexer extends Lexer
       {
          int _type = DAYS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:11:
          // ( 'days' | 'day' | 'd' )
          int alt8 = 3;
          int LA8_0 = input.LA( 1 );
@@ -1333,7 +1347,7 @@ public class DateLexer extends Lexer
          switch ( alt8 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:13:
             // 'days'
             {
                match( "days" );
@@ -1341,7 +1355,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:22:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:22:
             // 'day'
             {
                match( "day" );
@@ -1349,7 +1363,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:30:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:456:30:
             // 'd'
             {
                match( 'd' );
@@ -1378,7 +1392,7 @@ public class DateLexer extends Lexer
       {
          int _type = MONTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:11:
          // ( 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' |
          // 'july' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' |
          // 'december' | 'dec' )
@@ -1832,7 +1846,7 @@ public class DateLexer extends Lexer
          switch ( alt9 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:13:
             // 'january'
             {
                match( "january" );
@@ -1840,7 +1854,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:27:
             // 'jan'
             {
                match( "jan" );
@@ -1848,7 +1862,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:36:
             // 'february'
             {
                match( "february" );
@@ -1856,7 +1870,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:49:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:49:
             // 'feb'
             {
                match( "feb" );
@@ -1864,7 +1878,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 5:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:61:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:61:
             // 'march'
             {
                match( "march" );
@@ -1872,7 +1886,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 6:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:71:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:71:
             // 'mar'
             {
                match( "mar" );
@@ -1880,7 +1894,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 7:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:84:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:84:
             // 'april'
             {
                match( "april" );
@@ -1888,7 +1902,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 8:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:94:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:458:94:
             // 'apr'
             {
                match( "apr" );
@@ -1896,7 +1910,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 9:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:13:
             // 'may'
             {
                match( "may" );
@@ -1904,7 +1918,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 10:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:27:
             // 'june'
             {
                match( "june" );
@@ -1912,7 +1926,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 11:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:36:
             // 'jun'
             {
                match( "jun" );
@@ -1920,7 +1934,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 12:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:49:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:49:
             // 'july'
             {
                match( "july" );
@@ -1928,7 +1942,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 13:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:61:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:61:
             // 'jul'
             {
                match( "jul" );
@@ -1936,7 +1950,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 14:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:71:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:71:
             // 'august'
             {
                match( "august" );
@@ -1944,7 +1958,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 15:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:84:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:459:84:
             // 'aug'
             {
                match( "aug" );
@@ -1952,7 +1966,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 16:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:13:
             // 'september'
             {
                match( "september" );
@@ -1960,7 +1974,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 17:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:27:
             // 'sept'
             {
                match( "sept" );
@@ -1968,7 +1982,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 18:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:36:
             // 'sep'
             {
                match( "sep" );
@@ -1976,7 +1990,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 19:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:49:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:49:
             // 'october'
             {
                match( "october" );
@@ -1984,7 +1998,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 20:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:61:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:61:
             // 'oct'
             {
                match( "oct" );
@@ -1992,7 +2006,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 21:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:71:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:71:
             // 'november'
             {
                match( "november" );
@@ -2000,7 +2014,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 22:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:84:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:460:84:
             // 'nov'
             {
                match( "nov" );
@@ -2008,7 +2022,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 23:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:13:
             // 'december'
             {
                match( "december" );
@@ -2016,7 +2030,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 24:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:27:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:461:27:
             // 'dec'
             {
                match( "dec" );
@@ -2045,7 +2059,7 @@ public class DateLexer extends Lexer
       {
          int _type = WEEKDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:11:
          // ( 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' |
          // 'saturday' | 'sat' | 'sunday' | 'sun' )
          int alt10 = 14;
@@ -2340,7 +2354,7 @@ public class DateLexer extends Lexer
          switch ( alt10 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:13:
             // 'monday'
             {
                match( "monday" );
@@ -2348,7 +2362,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:26:
             // 'mon'
             {
                match( "mon" );
@@ -2356,7 +2370,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:34:
             // 'tuesday'
             {
                match( "tuesday" );
@@ -2364,7 +2378,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:46:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:46:
             // 'tue'
             {
                match( "tue" );
@@ -2372,7 +2386,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 5:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:54:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:54:
             // 'wednesday'
             {
                match( "wednesday" );
@@ -2380,7 +2394,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 6:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:68:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:463:68:
             // 'wed'
             {
                match( "wed" );
@@ -2388,7 +2402,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 7:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:13:
             // 'thursday'
             {
                match( "thursday" );
@@ -2396,7 +2410,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 8:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:26:
             // 'thu'
             {
                match( "thu" );
@@ -2404,7 +2418,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 9:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:34:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:34:
             // 'friday'
             {
                match( "friday" );
@@ -2412,7 +2426,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 10:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:46:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:46:
             // 'fri'
             {
                match( "fri" );
@@ -2420,7 +2434,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 11:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:54:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:54:
             // 'saturday'
             {
                match( "saturday" );
@@ -2428,7 +2442,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 12:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:68:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:464:68:
             // 'sat'
             {
                match( "sat" );
@@ -2436,7 +2450,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 13:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:13:
             // 'sunday'
             {
                match( "sunday" );
@@ -2444,7 +2458,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 14:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:26:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:465:26:
             // 'sun'
             {
                match( "sun" );
@@ -2473,7 +2487,7 @@ public class DateLexer extends Lexer
       {
          int _type = NUM_STR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:11:
          // ( 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' )
          int alt11 = 10;
          switch ( input.LA( 1 ) )
@@ -2585,7 +2599,7 @@ public class DateLexer extends Lexer
          switch ( alt11 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:13:
             // 'one'
             {
                match( "one" );
@@ -2593,7 +2607,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:21:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:21:
             // 'two'
             {
                match( "two" );
@@ -2601,7 +2615,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:29:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:29:
             // 'three'
             {
                match( "three" );
@@ -2609,7 +2623,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 4:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:39:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:39:
             // 'four'
             {
                match( "four" );
@@ -2617,7 +2631,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 5:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:48:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:48:
             // 'five'
             {
                match( "five" );
@@ -2625,7 +2639,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 6:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:57:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:57:
             // 'six'
             {
                match( "six" );
@@ -2633,7 +2647,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 7:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:65:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:65:
             // 'seven'
             {
                match( "seven" );
@@ -2641,7 +2655,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 8:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:75:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:75:
             // 'eight'
             {
                match( "eight" );
@@ -2649,7 +2663,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 9:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:85:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:85:
             // 'nine'
             {
                match( "nine" );
@@ -2657,7 +2671,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 10:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:94:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:467:94:
             // 'ten'
             {
                match( "ten" );
@@ -2686,9 +2700,9 @@ public class DateLexer extends Lexer
       {
          int _type = DATE_SEP;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:469:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:469:11:
          // ( '/' | '\\u5E74' | '\\u6708' | '\\u65E5' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:
          {
             if ( input.LA( 1 ) == '/' || input.LA( 1 ) == '\u5E74'
                || input.LA( 1 ) == '\u65E5' || input.LA( 1 ) == '\u6708' )
@@ -2725,9 +2739,9 @@ public class DateLexer extends Lexer
       {
          int _type = DOT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:11:
          // ( '.' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:471:13:
          // '.'
          {
             match( '.' );
@@ -2754,9 +2768,9 @@ public class DateLexer extends Lexer
       {
          int _type = COLON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:11:
          // ( ':' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:473:13:
          // ':'
          {
             match( ':' );
@@ -2783,9 +2797,9 @@ public class DateLexer extends Lexer
       {
          int _type = MINUS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:11:
          // ( '-' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:475:13:
          // '-'
          {
             match( '-' );
@@ -2812,9 +2826,9 @@ public class DateLexer extends Lexer
       {
          int _type = MINUS_A;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:11:
          // ( '-a' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:477:13:
          // '-a'
          {
             match( "-a" );
@@ -2841,9 +2855,9 @@ public class DateLexer extends Lexer
       {
          int _type = COMMA;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:11:
          // ( ',' )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:479:13:
          // ','
          {
             match( ',' );
@@ -2870,7 +2884,7 @@ public class DateLexer extends Lexer
       {
          int _type = DATE_TIME_SEPARATOR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:21:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:21:
          // ( '@' | 'at' | COMMA )
          int alt12 = 3;
          switch ( input.LA( 1 ) )
@@ -2903,7 +2917,7 @@ public class DateLexer extends Lexer
          switch ( alt12 )
          {
             case 1:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:23:
             // '@'
             {
                match( '@' );
@@ -2911,7 +2925,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 2:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:29:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:29:
             // 'at'
             {
                match( "at" );
@@ -2919,7 +2933,7 @@ public class DateLexer extends Lexer
             }
                break;
             case 3:
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:481:36:
             // COMMA
             {
                mCOMMA();
@@ -2948,12 +2962,12 @@ public class DateLexer extends Lexer
       {
          int _type = INT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:11:
          // ( ( '0' .. '9' )+ )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
          // ( '0' .. '9' )+
          {
-            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:483:13:
             // ( '0' .. '9' )+
             int cnt13 = 0;
             loop13: do
@@ -2969,7 +2983,7 @@ public class DateLexer extends Lexer
                switch ( alt13 )
                {
                   case 1:
-                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:
                   {
                      if ( ( input.LA( 1 ) >= '0' && input.LA( 1 ) <= '9' ) )
                      {
@@ -3018,9 +3032,9 @@ public class DateLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:11:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:11:
          // ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:13:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:485:13:
          // ( ' ' | '\\t' | '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
@@ -3055,7 +3069,7 @@ public class DateLexer extends Lexer
    
    public void mTokens() throws RecognitionException
    {
-      // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:8:
+      // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:8:
       // ( A | OF | ON | IN | AND | END | THE | NOW | TONIGHT | NEVER | TODAY | TOMORROW | YESTERDAY | NEXT | STs |
       // YEARS | MONTHS | WEEKS | DAYS | MONTH | WEEKDAY | NUM_STR | DATE_SEP | DOT | COLON | MINUS | MINUS_A | COMMA |
       // DATE_TIME_SEPARATOR | INT | WS )
@@ -3642,7 +3656,7 @@ public class DateLexer extends Lexer
       switch ( alt14 )
       {
          case 1:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:10:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:10:
          // A
          {
             mA();
@@ -3650,7 +3664,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 2:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:12:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:12:
          // OF
          {
             mOF();
@@ -3658,7 +3672,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 3:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:15:
          // ON
          {
             mON();
@@ -3666,7 +3680,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 4:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:18:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:18:
          // IN
          {
             mIN();
@@ -3674,7 +3688,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 5:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:21:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:21:
          // AND
          {
             mAND();
@@ -3682,7 +3696,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 6:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:25:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:25:
          // END
          {
             mEND();
@@ -3690,7 +3704,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 7:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:29:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:29:
          // THE
          {
             mTHE();
@@ -3698,7 +3712,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 8:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:33:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:33:
          // NOW
          {
             mNOW();
@@ -3706,7 +3720,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 9:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:37:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:37:
          // TONIGHT
          {
             mTONIGHT();
@@ -3714,7 +3728,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 10:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:45:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:45:
          // NEVER
          {
             mNEVER();
@@ -3722,7 +3736,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 11:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:51:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:51:
          // TODAY
          {
             mTODAY();
@@ -3730,7 +3744,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 12:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:57:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:57:
          // TOMORROW
          {
             mTOMORROW();
@@ -3738,7 +3752,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 13:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:66:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:66:
          // YESTERDAY
          {
             mYESTERDAY();
@@ -3746,7 +3760,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 14:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:76:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:76:
          // NEXT
          {
             mNEXT();
@@ -3754,7 +3768,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 15:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:81:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:81:
          // STs
          {
             mSTs();
@@ -3762,7 +3776,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 16:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:85:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:85:
          // YEARS
          {
             mYEARS();
@@ -3770,7 +3784,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 17:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:91:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:91:
          // MONTHS
          {
             mMONTHS();
@@ -3778,7 +3792,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 18:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:98:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:98:
          // WEEKS
          {
             mWEEKS();
@@ -3786,7 +3800,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 19:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:104:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:104:
          // DAYS
          {
             mDAYS();
@@ -3794,7 +3808,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 20:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:109:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:109:
          // MONTH
          {
             mMONTH();
@@ -3802,7 +3816,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 21:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:115:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:115:
          // WEEKDAY
          {
             mWEEKDAY();
@@ -3810,7 +3824,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 22:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:123:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:123:
          // NUM_STR
          {
             mNUM_STR();
@@ -3818,7 +3832,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 23:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:131:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:131:
          // DATE_SEP
          {
             mDATE_SEP();
@@ -3826,7 +3840,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 24:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:140:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:140:
          // DOT
          {
             mDOT();
@@ -3834,7 +3848,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 25:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:144:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:144:
          // COLON
          {
             mCOLON();
@@ -3842,7 +3856,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 26:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:150:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:150:
          // MINUS
          {
             mMINUS();
@@ -3850,7 +3864,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 27:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:156:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:156:
          // MINUS_A
          {
             mMINUS_A();
@@ -3858,7 +3872,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 28:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:164:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:164:
          // COMMA
          {
             mCOMMA();
@@ -3866,7 +3880,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 29:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:170:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:170:
          // DATE_TIME_SEPARATOR
          {
             mDATE_TIME_SEPARATOR();
@@ -3874,7 +3888,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 30:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:190:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:190:
          // INT
          {
             mINT();
@@ -3882,7 +3896,7 @@ public class DateLexer extends Lexer
          }
             break;
          case 31:
-         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:194:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_trunk\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:1:194:
          // WS
          {
             mWS();

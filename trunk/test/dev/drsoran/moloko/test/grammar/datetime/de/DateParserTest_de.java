@@ -183,6 +183,20 @@ public class DateParserTest_de extends DateParserTestBase
    
    
    @Test
+   public void date_in_1_week()
+   {
+      final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+      cal.add( Calendar.WEEK_OF_YEAR, 1 );
+      
+      parseDate( "1 woche",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ) );
+   }
+   
+   
+   
+   @Test
    public void date_in_year_month_at_time1()
    {
       final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();

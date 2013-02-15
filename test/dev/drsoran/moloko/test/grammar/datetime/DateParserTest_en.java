@@ -145,6 +145,22 @@ public class DateParserTest_en extends DateParserTestBase
    
    
    @Test
+   public void date_tommorow_at_time()
+   {
+      final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+      cal.add( Calendar.DAY_OF_MONTH, 1 );
+      parseDate( "tommorow@12",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ),
+                 12,
+                 0,
+                 0 );
+   }
+   
+   
+   
+   @Test
    public void date_tomorrow_short_at_time()
    {
       final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
@@ -187,6 +203,20 @@ public class DateParserTest_en extends DateParserTestBase
                  7,
                  0,
                  0 );
+   }
+   
+   
+   
+   @Test
+   public void date_in_1_week()
+   {
+      final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+      cal.add( Calendar.WEEK_OF_YEAR, 1 );
+      
+      parseDate( "1 week",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ) );
    }
    
    

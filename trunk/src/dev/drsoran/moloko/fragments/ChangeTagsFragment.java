@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -48,6 +48,7 @@ import dev.drsoran.moloko.loaders.TagsLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.UIUtils.AfterTextChangedWatcher;
 import dev.drsoran.rtm.Tag;
 
 
@@ -76,6 +77,10 @@ public class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
    private MultiAutoCompleteTextView editView;
    
    private ListView tagsList;
+   
+   private OnItemClickListener tagsListItemClickedListener;
+   
+   private AfterTextChangedWatcher tagsEditTextChangedListener;
    
    
    
@@ -107,44 +112,42 @@ public class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
    
    
    @Override
+   public void onStart()
+   {
+      super.onStart();
+      registerListeners();
+   }
+   
+   
+   
+   @Override
+   public void onStop()
+   {
+      unregisterListeners();
+      super.onStop();
+   }
+   
+   
+   
+   @Override
    protected View createFragmentView( LayoutInflater inflater,
                                       ViewGroup container,
                                       Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.change_tags_fragment,
                                                   null );
+      createContent( fragmentView );
+      createListeners();
+      
       return fragmentView;
    }
    
    
    
    @Override
-   public void initContent( ViewGroup container )
+   public void initContentAfterDataLoaded( ViewGroup container )
    {
-      tagsList = (ListView) container.findViewById( android.R.id.list );
-      tagsList.setOnItemClickListener( new OnItemClickListener()
-      {
-         @Override
-         public void onItemClick( AdapterView< ? > parent,
-                                  View view,
-                                  int pos,
-                                  long id )
-         {
-            onListItemClick( tagsList, view, pos, id );
-         }
-      } );
-      
-      editView = (MultiAutoCompleteTextView) container.findViewById( R.id.change_tags_fragment_edit );
       editView.setTokenizer( tokenizer );
-      editView.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
-      {
-         @Override
-         public void afterTextChanged( Editable s )
-         {
-            updateTagList();
-         }
-      } );
-      
       editView.setText( TextUtils.join( ", ", chosenTags ) );
       editView.requestFocus();
    }
@@ -175,6 +178,56 @@ public class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
          allTagsString.add( tag.getTag() );
       
       return allTagsString;
+   }
+   
+   
+   
+   private void createContent( View container )
+   {
+      tagsList = (ListView) container.findViewById( android.R.id.list );
+      editView = (MultiAutoCompleteTextView) container.findViewById( R.id.change_tags_fragment_edit );
+   }
+   
+   
+   
+   private void createListeners()
+   {
+      tagsListItemClickedListener = new OnItemClickListener()
+      {
+         @Override
+         public void onItemClick( AdapterView< ? > parent,
+                                  View view,
+                                  int pos,
+                                  long id )
+         {
+            onListItemClick( tagsList, view, pos, id );
+         }
+      };
+      
+      tagsEditTextChangedListener = new UIUtils.AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            updateTagList();
+         }
+      };
+   }
+   
+   
+   
+   private void registerListeners()
+   {
+      tagsList.setOnItemClickListener( tagsListItemClickedListener );
+      editView.addTextChangedListener( tagsEditTextChangedListener );
+   }
+   
+   
+   
+   private void unregisterListeners()
+   {
+      tagsList.setOnItemClickListener( null );
+      editView.removeTextChangedListener( tagsEditTextChangedListener );
    }
    
    

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -46,7 +46,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
       
       
       
-      void initContent( ViewGroup content );
+      void initContentAfterDataLoaded( ViewGroup content );
       
       
       
@@ -121,14 +121,6 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
-   public void onSettingsChanged( int which )
-   {
-      if ( isLoaderDataFound() && support.getContentView() != null )
-         support.initContent( support.getContentView() );
-   }
-   
-   
-   
    @Override
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
@@ -190,7 +182,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
          final ViewGroup content = support.getContentView();
          if ( content != null )
          {
-            support.initContent( content );
+            support.initContentAfterDataLoaded( content );
             content.setVisibility( View.VISIBLE );
          }
       }

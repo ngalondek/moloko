@@ -439,7 +439,7 @@ NEVER     : 'never';
 
 TODAY     : 'today' | 'tod';
 
-TOMORROW  : 'tomorrow' | 'tom' | 'tmr';
+TOMORROW  : 'tom' | 'tmr' | 'tomorrow' | 'tommorow';
 
 YESTERDAY : 'yesterday';
 

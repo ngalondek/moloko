@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -23,34 +23,32 @@
 package dev.drsoran.moloko.notification;
 
 import android.content.Context;
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.os.AsyncTask;
+import android.support.v4.content.Loader;
+import android.support.v4.content.Loader.OnLoadCompleteListener;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.loaders.AbstractLoader;
 
 
-abstract class AbstractNotifier implements IStatusbarNotifier
+abstract class AbstractNotifier implements IStatusbarNotifier,
+         OnLoadCompleteListener< Cursor >
 {
    protected final Context context;
    
    private final IHandlerToken handlerToken = MolokoNotificationService.acquireHandlerToken();
    
-   private AsyncTask< Void, Void, Cursor > tasksLoader;
+   private AbstractLoader< Cursor > tasksLoaderInUse;
    
    private Cursor currentTasksCursor;
-   
-   private ContentObserver tasksContentProviderObserver;
    
    
    
    protected AbstractNotifier( Context context )
    {
       this.context = context;
-      registerTasksContentProviderObserver();
    }
    
    
@@ -60,7 +58,6 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    {
       stopLoadingTasksToNotify();
       closeCurrentCursor();
-      unregisterTasksContentProviderObserver();
       
       handlerToken.release();
    }
@@ -81,33 +78,42 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    
    
    
-   protected final void startTasksLoader( AsyncTask< Void, Void, Cursor > loader )
+   public void loadTasksToNotify( int loaderId, AbstractLoader< Cursor > loader )
    {
       stopLoadingTasksToNotify();
-      cancelHandlerMessages();
       
-      tasksLoader = loader;
-      loader.execute();
+      final int loaderUpdateThrottleMs = context.getResources()
+                                                .getInteger( R.integer.env_loader_update_throttle_ms );
+      
+      tasksLoaderInUse = loader;
+      tasksLoaderInUse.registerListener( loaderId, this );
+      tasksLoaderInUse.setUpdateThrottle( loaderUpdateThrottleMs );
+      tasksLoaderInUse.setRespectContentChanges( true );
+      tasksLoaderInUse.startLoading();
    }
    
    
    
-   protected final void stopLoadingTasksToNotify()
+   public void stopLoadingTasksToNotify()
    {
-      if ( tasksLoader != null )
+      if ( tasksLoaderInUse != null )
       {
-         tasksLoader.cancel( true );
-         tasksLoader = null;
+         tasksLoaderInUse.cancelLoad();
+         tasksLoaderInUse.stopLoading();
+         tasksLoaderInUse.unregisterListener( this );
+         tasksLoaderInUse = null;
       }
+      
+      cancelHandlerMessages();
    }
    
    
    
-   protected void onFinishedLoading( Cursor cursor )
+   @Override
+   public void onLoadComplete( Loader< Cursor > loader, Cursor data )
    {
       closeCurrentCursor();
-      storeNewCursor( cursor );
-      tasksLoader = null;
+      storeNewCursor( data );
    }
    
    
@@ -115,13 +121,6 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    protected Cursor getCurrentTasksCursor()
    {
       return currentTasksCursor;
-   }
-   
-   
-   
-   protected void releaseCurrentCursor()
-   {
-      closeCurrentCursor();
    }
    
    
@@ -136,7 +135,7 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    
    
    
-   private void closeCurrentCursor()
+   protected void closeCurrentCursor()
    {
       if ( currentTasksCursor != null )
       {
@@ -147,52 +146,8 @@ abstract class AbstractNotifier implements IStatusbarNotifier
    
    
    
-   private void registerTasksContentProviderObserver()
-   {
-      if ( tasksContentProviderObserver == null )
-      {
-         tasksContentProviderObserver = new ContentObserver( null )
-         {
-            @Override
-            public void onChange( boolean selfChange )
-            {
-               // Aggregate several calls to a single update.
-               DelayedRun.run( handlerToken, new Runnable()
-               {
-                  @Override
-                  public void run()
-                  {
-                     onDatasetChanged();
-                  }
-               }, 500 );
-            }
-         };
-         
-         TasksProviderPart.registerContentObserver( context,
-                                                    tasksContentProviderObserver );
-      }
-   }
-   
-   
-   
-   private void unregisterTasksContentProviderObserver()
-   {
-      if ( tasksContentProviderObserver != null )
-      {
-         TasksProviderPart.unregisterContentObserver( context,
-                                                      tasksContentProviderObserver );
-         tasksContentProviderObserver = null;
-      }
-   }
-   
-   
-   
    private void cancelHandlerMessages()
    {
       handlerToken.removeRunnablesAndMessages();
    }
-   
-   
-   
-   protected abstract void onDatasetChanged();
 }

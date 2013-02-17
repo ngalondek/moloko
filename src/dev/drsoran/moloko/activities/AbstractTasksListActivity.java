@@ -335,8 +335,6 @@ public abstract class AbstractTasksListActivity extends
       
       actionBar.setSubtitle( subTitle );
       actionBar.setDisplayShowTitleEnabled( true );
-      actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
-      actionBar.setListNavigationCallbacks( null, null );
       
       if ( isListNavigationMode() )
       {
@@ -345,6 +343,9 @@ public abstract class AbstractTasksListActivity extends
          backStackNavigationItems = null;
          actionBarNavigationAdapter = null;
       }
+      
+      actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+      actionBar.setListNavigationCallbacks( null, null );
    }
    
    
@@ -358,12 +359,13 @@ public abstract class AbstractTasksListActivity extends
    
    protected void setListNavigationMode()
    {
+      initializeListNavigation();
+      
       final ActionBar actionBar = getSupportActionBar();
       
       actionBar.setDisplayShowTitleEnabled( false );
       actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
-      
-      initializeListNavigation();
+      actionBar.setSelectedNavigationItem( selectedNavigationItem.position );
    }
    
    
@@ -388,8 +390,6 @@ public abstract class AbstractTasksListActivity extends
       }
       
       setNavigationAdapter();
-      
-      getSupportActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
    }
    
    
@@ -619,8 +619,8 @@ public abstract class AbstractTasksListActivity extends
          newConfig.putAll( actionBarNavigationAdapter.getTasksListConfigForItem( itemPosition ) );
          
          // We set the selected position to 0 in the case of an ID change because the back stack change (see
-         // onBackStackChanged() will cause a recreation of the spinner adapter that causes the selected
-         // item position to be and we do not want a reload again due to changed position.
+         // onBackStackChanged() will cause a recreation of the spinner adapter what causes the selected
+         // item position to be 0 and we do not want a reload again due to changed position.
          if ( hasChangedSelectedItemId )
          {
             itemPosition = 0;

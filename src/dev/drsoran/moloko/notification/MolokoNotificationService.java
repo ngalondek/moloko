@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -21,8 +21,6 @@
  */
 
 package dev.drsoran.moloko.notification;
-
-import java.security.InvalidParameterException;
 
 import android.app.Service;
 import android.content.Intent;
@@ -60,13 +58,18 @@ public class MolokoNotificationService extends Service
    {
       try
       {
+         // The service may be killed by the system meanwhile. We can come
+         // here with a notification clicked intent here without a start
+         // after the service is resumed by the system.
+         ensureServiceIsStarted();
+         
          if ( intent != null )
          {
             final String action = intent.getAction();
             
             if ( Action.NOTIFICATION_SERVICE_START.equals( action ) )
             {
-               handleStart();
+               notificationManager.recreateNotifications();
             }
             else if ( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED.equals( action ) )
             {
@@ -75,11 +78,6 @@ public class MolokoNotificationService extends Service
             else if ( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED.equals( action ) )
             {
                handleNotificationCleared( intent );
-            }
-            else
-            {
-               throw new InvalidParameterException( String.format( "'%s' is no valid MolokoNotificationService intent action.",
-                                                                   action ) );
             }
          }
       }
@@ -131,15 +129,11 @@ public class MolokoNotificationService extends Service
    
    
    
-   private void handleStart()
+   private void ensureServiceIsStarted()
    {
       if ( !notificationManager.isStarted() )
       {
          notificationManager.start();
-      }
-      else
-      {
-         notificationManager.recreateNotifications();
       }
    }
    

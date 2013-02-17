@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.ActionItemListApplier;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.TaskEditUtils;
@@ -52,7 +53,7 @@ public class NotificationActionReceiver extends BroadcastReceiver
       
       if ( applyChangesInfo != null )
       {
-         new ActionItemListApplier( context ).applyInBackground( applyChangesInfo.getActionItems() );
+         new ActionItemListApplier( context, MolokoApp.getExecutor() ).applyInBackground( applyChangesInfo.getActionItems() );
       }
    }
    

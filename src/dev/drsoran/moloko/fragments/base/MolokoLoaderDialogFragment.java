@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -99,14 +99,6 @@ public abstract class MolokoLoaderDialogFragment< D > extends
    
    
    
-   @Override
-   public void onSettingsChanged( int which )
-   {
-      loaderImpl.onSettingsChanged( which );
-   }
-   
-   
-   
    public final void setRespectContentChanges( boolean respect )
    {
       loaderImpl.setRespectContentChanges( respect );
@@ -183,7 +175,7 @@ public abstract class MolokoLoaderDialogFragment< D > extends
    
    
    @Override
-   public abstract void initContent( ViewGroup content );
+   public abstract void initContentAfterDataLoaded( ViewGroup content );
    
    
    

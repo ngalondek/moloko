@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -120,7 +120,7 @@ public class TagCloudFragment extends
    
    
    @Override
-   public void initContent( ViewGroup container )
+   public void initContentAfterDataLoaded( ViewGroup container )
    {
       final List< TagCloudEntry > cloudEntries = getLoaderDataAssertNotNull();
       

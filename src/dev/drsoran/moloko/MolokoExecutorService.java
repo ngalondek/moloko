@@ -20,22 +20,25 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.notification;
+package dev.drsoran.moloko;
 
-import android.content.Context;
-import android.database.Cursor;
-import dev.drsoran.moloko.loaders.AbstractLoader;
+import android.os.AsyncTask;
 
 
-abstract class AbstractFilterBasedNotificationTasksLoader extends
-         AbstractLoader< Cursor >
+class MolokoExecutorService implements IExecutorService
 {
-   protected AbstractFilterBasedNotificationTasksLoader( Context context )
+   @Override
+   public < Progress, Result > AsyncTask< Void, Progress, Result > execute( AsyncTask< Void, Progress, Result > task )
    {
-      super( context );
+      return execute( task, (Void[]) null );
    }
    
    
    
-   public abstract String getFilterString();
+   @Override
+   public < Params, Progress, Result > AsyncTask< Params, Progress, Result > execute( AsyncTask< Params, Progress, Result > task,
+                                                                                      Params... params )
+   {
+      return task.execute( params );
+   }
 }

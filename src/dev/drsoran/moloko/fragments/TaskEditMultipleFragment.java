@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -193,9 +193,9 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    @Override
-   public void initContent( ViewGroup content )
+   public void initContentAfterDataLoaded( ViewGroup content )
    {
-      super.initContent( content );
+      super.initContentAfterDataLoaded( content );
       
       // Setup tasks name edit
       if ( !isCommonAttrib( Tasks.TASKSERIES_NAME ) )

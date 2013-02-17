@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,18 +28,20 @@ import java.util.Map;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.content.Loader;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.PermanentNotificationType;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.notification.AbstractFilterBasedNotificationTasksLoader.IFilterBasedTasksLoadedHandler;
+import dev.drsoran.moloko.loaders.AbstractLoader;
 
 
-class PermanentNotifier extends AbstractNotifier implements
-         IFilterBasedTasksLoadedHandler
+class PermanentNotifier extends AbstractNotifier
 {
    private final IPermanentNotificationPresenter presenter;
+   
+   private AbstractLoader< Cursor > tasksLoader;
    
    
    
@@ -48,8 +50,7 @@ class PermanentNotifier extends AbstractNotifier implements
       super( context );
       
       presenter = NotificationPresenterFactory.createPermanentNotificationPresenter( context );
-      
-      reEvaluatePermanentNotification();
+      checkPermanentNotificationActiveState();
    }
    
    
@@ -57,15 +58,18 @@ class PermanentNotifier extends AbstractNotifier implements
    @Override
    public void onTimeChanged( int which )
    {
-      switch ( which )
+      if ( isNotificationActive() )
       {
-         case IOnTimeChangedListener.MIDNIGHT:
-         case IOnTimeChangedListener.SYSTEM_TIME:
-            reEvaluatePermanentNotification();
-            break;
-         
-         default :
-            break;
+         switch ( which )
+         {
+            case IOnTimeChangedListener.MIDNIGHT:
+            case IOnTimeChangedListener.SYSTEM_TIME:
+               reEvaluatePermanentNotification();
+               break;
+            
+            default :
+               break;
+         }
       }
    }
    
@@ -77,8 +81,14 @@ class PermanentNotifier extends AbstractNotifier implements
       switch ( which )
       {
          case IOnSettingsChangedListener.DATEFORMAT:
+            if ( isNotificationActive() )
+            {
+               reEvaluatePermanentNotification();
+            }
+            break;
+         
          case IOnSettingsChangedListener.NOTIFY_PERMANENT_RELATED:
-            reEvaluatePermanentNotification();
+            checkPermanentNotificationActiveState();
             break;
          
          default :
@@ -109,16 +119,10 @@ class PermanentNotifier extends AbstractNotifier implements
    @Override
    public void shutdown()
    {
-      super.shutdown();
+      shutdownLoader();
       cancelPermanentNotification();
-   }
-   
-   
-   
-   @Override
-   protected void onDatasetChanged()
-   {
-      reEvaluatePermanentNotification();
+      
+      super.shutdown();
    }
    
    
@@ -126,43 +130,72 @@ class PermanentNotifier extends AbstractNotifier implements
    private void reEvaluatePermanentNotification()
    {
       final Settings settings = MolokoApp.getSettings( context );
+      loadPermanentTasks( settings.getNotifyingPermanentTaskLists() );
+   }
+   
+   
+   
+   private void checkPermanentNotificationActiveState()
+   {
+      final boolean isNotifyingPermanentTasks = isNotificationActive();
       
-      if ( !settings.isNotifyingPermanentTasks() )
+      if ( !isNotifyingPermanentTasks && tasksLoader != null )
       {
-         stopLoadingTasksToNotify();
+         shutdownLoader();
          cancelPermanentNotification();
       }
-      else
+      else if ( isNotifyingPermanentTasks && tasksLoader == null )
       {
-         loadPermanentTasks( settings.getNotifyingPermanentTaskLists() );
+         reEvaluatePermanentNotification();
       }
+   }
+   
+   
+   
+   private boolean isNotificationActive()
+   {
+      final Settings settings = MolokoApp.getSettings( context );
+      final boolean isNotifyingPermanentTasks = settings.isNotifyingPermanentTasks();
+      
+      return isNotifyingPermanentTasks;
    }
    
    
    
    private void loadPermanentTasks( Map< PermanentNotificationType, Collection< String >> permanentTaskLists )
    {
-      final LoadPermanentTasksAsyncTask loader = new LoadPermanentTasksAsyncTask( context,
-                                                                                  this,
-                                                                                  permanentTaskLists );
-      
-      startTasksLoader( loader );
+      tasksLoader = new PermanentNotifierTasksLoader( context,
+                                                      permanentTaskLists );
+      loadTasksToNotify( PermanentNotifierTasksLoader.ID, tasksLoader );
    }
    
    
    
    @Override
-   public void onTasksLoaded( final String filter, Cursor result )
+   public void onLoadComplete( Loader< Cursor > loader, Cursor data )
    {
-      onFinishedLoading( result );
-      getHandler().post( new Runnable()
+      super.onLoadComplete( loader, data );
+      
+      if ( loader.getId() == PermanentNotifierTasksLoader.ID )
       {
-         @Override
-         public void run()
+         final String filterString = ( (AbstractFilterBasedNotificationTasksLoader) loader ).getFilterString();
+         
+         getHandler().post( new Runnable()
          {
-            onFinishedLoadingTasksToNotify( filter );
-         }
-      } );
+            @Override
+            public void run()
+            {
+               onFinishedLoadingTasksToNotify( filterString );
+            }
+         } );
+      }
+      else
+      {
+         throw new IllegalArgumentException( String.format( "Unexpected Loader completed load. Expected '%s' but was '%s'.",
+                                                            PermanentNotifierTasksLoader.class.getSimpleName(),
+                                                            loader.getClass()
+                                                                  .getName() ) );
+      }
    }
    
    
@@ -180,7 +213,18 @@ class PermanentNotifier extends AbstractNotifier implements
          cancelPermanentNotification();
       }
       
-      releaseCurrentCursor();
+      closeCurrentCursor();
+   }
+   
+   
+   
+   private void shutdownLoader()
+   {
+      if ( tasksLoader != null )
+      {
+         stopLoadingTasksToNotify();
+         tasksLoader = null;
+      }
    }
    
    

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Ronny Röhricht
+ * Copyright (c) 2013 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -59,6 +59,8 @@ public class MolokoApp extends Application implements
    
    private final static TokenBasedHandler Handler = new TokenBasedHandler();
    
+   private final static IExecutorService ExecutorService = new MolokoExecutorService();
+   
    private Settings settings;
    
    private NotifierContext notifierContext;
@@ -73,6 +75,7 @@ public class MolokoApp extends Application implements
    public void onCreate()
    {
       ACRA.init( this );
+      
       Log = new MolokoLog( this )
       {
       };
@@ -171,6 +174,13 @@ public class MolokoApp extends Application implements
    public static IHandlerToken acquireHandlerToken()
    {
       return Handler.aquireToken();
+   }
+   
+   
+   
+   public static IExecutorService getExecutor()
+   {
+      return ExecutorService;
    }
    
    

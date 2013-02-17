@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -26,16 +26,22 @@ import java.util.Calendar;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.RemoteException;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-class LoadHoleDayDueTasksAsyncTask extends AbstractNotificationTasksLoader
+class HoleDayDueTasksLoader extends AbstractLoader< Cursor >
 {
+   public final static int ID = R.id.loader_hole_day_notifier_tasks;
+   
    private final static String DUE_TASKS_QUERY_WITH_REMIND_BEFORE = Tasks.HAS_DUE_TIME
       + " != 0 AND "
       + Tasks.DUE_DATE
@@ -50,44 +56,59 @@ class LoadHoleDayDueTasksAsyncTask extends AbstractNotificationTasksLoader
    
    
    
-   public LoadHoleDayDueTasksAsyncTask( Context context,
-      ITasksLoadedHandler handler, long remindBeforeMillis )
+   public HoleDayDueTasksLoader( Context context, long remindBeforeMillis )
    {
-      super( context, handler );
+      super( context );
       this.remindBeforeMillis = remindBeforeMillis;
    }
    
    
    
    @Override
-   protected Cursor doInBackground( Void... params )
+   protected Cursor queryResultInBackground( ContentProviderClient client )
    {
       Cursor result = null;
       
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Tasks.CONTENT_URI );
+      final String selection = getDueTasksSelection( remindBeforeMillis );
       
-      if ( client != null )
+      try
       {
-         final String selection = getDueTasksSelection( remindBeforeMillis );
-         
-         try
-         {
-            result = client.query( Tasks.CONTENT_URI,
-                                   TasksProviderPart.PROJECTION,
-                                   selection,
-                                   null,
-                                   Tasks.DUE_DATE );
-         }
-         catch ( RemoteException e )
-         {
-            result = null;
-         }
-         
-         client.release();
+         result = client.query( getContentUri(),
+                                TasksProviderPart.PROJECTION,
+                                selection,
+                                null,
+                                Tasks.DUE_DATE );
+      }
+      catch ( RemoteException e )
+      {
+         result = null;
       }
       
       return result;
+   }
+   
+   
+   
+   @Override
+   protected Uri getContentUri()
+   {
+      return Tasks.CONTENT_URI;
+   }
+   
+   
+   
+   @Override
+   protected void registerContentObserver( ContentObserver observer )
+   {
+      TasksProviderPart.registerContentObserver( getContext(), observer );
+   }
+   
+   
+   
+   @Override
+   protected void unregisterContentObserver( ContentObserver observer )
+   {
+      TasksProviderPart.unregisterContentObserver( getContext(), observer );
    }
    
    

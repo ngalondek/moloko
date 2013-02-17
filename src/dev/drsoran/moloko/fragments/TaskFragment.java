@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -315,7 +315,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    @Override
-   public void initContent( ViewGroup container )
+   public void initContentAfterDataLoaded( ViewGroup container )
    {
       final Task task = getLoaderDataAssertNotNull();
       final SherlockFragmentActivity activity = getSherlockActivity();

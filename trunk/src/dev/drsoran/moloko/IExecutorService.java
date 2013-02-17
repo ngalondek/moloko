@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,42 +20,17 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.notification;
+package dev.drsoran.moloko;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 
 
-abstract class AbstractNotificationTasksLoader extends
-         AsyncTask< Void, Void, Cursor >
+public interface IExecutorService
 {
-   public interface ITasksLoadedHandler
-   {
-      void onTasksLoaded( Cursor result );
-   }
-   
-   protected final Context context;
-   
-   private final ITasksLoadedHandler handler;
+   < Progress, Result > AsyncTask< Void, Progress, Result > execute( AsyncTask< Void, Progress, Result > task );
    
    
    
-   protected AbstractNotificationTasksLoader( Context context,
-      ITasksLoadedHandler handler )
-   {
-      this.context = context;
-      this.handler = handler;
-   }
-   
-   
-   
-   @Override
-   protected void onPostExecute( Cursor result )
-   {
-      if ( handler != null )
-      {
-         handler.onTasksLoaded( result );
-      }
-   }
+   < Params, Progress, Result > AsyncTask< Params, Progress, Result > execute( AsyncTask< Params, Progress, Result > task,
+                                                                               Params... params );
 }

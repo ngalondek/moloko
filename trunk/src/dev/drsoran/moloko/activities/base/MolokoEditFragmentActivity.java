@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -23,11 +23,12 @@
 package dev.drsoran.moloko.activities.base;
 
 import android.app.Dialog;
-import android.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IEditFragment;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ValidationResult;
 import dev.drsoran.moloko.content.ActionItemListApplier;
@@ -89,7 +90,7 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
          {
             final ContentProviderActionItemList actionItemList = applyInfo.getActionItems();
             
-            ok = new ActionItemListApplier( this ).applyNonThrowing( actionItemList );
+            ok = new ActionItemListApplier( this, MolokoApp.getExecutor() ).applyNonThrowing( actionItemList );
             showApplyChangesInfoAsToast( applyInfo, ok );
          }
       }

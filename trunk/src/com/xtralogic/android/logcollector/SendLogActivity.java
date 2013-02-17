@@ -271,7 +271,9 @@ public class SendLogActivity extends MolokoFragmentActivity
          }
       }
       
-      mCollectLogTask = (CollectLogTask) new CollectLogTask().execute( list );
+      mCollectLogTask = (CollectLogTask) MolokoApp.getExecutor()
+                                                  .execute( new CollectLogTask(),
+                                                            list );
    }
    
    

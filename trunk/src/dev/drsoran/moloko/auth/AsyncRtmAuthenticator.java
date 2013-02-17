@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Ronny Röhricht
+ * Copyright (c) 2013 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -34,6 +34,7 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
+import dev.drsoran.moloko.IExecutorService;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 
@@ -44,12 +45,15 @@ public class AsyncRtmAuthenticator
    
    private RtmAsyncAuthTask< ?, ? > runningTask;
    
+   private final IExecutorService executorService;
    
    
-   public AsyncRtmAuthenticator( AuthenticatorActivity activity )
-      throws ServiceInternalException
+   
+   public AsyncRtmAuthenticator( AuthenticatorActivity activity,
+      IExecutorService executor ) throws ServiceInternalException
    {
       this.rtmService = createService( activity );
+      this.executorService = executor;
    }
    
    
@@ -109,7 +113,8 @@ public class AsyncRtmAuthenticator
       final BeginAuthTask task = new BeginAuthTask( rtmService );
       task.onAttach( authSequenceListener );
       
-      runningTask = (RtmAsyncAuthTask< ?, ? >) task.execute( permission );
+      runningTask = (RtmAsyncAuthTask< ?, ? >) executorService.execute( task,
+                                                                        permission );
    }
    
    
@@ -124,7 +129,7 @@ public class AsyncRtmAuthenticator
       final CompleteAuthTask task = new CompleteAuthTask( rtmService );
       task.onAttach( authSequenceListener );
       
-      runningTask = (RtmAsyncAuthTask< ?, ? >) task.execute();
+      runningTask = (RtmAsyncAuthTask< ?, ? >) executorService.execute( task );
    }
    
    
@@ -140,7 +145,8 @@ public class AsyncRtmAuthenticator
       final CheckAuthTokenTask task = new CheckAuthTokenTask( rtmService );
       task.onAttach( authSequenceListener );
       
-      runningTask = (RtmAsyncAuthTask< ?, ? >) task.execute( authToken );
+      runningTask = (RtmAsyncAuthTask< ?, ? >) executorService.execute( task,
+                                                                        authToken );
    }
    
    

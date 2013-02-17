@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,6 +28,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 
 
@@ -103,7 +104,9 @@ abstract class AsyncLoadingCounterBubbleHomeWidget extends LinearLayout
             
             query = null;
          }
-      }.execute();
+      };
+      
+      MolokoApp.getExecutor().execute( query );
    }
    
    
@@ -137,7 +140,9 @@ abstract class AsyncLoadingCounterBubbleHomeWidget extends LinearLayout
             setCounterBubbleValue( counterBubbleView, result );
             query = null;
          }
-      }.execute();
+      };
+      
+      MolokoApp.getExecutor().execute( query );
    }
    
    

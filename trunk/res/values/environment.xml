@@ -24,4 +24,5 @@
          - error
      -->
     <string name="env_log_level">info</string>
+    <integer name="env_loader_update_throttle_ms">1000</integer>
 </resources>

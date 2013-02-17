@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,8 +28,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.annotations.InstanceState;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
@@ -58,8 +58,6 @@ abstract class LoaderFragmentImplBase< D >
       
       Loader< D > newLoaderInstance( int id, Bundle config );
    }
-   
-   private final static long DEFAULT_LOADER_THROTTLE_MS = DateUtils.SECOND_IN_MILLIS;
    
    private final static String RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
    
@@ -188,7 +186,10 @@ abstract class LoaderFragmentImplBase< D >
       
       if ( loader instanceof AsyncTaskLoader< ? > )
       {
-         ( (AsyncTaskLoader< ? >) loader ).setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
+         final int loaderUpdateThrottleMs = fragment.getResources()
+                                                    .getInteger( R.integer.env_loader_update_throttle_ms );
+         
+         ( (AsyncTaskLoader< ? >) loader ).setUpdateThrottle( loaderUpdateThrottleMs );
       }
       
       if ( loader instanceof AbstractLoader< ? > )

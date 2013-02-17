@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -39,6 +39,7 @@ import android.content.OperationApplicationException;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.IRtmProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -115,7 +116,7 @@ class ClearDbPreference extends InfoTextPreference
    
    private void clear( final List< ? extends IRtmProviderPart > parts )
    {
-      new AsyncTask< Void, Void, Void >()
+      final AsyncTask< Void, Void, Void > task = new AsyncTask< Void, Void, Void >()
       {
          private Dialog dialog;
          
@@ -179,6 +180,8 @@ class ClearDbPreference extends InfoTextPreference
                  .show();
          }
          
-      }.execute();
+      };
+      
+      MolokoApp.getExecutor().execute( task );
    }
 }

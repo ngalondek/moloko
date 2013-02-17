@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -308,7 +308,8 @@ public class RtmWebLoginFragment extends AuthFragment implements
    {
       try
       {
-         authenticator = new AsyncRtmAuthenticator( authenticatorActivity );
+         authenticator = new AsyncRtmAuthenticator( authenticatorActivity,
+                                                    MolokoApp.getExecutor() );
       }
       catch ( ServiceInternalException e )
       {

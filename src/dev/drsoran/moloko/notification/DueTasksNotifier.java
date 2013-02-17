@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2012 Ronny Röhricht
+ * Copyright (c) 2013 Ronny Röhricht
  *
  * This file is part of Moloko.
  *
@@ -26,18 +26,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.content.Loader;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.notification.AbstractNotificationTasksLoader.ITasksLoadedHandler;
+import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
+class DueTasksNotifier extends AbstractNotifier
 {
    private final IDueTaskNotificationPresenter presenter;
+   
+   private AbstractLoader< Cursor > tasksLoader;
    
    private int notificationEndIndex;
    
@@ -48,9 +51,8 @@ class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
       super( context );
       
       presenter = NotificationPresenterFactory.createDueTaskNotificationPresenter( context );
-      
       setNotificationFeatures();
-      reCreateDueTaskNotifications();
+      checkDueTaskNotificationsActiveState();
    }
    
    
@@ -58,26 +60,29 @@ class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
    @Override
    public void onTimeChanged( int which )
    {
-      switch ( which )
+      if ( IsNotificationActive() )
       {
-         case IOnTimeChangedListener.MIDNIGHT:
-            reCreateDueTaskNotifications();
-            break;
-         
-         case IOnTimeChangedListener.SYSTEM_TIME:
-         case IOnTimeChangedListener.MINUTE_TICK:
-            if ( presenter.needsAllTimeChanges() )
-            {
-               evaluateNotificationsRangeAndUpdateNotifications();
-            }
-            else
-            {
-               updateNotificationsIfRangeChanged();
-            }
-            break;
-         
-         default :
-            break;
+         switch ( which )
+         {
+            case IOnTimeChangedListener.MIDNIGHT:
+               reCreateDueTaskNotifications();
+               break;
+            
+            case IOnTimeChangedListener.SYSTEM_TIME:
+            case IOnTimeChangedListener.MINUTE_TICK:
+               if ( presenter.needsAllTimeChanges() )
+               {
+                  evaluateNotificationsRangeAndUpdateNotifications();
+               }
+               else
+               {
+                  updateNotificationsIfRangeChanged();
+               }
+               break;
+            
+            default :
+               break;
+         }
       }
    }
    
@@ -86,23 +91,27 @@ class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
    @Override
    public void onSettingsChanged( int which )
    {
-      switch ( which )
+      if ( which == IOnSettingsChangedListener.NOTIFY_DUE_TASKS )
       {
-         case IOnSettingsChangedListener.NOTIFY_DUE_TASKS:
-            reCreateDueTaskNotifications();
-            break;
-         
-         case IOnSettingsChangedListener.TIMEFORMAT:
-         case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_BEFORE_TIME:
-            updateNotifications();
-            break;
-         
-         case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_FEATURE:
-            setNotificationFeatures();
-            break;
-         
-         default :
-            break;
+         checkDueTaskNotificationsActiveState();
+      }
+      
+      else if ( IsNotificationActive() )
+      {
+         switch ( which )
+         {
+            case IOnSettingsChangedListener.TIMEFORMAT:
+            case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_BEFORE_TIME:
+               updateNotifications();
+               break;
+            
+            case IOnSettingsChangedListener.NOTIFY_DUE_TASKS_FEATURE:
+               setNotificationFeatures();
+               break;
+            
+            default :
+               break;
+         }
       }
    }
    
@@ -130,23 +139,6 @@ class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
    
    
    
-   @Override
-   public void onTasksLoaded( Cursor result )
-   {
-      onFinishedLoading( result );
-      
-      getHandler().post( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            onFinishedLoadingTasksToNotify();
-         }
-      } );
-   }
-   
-   
-   
    private void onFinishedLoadingTasksToNotify()
    {
       final Cursor cursor = getCurrentTasksCursor();
@@ -164,36 +156,44 @@ class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
    
    
    @Override
-   protected void onDatasetChanged()
-   {
-      reCreateDueTaskNotifications();
-   }
-   
-   
-   
-   @Override
    public void shutdown()
    {
-      super.shutdown();
+      shutdownLoader();
       cancelDueTaskNotifications();
-      releaseCurrentCursor();
+      
+      super.shutdown();
    }
    
    
    
    private void reCreateDueTaskNotifications()
    {
-      final boolean showDueTasks = getSettings().isNotifyingDueTasks();
+      loadDueTasks();
+   }
+   
+   
+   
+   private void checkDueTaskNotificationsActiveState()
+   {
+      final boolean showDueTasks = IsNotificationActive();
       
-      if ( !showDueTasks )
+      if ( !showDueTasks && tasksLoader != null )
       {
-         stopLoadingTasksToNotify();
+         shutdownLoader();
          cancelDueTaskNotifications();
       }
-      else
+      else if ( showDueTasks && tasksLoader == null )
       {
-         loadDueTasks();
+         reCreateDueTaskNotifications();
       }
+   }
+   
+   
+   
+   private boolean IsNotificationActive()
+   {
+      final boolean showDueTasks = getSettings().isNotifyingDueTasks();
+      return showDueTasks;
    }
    
    
@@ -201,10 +201,26 @@ class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
    private void loadDueTasks()
    {
       final long remindBeforeMillis = getSettings().getNotifyingDueTasksBeforeMs();
-      final LoadHoleDayDueTasksAsyncTask loader = new LoadHoleDayDueTasksAsyncTask( context,
-                                                                                    this,
-                                                                                    remindBeforeMillis );
-      startTasksLoader( loader );
+      tasksLoader = new HoleDayDueTasksLoader( context, remindBeforeMillis );
+      
+      loadTasksToNotify( HoleDayDueTasksLoader.ID, tasksLoader );
+   }
+   
+   
+   
+   @Override
+   public void onLoadComplete( Loader< Cursor > loader, Cursor data )
+   {
+      super.onLoadComplete( loader, data );
+      
+      getHandler().post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            onFinishedLoadingTasksToNotify();
+         }
+      } );
    }
    
    
@@ -279,6 +295,17 @@ class DueTasksNotifier extends AbstractNotifier implements ITasksLoadedHandler
       }
       
       return endIndex;
+   }
+   
+   
+   
+   private void shutdownLoader()
+   {
+      if ( tasksLoader != null )
+      {
+         stopLoadingTasksToNotify();
+         tasksLoader = null;
+      }
    }
    
    

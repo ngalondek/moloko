@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -179,6 +179,12 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    
    
+   protected void clearResult( D result )
+   {
+   }
+   
+   
+   
    abstract protected D queryResultInBackground( ContentProviderClient client );
    
    
@@ -192,10 +198,4 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    
    abstract protected void unregisterContentObserver( ContentObserver observer );
-   
-   
-   
-   protected void clearResult( D result )
-   {
-   }
 }

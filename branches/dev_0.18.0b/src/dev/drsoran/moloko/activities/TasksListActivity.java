@@ -154,8 +154,15 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    @Override
    public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
-      supportInvalidateOptionsMenu();
-      return super.onNavigationItemSelected( itemPosition, itemId );
+      final boolean superNavigationItemSelected = super.onNavigationItemSelected( itemPosition,
+                                                                                  itemId );
+      
+      if ( superNavigationItemSelected )
+      {
+         supportInvalidateOptionsMenu();
+      }
+      
+      return superNavigationItemSelected;
    }
    
    

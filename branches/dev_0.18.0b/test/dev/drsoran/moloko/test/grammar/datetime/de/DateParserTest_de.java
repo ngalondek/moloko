@@ -183,6 +183,20 @@ public class DateParserTest_de extends DateParserTestBase
    
    
    @Test
+   public void date_in_1_week()
+   {
+      final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+      cal.add( Calendar.WEEK_OF_YEAR, 1 );
+      
+      parseDate( "1 woche",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ) );
+   }
+   
+   
+   
+   @Test
    public void date_in_year_month_at_time1()
    {
       final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
@@ -426,7 +440,7 @@ public class DateParserTest_de extends DateParserTestBase
       cal.set( Calendar.MONTH, Calendar.OCTOBER );
       cal.set( Calendar.DAY_OF_MONTH, 10 );
       
-      parseDate( "13:15 10.10.2010",
+      parseDate( "13:15, 10.10.2010",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -503,6 +517,28 @@ public class DateParserTest_de extends DateParserTestBase
       final MolokoCalendar start = DateTimeTestHelper.getDateParserCalendar();
       
       parseDateWithin( "1 tag",
+                       false,
+                       start.get( Calendar.YEAR ),
+                       start.get( Calendar.MONTH ),
+                       start.get( Calendar.WEEK_OF_YEAR ),
+                       start.get( Calendar.DAY_OF_YEAR ),
+                       end.get( Calendar.YEAR ),
+                       end.get( Calendar.MONTH ),
+                       end.get( Calendar.WEEK_OF_YEAR ),
+                       end.get( Calendar.DAY_OF_YEAR ) );
+   }
+   
+   
+   
+   @Test
+   public void date_within_day_of_now()
+   {
+      final MolokoCalendar end = MolokoCalendar.getInstance();
+      end.add( Calendar.DAY_OF_YEAR, 1 );
+      
+      final MolokoCalendar start = MolokoCalendar.getInstance();
+      
+      parseDateWithin( "1 tag ab heute",
                        false,
                        start.get( Calendar.YEAR ),
                        start.get( Calendar.MONTH ),

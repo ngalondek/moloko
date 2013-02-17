@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of MolokoTest.
  *
@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -532,6 +533,30 @@ public class RtmSmartFilerParsingTest extends MolokoTestCase
    
    
    
+   /**
+    * https://code.google.com/p/moloko/issues/detail?id=80
+    */
+   @Test
+   public void sleeperTags() throws ParseException
+   {
+      evaluateFilter( "(tag:zzz AND dueAfter:now)"
+                         + " OR (tag:z1d AND dueAfter:\"1 day of now\")"
+                         + " OR (tag:z2d AND dueAfter:\"2 days of now\")"
+                         + " OR (tag:z1w AND dueAfter:\"1 week of now\")"
+                         + " OR (tag:z1m AND dueAfter:\"1 month of now\")"
+                         + " OR (tag:z2w AND dueAfter:\"2 weeks of now\")",
+                      new RtmSmartFilterReturn( "\\( \\( \\(tags = 'zzz' OR tags like 'zzz,%' OR tags like '%,zzz,%' OR tags like '%,zzz'\\) AND due > \\d+ \\)"
+                                                   + " OR \\( \\(tags = 'z1d' OR tags like 'z1d,%' OR tags like '%,z1d,%' OR tags like '%,z1d'\\) AND due > \\d+ \\)"
+                                                   + " OR \\( \\(tags = 'z2d' OR tags like 'z2d,%' OR tags like '%,z2d,%' OR tags like '%,z2d'\\) AND due > \\d+ \\)"
+                                                   + " OR \\( \\(tags = 'z1w' OR tags like 'z1w,%' OR tags like '%,z1w,%' OR tags like '%,z1w'\\) AND due > \\d+ \\)"
+                                                   + " OR \\( \\(tags = 'z1m' OR tags like 'z1m,%' OR tags like '%,z1m,%' OR tags like '%,z1m'\\) AND due > \\d+ \\)"
+                                                   + " OR \\( \\(tags = 'z2w' OR tags like 'z2w,%' OR tags like '%,z2w,%' OR tags like '%,z2w'\\) AND due > \\d+ \\) \\)",
+                                                false,
+                                                true ) );
+   }
+   
+   
+   
    private RtmSmartFilterReturn query( String queryString )
    {
       return query( queryString, false );
@@ -591,9 +616,24 @@ public class RtmSmartFilerParsingTest extends MolokoTestCase
       }
       else
       {
-         Assert.assertEquals( "Wrong smart filter parsing result",
-                              expectedResult,
-                              result );
+         if ( expectedResult.matchQuery )
+         {
+            
+            final boolean match = Pattern.matches( expectedResult.queryString,
+                                                   result.queryString );
+            
+            Assert.assertTrue( "Query string did not match result.", match );
+            
+            Assert.assertEquals( "Completed operator differs",
+                                 expectedResult.hasCompletedOperator,
+                                 result.hasCompletedOperator );
+         }
+         else
+         {
+            Assert.assertEquals( "Wrong smart filter parsing result",
+                                 expectedResult,
+                                 result );
+         }
       }
       
       if ( expectedTokens.length > 0 )

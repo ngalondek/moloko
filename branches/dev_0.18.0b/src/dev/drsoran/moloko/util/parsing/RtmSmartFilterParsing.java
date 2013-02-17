@@ -48,13 +48,24 @@ public final class RtmSmartFilterParsing
       
       public final boolean hasCompletedOperator;
       
+      public final boolean matchQuery;
+      
       
       
       public RtmSmartFilterReturn( String queryString,
          boolean hasCompletedOperator )
       {
+         this( queryString, hasCompletedOperator, false );
+      }
+      
+      
+      
+      public RtmSmartFilterReturn( String queryString,
+         boolean hasCompletedOperator, boolean matchQuery )
+      {
          this.queryString = queryString;
          this.hasCompletedOperator = hasCompletedOperator;
+         this.matchQuery = matchQuery;
       }
       
       

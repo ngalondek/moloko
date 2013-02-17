@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -205,13 +205,6 @@ public abstract class AbstractTaskEditFragment
    
    
    
-   public Bundle getInitialValues()
-   {
-      return initialValues;
-   }
-   
-   
-   
    public Bundle getChanges()
    {
       return changes == null ? Bundle.EMPTY : changes;
@@ -220,34 +213,31 @@ public abstract class AbstractTaskEditFragment
    
    
    @Override
-   public void initContent( ViewGroup content )
+   public void initContentAfterDataLoaded( ViewGroup content )
    {
       initialValues = determineInitialValues();
       
       determineInitialChanges();
       
-      if ( initialValues != null )
-      {
-         initializeHeadSection();
-         
-         nameEditText.setText( getCurrentValue( Tasks.TASKSERIES_NAME,
-                                                String.class ) );
-         initializePrioritySpinner();
-         initializeListSpinner();
-         initializeLocationSpinner();
-         
-         initializeTagsSection();
-         
-         initDueEditText();
-         initRecurrenceEditText();
-         initEstimateEditText();
-         
-         urlEditText.setText( getCurrentValue( Tasks.URL, String.class ) );
-         
-         registerInputListeners();
-         
-         putExtaInitialValues();
-      }
+      initializeHeadSection();
+      
+      nameEditText.setText( getCurrentValue( Tasks.TASKSERIES_NAME,
+                                             String.class ) );
+      initializePrioritySpinner();
+      initializeListSpinner();
+      initializeLocationSpinner();
+      
+      initializeTagsSection();
+      
+      initDueEditText();
+      initRecurrenceEditText();
+      initEstimateEditText();
+      
+      urlEditText.setText( getCurrentValue( Tasks.URL, String.class ) );
+      
+      registerInputListeners();
+      
+      putExtaInitialValues();
       
       nameEditText.requestFocus();
    }
@@ -808,6 +798,11 @@ public abstract class AbstractTaskEditFragment
    @Override
    public final < V > V getCurrentValue( String key, Class< V > type )
    {
+      if ( initialValues == null )
+      {
+         throw new IllegalStateException( "Initial values have not yet been initialized!" );
+      }
+      
       V res = null;
       
       if ( hasChange( key ) )
@@ -849,9 +844,17 @@ public abstract class AbstractTaskEditFragment
    
    public void saveChanges()
    {
-      saveDueChanges();
-      saveRecurrenceChanges();
-      saveEstimateChanges();
+      // The initial values are created after the task
+      // has been loaded. So they may still be null
+      // if an saveInstanceState comes before the task
+      // is loaded.
+      // See https://code.google.com/p/moloko/issues/detail?id=90
+      if ( initialValues != null )
+      {
+         saveDueChanges();
+         saveRecurrenceChanges();
+         saveEstimateChanges();
+      }
    }
    
    
@@ -901,6 +904,11 @@ public abstract class AbstractTaskEditFragment
    @Override
    public final < V > void putChange( String key, V value, Class< V > type )
    {
+      if ( initialValues == null )
+      {
+         throw new IllegalStateException( "Initial values have not yet been initialized!" );
+      }
+      
       // Check if it has reverted to the initial value
       if ( SyncUtils.hasChanged( value, initialValues.get( key ) ) )
       {

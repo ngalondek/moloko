@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -28,10 +28,13 @@ import java.util.Map;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import dev.drsoran.moloko.PermanentNotificationType;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -42,21 +45,22 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-class LoadPermanentTasksAsyncTask extends
+class PermanentNotifierTasksLoader extends
          AbstractFilterBasedNotificationTasksLoader
 {
    private final Map< PermanentNotificationType, Collection< String >> listIdsOfTasksToNotify;
    
    private volatile String filterString;
    
+   public final static int ID = R.id.loader_permanent_notifier_tasks;
    
    
-   public LoadPermanentTasksAsyncTask(
+   
+   public PermanentNotifierTasksLoader(
       Context context,
-      IFilterBasedTasksLoadedHandler handler,
       Map< PermanentNotificationType, Collection< String >> listIdsOfTasksToNotify )
    {
-      super( context, handler );
+      super( context );
       this.listIdsOfTasksToNotify = listIdsOfTasksToNotify;
    }
    
@@ -71,22 +75,18 @@ class LoadPermanentTasksAsyncTask extends
    
    
    @Override
-   protected Cursor doInBackground( Void... params )
+   protected Cursor queryResultInBackground( ContentProviderClient client )
    {
       Cursor result = null;
-      ContentProviderClient client = null;
       
       try
       {
-         client = context.getContentResolver()
-                         .acquireContentProviderClient( Tasks.CONTENT_URI );
-         
          buildFilterString();
          final String evalFilter = RtmSmartFilter.evaluate( filterString, true );
          
          if ( !TextUtils.isEmpty( evalFilter ) )
          {
-            result = client.query( Tasks.CONTENT_URI,
+            result = client.query( getContentUri(),
                                    TasksProviderPart.PROJECTION,
                                    evalFilter,
                                    null,
@@ -97,15 +97,32 @@ class LoadPermanentTasksAsyncTask extends
       {
          result = null;
       }
-      finally
-      {
-         if ( client != null )
-         {
-            client.release();
-         }
-      }
       
       return result;
+   }
+   
+   
+   
+   @Override
+   protected Uri getContentUri()
+   {
+      return Tasks.CONTENT_URI;
+   }
+   
+   
+   
+   @Override
+   protected void registerContentObserver( ContentObserver observer )
+   {
+      TasksProviderPart.registerContentObserver( getContext(), observer );
+   }
+   
+   
+   
+   @Override
+   protected void unregisterContentObserver( ContentObserver observer )
+   {
+      TasksProviderPart.unregisterContentObserver( getContext(), observer );
    }
    
    
@@ -251,8 +268,8 @@ class LoadPermanentTasksAsyncTask extends
       
       try
       {
-         client = context.getContentResolver()
-                         .acquireContentProviderClient( Lists.CONTENT_URI );
+         client = getContext().getContentResolver()
+                              .acquireContentProviderClient( Lists.CONTENT_URI );
          return RtmListsProviderPart.resolveListIdsToListNames( client,
                                                                 taskListIds );
       }

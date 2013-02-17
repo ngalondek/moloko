@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,6 +25,7 @@ package dev.drsoran.moloko.content;
 import java.util.concurrent.ExecutionException;
 
 import android.content.Context;
+import dev.drsoran.moloko.IExecutorService;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 
@@ -33,11 +34,15 @@ public class ActionItemListApplier
 {
    private final Context context;
    
+   private final IExecutorService executorService;
    
    
-   public ActionItemListApplier( Context context )
+   
+   public ActionItemListApplier( Context context,
+      IExecutorService executorService )
    {
       this.context = context;
+      this.executorService = executorService;
    }
    
    
@@ -48,8 +53,9 @@ public class ActionItemListApplier
       {
          if ( actionItems.size() > 0 )
          {
-            new ApplyContentProviderActionItemsTask( context ).execute( actionItems )
-                                                              .get();
+            executorService.execute( new ApplyContentProviderActionItemsTask( context ),
+                                     actionItems )
+                           .get();
          }
       }
       catch ( InterruptedException e )
@@ -72,8 +78,9 @@ public class ActionItemListApplier
       {
          if ( actionItems.size() > 0 )
          {
-            return new ApplyContentProviderActionItemsTask( context ).execute( actionItems )
-                                                                     .get();
+            executorService.execute( new ApplyContentProviderActionItemsTask( context ),
+                                     actionItems )
+                           .get();
          }
          
          return true;
@@ -96,7 +103,8 @@ public class ActionItemListApplier
    {
       if ( actionItems.size() > 0 )
       {
-         new ApplyContentProviderActionItemsTask( context ).execute( actionItems );
+         executorService.execute( new ApplyContentProviderActionItemsTask( context ),
+                                  actionItems );
       }
    }
    

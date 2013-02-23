@@ -21,7 +21,7 @@
       android:id="@id/frag_contactslist"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:name="dev.drsoran.moloko.fragments.ContactsListFragment" >
+      android:name="dev.drsoran.moloko.app.contactslist.ContactsListFragment" >
        <!-- Preview: layout=@layout/contactslist_fragment -->
    </fragment>
 </merge>

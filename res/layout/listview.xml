@@ -12,9 +12,9 @@
    - implementation
 -->
 
-<dev.drsoran.moloko.widgets.MolokoCompatibilityListView
+<dev.drsoran.moloko.ui.widgets.MolokoCompatibilityListView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-</dev.drsoran.moloko.widgets.MolokoCompatibilityListView>
+</dev.drsoran.moloko.ui.widgets.MolokoCompatibilityListView>

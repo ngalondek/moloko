@@ -26,7 +26,7 @@
       android:layout_marginRight="?android:attr/scrollbarSize"
       android:fillViewport="true">
 
-      <dev.drsoran.moloko.layouts.WrappingLayout
+      <dev.drsoran.moloko.ui.layouts.WrappingLayout
          android:id="@+id/tagcloud_container"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent" />

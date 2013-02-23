@@ -39,7 +39,9 @@ import android.util.Pair;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.account.AccountUtils;
 import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -47,9 +49,7 @@ import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -108,12 +108,12 @@ public final class SyncUtils
          
          else if ( !silent )
          {
-            UIUtils.showNoAccountDialog( activity );
+            UiUtils.showNoAccountDialog( activity );
          }
       }
       else if ( !silent )
       {
-         UIUtils.showNotConnectedDialog( activity );
+         UiUtils.showNotConnectedDialog( activity );
       }
    }
    

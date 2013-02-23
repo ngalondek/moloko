@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.TaskSeries;

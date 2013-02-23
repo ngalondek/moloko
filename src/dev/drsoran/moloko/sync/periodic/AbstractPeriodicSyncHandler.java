@@ -27,11 +27,11 @@ import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Context;
 import android.os.Handler;
-import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.account.AccountUtils;
+import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.AccountUtils;
 
 
 abstract class AbstractPeriodicSyncHandler implements IPeriodicSyncHandler,
@@ -90,7 +90,7 @@ abstract class AbstractPeriodicSyncHandler implements IPeriodicSyncHandler,
          {
             final Account account = accounts[ i ];
             foundAccount = account != null
-               && account.type.equals( dev.drsoran.moloko.auth.Constants.ACCOUNT_TYPE );
+               && account.type.equals( dev.drsoran.moloko.app.account.Constants.ACCOUNT_TYPE );
          }
       }
       

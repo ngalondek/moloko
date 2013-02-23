@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.rtm.RtmSmartFilter;

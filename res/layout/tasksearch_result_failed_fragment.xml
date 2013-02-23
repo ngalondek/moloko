@@ -4,7 +4,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" >
 
-    <dev.drsoran.moloko.layouts.TitleWithTextLayout
+    <dev.drsoran.moloko.ui.layouts.TitleWithTextLayout
       android:id="@android:id/text1"
     	style="@style/Error"
     	android:layout_width="wrap_content"

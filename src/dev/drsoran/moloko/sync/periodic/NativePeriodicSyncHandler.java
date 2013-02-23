@@ -28,9 +28,9 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.account.AccountUtils;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.provider.Rtm;
 
 

@@ -26,8 +26,8 @@ import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.os.AsyncTask;
-import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.account.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 

@@ -25,7 +25,7 @@ package dev.drsoran.moloko.grammar.lang;
 import java.text.ParseException;
 
 import android.content.res.Resources;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 
 
 public class RecurrPatternLanguage extends Language

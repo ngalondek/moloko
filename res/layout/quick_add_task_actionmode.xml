@@ -18,7 +18,7 @@
     android:layout_height="match_parent"
     tools:context=".actionmodes.QuickAddTaskActionModeCallback" >
 
-    <dev.drsoran.moloko.widgets.RtmSmartAddTextView
+    <dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView
         style="@style/RtmSmartAddTextViewStyle"
         android:id="@+id/quick_add_task_edit"
         android:layout_width="match_parent"

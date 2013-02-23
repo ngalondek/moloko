@@ -30,7 +30,7 @@ import java.util.ListIterator;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.util.LogUtils;
 
 

@@ -11,7 +11,7 @@
    Ronny Röhricht - implementation
 -->
 
-<dev.drsoran.moloko.layouts.CheckableListItem
+<dev.drsoran.moloko.ui.layouts.CheckableListItem
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/taskslist_selectable_mindetailed_listitem"
     android:layout_width="fill_parent"
@@ -30,4 +30,4 @@
         android:layout_height="fill_parent"
         layout="@layout/mindetailed_taskslist_listitem_base" />
 
-</dev.drsoran.moloko.layouts.CheckableListItem>
+</dev.drsoran.moloko.ui.layouts.CheckableListItem>

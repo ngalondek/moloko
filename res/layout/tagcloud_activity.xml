@@ -21,7 +21,7 @@
       android:id="@id/frag_tag_cloud"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:name="dev.drsoran.moloko.fragments.TagCloudFragment" >
+      android:name="dev.drsoran.moloko.app.tagcloud.TagCloudFragment" >
        <!-- Preview: layout=@layout/tagcloud_fragment -->
    </fragment>
 </merge>

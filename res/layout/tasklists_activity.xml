@@ -16,7 +16,7 @@
       android:id="@id/frag_tasklists"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:name="dev.drsoran.moloko.fragments.TaskListsFragment" >
+      android:name="dev.drsoran.moloko.app.lists.TaskListsFragment" >
        <!-- Preview: layout=@layout/tasklists_fragment -->
    </fragment>
 </merge>

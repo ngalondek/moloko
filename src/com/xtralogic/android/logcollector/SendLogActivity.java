@@ -51,10 +51,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.base.MolokoFragmentActivity;
-import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.ui.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
 public class SendLogActivity extends MolokoFragmentActivity

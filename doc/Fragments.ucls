@@ -1,37 +1,35 @@
 <class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.impl.LoaderExpandableListFragmentImpl" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/LoaderExpandableListFragmentImpl.java" binary="false">    
+    name="dev.drsoran.moloko.ui.fragments.impl.LoaderExpandableListFragmentImpl" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/impl/LoaderExpandableListFragmentImpl.java" binary="false">    
     <position height="-1" width="-1" x="789" y="662"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
   <class id="2" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.impl.MolokoDialogFragmentImpl" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/MolokoDialogFragmentImpl.java" binary="false">    
+    name="dev.drsoran.moloko.ui.fragments.impl.MolokoDialogFragmentImpl" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/impl/MolokoDialogFragmentImpl.java" binary="false">    
     <position height="-1" width="-1" x="2427" y="631"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.impl.LoaderListFragmentImpl" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/LoaderListFragmentImpl.java" binary="false">    
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.impl.LoaderListFragmentImpl" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/impl/LoaderListFragmentImpl.java" binary="false">    
     <position height="-1" width="-1" x="1226" y="678"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.impl.LoaderFragmentImplBase" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/LoaderFragmentImplBase.java" binary="false">    
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.impl.LoaderFragmentImplBase" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/impl/LoaderFragmentImplBase.java" binary="false">    
     <position height="-1" width="-1" x="1004" y="1069"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
@@ -40,124 +38,126 @@
     name="dev.drsoran.moloko.fragments.base.impl.MolokoListFragmentImpl" project="Moloko" 
     file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/MolokoListFragmentImpl.java" binary="false">    
     <position height="-1" width="-1" x="1588" y="655"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="6" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.impl.LoaderFragmentImpl" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/LoaderFragmentImpl.java" binary="false">    
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.impl.LoaderFragmentImpl" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/impl/LoaderFragmentImpl.java" binary="false">    
     <position height="-1" width="-1" x="2812" y="710"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="7" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.MolokoLoaderFragment" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoLoaderFragment.java" binary="false">    
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.base.MolokoLoaderFragment" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoLoaderFragment.java" binary="false">    
     <position height="-1" width="-1" x="2002" y="-750"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="8" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.impl.EditFragmentImpl" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/EditFragmentImpl.java" binary="false">    
+  <class id="8" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/impl/EditFragmentImpl.java" binary="false">    
     <position height="-1" width="-1" x="217" y="718"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="9" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoLoaderEditFragment.java" binary="false">    
+  <class id="9" corner="BOTTOM_RIGHT" language="java" 
+    name="dev.drsoran.moloko.ui.fragments.base.MolokoLoaderEditFragment" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoLoaderEditFragment.java" binary="false">    
     <position height="-1" width="-1" x="2006" y="-1333"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
   <class id="10" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.MolokoLoaderEditDialogFragment" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoLoaderEditDialogFragment.java" binary="false">    
+    name="dev.drsoran.moloko.ui.fragments.base.MolokoLoaderEditDialogFragment" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoLoaderEditDialogFragment.java" binary="false">    
     <position height="-1" width="-1" x="2640" y="-1325"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="11" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.MolokoListFragment" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoListFragment.java" binary="false">    
+  <class id="11" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.base.MolokoListFragment" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoListFragment.java" binary="false">    
     <position height="-1" width="-1" x="1289" y="93"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="12" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.MolokoFragment" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoFragment.java" binary="false">    
+  <class id="12" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.base.MolokoFragment" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoFragment.java" binary="false">    
     <position height="-1" width="-1" x="1992" y="-77"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
   <class id="13" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.MolokoExpandableListFragment" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoExpandableListFragment.java" binary="false">    
+    name="dev.drsoran.moloko.ui.fragments.base.MolokoExpandableListFragment" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoExpandableListFragment.java" binary="false">    
     <position height="-1" width="-1" x="825" y="96"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="14" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.MolokoEditFragment" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoEditFragment.java" binary="false">    
+  <class id="14" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.base.MolokoEditFragment" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoEditFragment.java" binary="false">    
     <position height="-1" width="-1" x="1550" y="-848"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="15" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.MolokoEditDialogFragment" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoEditDialogFragment.java" binary="false">    
+  <class id="15" corner="BOTTOM_RIGHT" language="java" 
+    name="dev.drsoran.moloko.ui.fragments.base.MolokoEditDialogFragment" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoEditDialogFragment.java" binary="false">    
     <position height="-1" width="-1" x="2641" y="-827"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="16" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.fragments.base.MolokoDialogFragment" 
-    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoDialogFragment.java" binary="false">    
+  <class id="16" corner="BOTTOM_RIGHT" language="java" name="dev.drsoran.moloko.ui.fragments.base.MolokoDialogFragment" 
+    project="Moloko" file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoDialogFragment.java" binary="false">    
     <position height="-1" width="-1" x="2581" y="-60"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
   <class id="17" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.MolokoContentDialogFragment" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/MolokoContentDialogFragment.java" binary="false">    
+    name="dev.drsoran.moloko.ui.fragments.base.MolokoContentDialogFragment" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/MolokoContentDialogFragment.java" binary="false">    
     <position height="-1" width="-1" x="2642" y="-355"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
   <class id="18" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/AbstractPickerDialogFragment.java" binary="false">    
+    name="dev.drsoran.moloko.ui.fragments.base.AbstractPickerDialogFragment" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/base/AbstractPickerDialogFragment.java" binary="false">    
     <position height="-1" width="-1" x="2385" y="-356"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
   </class>  
   <class id="19" corner="BOTTOM_RIGHT" language="java" 
-    name="dev.drsoran.moloko.fragments.base.impl.ConfigurableFragmentImpl" project="Moloko" 
-    file="/Moloko/src/dev/drsoran/moloko/fragments/base/impl/ConfigurableFragmentImpl.java" binary="false">    
+    name="dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl" project="Moloko" 
+    file="/Moloko/src/dev/drsoran/moloko/ui/fragments/impl/ConfigurableFragmentImpl.java" binary="false">    
     <position height="-1" width="-1" x="1988" y="719"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="false"/>    
     </display>  
@@ -348,7 +348,8 @@
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="19"/>  
   </generalization>  
-  <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
     <attributes public="true" package="true" protected="true" private="false"/>    
     <operations public="true" package="true" protected="true" private="false"/>  
   </classifier-display>  

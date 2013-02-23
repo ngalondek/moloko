@@ -7,7 +7,7 @@
       android:layout_height="fill_parent"
       android:fillViewport="true">
 
-      <dev.drsoran.moloko.layouts.TitleWithTextLayout
+      <dev.drsoran.moloko.ui.layouts.TitleWithTextLayout
          style="@style/Error"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"

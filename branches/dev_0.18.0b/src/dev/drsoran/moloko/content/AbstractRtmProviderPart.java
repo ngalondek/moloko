@@ -31,7 +31,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 
 

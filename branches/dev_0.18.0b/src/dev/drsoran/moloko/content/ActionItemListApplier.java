@@ -25,8 +25,8 @@ package dev.drsoran.moloko.content;
 import java.util.concurrent.ExecutionException;
 
 import android.content.Context;
-import dev.drsoran.moloko.IExecutorService;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.IExecutorService;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 
 

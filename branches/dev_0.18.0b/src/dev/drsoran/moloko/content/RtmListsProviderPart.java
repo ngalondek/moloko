@@ -42,7 +42,7 @@ import android.os.RemoteException;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;

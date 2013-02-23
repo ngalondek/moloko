@@ -73,7 +73,7 @@
       android:layout_height="fill_parent"
       android:orientation="horizontal">
 
-      <dev.drsoran.moloko.widgets.SimpleLineView
+      <dev.drsoran.moloko.ui.widgets.SimpleLineView
          android:layout_height="fill_parent"
          android:layout_width="1dip"
          android:layout_marginTop="2dip"

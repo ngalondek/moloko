@@ -31,9 +31,9 @@ import android.content.Context;
 import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.ApplyChangesInfo;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.content.ContentProviderAction;
 import dev.drsoran.moloko.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.CreationsProviderPart;

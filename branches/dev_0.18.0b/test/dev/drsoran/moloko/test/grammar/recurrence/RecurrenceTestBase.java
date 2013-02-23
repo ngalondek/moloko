@@ -28,7 +28,7 @@ import org.junit.Before;
 
 import com.xtremelabs.robolectric.Robolectric;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.test.MolokoTestCase;

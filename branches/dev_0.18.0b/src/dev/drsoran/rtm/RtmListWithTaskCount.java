@@ -26,7 +26,7 @@ import android.content.Context;
 
 import com.mdt.rtm.data.RtmList;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 
 

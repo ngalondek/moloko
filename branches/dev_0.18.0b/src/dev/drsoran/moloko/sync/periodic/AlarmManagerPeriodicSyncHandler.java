@@ -30,12 +30,12 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.content.SyncStatusObserver;
 import android.text.format.DateUtils;
-import dev.drsoran.moloko.IOnNetworkStatusChangedListener;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.IOnNetworkStatusChangedListener;
+import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.account.AccountUtils;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
 

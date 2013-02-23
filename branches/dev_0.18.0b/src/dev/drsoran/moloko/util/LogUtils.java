@@ -24,8 +24,8 @@ package dev.drsoran.moloko.util;
 
 import android.content.Context;
 import android.widget.Toast;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.MolokoApp;
 
 
 public final class LogUtils

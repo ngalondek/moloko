@@ -34,7 +34,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 
 import android.net.http.AndroidHttpClient;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 
 
 class ApacheHttpClientRtmConnection implements IRtmConnection

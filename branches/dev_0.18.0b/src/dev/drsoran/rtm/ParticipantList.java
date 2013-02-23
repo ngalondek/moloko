@@ -35,7 +35,7 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmData;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;

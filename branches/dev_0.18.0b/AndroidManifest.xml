@@ -54,7 +54,7 @@
    
 
    <application
-      android:name=".MolokoApp"
+      android:name=".app.MolokoApp"
       android:icon="@drawable/ic_launcher"
       android:label="@string/app_name"      
       android:theme="@style/Theme.Moloko"
@@ -69,14 +69,14 @@
          android:exported="false" />
 
       <provider
-         android:name=".search.TasksSearchRecentSuggestionsProvider"
+         android:name=".app.search.TasksSearchRecentSuggestionsProvider"
          android:authorities="dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider"
          android:exported="false" />
 
       <!-- Activities -->
       <activity
          android:label="@string/app_name"
-         android:name=".activities.StartUpActivity">
+         android:name=".app.StartUpActivity">
          <intent-filter>
             <action
                android:name="android.intent.action.MAIN" />
@@ -87,7 +87,7 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".activities.HomeActivity">
+         android:name=".app.home.HomeActivity">
          <meta-data
             android:name="android.app.default_searchable"
             android:value=".activities.TaskSearchResultActivity" />
@@ -95,7 +95,7 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".activities.TasksListActivity"
+         android:name=".app.taskslist.TasksListActivity"
          android:theme="@style/Theme.Moloko.TasksList"
          android:exported="false"
          android:windowSoftInputMode="adjustResize">
@@ -124,7 +124,7 @@
 
       <activity
          android:label="@string/app_tasklists"
-         android:name=".activities.TaskListsActivity"
+         android:name=".app.lists.TaskListsActivity"
          android:exported="false">
          <intent-filter>
             <!-- Show an overview of task lists -->
@@ -152,7 +152,7 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".activities.TaskSearchResultActivity"
+         android:name=".app.search.TaskSearchResultActivity"
          android:theme="@style/Theme.Moloko.TasksList"
          android:exported="false"
          android:launchMode="singleTop"> <!-- SingleTop due to searchable -->
@@ -168,7 +168,7 @@
       
       <activity
          android:label="@string/app_task"
-         android:name=".activities.TaskActivity"
+         android:name=".app.task.TaskActivity"
          android:theme="@style/Theme.Moloko.Task"
          android:exported="false"
          android:uiOptions="splitActionBarWhenNarrow">
@@ -185,7 +185,7 @@
       </activity>
       
       <activity
-         android:name=".activities.TaskEditActivity"
+         android:name=".app.taskedit.TaskEditActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
          android:exported="false"
          android:uiOptions="splitActionBarWhenNarrow"         
@@ -213,7 +213,7 @@
       </activity>
 
       <activity
-         android:name=".activities.TaskEditMultipleActivity"
+         android:name=".app.taskedit.TaskEditMultipleActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
          android:exported="false"
          android:uiOptions="splitActionBarWhenNarrow"
@@ -230,7 +230,7 @@
       </activity>
       
       <activity
-         android:name=".activities.NoteEditActivity"
+         android:name=".app.noteedit.NoteEditActivity"
          android:theme="@style/Theme.Moloko.HomeAsUp.NoTitle"
          android:exported="false"
          android:uiOptions="splitActionBarWhenNarrow"
@@ -259,7 +259,7 @@
        
       <activity
          android:label="@string/app_contacts"
-         android:name=".activities.ContactsListActivity"
+         android:name=".app.contactslist.ContactsListActivity"
          android:exported="false">
          <intent-filter>
             <!-- Show all contacts -->
@@ -274,7 +274,7 @@
       
       <activity
          android:label="@string/app_change_tags"
-         android:name=".activities.ChangeTagsActivity"
+         android:name=".changetags.ChangeTagsActivity"
          android:theme="@style/Theme.Moloko.ChangeTags"
          android:windowSoftInputMode="adjustResize"
          android:exported="false">
@@ -291,12 +291,12 @@
 
       <activity
          android:label="@string/app_tagcloud"
-         android:name=".activities.TagCloudActivity">
+         android:name=".app.tagcloud.TagCloudActivity">
       </activity>
 
       <activity
          android:label="@string/app_preferences"
-         android:name=".prefs.activities.MainPreferencesActivity"
+         android:name=".app.prefs.activities.MainPreferencesActivity"
          android:excludeFromRecents="true"
          android:exported="false">
          <intent-filter>
@@ -309,7 +309,7 @@
       
       <activity
          android:label="@string/moloko_prefs_rtm_title"
-         android:name=".prefs.activities.RtmPreferencesActivity"
+         android:name=".app.prefs.activities.RtmPreferencesActivity"
          android:excludeFromRecents="true"
          android:exported="false">         
          <intent-filter>
@@ -322,7 +322,7 @@
       
       <activity
          android:label="@string/moloko_prefs_notification_title"
-         android:name=".prefs.activities.NotificationPreferencesActivity"
+         android:name=".app.prefs.activities.NotificationPreferencesActivity"
          android:excludeFromRecents="true"
          android:exported="false">         
          <intent-filter>
@@ -335,7 +335,7 @@
       
       <activity
          android:label="@string/moloko_prefs_general_title"
-         android:name=".prefs.activities.GeneralPreferencesActivity"
+         android:name=".app.prefs.activities.GeneralPreferencesActivity"
          android:excludeFromRecents="true"
          android:exported="false">         
          <intent-filter>
@@ -348,7 +348,7 @@
       
       <activity
          android:label="@string/moloko_prefs_support_dev_title"
-         android:name=".prefs.activities.DevelopmentPreferencesActivity"
+         android:name=".app.prefs.activities.DevelopmentPreferencesActivity"
          android:excludeFromRecents="true"
          android:exported="false">         
          <intent-filter>
@@ -361,7 +361,7 @@
 
       <activity
          android:label="@string/app_account_preferences"
-         android:name=".prefs.activities.AccountPreferencesActivity"
+         android:name=".app.prefs.activities.AccountPreferencesActivity"
          android:theme="@style/Theme.Moloko"         
          android:taskAffinity="android.system"
          android:launchMode="singleTask"
@@ -377,7 +377,7 @@
       </activity>
 
       <activity
-         android:name=".auth.AuthenticatorActivity"
+         android:name=".app.account.AuthenticatorActivity"
          android:label="@string/rtm_full"
          android:excludeFromRecents="true"
          android:exported="true" />
@@ -405,7 +405,7 @@
       <!-- Services -->
 
       <service
-         android:name=".auth.AuthenticationService"
+         android:name=".app.account.AuthenticationService"
          android:label="@string/svc_auth">
          <intent-filter>
             <action
@@ -429,7 +429,7 @@
       </service>
       
       <service 
-         android:name=".notification.MolokoNotificationService"
+         android:name=".app.notification.MolokoNotificationService"
          android:label="@string/svc_notification"
          android:exported="false">
       </service>
@@ -437,10 +437,10 @@
       <!-- Broadcast receivers -->
 
       <receiver
-         android:name=".receivers.SyncAlarmReceiver" />
+         android:name="dev.drsoran.moloko.sync.SyncAlarmReceiver" />
 
       <receiver
-         android:name=".receivers.BootReceiver">
+         android:name=".app.receivers.BootReceiver">
          <intent-filter>
             <action
                android:name="android.intent.action.BOOT_COMPLETED" />
@@ -450,7 +450,7 @@
       </receiver>
       
       <receiver
-         android:name=".receivers.NotificationActionReceiver"
+         android:name=".app.notification.NotificationActionReceiver"
          android:exported="false">
          <intent-filter>
             <action

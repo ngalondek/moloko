@@ -37,7 +37,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.TaskSeries;

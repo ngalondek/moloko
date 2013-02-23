@@ -81,7 +81,7 @@
                     android:text="@string/task_source" />
             </RelativeLayout>
 
-            <dev.drsoran.moloko.widgets.ClearableEditText
+            <dev.drsoran.moloko.ui.widgets.ClearableEditText
                 android:id="@+id/task_edit_desc"
                 style="@style/Task_Overview_DescriptionText"
                 android:layout_width="fill_parent"
@@ -94,7 +94,7 @@
                 android:inputType="textCapSentences"
                 android:selectAllOnFocus="false" />
 
-            <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
+            <dev.drsoran.moloko.ui.layouts.TitleWithSpinnerLayout
                 android:id="@+id/task_edit_list"
                 style="?titleWithSpinnerStyle"
                 android:layout_width="fill_parent"
@@ -105,7 +105,7 @@
                 moloko:titlePaddingTop="8dip"
                 moloko:titleText="@string/task_edit_list" />
 
-            <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
+            <dev.drsoran.moloko.ui.layouts.TitleWithSpinnerLayout
                 android:id="@+id/task_edit_priority"
                 style="?titleWithSpinnerStyle"
                 android:layout_width="fill_parent"
@@ -141,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dip" >
 
-                    <dev.drsoran.moloko.layouts.WrappingLayout
+                    <dev.drsoran.moloko.ui.layouts.WrappingLayout
                         android:id="@+id/task_edit_tags_container"
                         style="?wrappingLayoutStyle"
                         android:layout_width="wrap_content"
@@ -173,7 +173,7 @@
                 android:layout_below="@id/task_edit_tags_layout"
                 android:layout_marginTop="10dip" >
 
-                <dev.drsoran.moloko.widgets.SimpleLineView
+                <dev.drsoran.moloko.ui.widgets.SimpleLineView
                     android:id="@+id/task_edit_due_top_line"
                     android:layout_width="fill_parent"
                     android:layout_height="1dip" />
@@ -196,7 +196,7 @@
                     android:layout_marginTop="3dip"
                     android:orientation="horizontal" >
 
-                    <dev.drsoran.moloko.widgets.DueEditText
+                    <dev.drsoran.moloko.ui.widgets.DueEditText
                         android:id="@+id/task_edit_due_text"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -246,7 +246,7 @@
                     android:layout_marginTop="3dip"
                     android:orientation="horizontal" >
 
-                    <dev.drsoran.moloko.widgets.RecurrenceEditText
+                    <dev.drsoran.moloko.ui.widgets.RecurrenceEditText
                         android:id="@+id/task_edit_recurrence_text"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -296,7 +296,7 @@
                     android:layout_marginTop="3dip"
                     android:orientation="horizontal" >
 
-                    <dev.drsoran.moloko.widgets.EstimateEditText
+                    <dev.drsoran.moloko.ui.widgets.EstimateEditText
                         android:id="@+id/task_edit_estim_text"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -320,7 +320,7 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
+            <dev.drsoran.moloko.ui.layouts.TitleWithSpinnerLayout
                 android:id="@+id/task_edit_location"
                 style="?titleWithSpinnerStyle"
                 android:layout_width="fill_parent"
@@ -331,7 +331,7 @@
                 moloko:titlePaddingTop="8dip"
                 moloko:titleText="@string/task_location" />
 
-            <dev.drsoran.moloko.layouts.TitleWithEditTextLayout
+            <dev.drsoran.moloko.ui.layouts.TitleWithEditTextLayout
                 android:id="@+id/task_edit_url"
                 style="?titleWithTextStyle"
                 android:layout_width="fill_parent"

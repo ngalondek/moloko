@@ -6,7 +6,7 @@
     android:background="@color/app_popup_notification"
     android:padding="5dip" >
     
-    <dev.drsoran.moloko.layouts.TitleWithTextLayout
+    <dev.drsoran.moloko.ui.layouts.TitleWithTextLayout
         android:id="@+id/notification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"        

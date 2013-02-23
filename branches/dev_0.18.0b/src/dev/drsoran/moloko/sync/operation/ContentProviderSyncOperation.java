@@ -29,7 +29,7 @@ import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.content.SyncResult;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.util.LogUtils;

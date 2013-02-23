@@ -42,7 +42,7 @@ import android.text.TextUtils;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;

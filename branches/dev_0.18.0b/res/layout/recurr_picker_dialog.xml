@@ -6,17 +6,17 @@
     android:gravity="center_horizontal"
     android:padding="5dip" >
 
-    <dev.drsoran.moloko.widgets.FocusableWheelView
+    <dev.drsoran.moloko.ui.widgets.FocusableWheelView
         android:id="@+id/recurr_dlg_ev_aft_wheel"
         android:layout_width="90dip"
         android:layout_height="120dip" />
 
-    <dev.drsoran.moloko.widgets.FocusableWheelView
+    <dev.drsoran.moloko.ui.widgets.FocusableWheelView
         android:id="@+id/recurr_dlg_interval_wheel"
         android:layout_width="55dip"
         android:layout_height="120dip" />
 
-    <dev.drsoran.moloko.widgets.FocusableWheelView
+    <dev.drsoran.moloko.ui.widgets.FocusableWheelView
         android:id="@+id/recurr_dlg_freq_wheel"
         android:layout_width="120dip"
         android:layout_height="120dip" />

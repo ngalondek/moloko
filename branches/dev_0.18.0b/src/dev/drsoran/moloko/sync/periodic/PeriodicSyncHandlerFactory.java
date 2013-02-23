@@ -24,7 +24,7 @@ package dev.drsoran.moloko.sync.periodic;
 
 import android.content.Context;
 import android.os.Build;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 
 
 public final class PeriodicSyncHandlerFactory

@@ -39,7 +39,7 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;

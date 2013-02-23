@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.connection;
 
 import android.os.Build;
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 
 
 public class DefaultRtmConnectionFactory implements IRtmConnectionFactory

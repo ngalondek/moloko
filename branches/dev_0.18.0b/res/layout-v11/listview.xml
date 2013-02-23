@@ -10,8 +10,8 @@
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
    - implementation -->
    
-<dev.drsoran.moloko.widgets.MolokoNativeListView
+<dev.drsoran.moloko.ui.widgets.MolokoNativeListView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >    
-</dev.drsoran.moloko.widgets.MolokoNativeListView>
+</dev.drsoran.moloko.ui.widgets.MolokoNativeListView>

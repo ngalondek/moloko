@@ -15,7 +15,7 @@
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
-   <dev.drsoran.moloko.widgets.SimpleLineView
+   <dev.drsoran.moloko.ui.widgets.SimpleLineView
       android:id="@+id/taskslist_listitem_priority"
       android:layout_width="5dip"
       android:layout_height="fill_parent"

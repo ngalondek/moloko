@@ -24,7 +24,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <dev.drsoran.moloko.widgets.ClearableMultiAutoCompleteTextView
+        <dev.drsoran.moloko.ui.widgets.ClearableMultiAutoCompleteTextView
             android:id="@+id/change_tags_fragment_edit"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

@@ -37,7 +37,7 @@
       android:text="@string/design_text"
       android:focusable="false" />
 
-   <dev.drsoran.moloko.layouts.WrappingLayout
+   <dev.drsoran.moloko.ui.layouts.WrappingLayout
       xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
       android:id="@+id/taskslist_listitem_additionals_container"
       android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
          android:text="@string/design_text" />
-   </dev.drsoran.moloko.layouts.WrappingLayout>
+   </dev.drsoran.moloko.ui.layouts.WrappingLayout>
 
    <LinearLayout
       android:id="@+id/taskslist_listitem_due_container"

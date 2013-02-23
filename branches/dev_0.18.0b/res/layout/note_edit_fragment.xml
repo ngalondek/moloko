@@ -24,7 +24,7 @@
       android:layout_alignRight="@+id/note_title"
       android:text="@string/design_text" />
 
-   <dev.drsoran.moloko.widgets.ClearableEditText
+   <dev.drsoran.moloko.ui.widgets.ClearableEditText
       android:id="@+id/note_title"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
       android:textStyle="bold"
       android:inputType="text" />
 
-   <dev.drsoran.moloko.widgets.ClearableEditText
+   <dev.drsoran.moloko.ui.widgets.ClearableEditText
       android:id="@+id/note_text"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"

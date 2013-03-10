@@ -37,20 +37,22 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.lists.TaskListsAdapter.IOnGroupIndicatorClickedListener;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.ui.fragments.MolokoExpandableListFragment;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
-public class TaskListsFragment extends
+class TaskListsFragment extends
          MolokoExpandableListFragment< RtmListWithTaskCount > implements
-         IOnGroupIndicatorClickedListener
+         IOnGroupIndicatorClickedListener, IOnSettingsChangedListener
 {
    private ITaskListsFragmentListener listener;
+   
+   private AppContext appContext;
    
    
    
@@ -77,6 +79,8 @@ public class TaskListsFragment extends
    {
       super.onAttach( activity );
       
+      appContext = AppContext.get( activity );
+      
       if ( activity instanceof ITaskListsFragmentListener )
          listener = (ITaskListsFragmentListener) activity;
       else
@@ -95,9 +99,31 @@ public class TaskListsFragment extends
    
    
    @Override
+   public void onStart()
+   {
+      super.onStart();
+      appContext.getAppEvents()
+                .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DEFAULTLIST,
+                                                    this );
+   }
+   
+   
+   
+   @Override
+   public void onStop()
+   {
+      appContext.getAppEvents().unregisterOnSettingsChangedListener( this );
+      super.onStop();
+   }
+   
+   
+   
+   @Override
    public void onDetach()
    {
       listener = null;
+      appContext = null;
+      
       super.onDetach();
    }
    
@@ -166,8 +192,8 @@ public class TaskListsFragment extends
       }
       
       final boolean isDefaultList = list.getId()
-                                        .equals( MolokoApp.getSettings( getSherlockActivity() )
-                                                          .getDefaultListId() );
+                                        .equals( appContext.getSettings()
+                                                           .getDefaultListId() );
       menu.findItem( R.id.ctx_menu_set_default_list )
           .setVisible( !isDefaultList );
       menu.findItem( R.id.ctx_menu_unset_default_list )
@@ -269,18 +295,9 @@ public class TaskListsFragment extends
    
    
    @Override
-   public int getSettingsMask()
-   {
-      return super.getSettingsMask()
-         | IOnSettingsChangedListener.RTM_DEFAULTLIST;
-   }
-   
-   
-   
-   @Override
    public ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
    {
-      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getSherlockActivity(),
+      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( appContext,
                                                                       R.layout.tasklists_fragment_group,
                                                                       R.layout.tasklists_fragment_child,
                                                                       result );
@@ -331,17 +348,26 @@ public class TaskListsFragment extends
    
    
    
+   @Override
+   public void onSettingsChanged( int which )
+   {
+      if ( which == IOnSettingsChangedListener.RTM_DEFAULTLIST )
+      {
+         getExpandableListAdapter().notifyDataSetChanged();
+      }
+   }
+   
+   
+   
    private void setAsDefaultList( int pos )
    {
-      MolokoApp.getSettings( getSherlockActivity() )
-               .setDefaultListId( getRtmList( pos ).getId() );
+      appContext.getSettings().setDefaultListId( getRtmList( pos ).getId() );
    }
    
    
    
    private void resetDefaultList()
    {
-      MolokoApp.getSettings( getSherlockActivity() )
-               .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+      appContext.getSettings().setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
 }

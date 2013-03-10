@@ -41,15 +41,14 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.IRecurrenceParsing;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
 
-public class RecurrencePickerDialogFragment extends
-         AbstractPickerDialogFragment
+class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
 {
    public final static class Config
    {
@@ -59,6 +58,8 @@ public class RecurrencePickerDialogFragment extends
    }
    
    private final static String DEFAULT_RECURRENCE = "after 1 year";
+   
+   private IRecurrenceParsing recurrenceParsing;
    
    @InstanceState( key = Config.RECURR_PATTERN )
    private String recurrencePattern;
@@ -119,6 +120,16 @@ public class RecurrencePickerDialogFragment extends
    
    
    @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      recurrenceParsing = getUiContext().getParsingService()
+                                        .getRecurrenceParsing();
+   }
+   
+   
+   
+   @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
       if ( savedInstanceState != null )
@@ -143,7 +154,7 @@ public class RecurrencePickerDialogFragment extends
    {
       if ( TextUtils.isEmpty( recurrencePattern ) )
       {
-         final Pair< String, Boolean > parseReturn = RecurrenceParsing.parseRecurrence( DEFAULT_RECURRENCE );
+         final Pair< String, Boolean > parseReturn = recurrenceParsing.parseRecurrence( DEFAULT_RECURRENCE );
          recurrencePattern = parseReturn.first;
          isEveryRecurrence = parseReturn.second.booleanValue();
       }
@@ -219,16 +230,15 @@ public class RecurrencePickerDialogFragment extends
    
    public String getSentence()
    {
-      return RecurrenceParsing.parseRecurrencePattern( getSherlockActivity(),
-                                                       getPatternString(),
-                                                       isEvery() );
+      return recurrenceParsing.parseRecurrencePatternToSentence( getPatternString(),
+                                                                 isEvery() );
    }
    
    
    
    private void initWheels()
    {
-      final Map< Integer, List< Object >> elements = RecurrenceParsing.parseRecurrencePattern( recurrencePattern );
+      final Map< Integer, List< Object >> elements = recurrenceParsing.parseRecurrencePattern( recurrencePattern );
       
       // Every, After wheel
       {
@@ -403,7 +413,7 @@ public class RecurrencePickerDialogFragment extends
         .append( "=" )
         .append( getInterval() );
       
-      recurrencePattern = RecurrenceParsing.ensureRecurrencePatternOrder( sb.toString() );
+      recurrencePattern = recurrenceParsing.ensureRecurrencePatternOrder( sb.toString() );
    }
    
    

@@ -22,9 +22,7 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
-
-
-public interface IPickerDialogListener
+interface IPickerDialogListener
 {
    public enum CloseReason
    {
@@ -32,7 +30,7 @@ public interface IPickerDialogListener
    }
    
    
-
+   
    void onPickerDialogClosed( AbstractPickerDialogFragment dialog,
                               CloseReason reason );
 }

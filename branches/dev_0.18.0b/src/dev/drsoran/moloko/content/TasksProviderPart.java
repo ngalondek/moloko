@@ -44,8 +44,9 @@ import android.text.TextUtils;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskSeries;
 
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
@@ -302,7 +303,7 @@ public class TasksProviderPart extends AbstractProviderPart
       
       try
       {
-         c = client.query( Queries.contentUriWithId( Rtm.Tasks.CONTENT_URI, id ),
+         c = client.query( DbHelper.contentUriWithId( Rtm.Tasks.CONTENT_URI, id ),
                            PROJECTION,
                            null,
                            null,
@@ -317,7 +318,7 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query task failed. ", e );
+         MolokoApp.Log().e( TAG, "Query task failed. ", e );
          task = null;
       }
       finally
@@ -370,7 +371,7 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query tasks failed. ", e );
+         MolokoApp.Log().e( TAG, "Query tasks failed. ", e );
          tasks = null;
       }
       finally
@@ -434,7 +435,7 @@ public class TasksProviderPart extends AbstractProviderPart
    
    
    
-   public TasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public TasksProviderPart( SystemContext context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Tasks.PATH );
    }
@@ -491,7 +492,7 @@ public class TasksProviderPart extends AbstractProviderPart
          }
       }
       
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( SUB_QUERY )
                                                                         .append( ") AS subQuery" );
@@ -530,7 +531,7 @@ public class TasksProviderPart extends AbstractProviderPart
          // Replace selection _ids
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? Queries.bindAll( selection,
+                                                    ? DbHelper.bindAll( selection,
                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );
@@ -617,47 +618,47 @@ public class TasksProviderPart extends AbstractProviderPart
                        c.getString( COL_INDICES.get( Tasks.LIST_NAME ) ),
                        c.getInt( COL_INDICES.get( Tasks.IS_SMART_LIST ) ) != 0,
                        new Date( c.getLong( COL_INDICES.get( Tasks.TASKSERIES_CREATED_DATE ) ) ),
-                       Queries.getOptDate( c,
+                       DbHelper.getOptDate( c,
                                            COL_INDICES.get( Tasks.MODIFIED_DATE ) ),
                        c.getString( COL_INDICES.get( Tasks.TASKSERIES_NAME ) ),
                        c.getString( COL_INDICES.get( Tasks.SOURCE ) ),
                        c.getString( COL_INDICES.get( Tasks.URL ) ),
-                       Queries.getOptString( c,
+                       DbHelper.getOptString( c,
                                              COL_INDICES.get( Tasks.RECURRENCE ) ),
-                       Queries.getOptBool( c,
+                       DbHelper.getOptBool( c,
                                            COL_INDICES.get( Tasks.RECURRENCE_EVERY ),
                                            false ),
-                       Queries.getOptString( c,
+                       DbHelper.getOptString( c,
                                              COL_INDICES.get( Tasks.LOCATION_ID ) ),
                        c.getString( COL_INDICES.get( Tasks.LIST_ID ) ),
-                       Queries.getOptDate( c, COL_INDICES.get( Tasks.DUE_DATE ) ),
+                       DbHelper.getOptDate( c, COL_INDICES.get( Tasks.DUE_DATE ) ),
                        c.getInt( COL_INDICES.get( Tasks.HAS_DUE_TIME ) ) != 0,
                        new Date( c.getLong( COL_INDICES.get( Tasks.ADDED_DATE ) ) ),
-                       Queries.getOptDate( c,
+                       DbHelper.getOptDate( c,
                                            COL_INDICES.get( Tasks.COMPLETED_DATE ) ),
-                       Queries.getOptDate( c,
+                       DbHelper.getOptDate( c,
                                            COL_INDICES.get( Tasks.DELETED_DATE ) ),
                        RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
                        c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ),
-                       Queries.getOptString( c,
+                       DbHelper.getOptString( c,
                                              COL_INDICES.get( Tasks.ESTIMATE ) ),
                        c.getLong( COL_INDICES.get( Tasks.ESTIMATE_MILLIS ) ),
-                       Queries.getOptString( c,
+                       DbHelper.getOptString( c,
                                              COL_INDICES.get( Tasks.LOCATION_NAME ) ),
-                       Queries.getOptFloat( c,
+                       DbHelper.getOptFloat( c,
                                             COL_INDICES.get( Tasks.LONGITUDE ),
                                             0.0f ),
-                       Queries.getOptFloat( c,
+                       DbHelper.getOptFloat( c,
                                             COL_INDICES.get( Tasks.LATITUDE ),
                                             0.0f ),
-                       Queries.getOptString( c, COL_INDICES.get( Tasks.ADDRESS ) ),
-                       Queries.getOptBool( c,
+                       DbHelper.getOptString( c, COL_INDICES.get( Tasks.ADDRESS ) ),
+                       DbHelper.getOptBool( c,
                                            COL_INDICES.get( Tasks.VIEWABLE ),
                                            false ),
-                       Queries.getOptInt( c, COL_INDICES.get( Tasks.ZOOM ), -1 ),
-                       Queries.getOptString( c, COL_INDICES.get( Tasks.TAGS ) ),
+                       DbHelper.getOptInt( c, COL_INDICES.get( Tasks.ZOOM ), -1 ),
+                       DbHelper.getOptString( c, COL_INDICES.get( Tasks.TAGS ) ),
                        getPartitiansList( taskSeriesId, c ),
-                       Queries.getOptString( c,
+                       DbHelper.getOptString( c,
                                              COL_INDICES.get( Tasks.NOTE_IDS ) ) );
    }
    
@@ -668,13 +669,13 @@ public class TasksProviderPart extends AbstractProviderPart
    {
       ParticipantList participantList = null;
       
-      final String partContactIds = Queries.getOptString( c,
+      final String partContactIds = DbHelper.getOptString( c,
                                                           COL_INDICES.get( Tasks.PARTICIPANT_IDS ) );
       if ( !TextUtils.isEmpty( partContactIds ) )
       {
-         final String partFullnames = Queries.getOptString( c,
+         final String partFullnames = DbHelper.getOptString( c,
                                                             COL_INDICES.get( Tasks.PARTICIPANT_FULLNAMES ) );
-         final String partUsernames = Queries.getOptString( c,
+         final String partUsernames = DbHelper.getOptString( c,
                                                             COL_INDICES.get( Tasks.PARTICIPANT_FULLNAMES ) );
          
          if ( !TextUtils.isEmpty( partFullnames )
@@ -703,11 +704,11 @@ public class TasksProviderPart extends AbstractProviderPart
             }
             else
             {
-               MolokoApp.Log.e( TAG,
-                                "Expected equal lengths for participant fields. Has IDs:"
-                                   + splitIds.length + ", Names:"
-                                   + splitFullnames.length + ", User:"
-                                   + splitUsernames.length );
+               MolokoApp.Log().e( TAG,
+                                  "Expected equal lengths for participant fields. Has IDs:"
+                                     + splitIds.length + ", Names:"
+                                     + splitFullnames.length + ", User:"
+                                     + splitUsernames.length );
             }
          }
       }
@@ -719,12 +720,12 @@ public class TasksProviderPart extends AbstractProviderPart
    
    private final static NewTaskIds generateIdsForNewTask( ContentProviderClient client )
    {
-      String nextTaskSeriesId = Queries.getNextId( client,
+      String nextTaskSeriesId = DbHelper.getNextId( client,
                                                    TaskSeries.CONTENT_URI );
       String nextRawTaskId = null;
       
       if ( nextTaskSeriesId != null )
-         nextRawTaskId = Queries.getNextId( client, RawTasks.CONTENT_URI );
+         nextRawTaskId = DbHelper.getNextId( client, RawTasks.CONTENT_URI );
       
       if ( nextTaskSeriesId != null && nextRawTaskId != null )
          return new NewTaskIds( nextTaskSeriesId, nextRawTaskId );

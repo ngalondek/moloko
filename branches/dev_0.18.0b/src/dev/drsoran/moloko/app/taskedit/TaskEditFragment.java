@@ -38,21 +38,24 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.loaders.TaskLoader;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.UiContext;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditFragment extends AbstractTaskEditFragment
+class TaskEditFragment extends AbstractTaskEditFragment implements
+         IOnSettingsChangedListener
 {
-   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
-   
    private final TaskLoaderHandler taskLoaderHandler = new TaskLoaderHandler();
+   
+   private IHandlerToken handler;
    
    @InstanceState( key = Intents.Extras.KEY_TASK )
    private Task task;
@@ -83,7 +86,29 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
+      handler = getUiContext().acquireHandlerToken();
       registerForTaskDeletedByBackgroundSync();
+   }
+   
+   
+   
+   @Override
+   public void onStart()
+   {
+      super.onStart();
+      getAppContext().getAppEvents()
+                     .registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
+                                                         this );
+   }
+   
+   
+   
+   @Override
+   public void onStop()
+   {
+      getAppContext().getAppEvents().unregisterOnSettingsChangedListener( this );
+      super.onStop();
    }
    
    
@@ -92,9 +117,26 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    public void onDestroy()
    {
       unregisterForTaskDeletedByBackgroundSync();
-      handler.release();
+      
+      if ( handler != null )
+      {
+         handler.release();
+         handler = null;
+      }
       
       super.onDestroy();
+   }
+   
+   
+   
+   @Override
+   public void onSettingsChanged( int which )
+   {
+      if ( ( which & IOnSettingsChangedListener.DATE_TIME_RELATED ) != 0
+         && isAdded() && !isRemoving() )
+      {
+         initializeHeadSection();
+      }
    }
    
    
@@ -134,7 +176,7 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    protected void initializeHeadSection()
    {
       final Task task = getTaskAssertNotNull();
-      defaultInitializeHeadSectionImpl( task );
+      initializeHeadSectionImpl( task );
    }
    
    
@@ -175,9 +217,54 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    
    
    
+   private void initializeHeadSectionImpl( Task task )
+   {
+      final UiContext context = getUiContext();
+      final IDateFormatterService dateFormatter = context.getDateFormatter();
+      
+      addedDate.setText( dateFormatter.formatDateTime( task.getAdded()
+                                                           .getTime(),
+                                                       FULL_DATE_FLAGS ) );
+      
+      if ( task.getCompleted() != null )
+      {
+         completedDate.setText( dateFormatter.formatDateTime( task.getCompleted()
+                                                                  .getTime(),
+                                                              FULL_DATE_FLAGS ) );
+         completedDate.setVisibility( View.VISIBLE );
+      }
+      else
+      {
+         completedDate.setVisibility( View.GONE );
+      }
+      
+      if ( task.getPosponed() > 0 )
+      {
+         postponed.setText( getString( R.string.task_postponed,
+                                       task.getPosponed() ) );
+         postponed.setVisibility( View.VISIBLE );
+      }
+      else
+      {
+         postponed.setVisibility( View.GONE );
+      }
+      
+      if ( !TextUtils.isEmpty( task.getSource() ) )
+      {
+         source.setText( getString( R.string.task_source, task.getSource() ) );
+      }
+      else
+      {
+         source.setText( "?" );
+      }
+   }
+   
+   
+   
    private void registerForTaskDeletedByBackgroundSync()
    {
-      taskChangesObserver = new ContentObserver( MolokoApp.getHandler() )
+      taskChangesObserver = new ContentObserver( getUiContext().asSystemContext()
+                                                               .getHandler() )
       {
          @Override
          public void onChange( boolean selfChange )
@@ -190,7 +277,7 @@ public class TaskEditFragment extends AbstractTaskEditFragment
       };
       
       getSherlockActivity().getContentResolver()
-                           .registerContentObserver( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                           .registerContentObserver( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                getTaskAssertNotNull().getId() ),
                                                      false,
                                                      taskChangesObserver );

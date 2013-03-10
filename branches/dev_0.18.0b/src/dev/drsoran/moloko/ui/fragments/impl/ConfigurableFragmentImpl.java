@@ -27,9 +27,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
-import dev.drsoran.moloko.ui.state.AnnotatedConfigurationSupport;
+import dev.drsoran.moloko.state.AnnotatedConfigurationSupport;
+import dev.drsoran.moloko.ui.UiContext;
 
 
 public class ConfigurableFragmentImpl
@@ -38,18 +37,13 @@ public class ConfigurableFragmentImpl
    
    private final Fragment fragment;
    
-   private Activity activity;
-   
-   private final int settingsMask;
-   
-   private boolean listenersRegistered;
+   private UiContext uiContext;
    
    
    
-   public ConfigurableFragmentImpl( Fragment fragment, int settingsMask )
+   public ConfigurableFragmentImpl( Fragment fragment )
    {
       this.fragment = fragment;
-      this.settingsMask = settingsMask;
    }
    
    
@@ -63,8 +57,8 @@ public class ConfigurableFragmentImpl
    
    public void onAttach( Activity activity )
    {
-      this.activity = activity;
-      this.annotatedConfigSupport.onAttach( this.activity );
+      this.uiContext = UiContext.get( activity );
+      this.annotatedConfigSupport.onAttach( uiContext.asSystemContext() );
    }
    
    
@@ -79,35 +73,17 @@ public class ConfigurableFragmentImpl
    
    
    
-   public void onStart()
+   public void onDetach()
    {
-      if ( !listenersRegistered )
-      {
-         if ( settingsMask != 0
-            && fragment instanceof IOnSettingsChangedListener )
-         {
-            MolokoApp.getNotifierContext( this.activity )
-                     .registerOnSettingsChangedListener( settingsMask,
-                                                         (IOnSettingsChangedListener) fragment );
-            
-            listenersRegistered = true;
-         }
-      }
+      annotatedConfigSupport.onDetach();
+      uiContext = null;
    }
    
    
    
-   public void onDetach()
+   public UiContext getUiContext()
    {
-      if ( listenersRegistered )
-      {
-         MolokoApp.getNotifierContext( activity )
-                  .unregisterOnSettingsChangedListener( (IOnSettingsChangedListener) fragment );
-         
-         listenersRegistered = false;
-      }
-      
-      annotatedConfigSupport.onDetach();
+      return uiContext;
    }
    
    

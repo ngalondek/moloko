@@ -36,8 +36,8 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.ui.fragments.MolokoDialogFragment;
 
 

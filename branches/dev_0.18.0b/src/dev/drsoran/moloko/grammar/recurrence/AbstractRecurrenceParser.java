@@ -36,15 +36,17 @@ import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.TokenStream;
 
-import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
+import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.IDateTimeParsing;
 
 
 public abstract class AbstractRecurrenceParser extends Parser
 {
-   protected final static CmpWeekday CMP_WEEKDAY = new CmpWeekday();
+   private final static CmpWeekday CMP_WEEKDAY = new CmpWeekday();
    
-   protected Map< String, Object > res;
+   private IDateTimeParsing dateTimeParsing;
+   
+   private Map< String, Object > res;
    
    protected Boolean isEvery = Boolean.FALSE;
    
@@ -64,7 +66,7 @@ public abstract class AbstractRecurrenceParser extends Parser
    
    protected AbstractRecurrenceParser( TokenStream input )
    {
-      super( input );
+      this( input, new RecognizerSharedState() );
    }
    
    
@@ -73,6 +75,20 @@ public abstract class AbstractRecurrenceParser extends Parser
       RecognizerSharedState state )
    {
       super( input, state );
+   }
+   
+   
+   
+   public IDateTimeParsing getDateTimeParsing()
+   {
+      return dateTimeParsing;
+   }
+   
+   
+   
+   public void setDateTimeParsing( IDateTimeParsing dateTimeParsing )
+   {
+      this.dateTimeParsing = dateTimeParsing;
    }
    
    
@@ -106,7 +122,7 @@ public abstract class AbstractRecurrenceParser extends Parser
    
    protected void setUntil( String dateTimeString )
    {
-      final MolokoCalendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
+      final MolokoCalendar untilDate = dateTimeParsing.parseDateTimeSpec( dateTimeString );
       
       if ( untilDate != null )
       {

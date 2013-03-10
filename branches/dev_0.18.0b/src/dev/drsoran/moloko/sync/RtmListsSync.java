@@ -37,12 +37,13 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.RtmServiceConstants;
+import dev.drsoran.moloko.app.sync.SyncAdapter;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.sync.elements.SyncRtmList;
 import dev.drsoran.moloko.sync.elements.SyncRtmListsList;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -69,7 +70,7 @@ public final class RtmListsSync
       // Check if we have server write access
       if ( timeLineFactory != null )
       {
-         final List< RtmList > newLists = RtmListsProviderPart.getLocalCreatedLists( provider );
+         final List< RtmList > newLists = RtmListsTable.getLocalCreatedLists( provider );
          
          if ( newLists != null )
          {
@@ -89,7 +90,7 @@ public final class RtmListsSync
       SyncRtmListsList local_Lists = null;
       {
          // Get all lists from local database
-         final RtmLists local_ListsOfLists = RtmListsProviderPart.getAllLists( provider,
+         final RtmLists local_ListsOfLists = RtmListsTable.getAllLists( provider,
                                                                                null );
          
          if ( local_ListsOfLists == null )
@@ -137,7 +138,7 @@ public final class RtmListsSync
          
          if ( !doOutSync )
          {
-            numDeleted = RtmListsProviderPart.getDeletedListsCount( provider );
+            numDeleted = RtmListsTable.getDeletedListsCount( provider );
             doOutSync = numDeleted > 0;
          }
          

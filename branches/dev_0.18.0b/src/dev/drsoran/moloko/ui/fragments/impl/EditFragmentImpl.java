@@ -22,13 +22,13 @@
 
 package dev.drsoran.moloko.ui.fragments.impl;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.ui.UiUtils;
 
 
@@ -36,11 +36,11 @@ public class EditFragmentImpl
 {
    private final Fragment fragment;
    
-   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
+   private IHandlerToken handler;
    
    private IBinder windowToken;
    
-   private Context context;
+   private SystemContext context;
    
    
    
@@ -51,9 +51,10 @@ public class EditFragmentImpl
    
    
    
-   public void onAttach( Context context )
+   public void onAttach( Activity activity )
    {
-      this.context = context;
+      this.context = SystemContext.get( activity );
+      this.handler = context.acquireHandlerToken();
    }
    
    
@@ -74,7 +75,11 @@ public class EditFragmentImpl
    
    public void onDestroy()
    {
-      handler.release();
+      if ( handler != null )
+      {
+         handler.release();
+         handler = null;
+      }
    }
    
    
@@ -94,7 +99,9 @@ public class EditFragmentImpl
          public void run()
          {
             if ( fragment.isAdded() )
+            {
                UiUtils.showSoftInput( view );
+            }
          }
       } );
    }
@@ -118,7 +125,7 @@ public class EditFragmentImpl
    
    
    
-   public Context getContext()
+   public SystemContext getContext()
    {
       return context;
    }

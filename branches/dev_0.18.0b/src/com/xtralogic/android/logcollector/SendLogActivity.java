@@ -52,8 +52,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.ui.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
@@ -119,8 +118,8 @@ public class SendLogActivity extends MolokoFragmentActivity
             String extraSendAction = intent.getStringExtra( EXTRA_SEND_INTENT_ACTION );
             if ( extraSendAction == null )
             {
-               MolokoApp.Log.e( getClass(),
-                                "Quiting, EXTRA_SEND_INTENT_ACTION is not supplied" );//$NON-NLS-1$
+               Log().e( getClass(),
+                        "Quiting, EXTRA_SEND_INTENT_ACTION is not supplied" );//$NON-NLS-1$
                finish();
                return;
             }
@@ -271,9 +270,9 @@ public class SendLogActivity extends MolokoFragmentActivity
          }
       }
       
-      mCollectLogTask = (CollectLogTask) MolokoApp.getExecutor()
-                                                  .execute( new CollectLogTask(),
-                                                            list );
+      mCollectLogTask = (CollectLogTask) getAppContext().getExecutorService()
+                                                           .execute( new CollectLogTask(),
+                                                                     list );
    }
    
    
@@ -317,8 +316,7 @@ public class SendLogActivity extends MolokoFragmentActivity
          }
          catch ( IOException e )
          {
-            MolokoApp.Log.e( getClass(),
-                             "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
+            Log().e( getClass(), "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
          }
          
          return log;
@@ -372,8 +370,7 @@ public class SendLogActivity extends MolokoFragmentActivity
          }
          catch ( IOException e )
          {
-            MolokoApp.Log.e( getClass(),
-                             "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
+            Log().e( getClass(), "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
          }
       }
       
@@ -399,8 +396,7 @@ public class SendLogActivity extends MolokoFragmentActivity
          }
          catch ( IOException e )
          {
-            MolokoApp.Log.e( getClass(),
-                             "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
+            Log().e( getClass(), "CollectLogTask.doInBackground failed", e );//$NON-NLS-1$
          }
       }
    }

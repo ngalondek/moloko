@@ -39,14 +39,14 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.app.taskedit.TaskEditActivity;
-import dev.drsoran.moloko.ui.activities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.adapters.ActionBarViewPagerTabsAdapter;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;

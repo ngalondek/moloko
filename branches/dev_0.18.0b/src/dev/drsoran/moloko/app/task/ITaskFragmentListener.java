@@ -25,7 +25,7 @@ package dev.drsoran.moloko.app.task;
 import dev.drsoran.rtm.Task;
 
 
-public interface ITaskFragmentListener
+interface ITaskFragmentListener
 {
    void onCompleteTask( Task task );
    

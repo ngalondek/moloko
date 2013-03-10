@@ -26,7 +26,7 @@ import android.os.Bundle;
 import dev.drsoran.moloko.R;
 
 
-public class GeneralPreferencesFragment extends MolokoPreferenceFragment
+class GeneralPreferencesFragment extends MolokoPreferenceFragment
 {
    @Override
    public void onCreate( Bundle savedInstanceState )

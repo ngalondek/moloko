@@ -28,7 +28,8 @@ import java.util.Map;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.grammar.IDateTimeParsing;
 
 
 public class RecurrenceParserImpl implements IRecurrenceParser
@@ -40,7 +41,15 @@ public class RecurrenceParserImpl implements IRecurrenceParser
    public final static Locale LOCALE = RecurrenceParser.LOCALE;
    
    
-
+   
+   public RecurrenceParserImpl( IDateTimeParsing dateTimeParsing )
+   {
+      parser.setDateTimeParsing( dateTimeParsing );
+   }
+   
+   
+   
+   @Override
    public Map< String, Object > parseRecurrence( String recurrence ) throws RecognitionException
    {
       lexer.setCharStream( new ANTLRNoCaseStringStream( recurrence ) );
@@ -57,8 +66,9 @@ public class RecurrenceParserImpl implements IRecurrenceParser
       }
    }
    
-
-
+   
+   
+   @Override
    public Locale getLocale()
    {
       return LOCALE;

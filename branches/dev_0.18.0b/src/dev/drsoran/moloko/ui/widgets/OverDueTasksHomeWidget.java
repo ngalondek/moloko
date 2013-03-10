@@ -36,10 +36,9 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -54,7 +53,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    
    private final ContentObserver dbObserver;
    
-   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
+   private final IHandlerToken handlerToken;
    
    private final Runnable reloadRunnable = new Runnable()
    {
@@ -71,6 +70,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       int labelId )
    {
       super( context, attrs );
+      handlerToken = getUiContext().acquireHandlerToken();
       
       setOrientation( LinearLayout.VERTICAL );
       

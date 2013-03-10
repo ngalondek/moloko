@@ -32,10 +32,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.listeners.IPopupNotificationFragmentListener;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -49,8 +48,6 @@ public class PopupNotificationFragment extends MolokoFragment
       
       public final static String NOTIFICATION_AUTO_CLOSE_MS = "notif_auto_close_ms";
    }
-   
-   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    private final Runnable closePopupRunnable = new Runnable()
    {
@@ -75,6 +72,8 @@ public class PopupNotificationFragment extends MolokoFragment
    private TitleWithTextLayout content;
    
    private IPopupNotificationFragmentListener listener;
+   
+   private IHandlerToken handler;
    
    
    
@@ -101,6 +100,7 @@ public class PopupNotificationFragment extends MolokoFragment
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
+      
       if ( activity instanceof IPopupNotificationFragmentListener )
       {
          listener = (IPopupNotificationFragmentListener) activity;
@@ -109,6 +109,8 @@ public class PopupNotificationFragment extends MolokoFragment
       {
          listener = null;
       }
+      
+      handler = getUiContext().acquireHandlerToken();
    }
    
    
@@ -137,7 +139,12 @@ public class PopupNotificationFragment extends MolokoFragment
    @Override
    public void onDestroy()
    {
-      handler.release();
+      if ( handler != null )
+      {
+         handler.release();
+         handler = null;
+      }
+      
       super.onDestroy();
    }
    

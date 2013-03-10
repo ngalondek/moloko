@@ -34,14 +34,14 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
@@ -49,7 +49,7 @@ import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.Task;
 
 
-public class NoteAddFragment extends AbstractNoteEditFragment
+class NoteAddFragment extends AbstractNoteEditFragment
 {
    private final static String NEW_NOTE_ID = "new_note_id";
    
@@ -109,9 +109,9 @@ public class NoteAddFragment extends AbstractNoteEditFragment
    private void showNote( View content )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
-                                                               created.toMillis( true ),
-                                                               MolokoDateFormatter.FORMAT_WITH_YEAR ) );
+      createdDate.setText( getUiContext().getDateFormatter()
+                                         .formatDateTime( created.toMillis( true ),
+                                                          IDateFormatterService.FORMAT_WITH_YEAR ) );
       
       title.setText( newTitle );
       text.setText( newText );

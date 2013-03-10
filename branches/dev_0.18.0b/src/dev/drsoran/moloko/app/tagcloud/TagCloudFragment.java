@@ -49,7 +49,7 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.TagWithTaskCount;
 
 
-public class TagCloudFragment extends
+class TagCloudFragment extends
          MolokoLoaderFragment< List< TagCloudFragment.TagCloudEntry > >
 {
    /**

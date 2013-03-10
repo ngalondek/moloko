@@ -22,32 +22,14 @@
 
 package dev.drsoran.moloko.grammar.datetime;
 
-import java.util.Locale;
-
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.ILocalizedParser;
 
 
-public interface ITimeParser
+public interface ITimeParser extends ILocalizedParser
 {
-   public final static class ParseTimeReturn
-   {
-      public final int lastParsedCharPos;
-      
-      public final boolean isEof;
-      
-      
-      
-      public ParseTimeReturn( int lastParsedCharPos, boolean isEof )
-      {
-         this.lastParsedCharPos = lastParsedCharPos;
-         this.isEof = isEof;
-      }
-   }
-   
-   
-   
    ParseTimeReturn parseTime( String time, MolokoCalendar cal, boolean adjustDay ) throws RecognitionException;
    
    
@@ -59,10 +41,6 @@ public interface ITimeParser
    
    
    long parseTimeEstimate( String timeEstimate ) throws RecognitionException;
-   
-   
-   
-   Locale getLocale();
    
    
    

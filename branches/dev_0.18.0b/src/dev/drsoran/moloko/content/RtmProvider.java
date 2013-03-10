@@ -37,7 +37,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.CreationsProviderPart;
+import dev.drsoran.moloko.content.db.ModificationsProviderPart;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 
 
 public class RtmProvider extends ContentProvider
@@ -97,20 +101,22 @@ public class RtmProvider extends ContentProvider
    
    private RtmProviderOpenHelper dbHelper = null;
    
+   private SystemContext context;
+   
    
    
    @Override
    public boolean onCreate()
    {
-      final Context context = getContext();
+      context = SystemContext.get( getContext() );
       
-      dbHelper = new RtmProviderOpenHelper( getContext() );
+      dbHelper = new RtmProviderOpenHelper( context );
       
       // These parts allow modification in the local DB.
       mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
       { new RtmTasksProviderPart( context, dbHelper ),
        new RtmTaskSeriesProviderPart( context, dbHelper ),
-       new RtmListsProviderPart( context, dbHelper ),
+       new RtmListsTable( context, dbHelper ),
        new RtmNotesProviderPart( context, dbHelper ),
        new RtmLocationsProviderPart( context, dbHelper ),
        new RtmContactsProviderPart( context, dbHelper ),
@@ -269,7 +275,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
-            MolokoApp.Log.e( TAG, "Unknown URI " + uri );
+            Log().e( TAG, "Unknown URI " + uri );
             break;
       }
       
@@ -307,7 +313,7 @@ public class RtmProvider extends ContentProvider
          }
          catch ( Throwable e )
          {
-            MolokoApp.Log.e( TAG, "Clearing database failed", e );
+            Log().e( TAG, "Clearing database failed", e );
             throw new OperationApplicationException( e );
          }
          finally
@@ -344,7 +350,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
-            MolokoApp.Log.e( TAG, "Unknown URI " + uri );
+            Log().e( TAG, "Unknown URI " + uri );
             break;
       }
       
@@ -381,4 +387,12 @@ public class RtmProvider extends ContentProvider
       
       return matchType;
    }
+   
+   
+   
+   private ILog Log()
+   {
+      return context.Log();
+   }
+   
 }

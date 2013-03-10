@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.view.View;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoExpandableListFragment;
 
@@ -75,13 +74,6 @@ public class LoaderExpandableListFragmentImpl< D > extends
       {
          startLoader();
       }
-   }
-   
-   
-   
-   public void onSettingsChanged( int which )
-   {
-      notifyDataSetChanged();
    }
    
    
@@ -150,13 +142,5 @@ public class LoaderExpandableListFragmentImpl< D > extends
    public void showError( Spanned message )
    {
       viewManager.showError( message );
-   }
-   
-   
-   
-   private void notifyDataSetChanged()
-   {
-      if ( fragment.getExpandableListAdapter() instanceof BaseExpandableListAdapter )
-         ( (BaseExpandableListAdapter) fragment.getExpandableListAdapter() ).notifyDataSetChanged();
    }
 }

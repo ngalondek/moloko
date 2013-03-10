@@ -29,7 +29,7 @@ import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.content.SyncResult;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.util.LogUtils;
@@ -172,7 +172,7 @@ public class ContentProviderSyncOperation implements
       this.operationType = builder.operationType;
       this.operations = new ArrayList< ContentProviderOperation >( builder.operations );
       
-      LogOperations();
+      logOperations();
    }
    
    
@@ -269,7 +269,7 @@ public class ContentProviderSyncOperation implements
    
    
    
-   private void LogOperations()
+   private void logOperations()
    {
       final StringBuilder stringBuilder = new StringBuilder( String.format( "%s: ",
                                                                             operationType ) );

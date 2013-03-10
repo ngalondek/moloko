@@ -30,10 +30,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.state.InstanceState;
 
 
-public class AccountIssueFragment extends AuthFragment
+class AccountIssueFragment extends AuthFragment
 {
    public final static class Config
    {

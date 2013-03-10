@@ -35,8 +35,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Settings;
 import dev.drsoran.rtm.RtmSettings;
@@ -122,7 +124,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query settings ID failed. ", e );
+         MolokoApp.Log().e( TAG, "Query settings ID failed. ", e );
          id = null;
       }
       finally
@@ -151,21 +153,21 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          
          if ( ok )
          {
-            settings = new RtmSettings( Queries.getOptDate( c,
+            settings = new RtmSettings( DbHelper.getOptDate( c,
                                                             COL_INDICES.get( Settings.SYNC_TIMESTAMP ) ),
-                                        Queries.getOptString( c,
+                                        DbHelper.getOptString( c,
                                                               COL_INDICES.get( Settings.TIMEZONE ) ),
                                         c.getInt( COL_INDICES.get( Settings.DATEFORMAT ) ),
                                         c.getInt( COL_INDICES.get( Settings.TIMEFORMAT ) ),
-                                        Queries.getOptString( c,
+                                        DbHelper.getOptString( c,
                                                               COL_INDICES.get( Settings.DEFAULTLIST_ID ) ),
-                                        Queries.getOptString( c,
+                                        DbHelper.getOptString( c,
                                                               COL_INDICES.get( Settings.LANGUAGE ) ) );
          }
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query settings ailed. ", e );
+         MolokoApp.Log().e( TAG, "Query settings ailed. ", e );
          settings = null;
       }
       finally
@@ -196,7 +198,8 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
    
    
-   public RtmSettingsProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public RtmSettingsProviderPart( SystemContext context,
+      SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Settings.PATH );
    }

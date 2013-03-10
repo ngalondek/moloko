@@ -28,12 +28,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.moloko.ui.IConfigurable;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.ui.fragments.listeners.NullLoaderFragmentListener;
-import dev.drsoran.moloko.ui.state.InstanceState;
 
 
 abstract class LoaderFragmentImplBase< D >

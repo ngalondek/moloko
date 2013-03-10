@@ -34,15 +34,13 @@ import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 
-import dev.drsoran.moloko.grammar.IDateFormatContext;
-import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
-import dev.drsoran.moloko.util.ANTLRIncrementalTokenStream;
-import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.IDateFormatter;
 
 
 public abstract class AbstractDateParser extends Parser
 {
-   protected IDateFormatContext dateFormatContext;
+   protected IDateFormatter dateFormatContext;
    
    private boolean success;
    
@@ -62,7 +60,7 @@ public abstract class AbstractDateParser extends Parser
    
    
    
-   public void setDateFormatContext( IDateFormatContext context )
+   public void setDateFormatContext( IDateFormatter context )
    {
       dateFormatContext = context;
    }

@@ -27,11 +27,13 @@ import java.util.Locale;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 
-import dev.drsoran.moloko.grammar.IDateFormatContext;
+import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.grammar.datetime.ANTLRIncrementalTokenStream;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
-import dev.drsoran.moloko.util.ANTLRIncrementalTokenStream;
-import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.grammar.datetime.ParseDateReturn;
+import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
 
 
 public class DateParserImpl implements IDateParser
@@ -45,7 +47,7 @@ public class DateParserImpl implements IDateParser
    
    
    @Override
-   public void setDateFormatContext( IDateFormatContext context )
+   public void setDateFormatter( IDateFormatter context )
    {
       parser.setDateFormatContext( context );
    }

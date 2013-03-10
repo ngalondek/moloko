@@ -36,10 +36,9 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
-import dev.drsoran.moloko.app.account.AccountUtils;
-import dev.drsoran.moloko.app.account.IAccountUpdatedListener;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.ui.activities.MolokoFragmentActivity;
 import dev.drsoran.moloko.ui.layouts.SimpleHomeWidgetLayout;
 import dev.drsoran.moloko.ui.widgets.IMolokoHomeWidget;
 
@@ -79,7 +78,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       {
          homeAdapter.startWidgets();
          onContentChanged();
-         showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
+         showAddAccountWidget( getAppContext().getAccountService()
+                                                 .getRtmAccount() == null );
       }
    }
    
@@ -166,7 +166,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
    private void setAccountNameAsSubTitle()
    {
-      final Account account = AccountUtils.getRtmAccount( this );
+      final Account account = getAppContext().getAccountService()
+                                                .getRtmAccount();
       if ( account != null )
       {
          getSupportActionBar().setSubtitle( account.name );

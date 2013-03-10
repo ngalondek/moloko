@@ -38,9 +38,8 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.util.ListEntriesAndValues;
 import dev.drsoran.provider.Rtm.Lists;
 
@@ -98,7 +97,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
          // list we must open a new list dialog with all lists to select one.
          if ( String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST )
                     .equals( newValueStr )
-            && MolokoApp.getSettings( getContext() ).getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
+            && getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
          {
             defListEntriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync( RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
                | RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
@@ -133,8 +132,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
                      // Check if the client has chosen a list.
                      if ( positive )
                      {
-                        MolokoApp.getSettings( getContext() )
-                                 .setDefaultListId( defListEntriesAndValues.values[ chosenDefListIdx ].toString() );
+                        getSettings().setDefaultListId( defListEntriesAndValues.values[ chosenDefListIdx ].toString() );
                         
                         defaultListName = defListEntriesAndValues.entries[ chosenDefListIdx ].toString();
                         currentStartUpValueIdx = 0;
@@ -208,8 +206,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    
    private void setDefaultListNameFromDatabase()
    {
-      final String defListId = MolokoApp.getSettings( getContext() )
-                                        .getDefaultListId();
+      final String defListId = getSettings().getDefaultListId();
       if ( !TextUtils.isEmpty( defListId ) )
       {
          ContentProviderClient client = null;
@@ -219,7 +216,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
             client = getContext().getContentResolver()
                                  .acquireContentProviderClient( Lists.CONTENT_URI );
             
-            final Collection< String > defaultListNameCollection = RtmListsProviderPart.resolveListIdsToListNames( client,
+            final Collection< String > defaultListNameCollection = RtmListsTable.resolveListIdsToListNames( client,
                                                                                                                    Collections.singleton( defListId ) );
             if ( !defaultListNameCollection.isEmpty() )
             {

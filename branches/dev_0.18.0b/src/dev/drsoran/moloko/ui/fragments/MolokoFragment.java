@@ -31,15 +31,17 @@ import android.view.ViewGroup;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.mdt.rtm.data.RtmAuth;
 
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
-import dev.drsoran.moloko.ui.IConfigurable;
-import dev.drsoran.moloko.ui.IRtmAccessLevelAware;
+import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelAwareFragmentImpl;
 
 
 public abstract class MolokoFragment extends SherlockFragment implements
-         IConfigurable, IOnSettingsChangedListener, IRtmAccessLevelAware
+         IConfigurable, IRtmAccessLevelAware
 {
    private final ConfigurableFragmentImpl impl;
    
@@ -49,7 +51,7 @@ public abstract class MolokoFragment extends SherlockFragment implements
    
    protected MolokoFragment()
    {
-      impl = new ConfigurableFragmentImpl( this, getSettingsMask() );
+      impl = new ConfigurableFragmentImpl( this );
       accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
    }
    
@@ -59,8 +61,9 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
+      
       impl.onAttach( activity );
-      accessLevelAwareImpl.onAttach( getSherlockActivity() );
+      accessLevelAwareImpl.onAttach( (MolokoFragmentActivity) activity );
    }
    
    
@@ -70,15 +73,6 @@ public abstract class MolokoFragment extends SherlockFragment implements
    {
       super.onCreate( savedInstanceState );
       impl.onCreate( savedInstanceState );
-   }
-   
-   
-   
-   @Override
-   public void onStart()
-   {
-      super.onStart();
-      impl.onStart();
    }
    
    
@@ -108,6 +102,20 @@ public abstract class MolokoFragment extends SherlockFragment implements
    {
       super.onSaveInstanceState( outState );
       impl.onSaveInstanceState( outState );
+   }
+   
+   
+   
+   public UiContext getUiContext()
+   {
+      return impl.getUiContext();
+   }
+   
+   
+   
+   public ILog Log()
+   {
+      return impl.getUiContext().Log();
    }
    
    
@@ -177,20 +185,6 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public final ViewGroup getContentView()
    {
       return impl.getContentView();
-   }
-   
-   
-   
-   @Override
-   public void onSettingsChanged( int which )
-   {
-   }
-   
-   
-   
-   protected int getSettingsMask()
-   {
-      return 0;
    }
    
    

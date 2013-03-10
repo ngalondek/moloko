@@ -29,7 +29,8 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Notes;
@@ -220,7 +221,7 @@ public class Modification implements Comparable< Modification >
                                                            String colName,
                                                            T newValue )
    {
-      return newModification( Queries.contentUriWithId( contentUri, id ),
+      return newModification( DbHelper.contentUriWithId( contentUri, id ),
                               colName,
                               newValue );
    }
@@ -282,7 +283,7 @@ public class Modification implements Comparable< Modification >
                                                                         String colName,
                                                                         T newValue )
    {
-      return newNonPersistentModification( Queries.contentUriWithId( contentUri,
+      return newNonPersistentModification( DbHelper.contentUriWithId( contentUri,
                                                                      id ),
                                            colName,
                                            newValue );

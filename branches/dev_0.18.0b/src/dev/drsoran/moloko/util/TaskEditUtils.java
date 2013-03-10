@@ -29,14 +29,16 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
-import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentProviderAction;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.content.CreationsProviderPart;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ContentProviderAction;
+import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.content.db.CreationsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Task;
@@ -211,13 +213,13 @@ public final class TaskEditUtils
                                           TasksProviderPart.insertLocalCreatedTask( task ) );
       ok = ok
          && actionItemList.add( ContentProviderAction.Type.INSERT,
-                                CreationsProviderPart.newCreation( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                CreationsProviderPart.newCreation( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                              task.getTaskSeriesId() ),
                                                                    task.getCreated()
                                                                        .getTime() ) );
       ok = ok
          && actionItemList.add( ContentProviderAction.Type.INSERT,
-                                CreationsProviderPart.newCreation( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                CreationsProviderPart.newCreation( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                              task.getId() ),
                                                                    task.getCreated()
                                                                        .getTime() ) );

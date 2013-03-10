@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,15 +33,13 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.provider.Rtm;
 
 
 public abstract class AbstractProviderPart implements IProviderPart
 {
-   @SuppressWarnings( "unused" )
-   private static final String TAG = "Moloko."
-      + AbstractProviderPart.class.getSimpleName();
-   
    protected static final String ITEM_ID_EQUALS = BaseColumns._ID + "=";
    
    protected final String path;
@@ -51,16 +48,16 @@ public abstract class AbstractProviderPart implements IProviderPart
    
    protected static final int ITEM_ID = 2;
    
-   protected final Context context;
+   protected final SystemContext context;
    
    protected final UriMatcher uriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
    
    protected SQLiteOpenHelper dbAccess = null;
    
    
-
-   public AbstractProviderPart( Context context, SQLiteOpenHelper dbAccess,
-      String path )
+   
+   public AbstractProviderPart( SystemContext context,
+      SQLiteOpenHelper dbAccess, String path )
    {
       this.context = context;
       this.dbAccess = dbAccess;
@@ -69,8 +66,9 @@ public abstract class AbstractProviderPart implements IProviderPart
       addUris();
    }
    
-
-
+   
+   
+   @Override
    public Cursor query( String id,
                         String[] projection,
                         String selection,
@@ -109,8 +107,9 @@ public abstract class AbstractProviderPart implements IProviderPart
       return cursor;
    }
    
-
-
+   
+   
+   @Override
    public String getType( Uri uri )
    {
       switch ( uriMatcher.match( uri ) )
@@ -124,15 +123,17 @@ public abstract class AbstractProviderPart implements IProviderPart
       }
    }
    
-
-
+   
+   
+   @Override
    public UriMatcher getUriMatcher()
    {
       return uriMatcher;
    }
    
-
-
+   
+   
+   @Override
    public int matchUri( Uri uri )
    {
       switch ( uriMatcher.match( uri ) )
@@ -146,34 +147,38 @@ public abstract class AbstractProviderPart implements IProviderPart
       }
    }
    
-
-
+   
+   
    public ContentProviderClient aquireContentProviderClient( Uri uri )
    {
       return context.getContentResolver().acquireContentProviderClient( uri );
    }
    
-
-
+   
+   
+   @Override
    public Object getElement( Uri uri )
    {
       return null;
    }
    
-
-
-   public abstract Uri getContentUri();
    
-
-
+   
+   public ILog Log()
+   {
+      return context.Log();
+   }
+   
+   
+   
    protected void addUris()
    {
       uriMatcher.addURI( Rtm.AUTHORITY, path, DIR );
       uriMatcher.addURI( Rtm.AUTHORITY, path + "/#", ITEM_ID );
    }
    
-
-
+   
+   
    protected final static void initProjectionDependent( String[] projection,
                                                         HashMap< String, String > projectionMap,
                                                         HashMap< String, Integer > columnIndices )
@@ -186,16 +191,16 @@ public abstract class AbstractProviderPart implements IProviderPart
       }
    }
    
-
-
+   
+   
    protected abstract String getDefaultSortOrder();
    
-
-
+   
+   
    protected abstract String getContentType();
    
-
-
+   
+   
    protected abstract String getContentItemType();
    
 }

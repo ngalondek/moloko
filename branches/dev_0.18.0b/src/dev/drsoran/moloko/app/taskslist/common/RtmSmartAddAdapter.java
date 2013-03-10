@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Pair;
@@ -44,16 +43,16 @@ import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.grammar.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Tags;
@@ -62,7 +61,7 @@ import dev.drsoran.rtm.Tag;
 
 class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 {
-   private final Context context;
+   private final AppContext context;
    
    private final Filter filter = new Filter();
    
@@ -83,7 +82,7 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    
    
-   public RtmSmartAddAdapter( Context context )
+   public RtmSmartAddAdapter( AppContext context )
    {
       this.context = context;
    }
@@ -262,11 +261,11 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   if ( lists_and_tags == null )
                   {
                      {
-                        final RtmLists lists = RtmListsProviderPart.getAllLists( context.getContentResolver()
+                        final RtmLists lists = RtmListsTable.getAllLists( context.getContentResolver()
                                                                                         .acquireContentProviderClient( Lists.CONTENT_URI ),
                                                                                  Lists.IS_SMART_LIST
                                                                                     + "=0 AND "
-                                                                                    + RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
+                                                                                    + RtmListsTable.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
                         if ( lists != null )
                         {
                            lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
@@ -425,8 +424,12 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          List< Pair< Integer, String > > newData = new LinkedList< Pair< Integer, String > >();
          
          for ( Pair< String, T > value : list )
+         {
             if ( value.first.toLowerCase().startsWith( prefix ) )
+            {
                newData.add( Pair.create( iconId, value.first ) );
+            }
+         }
          
          return newData;
       }
@@ -457,18 +460,21 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       private void addRecurrence( String sentence, boolean every )
       {
-         final Pair< String, Boolean > result = RecurrenceParsing.parseRecurrence( sentence );
+         IRecurrenceParsing recurrenceParsing = context.getParsingService()
+                                                       .getRecurrenceParsing();
+         final Pair< String, Boolean > result = recurrenceParsing.parseRecurrence( sentence );
          
          if ( result != null )
          {
             final String pattern = result.first;
-            final String translatedSentence = RecurrenceParsing.parseRecurrencePattern( context,
-                                                                                        pattern,
-                                                                                        every );
+            final String translatedSentence = recurrenceParsing.parseRecurrencePatternToSentence( pattern,
+                                                                                                  every );
             if ( pattern != null && translatedSentence != null )
+            {
                repeats.add( Pair.create( translatedSentence,
                                          Pair.create( pattern,
                                                       Boolean.valueOf( every ) ) ) );
+            }
          }
       }
       
@@ -476,8 +482,8 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       private void addEstimate( long estimate )
       {
-         estimates.add( Pair.create( MolokoDateFormatter.formatEstimated( context,
-                                                                          estimate ),
+         estimates.add( Pair.create( context.getDateFormatter()
+                                            .formatEstimated( estimate ),
                                      Long.valueOf( estimate ) ) );
       }
    }

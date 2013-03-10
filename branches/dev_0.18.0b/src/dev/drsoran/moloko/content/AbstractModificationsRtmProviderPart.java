@@ -22,32 +22,26 @@
 
 package dev.drsoran.moloko.content;
 
-import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
 import dev.drsoran.provider.Rtm.Modifications;
 
 
 public abstract class AbstractModificationsRtmProviderPart extends
          AbstractRtmProviderPart
 {
-   
-   @SuppressWarnings( "unused" )
-   private static final String TAG = "Moloko."
-      + AbstractModificationsRtmProviderPart.class.getSimpleName();
-   
-   
-
-   public AbstractModificationsRtmProviderPart( Context context,
+   public AbstractModificationsRtmProviderPart( SystemContext context,
       SQLiteOpenHelper dbAccess, String tableName )
    {
       super( context, dbAccess, tableName );
    }
    
-
-
+   
+   
    protected void createModificationsTrigger( SQLiteDatabase db ) throws SQLException
    {
       // TRIGGER: If this RTM element gets deleted we also delete all possible

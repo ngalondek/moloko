@@ -37,17 +37,16 @@ import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.adapters.DateFormatWheelTextAdapter;
 import dev.drsoran.moloko.ui.adapters.DueTimeWheelTextAdapter;
-import dev.drsoran.moloko.ui.state.InstanceState;
-import dev.drsoran.moloko.util.MolokoCalendar;
 
 
-public class DuePickerDialogFragment extends AbstractPickerDialogFragment
+class DuePickerDialogFragment extends AbstractPickerDialogFragment
 {
    public final static class Config
    {
@@ -55,6 +54,8 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
       
       public final static String HAS_DUE_TIME = "has_due_time";
    }
+   
+   private AppContext appContext;
    
    @InstanceState( key = Config.DUE_MILLIS )
    private long dueMillis = System.currentTimeMillis();
@@ -116,6 +117,15 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      appContext = AppContext.get( activity );
+   }
+   
+   
+   
+   @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
       if ( savedInstanceState != null )
@@ -133,8 +143,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    private void initTimeFormat()
    {
-      is24hTimeFormat = MolokoApp.getSettings( getSherlockActivity() )
-                                 .is24hTimeformat();
+      is24hTimeFormat = appContext.getSettings().is24hTimeformat();
    }
    
    
@@ -145,7 +154,8 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
-      final char[] dateFormatOrder = MolokoDateFormatter.getDateFormatOrder( activity );
+      final char[] dateFormatOrder = appContext.getDateFormatter()
+                                               .getDateFormatOrder();
       assignWheelsByDateFormat( view, dateFormatOrder );
       
       initDaysWheel( activity );

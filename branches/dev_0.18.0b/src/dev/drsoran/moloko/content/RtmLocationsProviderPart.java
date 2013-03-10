@@ -28,7 +28,6 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,8 +38,10 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmLocation;
 
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.Locations;
 
 
@@ -118,7 +119,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query location failed. ", e );
+         MolokoApp.Log().e( TAG, "Query location failed. ", e );
          location = null;
       }
       finally
@@ -165,7 +166,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query locations failed. ", e );
+         MolokoApp.Log().e( TAG, "Query locations failed. ", e );
          locations = null;
       }
       finally
@@ -185,19 +186,20 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                               c.getString( COL_INDICES.get( Locations.LOCATION_NAME ) ),
                               c.getFloat( COL_INDICES.get( Locations.LONGITUDE ) ),
                               c.getFloat( COL_INDICES.get( Locations.LATITUDE ) ),
-                              Queries.getOptString( c,
+                              DbHelper.getOptString( c,
                                                     COL_INDICES.get( Locations.ADDRESS ) ),
                               c.getInt( COL_INDICES.get( Locations.VIEWABLE ) ) == 1
                                                                                     ? true
                                                                                     : false,
-                              Queries.getOptInt( c,
+                              DbHelper.getOptInt( c,
                                                  COL_INDICES.get( Locations.ZOOM ),
                                                  0 ) );
    }
    
    
    
-   public RtmLocationsProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public RtmLocationsProviderPart( SystemContext context,
+      SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Locations.PATH );
    }

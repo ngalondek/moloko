@@ -25,11 +25,10 @@ package dev.drsoran.moloko.ui.fragments.factories;
 import java.util.Iterator;
 import java.util.List;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
 
 
 abstract class AbstractIntentFragmentFactory
@@ -41,7 +40,7 @@ abstract class AbstractIntentFragmentFactory
    
    
    
-   protected final static Fragment resolveIntentToFragment( Context context,
+   protected final static Fragment resolveIntentToFragment( SystemContext context,
                                                             Intent intent,
                                                             List< Class< ? extends Fragment > > fragmentClasses )
    {
@@ -70,10 +69,10 @@ abstract class AbstractIntentFragmentFactory
       }
       catch ( Throwable e )
       {
-         MolokoApp.Log.e( AbstractIntentFragmentFactory.class,
-                          "Unable to instantiate new fragment by Intent "
-                             + intent,
-                          e );
+         context.getLogService().e( AbstractIntentFragmentFactory.class,
+                                    "Unable to instantiate new fragment by Intent "
+                                       + intent,
+                                    e );
       }
       
       return fragment;

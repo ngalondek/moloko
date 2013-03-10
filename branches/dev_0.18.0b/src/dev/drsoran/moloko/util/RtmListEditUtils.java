@@ -30,17 +30,18 @@ import android.content.Context;
 
 import com.mdt.rtm.data.RtmList;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ContentProviderAction;
+import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.ContentProviderAction;
-import dev.drsoran.moloko.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.content.db.CreationsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.provider.Rtm.Lists;
 
 
@@ -59,7 +60,7 @@ public final class RtmListEditUtils
    {
       final ModificationSet modifications = new ModificationSet();
       
-      modifications.add( Modification.newModification( Queries.contentUriWithId( Lists.CONTENT_URI,
+      modifications.add( Modification.newModification( DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                                  listId ),
                                                        Lists.LIST_NAME,
                                                        name ) );
@@ -80,7 +81,7 @@ public final class RtmListEditUtils
                                                   .acquireContentProviderClient( Lists.CONTENT_URI );
       try
       {
-         final RtmList list = RtmListsProviderPart.getListByName( client,
+         final RtmList list = RtmListsTable.getListByName( client,
                                                                   listName );
          if ( list != null )
          {
@@ -104,10 +105,10 @@ public final class RtmListEditUtils
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
       boolean ok = actionItemList.add( ContentProviderAction.Type.INSERT,
-                                       RtmListsProviderPart.insertLocalCreatedList( list ) );
+                                       RtmListsTable.insertLocalCreatedList( list ) );
       ok = ok
          && actionItemList.add( ContentProviderAction.Type.INSERT,
-                                CreationsProviderPart.newCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                CreationsProviderPart.newCreation( DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                                              list.getId() ),
                                                                    list.getCreatedDate()
                                                                        .getTime() ) );
@@ -143,7 +144,7 @@ public final class RtmListEditUtils
          final String listId = list.getId();
          final ModificationSet modifications = new ModificationSet();
          
-         modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Lists.CONTENT_URI,
+         modifications.add( Modification.newNonPersistentModification( DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                                                  listId ),
                                                                        Lists.LIST_DELETED,
                                                                        System.currentTimeMillis() ) );
@@ -166,7 +167,7 @@ public final class RtmListEditUtils
          
          ok = ok
             && actionItemList.add( ContentProviderAction.Type.DELETE,
-                                   CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                   CreationsProviderPart.deleteCreation( DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                                                    listId ) ) );
          
          // Add the modifications to the actionItemList

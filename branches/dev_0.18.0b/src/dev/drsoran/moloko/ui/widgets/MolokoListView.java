@@ -35,6 +35,8 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuInflater;
 
+import dev.drsoran.moloko.ui.UiContext;
+
 
 public abstract class MolokoListView extends ListView
 {
@@ -61,11 +63,14 @@ public abstract class MolokoListView extends ListView
    
    protected IActionModeSupport actionModeSupport;
    
+   private final UiContext uiContext;
+   
    
    
    protected MolokoListView( Context context )
    {
       super( context );
+      this.uiContext = UiContext.get( context );
    }
    
    
@@ -73,6 +78,8 @@ public abstract class MolokoListView extends ListView
    protected MolokoListView( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      this.uiContext = UiContext.get( context );
+      ;
    }
    
    
@@ -80,6 +87,15 @@ public abstract class MolokoListView extends ListView
    protected MolokoListView( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
+      this.uiContext = UiContext.get( context );
+      ;
+   }
+   
+   
+   
+   public UiContext getUiContext()
+   {
+      return uiContext;
    }
    
    

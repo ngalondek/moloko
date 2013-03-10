@@ -27,16 +27,12 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.AutoCompleteTextView;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.ui.EditTextFocusHandler;
+import dev.drsoran.moloko.SystemContext;
 
 
 public class ClearableAutoCompleteTextView extends AutoCompleteTextView
 {
-   @SuppressWarnings( "unused" )
    private final EditTextFocusHandler editTextFocusHandler;
-   
-   private IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
    
    private ClearButtonCompoundDrawable clearButton;
    
@@ -62,6 +58,8 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
       super( context, attrs, defStyle );
       init( attrs );
       
+      IHandlerToken handlerToken = SystemContext.get( context )
+                                                .acquireHandlerToken();
       editTextFocusHandler = new EditTextFocusHandler( this, handlerToken );
    }
    
@@ -70,9 +68,7 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
    @Override
    protected void onDetachedFromWindow()
    {
-      handlerToken.release();
-      handlerToken = null;
-      
+      editTextFocusHandler.shutdown();
       super.onDetachedFromWindow();
    }
    

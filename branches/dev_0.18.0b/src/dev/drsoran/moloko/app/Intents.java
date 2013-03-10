@@ -42,17 +42,18 @@ import android.text.TextUtils;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.notification.MolokoNotificationService;
 import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
+import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.moloko.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.util.Bundles;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -683,7 +684,7 @@ public final class Intents
                                                     String taskId )
    {
       return new Intent( Intent.ACTION_VIEW,
-                         Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+                         DbHelper.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
    
    
@@ -700,7 +701,7 @@ public final class Intents
    public final static Intent createEditTaskIntent( Context context, Task task )
    {
       return new Intent( Intent.ACTION_EDIT,
-                         Queries.contentUriWithId( Tasks.CONTENT_URI,
+                         DbHelper.contentUriWithId( Tasks.CONTENT_URI,
                                                    task.getId() ) ).putExtras( Extras.createEditTaskExtras( task ) );
    }
    
@@ -735,7 +736,7 @@ public final class Intents
                                                     RtmTaskNote note )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT,
-                                        Queries.contentUriWithId( Notes.CONTENT_URI,
+                                        DbHelper.contentUriWithId( Notes.CONTENT_URI,
                                                                   note.getId() ) );
       
       intent.putExtras( Extras.createEditNoteExtras( task, note ) );

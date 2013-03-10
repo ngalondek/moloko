@@ -31,10 +31,11 @@ import android.net.Uri;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.content.db.CreationsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.ModificationsProviderPart;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -45,7 +46,6 @@ import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
@@ -126,7 +126,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
 
    public boolean hasModification( ModificationSet modificationSet )
    {
-      return modificationSet.hasModification( Queries.contentUriWithId( Lists.CONTENT_URI,
+      return modificationSet.hasModification( DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                         list.getId() ) );
    }
    
@@ -135,7 +135,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Lists.CONTENT_URI )
-                                                                             .withValues( RtmListsProviderPart.getContentValues( list,
+                                                                             .withValues( RtmListsTable.getContentValues( list,
                                                                                                                                  true ) )
                                                                              .build() )
                                          .build();
@@ -150,7 +150,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
       /**
        * Change the ID of the local list to the ID of the server list.
        **/
-      operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
+      operation.add( ContentProviderOperation.newUpdate( DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                                    list.getId() ) )
                                              .withValue( Lists._ID,
                                                          serverElement.list.getId() )
@@ -175,7 +175,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
          throw new IllegalArgumentException( "Update id "
             + serverElement.getId() + " differs this id " + getId() );
       
-      final Uri uri = Queries.contentUriWithId( Lists.CONTENT_URI, getId() );
+      final Uri uri = DbHelper.contentUriWithId( Lists.CONTENT_URI, getId() );
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
       if ( SyncUtils.hasChanged( list.getName(), serverElement.list.getName() ) )
@@ -273,7 +273,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                                                                    list.getId() ) )
                                                                              .build() )
                                          .build();
@@ -295,7 +295,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
                                                                                          ? null
                                                                                          : serverElement.getModifiedDate(),
                                                                     getModifiedDate(),
-                                                                    Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                    DbHelper.contentUriWithId( Lists.CONTENT_URI,
                                                                                               list.getId() ),
                                                                     modifications );
       // List Name

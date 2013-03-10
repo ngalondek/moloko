@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g 2011-11-28 14:27:17
+// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g 2013-03-03 20:01:13
 
 package dev.drsoran.moloko.grammar.recurrence.de;
 
@@ -13,99 +13,101 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 
 
+@SuppressWarnings(
+{ "all", "warnings", "unchecked" } )
 public class RecurrenceLexer extends Lexer
 {
    public static final int EOF = -1;
    
-   public static final int EVERY = 4;
+   public static final int AFTER = 4;
    
-   public static final int AFTER = 5;
+   public static final int AND = 5;
    
-   public static final int DAYS = 6;
+   public static final int COMMA = 6;
    
-   public static final int WEEKS = 7;
+   public static final int DAYS = 7;
    
-   public static final int ON = 8;
+   public static final int DOT = 8;
    
-   public static final int MONTHS = 9;
+   public static final int EVERY = 9;
    
-   public static final int YEARS = 10;
+   public static final int FIFTH = 10;
    
-   public static final int UNTIL = 11;
+   public static final int FIRST = 11;
    
    public static final int FOR = 12;
    
-   public static final int INT = 13;
+   public static final int FOURTH = 13;
    
-   public static final int AND = 14;
+   public static final int FRIDAY = 14;
    
-   public static final int COMMA = 15;
+   public static final int INT = 15;
    
    public static final int LAST = 16;
    
-   public static final int DOT = 17;
+   public static final int MINUS = 17;
    
-   public static final int FIRST = 18;
+   public static final int MONDAY = 18;
    
-   public static final int SECOND = 19;
+   public static final int MONTH = 19;
    
-   public static final int OTHER = 20;
+   public static final int MONTHS = 20;
    
-   public static final int THIRD = 21;
+   public static final int NUMBER = 21;
    
-   public static final int FOURTH = 22;
+   public static final int NUM_EIGHT = 22;
    
-   public static final int FIFTH = 23;
+   public static final int NUM_FIVE = 23;
    
-   public static final int NUM_ONE = 24;
+   public static final int NUM_FOUR = 24;
    
-   public static final int NUM_TWO = 25;
+   public static final int NUM_NINE = 25;
    
-   public static final int NUM_THREE = 26;
+   public static final int NUM_ONE = 26;
    
-   public static final int NUM_FOUR = 27;
+   public static final int NUM_SEVEN = 27;
    
-   public static final int NUM_FIVE = 28;
+   public static final int NUM_SIX = 28;
    
-   public static final int NUM_SIX = 29;
+   public static final int NUM_TEN = 29;
    
-   public static final int NUM_SEVEN = 30;
+   public static final int NUM_THREE = 30;
    
-   public static final int NUM_EIGHT = 31;
+   public static final int NUM_TWO = 31;
    
-   public static final int NUM_NINE = 32;
+   public static final int ON = 32;
    
-   public static final int NUM_TEN = 33;
+   public static final int OTHER = 33;
    
-   public static final int MONDAY = 34;
+   public static final int SATURDAY = 34;
    
-   public static final int TUESDAY = 35;
+   public static final int SECOND = 35;
    
-   public static final int WEDNESDAY = 36;
+   public static final int STRING = 36;
    
-   public static final int THURSDAY = 37;
+   public static final int SUNDAY = 37;
    
-   public static final int FRIDAY = 38;
+   public static final int THIRD = 38;
    
-   public static final int SATURDAY = 39;
+   public static final int THURSDAY = 39;
    
-   public static final int SUNDAY = 40;
+   public static final int TIMES = 40;
    
-   public static final int WEEKEND = 41;
+   public static final int TUESDAY = 41;
    
-   public static final int WEEKDAY_LIT = 42;
+   public static final int UNTIL = 42;
    
-   public static final int MONTH = 43;
+   public static final int WEDNESDAY = 43;
    
-   public static final int STRING = 44;
+   public static final int WEEKDAY_LIT = 44;
    
-   public static final int TIMES = 45;
+   public static final int WEEKEND = 45;
    
-   public static final int MINUS = 46;
+   public static final int WEEKS = 46;
    
-   public static final int NUMBER = 47;
+   public static final int WS = 47;
    
-   public static final int WS = 48;
+   public static final int YEARS = 48;
    
    
    
@@ -119,10 +121,15 @@ public class RecurrenceLexer extends Lexer
    
    // delegates
    // delegators
+   public Lexer[] getDelegates()
+   {
+      return new Lexer[] {};
+   }
+   
+   
    
    public RecurrenceLexer()
    {
-      ;
    }
    
    
@@ -137,15 +144,13 @@ public class RecurrenceLexer extends Lexer
    public RecurrenceLexer( CharStream input, RecognizerSharedState state )
    {
       super( input, state );
-      
    }
    
    
    
-   @Override
    public String getGrammarFileName()
    {
-      return "D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g";
+      return "C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g";
    }
    
    
@@ -157,7 +162,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = EVERY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:15:
          // ( 'jede' ( 's' | 'r' | 'n' )? | 'alle' )
          int alt2 = 2;
          int LA2_0 = input.LA( 1 );
@@ -178,16 +183,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt2 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:17:
             // 'jede' ( 's' | 'r' | 'n' )?
             {
                match( "jede" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:23:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:23:
                // ( 's' | 'r' | 'n' )?
                int alt1 = 2;
                int LA1_0 = input.LA( 1 );
@@ -199,13 +205,12 @@ public class RecurrenceLexer extends Lexer
                switch ( alt1 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:
                   {
                      if ( input.LA( 1 ) == 'n'
                         || ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
                      {
                         input.consume();
-                        
                      }
                      else
                      {
@@ -223,7 +228,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:287:40:
             // 'alle'
             {
                match( "alle" );
@@ -237,6 +242,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -251,9 +257,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = AFTER;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:289:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:289:15:
          // ( 'nach' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:289:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:289:17:
          // 'nach'
          {
             match( "nach" );
@@ -265,6 +271,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -279,14 +286,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = YEARS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:15:
          // ( 'jahr' ( 'e' | 'en' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:17:
          // 'jahr' ( 'e' | 'en' )?
          {
             match( "jahr" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:23:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:23:
             // ( 'e' | 'en' )?
             int alt3 = 3;
             int LA3_0 = input.LA( 1 );
@@ -303,7 +310,7 @@ public class RecurrenceLexer extends Lexer
             switch ( alt3 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:24:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:24:
                // 'e'
                {
                   match( 'e' );
@@ -311,7 +318,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:28:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:291:28:
                // 'en'
                {
                   match( "en" );
@@ -328,6 +335,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -342,14 +350,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = MONTHS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:15:
          // ( 'monat' ( 'e' | 'en' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:17:
          // 'monat' ( 'e' | 'en' )?
          {
             match( "monat" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:24:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:24:
             // ( 'e' | 'en' )?
             int alt4 = 3;
             int LA4_0 = input.LA( 1 );
@@ -366,7 +374,7 @@ public class RecurrenceLexer extends Lexer
             switch ( alt4 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:25:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:25:
                // 'e'
                {
                   match( 'e' );
@@ -374,7 +382,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:29:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:293:29:
                // 'en'
                {
                   match( "en" );
@@ -391,6 +399,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -405,14 +414,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = WEEKS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:15:
          // ( 'woche' ( 'n' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:17:
          // 'woche' ( 'n' )?
          {
             match( "woche" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:24:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:24:
             // ( 'n' )?
             int alt5 = 2;
             int LA5_0 = input.LA( 1 );
@@ -424,7 +433,7 @@ public class RecurrenceLexer extends Lexer
             switch ( alt5 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:24:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:295:24:
                // 'n'
                {
                   match( 'n' );
@@ -441,6 +450,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -455,14 +465,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = DAYS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:15:
          // ( 'tag' ( 'e' | 'en' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:17:
          // 'tag' ( 'e' | 'en' )?
          {
             match( "tag" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:22:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:22:
             // ( 'e' | 'en' )?
             int alt6 = 3;
             int LA6_0 = input.LA( 1 );
@@ -479,7 +489,7 @@ public class RecurrenceLexer extends Lexer
             switch ( alt6 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:23:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:23:
                // 'e'
                {
                   match( 'e' );
@@ -487,7 +497,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:27:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:297:27:
                // 'en'
                {
                   match( "en" );
@@ -504,6 +514,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -518,16 +529,437 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = MONTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:15:
          // ( 'januar' | 'jan' | 'februar' | 'feb' | 'märz' | 'april' | 'apr' | 'mai' | 'juni' | 'jun' | 'juli' | 'jul'
          // | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'oktober' | 'okt' | 'november' | 'nov' | 'dezember' |
          // 'dez' )
          int alt7 = 23;
-         alt7 = dfa7.predict( input );
+         switch ( input.LA( 1 ) )
+         {
+            case 'j':
+            {
+               int LA7_1 = input.LA( 2 );
+               
+               if ( ( LA7_1 == 'a' ) )
+               {
+                  int LA7_9 = input.LA( 3 );
+                  
+                  if ( ( LA7_9 == 'n' ) )
+                  {
+                     int LA7_20 = input.LA( 4 );
+                     
+                     if ( ( LA7_20 == 'u' ) )
+                     {
+                        alt7 = 1;
+                     }
+                     else
+                     {
+                        alt7 = 2;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           9,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else if ( ( LA7_1 == 'u' ) )
+               {
+                  int LA7_10 = input.LA( 3 );
+                  
+                  if ( ( LA7_10 == 'n' ) )
+                  {
+                     int LA7_21 = input.LA( 4 );
+                     
+                     if ( ( LA7_21 == 'i' ) )
+                     {
+                        alt7 = 9;
+                     }
+                     else
+                     {
+                        alt7 = 10;
+                     }
+                  }
+                  else if ( ( LA7_10 == 'l' ) )
+                  {
+                     int LA7_22 = input.LA( 4 );
+                     
+                     if ( ( LA7_22 == 'i' ) )
+                     {
+                        alt7 = 11;
+                     }
+                     else
+                     {
+                        alt7 = 12;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           10,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        1,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'f':
+            {
+               int LA7_2 = input.LA( 2 );
+               
+               if ( ( LA7_2 == 'e' ) )
+               {
+                  int LA7_11 = input.LA( 3 );
+                  
+                  if ( ( LA7_11 == 'b' ) )
+                  {
+                     int LA7_23 = input.LA( 4 );
+                     
+                     if ( ( LA7_23 == 'r' ) )
+                     {
+                        alt7 = 3;
+                     }
+                     else
+                     {
+                        alt7 = 4;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           11,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'm':
+            {
+               int LA7_3 = input.LA( 2 );
+               
+               if ( ( LA7_3 == '\u00E4' ) )
+               {
+                  alt7 = 5;
+               }
+               else if ( ( LA7_3 == 'a' ) )
+               {
+                  alt7 = 8;
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        3,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'a':
+            {
+               int LA7_4 = input.LA( 2 );
+               
+               if ( ( LA7_4 == 'p' ) )
+               {
+                  int LA7_14 = input.LA( 3 );
+                  
+                  if ( ( LA7_14 == 'r' ) )
+                  {
+                     int LA7_24 = input.LA( 4 );
+                     
+                     if ( ( LA7_24 == 'i' ) )
+                     {
+                        alt7 = 6;
+                     }
+                     else
+                     {
+                        alt7 = 7;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           14,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else if ( ( LA7_4 == 'u' ) )
+               {
+                  int LA7_15 = input.LA( 3 );
+                  
+                  if ( ( LA7_15 == 'g' ) )
+                  {
+                     int LA7_25 = input.LA( 4 );
+                     
+                     if ( ( LA7_25 == 'u' ) )
+                     {
+                        alt7 = 13;
+                     }
+                     else
+                     {
+                        alt7 = 14;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           15,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        4,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 's':
+            {
+               int LA7_5 = input.LA( 2 );
+               
+               if ( ( LA7_5 == 'e' ) )
+               {
+                  int LA7_16 = input.LA( 3 );
+                  
+                  if ( ( LA7_16 == 'p' ) )
+                  {
+                     int LA7_26 = input.LA( 4 );
+                     
+                     if ( ( LA7_26 == 't' ) )
+                     {
+                        int LA7_42 = input.LA( 5 );
+                        
+                        if ( ( LA7_42 == 'e' ) )
+                        {
+                           alt7 = 15;
+                        }
+                        else
+                        {
+                           alt7 = 16;
+                        }
+                     }
+                     else
+                     {
+                        alt7 = 17;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           16,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        5,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'o':
+            {
+               int LA7_6 = input.LA( 2 );
+               
+               if ( ( LA7_6 == 'k' ) )
+               {
+                  int LA7_17 = input.LA( 3 );
+                  
+                  if ( ( LA7_17 == 't' ) )
+                  {
+                     int LA7_27 = input.LA( 4 );
+                     
+                     if ( ( LA7_27 == 'o' ) )
+                     {
+                        alt7 = 18;
+                     }
+                     else
+                     {
+                        alt7 = 19;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           17,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        6,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'n':
+            {
+               int LA7_7 = input.LA( 2 );
+               
+               if ( ( LA7_7 == 'o' ) )
+               {
+                  int LA7_18 = input.LA( 3 );
+                  
+                  if ( ( LA7_18 == 'v' ) )
+                  {
+                     int LA7_28 = input.LA( 4 );
+                     
+                     if ( ( LA7_28 == 'e' ) )
+                     {
+                        alt7 = 20;
+                     }
+                     else
+                     {
+                        alt7 = 21;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           18,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        7,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            case 'd':
+            {
+               int LA7_8 = input.LA( 2 );
+               
+               if ( ( LA7_8 == 'e' ) )
+               {
+                  int LA7_19 = input.LA( 3 );
+                  
+                  if ( ( LA7_19 == 'z' ) )
+                  {
+                     int LA7_29 = input.LA( 4 );
+                     
+                     if ( ( LA7_29 == 'e' ) )
+                     {
+                        alt7 = 22;
+                     }
+                     else
+                     {
+                        alt7 = 23;
+                     }
+                  }
+                  else
+                  {
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           7,
+                                                                           19,
+                                                                           input );
+                     
+                     throw nvae;
+                     
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        7,
+                                                                        8,
+                                                                        input );
+                  
+                  throw nvae;
+                  
+               }
+            }
+               break;
+            default :
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     7,
+                                                                     0,
+                                                                     input );
+               
+               throw nvae;
+               
+         }
+         
          switch ( alt7 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:17:
             // 'januar'
             {
                match( "januar" );
@@ -535,7 +967,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:31:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:31:
             // 'jan'
             {
                match( "jan" );
@@ -543,7 +975,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:40:
             // 'februar'
             {
                match( "februar" );
@@ -551,7 +983,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:53:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:53:
             // 'feb'
             {
                match( "feb" );
@@ -559,7 +991,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 5:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:65:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:65:
             // 'märz'
             {
                match( "märz" );
@@ -567,7 +999,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 6:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:75:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:75:
             // 'april'
             {
                match( "april" );
@@ -575,7 +1007,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 7:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:88:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:299:88:
             // 'apr'
             {
                match( "apr" );
@@ -583,7 +1015,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 8:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:17:
             // 'mai'
             {
                match( "mai" );
@@ -591,7 +1023,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 9:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:31:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:31:
             // 'juni'
             {
                match( "juni" );
@@ -599,7 +1031,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 10:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:40:
             // 'jun'
             {
                match( "jun" );
@@ -607,7 +1039,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 11:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:53:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:53:
             // 'juli'
             {
                match( "juli" );
@@ -615,7 +1047,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 12:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:65:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:65:
             // 'jul'
             {
                match( "jul" );
@@ -623,7 +1055,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 13:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:75:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:75:
             // 'august'
             {
                match( "august" );
@@ -631,7 +1063,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 14:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:88:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:300:88:
             // 'aug'
             {
                match( "aug" );
@@ -639,7 +1071,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 15:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:17:
             // 'september'
             {
                match( "september" );
@@ -647,7 +1079,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 16:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:31:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:31:
             // 'sept'
             {
                match( "sept" );
@@ -655,7 +1087,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 17:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:40:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:40:
             // 'sep'
             {
                match( "sep" );
@@ -663,7 +1095,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 18:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:53:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:53:
             // 'oktober'
             {
                match( "oktober" );
@@ -671,7 +1103,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 19:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:65:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:65:
             // 'okt'
             {
                match( "okt" );
@@ -679,7 +1111,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 20:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:75:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:75:
             // 'november'
             {
                match( "november" );
@@ -687,7 +1119,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 21:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:88:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:301:88:
             // 'nov'
             {
                match( "nov" );
@@ -695,7 +1127,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 22:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:302:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:302:17:
             // 'dezember'
             {
                match( "dezember" );
@@ -703,7 +1135,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 23:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:302:31:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:302:31:
             // 'dez'
             {
                match( "dez" );
@@ -717,6 +1149,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -731,14 +1164,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = WEEKDAY_LIT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:15:
          // ( 'wochentag' ( 's' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:17:
          // 'wochentag' ( 's' )?
          {
             match( "wochentag" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:28:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:28:
             // ( 's' )?
             int alt8 = 2;
             int LA8_0 = input.LA( 1 );
@@ -750,7 +1183,7 @@ public class RecurrenceLexer extends Lexer
             switch ( alt8 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:28:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:304:28:
                // 's'
                {
                   match( 's' );
@@ -767,6 +1200,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -781,14 +1215,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = WEEKEND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:15:
          // ( 'wochenende' ( 'n' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:17:
          // 'wochenende' ( 'n' )?
          {
             match( "wochenende" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:29:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:29:
             // ( 'n' )?
             int alt9 = 2;
             int LA9_0 = input.LA( 1 );
@@ -800,7 +1234,7 @@ public class RecurrenceLexer extends Lexer
             switch ( alt9 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:29:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:306:29:
                // 'n'
                {
                   match( 'n' );
@@ -817,6 +1251,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -831,7 +1266,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = MONDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:15:
          // ( 'montag' ( 's' )? | 'mo' )
          int alt11 = 2;
          int LA11_0 = input.LA( 1 );
@@ -861,6 +1296,7 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -871,16 +1307,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt11 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:17:
             // 'montag' ( 's' )?
             {
                match( "montag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:25:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:25:
                // ( 's' )?
                int alt10 = 2;
                int LA10_0 = input.LA( 1 );
@@ -892,7 +1329,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt10 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:25:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:25:
                   // 's'
                   {
                      match( 's' );
@@ -905,7 +1342,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:308:36:
             // 'mo'
             {
                match( "mo" );
@@ -919,6 +1356,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -933,7 +1371,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = TUESDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:15:
          // ( 'dienstag' ( 's' )? | 'di' )
          int alt13 = 2;
          int LA13_0 = input.LA( 1 );
@@ -963,6 +1401,7 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -973,16 +1412,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt13 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:17:
             // 'dienstag' ( 's' )?
             {
                match( "dienstag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:27:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:27:
                // ( 's' )?
                int alt12 = 2;
                int LA12_0 = input.LA( 1 );
@@ -994,7 +1434,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt12 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:27:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:27:
                   // 's'
                   {
                      match( 's' );
@@ -1007,7 +1447,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:310:36:
             // 'di'
             {
                match( "di" );
@@ -1021,6 +1461,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1035,7 +1476,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = WEDNESDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:15:
          // ( 'mittwoch' ( 's' )? | 'mi' )
          int alt15 = 2;
          int LA15_0 = input.LA( 1 );
@@ -1065,6 +1506,7 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -1075,16 +1517,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt15 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:17:
             // 'mittwoch' ( 's' )?
             {
                match( "mittwoch" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:27:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:27:
                // ( 's' )?
                int alt14 = 2;
                int LA14_0 = input.LA( 1 );
@@ -1096,7 +1539,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt14 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:27:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:27:
                   // 's'
                   {
                      match( 's' );
@@ -1109,7 +1552,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:312:36:
             // 'mi'
             {
                match( "mi" );
@@ -1123,6 +1566,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1137,7 +1581,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = THURSDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:15:
          // ( 'donnerstag' ( 's' )? | 'do' )
          int alt17 = 2;
          int LA17_0 = input.LA( 1 );
@@ -1167,6 +1611,7 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -1177,16 +1622,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt17 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:17:
             // 'donnerstag' ( 's' )?
             {
                match( "donnerstag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:29:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:29:
                // ( 's' )?
                int alt16 = 2;
                int LA16_0 = input.LA( 1 );
@@ -1198,7 +1644,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt16 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:29:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:29:
                   // 's'
                   {
                      match( 's' );
@@ -1211,7 +1657,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:314:36:
             // 'do'
             {
                match( "do" );
@@ -1225,6 +1671,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1239,7 +1686,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = FRIDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:15:
          // ( 'freitag' ( 's' )? | 'fr' )
          int alt19 = 2;
          int LA19_0 = input.LA( 1 );
@@ -1269,6 +1716,7 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -1279,16 +1727,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt19 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:17:
             // 'freitag' ( 's' )?
             {
                match( "freitag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:26:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:26:
                // ( 's' )?
                int alt18 = 2;
                int LA18_0 = input.LA( 1 );
@@ -1300,7 +1749,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt18 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:26:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:26:
                   // 's'
                   {
                      match( 's' );
@@ -1313,7 +1762,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:316:36:
             // 'fr'
             {
                match( "fr" );
@@ -1327,6 +1776,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1341,7 +1791,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = SATURDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:15:
          // ( 'samstag' ( 's' )? | 'sa' )
          int alt21 = 2;
          int LA21_0 = input.LA( 1 );
@@ -1371,6 +1821,7 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -1381,16 +1832,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt21 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:17:
             // 'samstag' ( 's' )?
             {
                match( "samstag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:26:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:26:
                // ( 's' )?
                int alt20 = 2;
                int LA20_0 = input.LA( 1 );
@@ -1402,7 +1854,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt20 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:26:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:26:
                   // 's'
                   {
                      match( 's' );
@@ -1415,7 +1867,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:318:36:
             // 'sa'
             {
                match( "sa" );
@@ -1429,6 +1881,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1443,7 +1896,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = SUNDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:15:
          // ( 'sonntag' ( 's' )? | 'so' )
          int alt23 = 2;
          int LA23_0 = input.LA( 1 );
@@ -1473,6 +1926,7 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
          }
          else
@@ -1483,16 +1937,17 @@ public class RecurrenceLexer extends Lexer
                                                                   input );
             
             throw nvae;
+            
          }
          switch ( alt23 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:17:
             // 'sonntag' ( 's' )?
             {
                match( "sonntag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:26:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:26:
                // ( 's' )?
                int alt22 = 2;
                int LA22_0 = input.LA( 1 );
@@ -1504,7 +1959,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt22 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:26:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:26:
                   // 's'
                   {
                      match( 's' );
@@ -1517,7 +1972,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:36:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:320:36:
             // 'so'
             {
                match( "so" );
@@ -1531,6 +1986,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1545,9 +2001,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = FIRST;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:322:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:322:15:
          // ( 'erst' ( 'e' | 's' | 'r' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:322:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:322:17:
          // 'erst' ( 'e' | 's' | 'r' )
          {
             match( "erst" );
@@ -1556,7 +2012,6 @@ public class RecurrenceLexer extends Lexer
                || ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
             {
                input.consume();
-               
             }
             else
             {
@@ -1573,6 +2028,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1587,9 +2043,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = SECOND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:324:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:324:15:
          // ( 'zweit' ( 'e' | 's' | 'r' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:324:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:324:17:
          // 'zweit' ( 'e' | 's' | 'r' )
          {
             match( "zweit" );
@@ -1598,7 +2054,6 @@ public class RecurrenceLexer extends Lexer
                || ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
             {
                input.consume();
-               
             }
             else
             {
@@ -1615,6 +2070,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1629,9 +2085,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = THIRD;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:326:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:326:15:
          // ( 'dritt' ( 'e' | 's' | 'r' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:326:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:326:17:
          // 'dritt' ( 'e' | 's' | 'r' )
          {
             match( "dritt" );
@@ -1640,7 +2096,6 @@ public class RecurrenceLexer extends Lexer
                || ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
             {
                input.consume();
-               
             }
             else
             {
@@ -1657,6 +2112,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1671,9 +2127,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = FOURTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:328:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:328:15:
          // ( 'viert' ( 'e' | 's' | 'r' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:328:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:328:17:
          // 'viert' ( 'e' | 's' | 'r' )
          {
             match( "viert" );
@@ -1682,7 +2138,6 @@ public class RecurrenceLexer extends Lexer
                || ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
             {
                input.consume();
-               
             }
             else
             {
@@ -1699,6 +2154,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1713,9 +2169,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = FIFTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:330:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:330:15:
          // ( 'fünft' ( 'e' | 's' | 'r' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:330:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:330:17:
          // 'fünft' ( 'e' | 's' | 'r' )
          {
             match( "fünft" );
@@ -1724,7 +2180,6 @@ public class RecurrenceLexer extends Lexer
                || ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
             {
                input.consume();
-               
             }
             else
             {
@@ -1741,6 +2196,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1755,14 +2211,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = LAST;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:15:
          // ( 'letzt' ( 'e' | 's' | 'r' | 'en' | 'em' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:17:
          // 'letzt' ( 'e' | 's' | 'r' | 'en' | 'em' )
          {
             match( "letzt" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:24:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:24:
             // ( 'e' | 's' | 'r' | 'en' | 'em' )
             int alt24 = 5;
             switch ( input.LA( 1 ) )
@@ -1804,12 +2260,13 @@ public class RecurrenceLexer extends Lexer
                                                                         input );
                   
                   throw nvae;
+                  
             }
             
             switch ( alt24 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:25:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:25:
                // 'e'
                {
                   match( 'e' );
@@ -1817,7 +2274,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:29:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:29:
                // 's'
                {
                   match( 's' );
@@ -1825,7 +2282,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:33:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:33:
                // 'r'
                {
                   match( 'r' );
@@ -1833,7 +2290,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:37:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:37:
                // 'en'
                {
                   match( "en" );
@@ -1841,7 +2298,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:42:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:332:42:
                // 'em'
                {
                   match( "em" );
@@ -1858,6 +2315,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1872,14 +2330,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = OTHER;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:15:
          // ( 'ander' ( 'e' | 'es' | 'er' | 'en' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:17:
          // 'ander' ( 'e' | 'es' | 'er' | 'en' )
          {
             match( "ander" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:24:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:24:
             // ( 'e' | 'es' | 'er' | 'en' )
             int alt25 = 4;
             int LA25_0 = input.LA( 1 );
@@ -1916,11 +2374,12 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
             }
             switch ( alt25 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:25:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:25:
                // 'e'
                {
                   match( 'e' );
@@ -1928,7 +2387,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:29:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:29:
                // 'es'
                {
                   match( "es" );
@@ -1936,7 +2395,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:34:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:34:
                // 'er'
                {
                   match( "er" );
@@ -1944,7 +2403,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:39:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:334:39:
                // 'en'
                {
                   match( "en" );
@@ -1961,6 +2420,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -1975,14 +2435,14 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_ONE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:15:
          // ( 'ein' ( 's' | 'e' | 'er' | 'em' | 'en' | 'es' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:17:
          // 'ein' ( 's' | 'e' | 'er' | 'em' | 'en' | 'es' )?
          {
             match( "ein" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:22:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:22:
             // ( 's' | 'e' | 'er' | 'em' | 'en' | 'es' )?
             int alt26 = 7;
             int LA26_0 = input.LA( 1 );
@@ -2021,7 +2481,7 @@ public class RecurrenceLexer extends Lexer
             switch ( alt26 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:23:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:23:
                // 's'
                {
                   match( 's' );
@@ -2029,7 +2489,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:27:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:27:
                // 'e'
                {
                   match( 'e' );
@@ -2037,7 +2497,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:31:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:31:
                // 'er'
                {
                   match( "er" );
@@ -2045,7 +2505,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:36:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:36:
                // 'em'
                {
                   match( "em" );
@@ -2053,7 +2513,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:41:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:41:
                // 'en'
                {
                   match( "en" );
@@ -2061,7 +2521,7 @@ public class RecurrenceLexer extends Lexer
                }
                   break;
                case 6:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:46:
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:336:46:
                // 'es'
                {
                   match( "es" );
@@ -2078,6 +2538,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2092,9 +2553,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_TWO;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:338:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:338:15:
          // ( 'zwei' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:338:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:338:17:
          // 'zwei'
          {
             match( "zwei" );
@@ -2106,6 +2567,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2120,9 +2582,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_THREE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:340:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:340:15:
          // ( 'frei' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:340:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:340:17:
          // 'frei'
          {
             match( "frei" );
@@ -2134,6 +2596,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2148,9 +2611,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_FOUR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:342:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:342:15:
          // ( 'vier' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:342:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:342:17:
          // 'vier'
          {
             match( "vier" );
@@ -2162,6 +2625,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2176,9 +2640,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_FIVE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:344:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:344:15:
          // ( 'fünf' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:344:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:344:17:
          // 'fünf'
          {
             match( "fünf" );
@@ -2190,6 +2654,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2204,9 +2669,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_SIX;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:346:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:346:15:
          // ( 'sechs' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:346:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:346:17:
          // 'sechs'
          {
             match( "sechs" );
@@ -2218,6 +2683,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2232,9 +2698,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_SEVEN;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:348:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:348:15:
          // ( 'sieben' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:348:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:348:17:
          // 'sieben'
          {
             match( "sieben" );
@@ -2246,6 +2712,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2260,9 +2727,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_EIGHT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:350:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:350:15:
          // ( 'acht' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:350:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:350:17:
          // 'acht'
          {
             match( "acht" );
@@ -2274,6 +2741,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2288,9 +2756,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_NINE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:352:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:352:15:
          // ( 'neun' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:352:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:352:17:
          // 'neun'
          {
             match( "neun" );
@@ -2302,6 +2770,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2316,9 +2785,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = NUM_TEN;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:354:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:354:15:
          // ( 'zehn' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:354:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:354:17:
          // 'zehn'
          {
             match( "zehn" );
@@ -2330,6 +2799,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2344,9 +2814,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = AND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:356:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:356:15:
          // ( 'und' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:356:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:356:17:
          // 'und'
          {
             match( "und" );
@@ -2358,6 +2828,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2372,7 +2843,7 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = ON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:15:
          // ( 'a' ( 'm' | 'n' ) | 'i' ( 'n' | 'm' ) | 'de' ( 's' | 'r' ) | 'vo' ( 'n' | 'm' ) )
          int alt27 = 4;
          switch ( input.LA( 1 ) )
@@ -2404,19 +2875,20 @@ public class RecurrenceLexer extends Lexer
                                                                      input );
                
                throw nvae;
+               
          }
          
          switch ( alt27 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:17:
             // 'a' ( 'm' | 'n' )
             {
                match( 'a' );
+               
                if ( ( input.LA( 1 ) >= 'm' && input.LA( 1 ) <= 'n' ) )
                {
                   input.consume();
-                  
                }
                else
                {
@@ -2429,14 +2901,14 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:32:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:32:
             // 'i' ( 'n' | 'm' )
             {
                match( 'i' );
+               
                if ( ( input.LA( 1 ) >= 'm' && input.LA( 1 ) <= 'n' ) )
                {
                   input.consume();
-                  
                }
                else
                {
@@ -2449,7 +2921,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:47:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:47:
             // 'de' ( 's' | 'r' )
             {
                match( "de" );
@@ -2457,7 +2929,6 @@ public class RecurrenceLexer extends Lexer
                if ( ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
                {
                   input.consume();
-                  
                }
                else
                {
@@ -2470,7 +2941,7 @@ public class RecurrenceLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:63:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:358:63:
             // 'vo' ( 'n' | 'm' )
             {
                match( "vo" );
@@ -2478,7 +2949,6 @@ public class RecurrenceLexer extends Lexer
                if ( ( input.LA( 1 ) >= 'm' && input.LA( 1 ) <= 'n' ) )
                {
                   input.consume();
-                  
                }
                else
                {
@@ -2497,6 +2967,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2511,9 +2982,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = UNTIL;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:360:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:360:15:
          // ( 'bis' STRING )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:360:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:360:17:
          // 'bis' STRING
          {
             match( "bis" );
@@ -2527,6 +2998,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2541,9 +3013,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = FOR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:362:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:362:15:
          // ( 'für' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:362:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:362:17:
          // 'für'
          {
             match( "für" );
@@ -2555,6 +3027,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2569,9 +3042,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = TIMES;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:364:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:364:15:
          // ( 'mal' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:364:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:364:17:
          // 'mal'
          {
             match( "mal" );
@@ -2583,6 +3056,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2597,9 +3071,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = DOT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:366:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:366:15:
          // ( '.' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:366:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:366:17:
          // '.'
          {
             match( '.' );
@@ -2611,6 +3085,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2625,9 +3100,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = MINUS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:368:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:368:15:
          // ( '-' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:368:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:368:17:
          // '-'
          {
             match( '-' );
@@ -2639,6 +3114,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2653,9 +3129,9 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = COMMA;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:370:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:370:15:
          // ( ',' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:370:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:370:17:
          // ','
          {
             match( ',' );
@@ -2667,6 +3143,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2679,18 +3156,28 @@ public class RecurrenceLexer extends Lexer
    {
       try
       {
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:373:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:374:15:
          // ( '0' .. '9' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:373:17:
-         // '0' .. '9'
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:
          {
-            matchRange( '0', '9' );
+            if ( ( input.LA( 1 ) >= '0' && input.LA( 1 ) <= '9' ) )
+            {
+               input.consume();
+            }
+            else
+            {
+               MismatchedSetException mse = new MismatchedSetException( null,
+                                                                        input );
+               recover( mse );
+               throw mse;
+            }
             
          }
          
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2705,12 +3192,12 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = INT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:15:
          // ( ( MINUS )? ( NUMBER )+ )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:17:
          // ( MINUS )? ( NUMBER )+
          {
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:17:
             // ( MINUS )?
             int alt28 = 2;
             int LA28_0 = input.LA( 1 );
@@ -2722,17 +3209,26 @@ public class RecurrenceLexer extends Lexer
             switch ( alt28 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:17:
-               // MINUS
+               // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:
                {
-                  mMINUS();
+                  if ( input.LA( 1 ) == '-' )
+                  {
+                     input.consume();
+                  }
+                  else
+                  {
+                     MismatchedSetException mse = new MismatchedSetException( null,
+                                                                              input );
+                     recover( mse );
+                     throw mse;
+                  }
                   
                }
                   break;
             
             }
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:24:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:24:
             // ( NUMBER )+
             int cnt29 = 0;
             loop29: do
@@ -2748,10 +3244,19 @@ public class RecurrenceLexer extends Lexer
                switch ( alt29 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:375:24:
-                  // NUMBER
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:
                   {
-                     mNUMBER();
+                     if ( ( input.LA( 1 ) >= '0' && input.LA( 1 ) <= '9' ) )
+                     {
+                        input.consume();
+                     }
+                     else
+                     {
+                        MismatchedSetException mse = new MismatchedSetException( null,
+                                                                                 input );
+                        recover( mse );
+                        throw mse;
+                     }
                      
                   }
                      break;
@@ -2773,6 +3278,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2785,12 +3291,12 @@ public class RecurrenceLexer extends Lexer
    {
       try
       {
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:378:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:379:15:
          // ( ( ' ' | . )+ )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:378:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:379:17:
          // ( ' ' | . )+
          {
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:378:17:
+            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:379:17:
             // ( ' ' | . )+
             int cnt30 = 0;
             loop30: do
@@ -2810,7 +3316,7 @@ public class RecurrenceLexer extends Lexer
                switch ( alt30 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:378:18:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:379:18:
                   // ' '
                   {
                      match( ' ' );
@@ -2818,7 +3324,7 @@ public class RecurrenceLexer extends Lexer
                   }
                      break;
                   case 2:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:378:22:
+                  // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:379:22:
                   // .
                   {
                      matchAny();
@@ -2841,6 +3347,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2855,16 +3362,15 @@ public class RecurrenceLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:380:15:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:380:15:
          // ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:380:17:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:380:17:
          // ( ' ' | '\\t' | '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
                || input.LA( 1 ) == '\r' || input.LA( 1 ) == ' ' )
             {
                input.consume();
-               
             }
             else
             {
@@ -2883,6 +3389,7 @@ public class RecurrenceLexer extends Lexer
       }
       finally
       {
+         // do for sure before leaving
       }
    }
    
@@ -2890,10 +3397,9 @@ public class RecurrenceLexer extends Lexer
    
    // $ANTLR end "WS"
    
-   @Override
    public void mTokens() throws RecognitionException
    {
-      // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:8:
+      // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:8:
       // ( EVERY | AFTER | YEARS | MONTHS | WEEKS | DAYS | MONTH | WEEKDAY_LIT | WEEKEND | MONDAY | TUESDAY | WEDNESDAY
       // | THURSDAY | FRIDAY | SATURDAY | SUNDAY | FIRST | SECOND | THIRD | FOURTH | FIFTH | LAST | OTHER | NUM_ONE |
       // NUM_TWO | NUM_THREE | NUM_FOUR | NUM_FIVE | NUM_SIX | NUM_SEVEN | NUM_EIGHT | NUM_NINE | NUM_TEN | AND | ON |
@@ -2903,7 +3409,7 @@ public class RecurrenceLexer extends Lexer
       switch ( alt31 )
       {
          case 1:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:10:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:10:
          // EVERY
          {
             mEVERY();
@@ -2911,7 +3417,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 2:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:16:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:16:
          // AFTER
          {
             mAFTER();
@@ -2919,7 +3425,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 3:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:22:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:22:
          // YEARS
          {
             mYEARS();
@@ -2927,7 +3433,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 4:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:28:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:28:
          // MONTHS
          {
             mMONTHS();
@@ -2935,7 +3441,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 5:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:35:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:35:
          // WEEKS
          {
             mWEEKS();
@@ -2943,7 +3449,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 6:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:41:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:41:
          // DAYS
          {
             mDAYS();
@@ -2951,7 +3457,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 7:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:46:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:46:
          // MONTH
          {
             mMONTH();
@@ -2959,7 +3465,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 8:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:52:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:52:
          // WEEKDAY_LIT
          {
             mWEEKDAY_LIT();
@@ -2967,7 +3473,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 9:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:64:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:64:
          // WEEKEND
          {
             mWEEKEND();
@@ -2975,7 +3481,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 10:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:72:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:72:
          // MONDAY
          {
             mMONDAY();
@@ -2983,7 +3489,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 11:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:79:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:79:
          // TUESDAY
          {
             mTUESDAY();
@@ -2991,7 +3497,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 12:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:87:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:87:
          // WEDNESDAY
          {
             mWEDNESDAY();
@@ -2999,7 +3505,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 13:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:97:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:97:
          // THURSDAY
          {
             mTHURSDAY();
@@ -3007,7 +3513,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 14:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:106:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:106:
          // FRIDAY
          {
             mFRIDAY();
@@ -3015,7 +3521,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 15:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:113:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:113:
          // SATURDAY
          {
             mSATURDAY();
@@ -3023,7 +3529,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 16:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:122:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:122:
          // SUNDAY
          {
             mSUNDAY();
@@ -3031,7 +3537,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 17:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:129:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:129:
          // FIRST
          {
             mFIRST();
@@ -3039,7 +3545,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 18:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:135:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:135:
          // SECOND
          {
             mSECOND();
@@ -3047,7 +3553,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 19:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:142:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:142:
          // THIRD
          {
             mTHIRD();
@@ -3055,7 +3561,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 20:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:148:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:148:
          // FOURTH
          {
             mFOURTH();
@@ -3063,7 +3569,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 21:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:155:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:155:
          // FIFTH
          {
             mFIFTH();
@@ -3071,7 +3577,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 22:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:161:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:161:
          // LAST
          {
             mLAST();
@@ -3079,7 +3585,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 23:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:166:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:166:
          // OTHER
          {
             mOTHER();
@@ -3087,7 +3593,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 24:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:172:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:172:
          // NUM_ONE
          {
             mNUM_ONE();
@@ -3095,7 +3601,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 25:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:180:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:180:
          // NUM_TWO
          {
             mNUM_TWO();
@@ -3103,7 +3609,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 26:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:188:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:188:
          // NUM_THREE
          {
             mNUM_THREE();
@@ -3111,7 +3617,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 27:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:198:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:198:
          // NUM_FOUR
          {
             mNUM_FOUR();
@@ -3119,7 +3625,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 28:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:207:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:207:
          // NUM_FIVE
          {
             mNUM_FIVE();
@@ -3127,7 +3633,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 29:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:216:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:216:
          // NUM_SIX
          {
             mNUM_SIX();
@@ -3135,7 +3641,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 30:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:224:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:224:
          // NUM_SEVEN
          {
             mNUM_SEVEN();
@@ -3143,7 +3649,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 31:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:234:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:234:
          // NUM_EIGHT
          {
             mNUM_EIGHT();
@@ -3151,7 +3657,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 32:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:244:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:244:
          // NUM_NINE
          {
             mNUM_NINE();
@@ -3159,7 +3665,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 33:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:253:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:253:
          // NUM_TEN
          {
             mNUM_TEN();
@@ -3167,7 +3673,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 34:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:261:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:261:
          // AND
          {
             mAND();
@@ -3175,7 +3681,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 35:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:265:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:265:
          // ON
          {
             mON();
@@ -3183,7 +3689,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 36:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:268:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:268:
          // UNTIL
          {
             mUNTIL();
@@ -3191,7 +3697,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 37:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:274:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:274:
          // FOR
          {
             mFOR();
@@ -3199,7 +3705,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 38:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:278:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:278:
          // TIMES
          {
             mTIMES();
@@ -3207,7 +3713,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 39:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:284:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:284:
          // DOT
          {
             mDOT();
@@ -3215,7 +3721,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 40:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:288:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:288:
          // MINUS
          {
             mMINUS();
@@ -3223,7 +3729,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 41:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:294:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:294:
          // COMMA
          {
             mCOMMA();
@@ -3231,7 +3737,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 42:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:300:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:300:
          // INT
          {
             mINT();
@@ -3239,7 +3745,7 @@ public class RecurrenceLexer extends Lexer
          }
             break;
          case 43:
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:304:
+         // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\de\\Recurrence.g:1:304:
          // WS
          {
             mWS();
@@ -3251,91 +3757,10 @@ public class RecurrenceLexer extends Lexer
       
    }
    
-   protected DFA7 dfa7 = new DFA7( this );
-   
    protected DFA31 dfa31 = new DFA31( this );
    
-   static final String DFA7_eotS = "\24\uffff\1\37\1\41\1\43\1\45\1\47\1\51\1\53\1\55\1\57\1\61\14"
-      + "\uffff\1\63\11\uffff";
-   
-   static final String DFA7_eofS = "\64\uffff";
-   
-   static final String DFA7_minS = "\2\141\1\145\1\141\1\160\1\145\1\153\1\157\1\145\1\156\1\154\1"
-      + "\142\2\uffff\1\162\1\147\1\160\1\164\1\166\1\172\1\165\2\151\1\162"
-      + "\1\151\1\165\1\164\1\157\2\145\14\uffff\1\145\11\uffff";
-   
-   static final String DFA7_maxS = "\1\163\1\165\1\145\1\u00e4\1\165\1\145\1\153\1\157\1\145\2\156"
-      + "\1\142\2\uffff\1\162\1\147\1\160\1\164\1\166\1\172\1\165\2\151\1"
-      + "\162\1\151\1\165\1\164\1\157\2\145\14\uffff\1\145\11\uffff";
-   
-   static final String DFA7_acceptS = "\14\uffff\1\5\1\10\20\uffff\1\1\1\2\1\11\1\12\1\13\1\14\1\3\1\4"
-      + "\1\6\1\7\1\15\1\16\1\uffff\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1"
-      + "\17\1\20";
-   
-   static final String DFA7_specialS = "\64\uffff}>";
-   
-   static final String[] DFA7_transitionS =
-   {
-    "\1\4\2\uffff\1\10\1\uffff\1\2\3\uffff\1\1\2\uffff\1\3\1\7\1"
-       + "\6\3\uffff\1\5", "\1\11\23\uffff\1\12", "\1\13",
-    "\1\15\u0082\uffff\1\14", "\1\16\4\uffff\1\17", "\1\20", "\1\21", "\1\22",
-    "\1\23", "\1\24", "\1\26\1\uffff\1\25", "\1\27", "", "", "\1\30", "\1\31",
-    "\1\32", "\1\33", "\1\34", "\1\35", "\1\36", "\1\40", "\1\42", "\1\44",
-    "\1\46", "\1\50", "\1\52", "\1\54", "\1\56", "\1\60", "", "", "", "", "",
-    "", "", "", "", "", "", "", "\1\62", "", "", "", "", "", "", "", "", "" };
-   
-   static final short[] DFA7_eot = DFA.unpackEncodedString( DFA7_eotS );
-   
-   static final short[] DFA7_eof = DFA.unpackEncodedString( DFA7_eofS );
-   
-   static final char[] DFA7_min = DFA.unpackEncodedStringToUnsignedChars( DFA7_minS );
-   
-   static final char[] DFA7_max = DFA.unpackEncodedStringToUnsignedChars( DFA7_maxS );
-   
-   static final short[] DFA7_accept = DFA.unpackEncodedString( DFA7_acceptS );
-   
-   static final short[] DFA7_special = DFA.unpackEncodedString( DFA7_specialS );
-   
-   static final short[][] DFA7_transition;
-   
-   static
-   {
-      int numStates = DFA7_transitionS.length;
-      DFA7_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA7_transition[ i ] = DFA.unpackEncodedString( DFA7_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA7 extends DFA
-   {
-      
-      public DFA7( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 7;
-         this.eot = DFA7_eot;
-         this.eof = DFA7_eof;
-         this.min = DFA7_min;
-         this.max = DFA7_max;
-         this.accept = DFA7_accept;
-         this.special = DFA7_special;
-         this.transition = DFA7_transition;
-      }
-      
-      
-      
-      @Override
-      public String getDescription()
-      {
-         return "299:1: MONTH : ( 'januar' | 'jan' | 'februar' | 'feb' | 'märz' | 'april' | 'apr' | 'mai' | 'juni' | 'jun' | 'juli' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'oktober' | 'okt' | 'november' | 'nov' | 'dezember' | 'dez' );";
-      }
-   }
-   
-   static final String DFA31_eotS = "\23\uffff\1\60\5\uffff\1\20\3\uffff\1\64\3\uffff\1\70\36\uffff"
-      + "\1\105\1\107\1\111\1\113\1\115\7\uffff\1\115\3\uffff";
+   static final String DFA31_eotS = "\23\uffff\1\60\5\uffff\1\20\3\uffff\1\64\3\uffff\1\70\36\uffff\1"
+      + "\105\1\107\1\111\1\113\1\115\7\uffff\1\115\3\uffff";
    
    static final String DFA31_eofS = "\120\uffff";
    
@@ -3345,8 +3770,8 @@ public class RecurrenceLexer extends Lexer
       + "\1\uffff\1\145\3\uffff\1\141\2\uffff\1\150\1\151\1\uffff\1\146\2"
       + "\uffff\1\151\1\162\1\uffff\1\145\4\164\1\156\7\uffff\1\145\3\uffff";
    
-   static final String DFA31_maxS = "\1\172\2\165\1\157\1\u00e4\1\157\1\uffff\1\u00fc\1\157\1\uffff"
-      + "\2\162\1\167\1\157\5\uffff\1\71\4\uffff\1\156\1\144\3\uffff\1\156"
+   static final String DFA31_maxS = "\1\172\2\165\1\157\1\u00e4\1\157\1\uffff\1\u00fc\1\157\1\uffff\2"
+      + "\162\1\167\1\157\5\uffff\1\71\4\uffff\1\156\1\144\3\uffff\1\156"
       + "\1\154\1\uffff\1\143\1\145\1\162\1\160\3\uffff\1\172\5\uffff\1\145"
       + "\1\uffff\1\145\3\uffff\1\164\2\uffff\1\150\1\151\1\uffff\1\146\2"
       + "\uffff\1\151\1\162\1\uffff\1\145\4\164\1\156\7\uffff\1\164\3\uffff";
@@ -3362,10 +3787,10 @@ public class RecurrenceLexer extends Lexer
    
    static final String[] DFA31_transitionS =
    {
-    "\2\26\2\uffff\1\26\22\uffff\1\26\13\uffff\1\24\1\23\1\22\1"
-       + "\uffff\12\25\47\uffff\1\2\1\21\1\uffff\1\12\1\13\1\7\2\uffff"
-       + "\1\20\1\1\1\uffff\1\16\1\4\1\3\1\11\3\uffff\1\10\1\6\1\17\1"
-       + "\15\1\5\2\uffff\1\14", "\1\30\3\uffff\1\27\17\uffff\1\11",
+    "\2\26\2\uffff\1\26\22\uffff\1\26\13\uffff\1\24\1\23\1\22\1\uffff"
+       + "\12\25\47\uffff\1\2\1\21\1\uffff\1\12\1\13\1\7\2\uffff\1\20"
+       + "\1\1\1\uffff\1\16\1\4\1\3\1\11\3\uffff\1\10\1\6\1\17\1\15\1"
+       + "\5\2\uffff\1\14", "\1\30\3\uffff\1\27\17\uffff\1\11",
     "\1\32\10\uffff\1\27\1\20\1\31\1\uffff\1\11\4\uffff\1\11",
     "\1\33\3\uffff\1\34\11\uffff\1\11",
     "\1\36\7\uffff\1\37\5\uffff\1\35\164\uffff\1\11", "\1\40", "",
@@ -3424,7 +3849,6 @@ public class RecurrenceLexer extends Lexer
       
       
       
-      @Override
       public String getDescription()
       {
          return "1:1: Tokens : ( EVERY | AFTER | YEARS | MONTHS | WEEKS | DAYS | MONTH | WEEKDAY_LIT | WEEKEND | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | FIRST | SECOND | THIRD | FOURTH | FIFTH | LAST | OTHER | NUM_ONE | NUM_TWO | NUM_THREE | NUM_FOUR | NUM_FIVE | NUM_SIX | NUM_SEVEN | NUM_EIGHT | NUM_NINE | NUM_TEN | AND | ON | UNTIL | FOR | TIMES | DOT | MINUS | COMMA | INT | WS );";

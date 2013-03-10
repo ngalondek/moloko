@@ -67,9 +67,8 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    {
       super( context, attrs );
       
-      initUi( context, labelId, imgId );
-      
       this.intent = intent;
+      initUi( context, labelId, imgId );
    }
    
    
@@ -106,5 +105,4 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
       ( (ImageView) findViewById( R.id.widget_simple_image ) ).setImageResource( imgId );
       ( (TextView) findViewById( R.id.text ) ).setText( labelId );
    }
-   
 }

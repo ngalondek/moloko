@@ -24,7 +24,6 @@ package dev.drsoran.moloko.app.prefs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.util.ListEntriesAndValues;
 
 
@@ -49,8 +48,7 @@ class DefaultListPreference extends SyncableListPreference
    @Override
    protected boolean isSyncWithRtm()
    {
-      return MolokoApp.getSettings( getContext() )
-                      .isDefaultListIdInSyncWithRtm();
+      return getSettings().isDefaultListIdInSyncWithRtm();
    }
    
    
@@ -58,7 +56,7 @@ class DefaultListPreference extends SyncableListPreference
    @Override
    protected void setSyncWithRtm( boolean value )
    {
-      MolokoApp.getSettings( getContext() ).setDefaultListIdSyncWithRtm( value );
+      getSettings().setDefaultListIdSyncWithRtm( value );
    }
    
 }

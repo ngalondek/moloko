@@ -39,8 +39,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.connection.IRtmConnection;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.sync.connection.IRtmConnection;
 
 
 /**
@@ -64,10 +64,8 @@ public class Invoker
       }
       catch ( Exception exception )
       {
-         MolokoApp.Log.e( Invoker.class,
-                          "Unable to construct a document builder",
-                          exception );
-         throw new RuntimeException( exception );
+         throw new RuntimeException( "Unable to construct a document builder",
+                                     exception );
       }
       builder = aBuilder;
    }
@@ -90,11 +88,15 @@ public class Invoker
    
    private final IRtmConnection rtmConnection;
    
+   private final ILog log;
    
    
-   public Invoker( IRtmConnection rtmConnection, String serviceRelativeUri,
-      ApplicationInfo applicationInfo ) throws ServiceInternalException
+   
+   public Invoker( ILog log, IRtmConnection rtmConnection,
+      String serviceRelativeUri, ApplicationInfo applicationInfo )
+      throws ServiceInternalException
    {
+      this.log = log;
       this.rtmConnection = rtmConnection;
       this.serviceRelativeUri = serviceRelativeUri;
       
@@ -118,7 +120,7 @@ public class Invoker
    {
       obeyRtmRequestLimit();
       
-      MolokoApp.Log.d( getClass(), "Invoker running at " + new Date() );
+      log.d( getClass(), "Invoker running at " + new Date() );
       
       final String requestUri = computeRequestUri( params );
       
@@ -259,7 +261,7 @@ public class Invoker
             {
                final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
                
-               MolokoApp.Log.e( getClass(), message.toString(), exception );
+               log.e( getClass(), message.toString(), exception );
                throw new ServiceInternalException( message.toString(),
                                                    exception );
             }

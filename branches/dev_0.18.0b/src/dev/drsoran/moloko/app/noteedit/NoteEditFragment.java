@@ -34,32 +34,31 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.NoteEditUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Notes;
 
 
-public class NoteEditFragment extends AbstractNoteEditFragment implements
+class NoteEditFragment extends AbstractNoteEditFragment implements
          LoaderCallbacks< RtmTaskNote >
 {
-   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
-   
    @InstanceState( key = Intents.Extras.KEY_NOTE )
    private RtmTaskNote note;
    
    private ContentObserver noteChangesObserver;
    
    private INoteEditFragmentListener listener;
+   
+   private IHandlerToken handler;
    
    
    
@@ -94,6 +93,8 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
       {
          listener = null;
       }
+      
+      handler = getUiContext().acquireHandlerToken();
    }
    
    
@@ -136,7 +137,12 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
    public void onDestroy()
    {
       unregisterForNoteDeletedByBackgroundSync();
-      handler.release();
+      
+      if ( handler != null )
+      {
+         handler.release();
+         handler = null;
+      }
       
       super.onDestroy();
    }
@@ -171,10 +177,10 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
    private void showNote( View content, RtmTaskNote note )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
-                                                               note.getCreatedDate()
-                                                                   .getTime(),
-                                                               MolokoDateFormatter.FORMAT_WITH_YEAR ) );
+      createdDate.setText( getUiContext().getDateFormatter()
+                                         .formatDateTime( note.getCreatedDate()
+                                                              .getTime(),
+                                                          IDateFormatterService.FORMAT_WITH_YEAR ) );
       title.setText( note.getTitle() );
       text.setText( note.getText() );
    }
@@ -263,7 +269,8 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
    
    private void registerForNoteDeletedByBackgroundSync()
    {
-      noteChangesObserver = new ContentObserver( MolokoApp.getHandler() )
+      noteChangesObserver = new ContentObserver( getUiContext().asSystemContext()
+                                                               .getHandler() )
       {
          @Override
          public void onChange( boolean selfChange )
@@ -276,7 +283,7 @@ public class NoteEditFragment extends AbstractNoteEditFragment implements
       };
       
       getSherlockActivity().getContentResolver()
-                           .registerContentObserver( Queries.contentUriWithId( Notes.CONTENT_URI,
+                           .registerContentObserver( DbHelper.contentUriWithId( Notes.CONTENT_URI,
                                                                                getNoteAssertNotNull().getId() ),
                                                      false,
                                                      noteChangesObserver );

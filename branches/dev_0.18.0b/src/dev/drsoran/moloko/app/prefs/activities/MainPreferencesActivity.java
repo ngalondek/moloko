@@ -29,7 +29,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
 
 
 public class MainPreferencesActivity extends SherlockPreferenceActivity

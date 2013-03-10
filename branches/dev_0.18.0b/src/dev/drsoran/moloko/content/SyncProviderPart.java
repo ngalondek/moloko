@@ -26,7 +26,6 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,8 +33,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Pair;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.Sync;
 
 
@@ -92,9 +93,9 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    {
       try
       {
-         if ( Queries.exists( client, Sync.CONTENT_URI, FIX_ID ) )
+         if ( DbHelper.exists( client, Sync.CONTENT_URI, FIX_ID ) )
          {
-            client.update( Queries.contentUriWithId( Sync.CONTENT_URI, FIX_ID ),
+            client.update( DbHelper.contentUriWithId( Sync.CONTENT_URI, FIX_ID ),
                            getContentValues( lastIn, lastOut ),
                            null,
                            null );
@@ -106,7 +107,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query Sync failed. ", e );
+         MolokoApp.Log().e( TAG, "Query Sync failed. ", e );
       }
    }
    
@@ -132,7 +133,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query Sync failed. ", e );
+         MolokoApp.Log().e( TAG, "Query Sync failed. ", e );
          id = null;
       }
       finally
@@ -161,15 +162,15 @@ public class SyncProviderPart extends AbstractRtmProviderPart
          
          if ( ok )
          {
-            inAndOut = new Pair< Long, Long >( Queries.getOptLong( c,
+            inAndOut = new Pair< Long, Long >( DbHelper.getOptLong( c,
                                                                    COL_INDICES.get( Sync.LAST_IN ) ),
-                                               Queries.getOptLong( c,
+                                               DbHelper.getOptLong( c,
                                                                    COL_INDICES.get( Sync.LAST_OUT ) ) );
          }
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query Sync failed. ", e );
+         MolokoApp.Log().e( TAG, "Query Sync failed. ", e );
          inAndOut = null;
       }
       finally
@@ -183,7 +184,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    
    
    
-   public SyncProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public SyncProviderPart( SystemContext context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Sync.PATH );
    }

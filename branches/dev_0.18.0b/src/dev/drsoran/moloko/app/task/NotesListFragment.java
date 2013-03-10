@@ -38,17 +38,18 @@ import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoMultiChoiceModalListFragment;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
-public class NotesListFragment extends
+class NotesListFragment extends
          MolokoMultiChoiceModalListFragment< RtmTaskNote > implements
-         IAbsViewPagerSupport
+         IAbsViewPagerSupport, IOnSettingsChangedListener
 {
    
    public static class Config
@@ -74,6 +75,8 @@ public class NotesListFragment extends
    
    private INotesListsFragmentListener listener;
    
+   private AppContext appContext;
+   
    
    
    public NotesListFragment()
@@ -88,6 +91,8 @@ public class NotesListFragment extends
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
+      
+      appContext = AppContext.get( activity );
       
       if ( activity instanceof INotesListsFragmentListener )
          listener = (INotesListsFragmentListener) activity;
@@ -129,6 +134,35 @@ public class NotesListFragment extends
       {
          onCreateOptionsMenuImpl( menu, inflater );
       }
+   }
+   
+   
+   
+   @Override
+   public void onStart()
+   {
+      super.onStart();
+      appContext.getAppEvents()
+                .registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
+                                                    this );
+   }
+   
+   
+   
+   @Override
+   public void onStop()
+   {
+      appContext.getAppEvents().unregisterOnSettingsChangedListener( this );
+      super.onStop();
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
+      appContext = null;
+      super.onDetach();
    }
    
    
@@ -216,10 +250,12 @@ public class NotesListFragment extends
    
    
    @Override
-   protected int getSettingsMask()
+   public void onSettingsChanged( int which )
    {
-      return super.getSettingsMask()
-         | IOnSettingsChangedListener.DATE_TIME_RELATED;
+      if ( ( which & IOnSettingsChangedListener.DATE_TIME_RELATED ) != 0 )
+      {
+         getListAdapter().notifyDataSetChanged();
+      }
    }
    
    

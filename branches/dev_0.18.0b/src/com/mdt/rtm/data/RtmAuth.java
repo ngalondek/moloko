@@ -46,6 +46,7 @@ public class RtmAuth extends RtmData
    {
       nothing
       {
+         @Override
          public void setVisible( View view )
          {
             if ( view != null )
@@ -62,6 +63,7 @@ public class RtmAuth extends RtmData
       },
       read
       {
+         @Override
          public void setVisible( View view )
          {
             if ( view != null )
@@ -78,6 +80,7 @@ public class RtmAuth extends RtmData
       },
       write
       {
+         @Override
          public void setVisible( View view )
          {
             if ( view != null )
@@ -94,6 +97,7 @@ public class RtmAuth extends RtmData
       },
       delete
       {
+         @Override
          public void setVisible( View view )
          {
             if ( view != null )
@@ -113,6 +117,7 @@ public class RtmAuth extends RtmData
    public static final Parcelable.Creator< RtmAuth > CREATOR = new Parcelable.Creator< RtmAuth >()
    {
       
+      @Override
       public RtmAuth createFromParcel( Parcel source )
       {
          return new RtmAuth( source );
@@ -120,6 +125,7 @@ public class RtmAuth extends RtmData
       
       
       
+      @Override
       public RtmAuth[] newArray( int size )
       {
          return new RtmAuth[ size ];
@@ -189,6 +195,7 @@ public class RtmAuth extends RtmData
    
    
    
+   @Override
    public int describeContents()
    {
       return 0;
@@ -196,6 +203,7 @@ public class RtmAuth extends RtmData
    
    
    
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( token );

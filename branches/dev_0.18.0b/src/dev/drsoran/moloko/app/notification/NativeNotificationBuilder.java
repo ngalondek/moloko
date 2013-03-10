@@ -30,7 +30,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.widget.RemoteViews;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
 
 
 class NativeNotificationBuilder implements INotificationBuilder

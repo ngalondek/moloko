@@ -22,20 +22,14 @@
 
 package dev.drsoran.moloko.ui.widgets;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
 import dev.drsoran.moloko.ui.IChangesTarget;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 public class EstimateEditText extends ClearableEditText
@@ -43,8 +37,6 @@ public class EstimateEditText extends ClearableEditText
    public final static String EDIT_ESTIMATE_TEXT = "edit_estimate_text";
    
    private Long estimateMillis;
-   
-   private boolean isSupportingFreeTextInput;
    
    private IChangesTarget changes;
    
@@ -67,9 +59,6 @@ public class EstimateEditText extends ClearableEditText
    public EstimateEditText( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
-      checkFreeTextInput();
-      
-      setEnabled( isSupportingFreeTextInput );
    }
    
    
@@ -105,7 +94,7 @@ public class EstimateEditText extends ClearableEditText
    
    public ValidationResult validate()
    {
-      if ( isSupportingFreeTextInput )
+      if ( isEnabled() )
       {
          final Long res = parseEstimate( getTextTrimmed() );
          return validateEstimate( res );
@@ -176,8 +165,8 @@ public class EstimateEditText extends ClearableEditText
          }
          else
          {
-            setText( MolokoDateFormatter.formatEstimated( getContext(),
-                                                          estimateMillis.longValue() ) );
+            setText( getUiContext().getDateFormatter()
+                                   .formatEstimated( estimateMillis.longValue() ) );
          }
       }
    }
@@ -192,7 +181,9 @@ public class EstimateEditText extends ClearableEditText
       }
       else
       {
-         return RtmDateTimeParsing.parseEstimated( estimateString );
+         return getUiContext().getParsingService()
+                              .getDateTimeParsing()
+                              .parseEstimated( estimateString );
       }
    }
    
@@ -244,18 +235,8 @@ public class EstimateEditText extends ClearableEditText
    private void putTextChange()
    {
       if ( changes != null )
-         changes.putChange( EDIT_ESTIMATE_TEXT, getTextTrimmed(), String.class );
-   }
-   
-   
-   
-   private void checkFreeTextInput()
-   {
-      if ( !isInEditMode() )
       {
-         final Locale resLocale = MolokoApp.get( getContext() )
-                                           .getActiveResourcesLocale();
-         isSupportingFreeTextInput = DateParserFactory.existsDateParserWithMatchingLocale( resLocale );
+         changes.putChange( EDIT_ESTIMATE_TEXT, getTextTrimmed(), String.class );
       }
    }
    
@@ -263,7 +244,7 @@ public class EstimateEditText extends ClearableEditText
    
    private void commitInput( String input )
    {
-      if ( isSupportingFreeTextInput )
+      if ( isEnabled() )
       {
          setEstimateByString( input );
          updateEditText();

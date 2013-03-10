@@ -27,31 +27,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import android.accounts.Account;
-import android.content.ContentProviderClient;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SyncResult;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.util.Pair;
 
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
-import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.app.account.AccountUtils;
-import dev.drsoran.moloko.connection.ConnectionUtil;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
-import dev.drsoran.moloko.content.SyncProviderPart;
-import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.Sync;
 
 
 public final class SyncUtils
@@ -83,176 +68,6 @@ public final class SyncUtils
          MolokoApp.Log.e( tag, exception.responseMessage );
          ++syncResult.stats.numIoExceptions;
       }
-   }
-   
-   
-   
-   public final static void requestManualSync( FragmentActivity activity )
-   {
-      requestManualSync( activity, false );
-   }
-   
-   
-   
-   public final static void requestManualSync( FragmentActivity activity,
-                                               boolean silent )
-   {
-      if ( ConnectionUtil.isConnected( activity ) )
-      {
-         final Account account = AccountUtils.getRtmAccount( activity );
-         
-         if ( account != null )
-         {
-            SyncUtils.requestManualSync( account );
-         }
-         
-         else if ( !silent )
-         {
-            UiUtils.showNoAccountDialog( activity );
-         }
-      }
-      else if ( !silent )
-      {
-         UiUtils.showNotConnectedDialog( activity );
-      }
-   }
-   
-   
-   
-   public final static void requestManualSync( Account account )
-   {
-      final Bundle bundle = new Bundle();
-      
-      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
-      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
-      
-      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
-   }
-   
-   
-   
-   public final static void requestSettingsOnlySync( Context context,
-                                                     Account account )
-   {
-      if ( account != null )
-      {
-         final Bundle bundle = new Bundle();
-         
-         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
-         bundle.putBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
-                            true );
-         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, false );
-         
-         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
-      }
-      else
-      {
-         // TODO: Show NoAccountDialogFragment if we use PreferenceFragment
-         context.startActivity( Intents.createNewAccountIntent() );
-      }
-   }
-   
-   
-   
-   public final static void requestScheduledSync( Account account )
-   {
-      final Bundle bundle = new Bundle();
-      
-      bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
-      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
-      
-      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
-   }
-   
-   
-   
-   public final static void cancelSync( Context context )
-   {
-      final Account account = AccountUtils.getRtmAccount( context );
-      
-      if ( account != null )
-         ContentResolver.cancelSync( account, Rtm.AUTHORITY );
-   }
-   
-   
-   
-   public final static boolean isReadyToSync( Context context )
-   {
-      // Check if we are connected.
-      boolean sync = ConnectionUtil.isConnected( context );
-      
-      if ( sync )
-      {
-         final Account account = AccountUtils.getRtmAccount( context );
-         
-         // Check if we have an account and the sync has not been disabled
-         // in between.
-         sync = account != null
-            && ContentResolver.getSyncAutomatically( account, Rtm.AUTHORITY );
-      }
-      
-      return sync;
-   }
-   
-   
-   
-   public final static boolean isSyncing( Context context )
-   {
-      final Account account = AccountUtils.getRtmAccount( context );
-      
-      return account != null
-         && !ContentResolver.isSyncPending( account, Rtm.AUTHORITY )
-         && ContentResolver.isSyncActive( account, Rtm.AUTHORITY );
-   }
-   
-   
-   
-   /**
-    * Loads the start time from the Sync database table and the interval from the settings.
-    */
-   public final static void schedulePeriodicSync( Context context )
-   {
-      final long interval = MolokoApp.getSettings( context ).getSyncInterval();
-      
-      if ( interval != Constants.SYNC_INTERVAL_MANUAL )
-         SyncUtils.schedulePeriodicSync( context, interval );
-   }
-   
-   
-   
-   /**
-    * Loads the start time from the Sync database table.
-    */
-   public final static void schedulePeriodicSync( Context context, long interval )
-   {
-      long startUtc = System.currentTimeMillis();
-      
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Sync.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final Pair< Long, Long > lastSync = SyncProviderPart.getLastInAndLastOut( client );
-         
-         if ( lastSync != null )
-         {
-            final long lastSyncIn = ( lastSync.first != null ) ? lastSync.first
-                                                              : Long.MAX_VALUE;
-            final long lastSyncOut = ( lastSync.second != null )
-                                                                ? lastSync.second
-                                                                : Long.MAX_VALUE;
-            
-            final long earliestLastSync = Math.min( lastSyncIn, lastSyncOut );
-            
-            // Ever synced?
-            if ( earliestLastSync != Long.MAX_VALUE )
-            {
-               startUtc = earliestLastSync + interval;
-            }
-         }
-      }
-      
-      MolokoApp.get( context ).schedulePeriodicSync( startUtc, interval );
    }
    
    
@@ -305,16 +120,22 @@ public final class SyncUtils
                // value we have transferred already.
                if ( properties.serverModDate != null
                   && ( properties.serverModDate.getTime() >= properties.localModDate.getTime() ) )
+               {
                   // LOCAL UPDATE: The server element was modified after the local value.
                   syncDir = SyncResultDirection.LOCAL;
+               }
                else
+               {
                   // SERVER UPDATE: The local element was modified after the server element.
                   syncDir = SyncResultDirection.SERVER;
+               }
             }
             else
+            {
                // SERVER UPDATE: The server value has not been changed since last sync,
                // so use local modified value.
                syncDir = SyncResultDirection.SERVER;
+            }
          }
          
          // LOCAL UPDATE: If the element has not locally changed, take the server version

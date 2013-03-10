@@ -24,7 +24,6 @@ package dev.drsoran.moloko.ui.actionmodes;
 
 import java.util.Collection;
 
-import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Build;
 import android.util.SparseBooleanArray;
@@ -34,8 +33,9 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.ui.widgets.MolokoListView.IMolokoMultiChoiceModeListener;
 import dev.drsoran.moloko.util.Strings;
@@ -101,9 +101,9 @@ public class BaseMultiChoiceModeListener< T > implements
    
    
    
-   public Context getContext()
+   public UiContext getContext()
    {
-      return listView.getContext();
+      return listView.getUiContext();
    }
    
    
@@ -287,14 +287,16 @@ public class BaseMultiChoiceModeListener< T > implements
       }
       else
       {
-         MolokoApp.getHandler().postAtFrontOfQueue( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               getAdapter().unregisterDataSetObserver( dataSetObserver );
-            }
-         } );
+         getContext().asSystemContext()
+                     .getHandler()
+                     .postAtFrontOfQueue( new Runnable()
+                     {
+                        @Override
+                        public void run()
+                        {
+                           getAdapter().unregisterDataSetObserver( dataSetObserver );
+                        }
+                     } );
       }
    }
 }

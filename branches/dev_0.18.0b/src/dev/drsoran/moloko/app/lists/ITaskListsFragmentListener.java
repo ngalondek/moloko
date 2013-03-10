@@ -25,7 +25,7 @@ package dev.drsoran.moloko.app.lists;
 import android.content.Intent;
 
 
-public interface ITaskListsFragmentListener
+interface ITaskListsFragmentListener
 {
    void openList( int pos );
    

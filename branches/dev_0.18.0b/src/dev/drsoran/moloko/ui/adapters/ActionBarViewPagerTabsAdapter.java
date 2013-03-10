@@ -30,7 +30,7 @@ import android.support.v4.view.ViewPager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 
-import dev.drsoran.moloko.ui.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 
 
 public class ActionBarViewPagerTabsAdapter extends BaseFragmentPagerAdapter

@@ -23,22 +23,77 @@ package dev.drsoran.moloko.test.grammar.recurrence;
  */
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.xtremelabs.robolectric.Robolectric;
 
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.grammar.lang.RecurrenceSentenceLanguage;
+import dev.drsoran.moloko.grammar.recurrence.IRecurrencePatternParser;
+import dev.drsoran.moloko.grammar.recurrence.IRecurrenceSentenceLanguage;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParserImpl;
+import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.MolokoTestRunner_en;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.ui.UiContext;
 
 
 @RunWith( MolokoTestRunner_en.class )
-public class RecurrencePatternTest extends RecurrenceTestBase
+public class RecurrencePatternTest extends MolokoTestCase
 {
+   private final static SimpleDateFormat SDF_FORMAT = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
+   
+   private IRecurrencePatternParser recurrencePatternParser;
+   
+   private SimpleDateFormat dateParse;
+   
+   
+   
+   @Override
+   @Before
+   public void setUp()
+   {
+      super.setUp();
+      
+      final ILog log = EasyMock.createNiceMock( ILog.class );
+      
+      final UiContext uiContext = UiContext.get( Robolectric.application );
+      final IDateFormatter dateFormatContext = uiContext.getDateFormatter();
+      
+      IRecurrenceSentenceLanguage language;
+      try
+      {
+         language = new RecurrenceSentenceLanguage( Locale.US,
+                                                    log,
+                                                    uiContext.getResources(),
+                                                    R.xml.parser_lang_reccur_pattern );
+      }
+      catch ( ParseException e )
+      {
+         throw new RuntimeException( e );
+      }
+      
+      recurrencePatternParser = new RecurrencePatternParserImpl( log,
+                                                                 dateFormatContext,
+                                                                 language );
+      
+      dateParse = new SimpleDateFormat( uiContext.getDateFormatter()
+                                                 .getNumericDateFormatPattern( true ) );
+      
+   }
+   
+   
+   
    @Test
    public void every_year()
    {
@@ -200,7 +255,7 @@ public class RecurrencePatternTest extends RecurrenceTestBase
                                                + "=MO,WE",
                                             RecurrencePatternParser.OP_UNTIL_LIT
                                                + "="
-                                               + getRecurrenceDateFormat().format( getDateParse().parse( "10/10/2010" ) ) ),
+                                               + SDF_FORMAT.format( dateParse.parse( "10/10/2010" ) ) ),
                               "every week on the monday, wednesday until 10/10/2010",
                               true );
    }
@@ -234,9 +289,8 @@ public class RecurrencePatternTest extends RecurrenceTestBase
                                             1,
                                             RecurrencePatternParser.OP_UNTIL_LIT
                                                + "="
-                                               + getRecurrenceDateFormat().format( cal.getTime() ) ),
-                              "daily until "
-                                 + getDateParse().format( cal.getTime() ),
+                                               + SDF_FORMAT.format( cal.getTime() ) ),
+                              "daily until " + dateParse.format( cal.getTime() ),
                               true );
    }
    
@@ -260,9 +314,8 @@ public class RecurrencePatternTest extends RecurrenceTestBase
                                         boolean isEvery )
    {
       
-      final String result = RecurrenceParsing.parseRecurrencePattern( Robolectric.application,
-                                                                      recurrencePatternString,
-                                                                      isEvery );
+      final String result = recurrencePatternParser.parseRecurrencePatternToSentence( recurrencePatternString,
+                                                                                      isEvery );
       if ( result == null )
       {
          Assert.fail( "Parsing '" + recurrencePatternString + "' failed!" );

@@ -31,14 +31,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 
 
-public class ChangeTagsActivity extends SherlockFragmentActivity
+public class ChangeTagsActivity extends MolokoFragmentActivity
 {
    @Override
    public void onCreate( Bundle savedInstanceState )
@@ -105,5 +103,14 @@ public class ChangeTagsActivity extends SherlockFragmentActivity
                                  .add( R.id.frag_change_tags,
                                        ChangeTagsFragment.newInstance( getIntent().getExtras() ) )
                                  .commit();
+   }
+   
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return new int[]
+      { R.id.frag_change_tags };
    }
 }

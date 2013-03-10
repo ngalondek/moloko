@@ -26,19 +26,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.IBinder;
-import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.TokenBasedHandler;
-import dev.drsoran.moloko.app.NotifierContext;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents.Action;
 
 
 public class MolokoNotificationService extends Service
 {
-   private final static TokenBasedHandler handler = new TokenBasedHandler();
-   
-   private NotifierContext notifierContext;
-   
    private MolokoNotificationManager notificationManager;
+   
+   private AppContext appContext;
    
    
    
@@ -47,7 +43,7 @@ public class MolokoNotificationService extends Service
    {
       super.onCreate();
       
-      createNotifierContext();
+      createAppContext();
       createNotificationManager();
    }
    
@@ -107,7 +103,7 @@ public class MolokoNotificationService extends Service
    public void onDestroy()
    {
       deleteNotificationManager();
-      deleteNotifierContext();
+      deleteAppContext();
       
       super.onDestroy();
    }
@@ -118,13 +114,6 @@ public class MolokoNotificationService extends Service
    public IBinder onBind( Intent intent )
    {
       return serviceNotBindable();
-   }
-   
-   
-   
-   public static IHandlerToken acquireHandlerToken()
-   {
-      return handler.aquireToken();
    }
    
    
@@ -153,20 +142,16 @@ public class MolokoNotificationService extends Service
    
    
    
-   private void createNotifierContext()
+   private void createAppContext()
    {
-      notifierContext = new NotifierContext( this );
+      appContext = AppContext.get( this );
    }
    
    
    
-   private void deleteNotifierContext()
+   private void deleteAppContext()
    {
-      if ( notifierContext != null )
-      {
-         notifierContext.shutdown();
-         notifierContext = null;
-      }
+      appContext = null;
    }
    
    
@@ -175,7 +160,7 @@ public class MolokoNotificationService extends Service
    {
       if ( notificationManager == null )
       {
-         notificationManager = new MolokoNotificationManager( notifierContext );
+         notificationManager = new MolokoNotificationManager( appContext );
       }
    }
    

@@ -29,8 +29,8 @@ import java.util.Calendar;
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 import android.content.Context;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter

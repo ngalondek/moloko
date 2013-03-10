@@ -30,11 +30,11 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -123,7 +123,7 @@ class HoleDayDueTasksLoader extends AbstractLoader< Cursor >
       final long tomorrowPlusReminder = cal.getTimeInMillis()
          + remindBeforeMillis;
       
-      final String result = Queries.bindAll( DUE_TASKS_QUERY_WITH_REMIND_BEFORE,
+      final String result = DbHelper.bindAll( DUE_TASKS_QUERY_WITH_REMIND_BEFORE,
                                              new String[]
                                              {
                                               String.valueOf( today ),

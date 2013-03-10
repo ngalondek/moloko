@@ -23,9 +23,9 @@
 package dev.drsoran.moloko.app.notification;
 
 import android.app.Notification;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import dev.drsoran.moloko.app.AppContext;
 
 
 class PreHoneycombPermanentNotificationPresenter extends
@@ -35,7 +35,7 @@ class PreHoneycombPermanentNotificationPresenter extends
    
    
    
-   public PreHoneycombPermanentNotificationPresenter( Context context )
+   public PreHoneycombPermanentNotificationPresenter( AppContext context )
    {
       super( context );
    }
@@ -97,9 +97,7 @@ class PreHoneycombPermanentNotificationPresenter extends
    
    private void startActivity( Intent intent )
    {
-      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TASK
-         | Intent.FLAG_ACTIVITY_NEW_TASK );
-      
+      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_NEW_TASK );
       getContext().startActivity( intent );
    }
 }

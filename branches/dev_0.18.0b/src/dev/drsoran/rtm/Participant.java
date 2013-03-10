@@ -30,11 +30,11 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Participants;
 
 
@@ -165,7 +165,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
 
    public Uri getContentUriWithId()
    {
-      return Queries.contentUriWithId( Participants.CONTENT_URI, id );
+      return DbHelper.contentUriWithId( Participants.CONTENT_URI, id );
    }
    
 

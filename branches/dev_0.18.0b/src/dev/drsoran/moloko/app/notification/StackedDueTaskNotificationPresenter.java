@@ -29,17 +29,20 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import android.content.Context;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
+@TargetApi( Build.VERSION_CODES.HONEYCOMB )
 class StackedDueTaskNotificationPresenter extends
          AbstractDueTaskNotificationPresenter
 {
@@ -67,9 +70,18 @@ class StackedDueTaskNotificationPresenter extends
    
    
    
-   public StackedDueTaskNotificationPresenter( Context context )
+   public StackedDueTaskNotificationPresenter( AppContext context )
    {
       super( context );
+   }
+   
+   
+   
+   @Override
+   protected void startActivity( Intent intent )
+   {
+      intent.addFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TASK );
+      super.startActivity( intent );
    }
    
    

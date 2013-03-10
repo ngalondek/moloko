@@ -34,17 +34,23 @@ import java.util.TreeSet;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.net.Uri;
+import dev.drsoran.moloko.app.content.ContentProviderAction.Type;
+import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
+import dev.drsoran.moloko.app.content.IContentProviderActionItem;
+import dev.drsoran.moloko.content.db.ModificationsProviderPart;
+import dev.drsoran.moloko.content.db.Queries;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Modifications;
 
 
 public class ModificationSet implements Set< Modification >,
          IContentProviderActionItem
 {
-   private final Set< Modification > impl;
+   public final static ModificationSet EMPTY = new ModificationSet().asReadOnly();
    
-   public final static ModificationSet EMPTY_MODIFICATION_SET = new ModificationSet();
+   private Set< Modification > impl;
+   
+   private boolean isReadOnly;
    
    
    
@@ -58,6 +64,14 @@ public class ModificationSet implements Set< Modification >,
    public ModificationSet( Collection< ? extends Modification > collection )
    {
       impl = new TreeSet< Modification >( collection );
+   }
+   
+   
+   
+   public ModificationSet asReadOnly()
+   {
+      impl = Collections.unmodifiableSet( impl );
+      return this;
    }
    
    
@@ -178,9 +192,13 @@ public class ModificationSet implements Set< Modification >,
    {
       if ( !SyncUtils.hasChanged( modification.getSyncedValue(),
                                   modification.getNewValue() ) )
+      {
          remove( modification );
+      }
       else
+      {
          add( modification );
+      }
    }
    
    
@@ -230,7 +248,9 @@ public class ModificationSet implements Set< Modification >,
       {
          if ( modification.getEntityUri().equals( entityUri )
             && modification.getColName().equals( columnName ) )
+         {
             return modification;
+         }
       }
       
       return null;
@@ -245,7 +265,9 @@ public class ModificationSet implements Set< Modification >,
          if ( modification.getEntityUri()
                           .toString()
                           .startsWith( uri.toString() ) )
+         {
             return true;
+         }
       }
       
       return false;
@@ -258,7 +280,9 @@ public class ModificationSet implements Set< Modification >,
       for ( Modification modification : impl )
       {
          if ( modification.getEntityUri().equals( entityUri ) )
+         {
             return true;
+         }
       }
       
       return false;
@@ -272,7 +296,9 @@ public class ModificationSet implements Set< Modification >,
       {
          if ( modification.getEntityUri().equals( entityUri )
             && modification.getColName().equals( columnName ) )
+         {
             return true;
+         }
       }
       
       return false;
@@ -287,7 +313,9 @@ public class ModificationSet implements Set< Modification >,
       for ( Modification modification : impl )
       {
          if ( modification.getEntityUri().equals( entityUri ) )
+         {
             result.add( modification );
+         }
       }
       
       return Collections.unmodifiableList( result );
@@ -320,7 +348,39 @@ public class ModificationSet implements Set< Modification >,
    
    
    @Override
-   public boolean applyTransactional( RtmProvider rtmProvider )
+   public Iterable< ContentProviderOperation > getOperations()
+   {
+      return impl.;
+   }
+   
+   
+   
+   @Override
+   public int getOperationsCount()
+   {
+      return size();
+   }
+   
+   
+   
+   @Override
+   public int addOperationsToBatch( Collection< ? super ContentProviderOperation > batch )
+   {
+      return 0;
+   }
+   
+   
+   
+   @Override
+   public Type getActionType()
+   {
+      return Type.UPDATE;
+   }
+   
+   
+   
+   @Override
+   public void applyTransactional( RtmProvider rtmProvider )
    {
       return ModificationsProviderPart.applyModificationsTransactional( rtmProvider,
                                                                         this );
@@ -329,7 +389,7 @@ public class ModificationSet implements Set< Modification >,
    
    
    @Override
-   public boolean apply( ContentResolver contentResolver )
+   public void apply( ContentResolver contentResolver )
    {
       return ModificationsProviderPart.applyModifications( contentResolver,
                                                            this );

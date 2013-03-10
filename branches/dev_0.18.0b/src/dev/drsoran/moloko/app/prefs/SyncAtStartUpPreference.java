@@ -26,7 +26,7 @@ import android.content.Context;
 import android.preference.CheckBoxPreference;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.AppContext;
 
 
 class SyncAtStartUpPreference extends CheckBoxPreference implements
@@ -42,7 +42,9 @@ class SyncAtStartUpPreference extends CheckBoxPreference implements
    @Override
    public void checkEnabled()
    {
-      setEnabled( !MolokoApp.getSettings( getContext() ).isManualSyncOnly() );
+      setEnabled( !AppContext.get( getContext() )
+                             .getSettings()
+                             .isManualSyncOnly() );
       
       if ( !isEnabled() )
       {

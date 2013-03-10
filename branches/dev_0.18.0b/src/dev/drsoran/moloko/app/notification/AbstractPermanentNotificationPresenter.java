@@ -36,16 +36,15 @@ import android.util.Pair;
 
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.format.OverdueNotificationTaskDateFormatter;
-import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -56,13 +55,13 @@ abstract class AbstractPermanentNotificationPresenter implements
 {
    private final static int ID = R.id.notification_permanent;
    
-   private final Context context;
+   private final AppContext context;
    
    private boolean isNotificationActive;
    
    
    
-   protected AbstractPermanentNotificationPresenter( Context context )
+   protected AbstractPermanentNotificationPresenter( AppContext context )
    {
       this.context = context;
    }
@@ -104,7 +103,7 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    
    
-   protected Context getContext()
+   protected AppContext getContext()
    {
       return context;
    }
@@ -116,7 +115,7 @@ abstract class AbstractPermanentNotificationPresenter implements
       if ( tasksCursor.moveToFirst() )
       {
          return Intents.createOpenTaskIntentFromNotification( getContext(),
-                                                              Queries.getOptString( tasksCursor,
+                                                              DbHelper.getOptString( tasksCursor,
                                                                                     getColumnIndex( Tasks._ID ) ) );
       }
       
@@ -175,8 +174,8 @@ abstract class AbstractPermanentNotificationPresenter implements
    
    private String getNotificationTitle()
    {
-      final Map< PermanentNotificationType, Collection< String >> permanetNotifications = MolokoApp.getSettings( getContext() )
-                                                                                                   .getNotifyingPermanentTaskLists();
+      final Map< PermanentNotificationType, Collection< String >> permanetNotifications = context.getSettings()
+                                                                                                 .getNotifyingPermanentTaskLists();
       
       final boolean isNotifyingTodayTasks = !permanetNotifications.get( PermanentNotificationType.TODAY )
                                                                   .isEmpty();
@@ -193,13 +192,13 @@ abstract class AbstractPermanentNotificationPresenter implements
          cal.roll( Calendar.DAY_OF_YEAR, 1 );
          final long tomorrowMillis = cal.getTimeInMillis();
          
+         final IDateFormatterService dateFormatter = context.getDateFormatter();
+         
          return context.getString( R.string.notification_permanent_today_and_tomorrow_title,
-                                   MolokoDateFormatter.formatDate( context,
-                                                                   todayMillis,
-                                                                   MolokoDateFormatter.FORMAT_NUMERIC ),
-                                   MolokoDateFormatter.formatDate( context,
-                                                                   tomorrowMillis,
-                                                                   MolokoDateFormatter.FORMAT_NUMERIC ) );
+                                   dateFormatter.formatDate( todayMillis,
+                                                             IDateFormatterService.FORMAT_NUMERIC ),
+                                   dateFormatter.formatDate( tomorrowMillis,
+                                                             IDateFormatterService.FORMAT_NUMERIC ) );
       }
       
       if ( isNotifyingTodayTasks )
@@ -237,13 +236,13 @@ abstract class AbstractPermanentNotificationPresenter implements
       {
          tasksCursor.moveToFirst();
          
-         final String taskName = Queries.getOptString( tasksCursor,
+         final String taskName = DbHelper.getOptString( tasksCursor,
                                                        getColumnIndex( Tasks.TASKSERIES_NAME ) );
          
          // If we have one task to show and this is overdue, show due date.
          if ( overdueCnt == 1 )
          {
-            final String pastString = new OverdueNotificationTaskDateFormatter( context ).getFormattedOverdueDueDate( Queries.getOptLong( tasksCursor,
+            final String pastString = new OverdueNotificationTaskDateFormatter( context ).getFormattedOverdueDueDate( DbHelper.getOptLong( tasksCursor,
                                                                                                                                           getColumnIndex( Tasks.DUE_DATE ) ) );
             if ( !TextUtils.isEmpty( pastString ) )
             {
@@ -301,7 +300,7 @@ abstract class AbstractPermanentNotificationPresenter implements
       boolean hasNext = tasksCursor.moveToFirst();
       for ( ; hasNext; hasNext = tasksCursor.moveToNext() )
       {
-         final String priorityString = Queries.getOptString( tasksCursor,
+         final String priorityString = DbHelper.getOptString( tasksCursor,
                                                              getColumnIndex( Tasks.PRIORITY ) );
          
          if ( RtmTask.convertPriority( priorityString ) == RtmTask.Priority.High )
@@ -309,7 +308,7 @@ abstract class AbstractPermanentNotificationPresenter implements
             ++numHighPrioTasks;
          }
          
-         final Long due = Queries.getOptLong( tasksCursor,
+         final Long due = DbHelper.getOptLong( tasksCursor,
                                               getColumnIndex( Tasks.DUE_DATE ) );
          
          if ( due != null )
@@ -319,14 +318,15 @@ abstract class AbstractPermanentNotificationPresenter implements
             if ( nowCal == null )
                nowCal = MolokoCalendar.getInstance();
             
-            final boolean hasDueTime = Queries.getOptBool( tasksCursor,
+            final boolean hasDueTime = DbHelper.getOptBool( tasksCursor,
                                                            getColumnIndex( Tasks.HAS_DUE_TIME ),
                                                            false );
             
             // If the task has a due time then it can be overdue
             // even today.
             if ( hasDueTime
-               && MolokoDateUtils.isDaysBefore( dueMillis, nowCal.getTimeInMillis() ) )
+               && MolokoDateUtils.isDaysBefore( dueMillis,
+                                                nowCal.getTimeInMillis() ) )
             {
                ++numOverdueTasks;
             }
@@ -334,7 +334,8 @@ abstract class AbstractPermanentNotificationPresenter implements
             // If the task has no due time then it can be overdue
             // only before today.
             else if ( !MolokoDateUtils.isToday( dueMillis )
-               && !MolokoDateUtils.isDaysAfter( dueMillis, nowCal.getTimeInMillis() ) )
+               && !MolokoDateUtils.isDaysAfter( dueMillis,
+                                                nowCal.getTimeInMillis() ) )
             {
                ++numOverdueTasks;
             }

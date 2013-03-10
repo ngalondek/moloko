@@ -29,7 +29,6 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,14 +39,12 @@ import android.view.View;
 import android.widget.Toast;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.app.account.AccountUtils;
-import dev.drsoran.moloko.app.account.IAccountUpdatedListener;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
+import dev.drsoran.moloko.app.event.ISyncStatusListener;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.moloko.sync.ISyncStatusListener;
-import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.rtm.RtmSettings;
 
 
@@ -61,7 +58,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    
    private AccountManagerFuture< Bundle > addAccountHandle;
    
-   private final IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
+   private final IHandlerToken handlerToken;
    
    
    
@@ -69,9 +66,12 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    {
       super( context, attrs );
       
-      account = AccountUtils.getRtmAccount( context );
-      MolokoApp.getNotifierContext( context )
-               .registerAccountUpdatedListener( this );
+      final AppContext appContext = getAppContext();
+      
+      handlerToken = appContext.acquireHandlerToken();
+      account = appContext.getAccountService().getRtmAccount();
+      
+      appContext.getAppEvents().registerAccountUpdatedListener( this );
    }
    
    
@@ -123,8 +123,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    @Override
    public void cleanUp()
    {
-      MolokoApp.getNotifierContext( getContext() )
-               .unregisterAccountUpdatedListener( this );
+      getAppContext().getAppEvents().unregisterAccountUpdatedListener( this );
       
       if ( addAccountHandle != null )
       {
@@ -145,8 +144,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
       
       if ( account != null )
       {
-         final RtmSettings settings = MolokoApp.getSettings( getContext() )
-                                               .getRtmSettings();
+         final RtmSettings settings = getSettings().getRtmSettings();
          
          if ( settings == null )
          {
@@ -154,11 +152,11 @@ class RtmSyncStatePreference extends InfoTextPreference implements
          }
          else
          {
-            final String date = MolokoDateFormatter.formatDate( getContext(),
-                                                                settings.getSyncTimeStamp()
-                                                                        .getTime(),
-                                                                MolokoDateFormatter.FORMAT_NUMERIC
-                                                                   | MolokoDateFormatter.FORMAT_WITH_YEAR );
+            final String date = getAppContext().getDateFormatter()
+                                               .formatDate( settings.getSyncTimeStamp()
+                                                                    .getTime(),
+                                                            IDateFormatterService.FORMAT_NUMERIC
+                                                               | IDateFormatterService.FORMAT_WITH_YEAR );
             
             setSummary( getContext().getString( R.string.moloko_prefs_rtm_sync_text_in_sync,
                                                 date ) );
@@ -181,13 +179,14 @@ class RtmSyncStatePreference extends InfoTextPreference implements
       if ( account != null )
       {
          registerSyncStatusChangedListener();
-         SyncUtils.requestSettingsOnlySync( getContext(), account );
+         getAppContext().getSyncService().requestSettingsOnlySync( account );
          
          showDialog();
       }
       else
       {
-         ( (Activity) getContext() ).startActivity( Intents.createNewAccountIntent() );
+         // TODO: Show NoAccountDialogFragment if we use PreferenceFragment
+         getContext().startActivity( Intents.createNewAccountIntent() );
       }
    }
    
@@ -242,15 +241,13 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    
    private void registerSyncStatusChangedListener()
    {
-      MolokoApp.getNotifierContext( getContext() )
-               .registerSyncStatusChangedListener( this );
+      getAppContext().getAppEvents().registerSyncStatusChangedListener( this );
    }
    
    
    
    private void unregisterSyncStatusChangedListener()
    {
-      MolokoApp.getNotifierContext( getContext() )
-               .unregisterSyncStatusChangedListener( this );
+      getAppContext().getAppEvents().unregisterSyncStatusChangedListener( this );
    }
 }

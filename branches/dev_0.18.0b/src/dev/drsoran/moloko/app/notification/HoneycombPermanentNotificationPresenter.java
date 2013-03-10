@@ -22,19 +22,20 @@
 
 package dev.drsoran.moloko.app.notification;
 
+import android.accounts.Account;
 import android.app.Notification;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.account.AccountUtils;
 import dev.drsoran.moloko.app.home.HomeActivity;
+import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -46,7 +47,7 @@ class HoneycombPermanentNotificationPresenter extends
    
    
    
-   public HoneycombPermanentNotificationPresenter( Context context )
+   public HoneycombPermanentNotificationPresenter( AppContext context )
    {
       super( context );
    }
@@ -100,7 +101,7 @@ class HoneycombPermanentNotificationPresenter extends
       {
          final Intent notifyingTaskIntent = createSingletonOnClickIntent( tasksCursor );
          onClickIntentStack = makeSingleNotificationActivityStack( notifyingTaskIntent,
-                                                                   Queries.getOptString( tasksCursor,
+                                                                   DbHelper.getOptString( tasksCursor,
                                                                                          getColumnIndex( Tasks.LIST_ID ) ) );
       }
       else
@@ -157,7 +158,10 @@ class HoneycombPermanentNotificationPresenter extends
                                                              R.drawable.ic_notify_permanent_expanded );
       builder.setLargeIcon( largeIcon );
       
-      if ( AccountUtils.isWriteableAccess( getContext() ) )
+      final IAccountService accountService = getContext().getAccountService();
+      final Account account = accountService.getRtmAccount();
+      
+      if ( accountService.isWriteableAccess( account ) )
       {
          addNotificationActions( tasksCursor, builder );
       }

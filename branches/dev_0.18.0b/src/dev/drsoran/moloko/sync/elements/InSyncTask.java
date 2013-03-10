@@ -31,13 +31,13 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation.Builder;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParticipantList;
@@ -145,7 +145,7 @@ public class InSyncTask extends SyncTaskBase implements
    
    private void syncTask( InSyncTask serverElement, Builder operations )
    {
-      final Uri contentUri = Queries.contentUriWithId( RawTasks.CONTENT_URI,
+      final Uri contentUri = DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                        task.getId() );
       
       // Check for a moved task. The task with the same ID is now in another taskseries.
@@ -226,7 +226,7 @@ public class InSyncTask extends SyncTaskBase implements
    
    private void syncTaskSeries( InSyncTask serverElement, Builder operations )
    {
-      final Uri contentUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+      final Uri contentUri = DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                        taskSeries.getId() );
       
       if ( SyncUtils.hasChanged( serverElement.taskSeries.getListId(),
@@ -315,7 +315,7 @@ public class InSyncTask extends SyncTaskBase implements
    {
       // RtmTaskSeries, Notes, Participant gets deleted by a RtmTaskSeriesProvider DB trigger if it references no more
       // RawTasks.
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                                    task.getId() ) )
                                                                              .build() )
                                          .build();

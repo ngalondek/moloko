@@ -27,16 +27,14 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.EditText;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.ui.EditTextFocusHandler;
+import dev.drsoran.moloko.ui.UiContext;
 
 
 public class ClearableEditText extends EditText
 {
-   @SuppressWarnings( "unused" )
    private final EditTextFocusHandler editTextFocusHandler;
    
-   private IHandlerToken handlerToken = MolokoApp.acquireHandlerToken();
+   private final UiContext uiContext;
    
    private ClearButtonCompoundDrawable clearButton;
    
@@ -59,7 +57,11 @@ public class ClearableEditText extends EditText
    public ClearableEditText( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
+      
+      uiContext = UiContext.get( context );
+      
       init( attrs );
+      IHandlerToken handlerToken = uiContext.acquireHandlerToken();
       
       editTextFocusHandler = new EditTextFocusHandler( this, handlerToken );
    }
@@ -69,10 +71,15 @@ public class ClearableEditText extends EditText
    @Override
    protected void onDetachedFromWindow()
    {
-      handlerToken.release();
-      handlerToken = null;
-      
+      editTextFocusHandler.shutdown();
       super.onDetachedFromWindow();
+   }
+   
+   
+   
+   public UiContext getUiContext()
+   {
+      return uiContext;
    }
    
    

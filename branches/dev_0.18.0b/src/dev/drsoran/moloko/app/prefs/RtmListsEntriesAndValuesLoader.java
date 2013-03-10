@@ -32,7 +32,7 @@ import com.mdt.rtm.data.RtmLists;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.util.ListEntriesAndValues;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Lists;
@@ -67,7 +67,7 @@ class RtmListsEntriesAndValuesLoader
       {
          final String selection = getSelectionString( flags );
          
-         final RtmLists lists = RtmListsProviderPart.getAllLists( client,
+         final RtmLists lists = RtmListsTable.getAllLists( client,
                                                                   selection );
          client.release();
          
@@ -107,7 +107,7 @@ class RtmListsEntriesAndValuesLoader
    
    private String getSelectionString( int flags )
    {
-      final StringBuilder selectionStringBuilder = new StringBuilder( RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
+      final StringBuilder selectionStringBuilder = new StringBuilder( RtmListsTable.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
       
       if ( ( flags & FLAG_INCLUDE_SMART_LISTS ) == 0 )
       {

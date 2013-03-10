@@ -25,10 +25,10 @@ package dev.drsoran.moloko.ui.fragments.factories;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.app.task.TaskFragment;
 import dev.drsoran.moloko.app.taskedit.TaskAddFragment;
 import dev.drsoran.moloko.app.taskedit.TaskEditFragment;
@@ -47,7 +47,7 @@ public final class TaskFragmentFactory extends AbstractIntentFragmentFactory
    
    
    
-   public final static Fragment newFragment( Context context,
+   public final static Fragment newFragment( SystemContext context,
                                              Intent intent,
                                              Bundle config )
    {

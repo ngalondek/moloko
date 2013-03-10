@@ -14,8 +14,8 @@ options
 
    import java.util.Calendar;
    
-   import dev.drsoran.moloko.util.MolokoCalendar;
-   import dev.drsoran.moloko.grammar.datetime.ITimeParser.ParseTimeReturn;
+   import dev.drsoran.moloko.MolokoCalendar;
+   import dev.drsoran.moloko.grammar.datetime.ParseTimeReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractTimeParser;
    import dev.drsoran.moloko.grammar.LexerException;
 }

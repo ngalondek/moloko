@@ -39,11 +39,10 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
@@ -59,8 +58,6 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    private static final int[] GROUP_EXPANDED_STATE_SET =
    { android.R.attr.state_expanded };
    
-   private final Context context;
-   
    public final static int DUE_TODAY_TASK_COUNT = 1;
    
    public final static int DUE_TOMORROW_TASK_COUNT = 2;
@@ -74,6 +71,8 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    private final static int ID_ICON_DEFAULT_LIST = 1;
    
    private final static int ID_ICON_LOCKED = 2;
+   
+   private final AppContext context;
    
    private final View.OnClickListener iconExpandCollapseListener = new View.OnClickListener()
    {
@@ -99,7 +98,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    
    
-   public TaskListsAdapter( Context context, int groupId, int childId,
+   public TaskListsAdapter( AppContext context, int groupId, int childId,
       List< RtmListWithTaskCount > lists )
    {
       this.context = context;
@@ -138,9 +137,9 @@ class TaskListsAdapter extends BaseExpandableListAdapter
             return Integer.valueOf( lists.get( groupPosition )
                                          .getExtendedListInfo( context ).completedTaskCount );
          case SUM_ESTIMATE:
-            return MolokoDateFormatter.formatEstimated( context,
-                                                        lists.get( groupPosition )
-                                                             .getExtendedListInfo( context ).sumEstimated );
+            return context.getDateFormatter()
+                          .formatEstimated( lists.get( groupPosition )
+                                                 .getExtendedListInfo( context ).sumEstimated );
          default :
             return null;
       }
@@ -354,9 +353,8 @@ class TaskListsAdapter extends BaseExpandableListAdapter
       addConditionalIcon( iconsContainer,
                           R.drawable.ic_list_tasklists_flag,
                           ID_ICON_DEFAULT_LIST,
-                          rtmList.getId()
-                                 .equals( MolokoApp.getSettings( context )
-                                                   .getDefaultListId() ) );
+                          rtmList.getId().equals( context.getSettings()
+                                                         .getDefaultListId() ) );
       addConditionalIcon( iconsContainer,
                           R.drawable.ic_list_tasklists_lock,
                           ID_ICON_LOCKED,

@@ -32,49 +32,49 @@ public final class TransactionalAccess
    private final SQLiteDatabase database;
    
    
-
+   
    private TransactionalAccess( SQLiteDatabase database )
    {
       if ( database == null )
-         throw new NullPointerException( "Database is null" );
+         throw new IllegalArgumentException( "Database is null" );
       if ( !database.isOpen() || database.isReadOnly() )
-         throw new IllegalStateException( "Database is closed or read only" );
+         throw new UnsupportedOperationException( "Database is closed or read only" );
       
       this.database = database;
       this.database.acquireReference();
    }
    
-
-
+   
+   
    public void beginTransaction()
    {
       database.beginTransaction();
    }
    
-
-
+   
+   
    public boolean inTransaction()
    {
       return database.inTransaction();
    }
    
-
-
+   
+   
    public void setTransactionSuccessful()
    {
       database.setTransactionSuccessful();
    }
    
-
-
+   
+   
    public void endTransaction()
    {
       database.endTransaction();
       database.releaseReference();
    }
    
-
-
+   
+   
    public final static TransactionalAccess newTransactionalAccess( SQLiteOpenHelper openHelper ) throws SQLException
    {
       return new TransactionalAccess( openHelper.getWritableDatabase() );

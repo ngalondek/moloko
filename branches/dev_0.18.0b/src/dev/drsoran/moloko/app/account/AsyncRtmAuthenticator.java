@@ -34,9 +34,10 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
+import dev.drsoran.moloko.IExecutorService;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.IExecutorService;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.AppContext;
 
 
 class AsyncRtmAuthenticator
@@ -49,11 +50,11 @@ class AsyncRtmAuthenticator
    
    
    
-   public AsyncRtmAuthenticator( AuthenticatorActivity activity,
-      IExecutorService executor ) throws ServiceInternalException
+   public AsyncRtmAuthenticator( AuthenticatorActivity activity )
+      throws ServiceInternalException
    {
       this.rtmService = createService( activity );
-      this.executorService = executor;
+      this.executorService = activity.getAppContext().getExecutorService();
    }
    
    
@@ -172,8 +173,13 @@ class AsyncRtmAuthenticator
                                                                    activity.getString( R.string.app_name ),
                                                                    null );
       
-      return ServiceImpl.getInstance( MolokoApp.getSettings( activity )
-                                               .isUsingHttps(), applicationInfo );
+      final AppContext appContext = AppContext.get( activity );
+      
+      return ServiceImpl.getInstance( appContext.getConnectionService()
+                                                .getRtmConnectionFactory(),
+                                      appContext.Log(),
+                                      appContext.getSettings().isUsingHttps(),
+                                      applicationInfo );
    }
    
    

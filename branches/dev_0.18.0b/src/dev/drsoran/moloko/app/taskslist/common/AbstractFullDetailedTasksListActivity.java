@@ -34,23 +34,18 @@ import android.view.View;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
-import dev.drsoran.moloko.app.taskslist.ChooseTagsDialogFragment;
-import dev.drsoran.moloko.app.taskslist.IQuickAddTaskActionModeListener;
-import dev.drsoran.moloko.app.taskslist.IShowTasksWithTagsListener;
-import dev.drsoran.moloko.app.taskslist.ITasksListActionModeListener;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.listsedit.AddRenameListDialogFragment;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -450,6 +445,14 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
+   @Override
+   public Fragment createTasksListFragment( Bundle config )
+   {
+      return FullDetailedTasksListFragment.newInstance( config );
+   }
+   
+   
+   
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
       final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
@@ -514,9 +517,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private boolean hasShownMultiSelectionNotification()
    {
-      return MolokoApp.getSettings( this )
-                      .loadBool( getString( R.string.key_notified_taskslist_multiselection ),
-                                 false );
+      return getAppContext().getSettings()
+                            .hasNotifiedTaskListMultiSelectionHint();
    }
    
    
@@ -527,9 +529,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                    .setMessage( getString( R.string.abstaskslist_notif_multi_selection ) )
                                                    .setNeutralButton( android.R.string.ok )
                                                    .show( this );
-      MolokoApp.getSettings( this )
-               .storeBool( getString( R.string.key_notified_taskslist_multiselection ),
-                           true );
+      
+      getAppContext().getSettings().setTaskListMultiSelectionHintNotified();
    }
    
    

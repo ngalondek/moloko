@@ -28,28 +28,6 @@ public final class Constants
    
    public final static String SYNC_EXTRAS_SCHEDULED = "scheduled";
    
-   /**
-    * Master- or account sync has been enabled or disabled.
-    */
-   public final static int SYNC_OBSERVER_TYPE_SETTINGS = 1 << 0;
-   
-   /**
-    * A new sync request has been scheduled or removed w/o ever been active.
-    */
-   public final static int SYNC_OBSERVER_TYPE_PENDING = 1 << 1;
-   
-   /**
-    * The currently active sync is changing.
-    */
-   public final static int SYNC_OBSERVER_TYPE_ACTIVE = 1 << 2;
-   
-   /**
-    * A sync has been started or stopped
-    */
-   public final static int SYNC_OBSERVER_TYPE_STATUS = 1 << 3;
-   
-   public final static int SYNC_OBSERVER_TYPE_ALL = 0x7fffffff;
-   
    public final static long SYNC_INTERVAL_MANUAL = -1;
    
    public final static int SYNC_STATUS_STARTED = 1;

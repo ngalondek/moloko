@@ -25,8 +25,8 @@ package dev.drsoran.moloko.ui.fragments.dialogs;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.MolokoDialogFragment;
-import dev.drsoran.moloko.ui.state.InstanceState;
 
 
 public class ProgressDialogFragment extends MolokoDialogFragment

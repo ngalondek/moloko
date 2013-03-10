@@ -37,21 +37,21 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.RtmServiceConstants;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.service.RtmServiceConstants;
 
 
 public class Authenticator extends AbstractAccountAuthenticator
 {
-   private final Context context;
+   private final AppContext context;
    
    
    
    public Authenticator( Context context )
    {
       super( context );
-      this.context = context;
+      this.context = AppContext.get( context );
    }
    
    
@@ -164,8 +164,11 @@ public class Authenticator extends AbstractAccountAuthenticator
             Service service = null;
             try
             {
-               service = ServiceImpl.getInstance( MolokoApp.getSettings( context )
-                                                           .isUsingHttps(),
+               service = ServiceImpl.getInstance( context.getConnectionService()
+                                                         .getRtmConnectionFactory(),
+                                                  context.Log(),
+                                                  context.getSettings()
+                                                         .isUsingHttps(),
                                                   new ApplicationInfo( apiKey,
                                                                        sharedSecret,
                                                                        null ) );

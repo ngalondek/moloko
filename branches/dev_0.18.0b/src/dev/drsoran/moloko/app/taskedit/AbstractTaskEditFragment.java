@@ -25,9 +25,9 @@ package dev.drsoran.moloko.app.taskedit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
@@ -49,12 +49,16 @@ import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.domain.services.IParsingService;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.ui.IChangesTarget;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -63,14 +67,12 @@ import dev.drsoran.moloko.ui.fragments.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.ui.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.ui.layouts.WrappingLayout;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.DueEditText;
 import dev.drsoran.moloko.ui.widgets.EstimateEditText;
 import dev.drsoran.moloko.ui.widgets.RecurrenceEditText;
 import dev.drsoran.moloko.util.Bundles;
-import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
@@ -84,7 +86,9 @@ abstract class AbstractTaskEditFragment
          MolokoLoaderEditFragment< AbstractTaskEditFragment.TaskEditDatabaseData >
          implements IChangesTarget
 {
-   protected final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
+   protected final int FULL_DATE_FLAGS = IDateFormatterService.FORMAT_WITH_YEAR;
+   
+   private AppContext appContext;
    
    @InstanceState( key = "changes", defaultValue = InstanceState.NO_DEFAULT )
    private Bundle changes;
@@ -141,6 +145,8 @@ abstract class AbstractTaskEditFragment
    {
       super.onAttach( activity );
       
+      appContext = AppContext.get( activity );
+      
       if ( activity instanceof ITaskEditFragmentListener )
          listener = (ITaskEditFragmentListener) activity;
       else
@@ -162,7 +168,16 @@ abstract class AbstractTaskEditFragment
    public void onDetach()
    {
       listener = null;
+      appContext = null;
+      
       super.onDetach();
+   }
+   
+   
+   
+   public AppContext getAppContext()
+   {
+      return appContext;
    }
    
    
@@ -197,7 +212,28 @@ abstract class AbstractTaskEditFragment
       locationSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_location );
       urlEditText = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
       
+      enableParserEnabledFreeTextInput();
+      
       return fragmentView;
+   }
+   
+   
+   
+   private void enableParserEnabledFreeTextInput()
+   {
+      final Locale localeFromResources = MolokoApp.get( getActivity() )
+                                                  .getActiveResourcesLocale();
+      
+      final IParsingService parsingService = getUiContext().getParsingService();
+      
+      final boolean hasDateParser = parsingService.getDateTimeParsing()
+                                                  .existsParserWithMatchingLocale( localeFromResources );
+      final boolean hasRecurrenceParser = parsingService.getRecurrenceParsing()
+                                                        .existsParserWithMatchingLocale( localeFromResources );
+      
+      dueEditText.setEnabled( hasDateParser );
+      estimateEditText.setEnabled( hasDateParser );
+      recurrEditText.setEnabled( hasRecurrenceParser );
    }
    
    
@@ -252,57 +288,6 @@ abstract class AbstractTaskEditFragment
       dueEditText.putInitialValue( initialValues );
       recurrEditText.putInitialValue( initialValues );
       estimateEditText.putInitialValue( initialValues );
-   }
-   
-   
-   
-   protected void initializeHeadSection()
-   {
-   }
-   
-   
-   
-   protected void defaultInitializeHeadSectionImpl( Task task )
-   {
-      final Context context = getSherlockActivity();
-      
-      addedDate.setText( MolokoDateFormatter.formatDateTime( context,
-                                                             task.getAdded()
-                                                                 .getTime(),
-                                                             FULL_DATE_FLAGS ) );
-      
-      if ( task.getCompleted() != null )
-      {
-         completedDate.setText( MolokoDateFormatter.formatDateTime( context,
-                                                                    task.getCompleted()
-                                                                        .getTime(),
-                                                                    FULL_DATE_FLAGS ) );
-         completedDate.setVisibility( View.VISIBLE );
-      }
-      else
-      {
-         completedDate.setVisibility( View.GONE );
-      }
-      
-      if ( task.getPosponed() > 0 )
-      {
-         postponed.setText( getString( R.string.task_postponed,
-                                       task.getPosponed() ) );
-         postponed.setVisibility( View.VISIBLE );
-      }
-      else
-      {
-         postponed.setVisibility( View.GONE );
-      }
-      
-      if ( !TextUtils.isEmpty( task.getSource() ) )
-      {
-         source.setText( getString( R.string.task_source, task.getSource() ) );
-      }
-      else
-      {
-         source.setText( "?" );
-      }
    }
    
    
@@ -593,14 +578,6 @@ abstract class AbstractTaskEditFragment
    
    
    
-   @Override
-   public int getSettingsMask()
-   {
-      return IOnSettingsChangedListener.DATE_TIME_RELATED;
-   }
-   
-   
-   
    protected ValidationResult validateName()
    {
       final boolean ok = !TextUtils.isEmpty( getCurrentValue( Tasks.TASKSERIES_NAME,
@@ -764,13 +741,15 @@ abstract class AbstractTaskEditFragment
       final Long estimateMillis = estimateEditText.getEstimateMillis();
       
       if ( estimateMillis == null )
+      {
          throw new IllegalStateException( String.format( "Expected valid estimate edit text to parse. Found %s",
                                                          estimateEditText.getText() ) );
+      }
       
       if ( estimateMillis.longValue() != -1 )
       {
-         final String estEditText = MolokoDateFormatter.formatEstimated( getSherlockActivity(),
-                                                                         estimateMillis.longValue() );
+         final String estEditText = getUiContext().getDateFormatter()
+                                                  .formatEstimated( estimateMillis.longValue() );
          putChange( Tasks.ESTIMATE, estEditText, String.class );
          putChange( Tasks.ESTIMATE_MILLIS, estimateMillis, Long.class );
       }
@@ -965,7 +944,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getName(), taskName ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.TASKSERIES_NAME,
                                                                 taskName ) );
@@ -981,7 +960,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getListId(), selectedListId ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.LIST_ID,
                                                                 selectedListId ) );
@@ -998,7 +977,7 @@ abstract class AbstractTaskEditFragment
             if ( SyncUtils.hasChanged( RtmTask.convertPriority( task.getPriority() ),
                                        selectedPriority ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.PRIORITY,
                                                                 selectedPriority ) );
@@ -1015,7 +994,7 @@ abstract class AbstractTaskEditFragment
                                        TextUtils.join( Tags.TAGS_SEPARATOR,
                                                        task.getTags() ) ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.TAGS,
                                                                 tags ) );
@@ -1034,7 +1013,7 @@ abstract class AbstractTaskEditFragment
             if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( task.getDue() ),
                                        newDue ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.DUE_DATE,
                                                                 newDue ) );
@@ -1049,7 +1028,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.hasDueTime(), newHasDueTime ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.HAS_DUE_TIME,
                                                                 newHasDueTime
@@ -1068,7 +1047,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getRecurrence(), recurrence ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.RECURRENCE,
                                                                 recurrence ) );
@@ -1082,7 +1061,7 @@ abstract class AbstractTaskEditFragment
                                        isEveryRecurrence ) )
             {
                // The flag RECURRENCE_EVERY will not be synced out. RTM parses only the recurrence sentence.
-               modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newNonPersistentModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                        task.getTaskSeriesId() ),
                                                                              TaskSeries.RECURRENCE_EVERY,
                                                                              isEveryRecurrence ) );
@@ -1098,13 +1077,13 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getEstimateMillis(), estimateMillis ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.ESTIMATE,
                                                                 getCurrentValue( RawTasks.ESTIMATE,
                                                                                  String.class ) ) );
                
-               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.ESTIMATE_MILLIS,
                                                                 estimateMillis ) );
@@ -1120,7 +1099,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getLocationId(), selectedLocation ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.LOCATION_ID,
                                                                 selectedLocation ) );
@@ -1136,7 +1115,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getUrl(), newUrl ) )
             {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.URL,
                                                                 newUrl ) );
@@ -1278,4 +1257,8 @@ abstract class AbstractTaskEditFragment
          return locationNames;
       }
    }
+   
+   
+   
+   protected abstract void initializeHeadSection();
 }

@@ -34,7 +34,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.ui.activities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;

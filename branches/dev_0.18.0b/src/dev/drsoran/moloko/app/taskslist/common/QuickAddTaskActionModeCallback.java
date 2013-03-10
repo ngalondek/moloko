@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
-import android.content.Context;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +33,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.taskslist.IQuickAddTaskActionModeListener;
-import dev.drsoran.moloko.app.taskslist.IQuickAddTaskButtonBarFragmentListener;
-import dev.drsoran.moloko.app.taskslist.QuickAddTaskButtonBarFragment;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -67,7 +64,7 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      final Context context = activity;
+      final AppContext context = activity.getAppContext();
       final View quickAddTaskInputView = LayoutInflater.from( context )
                                                        .inflate( R.layout.quick_add_task_actionmode,
                                                                  null );

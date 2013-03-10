@@ -37,7 +37,6 @@ import android.os.Environment;
 import android.util.AttributeSet;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.content.RtmProvider;
 
 
@@ -108,7 +107,7 @@ class SendDbPreference extends InfoTextPreference
          }
          catch ( Throwable e )
          {
-            MolokoApp.Log.e( getClass(), "Sending DB failed", e );
+            Log().e( getClass(), "Sending DB failed", e );
             
             deleteExternalStoragePrivateFile();
             
@@ -123,7 +122,7 @@ class SendDbPreference extends InfoTextPreference
                          R.string.moloko_prefs_send_db_toast_failed,
                          Toast.LENGTH_LONG ).show();
          
-         MolokoApp.Log.e( getClass(), "Sending DB failed, no access" );
+         Log().e( getClass(), "Sending DB failed, no access" );
       }
    }
    
@@ -141,6 +140,7 @@ class SendDbPreference extends InfoTextPreference
          is = new FileInputStream( rtmDb );
          os = new FileOutputStream( tempRtmDbFile );
          
+         // TODO: Do we need an array here?
          final byte[] data = new byte[ is.available() ];
          is.read( data );
          os.write( data );

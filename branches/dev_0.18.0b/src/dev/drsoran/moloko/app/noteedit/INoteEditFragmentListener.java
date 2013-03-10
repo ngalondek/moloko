@@ -25,7 +25,7 @@ package dev.drsoran.moloko.app.noteedit;
 import com.mdt.rtm.data.RtmTaskNote;
 
 
-public interface INoteEditFragmentListener
+interface INoteEditFragmentListener
 {
    void onBackgroundDeletion( RtmTaskNote oldNote );
 }

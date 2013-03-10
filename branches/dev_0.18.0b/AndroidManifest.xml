@@ -54,7 +54,7 @@
    
 
    <application
-      android:name=".app.MolokoApp"
+      android:name="dev.drsoran.moloko.MolokoApp"
       android:icon="@drawable/ic_launcher"
       android:label="@string/app_name"      
       android:theme="@style/Theme.Moloko"
@@ -76,7 +76,7 @@
       <!-- Activities -->
       <activity
          android:label="@string/app_name"
-         android:name=".app.StartUpActivity">
+         android:name=".app.startup.StartUpActivity">
          <intent-filter>
             <action
                android:name="android.intent.action.MAIN" />
@@ -417,7 +417,7 @@
       </service>
 
       <service
-         android:name=".sync.SyncService"
+         android:name="dev.drsoran.moloko.app.sync.SyncService"
          android:label="@string/svc_sync">
          <intent-filter>
             <action
@@ -437,10 +437,10 @@
       <!-- Broadcast receivers -->
 
       <receiver
-         android:name="dev.drsoran.moloko.sync.SyncAlarmReceiver" />
+         android:name="dev.drsoran.moloko.app.sync.SyncAlarmReceiver" />
 
       <receiver
-         android:name=".app.receivers.BootReceiver">
+         android:name="dev.drsoran.moloko.BootReceiver">
          <intent-filter>
             <action
                android:name="android.intent.action.BOOT_COMPLETED" />

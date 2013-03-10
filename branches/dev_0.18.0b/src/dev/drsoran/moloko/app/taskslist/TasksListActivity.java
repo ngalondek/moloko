@@ -24,19 +24,14 @@ package dev.drsoran.moloko.app.taskslist;
 
 import java.util.List;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -91,7 +86,9 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       
       if ( show )
       {
-         final List< RtmSmartFilterToken > unAmbigiousTokens = RtmSmartFilterParsing.removeAmbiguousTokens( filter.getTokens() );
+         final List< RtmSmartFilterToken > unAmbigiousTokens = getAppContext().getParsingService()
+                                                                              .getRtmSmartFilterParsing()
+                                                                              .removeAmbiguousTokens( filter.getTokens() );
          show = unAmbigiousTokens.size() > 0;
       }
       
@@ -167,14 +164,6 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    
    
-   @Override
-   protected Fragment createTasksListFragment( Bundle config )
-   {
-      return FullDetailedTasksListFragment.newInstance( config );
-   }
-   
-   
-   
    private RtmSmartFilter geActiveRtmSmartFilter()
    {
       final IFilter activeFilter = getActiveFilter();
@@ -202,22 +191,22 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    private boolean isDefaultList()
    {
-      return getActiveListId().equals( MolokoApp.getSettings( this )
-                                                .getDefaultListId() );
+      return getActiveListId().equals( getAppContext().getSettings()
+                                                      .getDefaultListId() );
    }
    
    
    
    private void setAsDefaultList()
    {
-      MolokoApp.getSettings( this ).setDefaultListId( getActiveListId() );
+      getAppContext().getSettings().setDefaultListId( getActiveListId() );
    }
    
    
    
    private void resetDefaultList()
    {
-      MolokoApp.getSettings( this )
-               .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+      getAppContext().getSettings()
+                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
    }
 }

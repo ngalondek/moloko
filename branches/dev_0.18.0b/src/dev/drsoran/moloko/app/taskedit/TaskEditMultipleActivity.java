@@ -29,7 +29,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.Task;
 
 

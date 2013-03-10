@@ -38,9 +38,11 @@ import android.widget.ExpandableListView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.mdt.rtm.data.RtmAuth;
 
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
-import dev.drsoran.moloko.ui.IConfigurable;
-import dev.drsoran.moloko.ui.IRtmAccessLevelAware;
+import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderExpandableListFragmentImpl;
@@ -49,7 +51,7 @@ import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelAwareFragmentImpl;
 
 public abstract class MolokoExpandableListFragment< D > extends
          SherlockListFragment implements IConfigurable,
-         IOnSettingsChangedListener, LoaderCallbacks< List< D > >,
+         LoaderCallbacks< List< D > >,
          LoaderExpandableListFragmentImpl.Support< D >, IRtmAccessLevelAware,
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
@@ -68,7 +70,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    protected MolokoExpandableListFragment()
    {
-      baseImpl = new ConfigurableFragmentImpl( this, getSettingsMask() );
+      baseImpl = new ConfigurableFragmentImpl( this );
       loaderImpl = new LoaderExpandableListFragmentImpl< D >( this );
       editImpl = new EditFragmentImpl( this );
       accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
@@ -87,22 +89,14 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    @Override
-   public void onStart()
-   {
-      super.onStart();
-      baseImpl.onStart();
-   }
-   
-   
-   
-   @Override
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
+      
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
       editImpl.onAttach( activity );
-      accessLevelAwareImpl.onAttach( getSherlockActivity() );
+      accessLevelAwareImpl.onAttach( (MolokoFragmentActivity) activity );
    }
    
    
@@ -114,7 +108,22 @@ public abstract class MolokoExpandableListFragment< D > extends
       loaderImpl.onDetach();
       editImpl.onDetach();
       accessLevelAwareImpl.onDetach();
+      
       super.onDetach();
+   }
+   
+   
+   
+   public UiContext getUiContext()
+   {
+      return baseImpl.getUiContext();
+   }
+   
+   
+   
+   public ILog Log()
+   {
+      return baseImpl.getUiContext().Log();
    }
    
    
@@ -244,21 +253,6 @@ public abstract class MolokoExpandableListFragment< D > extends
    public Bundle getDefaultConfiguration()
    {
       return baseImpl.getDefaultConfiguration();
-   }
-   
-   
-   
-   @Override
-   public void onSettingsChanged( int which )
-   {
-      loaderImpl.onSettingsChanged( which );
-   }
-   
-   
-   
-   protected int getSettingsMask()
-   {
-      return 0;
    }
    
    

@@ -39,12 +39,12 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.util.Strings;
 
 

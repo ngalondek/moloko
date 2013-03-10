@@ -22,33 +22,26 @@
 
 package dev.drsoran.moloko.ui.widgets;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
 import dev.drsoran.moloko.ui.IChangesTarget;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
-import dev.drsoran.moloko.util.MolokoCalendar;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
 
 public class DueEditText extends ClearableEditText
 {
-   private final static int FORMAT = MolokoDateFormatter.FORMAT_NUMERIC
-      | MolokoDateFormatter.FORMAT_WITH_YEAR;
+   private final static int FORMAT = IDateFormatterService.FORMAT_NUMERIC
+      | IDateFormatterService.FORMAT_WITH_YEAR;
    
    public final static String EDIT_DUE_TEXT = "edit_due_text";
    
    private MolokoCalendar dueCalendar = getDatelessAndTimelessInstance();
-   
-   private boolean isSupportingFreeTextInput;
    
    private IChangesTarget changes;
    
@@ -71,9 +64,6 @@ public class DueEditText extends ClearableEditText
    public DueEditText( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
-      checkFreeTextInput();
-      
-      setEnabled( isSupportingFreeTextInput );
    }
    
    
@@ -116,7 +106,7 @@ public class DueEditText extends ClearableEditText
    
    public ValidationResult validate()
    {
-      if ( isSupportingFreeTextInput )
+      if ( isEnabled() )
       {
          final MolokoCalendar cal = parseDue( getTextTrimmed() );
          return validateCalendar( cal );
@@ -187,15 +177,15 @@ public class DueEditText extends ClearableEditText
          }
          else if ( dueCalendar.hasTime() )
          {
-            setText( MolokoDateFormatter.formatDateTime( getContext(),
-                                                         dueCalendar.getTimeInMillis(),
-                                                         FORMAT ) );
+            setText( getUiContext().getDateFormatter()
+                                   .formatDateTime( dueCalendar.getTimeInMillis(),
+                                                    FORMAT ) );
          }
          else
          {
-            setText( MolokoDateFormatter.formatDate( getContext(),
-                                                     dueCalendar.getTimeInMillis(),
-                                                     FORMAT ) );
+            setText( getUiContext().getDateFormatter()
+                                   .formatDate( dueCalendar.getTimeInMillis(),
+                                                FORMAT ) );
          }
       }
    }
@@ -210,7 +200,9 @@ public class DueEditText extends ClearableEditText
       }
       else
       {
-         return RtmDateTimeParsing.parseDateTimeSpec( dueStr );
+         return getUiContext().getParsingService()
+                              .getDateTimeParsing()
+                              .parseDateTimeSpec( dueStr );
       }
    }
    
@@ -283,18 +275,8 @@ public class DueEditText extends ClearableEditText
    private void putTextChange()
    {
       if ( changes != null )
-         changes.putChange( EDIT_DUE_TEXT, getTextTrimmed(), String.class );
-   }
-   
-   
-   
-   private void checkFreeTextInput()
-   {
-      if ( !isInEditMode() )
       {
-         final Locale resLocale = MolokoApp.get( getContext() )
-                                           .getActiveResourcesLocale();
-         isSupportingFreeTextInput = DateParserFactory.existsDateParserWithMatchingLocale( resLocale );
+         changes.putChange( EDIT_DUE_TEXT, getTextTrimmed(), String.class );
       }
    }
    
@@ -302,7 +284,7 @@ public class DueEditText extends ClearableEditText
    
    private void commitInput( String input )
    {
-      if ( isSupportingFreeTextInput )
+      if ( isEnabled() )
       {
          setDueCalendarByParseString( input );
          updateEditDueText();

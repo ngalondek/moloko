@@ -40,7 +40,6 @@ import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.content.IRtmProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.provider.Rtm;
@@ -182,6 +181,6 @@ class ClearDbPreference extends InfoTextPreference
          
       };
       
-      MolokoApp.getExecutor().execute( task );
+      getAppContext().getExecutorService().execute( task );
    }
 }

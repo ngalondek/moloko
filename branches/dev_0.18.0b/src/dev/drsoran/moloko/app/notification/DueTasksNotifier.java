@@ -22,17 +22,17 @@
 
 package dev.drsoran.moloko.app.notification;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.Loader;
-import dev.drsoran.moloko.app.IOnTimeChangedListener;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.event.IOnTimeChangedListener;
 import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -46,7 +46,7 @@ class DueTasksNotifier extends AbstractNotifier
    
    
    
-   public DueTasksNotifier( Context context )
+   public DueTasksNotifier( AppContext context )
    {
       super( context );
       
@@ -282,7 +282,7 @@ class DueTasksNotifier extends AbstractNotifier
          boolean notifyTask = true;
          for ( ; endIndex < numTasks && notifyTask; currentTasks.moveToNext() )
          {
-            final long taskDueTimeMillis = Queries.getOptLong( currentTasks,
+            final long taskDueTimeMillis = DbHelper.getOptLong( currentTasks,
                                                                TasksProviderPart.COL_INDICES.get( Tasks.DUE_DATE ) )
                                                   .longValue();
             
@@ -319,7 +319,7 @@ class DueTasksNotifier extends AbstractNotifier
    
    private void setNotificationFeatures()
    {
-      final Settings settings = getSettings();
+      final ISettingsService settings = getSettings();
       
       final Uri ringtone = settings.getNotifyingDueTasksRingtoneUri();
       final boolean vibrate = settings.isNotifyingDueTasksVibration();

@@ -18,11 +18,11 @@ options
 
    import java.util.Calendar;
    
-   import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
+   import dev.drsoran.moloko.grammar.datetime.ParseDateReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
    import dev.drsoran.moloko.grammar.LexerException;
-   import dev.drsoran.moloko.grammar.IDateFormatContext;
-   import dev.drsoran.moloko.util.MolokoCalendar;
+   import dev.drsoran.moloko.grammar.IDateFormatter;
+   import dev.drsoran.moloko.MolokoCalendar;
 }
 
 @lexer::header

@@ -31,13 +31,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.MolokoFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class TaskSearchResultFailedFragment extends MolokoFragment
+class TaskSearchResultFailedFragment extends MolokoFragment
 {
    @InstanceState( key = SearchManager.QUERY,
                    defaultValue = Strings.EMPTY_STRING )

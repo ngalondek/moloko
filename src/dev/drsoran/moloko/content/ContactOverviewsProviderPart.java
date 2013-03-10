@@ -36,8 +36,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.ContactOverviews;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
@@ -160,7 +161,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query contact overview failed. ", e );
+         MolokoApp.Log().e( TAG, "Query contact overview failed. ", e );
          contact = null;
       }
       finally
@@ -212,7 +213,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query contact overviews failed. ", e );
+         MolokoApp.Log().e( TAG, "Query contact overviews failed. ", e );
          contacts = null;
       }
       finally
@@ -226,7 +227,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
    
    
    
-   public ContactOverviewsProviderPart( Context context,
+   public ContactOverviewsProviderPart( SystemContext context,
       SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, ContactOverviews.PATH );
@@ -241,7 +242,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
                         String[] selectionArgs,
                         String sortOrder )
    {
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )
                                                                         .append( ")" );
@@ -250,7 +251,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       {
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? Queries.bindAll( selection,
+                                                    ? DbHelper.bindAll( selection,
                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );

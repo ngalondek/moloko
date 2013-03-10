@@ -31,8 +31,8 @@ import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.ui.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 

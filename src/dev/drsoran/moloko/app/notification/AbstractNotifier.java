@@ -22,23 +22,22 @@
 
 package dev.drsoran.moloko.app.notification;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.Loader;
 import android.support.v4.content.Loader.OnLoadCompleteListener;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 
 
 abstract class AbstractNotifier implements IStatusbarNotifier,
          OnLoadCompleteListener< Cursor >
 {
-   protected final Context context;
+   protected final AppContext context;
    
-   private final IHandlerToken handlerToken = MolokoNotificationService.acquireHandlerToken();
+   private final IHandlerToken handlerToken;
    
    private AbstractLoader< Cursor > tasksLoaderInUse;
    
@@ -46,9 +45,10 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
    
    
    
-   protected AbstractNotifier( Context context )
+   protected AbstractNotifier( AppContext context )
    {
       this.context = context;
+      this.handlerToken = context.acquireHandlerToken();
    }
    
    
@@ -71,9 +71,9 @@ abstract class AbstractNotifier implements IStatusbarNotifier,
    
    
    
-   protected Settings getSettings()
+   protected ISettingsService getSettings()
    {
-      return MolokoApp.getSettings( context );
+      return context.getSettings();
    }
    
    

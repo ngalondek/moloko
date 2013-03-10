@@ -18,9 +18,8 @@ grammar RecurrencePattern;
    import java.util.HashMap;
    import java.util.LinkedList;
    import java.util.TimeZone;
-
-   import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
-   import dev.drsoran.moloko.grammar.IDateFormatContext;
+   
+   import dev.drsoran.moloko.grammar.IDateFormatter;
 }
 
 @lexer::header
@@ -81,9 +80,9 @@ grammar RecurrencePattern;
    }
 
 
-   public void setDateFormatContext( IDateFormatContext formatContext )
+   public void setDateFormatter( IDateFormatter dateFormatter )
    {
-      dateFormatContext = formatContext;
+      this.dateFormatter = dateFormatter;
    }
 
    
@@ -110,9 +109,9 @@ grammar RecurrencePattern;
       {
          sdf.parse( value );
          
-         if ( dateFormatContext != null )
+         if ( dateFormatter != null )
          {
-            return dateFormatContext.formatDateNumeric( sdf.getCalendar().getTimeInMillis() );
+            return dateFormatter.formatDateNumeric( sdf.getCalendar().getTimeInMillis() );
          }
          else
          {
@@ -172,7 +171,7 @@ grammar RecurrencePattern;
    
    public final static DateFormat DATE_FORMAT   = new SimpleDateFormat( DATE_PATTERN );
    
-   private IDateFormatContext dateFormatContext;
+   private IDateFormatter dateFormatter;
    
    static
    {
@@ -182,8 +181,8 @@ grammar RecurrencePattern;
 
 // RULES
 
-parseRecurrencePattern [RecurrPatternLanguage lang,
-                        boolean               every] returns [String sentence]
+parseRecurrencePattern [IRecurrenceSentenceLanguage lang,
+                        boolean                     every] returns [String sentence]
    @init
    {
       final StringBuilder sb = new StringBuilder();
@@ -321,10 +320,10 @@ parseRecurrencePattern1 returns [Map< Integer, List< Object > > elements]
       throw e;
    }
 
-parse_PatternInterval [RecurrPatternLanguage lang,
-                       StringBuilder         sb,
-                       String                unit,
-                       boolean               isEvery]
+parse_PatternInterval [IRecurrenceSentenceLanguage lang,
+                       StringBuilder               sb,
+                       String                      unit,
+                       boolean                     isEvery]
    : OP_INTERVAL interval=INT
      {
         if ( isEvery )
@@ -353,7 +352,7 @@ parse_PatternInterval1 [Map< Integer, List< Object > > elements]
       throw e;
    }
 
-parse_PatternXst [RecurrPatternLanguage lang, StringBuilder sb]
+parse_PatternXst [IRecurrenceSentenceLanguage lang, StringBuilder sb]
    : x=INT
      {
  	     if ( sb != null )
@@ -384,9 +383,9 @@ parse_PatternXst [RecurrPatternLanguage lang, StringBuilder sb]
       throw e;
    }
 
-parse_PatternWeekday [RecurrPatternLanguage lang,
-                      StringBuilder         sb,
-                      boolean               respectXst]
+parse_PatternWeekday [IRecurrenceSentenceLanguage lang,
+                      StringBuilder               sb,
+                      boolean                     respectXst]
    : (
         (
            parse_PatternXst[lang, respectXst ? sb : null]
@@ -449,7 +448,7 @@ parse_PatternWeekday1 [Map< Integer, List< Object > > elements]
       throw e;
    }
 
-parse_PatternMonth [RecurrPatternLanguage lang, StringBuilder sb]
+parse_PatternMonth [IRecurrenceSentenceLanguage lang, StringBuilder sb]
    : m=INT
      {
         lang.add( sb, "m" + $m.text );

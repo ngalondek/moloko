@@ -35,14 +35,17 @@ import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.services.IAppEventService;
+import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmSettings;
 
 
-public class Settings implements IOnSettingsChangedListener
+public class Settings implements ISettingsService, IOnSettingsChangedListener
 {
    public final static String NO_DEFAULT_LIST_ID = Strings.EMPTY_STRING;
    
@@ -68,13 +71,16 @@ public class Settings implements IOnSettingsChangedListener
    
    private final SharedPreferences preferences;
    
+   private final IAppEventService eventService;
+   
    private RtmSettings rtmSettings;
    
    
    
-   public Settings( Context context )
+   public Settings( Context context, IAppEventService eventService )
    {
       this.context = context;
+      this.eventService = eventService;
       
       preferences = PreferenceManager.getDefaultSharedPreferences( context );
       if ( preferences == null )
@@ -89,13 +95,14 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
-   public void release()
+   public void shutdown()
    {
-      unregsiterSettingsListener();
+      unregisterSettingsListener();
    }
    
    
    
+   @Override
    public String getDateformat()
    {
       return android.provider.Settings.System.getString( context.getContentResolver(),
@@ -104,6 +111,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean is24hTimeformat()
    {
       return android.text.format.DateFormat.is24HourFormat( context );
@@ -111,6 +119,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public String getDefaultListId()
    {
       return loadString( context.getString( R.string.key_def_list_local ),
@@ -119,6 +128,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public void setDefaultListIdSyncWithRtm( boolean sync )
    {
       setSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ),
@@ -138,6 +148,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isDefaultListIdInSyncWithRtm()
    {
       return isInSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ) );
@@ -145,6 +156,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public void setDefaultListId( String id )
    {
       if ( TextUtils.isEmpty( id ) )
@@ -185,6 +197,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public Locale getLocale()
    {
       return Locale.getDefault();
@@ -192,6 +205,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public RtmSettings getRtmSettings()
    {
       return rtmSettings;
@@ -199,6 +213,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public int getStartupView()
    {
       return loadInt( context.getString( R.string.key_startup_view ),
@@ -207,6 +222,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public void setStartupView( int value )
    {
       storeInt( context.getString( R.string.key_startup_view ), value );
@@ -214,6 +230,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public int getTaskSort()
    {
       return loadInt( context.getString( R.string.key_task_sort ),
@@ -222,6 +239,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public void setTaskSort( int taskSort )
    {
       storeInt( context.getString( R.string.key_task_sort ), taskSort );
@@ -229,6 +247,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isSyncAtStartup()
    {
       return loadBool( context.getString( R.string.key_sync_at_startup ), true );
@@ -236,6 +255,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public void setSyncAtStartUp( boolean value )
    {
       storeBool( context.getString( R.string.key_sync_at_startup ), value );
@@ -243,6 +263,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public long getSyncInterval()
    {
       return loadLong( context.getString( R.string.key_sync_inverval ),
@@ -251,6 +272,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isManualSyncOnly()
    {
       return getSyncInterval() == -1;
@@ -258,6 +280,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isNotifyingDueTasks()
    {
       return loadBool( context.getString( R.string.key_notify_due_tasks ),
@@ -266,6 +289,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public long getNotifyingDueTasksBeforeMs()
    {
       return loadLong( context.getString( R.string.key_notify_due_tasks_before ),
@@ -274,6 +298,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public Uri getNotifyingDueTasksRingtoneUri()
    {
       final String uriString = loadString( context.getString( R.string.key_notify_due_tasks_ringtone ),
@@ -286,6 +311,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isNotifyingDueTasksVibration()
    {
       return loadBool( context.getString( R.string.key_notify_due_tasks_vibrate ),
@@ -294,6 +320,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isNotifyingDueTasksLed()
    {
       return loadBool( context.getString( R.string.key_notify_due_tasks_led ),
@@ -305,6 +332,7 @@ public class Settings implements IOnSettingsChangedListener
    /**
     * Value: Collection of list IDs to notify tasks for, or the constant {@link Settings.ALL_LISTS}.
     */
+   @Override
    public Map< PermanentNotificationType, Collection< String > > getNotifyingPermanentTaskLists()
    {
       final String todayTaskLists = loadString( context.getString( R.string.key_notify_permanent_today_lists ),
@@ -331,6 +359,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isNotifyingPermanentTasks()
    {
       for ( Collection< String > listIdsToNotify : getNotifyingPermanentTaskLists().values() )
@@ -346,6 +375,7 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
+   @Override
    public boolean isUsingHttps()
    {
       return loadBool( context.getString( R.string.key_conn_use_https ), true );
@@ -353,7 +383,25 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
-   public String loadString( String key, String defValue )
+   @Override
+   public boolean hasNotifiedTaskListMultiSelectionHint()
+   {
+      return loadBool( context.getString( R.string.key_notified_taskslist_multiselection ),
+                       false );
+   }
+   
+   
+   
+   @Override
+   public void setTaskListMultiSelectionHintNotified()
+   {
+      storeBool( context.getString( R.string.key_notified_taskslist_multiselection ),
+                 true );
+   }
+   
+   
+   
+   private String loadString( String key, String defValue )
    {
       String value;
       
@@ -392,42 +440,35 @@ public class Settings implements IOnSettingsChangedListener
    
    
    
-   public int loadInt( String key, int defValue )
+   private int loadInt( String key, int defValue )
    {
       return Integer.parseInt( loadString( key, String.valueOf( defValue ) ) );
    }
    
    
    
-   public void storeInt( String key, int value )
+   private void storeInt( String key, int value )
    {
       storeStringIfChanged( key, String.valueOf( value ) );
    }
    
    
    
-   public long loadLong( String key, long defValue )
+   private long loadLong( String key, long defValue )
    {
       return Long.parseLong( loadString( key, String.valueOf( defValue ) ) );
    }
    
    
    
-   public void storeLong( String key, long value )
-   {
-      storeStringIfChanged( key, String.valueOf( value ) );
-   }
-   
-   
-   
-   public boolean loadBool( String key, boolean defValue )
+   private boolean loadBool( String key, boolean defValue )
    {
       return preferences.getBoolean( key, defValue );
    }
    
    
    
-   public void storeBool( String key, boolean value )
+   private void storeBool( String key, boolean value )
    {
       preferences.edit().putBoolean( key, value ).commit();
    }
@@ -458,18 +499,16 @@ public class Settings implements IOnSettingsChangedListener
    
    private void regsiterSettingsListener()
    {
-      MolokoApp.getNotifierContext( context )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED
-                                                      | IOnSettingsChangedListener.RTM_DEFAULTLIST,
-                                                   this );
+      eventService.registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED
+                                                         | IOnSettingsChangedListener.RTM_DEFAULTLIST,
+                                                      this );
    }
    
    
    
-   private void unregsiterSettingsListener()
+   private void unregisterSettingsListener()
    {
-      MolokoApp.getNotifierContext( context )
-               .unregisterOnSettingsChangedListener( this );
+      eventService.unregisterOnSettingsChangedListener( this );
    }
    
    

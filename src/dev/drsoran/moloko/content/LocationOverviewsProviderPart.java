@@ -38,8 +38,9 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmLocation;
 
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.LocationOverviews;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -166,7 +167,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query location overview failed. ", e );
+         MolokoApp.Log().e( TAG, "Query location overview failed. ", e );
          location = null;
       }
       finally
@@ -219,7 +220,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query location overviews failed. ", e );
+         MolokoApp.Log().e( TAG, "Query location overviews failed. ", e );
          locations = null;
       }
       finally
@@ -233,7 +234,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    
    
    
-   public LocationOverviewsProviderPart( Context context,
+   public LocationOverviewsProviderPart( SystemContext context,
       SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, LocationOverviews.PATH );
@@ -248,7 +249,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                         String[] selectionArgs,
                         String sortOrder )
    {
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )
                                                                         .append( " )" );
@@ -257,7 +258,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       {
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? Queries.bindAll( selection,
+                                                    ? DbHelper.bindAll( selection,
                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );
@@ -341,10 +342,10 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                                                          c.getString( COL_INDICES.get( LocationOverviews.LOCATION_NAME ) ),
                                                          c.getFloat( COL_INDICES.get( LocationOverviews.LONGITUDE ) ),
                                                          c.getFloat( COL_INDICES.get( LocationOverviews.LATITUDE ) ),
-                                                         Queries.getOptString( c,
+                                                         DbHelper.getOptString( c,
                                                                                COL_INDICES.get( LocationOverviews.ADDRESS ) ),
                                                          c.getInt( COL_INDICES.get( LocationOverviews.VIEWABLE ) ) != 0,
-                                                         Queries.getOptInt( c,
+                                                         DbHelper.getOptInt( c,
                                                                             COL_INDICES.get( LocationOverviews.ZOOM ),
                                                                             0 ) ),
                                         c.getInt( COL_INDICES.get( LocationOverviews.TASKS_COUNT ) ) );

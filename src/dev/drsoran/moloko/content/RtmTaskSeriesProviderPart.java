@@ -32,7 +32,6 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -50,9 +49,12 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.CreationsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
@@ -166,7 +168,7 @@ public class RtmTaskSeriesProviderPart extends
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query taskseries failed. ", e );
+         MolokoApp.Log().e( TAG, "Query taskseries failed. ", e );
          taskSeries = null;
       }
       finally
@@ -193,7 +195,7 @@ public class RtmTaskSeriesProviderPart extends
             taskSerieses = new ArrayList< RtmTaskSeries >( 0 );
          else
          {
-            final String selection = Queries.toColumnList( creations,
+            final String selection = DbHelper.toColumnList( creations,
                                                            TaskSeries._ID,
                                                            " OR " );
             Cursor c = null;
@@ -228,7 +230,7 @@ public class RtmTaskSeriesProviderPart extends
             }
             catch ( final RemoteException e )
             {
-               MolokoApp.Log.e( TAG, "Query taskseries failed. ", e );
+               MolokoApp.Log().e( TAG, "Query taskseries failed. ", e );
                taskSerieses = null;
             }
             finally
@@ -277,7 +279,7 @@ public class RtmTaskSeriesProviderPart extends
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query taskserieses failed.", e );
+         MolokoApp.Log().e( TAG, "Query taskserieses failed.", e );
          taskList = null;
       }
       finally
@@ -296,8 +298,8 @@ public class RtmTaskSeriesProviderPart extends
       RtmTasks tasksLists = null;
       
       // Query all lists, including smart lists. So we get empty RtmTaskList instances too.
-      final RtmLists lists = RtmListsProviderPart.getAllLists( client,
-                                                               RtmListsProviderPart.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
+      final RtmLists lists = RtmListsTable.getAllLists( client,
+                                                               RtmListsTable.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
       
       if ( lists != null )
       {
@@ -341,11 +343,11 @@ public class RtmTaskSeriesProviderPart extends
          final ContentProviderClient client = contentResolver.acquireContentProviderClient( Lists.CONTENT_URI );
          if ( client != null )
          {
-            inbox = RtmListsProviderPart.getListByName( client, nameInbox );
+            inbox = RtmListsTable.getListByName( client, nameInbox );
             client.release();
          }
          else
-            MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+            MolokoApp.Log().e( TAG, LogUtils.GENERIC_DB_ERROR );
       }
       
       if ( inbox != null )
@@ -364,7 +366,7 @@ public class RtmTaskSeriesProviderPart extends
                
                for ( RtmTaskSeries rtmTaskSeries : tasks )
                {
-                  operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                  operations.add( ContentProviderOperation.newUpdate( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                 rtmTaskSeries.getId() ) )
                                                           .withValue( TaskSeries.LIST_ID,
                                                                       inbox.getId() )
@@ -374,12 +376,12 @@ public class RtmTaskSeriesProviderPart extends
          }
          else
          {
-            MolokoApp.Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+            MolokoApp.Log().e( TAG, LogUtils.GENERIC_DB_ERROR );
          }
       }
       else
       {
-         MolokoApp.Log.e( TAG, "Query Inbox list failed" );
+         MolokoApp.Log().e( TAG, "Query Inbox list failed" );
       }
       
       return operations;
@@ -477,23 +479,23 @@ public class RtmTaskSeriesProviderPart extends
          return new RtmTaskSeries( taskSeriesId,
                                    c.getString( COL_INDICES.get( TaskSeries.LIST_ID ) ),
                                    new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
-                                   Queries.getOptDate( c,
+                                   DbHelper.getOptDate( c,
                                                        COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
                                    c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
-                                   Queries.getOptString( c,
+                                   DbHelper.getOptString( c,
                                                          COL_INDICES.get( TaskSeries.SOURCE ) ),
                                    tasks,
                                    notes,
-                                   Queries.getOptString( c,
+                                   DbHelper.getOptString( c,
                                                          COL_INDICES.get( TaskSeries.LOCATION_ID ) ),
-                                   Queries.getOptString( c,
+                                   DbHelper.getOptString( c,
                                                          COL_INDICES.get( TaskSeries.URL ) ),
-                                   Queries.getOptString( c,
+                                   DbHelper.getOptString( c,
                                                          COL_INDICES.get( TaskSeries.RECURRENCE ) ),
-                                   Queries.getOptBool( c,
+                                   DbHelper.getOptBool( c,
                                                        COL_INDICES.get( TaskSeries.RECURRENCE_EVERY ),
                                                        false ),
-                                   Queries.getOptString( c,
+                                   DbHelper.getOptString( c,
                                                          COL_INDICES.get( TaskSeries.TAGS ),
                                                          Strings.EMPTY_STRING ),
                                    participantsList );
@@ -504,7 +506,8 @@ public class RtmTaskSeriesProviderPart extends
    
    
    
-   public RtmTaskSeriesProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public RtmTaskSeriesProviderPart( SystemContext context,
+      SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, TaskSeries.PATH );
    }

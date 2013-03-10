@@ -35,7 +35,7 @@ import com.xtremelabs.robolectric.RobolectricTestRunner;
 import com.xtremelabs.robolectric.res.RobolectricPackageManager;
 import com.xtremelabs.robolectric.shadows.ShadowContextWrapper;
 
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.test.shadows.ACRAShadow;
 import dev.drsoran.moloko.test.shadows.DateFormatShadow;
 

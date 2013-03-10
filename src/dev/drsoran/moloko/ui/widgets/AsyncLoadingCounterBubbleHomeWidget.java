@@ -29,20 +29,23 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.ui.UiContext;
 
 
 abstract class AsyncLoadingCounterBubbleHomeWidget extends LinearLayout
          implements IMolokoHomeWidget
 {
+   private final UiContext uiContext;
+   
    private AsyncTask< Void, Void, Integer > query;
    
    
    
-   public AsyncLoadingCounterBubbleHomeWidget( Context context,
+   protected AsyncLoadingCounterBubbleHomeWidget( Context context,
       AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
+      uiContext = UiContext.get( context );
    }
    
    
@@ -50,14 +53,14 @@ abstract class AsyncLoadingCounterBubbleHomeWidget extends LinearLayout
    public AsyncLoadingCounterBubbleHomeWidget( Context context,
       AttributeSet attrs )
    {
-      super( context, attrs );
+      this( context, attrs, 0 );
    }
    
    
    
    public AsyncLoadingCounterBubbleHomeWidget( Context context )
    {
-      super( context );
+      this( context, null );
    }
    
    
@@ -106,7 +109,7 @@ abstract class AsyncLoadingCounterBubbleHomeWidget extends LinearLayout
          }
       };
       
-      MolokoApp.getExecutor().execute( query );
+      uiContext.asSystemContext().getExecutorService().execute( query );
    }
    
    
@@ -142,7 +145,14 @@ abstract class AsyncLoadingCounterBubbleHomeWidget extends LinearLayout
          }
       };
       
-      MolokoApp.getExecutor().execute( query );
+      uiContext.asSystemContext().getExecutorService().execute( query );
+   }
+   
+   
+   
+   public UiContext getUiContext()
+   {
+      return uiContext;
    }
    
    

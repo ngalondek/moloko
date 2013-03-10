@@ -30,6 +30,9 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
@@ -39,11 +42,15 @@ public class AutoSummaryListPreference extends ListPreference implements
 {
    private final AutoSummary< String > autoSummaryImpl;
    
+   private final AppContext appContext;
+   
    
    
    public AutoSummaryListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      
+      appContext = AppContext.get( context );
       autoSummaryImpl = new AutoSummary< String >( context, attrs, this );
    }
    
@@ -56,6 +63,27 @@ public class AutoSummaryListPreference extends ListPreference implements
       
       getSharedPreferences().registerOnSharedPreferenceChangeListener( this );
       setOnPreferenceChangeListener( this );
+   }
+   
+   
+   
+   public AppContext getAppContext()
+   {
+      return appContext;
+   }
+   
+   
+   
+   public ILog Log()
+   {
+      return appContext.Log();
+   }
+   
+   
+   
+   public ISettingsService getSettings()
+   {
+      return appContext.getSettings();
    }
    
    

@@ -27,18 +27,18 @@ import java.util.Locale;
 import android.accounts.Account;
 import android.content.Intent;
 import android.content.res.Configuration;
-import dev.drsoran.moloko.app.IOnTimeChangedListener;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.app.NotifierContext;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents.Extras;
-import dev.drsoran.moloko.app.account.IAccountUpdatedListener;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.services.IAppEventService;
+import dev.drsoran.moloko.event.IOnTimeChangedListener;
 
 
 class MolokoNotificationManager implements IOnTimeChangedListener,
          IOnSettingsChangedListener, IAccountUpdatedListener
 {
-   private final NotifierContext context;
+   private final AppContext context;
    
    private final IStatusbarNotifier[] notifiers = new IStatusbarNotifier[ 2 ];
    
@@ -48,7 +48,7 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    
    
-   public MolokoNotificationManager( NotifierContext context )
+   public MolokoNotificationManager( AppContext context )
    {
       this.context = context;
       this.lastUsedLocale = getCurrentNotificatonLocale();
@@ -207,26 +207,31 @@ class MolokoNotificationManager implements IOnTimeChangedListener,
    
    private void registerListeners()
    {
-      context.registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
-      context.registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
-                                                 this );
-      context.registerAccountUpdatedListener( this );
+      context.getSystemEvents()
+             .registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
+      
+      final IAppEventService appEventService = context.getAppEvents();
+      appEventService.registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
+                                                         this );
+      appEventService.registerAccountUpdatedListener( this );
    }
    
    
    
    private void unregisterListeners()
    {
-      context.unregisterAccountUpdatedListener( this );
-      context.unregisterOnTimeChangedListener( this );
-      context.unregisterOnSettingsChangedListener( this );
+      final IAppEventService appEventService = context.getAppEvents();
+      appEventService.unregisterAccountUpdatedListener( this );
+      appEventService.unregisterOnSettingsChangedListener( this );
+      
+      context.getSystemEvents().unregisterOnTimeChangedListener( this );
    }
    
    
    
    private Locale getCurrentNotificatonLocale()
    {
-      return MolokoApp.getSettings( context ).getLocale();
+      return context.getSettings().getLocale();
    }
    
    

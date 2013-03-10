@@ -22,17 +22,17 @@
 
 package dev.drsoran.moloko.grammar.recurrence;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.grammar.ILocalizedParser;
 
-public interface IRecurrenceParser
+
+public interface IRecurrenceParser extends ILocalizedParser
 {
+   /**
+    * @return Map, where the keys are the parsed recurrence pattern key words and the values their according values.
+    */
    Map< String, Object > parseRecurrence( String recurrence ) throws RecognitionException;
-   
-
-
-   Locale getLocale();
 }

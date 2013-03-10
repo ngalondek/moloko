@@ -34,10 +34,9 @@ import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.view.Window;
 import com.mdt.rtm.data.RtmAuth;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.connection.ConnectionUtil;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.provider.Rtm;
 
@@ -77,10 +76,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
    {
       switch ( dialogId )
       {
-         case R.id.dlg_not_connected:
-            startActivity( new Intent( android.provider.Settings.ACTION_WIRELESS_SETTINGS ) );
-            break;
-         
          case R.id.error:
             finish();
             break;
@@ -111,7 +106,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
    @Override
    public void onStartAuthentication( RtmAuth.Perms permission )
    {
-      if ( ConnectionUtil.isConnected( this ) )
+      if ( getAppContext().getConnectionService().hasInternetConnection() )
       {
          final Bundle config = new Bundle( 1 );
          config.putString( Constants.FEAT_PERMISSION, permission.toString() );
@@ -124,11 +119,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
       }
       else
       {
-         new AlertDialogFragment.Builder( R.id.dlg_not_connected ).setTitle( getString( R.string.err_not_connected ) )
-                                                                  .setMessage( getString( R.string.phr_establish_connection ) )
-                                                                  .setIcon( R.drawable.ic_prefs_info )
-                                                                  .setNeutralButton( R.string.phr_settings )
-                                                                  .show( this );
+         showNotConnectedDialog();
       }
    }
    
@@ -196,7 +187,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
       }
       catch ( SecurityException e )
       {
-         MolokoApp.Log.e( getClass(), e.getLocalizedMessage() );
+         Log().e( getClass(), e.getLocalizedMessage() );
          onAuthenticationFailed( getString( R.string.auth_err_cause_scurity ) );
       }
       finally
@@ -258,7 +249,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
          chosenFragment = AccountIssueFragment.newInstance( getIntent().getExtras() );
       }
       
-      else if ( AccountUtils.getRtmAccount( accountManager ) != null )
+      else if ( getAppContext().getAccountService().getRtmAccount() != null )
       {
          final Bundle config = new Bundle( 1 );
          config.putBoolean( AccountIssueFragment.Config.ACCOUNT_ALREADY_EXISTS,

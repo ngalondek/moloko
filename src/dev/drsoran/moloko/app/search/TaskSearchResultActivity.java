@@ -38,9 +38,8 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.taskslist.FullDetailedTasksListFragment;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -294,15 +293,14 @@ public class TaskSearchResultActivity extends
    
    
    @Override
-   protected Fragment createTasksListFragment( Bundle config )
+   public Fragment createTasksListFragment( Bundle config )
    {
       evaluateAndStoreQuery();
       
       if ( getTopQuery().succeeded )
       {
          putTransformedQueryFromSmartFilter( config );
-         
-         return FullDetailedTasksListFragment.newInstance( config );
+         return super.createTasksListFragment( config );
       }
       else
       {

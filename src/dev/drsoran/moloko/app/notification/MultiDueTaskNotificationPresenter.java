@@ -25,9 +25,9 @@ package dev.drsoran.moloko.app.notification;
 import java.util.List;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.provider.Rtm.Tasks;
 
@@ -35,7 +35,7 @@ import dev.drsoran.provider.Rtm.Tasks;
 class MultiDueTaskNotificationPresenter extends
          AbstractDueTaskNotificationPresenter
 {
-   public MultiDueTaskNotificationPresenter( Context context )
+   public MultiDueTaskNotificationPresenter( AppContext context )
    {
       super( context );
    }

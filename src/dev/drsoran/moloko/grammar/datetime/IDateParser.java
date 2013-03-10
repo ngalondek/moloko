@@ -22,50 +22,15 @@
 
 package dev.drsoran.moloko.grammar.datetime;
 
-import java.util.Locale;
-
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.grammar.IDateFormatContext;
-import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.grammar.ILocalizedParser;
 
 
-public interface IDateParser
+public interface IDateParser extends ILocalizedParser
 {
-   public final static class ParseDateReturn
-   {
-      public final int lastParsedCharPos;
-      
-      public final boolean isEof;
-      
-      
-      
-      public ParseDateReturn( int lastParsedCharPos, boolean isEof )
-      {
-         this.lastParsedCharPos = lastParsedCharPos;
-         this.isEof = isEof;
-      }
-   }
-   
-   
-   public final static class ParseDateWithinReturn
-   {
-      public final MolokoCalendar startEpoch;
-      
-      public final MolokoCalendar endEpoch;
-      
-      
-      
-      public ParseDateWithinReturn( MolokoCalendar startEpoch,
-         MolokoCalendar endEpoch )
-      {
-         this.startEpoch = startEpoch;
-         this.endEpoch = endEpoch;
-      }
-   }
-   
-   
-   
    ParseDateReturn parseDate( String date, MolokoCalendar cal, boolean clearTime ) throws RecognitionException;
    
    
@@ -74,13 +39,9 @@ public interface IDateParser
    
    
    
-   Locale getLocale();
-   
-   
-   
    MolokoCalendar getCalendar();
    
    
    
-   void setDateFormatContext( IDateFormatContext context );
+   void setDateFormatter( IDateFormatter context );
 }

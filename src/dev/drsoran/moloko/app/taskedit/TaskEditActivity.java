@@ -30,11 +30,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
-import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.Task;
 

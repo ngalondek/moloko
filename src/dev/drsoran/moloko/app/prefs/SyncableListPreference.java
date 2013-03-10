@@ -40,8 +40,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
 
 
 abstract class SyncableListPreference extends AutoSummaryListPreference
@@ -189,7 +189,7 @@ abstract class SyncableListPreference extends AutoSummaryListPreference
    
    protected boolean hasRtmSettings()
    {
-      return MolokoApp.getSettings( getContext() ).getRtmSettings() != null;
+      return getSettings().getRtmSettings() != null;
    }
    
    

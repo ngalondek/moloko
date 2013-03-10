@@ -31,14 +31,15 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmList;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.listsedit.AddRenameListDialogFragment;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.ui.activities.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 

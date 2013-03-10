@@ -39,11 +39,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.ui.state.InstanceState;
 
 
-public class ChooseRtmPermissionFragment extends AuthFragment implements
+class ChooseRtmPermissionFragment extends AuthFragment implements
          OnItemSelectedListener
 {
    @InstanceState( key = Constants.FEAT_PERMISSION, defaultValue = "read" )

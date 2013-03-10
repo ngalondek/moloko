@@ -5,7 +5,7 @@ import com.mdt.rtm.data.RtmLocation;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
-public interface ITagCloudFragmentListener
+interface ITagCloudFragmentListener
 {
    void onOpenList( RtmListWithTaskCount list );
    

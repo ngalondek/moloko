@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.app.task;
 
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,23 +30,17 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
 import dev.drsoran.moloko.ui.MolokoLinkifier;
 import dev.drsoran.moloko.ui.adapters.MultiChoiceModalArrayAdapter;
-import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
 
 class NotesListFragmentAdapter extends
          MultiChoiceModalArrayAdapter< RtmTaskNote >
 {
-   private final MolokoListFragment< RtmTaskNote > fragment;
-   
-   
-   
    public NotesListFragmentAdapter( NotesListFragment fragment )
    {
       super( fragment.getMolokoListView(), R.layout.noteslist_listitem );
-      this.fragment = fragment;
    }
    
    
@@ -86,11 +79,11 @@ class NotesListFragmentAdapter extends
    private void initNoteListItem( RtmTaskNote note, ViewGroup listItemView )
    {
       final TextView createdDateView = (TextView) listItemView.findViewById( R.id.note_created_date );
-      createdDateView.setText( MolokoDateFormatter.formatDate( fragment.getSherlockActivity(),
-                                                               note.getCreatedDate()
-                                                                   .getTime(),
-                                                               MolokoDateFormatter.FORMAT_ABR_MONTH
-                                                                  | DateUtils.FORMAT_SHOW_YEAR ) );
+      createdDateView.setText( getUiContext().getDateFormatter()
+                                             .formatDate( note.getCreatedDate()
+                                                              .getTime(),
+                                                          IDateFormatterService.FORMAT_ABR_MONTH
+                                                             | IDateFormatterService.FORMAT_WITH_YEAR ) );
       
       final TextView titleView = (TextView) listItemView.findViewById( R.id.note_title );
       if ( !TextUtils.isEmpty( note.getTitle() ) )

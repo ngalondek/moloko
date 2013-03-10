@@ -24,7 +24,7 @@ package dev.drsoran.moloko.ui.fragments;
 
 import android.app.Activity;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 
 

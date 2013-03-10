@@ -22,30 +22,26 @@
 
 package dev.drsoran.moloko.ui.widgets;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserFactory;
+import dev.drsoran.moloko.grammar.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.IChangesTarget;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
 
 public class RecurrenceEditText extends ClearableEditText
 {
    public final static String EDIT_RECURRENCE_TEXT = "edit_recurrence_text";
    
-   private Pair< String, Boolean > recurrencePattern;
+   private final IRecurrenceParsing recurrenceParsing;
    
-   private boolean isSupportingFreeTextInput;
+   private Pair< String, Boolean > recurrencePattern;
    
    private IChangesTarget changes;
    
@@ -68,9 +64,8 @@ public class RecurrenceEditText extends ClearableEditText
    public RecurrenceEditText( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
-      checkFreeTextInput();
-      
-      setEnabled( isSupportingFreeTextInput );
+      recurrenceParsing = getUiContext().getParsingService()
+                                        .getRecurrenceParsing();
    }
    
    
@@ -107,7 +102,7 @@ public class RecurrenceEditText extends ClearableEditText
    
    public ValidationResult validate()
    {
-      if ( isSupportingFreeTextInput )
+      if ( isEnabled() )
       {
          final Pair< String, Boolean > res = parseRecurrenceSentence( getTextTrimmed() );
          return validateRecurrence( res );
@@ -178,9 +173,8 @@ public class RecurrenceEditText extends ClearableEditText
          }
          else
          {
-            final String sentence = RecurrenceParsing.parseRecurrencePattern( getContext(),
-                                                                              recurrencePattern.first,
-                                                                              recurrencePattern.second );
+            final String sentence = recurrenceParsing.parseRecurrencePatternToSentence( recurrencePattern.first,
+                                                                                        recurrencePattern.second );
             setText( ( sentence != null
                                        ? sentence
                                        : getContext().getString( R.string.task_datetime_err_recurr ) ) );
@@ -198,7 +192,7 @@ public class RecurrenceEditText extends ClearableEditText
       }
       else
       {
-         return RecurrenceParsing.parseRecurrence( recurrenceSentence );
+         return recurrenceParsing.parseRecurrence( recurrenceSentence );
       }
    }
    
@@ -252,20 +246,10 @@ public class RecurrenceEditText extends ClearableEditText
    private void putTextChange()
    {
       if ( changes != null )
+      {
          changes.putChange( EDIT_RECURRENCE_TEXT,
                             getTextTrimmed(),
                             String.class );
-   }
-   
-   
-   
-   private void checkFreeTextInput()
-   {
-      if ( !isInEditMode() )
-      {
-         final Locale resLocale = MolokoApp.get( getContext() )
-                                           .getActiveResourcesLocale();
-         isSupportingFreeTextInput = RecurrenceParserFactory.existsDateParserWithMatchingLocale( resLocale );
       }
    }
    
@@ -273,7 +257,7 @@ public class RecurrenceEditText extends ClearableEditText
    
    private void commitInput( String input )
    {
-      if ( isSupportingFreeTextInput )
+      if ( isEnabled() )
       {
          setRecurrenceBySentence( input );
          updateEditText();

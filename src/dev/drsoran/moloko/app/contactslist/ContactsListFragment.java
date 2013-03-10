@@ -43,7 +43,7 @@ import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
 import dev.drsoran.rtm.Contact;
 
 
-public class ContactsListFragment extends MolokoListFragment< Contact >
+class ContactsListFragment extends MolokoListFragment< Contact >
 {
    private IContactsListFragmentListener listener;
    

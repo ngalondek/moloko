@@ -1,6 +1,6 @@
 package dev.drsoran.moloko.app.contactslist;
 
-public interface IContactsListFragmentListener
+interface IContactsListFragmentListener
 {
    void onShowTasksOfContact( String fullname, String username );
    

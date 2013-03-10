@@ -37,9 +37,9 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -69,7 +69,7 @@ class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
       
       try
       {
-         if ( Queries.exists( client, Tasks.CONTENT_URI, taskId ) )
+         if ( DbHelper.exists( client, Tasks.CONTENT_URI, taskId ) )
          {
             final String query = buildQuery();
             final RtmProvider rtmProvider = (RtmProvider) client.getLocalContentProvider();

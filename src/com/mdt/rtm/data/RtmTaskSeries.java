@@ -32,9 +32,9 @@ import org.w3c.dom.Element;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.grammar.RecurrenceParsing;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.ParticipantList;
@@ -200,9 +200,9 @@ public class RtmTaskSeries extends RtmData
             recurrence = null;
             isEveryRecurrence = false;
             
-            MolokoApp.Log.e( this.getClass(),
-                             "Error reading recurrence pattern from XML",
-                             nfe );
+            MolokoApp.Log().e( getClass(),
+                               "Error reading recurrence pattern from XML",
+                               nfe );
          }
       }
       
@@ -467,7 +467,7 @@ public class RtmTaskSeries extends RtmData
       final String repeat;
       
       if ( recurrence != null )
-         repeat = RecurrenceParsing.parseRecurrencePattern( recurrence,
+         repeat = RecurrenceParsing.parseRecurrencePatternToSentence( recurrence,
                                                             isEveryRecurrence );
       else
          repeat = null;

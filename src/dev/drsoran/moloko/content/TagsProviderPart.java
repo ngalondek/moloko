@@ -44,8 +44,10 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -177,7 +179,7 @@ public class TagsProviderPart extends AbstractProviderPart
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query tags failed. ", e );
+         MolokoApp.Log().e( TAG, "Query tags failed. ", e );
          tags = null;
       }
       finally
@@ -246,7 +248,7 @@ public class TagsProviderPart extends AbstractProviderPart
    
    
    
-   public TagsProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public TagsProviderPart( SystemContext context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Tags.PATH );
    }
@@ -271,7 +273,7 @@ public class TagsProviderPart extends AbstractProviderPart
          }
       }
       
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )
                                                                         .append( ")" );
@@ -280,7 +282,7 @@ public class TagsProviderPart extends AbstractProviderPart
       {
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? Queries.bindAll( selection,
+                                                    ? DbHelper.bindAll( selection,
                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );

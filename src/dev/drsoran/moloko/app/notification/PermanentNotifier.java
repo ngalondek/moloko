@@ -25,15 +25,13 @@ package dev.drsoran.moloko.app.notification;
 import java.util.Collection;
 import java.util.Map;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.content.Loader;
-import dev.drsoran.moloko.app.IOnTimeChangedListener;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.event.IOnTimeChangedListener;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 
 
@@ -45,7 +43,7 @@ class PermanentNotifier extends AbstractNotifier
    
    
    
-   public PermanentNotifier( Context context )
+   public PermanentNotifier( AppContext context )
    {
       super( context );
       
@@ -129,8 +127,8 @@ class PermanentNotifier extends AbstractNotifier
    
    private void reEvaluatePermanentNotification()
    {
-      final Settings settings = MolokoApp.getSettings( context );
-      loadPermanentTasks( settings.getNotifyingPermanentTaskLists() );
+      loadPermanentTasks( context.getSettings()
+                                 .getNotifyingPermanentTaskLists() );
    }
    
    
@@ -154,9 +152,8 @@ class PermanentNotifier extends AbstractNotifier
    
    private boolean isNotificationActive()
    {
-      final Settings settings = MolokoApp.getSettings( context );
-      final boolean isNotifyingPermanentTasks = settings.isNotifyingPermanentTasks();
-      
+      final boolean isNotifyingPermanentTasks = context.getSettings()
+                                                       .isNotifyingPermanentTasks();
       return isNotifyingPermanentTasks;
    }
    

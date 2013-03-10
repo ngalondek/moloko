@@ -37,12 +37,13 @@ import com.mdt.rtm.TimeLineResult;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.RtmServiceConstants;
+import dev.drsoran.moloko.app.sync.SyncAdapter;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.elements.SyncNote;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskNotesList;

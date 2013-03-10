@@ -25,9 +25,7 @@ package dev.drsoran.moloko.app.task;
 import com.mdt.rtm.data.RtmTaskNote;
 
 
-
-public interface INotesListsFragmentListener extends
-         INotesListActionModeListener
+interface INotesListsFragmentListener extends INotesListActionModeListener
 {
    void onOpenNote( RtmTaskNote note, int position );
    

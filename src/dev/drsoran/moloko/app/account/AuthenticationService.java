@@ -26,6 +26,7 @@ import android.accounts.AccountManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import dev.drsoran.moloko.SystemContext;
 
 
 /**
@@ -33,22 +34,18 @@ import android.os.IBinder;
  */
 public class AuthenticationService extends Service
 {
-   @SuppressWarnings( "unused" )
-   private static final String TAG = "Moloko."
-      + AuthenticationService.class.getSimpleName();
-   
    private Authenticator authenticator;
    
    
-
+   
    @Override
    public void onCreate()
    {
-      authenticator = new Authenticator( this );
+      authenticator = new Authenticator( SystemContext.get( this ) );
    }
    
-
-
+   
+   
    @Override
    public IBinder onBind( Intent intent )
    {

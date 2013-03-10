@@ -585,7 +585,8 @@ public final class UiUtils
       new AlertDialogFragment.Builder( R.id.dlg_not_connected ).setTitle( fragmentActivity.getString( R.string.err_not_connected ) )
                                                                .setIcon( android.R.drawable.ic_dialog_alert )
                                                                .setMessage( fragmentActivity.getString( R.string.phr_establish_connection ) )
-                                                               .setNeutralButton( R.string.btn_ok )
+                                                               .setPositiveButton( R.string.btn_ok )
+                                                               .setNeutralButton( R.string.phr_settings )
                                                                .show( fragmentActivity );
    }
    

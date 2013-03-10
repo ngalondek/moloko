@@ -22,14 +22,14 @@
 
 package dev.drsoran.moloko.app.notification;
 
-import android.content.Context;
 import android.os.Build;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.AppContext;
 
 
 class NotificationPresenterFactory
 {
-   public static IPermanentNotificationPresenter createPermanentNotificationPresenter( Context context )
+   public static IPermanentNotificationPresenter createPermanentNotificationPresenter( AppContext context )
    {
       if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
       {
@@ -43,7 +43,7 @@ class NotificationPresenterFactory
    
    
    
-   public static IDueTaskNotificationPresenter createDueTaskNotificationPresenter( Context context )
+   public static IDueTaskNotificationPresenter createDueTaskNotificationPresenter( AppContext context )
    {
       if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.HONEYCOMB ) )
       {

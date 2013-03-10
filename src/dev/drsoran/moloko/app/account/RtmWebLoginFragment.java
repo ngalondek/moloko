@@ -40,15 +40,12 @@ import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class RtmWebLoginFragment extends AuthFragment implements
-         IAuthSequenceListener
+class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
 {
-   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
    
    @InstanceState( key = Constants.FEAT_PERMISSION, defaultValue = "read" )
    private String permission;
@@ -56,6 +53,8 @@ public class RtmWebLoginFragment extends AuthFragment implements
    private AuthenticatorActivity authenticatorActivity;
    
    private AsyncRtmAuthenticator authenticator;
+   
+   private IHandlerToken handler;
    
    private TextView messageText;
    
@@ -88,7 +87,9 @@ public class RtmWebLoginFragment extends AuthFragment implements
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
+      
       authenticatorActivity = (AuthenticatorActivity) activity;
+      handler = getUiContext().acquireHandlerToken();
    }
    
    
@@ -199,7 +200,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
       }
       else
       {
-         MolokoApp.Log.d( getClass(), "LoginURL: " + loginUrl );
+         Log().d( getClass(), "LoginURL: " + loginUrl );
          
          messageText.setText( getString( R.string.auth_info_text ) );
          
@@ -216,7 +217,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
    public void onAuthenticationCompleted( String authToken,
                                           ServiceException exception )
    {
-      MolokoApp.Log.d( getClass(), "AuthToken: " + authToken );
+      Log().d( getClass(), "AuthToken: " + authToken );
       
       if ( exception != null )
       {
@@ -289,7 +290,12 @@ public class RtmWebLoginFragment extends AuthFragment implements
       }
       
       authenticatorActivity = null;
-      handler.release();
+      
+      if ( handler != null )
+      {
+         handler.release();
+         handler = null;
+      }
       
       super.onDestroy();
    }
@@ -308,12 +314,11 @@ public class RtmWebLoginFragment extends AuthFragment implements
    {
       try
       {
-         authenticator = new AsyncRtmAuthenticator( authenticatorActivity,
-                                                    MolokoApp.getExecutor() );
+         authenticator = new AsyncRtmAuthenticator( authenticatorActivity );
       }
       catch ( ServiceInternalException e )
       {
-         MolokoApp.Log.e( getClass(), "Error creating RTM service", e );
+         Log().e( getClass(), "Error creating RTM service", e );
       }
    }
    

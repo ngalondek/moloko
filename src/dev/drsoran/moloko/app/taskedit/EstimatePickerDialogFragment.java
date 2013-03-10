@@ -39,13 +39,13 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils.EstimateStruct;
 
 
-public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
+class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
 {
    public final static class Config
    {

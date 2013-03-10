@@ -33,11 +33,11 @@ import android.os.Parcelable;
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.IFilter;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.RtmSmartFilterParsing;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterReturn;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.provider.Rtm.RawTasks;
 
 

@@ -36,10 +36,10 @@ import android.text.TextUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -270,7 +270,7 @@ class PermanentNotifierTasksLoader extends
       {
          client = getContext().getContentResolver()
                               .acquireContentProviderClient( Lists.CONTENT_URI );
-         return RtmListsProviderPart.resolveListIdsToListNames( client,
+         return RtmListsTable.resolveListIdsToListNames( client,
                                                                 taskListIds );
       }
       finally

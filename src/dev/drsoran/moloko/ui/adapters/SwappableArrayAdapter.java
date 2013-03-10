@@ -27,13 +27,18 @@ import java.util.List;
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import dev.drsoran.moloko.ui.UiContext;
 
 
 public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
 {
+   private final UiContext uiContext;
+   
+   
+   
    protected SwappableArrayAdapter( Context context )
    {
-      super( context, View.NO_ID );
+      this( context, View.NO_ID );
    }
    
    
@@ -41,6 +46,7 @@ public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
    protected SwappableArrayAdapter( Context context, int textViewResourceId )
    {
       super( context, textViewResourceId );
+      uiContext = UiContext.get( context );
    }
    
    
@@ -48,6 +54,7 @@ public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
    protected SwappableArrayAdapter( Context context, List< T > objects )
    {
       super( context, View.NO_ID, objects );
+      uiContext = UiContext.get( context );
    }
    
    
@@ -56,6 +63,7 @@ public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
       int textViewResourceId, List< T > objects )
    {
       super( context, resource, textViewResourceId, objects );
+      uiContext = UiContext.get( context );
    }
    
    
@@ -64,6 +72,7 @@ public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
       int textViewResourceId )
    {
       super( context, resource, textViewResourceId );
+      uiContext = UiContext.get( context );
    }
    
    
@@ -72,6 +81,7 @@ public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
       List< T > objects )
    {
       super( context, textViewResourceId, objects );
+      uiContext = UiContext.get( context );
    }
    
    
@@ -97,6 +107,13 @@ public abstract class SwappableArrayAdapter< T > extends ArrayAdapter< T >
       setNotifyOnChange( true );
       
       notifyDataSetChanged();
+   }
+   
+   
+   
+   public UiContext getUiContext()
+   {
+      return uiContext;
    }
    
    

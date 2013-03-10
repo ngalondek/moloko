@@ -29,7 +29,6 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -40,8 +39,9 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -151,7 +151,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query rawtask failed. ", e );
+         MolokoApp.Log().e( TAG, "Query rawtask failed. ", e );
          task = null;
       }
       finally
@@ -226,7 +226,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
          }
          catch ( final RemoteException e )
          {
-            MolokoApp.Log.e( TAG, "Query rawtasks failed. ", e );
+            MolokoApp.Log().e( TAG, "Query rawtasks failed. ", e );
             tasks = null;
          }
          finally
@@ -261,7 +261,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query rawtasks failed. ", e );
+         MolokoApp.Log().e( TAG, "Query rawtasks failed. ", e );
       }
       finally
       {
@@ -274,7 +274,7 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
-   public RtmTasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public RtmTasksProviderPart( SystemContext context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, RawTasks.PATH );
    }
@@ -398,18 +398,18 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
    {
       return new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),
                           c.getString( COL_INDICES.get( RawTasks.TASKSERIES_ID ) ),
-                          Queries.getOptDate( c,
+                          DbHelper.getOptDate( c,
                                               COL_INDICES.get( RawTasks.DUE_DATE ) ),
                           c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),
-                          Queries.getOptDate( c,
+                          DbHelper.getOptDate( c,
                                               COL_INDICES.get( RawTasks.ADDED_DATE ) ),
-                          Queries.getOptDate( c,
+                          DbHelper.getOptDate( c,
                                               COL_INDICES.get( RawTasks.COMPLETED_DATE ) ),
-                          Queries.getOptDate( c,
+                          DbHelper.getOptDate( c,
                                               COL_INDICES.get( RawTasks.DELETED_DATE ) ),
                           RtmTask.convertPriority( c.getString( COL_INDICES.get( RawTasks.PRIORITY ) ) ),
                           c.getInt( COL_INDICES.get( RawTasks.POSTPONED ) ),
-                          Queries.getOptString( c,
+                          DbHelper.getOptString( c,
                                                 COL_INDICES.get( RawTasks.ESTIMATE ) ),
                           c.getLong( COL_INDICES.get( RawTasks.ESTIMATE_MILLIS ) ) );
    }

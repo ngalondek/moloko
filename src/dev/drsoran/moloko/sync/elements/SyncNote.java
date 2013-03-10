@@ -34,11 +34,12 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.content.db.CreationsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -50,7 +51,6 @@ import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Notes;
 
@@ -157,7 +157,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    
    public boolean hasModification( ModificationSet modificationSet )
    {
-      return modificationSet.hasModification( Queries.contentUriWithId( Notes.CONTENT_URI,
+      return modificationSet.hasModification( DbHelper.contentUriWithId( Notes.CONTENT_URI,
                                                                         note.getId() ) );
    }
    
@@ -181,7 +181,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
       /**
        * Change the ID of the local note to the ID of the server note.
        **/
-      operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Notes.CONTENT_URI,
+      operation.add( ContentProviderOperation.newUpdate( DbHelper.contentUriWithId( Notes.CONTENT_URI,
                                                                                    note.getId() ) )
                                              .withValue( Notes._ID,
                                                          serverElement.note.getId() )
@@ -206,7 +206,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
          throw new IllegalArgumentException( "Update id "
             + serverElement.note.getId() + " differs this id " + note.getId() );
       
-      final Uri uri = Queries.contentUriWithId( Notes.CONTENT_URI, note.getId() );
+      final Uri uri = DbHelper.contentUriWithId( Notes.CONTENT_URI, note.getId() );
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
@@ -243,7 +243,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Notes.CONTENT_URI,
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( DbHelper.contentUriWithId( Notes.CONTENT_URI,
                                                                                                                    note.getId() ) )
                                                                              .build() )
                                          .build();
@@ -265,7 +265,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
                                                                                          ? null
                                                                                          : serverElement.getModifiedDate(),
                                                                     getModifiedDate(),
-                                                                    Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                    DbHelper.contentUriWithId( Notes.CONTENT_URI,
                                                                                               note.getId() ),
                                                                     modifications );
       // Title and Text

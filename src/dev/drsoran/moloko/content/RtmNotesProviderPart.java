@@ -30,7 +30,6 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,8 +41,10 @@ import android.text.TextUtils;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.CreationsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -127,7 +128,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log().e( TAG, "Query notes failed. ", e );
          notes = null;
       }
       finally
@@ -169,7 +170,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log().e( TAG, "Query notes failed. ", e );
          notes = null;
       }
       finally
@@ -210,7 +211,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query note failed. ", e );
+         MolokoApp.Log().e( TAG, "Query note failed. ", e );
          note = null;
       }
       finally
@@ -237,7 +238,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
             notes = new ArrayList< RtmTaskNote >( 0 );
          else
          {
-            final String selection = Queries.toColumnList( creations,
+            final String selection = DbHelper.toColumnList( creations,
                                                            Notes._ID,
                                                            " OR " );
             Cursor c = null;
@@ -257,7 +258,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
             }
             catch ( final RemoteException e )
             {
-               MolokoApp.Log.e( TAG, "Query notes failed. ", e );
+               MolokoApp.Log().e( TAG, "Query notes failed. ", e );
                notes = null;
             }
             finally
@@ -289,7 +290,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log().e( TAG, "Query notes failed. ", e );
       }
       finally
       {
@@ -320,7 +321,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query notes failed. ", e );
+         MolokoApp.Log().e( TAG, "Query notes failed. ", e );
       }
       finally
       {
@@ -359,7 +360,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    public final static NewNoteId createNewNoteId( ContentProviderClient client )
    {
       final NewNoteId newId = new NewNoteId();
-      newId.noteId = Queries.getNextId( client, Notes.CONTENT_URI );
+      newId.noteId = DbHelper.getNextId( client, Notes.CONTENT_URI );
       
       if ( newId.noteId != null )
          return newId;
@@ -378,7 +379,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
    
    
-   public RtmNotesProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public RtmNotesProviderPart( SystemContext context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Notes.PATH );
    }
@@ -478,13 +479,13 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return new RtmTaskNote( c.getString( COL_INDICES.get( Notes._ID ) ),
                               c.getString( COL_INDICES.get( Notes.TASKSERIES_ID ) ),
                               new Date( c.getLong( COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
-                              Queries.getOptDate( c,
+                              DbHelper.getOptDate( c,
                                                   COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ),
-                              Queries.getOptDate( c,
+                              DbHelper.getOptDate( c,
                                                   COL_INDICES.get( Notes.NOTE_DELETED ) ),
-                              Queries.getOptString( c,
+                              DbHelper.getOptString( c,
                                                     COL_INDICES.get( Notes.NOTE_TITLE ) ),
-                              Queries.getOptString( c,
+                              DbHelper.getOptString( c,
                                                     COL_INDICES.get( Notes.NOTE_TEXT ) ) );
    }
 }

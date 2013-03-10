@@ -46,22 +46,20 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.taskslist.ITasksListFragment;
-import dev.drsoran.moloko.app.taskslist.ITasksListFragmentListener;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
-import dev.drsoran.moloko.ui.activities.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 import dev.drsoran.rtm.Task;
 
 
-public abstract class AbstractTasksListActivity extends
-         MolokoEditFragmentActivity implements ITasksListFragmentListener,
-         OnNavigationListener, OnBackStackChangedListener,
+abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
+         implements ITasksListFragmentListener, OnNavigationListener,
+         OnBackStackChangedListener,
          LoaderCallbacks< List< RtmListWithTaskCount > >
 {
    protected final static long CUSTOM_NAVIGATION_ITEM_ID = 0L;
@@ -691,10 +689,6 @@ public abstract class AbstractTasksListActivity extends
    }
    
    
-   
-   protected abstract Fragment createTasksListFragment( Bundle config );
-   
-   
    private final static class SelectedNavigationItem implements Parcelable
    {
       @SuppressWarnings( "unused" )
@@ -798,4 +792,8 @@ public abstract class AbstractTasksListActivity extends
          return String.format( "%d;%d", id, position );
       }
    }
+   
+   
+   
+   public abstract Fragment createTasksListFragment( Bundle config );
 }

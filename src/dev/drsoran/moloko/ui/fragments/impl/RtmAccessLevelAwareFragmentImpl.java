@@ -22,20 +22,18 @@
 
 package dev.drsoran.moloko.ui.fragments.impl;
 
-import android.support.v4.app.FragmentActivity;
-
 import com.mdt.rtm.data.RtmAuth;
 
-import dev.drsoran.moloko.app.account.AccountUtils;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 
 
 public class RtmAccessLevelAwareFragmentImpl
 {
-   private FragmentActivity activity;
+   private MolokoFragmentActivity activity;
    
    
    
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( MolokoFragmentActivity activity )
    {
       this.activity = activity;
    }
@@ -63,7 +61,7 @@ public class RtmAccessLevelAwareFragmentImpl
    {
       if ( activity != null )
       {
-         return AccountUtils.isReadOnlyAccess( activity );
+         return activity.isReadOnlyAccess();
       }
       else
       {
@@ -77,7 +75,7 @@ public class RtmAccessLevelAwareFragmentImpl
    {
       if ( activity != null )
       {
-         return AccountUtils.isWriteableAccess( activity );
+         return activity.isWritableAccess();
       }
       else
       {

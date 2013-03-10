@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.accounts.Account;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -37,12 +38,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.account.AccountUtils;
+import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -138,7 +139,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    private final static long[] VIBRATE_PATTERN =
    { 0, 300 };
    
-   private final Context context;
+   private final AppContext context;
    
    private boolean vibrateOnNotification;
    
@@ -150,7 +151,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   protected AbstractDueTaskNotificationPresenter( Context context )
+   protected AbstractDueTaskNotificationPresenter( AppContext context )
    {
       this.context = context;
    }
@@ -205,7 +206,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   protected Context getContext()
+   protected AppContext getContext()
    {
       return context;
    }
@@ -214,9 +215,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected void startActivity( Intent intent )
    {
-      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TASK
-         | Intent.FLAG_ACTIVITY_NEW_TASK );
-      
+      intent.setFlags( intent.getFlags() | Intent.FLAG_ACTIVITY_NEW_TASK );
       context.startActivity( intent );
    }
    
@@ -259,7 +258,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected String getNotificationTitle( Cursor tasksCursor )
    {
-      final String taskName = Queries.getOptString( tasksCursor,
+      final String taskName = DbHelper.getOptString( tasksCursor,
                                                     getColumnIndex( Tasks.TASKSERIES_NAME ) );
       return taskName;
    }
@@ -268,13 +267,13 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected String getNotificationText( Cursor tasksCursor )
    {
-      final long dueTimeMillis = Queries.getOptLong( tasksCursor,
+      final long dueTimeMillis = DbHelper.getOptLong( tasksCursor,
                                                      getColumnIndex( Tasks.DUE_DATE ) )
                                         .longValue();
       
       final String text = context.getString( R.string.notification_due,
-                                             MolokoDateFormatter.formatTime( context,
-                                                                             dueTimeMillis ) );
+                                             context.getDateFormatter()
+                                                    .formatTime( dueTimeMillis ) );
       return text;
    }
    
@@ -282,9 +281,9 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected String getNotificationTicker( Cursor tasksCursor )
    {
-      final String taskName = Queries.getOptString( tasksCursor,
+      final String taskName = DbHelper.getOptString( tasksCursor,
                                                     getColumnIndex( Tasks.TASKSERIES_NAME ) );
-      final long dueTimeMillis = Queries.getOptLong( tasksCursor,
+      final long dueTimeMillis = DbHelper.getOptLong( tasksCursor,
                                                      getColumnIndex( Tasks.DUE_DATE ) )
                                         .longValue();
       
@@ -305,7 +304,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
       boolean ok = tasksCursor.moveToFirst();
       for ( int i = 0; i < endIndex && ok; ok = tasksCursor.moveToNext(), ++i )
       {
-         final String taskId = Queries.getOptString( tasksCursor,
+         final String taskId = DbHelper.getOptString( tasksCursor,
                                                      getColumnIndex( Tasks._ID ) );
          taskIds.add( taskId );
       }
@@ -334,7 +333,10 @@ abstract class AbstractDueTaskNotificationPresenter implements
       builder.setSmallIcon( R.drawable.notification_due_task,
                             tasksCursor.getCount() );
       
-      if ( AccountUtils.isWriteableAccess( getContext() ) )
+      final IAccountService accountService = context.getAccountService();
+      final Account account = accountService.getRtmAccount();
+      
+      if ( accountService.isWriteableAccess( account ) )
       {
          addNotificationActions( tasksCursor, builder );
       }
@@ -404,7 +406,9 @@ abstract class AbstractDueTaskNotificationPresenter implements
       for ( DueTaskNotification notification : notifications )
       {
          if ( notification.getTaskId().equals( taskId ) )
+         {
             return notification;
+         }
       }
       
       return null;

@@ -27,8 +27,8 @@ import android.support.v4.app.DialogFragment;
 
 public class MolokoDialogFragmentImpl extends ConfigurableFragmentImpl
 {
-   public MolokoDialogFragmentImpl( DialogFragment fragment, int settingsMask )
+   public MolokoDialogFragmentImpl( DialogFragment fragment )
    {
-      super( fragment, settingsMask );
+      super( fragment );
    }
 }

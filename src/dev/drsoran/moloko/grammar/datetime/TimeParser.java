@@ -1,4 +1,4 @@
-// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Time.g 2013-01-13 13:42:21
+// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Time.g 2013-03-03 19:56:29
 
 package dev.drsoran.moloko.grammar.datetime;
 
@@ -13,9 +13,8 @@ import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.LexerException;
-import dev.drsoran.moloko.grammar.datetime.ITimeParser.ParseTimeReturn;
-import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 @SuppressWarnings(

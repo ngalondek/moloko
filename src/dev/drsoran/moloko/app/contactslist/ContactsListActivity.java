@@ -28,7 +28,7 @@ import com.actionbarsherlock.view.Menu;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.ui.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 
 
 public class ContactsListActivity extends MolokoFragmentActivity implements

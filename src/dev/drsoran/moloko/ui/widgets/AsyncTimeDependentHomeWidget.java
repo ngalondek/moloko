@@ -24,8 +24,7 @@ package dev.drsoran.moloko.ui.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.app.IOnTimeChangedListener;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.event.IOnTimeChangedListener;
 
 
 public abstract class AsyncTimeDependentHomeWidget extends
@@ -39,12 +38,13 @@ public abstract class AsyncTimeDependentHomeWidget extends
    
    
    
+   @Override
    public void start()
    {
       asyncReload();
-      
-      MolokoApp.getNotifierContext( getContext() )
-               .registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
+      getUiContext().getSystemEvents()
+                        .registerOnTimeChangedListener( IOnTimeChangedListener.ALL,
+                                                        this );
    }
    
    
@@ -52,12 +52,13 @@ public abstract class AsyncTimeDependentHomeWidget extends
    @Override
    public void stop()
    {
-      MolokoApp.getNotifierContext( getContext() )
-               .unregisterOnTimeChangedListener( this );
+      getUiContext().getSystemEvents()
+                        .unregisterOnTimeChangedListener( this );
    }
    
    
    
+   @Override
    public void onTimeChanged( int which )
    {
       switch ( which )

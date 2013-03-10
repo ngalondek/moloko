@@ -27,7 +27,7 @@ import android.os.Message;
 import android.os.SystemClock;
 
 
-public class TokenBasedHandler extends Handler
+public class TokenBasedHandler extends Handler implements IHandlerTokenFactory
 {
    public TokenBasedHandler()
    {
@@ -43,7 +43,8 @@ public class TokenBasedHandler extends Handler
    
    
    
-   public IHandlerToken aquireToken()
+   @Override
+   public IHandlerToken acquireToken()
    {
       return new HandlerToken();
    }

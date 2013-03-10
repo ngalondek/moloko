@@ -37,12 +37,11 @@ import android.view.View.OnClickListener;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
-import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -51,7 +50,7 @@ import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskAddFragment extends AbstractTaskEditFragment
+class TaskAddFragment extends AbstractTaskEditFragment
 {
    private final static class Args
    {
@@ -200,9 +199,9 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    @Override
    protected void initializeHeadSection()
    {
-      addedDate.setText( MolokoDateFormatter.formatDateTime( getSherlockActivity(),
-                                                             created,
-                                                             FULL_DATE_FLAGS ) );
+      addedDate.setText( getUiContext().getDateFormatter()
+                                       .formatDateTime( created,
+                                                        FULL_DATE_FLAGS ) );
       completedDate.setVisibility( View.GONE );
       postponed.setVisibility( View.GONE );
       

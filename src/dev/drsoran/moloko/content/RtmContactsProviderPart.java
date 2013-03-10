@@ -36,8 +36,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.rtm.RtmContact;
@@ -92,7 +94,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       
       try
       {
-         c = Queries.getItem( client, PROJECTION, Contacts.CONTENT_URI, id );
+         c = DbHelper.getItem( client, PROJECTION, Contacts.CONTENT_URI, id );
          
          boolean ok = c != null && c.moveToFirst();
          
@@ -103,7 +105,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query contact failed. ", e );
+         MolokoApp.Log().e( TAG, "Query contact failed. ", e );
          contact = null;
       }
       finally
@@ -155,7 +157,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query locations failed. ", e );
+         MolokoApp.Log().e( TAG, "Query locations failed. ", e );
          contacts = null;
       }
       finally
@@ -195,7 +197,8 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
    
    
    
-   public RtmContactsProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public RtmContactsProviderPart( SystemContext context,
+      SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Contacts.PATH );
    }

@@ -37,7 +37,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -128,7 +130,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query participants failed. ", e );
+         MolokoApp.Log().e( TAG, "Query participants failed. ", e );
          participantsList = null;
       }
       finally
@@ -192,7 +194,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query participating contacts failed. ", e );
+         MolokoApp.Log().e( TAG, "Query participating contacts failed. ", e );
          contacts = null;
       }
       finally
@@ -227,7 +229,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       }
       catch ( final RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query num tasks participating failed. ", e );
+         MolokoApp.Log().e( TAG, "Query num tasks participating failed. ", e );
          num = -1;
       }
       finally
@@ -287,7 +289,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    
    
    
-   public ParticipantsProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public ParticipantsProviderPart( SystemContext context,
+      SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Participants.PATH );
    }

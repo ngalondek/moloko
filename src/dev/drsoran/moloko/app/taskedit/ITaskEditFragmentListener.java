@@ -27,7 +27,7 @@ import java.util.List;
 import dev.drsoran.rtm.Task;
 
 
-public interface ITaskEditFragmentListener
+interface ITaskEditFragmentListener
 {
    void onChangeTags( List< String > tags );
    

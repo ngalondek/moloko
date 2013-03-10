@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -38,20 +39,23 @@ import android.content.res.XmlResourceParser;
 
 public abstract class Language
 {
+   private final Locale locale;
+   
    protected final HashMap< String, String > dictionary;
    
    
    
-   protected Language()
+   protected Language( Locale locale )
    {
+      this.locale = locale;
       dictionary = new HashMap< String, String >();
    }
    
    
    
-   protected Language( Language other )
+   public Locale getLocale()
    {
-      dictionary = new HashMap< String, String >( other.dictionary );
+      return locale;
    }
    
    
@@ -84,7 +88,7 @@ public abstract class Language
    
    
    
-   public List< String > getStings( String key )
+   public List< String > getStrings( String key )
    {
       final String entry = getString( key );
       
@@ -99,7 +103,7 @@ public abstract class Language
    
    
    
-   public List< String > getPluralStings( String key, String unit, int qty )
+   public List< String > getPluralStrings( String key, String unit, int qty )
    {
       return getPluralStrings( key, unit, String.valueOf( qty ) );
    }
@@ -121,7 +125,7 @@ public abstract class Language
    
    
    
-   protected void fromResources( Resources resources, int resId ) throws ParseException
+   public void fromResources( Resources resources, int resId ) throws ParseException
    {
       final XmlResourceParser xmlParser = resources.getXml( resId );
       
@@ -257,7 +261,6 @@ public abstract class Language
    
    protected void validate( XmlPullParser xmlParser, String key, String value ) throws ParseException
    {
-      
    }
    
    

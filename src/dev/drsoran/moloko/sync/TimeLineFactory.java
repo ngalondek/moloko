@@ -26,7 +26,7 @@ import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
 
 
 public final class TimeLineFactory

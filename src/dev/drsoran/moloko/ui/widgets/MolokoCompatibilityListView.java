@@ -42,8 +42,6 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.app.MolokoApp;
-
 
 public class MolokoCompatibilityListView extends MolokoListView implements
          OnItemLongClickListener
@@ -126,14 +124,16 @@ public class MolokoCompatibilityListView extends MolokoListView implements
             // not supported for API level < 11.
             // So we defer the finish call until the notification is
             // done.
-            MolokoApp.getHandler().postAtFrontOfQueue( new Runnable()
-            {
-               @Override
-               public void run()
-               {
-                  mode.finish();
-               }
-            } );
+            getUiContext().asSystemContext()
+                          .getHandler()
+                          .postAtFrontOfQueue( new Runnable()
+                          {
+                             @Override
+                             public void run()
+                             {
+                                mode.finish();
+                             }
+                          } );
          }
       }
    }

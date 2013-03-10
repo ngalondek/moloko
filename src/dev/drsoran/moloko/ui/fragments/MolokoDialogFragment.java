@@ -29,13 +29,14 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
-import dev.drsoran.moloko.ui.IConfigurable;
+import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.MolokoDialogFragmentImpl;
 
 
 public abstract class MolokoDialogFragment extends SherlockDialogFragment
-         implements IConfigurable, IOnSettingsChangedListener
+         implements IConfigurable
 {
    
    private final DialogInterface.OnClickListener genericListener = new OnClickListener()
@@ -53,7 +54,7 @@ public abstract class MolokoDialogFragment extends SherlockDialogFragment
    
    protected MolokoDialogFragment()
    {
-      impl = new MolokoDialogFragmentImpl( this, getSettingsMask() );
+      impl = new MolokoDialogFragmentImpl( this );
    }
    
    
@@ -81,6 +82,20 @@ public abstract class MolokoDialogFragment extends SherlockDialogFragment
    {
       impl.onDetach();
       super.onDetach();
+   }
+   
+   
+   
+   public UiContext getUiContext()
+   {
+      return impl.getUiContext();
+   }
+   
+   
+   
+   public ILog Log()
+   {
+      return impl.getUiContext().Log();
    }
    
    
@@ -139,20 +154,6 @@ public abstract class MolokoDialogFragment extends SherlockDialogFragment
    public Bundle getDefaultConfiguration()
    {
       return impl.getDefaultConfiguration();
-   }
-   
-   
-   
-   @Override
-   public void onSettingsChanged( int which )
-   {
-   }
-   
-   
-   
-   protected int getSettingsMask()
-   {
-      return 0;
    }
    
    

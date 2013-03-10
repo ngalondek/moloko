@@ -30,7 +30,7 @@ import android.net.Uri;
 import com.mdt.rtm.data.RtmLists;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.provider.Rtm.Lists;
 
@@ -61,7 +61,7 @@ class RtmListsLoader extends AbstractLoader< RtmLists >
    @Override
    protected RtmLists queryResultInBackground( ContentProviderClient client )
    {
-      return RtmListsProviderPart.getAllLists( client, slelection );
+      return RtmListsTable.getAllLists( client, slelection );
    }
    
    

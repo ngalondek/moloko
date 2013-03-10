@@ -29,19 +29,26 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.services.ISettingsService;
 
 
 public class InfoTextPreference extends Preference implements IMolokoPreference
 {
    private View preferenceView;
    
+   private final AppContext appContext;
+   
    
    
    public InfoTextPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      
+      appContext = AppContext.get( context );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.InfoTextPreference,
@@ -81,6 +88,27 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
       // This has to be called as last step, otherwise the summary
       // can not be set by derived classes.
       super.onBindView( view );
+   }
+   
+   
+   
+   public AppContext getAppContext()
+   {
+      return appContext;
+   }
+   
+   
+   
+   public ILog Log()
+   {
+      return appContext.Log();
+   }
+   
+   
+   
+   public ISettingsService getSettings()
+   {
+      return appContext.getSettings();
    }
    
    

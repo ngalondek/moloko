@@ -27,45 +27,46 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.widget.ListAdapter;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
-import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
+import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.domain.services.IParsingService;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
-import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
 class QuickAddTaskActionModeInputHandler
 {
-   private final Context context;
+   private final AppContext context;
    
-   private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
+   private final IParsingService parsingService;
+   
+   private final RtmSmartAddTokenizer smartAddTokenizer;
    
    private final RtmSmartAddTextView addTaskEdit;
    
    
    
-   public QuickAddTaskActionModeInputHandler( Context context,
+   public QuickAddTaskActionModeInputHandler( AppContext context,
       RtmSmartAddTextView inputView )
    {
       this.context = context;
-      this.addTaskEdit = inputView;
+      this.parsingService = context.getParsingService();
       
+      smartAddTokenizer = new RtmSmartAddTokenizer( parsingService.getDateTimeParsing() );
+      
+      this.addTaskEdit = inputView;
       addTaskEdit.setTokenizer( smartAddTokenizer );
       addTaskEdit.setThreshold( 1 );
       addTaskEdit.setAdapter( new RtmSmartAddAdapter( context ) );
@@ -111,7 +112,8 @@ class QuickAddTaskActionModeInputHandler
       int numPreselected = 0;
       
       // Iterate over all tokens and suggest all non-null tokens
-      for ( RtmSmartFilterToken rtmSmartFilterToken : RtmSmartFilterParsing.removeAmbiguousTokens( filter.getTokens() ) )
+      for ( RtmSmartFilterToken rtmSmartFilterToken : parsingService.getRtmSmartFilterParsing()
+                                                                    .removeAmbiguousTokens( filter.getTokens() ) )
       {
          final Character operator = RtmSmartAddTokenizer.getOperatorFromRtmSmartFilterTokenType( rtmSmartFilterToken.operatorType );
          
@@ -170,12 +172,12 @@ class QuickAddTaskActionModeInputHandler
    {
       final CharSequence input = UiUtils.getTrimmedSequence( addTaskEdit );
       
-      MolokoApp.Log.d( getClass(), "Creating tokens for '" + input + "'" );
+      context.Log().d( getClass(), "Creating tokens for '" + input + "'" );
       
       final List< RtmSmartAddTokenizer.Token > tokens = new LinkedList< RtmSmartAddTokenizer.Token >();
       smartAddTokenizer.getTokens( input, tokens );
       
-      MolokoApp.Log.d( getClass(), "Tokens: " + tokens );
+      context.Log().d( getClass(), "Tokens: " + tokens );
       
       final Bundle config = new Bundle();
       
@@ -212,7 +214,9 @@ class QuickAddTaskActionModeInputHandler
                         }
                         else
                         {
-                           final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( token.text );
+                           final MolokoCalendar cal = context.getParsingService()
+                                                             .getDateTimeParsing()
+                                                             .parseDateTimeSpec( token.text );
                            if ( cal != null )
                            {
                               config.putLong( Tasks.DUE_DATE,
@@ -267,7 +271,9 @@ class QuickAddTaskActionModeInputHandler
                            recurr = tempValue;
                         }
                         else
-                           recurr = RecurrenceParsing.parseRecurrence( token.text );
+                           recurr = context.getParsingService()
+                                           .getRecurrenceParsing()
+                                           .parseRecurrence( token.text );
                         
                         if ( recurr != null )
                         {
@@ -286,12 +292,14 @@ class QuickAddTaskActionModeInputHandler
                         }
                         else
                         {
-                           final long estimated = RtmDateTimeParsing.parseEstimated( token.text );
+                           final long estimated = context.getParsingService()
+                                                         .getDateTimeParsing()
+                                                         .parseEstimated( token.text );
                            if ( estimated != -1 )
                            {
                               config.putString( Tasks.ESTIMATE,
-                                                MolokoDateFormatter.formatEstimated( context,
-                                                                                     estimated ) );
+                                                context.getDateFormatter()
+                                                       .formatEstimated( estimated ) );
                               config.putLong( Tasks.ESTIMATE_MILLIS,
                                               Long.valueOf( estimated ) );
                            }

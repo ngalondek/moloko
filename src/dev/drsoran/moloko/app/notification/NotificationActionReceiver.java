@@ -25,10 +25,10 @@ package dev.drsoran.moloko.app.notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.content.ActionItemListApplier;
+import dev.drsoran.moloko.app.content.ActionItemListApplier;
+import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.rtm.Task;
 
@@ -53,7 +53,7 @@ public class NotificationActionReceiver extends BroadcastReceiver
       
       if ( applyChangesInfo != null )
       {
-         new ActionItemListApplier( context, MolokoApp.getExecutor() ).applyInBackground( applyChangesInfo.getActionItems() );
+         new ActionItemListApplier( AppContext.get( context ) ).applyAsync( applyChangesInfo.getActionItems() );
       }
    }
    

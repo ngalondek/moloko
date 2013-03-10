@@ -41,14 +41,14 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.ValidationResult;
-import dev.drsoran.moloko.ui.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditMultipleFragment extends AbstractTaskEditFragment
+class TaskEditMultipleFragment extends AbstractTaskEditFragment
 {
    private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
    
@@ -234,22 +234,11 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    @Override
    protected void initializeHeadSection()
    {
-      final List< Task > tasks = getTasksAssertNotNull();
-      
-      if ( !isMultiTask() && tasks.size() > 0 )
-      {
-         final Task task = tasks.get( 0 );
-         
-         defaultInitializeHeadSectionImpl( task );
-      }
-      else
-      {
-         tagsContainer.setVisibility( View.GONE );
-         addedDate.setVisibility( View.GONE );
-         completedDate.setVisibility( View.GONE );
-         postponed.setVisibility( View.GONE );
-         source.setVisibility( View.GONE );
-      }
+      tagsContainer.setVisibility( View.GONE );
+      addedDate.setVisibility( View.GONE );
+      completedDate.setVisibility( View.GONE );
+      postponed.setVisibility( View.GONE );
+      source.setVisibility( View.GONE );
    }
    
    
@@ -438,12 +427,5 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    private final boolean isCommonAttrib( String key )
    {
       return attributeCount.get( key ).size() == 1;
-   }
-   
-   
-   
-   private final boolean isMultiTask()
-   {
-      return getTasksAssertNotNull().size() > 1;
    }
 }

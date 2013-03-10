@@ -38,9 +38,10 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
@@ -181,7 +182,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query lists overview failed. ", e );
+         MolokoApp.Log().e( TAG, "Query lists overview failed. ", e );
          list = null;
       }
       finally
@@ -235,7 +236,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         MolokoApp.Log.e( TAG, "Query lists overview failed. ", e );
+         MolokoApp.Log().e( TAG, "Query lists overview failed. ", e );
          lists = null;
       }
       finally
@@ -272,9 +273,9 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
             }
             else
             {
-               MolokoApp.Log.e( TAG,
-                                "Unable to query extended list info with invalid filter "
-                                   + filter );
+               MolokoApp.Log().e( TAG,
+                                  "Unable to query extended list info with invalid filter "
+                                     + filter );
             }
          }
          else
@@ -336,7 +337,8 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
    
    
-   public ListOverviewsProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public ListOverviewsProviderPart( SystemContext context,
+      SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, ListOverviews.PATH );
    }
@@ -350,7 +352,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                         String[] selectionArgs,
                         String sortOrder )
    {
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )
                                                                         .append( ")" );
@@ -359,7 +361,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       {
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? Queries.bindAll( selection,
+                                                    ? DbHelper.bindAll( selection,
                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );
@@ -486,13 +488,15 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
          }
          catch ( SQLiteException e )
          {
-            MolokoApp.Log.e( TAG, "Tried to QUERY with Bad RTM filter: "
-               + evalFilter, e );
+            MolokoApp.Log().e( TAG,
+                               "Tried to QUERY with Bad RTM filter: "
+                                  + evalFilter,
+                               e );
             badFilter = true;
          }
          catch ( RemoteException e )
          {
-            MolokoApp.Log.e( TAG, "Unable to QUERY tasks with filter.", e );
+            MolokoApp.Log().e( TAG, "Unable to QUERY tasks with filter.", e );
             badFilter = true;
          }
       }

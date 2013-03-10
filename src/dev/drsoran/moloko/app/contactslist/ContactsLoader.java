@@ -34,8 +34,8 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContactOverviewsProviderPart;
+import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.ContactOverviews;
 import dev.drsoran.rtm.Contact;
 import dev.drsoran.rtm.RtmContactWithTaskCount;
@@ -156,7 +156,7 @@ class ContactsLoader extends AbstractLoader< List< Contact > >
          // Check if a contact with a note starting with RTM: is in the phonebook
          else
          {
-            final String selection = Queries.bindAll( CONTACTS_NOTE_CONTAINS_RTM,
+            final String selection = DbHelper.bindAll( CONTACTS_NOTE_CONTAINS_RTM,
                                                       new String[]
                                                       { contact.getFullname(),
                                                        contact.getUsername() } );
@@ -203,7 +203,7 @@ class ContactsLoader extends AbstractLoader< List< Contact > >
    {
       Cursor photoCursor = null;
       
-      final Uri photoUri = Queries.contentUriWithId( ContactsContract.Data.CONTENT_URI,
+      final Uri photoUri = DbHelper.contentUriWithId( ContactsContract.Data.CONTENT_URI,
                                                      photoId );
       
       try

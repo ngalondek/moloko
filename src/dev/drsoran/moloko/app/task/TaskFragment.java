@@ -39,26 +39,26 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.settings.IOnSettingsChangedListener;
-import dev.drsoran.moloko.format.MolokoDateFormatter;
-import dev.drsoran.moloko.format.RtmStyleTaskDescTextViewFormatter;
+import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
+import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.MenuItemPreparer;
 import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.ui.format.RtmStyleTaskDescTextViewFormatter;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
-import dev.drsoran.moloko.ui.state.InstanceState;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.rtm.Participant;
 import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskFragment extends MolokoLoaderFragment< Task > implements
-         IAbsViewPagerSupport
+class TaskFragment extends MolokoLoaderFragment< Task > implements
+         IAbsViewPagerSupport, IOnSettingsChangedListener
 {
-   public final int FULL_DATE_FLAGS = MolokoDateFormatter.FORMAT_WITH_YEAR;
+   public final int FULL_DATE_FLAGS = IDateFormatterService.FORMAT_WITH_YEAR;
    
    
    public static class Config
@@ -69,6 +69,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    private boolean enableAbsViewPagerWorkaround;
    
    private ITaskFragmentListener listener;
+   
+   private AppContext appContext;
    
    @InstanceState( key = Config.TASK_ID )
    private String taskId;
@@ -135,6 +137,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    {
       super.onAttach( activity );
       
+      appContext = AppContext.get( activity );
+      
       if ( activity instanceof ITaskFragmentListener )
          listener = (ITaskFragmentListener) activity;
       else
@@ -144,9 +148,31 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    @Override
+   public void onStart()
+   {
+      super.onStart();
+      appContext.getAppEvents()
+                .registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
+                                                    this );
+   }
+   
+   
+   
+   @Override
+   public void onStop()
+   {
+      appContext.getAppEvents().unregisterOnSettingsChangedListener( this );
+      super.onStop();
+   }
+   
+   
+   
+   @Override
    public void onDetach()
    {
       listener = null;
+      appContext = null;
+      
       super.onDetach();
    }
    
@@ -319,18 +345,18 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       
       UiUtils.setPriorityColor( activity, priorityBar, task );
       
-      addedDate.setText( MolokoDateFormatter.formatDateTime( activity,
-                                                             task.getAdded()
-                                                                 .getTime(),
-                                                             FULL_DATE_FLAGS ) );
+      addedDate.setText( getUiContext().getDateFormatter()
+                                       .formatDateTime( task.getAdded()
+                                                            .getTime(),
+                                                        FULL_DATE_FLAGS ) );
       
       if ( task.getCompleted() != null )
       {
          completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateFormatter.formatDateTime( activity,
-                                                                    task.getCompleted()
-                                                                        .getTime(),
-                                                                    FULL_DATE_FLAGS ) );
+         completedDate.setText( getUiContext().getDateFormatter()
+                                              .formatDateTime( task.getCompleted()
+                                                                   .getTime(),
+                                                               FULL_DATE_FLAGS ) );
       }
       else
       {
@@ -406,27 +432,31 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          if ( hasDue )
          {
             if ( task.hasDueTime() )
+            {
                UiUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateFormatter.formatDateTime( getSherlockActivity(),
-                                                                            task.getDue()
-                                                                                .getTime(),
-                                                                            MolokoDateFormatter.FORMAT_WITH_YEAR
-                                                                               | MolokoDateFormatter.FORMAT_SHOW_WEEKDAY ) );
+                                        getUiContext().getDateFormatter()
+                                                      .formatDateTime( task.getDue()
+                                                                           .getTime(),
+                                                                       IDateFormatterService.FORMAT_WITH_YEAR
+                                                                          | IDateFormatterService.FORMAT_SHOW_WEEKDAY ) );
+            }
             else
+            {
                UiUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateFormatter.formatDate( getSherlockActivity(),
-                                                                        task.getDue()
-                                                                            .getTime(),
-                                                                        MolokoDateFormatter.FORMAT_WITH_YEAR
-                                                                           | MolokoDateFormatter.FORMAT_SHOW_WEEKDAY ) );
-            
+                                        getUiContext().getDateFormatter()
+                                                      .formatDate( task.getDue()
+                                                                       .getTime(),
+                                                                   IDateFormatterService.FORMAT_WITH_YEAR
+                                                                      | IDateFormatterService.FORMAT_SHOW_WEEKDAY ) );
+            }
          }
          
          if ( isRecurrent )
          {
-            final String sentence = RecurrenceParsing.parseRecurrencePattern( getSherlockActivity(),
-                                                                              task.getRecurrence(),
-                                                                              task.isEveryRecurrence() );
+            final String sentence = getUiContext().getParsingService()
+                                                  .getRecurrenceParsing()
+                                                  .parseRecurrencePatternToSentence( task.getRecurrence(),
+                                                                                     task.isEveryRecurrence() );
             
             // In this case we add the 'repeat' to the beginning of the pattern, otherwise
             // the 'repeat' will be the header of the section.
@@ -452,8 +482,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             UiUtils.appendAtNewLine( textBuffer,
                                      getString( R.string.task_datetime_estimate_inline,
-                                                MolokoDateFormatter.formatEstimated( getSherlockActivity(),
-                                                                                     task.getEstimateMillis() ) ) );
+                                                getUiContext().getDateFormatter()
+                                                              .formatEstimated( task.getEstimateMillis() ) ) );
          }
          
          // Determine the section title
@@ -597,9 +627,13 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    @Override
-   public int getSettingsMask()
+   public void onSettingsChanged( int which )
    {
-      return IOnSettingsChangedListener.DATE_TIME_RELATED;
+      if ( ( which & IOnSettingsChangedListener.DATE_TIME_RELATED ) != 0
+         && isAdded() && !isRemoving() )
+      {
+         getContentView().invalidate();
+      }
    }
    
    

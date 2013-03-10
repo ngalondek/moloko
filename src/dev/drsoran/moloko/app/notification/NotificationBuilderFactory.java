@@ -24,7 +24,7 @@ package dev.drsoran.moloko.app.notification;
 
 import android.content.Context;
 import android.os.Build;
-import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.MolokoApp;
 
 
 class NotificationBuilderFactory

@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.ui.fragments.impl;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -31,10 +32,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IHandlerToken;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.MolokoApp;
-import dev.drsoran.moloko.ui.IConfigurable;
 
 
 public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
@@ -61,8 +63,6 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    private final Support< D > support;
    
-   private final IHandlerToken handler = MolokoApp.acquireHandlerToken();
-   
    private final Runnable showContentAsyncRunnable = new Runnable()
    {
       @Override
@@ -74,6 +74,10 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
          }
       }
    };
+   
+   private SystemContext context;
+   
+   private IHandlerToken handler;
    
    
    
@@ -102,6 +106,17 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      context = SystemContext.get( activity );
+      handler = context.acquireHandlerToken();
+   }
+   
+   
+   
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       if ( !isLoaderDataFound() )
@@ -116,7 +131,20 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    public void onDestroy()
    {
-      handler.release();
+      if ( handler != null )
+      {
+         handler.release();
+         handler = null;
+      }
+   }
+   
+   
+   
+   @Override
+   public void onDetach()
+   {
+      context = null;
+      super.onDetach();
    }
    
    
@@ -235,7 +263,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
                                 .getString( errorMsgResId, params );
       text.setText( msg );
       
-      MolokoApp.Log.e( MolokoApp.class, msg );
+      context.Log().e( MolokoApp.class, msg );
    }
    
 }

@@ -35,11 +35,7 @@ public final class Constants
    public static final String FEAT_FULLNAME = "feat_full_name";
    
    public static String[] FEATURES =
-   {
-    FEAT_API_KEY,
-    FEAT_SHARED_SECRET,
-    FEAT_PERMISSION,
-    FEAT_USER_ID,
+   { FEAT_API_KEY, FEAT_SHARED_SECRET, FEAT_PERMISSION, FEAT_USER_ID,
     FEAT_FULLNAME };
    
    public final static String ACCOUNT_TYPE = "dev.drsoran.moloko";

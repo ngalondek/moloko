@@ -25,16 +25,14 @@ package dev.drsoran.moloko.app.account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
+import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 import dev.drsoran.moloko.ui.fragments.listeners.IAlertDialogFragmentListener;
 
 
 /**
  * Implementation taken from android.accounts.AccountAuthenticatorActivity
  */
-class AccountAuthenticatorFragmentActivity extends SherlockFragmentActivity
+class AccountAuthenticatorFragmentActivity extends MolokoFragmentActivity
          implements IAlertDialogFragmentListener
 {
    private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
@@ -51,7 +49,7 @@ class AccountAuthenticatorFragmentActivity extends SherlockFragmentActivity
    
    
    @Override
-   protected void onCreate( Bundle icicle )
+   public void onCreate( Bundle icicle )
    {
       super.onCreate( icicle );
       
@@ -88,7 +86,8 @@ class AccountAuthenticatorFragmentActivity extends SherlockFragmentActivity
    
    
    @Override
-   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   protected int[] getFragmentIds()
    {
+      return null;
    }
 }

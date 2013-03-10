@@ -24,7 +24,6 @@ package dev.drsoran.moloko.app.prefs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.app.settings.Settings;
 
 
@@ -39,7 +38,7 @@ class TaskSortPreference extends AutoSummaryListPreference
    
    public TaskSortPreference( Context context, AttributeSet attrs )
    {
-      super( context, attrs );      
+      super( context, attrs );
       setEntryValues( SORT_ORDER_VALUES );
    }
    
@@ -79,7 +78,6 @@ class TaskSortPreference extends AutoSummaryListPreference
    
    private void ensureTaskSortSetting()
    {
-      MolokoApp.getSettings( getContext() ).getTaskSort();
+      getSettings().getTaskSort();
    }
-   
 }

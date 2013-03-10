@@ -74,13 +74,6 @@ public class LoaderListFragmentImpl< D > extends
    
    
    
-   public void onSettingsChanged( int which )
-   {
-      notifyDataSetChanged();
-   }
-   
-   
-   
    @Override
    public Loader< List< D > > onCreateLoader( int id, Bundle args )
    {
@@ -144,12 +137,5 @@ public class LoaderListFragmentImpl< D > extends
    public void showError( Spanned message )
    {
       viewManager.showError( message );
-   }
-   
-   
-   
-   private void notifyDataSetChanged()
-   {
-      ( (SwappableArrayAdapter< ? >) fragment.getListAdapter() ).notifyDataSetChanged();
    }
 }

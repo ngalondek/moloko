@@ -46,8 +46,9 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.connection.DefaultRtmConnectionFactory;
-import dev.drsoran.moloko.connection.IRtmConnection;
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.sync.connection.IRtmConnection;
+import dev.drsoran.moloko.sync.connection.IRtmConnectionFactory;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
@@ -81,10 +82,14 @@ public class ServiceImpl implements Service
    
    
    
-   public static ServiceImpl getInstance( boolean useHttps,
+   public static ServiceImpl getInstance( IRtmConnectionFactory connectionFactory,
+                                          ILog log,
+                                          boolean useHttps,
                                           ApplicationInfo applicationInfo ) throws ServiceInternalException
    {
-      final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
+      final ServiceImpl serviceImpl = new ServiceImpl( connectionFactory,
+                                                       log,
+                                                       applicationInfo,
                                                        !useHttps );
       
       return serviceImpl;
@@ -92,18 +97,20 @@ public class ServiceImpl implements Service
    
    
    
-   protected ServiceImpl( ApplicationInfo applicationInfo, boolean useHttp )
+   protected ServiceImpl( IRtmConnectionFactory connectionFactory, ILog log,
+      ApplicationInfo applicationInfo, boolean useHttp )
       throws ServiceInternalException
    {
       final String scheme = useHttp ? "http" : "https";
       final int port = useHttp ? SERVER_PORT_NUMBER_HTTP
                               : SERVER_PORT_NUMBER_HTTPS;
       
-      final IRtmConnection connection = new DefaultRtmConnectionFactory().createRtmConnection( scheme,
-                                                                                               SERVER_HOST_NAME,
-                                                                                               port );
+      final IRtmConnection connection = connectionFactory.createRtmConnection( scheme,
+                                                                               SERVER_HOST_NAME,
+                                                                               port );
       
-      invoker = new Invoker( connection,
+      invoker = new Invoker( log,
+                             connection,
                              REST_SERVICE_URL_POSTFIX,
                              applicationInfo );
       

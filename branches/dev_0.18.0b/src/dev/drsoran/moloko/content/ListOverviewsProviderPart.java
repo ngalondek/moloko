@@ -40,7 +40,6 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;

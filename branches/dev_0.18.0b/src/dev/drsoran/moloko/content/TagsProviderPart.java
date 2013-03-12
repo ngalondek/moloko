@@ -46,8 +46,6 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;

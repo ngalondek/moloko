@@ -30,7 +30,7 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
-import dev.drsoran.moloko.content.RtmSettingsProviderPart;
+import dev.drsoran.moloko.content.db.RtmSettingsTable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.RtmSettings;
 
@@ -77,7 +77,7 @@ public final class RtmSettingsSync
          return false;
       }
       
-      final RtmSettings local_Settings = RtmSettingsProviderPart.getSettings( provider );
+      final RtmSettings local_Settings = RtmSettingsTable.getSettings( provider );
       
       if ( local_Settings == null )
       {

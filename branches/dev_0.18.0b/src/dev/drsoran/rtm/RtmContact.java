@@ -34,8 +34,8 @@ import android.os.Parcelable;
 
 import com.mdt.rtm.data.RtmData;
 
-import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.RtmContactsTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
@@ -168,7 +168,7 @@ public class RtmContact extends RtmData implements
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Contacts.CONTENT_URI )
-                                                                             .withValues( RtmContactsProviderPart.getContentValues( this,
+                                                                             .withValues( RtmContactsTable.getContentValues( this,
                                                                                                                                     true ) )
                                                                              .build() )
                                          .build();

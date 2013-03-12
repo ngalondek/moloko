@@ -36,10 +36,10 @@ import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.content.db.ModificationsProviderPart;
+import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -166,7 +166,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                                                             .withValues( RtmNotesProviderPart.getContentValues( note,
+                                                                             .withValues( RtmNotesTable.getContentValues( note,
                                                                                                                                  true ) )
                                                                              .build() )
                                          .build();

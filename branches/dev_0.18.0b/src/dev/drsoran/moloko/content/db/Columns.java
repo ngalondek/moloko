@@ -27,7 +27,7 @@ import android.provider.BaseColumns;
 
 final class Columns
 {
-   public final static class RtmLists implements BaseColumns
+   public final static class RtmListsColumns implements BaseColumns
    {
       /**
        * The name of the list
@@ -113,7 +113,7 @@ final class Columns
    }
    
    
-   public final static class Notes implements BaseColumns
+   public final static class NotesColumns implements BaseColumns
    {
       /**
        * The created date of the note
@@ -171,7 +171,7 @@ final class Columns
    }
    
    
-   public final static class Locations implements BaseColumns
+   public final static class RtmLocationsColumns implements BaseColumns
    {
       /**
        * The name of the location
@@ -233,29 +233,7 @@ final class Columns
    }
    
    
-   public final static class Tags implements BaseColumns
-   {
-      /**
-       * A {@link TAGS_SEPARATOR} separated list of tags.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String TAGS = "tags";
-      
-      /**
-       * The separator used to separate a the tags.
-       */
-      public final static String TAGS_SEPARATOR = ",";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
-   }
-   
-   
-   public final static class TaskSeries implements BaseColumns
+   public final static class RtmTaskSeriesColumns implements BaseColumns
    {
       /**
        * The created date of the taskseries
@@ -345,7 +323,7 @@ final class Columns
    }
    
    
-   public final static class RawTasks implements BaseColumns
+   public final static class RawTasksColumns implements BaseColumns
    {
       /**
        * The ID of the taskseries referenced.
@@ -434,7 +412,7 @@ final class Columns
    }
    
    
-   public final static class Settings implements BaseColumns
+   public final static class RtmSettingsColumns implements BaseColumns
    {
       /**
        * The time stamp when the settings were retrieved from the server
@@ -489,7 +467,7 @@ final class Columns
    }
    
    
-   public final static class Sync implements BaseColumns
+   public final static class SyncColumns implements BaseColumns
    {
       /**
        * The time stamp of the last synchronization RTM -> local
@@ -509,7 +487,7 @@ final class Columns
    }
    
    
-   public final static class Contacts implements BaseColumns
+   public final static class RtmContactsColumns implements BaseColumns
    {
       /**
        * The full name of the contact
@@ -532,7 +510,7 @@ final class Columns
    }
    
    
-   public final static class Participants implements BaseColumns
+   public final static class ParticipantsColumns implements BaseColumns
    {
       /**
        * The contact ID of the contact who participates
@@ -571,7 +549,7 @@ final class Columns
    }
    
    
-   public final static class Modifications implements BaseColumns
+   public final static class ModificationsColumns implements BaseColumns
    {
       /**
        * Designates the entity that has been modified by it's Content URI with ID.
@@ -617,7 +595,7 @@ final class Columns
    }
    
    
-   public final static class Creations implements BaseColumns
+   public final static class CreationsColumns implements BaseColumns
    {
       /**
        * Designates the entity that has been created by it's Content URI with ID.

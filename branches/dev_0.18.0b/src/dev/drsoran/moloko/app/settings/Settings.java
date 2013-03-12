@@ -40,7 +40,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.content.RtmSettingsProviderPart;
+import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmSettings;
 
@@ -330,7 +330,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    
    
    /**
-    * Value: Collection of list IDs to notify tasks for, or the constant {@link Settings.ALL_LISTS}.
+    * Value: Collection of list IDs to notify tasks for, or the constant {@link RtmSettingsColumns.ALL_LISTS}.
     */
    @Override
    public Map< PermanentNotificationType, Collection< String > > getNotifyingPermanentTaskLists()
@@ -556,7 +556,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
       
       if ( client != null )
       {
-         final RtmSettings settings = RtmSettingsProviderPart.getSettings( client );
+         final RtmSettings settings = RtmSettingsTable.getSettings( client );
          client.release();
          
          if ( settings != null )

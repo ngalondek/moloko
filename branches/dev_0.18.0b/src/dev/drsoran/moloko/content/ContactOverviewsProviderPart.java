@@ -38,7 +38,6 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.ContactOverviews;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
@@ -331,7 +330,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
    
    public final static RtmContactWithTaskCount createContactOverview( Cursor c )
    {
-      final RtmContact contact = RtmContactsProviderPart.createContact( c );
+      final RtmContact contact = RtmContactsTable.createContact( c );
       
       if ( contact != null )
          return new RtmContactWithTaskCount( contact,

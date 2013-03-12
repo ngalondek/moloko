@@ -26,33 +26,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmContactsColumns;
+import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
 
-class RtmListsTable extends Table
+class ParticipantsTable extends Table
 {
-   public final static String TABLE_NAME = "lists";
-   
-   
-   @Deprecated
-   public final static class NewRtmListId
-   {
-      public String rtmListId;
-   }
+   public final static String TABLE_NAME = "participants";
    
    private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    private final static String[] PROJECTION =
-   { RtmListsColumns._ID, RtmListsColumns.LIST_NAME,
-    RtmListsColumns.CREATED_DATE, RtmListsColumns.MODIFIED_DATE,
-    RtmListsColumns.LIST_DELETED, RtmListsColumns.LOCKED,
-    RtmListsColumns.ARCHIVED, RtmListsColumns.POSITION,
-    RtmListsColumns.IS_SMART_LIST, RtmListsColumns.FILTER };
+   { ParticipantsColumns._ID, ParticipantsColumns.CONTACT_ID,
+    ParticipantsColumns.TASKSERIES_ID, ParticipantsColumns.FULLNAME,
+    ParticipantsColumns.USERNAME };
    
-   private final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   public final static String SELECTION_EXCLUDE_DELETED_AND_ARCHIVED = RtmListsColumns.LIST_DELETED
-      + " IS NULL AND " + RtmListsColumns.ARCHIVED + "=0";
+   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
@@ -61,7 +51,7 @@ class RtmListsTable extends Table
    
    
    
-   public RtmListsTable( RtmDatabase database )
+   public ParticipantsTable( RtmDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -75,30 +65,32 @@ class RtmListsTable extends Table
       
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
-      builder.append( " ( " );
-      builder.append( RtmListsColumns._ID );
+      builder.append( "( " );
+      builder.append( ParticipantsColumns._ID );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_PARTICIPANTS PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( ParticipantsColumns.CONTACT_ID );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( RtmListsColumns.LIST_NAME );
+      builder.append( ParticipantsColumns.TASKSERIES_ID );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( RtmListsColumns.CREATED_DATE );
-      builder.append( " INTEGER, " );
-      builder.append( RtmListsColumns.MODIFIED_DATE );
-      builder.append( " INTEGER, " );
-      builder.append( RtmListsColumns.LIST_DELETED );
-      builder.append( " INTEGER, " );
-      builder.append( RtmListsColumns.LOCKED );
-      builder.append( " INTEGER NOT NULL DEFAULT 0, " );
-      builder.append( RtmListsColumns.ARCHIVED );
-      builder.append( " INTEGER NOT NULL DEFAULT 0, " );
-      builder.append( RtmListsColumns.POSITION );
-      builder.append( " INTEGER NOT NULL DEFAULT 0, " );
-      builder.append( RtmListsColumns.IS_SMART_LIST );
-      builder.append( " INTEGER NOT NULL DEFAULT 0, " );
-      builder.append( RtmListsColumns.FILTER );
-      builder.append( " TEXT, " );
-      builder.append( "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" );
-      builder.append( RtmListsColumns._ID );
-      builder.append( "\" ) );" );
+      builder.append( ParticipantsColumns.FULLNAME );
+      builder.append( " TEXT NOT NULL, " );
+      builder.append( ParticipantsColumns.USERNAME );
+      builder.append( " TEXT NOT NULL, " );
+      builder.append( "CONSTRAINT participant FOREIGN KEY ( " );
+      builder.append( ParticipantsColumns.TASKSERIES_ID );
+      builder.append( " ) REFERENCES " );
+      builder.append( RtmTaskSeriesTable.TABLE_NAME );
+      builder.append( " (\"" );
+      builder.append( RtmTaskSeriesColumns._ID );
+      builder.append( "\"), " );
+      builder.append( "CONSTRAINT participates FOREIGN KEY ( " );
+      builder.append( ParticipantsColumns.CONTACT_ID );
+      builder.append( " ) REFERENCES " );
+      builder.append( RtmContactsTable.TABLE_NAME );
+      builder.append( " (\"" );
+      builder.append( RtmContactsColumns._ID );
+      builder.append( "\") " );
+      builder.append( " );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
    }
@@ -108,7 +100,7 @@ class RtmListsTable extends Table
    @Override
    public String getDefaultSortOrder()
    {
-      return RtmListsColumns.DEFAULT_SORT_ORDER;
+      return ParticipantsColumns.DEFAULT_SORT_ORDER;
    }
    
    

@@ -37,8 +37,8 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.ApplyChangesInfo;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
+import dev.drsoran.moloko.content.db.RtmNotesTable;
+import dev.drsoran.moloko.content.db.RtmNotesTable.NewNoteId;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
@@ -191,7 +191,7 @@ class NoteAddFragment extends AbstractNoteEditFragment
    
    private NewNoteId createNewNoteId()
    {
-      return RtmNotesProviderPart.createNewNoteId( getSherlockActivity().getContentResolver()
+      return RtmNotesTable.createNewNoteId( getSherlockActivity().getContentResolver()
                                                                         .acquireContentProviderClient( Notes.CONTENT_URI ) );
    }
 }

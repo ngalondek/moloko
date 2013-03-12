@@ -30,7 +30,7 @@ import android.database.ContentObserver;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmSettingsProviderPart;
+import dev.drsoran.moloko.content.db.RtmSettingsTable;
 
 
 class SettingsListener implements OnSharedPreferenceChangeListener
@@ -151,7 +151,7 @@ class SettingsListener implements OnSharedPreferenceChangeListener
             onSettingChanged( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED );
          }
       };
-      RtmSettingsProviderPart.registerContentObserver( context,
+      RtmSettingsTable.registerContentObserver( context,
                                                        rtmSettingsChangedObserver );
    }
    
@@ -161,7 +161,7 @@ class SettingsListener implements OnSharedPreferenceChangeListener
    {
       if ( rtmSettingsChangedObserver != null )
       {
-         RtmSettingsProviderPart.unregisterContentObserver( context,
+         RtmSettingsTable.unregisterContentObserver( context,
                                                             rtmSettingsChangedObserver );
          rtmSettingsChangedObserver = null;
       }

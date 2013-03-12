@@ -34,8 +34,8 @@ import android.os.Parcelable;
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.RtmSettingsTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
@@ -211,7 +211,7 @@ public class RtmSettings extends RtmData implements
    public Uri getContentUriWithId()
    {
       return DbHelper.contentUriWithId( Settings.CONTENT_URI,
-                                       RtmSettingsProviderPart.SETTINGS_ID );
+                                       RtmSettingsTable.SETTINGS_ID );
    }
    
    
@@ -236,7 +236,7 @@ public class RtmSettings extends RtmData implements
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Settings.CONTENT_URI )
-                                                                             .withValues( RtmSettingsProviderPart.getContentValues( this ) )
+                                                                             .withValues( RtmSettingsTable.getContentValues( this ) )
                                                                              .build() )
                                          .build();
    }

@@ -46,7 +46,6 @@ import com.mdt.rtm.data.RtmTaskSeries;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
@@ -430,7 +429,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                              task.getTags(),
                                                              task.getParticipants() );
       
-      return RtmTaskSeriesProviderPart.insertTaskSeries( rtmTaskSeries );
+      return RtmTaskSeriesTable.insertTaskSeries( rtmTaskSeries );
    }
    
    

@@ -39,7 +39,7 @@ import dev.drsoran.moloko.app.services.IConnectionService;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.app.services.SyncStartResult;
-import dev.drsoran.moloko.content.SyncProviderPart;
+import dev.drsoran.moloko.content.db.SyncTable;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
@@ -195,7 +195,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
          
          if ( client != null )
          {
-            final Pair< Long, Long > lastSync = SyncProviderPart.getLastInAndLastOut( client );
+            final Pair< Long, Long > lastSync = SyncTable.getLastInAndLastOut( client );
             
             if ( lastSync != null )
             {

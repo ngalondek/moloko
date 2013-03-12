@@ -29,8 +29,8 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.ParticipantsTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
@@ -180,7 +180,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Participants.CONTENT_URI )
-                                                                             .withValues( ParticipantsProviderPart.getContentValues( this,
+                                                                             .withValues( ParticipantsTable.getContentValues( this,
                                                                                                                                      true ) )
                                                                              .build() )
                                          .build();

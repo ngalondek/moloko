@@ -34,7 +34,7 @@ import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
-import dev.drsoran.moloko.content.RtmLocationsProviderPart;
+import dev.drsoran.moloko.content.db.RtmLocationsTable;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
@@ -53,7 +53,7 @@ public final class RtmLocationsSync
                                       MolokoSyncResult syncResult )
    {
       // Get all locations from local database
-      final List< RtmLocation > local_Locations = RtmLocationsProviderPart.getAllLocations( provider );
+      final List< RtmLocation > local_Locations = RtmLocationsTable.getAllLocations( provider );
       
       if ( local_Locations == null )
       {

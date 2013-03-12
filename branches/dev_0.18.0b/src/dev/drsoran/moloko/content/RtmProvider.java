@@ -39,9 +39,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.db.CreationsProviderPart;
-import dev.drsoran.moloko.content.db.ModificationsProviderPart;
-import dev.drsoran.moloko.content.db.RtmListsTable;
 
 
 public class RtmProvider extends ContentProvider
@@ -115,14 +112,14 @@ public class RtmProvider extends ContentProvider
       // These parts allow modification in the local DB.
       mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
       { new RtmTasksProviderPart( context, dbHelper ),
-       new RtmTaskSeriesProviderPart( context, dbHelper ),
+       new RtmTaskSeriesTable( context, dbHelper ),
        new RtmListsTable( context, dbHelper ),
-       new RtmNotesProviderPart( context, dbHelper ),
-       new RtmLocationsProviderPart( context, dbHelper ),
-       new RtmContactsProviderPart( context, dbHelper ),
-       new ParticipantsProviderPart( context, dbHelper ),
-       new RtmSettingsProviderPart( context, dbHelper ),
-       new SyncProviderPart( context, dbHelper ),
+       new RtmNotesTable( context, dbHelper ),
+       new RtmLocationsTable( context, dbHelper ),
+       new RtmContactsTable( context, dbHelper ),
+       new ParticipantsTable( context, dbHelper ),
+       new RtmSettingsTable( context, dbHelper ),
+       new SyncTable( context, dbHelper ),
        new ModificationsProviderPart( context, dbHelper ),
        new CreationsProviderPart( context, dbHelper ) } ) );
       

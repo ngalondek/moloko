@@ -34,8 +34,8 @@ import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.taskedit.AbstractTaskEditFragment.TaskEditDatabaseData;
-import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.content.db.RtmLocationsTable;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
@@ -67,7 +67,7 @@ class TaskEditDatabaseDataLoader extends AbstractLoader< TaskEditDatabaseData >
                                                                LISTS_SELECTION );
       if ( lists != null )
       {
-         final List< RtmLocation > locations = RtmLocationsProviderPart.getAllLocations( client );
+         final List< RtmLocation > locations = RtmLocationsTable.getAllLocations( client );
          
          if ( locations != null )
          {

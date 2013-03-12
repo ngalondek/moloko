@@ -33,7 +33,7 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
-import dev.drsoran.moloko.content.RtmContactsProviderPart;
+import dev.drsoran.moloko.content.db.RtmContactsTable;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
@@ -54,7 +54,7 @@ public final class RtmContactsSync
                                       MolokoSyncResult syncResult )
    {
       // Get all contacts from local database
-      final List< RtmContact > local_ListOfContacts = RtmContactsProviderPart.getAllContacts( provider,
+      final List< RtmContact > local_ListOfContacts = RtmContactsTable.getAllContacts( provider,
                                                                                               null );
       
       if ( local_ListOfContacts == null )

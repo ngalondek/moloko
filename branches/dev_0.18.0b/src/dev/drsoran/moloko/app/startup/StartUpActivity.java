@@ -39,7 +39,6 @@ import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -147,7 +146,7 @@ public class StartUpActivity extends MolokoFragmentActivity
    {
       boolean switchToNextState = true;
       final Account account = getAppContext().getAccountService()
-                                                .getRtmAccount();
+                                             .getRtmAccount();
       
       if ( account == null )
       {
@@ -215,7 +214,7 @@ public class StartUpActivity extends MolokoFragmentActivity
       if ( settings.isSyncAtStartup() && !settings.isManualSyncOnly() )
       {
          final Account account = getAppContext().getAccountService()
-                                                   .getRtmAccount();
+                                                .getRtmAccount();
          if ( account != null )
          {
             getAppContext().getSyncService().requestManualSync( account );

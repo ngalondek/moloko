@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.Cursor;
-import dev.drsoran.moloko.content.db.Columns.RtmLists;
+import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
 
 
 public class RtmListsQuery
@@ -47,7 +47,7 @@ public class RtmListsQuery
       final Cursor c = database.getReadable()
                                .query( rtmListsTable.getTableName(),
                                        rtmListsTable.getProjection(),
-                                       RtmLists._ID + "=" + listId,
+                                       RtmListsColumns._ID + "=" + listId,
                                        null,
                                        null,
                                        null,
@@ -62,7 +62,7 @@ public class RtmListsQuery
       final Cursor c = database.getReadable()
                                .query( rtmListsTable.getTableName(),
                                        rtmListsTable.getProjection(),
-                                       RtmLists.LIST_NAME + " like '"
+                                       RtmListsColumns.LIST_NAME + " like '"
                                           + listName + "'",
                                        null,
                                        null,
@@ -76,13 +76,14 @@ public class RtmListsQuery
    public Cursor resolveListIdsToListNames( Iterable< String > listIds )
    {
       final String selectionString = DbHelper.toColumnList( listIds,
-                                                            RtmLists._ID,
+                                                            RtmListsColumns._ID,
                                                             " OR " );
       
       final Cursor c = database.getReadable()
                                .query( rtmListsTable.getTableName(),
                                        new String[]
-                                       { RtmLists._ID, RtmLists.LIST_NAME },
+                                       { RtmListsColumns._ID,
+                                        RtmListsColumns.LIST_NAME },
                                        selectionString,
                                        null,
                                        null,
@@ -122,8 +123,9 @@ public class RtmListsQuery
       final Cursor c = database.getReadable()
                                .query( rtmListsTable.getTableName(),
                                        new String[]
-                                       { RtmLists._ID },
-                                       RtmLists.LIST_DELETED + " IS NOT NULL",
+                                       { RtmListsColumns._ID },
+                                       RtmListsColumns.LIST_DELETED
+                                          + " IS NOT NULL",
                                        null,
                                        null,
                                        null,

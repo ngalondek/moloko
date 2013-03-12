@@ -29,8 +29,6 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.moloko.content.db.DbHelper;
-import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Notes;

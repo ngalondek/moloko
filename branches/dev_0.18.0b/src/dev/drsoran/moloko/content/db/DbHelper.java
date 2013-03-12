@@ -28,8 +28,6 @@ import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.TextUtils;
-import dev.drsoran.moloko.MolokoApp;
 
 
 final class DbHelper
@@ -37,30 +35,6 @@ final class DbHelper
    private DbHelper()
    {
       throw new AssertionError( "This class should not be instantiated." );
-   }
-   
-   
-   
-   public final static String bindAll( String selection, String[] selectionArgs )
-   {
-      String result = selection;
-      
-      for ( int i = 0; i < selectionArgs.length; i++ )
-      {
-         result = result.replaceFirst( "\\?", selectionArgs[ i ] );
-      }
-      
-      return result.toString();
-   }
-   
-   
-   
-   public final static String toCommaList( String[] values )
-   {
-      if ( values != null )
-         return TextUtils.join( ",", values );
-      else
-         return "";
    }
    
    
@@ -117,10 +91,6 @@ final class DbHelper
             else
                newId = String.valueOf( 1L );
          }
-      }
-      catch ( Throwable e )
-      {
-         MolokoApp.Log.e( DbHelper.class, "Generating new ID failed. ", e );
       }
       finally
       {

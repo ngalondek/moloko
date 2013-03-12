@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmLists;
+import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
 import dev.drsoran.provider.Rtm.Settings;
 
 
@@ -46,7 +46,7 @@ class DefaultListSettingConsistencyTrigger extends Trigger
       getDatabase().getWritable().execSQL( "CREATE TRIGGER " + getTriggerName()
          + " AFTER DELETE ON " + RtmListsTable.TABLE_NAME + " BEGIN UPDATE "
          + Settings.PATH + " SET " + Settings.DEFAULTLIST_ID
-         + " = NULL WHERE old." + RtmLists._ID + " = "
+         + " = NULL WHERE old." + RtmListsColumns._ID + " = "
          + Settings.DEFAULTLIST_ID + "; END;" );
    }
 }

@@ -35,9 +35,9 @@ import dev.drsoran.moloko.app.content.ContentProviderAction;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.provider.Rtm.Notes;
 
 
@@ -81,7 +81,7 @@ public final class NoteEditUtils
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
       boolean ok = actionItemList.add( ContentProviderAction.Type.INSERT,
-                                       RtmNotesProviderPart.insertLocalCreatedNote( note ) );
+                                       RtmNotesTable.insertLocalCreatedNote( note ) );
       ok = ok
          && actionItemList.add( ContentProviderAction.Type.INSERT,
                                 CreationsProviderPart.newCreation( DbHelper.contentUriWithId( Notes.CONTENT_URI,

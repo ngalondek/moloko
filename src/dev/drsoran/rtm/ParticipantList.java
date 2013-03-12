@@ -36,7 +36,7 @@ import android.text.TextUtils;
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.ParticipantsProviderPart;
+import dev.drsoran.moloko.content.db.ParticipantsTable;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -187,7 +187,7 @@ public class ParticipantList implements
    @Override
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      return ContentProviderSyncOperation.newInsert( ParticipantsProviderPart.insertParticipants( this ) )
+      return ContentProviderSyncOperation.newInsert( ParticipantsTable.insertParticipants( this ) )
                                          .build();
    }
    

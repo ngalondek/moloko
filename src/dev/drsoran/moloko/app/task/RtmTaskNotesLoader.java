@@ -35,9 +35,9 @@ import android.os.RemoteException;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Notes;
@@ -79,7 +79,7 @@ class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
             {
                try
                {
-                  taskNotes = RtmNotesProviderPart.fromCursor( notesCursor );
+                  taskNotes = RtmNotesTable.fromCursor( notesCursor );
                }
                finally
                {
@@ -139,7 +139,7 @@ class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
                                                                    + ") AS subQuery",
                                                                 
                                                                 // columns
-                                                                RtmNotesProviderPart.PROJECTION,
+                                                                RtmNotesTable.PROJECTION,
                                                                 
                                                                 // where
                                                                 "subQuery.series_id ="

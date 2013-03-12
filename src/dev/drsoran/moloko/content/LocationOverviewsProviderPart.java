@@ -40,7 +40,6 @@ import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.provider.Rtm.LocationOverviews;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.RawTasks;

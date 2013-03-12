@@ -26,21 +26,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
+import dev.drsoran.moloko.content.db.Columns.NotesColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
 
-class ModificationsTable extends Table
+class RtmNotesTable extends Table
 {
-   public final static String TABLE_NAME = "modifications";
+   public final static String TABLE_NAME = "notes";
    
-   public final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
+   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
-   public final static String[] PROJECTION =
-   { ModificationsColumns._ID, ModificationsColumns.ENTITY_URI,
-    ModificationsColumns.COL_NAME, ModificationsColumns.NEW_VALUE,
-    ModificationsColumns.SYNCED_VALUE, ModificationsColumns.TIMESTAMP };
+   private final static String[] PROJECTION =
+   { NotesColumns._ID, NotesColumns.TASKSERIES_ID,
+    NotesColumns.NOTE_CREATED_DATE, NotesColumns.NOTE_MODIFIED_DATE,
+    NotesColumns.NOTE_DELETED, NotesColumns.NOTE_TITLE, NotesColumns.NOTE_TEXT };
    
-   public final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   
+   
+   @Deprecated
+   public final static class NewNoteId
+   {
+      public String noteId;
+   }
    
    static
    {
@@ -49,7 +57,7 @@ class ModificationsTable extends Table
    
    
    
-   public ModificationsTable( RtmDatabase database )
+   public RtmNotesTable( RtmDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -64,19 +72,30 @@ class ModificationsTable extends Table
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
       builder.append( " ( " );
-      builder.append( ModificationsColumns._ID );
-      builder.append( " INTEGER NOT NULL CONSTRAINT PK_MODIFICATIONS PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( ModificationsColumns.ENTITY_URI );
+      builder.append( NotesColumns._ID );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( ModificationsColumns.COL_NAME );
+      builder.append( NotesColumns.TASKSERIES_ID );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( ModificationsColumns.NEW_VALUE );
+      builder.append( NotesColumns.NOTE_CREATED_DATE );
+      builder.append( " INTEGER NOT NULL, " );
+      builder.append( NotesColumns.NOTE_MODIFIED_DATE );
+      builder.append( " INTEGER, " );
+      builder.append( NotesColumns.NOTE_DELETED );
+      builder.append( " INTEGER, " );
+      builder.append( NotesColumns.NOTE_TITLE );
       builder.append( " TEXT, " );
-      builder.append( ModificationsColumns.SYNCED_VALUE );
+      builder.append( NotesColumns.NOTE_TEXT );
       builder.append( " TEXT, " );
-      builder.append( ModificationsColumns.TIMESTAMP );
-      builder.append( " INTEGER NOT NULL" );
-      builder.append( ");" );
+      builder.append( "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" );
+      builder.append( NotesColumns._ID );
+      builder.append( "\" ), " );
+      builder.append( "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( " );
+      builder.append( NotesColumns.TASKSERIES_ID );
+      builder.append( " ) REFERENCES " );
+      builder.append( RtmTaskSeriesTable.TABLE_NAME );
+      builder.append( " ( " );
+      builder.append( RtmTaskSeriesColumns._ID );
+      builder.append( " ) );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
    }
@@ -86,7 +105,7 @@ class ModificationsTable extends Table
    @Override
    public String getDefaultSortOrder()
    {
-      return ModificationsColumns.DEFAULT_SORT_ORDER;
+      return NotesColumns.DEFAULT_SORT_ORDER;
    }
    
    

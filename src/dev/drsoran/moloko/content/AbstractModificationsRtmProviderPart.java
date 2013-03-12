@@ -27,7 +27,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.db.AbstractRtmProviderPart;
 import dev.drsoran.provider.Rtm.Modifications;
 
 

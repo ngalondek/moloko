@@ -26,21 +26,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
+import dev.drsoran.provider.Rtm.Lists;
 
 
-class ModificationsTable extends Table
+class RtmSettingsTable extends Table
 {
-   public final static String TABLE_NAME = "modifications";
+   public final static String TABLE_NAME = "settings";
    
-   public final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
+   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
-   public final static String[] PROJECTION =
-   { ModificationsColumns._ID, ModificationsColumns.ENTITY_URI,
-    ModificationsColumns.COL_NAME, ModificationsColumns.NEW_VALUE,
-    ModificationsColumns.SYNCED_VALUE, ModificationsColumns.TIMESTAMP };
+   private final static String[] PROJECTION =
+   { RtmSettingsColumns._ID, RtmSettingsColumns.SYNC_TIMESTAMP,
+    RtmSettingsColumns.TIMEZONE, RtmSettingsColumns.DATEFORMAT,
+    RtmSettingsColumns.TIMEFORMAT, RtmSettingsColumns.DEFAULTLIST_ID,
+    RtmSettingsColumns.LANGUAGE };
    
-   public final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
@@ -49,7 +51,7 @@ class ModificationsTable extends Table
    
    
    
-   public ModificationsTable( RtmDatabase database )
+   public RtmSettingsTable( RtmDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -64,19 +66,26 @@ class ModificationsTable extends Table
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
       builder.append( " ( " );
-      builder.append( ModificationsColumns._ID );
-      builder.append( " INTEGER NOT NULL CONSTRAINT PK_MODIFICATIONS PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( ModificationsColumns.ENTITY_URI );
-      builder.append( " TEXT NOT NULL, " );
-      builder.append( ModificationsColumns.COL_NAME );
-      builder.append( " TEXT NOT NULL, " );
-      builder.append( ModificationsColumns.NEW_VALUE );
+      builder.append( RtmSettingsColumns._ID );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_SETTINGS PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( RtmSettingsColumns.SYNC_TIMESTAMP );
+      builder.append( " INTEGER NOT NULL, " );
+      builder.append( RtmSettingsColumns.TIMEZONE );
       builder.append( " TEXT, " );
-      builder.append( ModificationsColumns.SYNCED_VALUE );
+      builder.append( RtmSettingsColumns.DATEFORMAT );
+      builder.append( " INTEGER NOT NULL DEFAULT 0, " );
+      builder.append( RtmSettingsColumns.TIMEFORMAT );
+      builder.append( " INTEGER NOT NULL DEFAULT 0, " );
+      builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( " TEXT, " );
-      builder.append( ModificationsColumns.TIMESTAMP );
-      builder.append( " INTEGER NOT NULL" );
-      builder.append( ");" );
+      builder.append( RtmSettingsColumns.LANGUAGE );
+      builder.append( " TEXT, CONSTRAINT defaultlist FOREIGN KEY ( " );
+      builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
+      builder.append( ") REFERENCES " );
+      builder.append( Lists.PATH );
+      builder.append( "( " );
+      builder.append( Lists._ID );
+      builder.append( " ) );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
    }
@@ -86,7 +95,7 @@ class ModificationsTable extends Table
    @Override
    public String getDefaultSortOrder()
    {
-      return ModificationsColumns.DEFAULT_SORT_ORDER;
+      return null;
    }
    
    

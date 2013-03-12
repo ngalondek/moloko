@@ -44,9 +44,9 @@ import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.app.sync.SyncAdapter;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
+import dev.drsoran.moloko.content.db.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.elements.InSyncTask;
 import dev.drsoran.moloko.sync.elements.OutSyncTask;
 import dev.drsoran.moloko.sync.elements.ServerSyncRtmTaskList;
@@ -92,7 +92,7 @@ public final class RtmTasksSync
       // Check if we have server write access
       if ( timeLineFactory != null )
       {
-         final List< RtmTaskSeries > tasks = RtmTaskSeriesProviderPart.getLocalCreatedTaskSeries( provider );
+         final List< RtmTaskSeries > tasks = RtmTaskSeriesTable.getLocalCreatedTaskSerieses( provider );
          
          if ( tasks != null )
          {
@@ -112,7 +112,7 @@ public final class RtmTasksSync
       
       SyncRtmTaskList local_SyncTaskList = null;
       {
-         final RtmTasks tasks = RtmTaskSeriesProviderPart.getAllTaskSeries( provider );
+         final RtmTasks tasks = RtmTaskSeriesTable.getAllTaskSeries( provider );
          
          if ( tasks == null )
          {

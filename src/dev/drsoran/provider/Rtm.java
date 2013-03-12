@@ -51,7 +51,7 @@ public class Rtm
       public final static String IS_SMART_LIST = "smart";
    }
    
-
+   
    protected static interface ListColumns extends ListBaseColumns
    {
       /**
@@ -114,7 +114,7 @@ public class Rtm
       public final static String FILTER = "filter";
    }
    
-
+   
    public static final class Lists implements BaseColumns, ListColumns
    {
       public final static String PATH = "lists";
@@ -142,7 +142,7 @@ public class Rtm
          + LIST_NAME;
    }
    
-
+   
    public static final class ListOverviews implements BaseColumns, ListColumns
    {
       public final static String PATH = "list_overviews";
@@ -173,7 +173,7 @@ public class Rtm
          + LIST_NAME;
    }
    
-
+   
    protected static interface NoteBaseColumns
    {
       /**
@@ -218,7 +218,7 @@ public class Rtm
       public final static String NOTE_TEXT = "note_text";
    }
    
-
+   
    protected static interface NoteColumns extends NoteBaseColumns
    {
       /**
@@ -230,7 +230,7 @@ public class Rtm
       public final static String TASKSERIES_ID = "taskseries_id";
    }
    
-
+   
    public static final class Notes implements BaseColumns, NoteColumns
    {
       public final static String PATH = "notes";
@@ -257,7 +257,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
-
+   
    protected static interface LocationColumns
    {
       /**
@@ -314,7 +314,7 @@ public class Rtm
       public final static String ZOOM = "zoom";
    }
    
-
+   
    public static final class Locations implements BaseColumns, LocationColumns
    {
       public final static String PATH = "locations";
@@ -341,7 +341,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = LOCATION_NAME;
    }
    
-
+   
    public static final class LocationOverviews implements BaseColumns,
             LocationColumns
    {
@@ -377,7 +377,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = LOCATION_NAME;
    }
    
-
+   
    protected static interface TagColumns
    {
       /**
@@ -394,7 +394,7 @@ public class Rtm
       public final static String TAGS_SEPARATOR = ",";
    }
    
-
+   
    public static final class Tags implements BaseColumns, TagColumns
    {
       public final static String PATH = "tags";
@@ -421,7 +421,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
-
+   
    protected static interface TaskSeriesColumns
    {
       /**
@@ -498,7 +498,7 @@ public class Rtm
       public final static String LIST_ID = "list_id";
    }
    
-
+   
    public static final class TaskSeries implements BaseColumns,
             TaskSeriesColumns, TagColumns
    {
@@ -531,7 +531,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
-
+   
    protected static interface RawTaskColumns
    {
       /**
@@ -615,7 +615,7 @@ public class Rtm
       public final static String ESTIMATE_MILLIS = "estimateMillis";
    }
    
-
+   
    public static final class RawTasks implements BaseColumns, RawTaskColumns
    {
       public final static String PATH = "rawtasks";
@@ -642,7 +642,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
-
+   
    public static final class Tasks implements BaseColumns, ListBaseColumns,
             TaskSeriesColumns, RawTaskColumns, TagColumns, LocationColumns
    {
@@ -730,7 +730,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = SORT_PRIORITY;
    }
    
-
+   
    public static final class TagOverviews implements BaseColumns
    {
       public final static String PATH = "tag_overviews";
@@ -773,7 +773,7 @@ public class Rtm
       public final static String DEFAULT_SORT_ORDER = TAG + " COLLATE NOCASE";
    }
    
-
+   
    protected static interface SettingsColumns
    {
       /**
@@ -828,7 +828,7 @@ public class Rtm
       public final static String LANGUAGE = "language";
    }
    
-
+   
    public static final class Settings implements BaseColumns, SettingsColumns
    {
       public final static String PATH = "settings";
@@ -850,7 +850,7 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.settings";
    }
    
-
+   
    protected static interface SyncColumns
    {
       /**
@@ -870,7 +870,7 @@ public class Rtm
       public final static String LAST_OUT = "last_out";
    }
    
-
+   
    public static final class Sync implements BaseColumns, SyncColumns
    {
       public final static String PATH = "sync";
@@ -892,7 +892,7 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.sync";
    }
    
-
+   
    protected static interface ContactColumns
    {
       /**
@@ -912,7 +912,7 @@ public class Rtm
       public final static String USERNAME = "username";
    }
    
-
+   
    public static final class Contacts implements BaseColumns, ContactColumns
    {
       public final static String PATH = "contacts";
@@ -937,7 +937,7 @@ public class Rtm
          + " COLLATE NOCASE";
    }
    
-
+   
    public static final class ContactOverviews implements BaseColumns,
             ContactColumns
    {
@@ -969,7 +969,7 @@ public class Rtm
          + " COLLATE NOCASE";
    }
    
-
+   
    protected static interface ParticipantsColumns
    {
       /**
@@ -1005,7 +1005,7 @@ public class Rtm
       public final static String USERNAME = "username";
    }
    
-
+   
    public static final class Participants implements BaseColumns,
             ParticipantsColumns
    {
@@ -1031,7 +1031,7 @@ public class Rtm
          + " COLLATE NOCASE";
    }
    
-
+   
    protected static interface ModificationsColumns
    {
       /**
@@ -1075,7 +1075,7 @@ public class Rtm
       public final static String TIMESTAMP = "timestamp";
    }
    
-
+   
    public static final class Modifications implements BaseColumns,
             ModificationsColumns
    {
@@ -1100,7 +1100,7 @@ public class Rtm
       public static final String DEFAULT_SORT_ORDER = null;
    }
    
-
+   
    protected static interface CreationsColumns
    {
       /**
@@ -1120,7 +1120,7 @@ public class Rtm
       public final static String TIMESTAMP = "timestamp";
    }
    
-
+   
    public static final class Creations implements BaseColumns, CreationsColumns
    {
       public final static String PATH = "creations";

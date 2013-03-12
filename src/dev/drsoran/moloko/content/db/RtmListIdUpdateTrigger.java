@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmLists;
+import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
 import dev.drsoran.provider.Rtm.Settings;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -47,12 +47,12 @@ class RtmListIdUpdateTrigger extends Trigger
    {
       getDatabase().getWritable().execSQL( "CREATE TRIGGER "
          + RtmListsTable.TABLE_NAME + "_update_list AFTER UPDATE OF "
-         + RtmLists._ID + " ON " + RtmListsTable.TABLE_NAME
+         + RtmListsColumns._ID + " ON " + RtmListsTable.TABLE_NAME
          + " FOR EACH ROW BEGIN UPDATE " + TaskSeries.PATH + " SET "
-         + TaskSeries.LIST_ID + " = new." + RtmLists._ID + " WHERE "
-         + TaskSeries.LIST_ID + " = old." + RtmLists._ID + "; UPDATE "
+         + TaskSeries.LIST_ID + " = new." + RtmListsColumns._ID + " WHERE "
+         + TaskSeries.LIST_ID + " = old." + RtmListsColumns._ID + "; UPDATE "
          + Settings.PATH + " SET " + Settings.DEFAULTLIST_ID + " = new."
-         + RtmLists._ID + " WHERE " + Settings.DEFAULTLIST_ID + " = old."
-         + RtmLists._ID + "; END;" );
+         + RtmListsColumns._ID + " WHERE " + Settings.DEFAULTLIST_ID
+         + " = old." + RtmListsColumns._ID + "; END;" );
    }
 }

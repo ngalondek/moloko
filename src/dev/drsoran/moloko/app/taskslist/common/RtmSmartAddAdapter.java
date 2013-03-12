@@ -46,9 +46,9 @@ import com.mdt.rtm.data.RtmTask.Priority;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.content.db.RtmLocationsTable;
 import dev.drsoran.moloko.grammar.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
@@ -307,7 +307,7 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                case RtmSmartAddTokenizer.OP_LOCATION:
                   if ( locations == null )
                   {
-                     final List< RtmLocation > dbLocs = RtmLocationsProviderPart.getAllLocations( context.getContentResolver()
+                     final List< RtmLocation > dbLocs = RtmLocationsTable.getAllLocations( context.getContentResolver()
                                                                                                          .acquireContentProviderClient( Locations.CONTENT_URI ) );
                      if ( dbLocs != null )
                      {

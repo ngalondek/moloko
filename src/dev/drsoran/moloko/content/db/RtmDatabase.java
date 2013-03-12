@@ -95,7 +95,11 @@ public class RtmDatabase
    {
       return new Table[]
       { new RtmListsTable( this ), new CreationsTable( this ),
-       new ModificationsTable( this ) };
+       new ModificationsTable( this ), new RawTasksTable( this ),
+       new RtmTaskSeriesTable( this ), new RtmNotesTable( this ),
+       new RtmContactsTable( this ), new ParticipantsTable( this ),
+       new RtmLocationsTable( this ), new RtmSettingsTable( this ),
+       new SyncTable( this ) };
    }
    
    
@@ -104,8 +108,14 @@ public class RtmDatabase
    {
       return new Trigger[]
       { new RtmListIdUpdateTrigger( this ),
+       new DefaultListSettingConsistencyTrigger( this ),
+       new DeleteRawTaskTrigger( this ), new UpdateRawTaskTrigger( this ),
+       new DeleteTaskSeriesTrigger( this ),
+       new UpdateTaskSeriesTrigger( this ), new DeleteContactTrigger( this ),
        new DeleteModificationsTrigger( this, RtmListsTable.TABLE_NAME ),
-       new DefaultListSettingConsistencyTrigger( this ) };
+       new DeleteModificationsTrigger( this, RawTasksTable.TABLE_NAME ),
+       new DeleteModificationsTrigger( this, RtmTaskSeriesTable.TABLE_NAME ),
+       new DeleteModificationsTrigger( this, RtmNotesTable.TABLE_NAME ) };
    }
    
    
@@ -123,6 +133,30 @@ public class RtmDatabase
       queries.put( ModificationsQuery.class,
                    new ModificationsQuery( this,
                                            (ModificationsTable) getTable( ModificationsTable.TABLE_NAME ) ) );
+      queries.put( RawTasksQuery.class,
+                   new RawTasksQuery( this,
+                                      (RawTasksTable) getTable( RawTasksTable.TABLE_NAME ) ) );
+      queries.put( RtmTaskSeriesQuery.class,
+                   new RtmTaskSeriesQuery( this,
+                                           (RtmTaskSeriesTable) getTable( RtmTaskSeriesTable.TABLE_NAME ) ) );
+      queries.put( RtmNotesQuery.class,
+                   new RtmNotesQuery( this,
+                                      (RtmNotesTable) getTable( RtmNotesTable.TABLE_NAME ) ) );
+      queries.put( RtmSettingsQuery.class,
+                   new RtmSettingsQuery( this,
+                                         (RtmSettingsTable) getTable( RtmSettingsTable.TABLE_NAME ) ) );
+      queries.put( RtmContactsQuery.class,
+                   new RtmContactsQuery( this,
+                                         (RtmContactsTable) getTable( RtmContactsTable.TABLE_NAME ) ) );
+      queries.put( ParticipantsQuery.class,
+                   new ParticipantsQuery( this,
+                                          (ParticipantsTable) getTable( ParticipantsTable.TABLE_NAME ) ) );
+      queries.put( RtmLocationsQuery.class,
+                   new RtmLocationsQuery( this,
+                                          (RtmLocationsTable) getTable( RtmLocationsTable.TABLE_NAME ) ) );
+      queries.put( SyncQuery.class,
+                   new SyncQuery( this,
+                                  (SyncTable) getTable( SyncTable.TABLE_NAME ) ) );
       
       return queries;
    }

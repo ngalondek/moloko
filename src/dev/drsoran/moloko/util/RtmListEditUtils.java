@@ -38,10 +38,10 @@ import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
 import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
 import dev.drsoran.provider.Rtm.Lists;
 
 
@@ -153,7 +153,7 @@ public final class RtmListEditUtils
          // Move all contained tasks of the deleted List to the Inbox, this only applies to non-smart lists.
          if ( list.getSmartFilter() == null )
          {
-            final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( context.getContentResolver(),
+            final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesTable.moveTaskSeriesToInbox( context.getContentResolver(),
                                                                                                                                listId,
                                                                                                                                context.getString( R.string.app_list_name_inbox ) );
             ok = moveTasksToInboxOps != null;

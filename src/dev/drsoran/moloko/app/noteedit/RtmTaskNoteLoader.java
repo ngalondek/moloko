@@ -30,7 +30,7 @@ import android.net.Uri;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.provider.Rtm.Notes;
 
@@ -57,7 +57,7 @@ class RtmTaskNoteLoader extends AbstractLoader< RtmTaskNote >
       RtmTaskNote note = null;
       
       if ( noteId != null )
-         note = RtmNotesProviderPart.getNote( client, noteId );
+         note = RtmNotesTable.getNote( client, noteId );
       
       return note;
    }

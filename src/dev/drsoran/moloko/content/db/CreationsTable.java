@@ -26,19 +26,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.Creations;
+import dev.drsoran.moloko.content.db.Columns.CreationsColumns;
 
 
 class CreationsTable extends Table
 {
    public final static String TABLE_NAME = "creations";
    
-   public final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
+   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
-   public final static String[] PROJECTION =
-   { Creations._ID, Creations.ENTITY_URI, Creations.TIMESTAMP };
+   private final static String[] PROJECTION =
+   { CreationsColumns._ID, CreationsColumns.ENTITY_URI,
+    CreationsColumns.TIMESTAMP };
    
-   public final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
@@ -62,11 +63,11 @@ class CreationsTable extends Table
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
       builder.append( " ( " );
-      builder.append( Creations._ID );
+      builder.append( CreationsColumns._ID );
       builder.append( " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( Creations.ENTITY_URI );
+      builder.append( CreationsColumns.ENTITY_URI );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( Creations.TIMESTAMP );
+      builder.append( CreationsColumns.TIMESTAMP );
       builder.append( " INTEGER NOT NULL" );
       builder.append( ");" );
       
@@ -78,7 +79,7 @@ class CreationsTable extends Table
    @Override
    public String getDefaultSortOrder()
    {
-      return Creations.DEFAULT_SORT_ORDER;
+      return CreationsColumns.DEFAULT_SORT_ORDER;
    }
    
    

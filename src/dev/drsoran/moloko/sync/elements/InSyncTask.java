@@ -28,10 +28,10 @@ import android.net.Uri;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskSeries;
 
-import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.ParticipantsTable;
+import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
+import dev.drsoran.moloko.content.db.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation.Builder;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -81,7 +81,7 @@ public class InSyncTask extends SyncTaskBase implements
       
       // Insert new taskseries
       operation.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                             .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
+                                             .withValues( RtmTaskSeriesTable.getContentValues( taskSeries,
                                                                                                       true ) )
                                              .build() );
       
@@ -95,7 +95,7 @@ public class InSyncTask extends SyncTaskBase implements
       final ParticipantList participantList = taskSeries.getParticipants();
       
       if ( participantList.getCount() > 0 )
-         operation.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
+         operation.addAll( ParticipantsTable.insertParticipants( participantList ) );
       
       return operation.build();
    }
@@ -115,7 +115,7 @@ public class InSyncTask extends SyncTaskBase implements
       {
          // Insert new taskseries
          operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                                 .withValues( RtmTaskSeriesProviderPart.getContentValues( serverElement.taskSeries,
+                                                 .withValues( RtmTaskSeriesTable.getContentValues( serverElement.taskSeries,
                                                                                                           true ) )
                                                  .build() );
          
@@ -123,7 +123,7 @@ public class InSyncTask extends SyncTaskBase implements
          final ParticipantList participantList = serverElement.taskSeries.getParticipants();
          
          if ( participantList.getCount() > 0 )
-            operations.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
+            operations.addAll( ParticipantsTable.insertParticipants( participantList ) );
       }
       
       // Sync task

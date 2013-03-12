@@ -30,7 +30,6 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
@@ -48,8 +47,7 @@ public class RtmListWithTaskCountLoader extends
    
    public RtmListWithTaskCountLoader( Context context )
    {
-      this( context,
-            RtmListsTable.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
+      this( context, RtmListsTable.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
    }
    
    

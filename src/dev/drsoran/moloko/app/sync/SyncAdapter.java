@@ -63,9 +63,7 @@ import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
-import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.sync.MolokoSyncResult;
 import dev.drsoran.moloko.sync.RtmContactsSync;
 import dev.drsoran.moloko.sync.RtmListsSync;
@@ -465,7 +463,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
       
       if ( client != null )
       {
-         result = SyncProviderPart.getLastInAndLastOut( client );
+         result = SyncTable.getLastInAndLastOut( client );
          
          client.release();
          
@@ -536,7 +534,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
       if ( client != null )
       {
          final Long millis = Long.valueOf( System.currentTimeMillis() );
-         SyncProviderPart.updateSync( client, millis, millis );
+         SyncTable.updateSync( client, millis, millis );
          
          client.release();
       }

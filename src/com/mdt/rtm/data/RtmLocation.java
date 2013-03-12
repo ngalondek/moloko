@@ -28,8 +28,8 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.RtmLocationsTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
@@ -174,7 +174,7 @@ public class RtmLocation extends RtmData implements
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Locations.CONTENT_URI )
-                                                                             .withValues( RtmLocationsProviderPart.getContentValues( this,
+                                                                             .withValues( RtmLocationsTable.getContentValues( this,
                                                                                                                                      true ) )
                                                                              .build() )
                                          .build();

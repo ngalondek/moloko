@@ -119,7 +119,7 @@ public interface ISettingsService
    
    
    /**
-    * Value: Collection of list IDs to notify tasks for, or the constant {@link Settings.ALL_LISTS}.
+    * Value: Collection of list IDs to notify tasks for, or the constant {@link RtmSettingsColumns.ALL_LISTS}.
     */
    Map< PermanentNotificationType, Collection< String > > getNotifyingPermanentTaskLists();
    

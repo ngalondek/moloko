@@ -41,9 +41,9 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.app.sync.SyncAdapter;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.sync.elements.SyncNote;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskNotesList;
@@ -75,7 +75,7 @@ public final class RtmNotesSync
       // Check if we have server write access
       if ( timeLineFactory != null )
       {
-         final List< RtmTaskNote > newNotes = RtmNotesProviderPart.getLocalCreatedNotes( provider );
+         final List< RtmTaskNote > newNotes = RtmNotesTable.getLocalCreatedNotes( provider );
          
          if ( newNotes != null )
          {
@@ -104,7 +104,7 @@ public final class RtmNotesSync
       
       SyncRtmTaskNotesList local_Notes;
       {
-         final List< RtmTaskNote > notes = RtmNotesProviderPart.getAllNotes( provider );
+         final List< RtmTaskNote > notes = RtmNotesTable.getAllNotes( provider );
          
          if ( notes == null )
          {
@@ -138,7 +138,7 @@ public final class RtmNotesSync
          
          if ( !doOutSync )
          {
-            numDeleted = RtmNotesProviderPart.getDeletedNotesCount( provider );
+            numDeleted = RtmNotesTable.getDeletedNotesCount( provider );
             doOutSync = numDeleted > 0;
          }
          
@@ -229,7 +229,7 @@ public final class RtmNotesSync
    {
       boolean ok = true;
       
-      final List< RtmTaskNote > deletedNotes = RtmNotesProviderPart.getDeletedNotes( provider );
+      final List< RtmTaskNote > deletedNotes = RtmNotesTable.getDeletedNotes( provider );
       ok = deletedNotes != null;
       
       if ( ok )

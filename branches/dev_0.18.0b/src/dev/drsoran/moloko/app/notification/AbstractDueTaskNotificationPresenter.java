@@ -42,7 +42,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -258,7 +258,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected String getNotificationTitle( Cursor tasksCursor )
    {
-      final String taskName = DbHelper.getOptString( tasksCursor,
+      final String taskName = DbUtils.getOptString( tasksCursor,
                                                     getColumnIndex( Tasks.TASKSERIES_NAME ) );
       return taskName;
    }
@@ -267,7 +267,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected String getNotificationText( Cursor tasksCursor )
    {
-      final long dueTimeMillis = DbHelper.getOptLong( tasksCursor,
+      final long dueTimeMillis = DbUtils.getOptLong( tasksCursor,
                                                      getColumnIndex( Tasks.DUE_DATE ) )
                                         .longValue();
       
@@ -281,9 +281,9 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    protected String getNotificationTicker( Cursor tasksCursor )
    {
-      final String taskName = DbHelper.getOptString( tasksCursor,
+      final String taskName = DbUtils.getOptString( tasksCursor,
                                                     getColumnIndex( Tasks.TASKSERIES_NAME ) );
-      final long dueTimeMillis = DbHelper.getOptLong( tasksCursor,
+      final long dueTimeMillis = DbUtils.getOptLong( tasksCursor,
                                                      getColumnIndex( Tasks.DUE_DATE ) )
                                         .longValue();
       
@@ -304,7 +304,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
       boolean ok = tasksCursor.moveToFirst();
       for ( int i = 0; i < endIndex && ok; ok = tasksCursor.moveToNext(), ++i )
       {
-         final String taskId = DbHelper.getOptString( tasksCursor,
+         final String taskId = DbUtils.getOptString( tasksCursor,
                                                      getColumnIndex( Tasks._ID ) );
          taskIds.add( taskId );
       }

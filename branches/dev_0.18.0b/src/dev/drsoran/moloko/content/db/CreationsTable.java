@@ -22,29 +22,13 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
 import dev.drsoran.moloko.content.db.Columns.CreationsColumns;
 
 
-class CreationsTable extends Table
+class CreationsTable extends AbstractTable
 {
    public final static String TABLE_NAME = "creations";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { CreationsColumns._ID, CreationsColumns.ENTITY_URI,
-    CreationsColumns.TIMESTAMP };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -64,7 +48,7 @@ class CreationsTable extends Table
       builder.append( TABLE_NAME );
       builder.append( " ( " );
       builder.append( CreationsColumns._ID );
-      builder.append( " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_CREATIONS PRIMARY KEY AUTOINCREMENT, " );
       builder.append( CreationsColumns.ENTITY_URI );
       builder.append( " TEXT NOT NULL, " );
       builder.append( CreationsColumns.TIMESTAMP );
@@ -85,24 +69,8 @@ class CreationsTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return CreationsColumns.PROJECTION;
    }
 }

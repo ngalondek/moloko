@@ -58,8 +58,7 @@ public class DomainServicesContainer implements IDomainServices
       final IRecurrenceParsing recurrenceParsing = new RecurrenceParsing( log,
                                                                           recurrenceParserRepository );
       
-      final IRtmSmartFilterParsing rtmSmartFilterParsing = new RtmSmartFilterParsing( log,
-                                                                                      dateTimeParsing );
+      final IRtmSmartFilterParsing rtmSmartFilterParsing = new RtmSmartFilterParsing( log );
       
       this.parsingService = new ParsingService( dateTimeParsing,
                                                 recurrenceParsing,

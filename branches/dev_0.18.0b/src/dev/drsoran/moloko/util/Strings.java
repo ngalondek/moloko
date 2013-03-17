@@ -39,6 +39,27 @@ public final class Strings
    
    
    
+   public static boolean isQuotified( String input )
+   {
+      return input.matches( "\"(?:[^\"\\\\]|\\\\.)*\"" );
+   }
+   
+   
+   
+   public static String unquotify( String input )
+   {
+      return input.replaceAll( "(\"|')", "" );
+   }
+   
+   
+   
+   public static String quotify( String input )
+   {
+      return "\"" + input + "\"";
+   }
+   
+   
+   
    public final static String getTrimmed( Editable editable )
    {
       return editable.toString().trim();

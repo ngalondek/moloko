@@ -22,37 +22,20 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.NotesColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
 
-class RtmNotesTable extends Table
+class RtmNotesTable extends AbstractTable
 {
    public final static String TABLE_NAME = "notes";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { NotesColumns._ID, NotesColumns.TASKSERIES_ID,
-    NotesColumns.NOTE_CREATED_DATE, NotesColumns.NOTE_MODIFIED_DATE,
-    NotesColumns.NOTE_DELETED, NotesColumns.NOTE_TITLE, NotesColumns.NOTE_TEXT };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    
    @Deprecated
    public final static class NewNoteId
    {
       public String noteId;
-   }
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
    }
    
    
@@ -72,25 +55,24 @@ class RtmNotesTable extends Table
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
       builder.append( " ( " );
-      builder.append( NotesColumns._ID );
-      builder.append( " TEXT NOT NULL, " );
-      builder.append( NotesColumns.TASKSERIES_ID );
-      builder.append( " TEXT NOT NULL, " );
-      builder.append( NotesColumns.NOTE_CREATED_DATE );
+      builder.append( RtmNotesColumns._ID );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_NOTES PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( RtmNotesColumns.RTM_NOTE_ID );
+      builder.append( " TEXT, " );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
       builder.append( " INTEGER NOT NULL, " );
-      builder.append( NotesColumns.NOTE_MODIFIED_DATE );
+      builder.append( RtmNotesColumns.NOTE_CREATED_DATE );
+      builder.append( " INTEGER NOT NULL, " );
+      builder.append( RtmNotesColumns.NOTE_MODIFIED_DATE );
+      builder.append( " INTEGER NOT NULL, " );
+      builder.append( RtmNotesColumns.NOTE_DELETED_DATE );
       builder.append( " INTEGER, " );
-      builder.append( NotesColumns.NOTE_DELETED );
-      builder.append( " INTEGER, " );
-      builder.append( NotesColumns.NOTE_TITLE );
+      builder.append( RtmNotesColumns.NOTE_TITLE );
       builder.append( " TEXT, " );
-      builder.append( NotesColumns.NOTE_TEXT );
-      builder.append( " TEXT, " );
-      builder.append( "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" );
-      builder.append( NotesColumns._ID );
-      builder.append( "\" ), " );
+      builder.append( RtmNotesColumns.NOTE_TEXT );
+      builder.append( " TEXT NOT NULL, " );
       builder.append( "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( " );
-      builder.append( NotesColumns.TASKSERIES_ID );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
       builder.append( " ) REFERENCES " );
       builder.append( RtmTaskSeriesTable.TABLE_NAME );
       builder.append( " ( " );
@@ -103,25 +85,45 @@ class RtmNotesTable extends Table
    
    
    @Override
+   public void createIndices()
+   {
+      final StringBuilder builder = new StringBuilder();
+      
+      builder.append( "CREATE INDEX " );
+      builder.append( TABLE_NAME );
+      builder.append( "_" );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( " ON " );
+      builder.append( TABLE_NAME );
+      builder.append( "(" );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( ");" );
+      
+      getDatabase().getWritable().execSQL( builder.toString() );
+   }
+   
+   
+   
+   @Override
+   public void dropIndices()
+   {
+      final StringBuilder builder = new StringBuilder();
+      
+      builder.append( "DROP INDEX " );
+      builder.append( TABLE_NAME );
+      builder.append( "_" );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( ";" );
+      
+      getDatabase().getWritable().execSQL( builder.toString() );
+   }
+   
+   
+   
+   @Override
    public String getDefaultSortOrder()
    {
-      return NotesColumns.DEFAULT_SORT_ORDER;
-   }
-   
-   
-   
-   @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
+      return RtmNotesColumns.DEFAULT_SORT_ORDER;
    }
    
    
@@ -129,6 +131,6 @@ class RtmNotesTable extends Table
    @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return RtmNotesColumns.PROJECTION;
    }
 }

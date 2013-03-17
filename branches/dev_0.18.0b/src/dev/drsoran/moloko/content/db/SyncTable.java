@@ -22,28 +22,13 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
 import dev.drsoran.moloko.content.db.Columns.SyncColumns;
 
 
-class SyncTable extends Table
+class SyncTable extends AbstractTable
 {
    public final static String TABLE_NAME = "sync";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { SyncColumns._ID, SyncColumns.LAST_IN, SyncColumns.LAST_OUT };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -83,24 +68,8 @@ class SyncTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return SyncColumns.PROJECTION;
    }
 }

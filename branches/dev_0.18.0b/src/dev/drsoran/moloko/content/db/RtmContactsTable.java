@@ -22,28 +22,13 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
 import dev.drsoran.moloko.content.db.Columns.RtmContactsColumns;
 
 
-class RtmContactsTable extends Table
+class RtmContactsTable extends AbstractTable
 {
    public final static String TABLE_NAME = "contacts";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { RtmContactsColumns._ID, RtmContactsColumns.FULLNAME, RtmContactsColumns.USERNAME };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -63,14 +48,13 @@ class RtmContactsTable extends Table
       builder.append( TABLE_NAME );
       builder.append( " ( " );
       builder.append( RtmContactsColumns._ID );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_CONTACTS PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( RtmContactsColumns.RTM_CONTACT_ID );
       builder.append( " TEXT NOT NULL, " );
       builder.append( RtmContactsColumns.FULLNAME );
       builder.append( " TEXT NOT NULL, " );
       builder.append( RtmContactsColumns.USERNAME );
-      builder.append( " TEXT NOT NULL, " );
-      builder.append( "CONSTRAINT PK_CONTACTS PRIMARY KEY ( \"" );
-      builder.append( RtmContactsColumns._ID );
-      builder.append( "\" )" );
+      builder.append( " TEXT NOT NULL" );
       builder.append( " );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
@@ -87,24 +71,8 @@ class RtmContactsTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return RtmContactsColumns.PROJECTION;
    }
 }

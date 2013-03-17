@@ -25,8 +25,8 @@ package dev.drsoran.moloko.app.content;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.os.AsyncTask;
-import dev.drsoran.moloko.content.ContentException;
-import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.ContentRepository;
+import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.provider.Rtm;
 
 
@@ -72,7 +72,7 @@ class ApplyContentProviderActionItemsTask extends
             client = context.getContentResolver()
                             .acquireContentProviderClient( Rtm.AUTHORITY );
             
-            final RtmProvider localProvider = (RtmProvider) client.getLocalContentProvider();
+            final ContentRepository localProvider = (ContentRepository) client.getLocalContentProvider();
             final ContentProviderActionItemList list = params[ 0 ];
             
             list.applyTransactional( localProvider );

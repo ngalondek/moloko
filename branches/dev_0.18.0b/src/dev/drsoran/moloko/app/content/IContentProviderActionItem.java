@@ -27,8 +27,8 @@ import java.util.Collection;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import dev.drsoran.moloko.app.content.ContentProviderAction.Type;
-import dev.drsoran.moloko.content.ContentException;
-import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.ContentRepository;
+import dev.drsoran.moloko.domain.services.ContentException;
 
 
 public interface IContentProviderActionItem
@@ -49,7 +49,7 @@ public interface IContentProviderActionItem
    
    
    
-   void applyTransactional( RtmProvider rtmProvider ) throws ContentException;
+   void applyTransactional( ContentRepository rtmProvider ) throws ContentException;
    
    
    

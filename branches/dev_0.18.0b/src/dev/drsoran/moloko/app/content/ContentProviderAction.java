@@ -28,9 +28,9 @@ import java.util.Collection;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import dev.drsoran.moloko.content.ContentException;
-import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.provider.Rtm;
 
 
@@ -198,7 +198,7 @@ public class ContentProviderAction implements IContentProviderActionItem
    
    
    @Override
-   public void applyTransactional( RtmProvider rtmProvider ) throws ContentException
+   public void applyTransactional( ContentRepository rtmProvider ) throws ContentException
    {
       final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
       

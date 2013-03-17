@@ -56,7 +56,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -944,7 +944,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getName(), taskName ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.TASKSERIES_NAME,
                                                                 taskName ) );
@@ -960,7 +960,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getListId(), selectedListId ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.LIST_ID,
                                                                 selectedListId ) );
@@ -977,7 +977,7 @@ abstract class AbstractTaskEditFragment
             if ( SyncUtils.hasChanged( RtmTask.convertPriority( task.getPriority() ),
                                        selectedPriority ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.PRIORITY,
                                                                 selectedPriority ) );
@@ -994,7 +994,7 @@ abstract class AbstractTaskEditFragment
                                        TextUtils.join( Tags.TAGS_SEPARATOR,
                                                        task.getTags() ) ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.TAGS,
                                                                 tags ) );
@@ -1013,7 +1013,7 @@ abstract class AbstractTaskEditFragment
             if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( task.getDue() ),
                                        newDue ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.DUE_DATE,
                                                                 newDue ) );
@@ -1028,7 +1028,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.hasDueTime(), newHasDueTime ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.HAS_DUE_TIME,
                                                                 newHasDueTime
@@ -1047,7 +1047,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getRecurrence(), recurrence ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.RECURRENCE,
                                                                 recurrence ) );
@@ -1061,7 +1061,7 @@ abstract class AbstractTaskEditFragment
                                        isEveryRecurrence ) )
             {
                // The flag RECURRENCE_EVERY will not be synced out. RTM parses only the recurrence sentence.
-               modifications.add( Modification.newNonPersistentModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newNonPersistentModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                        task.getTaskSeriesId() ),
                                                                              TaskSeries.RECURRENCE_EVERY,
                                                                              isEveryRecurrence ) );
@@ -1077,13 +1077,13 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getEstimateMillis(), estimateMillis ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.ESTIMATE,
                                                                 getCurrentValue( RawTasks.ESTIMATE,
                                                                                  String.class ) ) );
                
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.ESTIMATE_MILLIS,
                                                                 estimateMillis ) );
@@ -1099,7 +1099,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getLocationId(), selectedLocation ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.LOCATION_ID,
                                                                 selectedLocation ) );
@@ -1115,7 +1115,7 @@ abstract class AbstractTaskEditFragment
             
             if ( SyncUtils.hasChanged( task.getUrl(), newUrl ) )
             {
-               modifications.add( Modification.newModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.URL,
                                                                 newUrl ) );

@@ -43,7 +43,7 @@ public class RtmTaskSeriesQuery
    
    
    
-   public Cursor getTaskSeries( String taskSeriesId )
+   public Cursor getTaskSeries( long taskSeriesId )
    {
       final Cursor c = database.getReadable()
                                .query( taskSeriesTable.getTableName(),
@@ -83,7 +83,7 @@ public class RtmTaskSeriesQuery
    
    
    
-   public Cursor getAllTaskSeriesesForList( String rtmListId )
+   public Cursor getAllTaskSeriesesForList( long rtmListId )
    {
       final Cursor c = database.getReadable()
                                .query( taskSeriesTable.getTableName(),

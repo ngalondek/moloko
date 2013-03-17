@@ -43,7 +43,7 @@ public class ParticipantsQuery
    
    
    
-   public Cursor getParticipants( String taskSeriesId )
+   public Cursor getParticipants( long taskSeriesId )
    {
       final Cursor c = database.getReadable()
                                .query( participantsTable.getTableName(),

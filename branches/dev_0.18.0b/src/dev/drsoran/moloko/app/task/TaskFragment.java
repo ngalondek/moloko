@@ -41,6 +41,8 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.domain.model.Participant;
+import dev.drsoran.moloko.domain.model.ParticipantList;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.MenuItemPreparer;
@@ -50,8 +52,6 @@ import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
-import dev.drsoran.rtm.Participant;
-import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 

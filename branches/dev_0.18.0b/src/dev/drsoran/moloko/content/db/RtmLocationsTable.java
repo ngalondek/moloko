@@ -22,31 +22,13 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
 import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
 
 
-class RtmLocationsTable extends Table
+class RtmLocationsTable extends AbstractTable
 {
    public final static String TABLE_NAME = "locations";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { RtmLocationsColumns._ID, RtmLocationsColumns.LOCATION_NAME,
-    RtmLocationsColumns.LONGITUDE, RtmLocationsColumns.LATITUDE,
-    RtmLocationsColumns.ADDRESS, RtmLocationsColumns.VIEWABLE,
-    RtmLocationsColumns.ZOOM };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -66,22 +48,21 @@ class RtmLocationsTable extends Table
       builder.append( TABLE_NAME );
       builder.append( " ( " );
       builder.append( RtmLocationsColumns._ID );
-      builder.append( " TEXT NOT NULL, " );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_LOCATIONS PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( RtmLocationsColumns.RTM_LOCATION_ID );
+      builder.append( " TEXT NOT NULL , " );
       builder.append( RtmLocationsColumns.LOCATION_NAME );
-      builder.append( " NOTE_TEXT, " );
+      builder.append( " TEXT NOT NULL, " );
       builder.append( RtmLocationsColumns.LONGITUDE );
       builder.append( " REAL NOT NULL, " );
       builder.append( RtmLocationsColumns.LATITUDE );
       builder.append( " REAL NOT NULL, " );
       builder.append( RtmLocationsColumns.ADDRESS );
-      builder.append( " NOTE_TEXT, " );
+      builder.append( " TEXT, " );
       builder.append( RtmLocationsColumns.VIEWABLE );
       builder.append( " INTEGER NOT NULL DEFAULT 1, " );
       builder.append( RtmLocationsColumns.ZOOM );
-      builder.append( " INTEGER, " );
-      builder.append( "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" );
-      builder.append( RtmLocationsColumns._ID );
-      builder.append( "\" )" );
+      builder.append( " INTEGER" );
       builder.append( " );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
@@ -98,24 +79,8 @@ class RtmLocationsTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return RtmLocationsColumns.PROJECTION;
    }
 }

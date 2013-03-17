@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.app.taskslist.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import android.os.Bundle;
@@ -34,14 +35,13 @@ import android.widget.TextView;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.grammar.IRtmSmartFilterParsing;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
@@ -50,9 +50,7 @@ class FullDetailedTasksListFragmentAdapter extends
 {
    public final static int FLAG_SHOW_ALL = 1 << 0;
    
-   private final IRtmSmartFilterParsing smartFilterParsing;
-   
-   private final RtmSmartFilter filter;
+   private final RtmSmartFilter rtmSmartFilter;
    
    private final String[] tagsToRemove;
    
@@ -67,16 +65,14 @@ class FullDetailedTasksListFragmentAdapter extends
              R.layout.fulldetailed_taskslist_listitem,
              R.layout.mindetailed_selectable_taskslist_listitem );
       
-      this.smartFilterParsing = context.getParsingService()
-                                       .getRtmSmartFilterParsing();
       this.flags = flags;
-      this.filter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
-                                                                           ? filter
-                                                                           : new RtmSmartFilter( Strings.EMPTY_STRING ) );
+      this.rtmSmartFilter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
+                                                                                   ? filter
+                                                                                   : new RtmSmartFilter( Strings.EMPTY_STRING ) );
       
       if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL )
       {
-         final List< RtmSmartFilterToken > tokens = this.filter.getTokens();
+         final Collection< RtmSmartFilterToken > tokens = rtmSmartFilter.getTokens();
          final List< String > tagsToRemove = new ArrayList< String >();
          
          for ( RtmSmartFilterToken token : tokens )
@@ -148,10 +144,9 @@ class FullDetailedTasksListFragmentAdapter extends
    private final void setListName( TextView view, Task task )
    {
       if ( ( flags & FLAG_SHOW_ALL ) == FLAG_SHOW_ALL
-         || !smartFilterParsing.hasOperatorAndValue( filter.getTokens(),
-                                                     RtmSmartFilterLexer.OP_LIST,
-                                                     task.getListName(),
-                                                     false ) )
+         || !rtmSmartFilter.hasOperatorAndValue( RtmSmartFilterLexer.OP_LIST,
+                                                 task.getListName(),
+                                                 false ) )
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getListName() );
@@ -168,10 +163,9 @@ class FullDetailedTasksListFragmentAdapter extends
    {
       // If the task has no location
       if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL
-         && ( TextUtils.isEmpty( task.getLocationName() ) || smartFilterParsing.hasOperatorAndValue( filter.getTokens(),
-                                                                                                     RtmSmartFilterLexer.OP_LOCATION,
-                                                                                                     task.getLocationName(),
-                                                                                                     false ) ) )
+         && ( TextUtils.isEmpty( task.getLocationName() ) || rtmSmartFilter.hasOperatorAndValue( RtmSmartFilterLexer.OP_LOCATION,
+                                                                                                 task.getLocationName(),
+                                                                                                 false ) ) )
       {
          view.setVisibility( View.GONE );
       }

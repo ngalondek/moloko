@@ -39,7 +39,7 @@ import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
 import dev.drsoran.provider.Rtm.Lists;
@@ -60,7 +60,7 @@ public final class RtmListEditUtils
    {
       final ModificationSet modifications = new ModificationSet();
       
-      modifications.add( Modification.newModification( DbHelper.contentUriWithId( Lists.CONTENT_URI,
+      modifications.add( Modification.newModification( DbUtils.contentUriWithId( Lists.CONTENT_URI,
                                                                                  listId ),
                                                        Lists.LIST_NAME,
                                                        name ) );
@@ -108,7 +108,7 @@ public final class RtmListEditUtils
                                        RtmListsTable.insertLocalCreatedList( list ) );
       ok = ok
          && actionItemList.add( ContentProviderAction.Type.INSERT,
-                                CreationsProviderPart.newCreation( DbHelper.contentUriWithId( Lists.CONTENT_URI,
+                                CreationsProviderPart.newCreation( DbUtils.contentUriWithId( Lists.CONTENT_URI,
                                                                                              list.getId() ),
                                                                    list.getCreatedDate()
                                                                        .getTime() ) );
@@ -144,7 +144,7 @@ public final class RtmListEditUtils
          final String listId = list.getId();
          final ModificationSet modifications = new ModificationSet();
          
-         modifications.add( Modification.newNonPersistentModification( DbHelper.contentUriWithId( Lists.CONTENT_URI,
+         modifications.add( Modification.newNonPersistentModification( DbUtils.contentUriWithId( Lists.CONTENT_URI,
                                                                                                  listId ),
                                                                        Lists.LIST_DELETED,
                                                                        System.currentTimeMillis() ) );
@@ -167,7 +167,7 @@ public final class RtmListEditUtils
          
          ok = ok
             && actionItemList.add( ContentProviderAction.Type.DELETE,
-                                   CreationsProviderPart.deleteCreation( DbHelper.contentUriWithId( Lists.CONTENT_URI,
+                                   CreationsProviderPart.deleteCreation( DbUtils.contentUriWithId( Lists.CONTENT_URI,
                                                                                                    listId ) ) );
          
          // Add the modifications to the actionItemList

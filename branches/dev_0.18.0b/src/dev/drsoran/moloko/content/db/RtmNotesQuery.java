@@ -24,7 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.content.ContentProviderClient;
 import android.database.Cursor;
-import dev.drsoran.moloko.content.db.Columns.NotesColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
 
 
 class RtmNotesQuery
@@ -39,15 +39,15 @@ class RtmNotesQuery
    
    static
    {
-      SEL_NON_DEL_NOTES_OF_TASKSERIES = new StringBuilder( NotesColumns.TASKSERIES_ID ).append( "=? AND " )
-                                                                                       .append( NotesColumns.NOTE_DELETED )
-                                                                                       .append( " IS NULL" )
-                                                                                       .toString();
+      SEL_NON_DEL_NOTES_OF_TASKSERIES = new StringBuilder( RtmNotesColumns.TASKSERIES_ID ).append( "=? AND " )
+                                                                                          .append( RtmNotesColumns.NOTE_DELETED_DATE )
+                                                                                          .append( " IS NULL" )
+                                                                                          .toString();
       
-      SEL_NON_DEL_NOTE = new StringBuilder( NotesColumns._ID ).append( "=? AND " )
-                                                              .append( NotesColumns.NOTE_DELETED )
-                                                              .append( " IS NULL" )
-                                                              .toString();
+      SEL_NON_DEL_NOTE = new StringBuilder( RtmNotesColumns._ID ).append( "=? AND " )
+                                                                 .append( RtmNotesColumns.NOTE_DELETED_DATE )
+                                                                 .append( " IS NULL" )
+                                                                 .toString();
    }
    
    
@@ -60,14 +60,14 @@ class RtmNotesQuery
    
    
    
-   public Cursor getNote( ContentProviderClient client, String noteId )
+   public Cursor getNote( ContentProviderClient client, long noteId )
    {
       final Cursor c = database.getReadable()
                                .query( rtmNotesTable.getTableName(),
                                        rtmNotesTable.getProjection(),
                                        SEL_NON_DEL_NOTE,
                                        new String[]
-                                       { noteId },
+                                       { String.valueOf( noteId ) },
                                        null,
                                        null,
                                        null );
@@ -91,14 +91,14 @@ class RtmNotesQuery
    
    
    
-   public Cursor getNotesOfTaskSeries( String taskSeriesId )
+   public Cursor getNotesOfTaskSeries( long taskSeriesId )
    {
       final Cursor c = database.getReadable()
                                .query( rtmNotesTable.getTableName(),
                                        rtmNotesTable.getProjection(),
                                        SEL_NON_DEL_NOTES_OF_TASKSERIES,
                                        new String[]
-                                       { taskSeriesId },
+                                       { String.valueOf( taskSeriesId ) },
                                        null,
                                        null,
                                        null );
@@ -145,7 +145,7 @@ class RtmNotesQuery
       final Cursor c = database.getReadable()
                                .query( rtmNotesTable.getTableName(),
                                        rtmNotesTable.getProjection(),
-                                       NotesColumns.NOTE_DELETED
+                                       RtmNotesColumns.NOTE_DELETED_DATE
                                           + " IS NOT NULL",
                                        null,
                                        null,

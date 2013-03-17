@@ -40,8 +40,8 @@ import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.IRtmProviderPart;
-import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.provider.Rtm;
 
 
@@ -60,9 +60,9 @@ class ClearDbPreference extends InfoTextPreference
       final ContentProviderClient client = getContext().getContentResolver()
                                                        .acquireContentProviderClient( Rtm.AUTHORITY );
       if ( client != null
-         && ( client.getLocalContentProvider() instanceof RtmProvider ) )
+         && ( client.getLocalContentProvider() instanceof ContentRepository ) )
       {
-         final List< IRtmProviderPart > parts = ( (RtmProvider) client.getLocalContentProvider() ).getMutableParts();
+         final List< IRtmProviderPart > parts = ( (ContentRepository) client.getLocalContentProvider() ).getMutableParts();
          final CharSequence[] partNames = new CharSequence[ parts.size() ];
          final boolean[] checked = new boolean[ parts.size() ];
          Arrays.fill( checked, true );
@@ -142,9 +142,9 @@ class ClearDbPreference extends InfoTextPreference
                                                              .acquireContentProviderClient( Rtm.AUTHORITY );
             
             if ( client != null
-               && ( client.getLocalContentProvider() instanceof RtmProvider ) )
+               && ( client.getLocalContentProvider() instanceof ContentRepository ) )
             {
-               final RtmProvider rtmProvider = (RtmProvider) client.getLocalContentProvider();
+               final ContentRepository rtmProvider = (ContentRepository) client.getLocalContentProvider();
                
                try
                {

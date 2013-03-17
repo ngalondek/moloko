@@ -22,30 +22,13 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
 import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
 
 
-class ModificationsTable extends Table
+class ModificationsTable extends AbstractTable
 {
    public final static String TABLE_NAME = "modifications";
-   
-   public final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   public final static String[] PROJECTION =
-   { ModificationsColumns._ID, ModificationsColumns.ENTITY_URI,
-    ModificationsColumns.COL_NAME, ModificationsColumns.NEW_VALUE,
-    ModificationsColumns.SYNCED_VALUE, ModificationsColumns.TIMESTAMP };
-   
-   public final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -92,24 +75,8 @@ class ModificationsTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return ModificationsColumns.PROJECTION;
    }
 }

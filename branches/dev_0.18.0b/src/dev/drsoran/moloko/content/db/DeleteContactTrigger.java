@@ -24,8 +24,8 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmContactsColumns;
-import dev.drsoran.provider.Rtm.Participants;
 
 
 /**
@@ -52,9 +52,9 @@ class DeleteContactTrigger extends Trigger
       builder.append( " AFTER DELETE ON " );
       builder.append( RtmContactsTable.TABLE_NAME );
       builder.append( " FOR EACH ROW BEGIN DELETE FROM " );
-      builder.append( Participants.PATH );
+      builder.append( ParticipantsTable.TABLE_NAME );
       builder.append( " WHERE " );
-      builder.append( Participants.CONTACT_ID );
+      builder.append( ParticipantsColumns.CONTACT_ID );
       builder.append( " = old." );
       builder.append( RtmContactsColumns._ID );
       builder.append( "; END;" );

@@ -22,43 +22,21 @@
 
 package dev.drsoran.moloko.grammar;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
-import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterTokenCollection;
 
 
 public interface IRtmSmartFilterParsing
 {
-   RtmSmartFilterReturn evaluateRtmSmartFilter( RtmSmartFilter filter,
-                                                ArrayList< RtmSmartFilterToken > tokens );
+   RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString );
    
    
    
    RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString,
-                                                ArrayList< RtmSmartFilterToken > tokens );
+                                                IRtmSmartFilterEvaluator evaluator );
    
    
    
-   boolean hasOperator( Collection< RtmSmartFilterToken > tokens,
-                        int operator,
-                        boolean negated );
-   
-   
-   
-   boolean hasOperatorAndValue( Collection< RtmSmartFilterToken > tokens,
-                                int operator,
-                                String value,
-                                boolean negated );
-   
-   
-   
-   boolean hasCompletedOperator( Collection< RtmSmartFilterToken > tokens );
-   
-   
-   
-   List< RtmSmartFilterToken > removeAmbiguousTokens( Collection< RtmSmartFilterToken > tokens );
+   RtmSmartFilterTokenCollection getSmartFilterTokens( String filterString );
 }

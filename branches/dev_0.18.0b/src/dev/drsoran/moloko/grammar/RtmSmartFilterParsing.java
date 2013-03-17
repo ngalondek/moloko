@@ -22,21 +22,15 @@
 
 package dev.drsoran.moloko.grammar;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.antlr.runtime.RecognitionException;
 
 import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
+import dev.drsoran.moloko.grammar.rtmsmart.NullRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
-import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterTokenCollection;
+import dev.drsoran.moloko.grammar.rtmsmart.TokenCollectingEvaluator;
 
 
 public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
@@ -47,157 +41,78 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    
    
    
-   public RtmSmartFilterParsing( ILog log, IDateTimeParsing dateTimeParsing )
+   public RtmSmartFilterParsing( ILog log )
    {
       this.log = log;
-      rtmSmartFilterLexer.setDateTimeParsing( dateTimeParsing );
    }
    
    
    
    @Override
-   public RtmSmartFilterReturn evaluateRtmSmartFilter( RtmSmartFilter filter,
-                                                       ArrayList< RtmSmartFilterToken > tokens )
+   public RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString )
    {
-      return evaluateRtmSmartFilter( filter.getFilterString(), tokens );
+      return evaluateRtmSmartFilter( filterString, null );
    }
    
    
    
    @Override
    public RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString,
-                                                       ArrayList< RtmSmartFilterToken > tokens )
+                                                       IRtmSmartFilterEvaluator evaluator )
    {
-      final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterString );
-      
-      rtmSmartFilterLexer.setCharStream( input );
-      
       try
       {
-         final String res = rtmSmartFilterLexer.getResult( tokens );
-         return new RtmSmartFilterReturn( res,
+         final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterString );
+         
+         rtmSmartFilterLexer.setCharStream( input );
+         rtmSmartFilterLexer.setEvaluator( evaluator );
+         rtmSmartFilterLexer.startEvaluation();
+         
+         return new RtmSmartFilterReturn( true,
                                           rtmSmartFilterLexer.hasStatusCompletedOperator() );
       }
       catch ( RecognitionException e )
       {
-         log.w( RtmSmartFilterParsing.class, "Failed to lex " + filterString, e );
+         log.w( RtmSmartFilterParsing.class, "Failed to lex smart filter '"
+            + filterString + "'", e );
+         
+         return new RtmSmartFilterReturn( false,
+                                          rtmSmartFilterLexer.hasStatusCompletedOperator() );
+      }
+      finally
+      {
+         rtmSmartFilterLexer.reset();
+         rtmSmartFilterLexer.setEvaluator( null );
+      }
+   }
+   
+   
+   
+   @Override
+   public RtmSmartFilterTokenCollection getSmartFilterTokens( String filterString )
+   {
+      try
+      {
+         final TokenCollectingEvaluator tokenCollector = new TokenCollectingEvaluator( new NullRtmSmartFilterEvaluator() );
+         final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterString );
+         
+         rtmSmartFilterLexer.setCharStream( input );
+         rtmSmartFilterLexer.setEvaluator( tokenCollector );
+         rtmSmartFilterLexer.startEvaluation();
+         
+         return new RtmSmartFilterTokenCollection( tokenCollector.getTokens() );
+      }
+      catch ( RecognitionException e )
+      {
+         log.w( RtmSmartFilterParsing.class, "Failed to lex smart filter '"
+            + filterString + "'", e );
+         
          return null;
       }
-   }
-   
-   
-   
-   @Override
-   public boolean hasOperator( Collection< RtmSmartFilterToken > tokens,
-                               int operator,
-                               boolean negated )
-   {
-      for ( RtmSmartFilterToken token : removeAmbiguousTokens( tokens ) )
+      finally
       {
-         if ( token.operatorType == operator && token.isNegated == negated )
-         {
-            return true;
-         }
+         rtmSmartFilterLexer.reset();
+         rtmSmartFilterLexer.setEvaluator( null );
       }
-      
-      return false;
-   }
-   
-   
-   
-   @Override
-   public boolean hasOperatorAndValue( Collection< RtmSmartFilterToken > tokens,
-                                       int operator,
-                                       String value,
-                                       boolean negated )
-   {
-      for ( RtmSmartFilterToken token : removeAmbiguousTokens( tokens ) )
-      {
-         if ( token.operatorType == operator
-            && token.value.equalsIgnoreCase( value )
-            && negated == token.isNegated )
-         {
-            return true;
-         }
-      }
-      
-      return false;
-   }
-   
-   
-   
-   @Override
-   public boolean hasCompletedOperator( Collection< RtmSmartFilterToken > tokens )
-   {
-      for ( RtmSmartFilterToken token : tokens )
-      {
-         final int tokenType = token.operatorType;
-         if ( ( tokenType == RtmSmartFilterLexer.OP_STATUS && token.value.equalsIgnoreCase( RtmSmartFilterLexer.COMPLETED_LIT ) )
-            || tokenType == RtmSmartFilterLexer.OP_COMPLETED
-            || tokenType == RtmSmartFilterLexer.OP_COMPLETED_AFTER
-            || tokenType == RtmSmartFilterLexer.OP_COMPLETED_BEFORE
-            || tokenType == RtmSmartFilterLexer.OP_COMPLETED_WITHIN )
-         {
-            return true;
-         }
-      }
-      
-      return false;
-   }
-   
-   
-   
-   /**
-    * Ambiguous is determined by the number a token exists in the list of given tokens. This is the simplest approach to
-    * avoid situation with complex logical expressions where a token is entered negated and not negated.
-    * 
-    * TODO: Use more sophisticated approach like BDDs
-    */
-   @Override
-   public List< RtmSmartFilterToken > removeAmbiguousTokens( Collection< RtmSmartFilterToken > tokens )
-   {
-      final List< RtmSmartFilterToken > filterTokens = new LinkedList< RtmSmartFilterToken >( tokens );
-      
-      Collections.sort( filterTokens, new Comparator< RtmSmartFilterToken >()
-      {
-         @Override
-         public int compare( RtmSmartFilterToken object1,
-                             RtmSmartFilterToken object2 )
-         {
-            return object1.operatorType - object2.operatorType;
-         }
-      } );
-      
-      for ( int i = 0, cnt = filterTokens.size(); i < cnt; )
-      {
-         boolean ambiguous = false;
-         
-         RtmSmartFilterToken filterToken = filterTokens.get( i );
-         
-         // next token
-         int startI = i++;
-         
-         // Look ahead if we have a row of equal operators
-         for ( ; i < cnt
-            && filterTokens.get( i ).operatorType == filterToken.operatorType; ++i )
-         {
-            ambiguous = true;
-            
-            // remove equal token in row
-            filterTokens.set( i, null );
-         }
-         
-         if ( ambiguous )
-            // Remove first token of the row
-            filterTokens.set( startI, null );
-      }
-      
-      for ( Iterator< RtmSmartFilterToken > i = filterTokens.iterator(); i.hasNext(); )
-      {
-         if ( i.next() == null )
-            i.remove();
-      }
-      
-      return filterTokens;
    }
 }

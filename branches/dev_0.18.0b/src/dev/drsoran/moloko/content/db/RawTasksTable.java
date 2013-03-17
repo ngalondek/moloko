@@ -22,35 +22,15 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
 
-class RawTasksTable extends Table
+class RawTasksTable extends AbstractTable
 {
    public final static String TABLE_NAME = "rawtasks";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { RawTasksColumns._ID, RawTasksColumns.TASKSERIES_ID,
-    RawTasksColumns.DUE_DATE, RawTasksColumns.HAS_DUE_TIME,
-    RawTasksColumns.ADDED_DATE, RawTasksColumns.COMPLETED_DATE,
-    RawTasksColumns.DELETED_DATE, RawTasksColumns.PRIORITY,
-    RawTasksColumns.POSTPONED, RawTasksColumns.ESTIMATE,
-    RawTasksColumns.ESTIMATE_MILLIS };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -72,9 +52,11 @@ class RawTasksTable extends Table
       builder.append( TABLE_NAME );
       builder.append( " ( " );
       builder.append( RawTasksColumns._ID );
-      builder.append( " TEXT NOT NULL, " );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_RAWTASKS PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( RawTasksColumns.RTM_RAWTASK_ID );
+      builder.append( " TEXT, " );
       builder.append( RawTasksColumns.TASKSERIES_ID );
-      builder.append( " TEXT NOT NULL, " );
+      builder.append( " INTEGER NOT NULL, " );
       builder.append( RawTasksColumns.DUE_DATE );
       builder.append( " INTEGER, " );
       builder.append( RawTasksColumns.HAS_DUE_TIME );
@@ -93,9 +75,6 @@ class RawTasksTable extends Table
       builder.append( " TEXT, " );
       builder.append( RawTasksColumns.ESTIMATE_MILLIS );
       builder.append( " INTEGER DEFAULT -1, " );
-      builder.append( "CONSTRAINT PK_TASKS PRIMARY KEY ( \"" );
-      builder.append( RawTasksColumns._ID );
-      builder.append( "\" ), " );
       builder.append( "CONSTRAINT rawtasks_taskseries_ref FOREIGN KEY ( " );
       builder.append( RawTasksColumns.TASKSERIES_ID );
       builder.append( " ) REFERENCES " );
@@ -119,24 +98,8 @@ class RawTasksTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return RawTasksColumns.PROJECTION;
    }
 }

@@ -35,7 +35,7 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -101,7 +101,7 @@ class HoneycombPermanentNotificationPresenter extends
       {
          final Intent notifyingTaskIntent = createSingletonOnClickIntent( tasksCursor );
          onClickIntentStack = makeSingleNotificationActivityStack( notifyingTaskIntent,
-                                                                   DbHelper.getOptString( tasksCursor,
+                                                                   DbUtils.getOptString( tasksCursor,
                                                                                          getColumnIndex( Tasks.LIST_ID ) ) );
       }
       else

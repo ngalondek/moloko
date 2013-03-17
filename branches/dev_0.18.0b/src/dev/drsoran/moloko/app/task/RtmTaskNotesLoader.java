@@ -35,8 +35,8 @@ import android.os.RemoteException;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmProvider;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.ContentRepository;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.LogUtils;
@@ -69,10 +69,10 @@ class RtmTaskNotesLoader extends AbstractLoader< List< RtmTaskNote > >
       
       try
       {
-         if ( DbHelper.exists( client, Tasks.CONTENT_URI, taskId ) )
+         if ( DbUtils.exists( client, Tasks.CONTENT_URI, taskId ) )
          {
             final String query = buildQuery();
-            final RtmProvider rtmProvider = (RtmProvider) client.getLocalContentProvider();
+            final ContentRepository rtmProvider = (ContentRepository) client.getLocalContentProvider();
             final Cursor notesCursor = rtmProvider.querySql( query );
             
             if ( notesCursor != null )

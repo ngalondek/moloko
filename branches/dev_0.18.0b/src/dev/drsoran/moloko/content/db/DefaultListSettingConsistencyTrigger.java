@@ -24,7 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
-import dev.drsoran.provider.Rtm.Settings;
+import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
 
 
 /**
@@ -35,7 +35,7 @@ class DefaultListSettingConsistencyTrigger extends Trigger
    
    public DefaultListSettingConsistencyTrigger( RtmDatabase database )
    {
-      super( database, Settings.PATH + "_default_list" );
+      super( database, RtmSettingsTable.TABLE_NAME + "_default_list" );
    }
    
    
@@ -43,10 +43,22 @@ class DefaultListSettingConsistencyTrigger extends Trigger
    @Override
    public void create() throws SQLException
    {
-      getDatabase().getWritable().execSQL( "CREATE TRIGGER " + getTriggerName()
-         + " AFTER DELETE ON " + RtmListsTable.TABLE_NAME + " BEGIN UPDATE "
-         + Settings.PATH + " SET " + Settings.DEFAULTLIST_ID
-         + " = NULL WHERE old." + RtmListsColumns._ID + " = "
-         + Settings.DEFAULTLIST_ID + "; END;" );
+      final StringBuilder builder = new StringBuilder();
+      
+      builder.append( "CREATE TRIGGER " );
+      builder.append( getTriggerName() );
+      builder.append( " AFTER DELETE ON " );
+      builder.append( RtmListsTable.TABLE_NAME );
+      builder.append( " BEGIN UPDATE " );
+      builder.append( RtmSettingsTable.TABLE_NAME );
+      builder.append( " SET " );
+      builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
+      builder.append( " = NULL WHERE old." );
+      builder.append( RtmListsColumns._ID );
+      builder.append( " = " );
+      builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
+      builder.append( "; END;" );
+      
+      getDatabase().getWritable().execSQL( builder.toString() );
    }
 }

@@ -46,9 +46,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
-import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Tag;
 import dev.drsoran.rtm.TagWithTaskCount;
 
@@ -271,7 +269,7 @@ public class TagsProviderPart extends AbstractProviderPart
          }
       }
       
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbUtils.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )
                                                                         .append( ")" );
@@ -280,8 +278,8 @@ public class TagsProviderPart extends AbstractProviderPart
       {
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? DbHelper.bindAll( selection,
-                                                                       selectionArgs )
+                                                    ? DbUtils.bindAll( selection,
+                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );
       }

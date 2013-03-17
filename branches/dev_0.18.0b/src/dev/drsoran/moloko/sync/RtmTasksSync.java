@@ -42,8 +42,8 @@ import com.mdt.rtm.data.RtmTimeline;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.app.sync.SyncAdapter;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
 import dev.drsoran.moloko.content.db.RtmTasksProviderPart;
@@ -98,7 +98,7 @@ public final class RtmTasksSync
          {
             // Send new tasks
             sendNewTasks( service,
-                          (RtmProvider) provider.getLocalContentProvider(),
+                          (ContentRepository) provider.getLocalContentProvider(),
                           timeLineFactory,
                           tasks,
                           syncResult );
@@ -181,7 +181,7 @@ public final class RtmTasksSync
                // Send our local changes to the server and update the server list of
                // TaskSeries with the new elements retrieved from server during
                // the commit.
-               applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
+               applyServerOperations( (ContentRepository) provider.getLocalContentProvider(),
                                       serverOps,
                                       server_SyncTaskList );
             }
@@ -245,7 +245,7 @@ public final class RtmTasksSync
    
    
    private static void sendNewTasks( Service service,
-                                     RtmProvider provider,
+                                     ContentRepository provider,
                                      TimeLineFactory timeLineFactory,
                                      List< RtmTaskSeries > localTaskSerieses,
                                      MolokoSyncResult syncResult )
@@ -286,7 +286,7 @@ public final class RtmTasksSync
    
    
    private final static RtmTaskList sendTask( Service service,
-                                              RtmProvider provider,
+                                              ContentRepository provider,
                                               RtmTimeline timeline,
                                               RtmTaskSeries localTaskSeries,
                                               RtmTask localTask,
@@ -356,7 +356,7 @@ public final class RtmTasksSync
    
    
    
-   private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
+   private final static void applyServerOperations( ContentRepository rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmTaskList > > serverOps,
                                                     SyncRtmTaskList serverList ) throws ServiceException
    {

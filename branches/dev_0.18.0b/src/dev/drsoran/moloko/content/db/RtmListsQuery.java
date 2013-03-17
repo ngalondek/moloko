@@ -42,7 +42,7 @@ public class RtmListsQuery
    
    
    
-   public Cursor getList( String listId )
+   public Cursor getList( long listId )
    {
       final Cursor c = database.getReadable()
                                .query( rtmListsTable.getTableName(),
@@ -75,7 +75,7 @@ public class RtmListsQuery
    
    public Cursor resolveListIdsToListNames( Iterable< String > listIds )
    {
-      final String selectionString = DbHelper.toColumnList( listIds,
+      final String selectionString = DbUtils.toColumnList( listIds,
                                                             RtmListsColumns._ID,
                                                             " OR " );
       
@@ -124,7 +124,7 @@ public class RtmListsQuery
                                .query( rtmListsTable.getTableName(),
                                        new String[]
                                        { RtmListsColumns._ID },
-                                       RtmListsColumns.LIST_DELETED
+                                       RtmListsColumns.LIST_DELETED_DATE
                                           + " IS NOT NULL",
                                        null,
                                        null,

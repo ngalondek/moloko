@@ -24,19 +24,19 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.provider.Rtm.Modifications;
+import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
 
 
 public class ModificationsQuery
 {
-   private final static String SEL_QUERY_MODIFICATION = new StringBuilder( 100 ).append( Modifications.ENTITY_URI )
+   private final static String SEL_QUERY_MODIFICATION = new StringBuilder( 100 ).append( ModificationsColumns.ENTITY_URI )
                                                                                 .append( "=? AND " )
-                                                                                .append( Modifications.COL_NAME )
+                                                                                .append( ModificationsColumns.COL_NAME )
                                                                                 .append( "=?" )
                                                                                 .toString();
    
-   private final static String SEL_QUERY_MODIFICATIONS = new StringBuilder( Modifications.ENTITY_URI ).append( "=?" )
-                                                                                                      .toString();
+   private final static String SEL_QUERY_MODIFICATIONS = new StringBuilder( ModificationsColumns.ENTITY_URI ).append( "=?" )
+                                                                                                             .toString();
    
    private final RtmDatabase database;
    
@@ -72,7 +72,7 @@ public class ModificationsQuery
    public Cursor getModifications( String tableName, String... otherTableNames )
    {
       final StringBuilder selectionBuilder = new StringBuilder();
-      selectionBuilder.append( Modifications.ENTITY_URI )
+      selectionBuilder.append( ModificationsColumns.ENTITY_URI )
                       .append( " like '" )
                       .append( tableName )
                       .append( "%'" );
@@ -83,7 +83,7 @@ public class ModificationsQuery
          
          for ( int i = 0; i < otherTableNames.length; ++i )
          {
-            selectionBuilder.append( Modifications.ENTITY_URI )
+            selectionBuilder.append( ModificationsColumns.ENTITY_URI )
                             .append( " like '" )
                             .append( otherTableNames[ i ] )
                             .append( "%'" );

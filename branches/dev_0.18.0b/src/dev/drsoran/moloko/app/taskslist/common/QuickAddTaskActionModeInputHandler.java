@@ -40,7 +40,7 @@ import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
-import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer.Token;
+import dev.drsoran.moloko.ui.widgets.Token;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -174,7 +174,7 @@ class QuickAddTaskActionModeInputHandler
       
       context.Log().d( getClass(), "Creating tokens for '" + input + "'" );
       
-      final List< RtmSmartAddTokenizer.Token > tokens = new LinkedList< RtmSmartAddTokenizer.Token >();
+      final List< Token > tokens = new LinkedList< Token >();
       smartAddTokenizer.getTokens( input, tokens );
       
       context.Log().d( getClass(), "Tokens: " + tokens );

@@ -32,7 +32,7 @@ import dev.drsoran.moloko.app.ReadOnlyAccountException;
 import dev.drsoran.moloko.app.content.ActionItemListApplier;
 import dev.drsoran.moloko.app.content.ApplyChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.content.ContentException;
+import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;

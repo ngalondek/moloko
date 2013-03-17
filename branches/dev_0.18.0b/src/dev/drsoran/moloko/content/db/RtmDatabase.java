@@ -40,9 +40,9 @@ public class RtmDatabase
    
    private final ILog log;
    
-   private final DatabaseAccess dbAccess;
+   private final DatabaseOpenHelper dbAccess;
    
-   private final Table[] tables;
+   private final AbstractTable[] tables;
    
    private final Trigger[] triggers;
    
@@ -53,7 +53,7 @@ public class RtmDatabase
    public RtmDatabase( SystemContext context )
    {
       log = context.Log();
-      dbAccess = new DatabaseAccess( context );
+      dbAccess = new DatabaseOpenHelper( context );
       tables = getTables();
       triggers = getTriggers();
       queries = getQueries();
@@ -91,9 +91,24 @@ public class RtmDatabase
    
    
    
-   private Table[] getTables()
+   public ITable getTable( String tableName )
    {
-      return new Table[]
+      for ( ITable table : tables )
+      {
+         if ( table.getTableName().equals( tableName ) )
+         {
+            return table;
+         }
+      }
+      
+      return null;
+   }
+   
+   
+   
+   private AbstractTable[] getTables()
+   {
+      return new AbstractTable[]
       { new RtmListsTable( this ), new CreationsTable( this ),
        new ModificationsTable( this ), new RawTasksTable( this ),
        new RtmTaskSeriesTable( this ), new RtmNotesTable( this ),
@@ -162,24 +177,9 @@ public class RtmDatabase
    }
    
    
-   
-   private Table getTable( String tableName )
+   private class DatabaseOpenHelper extends SQLiteOpenHelper
    {
-      for ( Table table : tables )
-      {
-         if ( table.getTableName().equalsIgnoreCase( tableName ) )
-         {
-            return table;
-         }
-      }
-      
-      return null;
-   }
-   
-   
-   private class DatabaseAccess extends SQLiteOpenHelper
-   {
-      public DatabaseAccess( Context context )
+      public DatabaseOpenHelper( Context context )
       {
          super( context,
                 RtmDatabase.DATABASE_NAME,
@@ -201,7 +201,7 @@ public class RtmDatabase
       @Override
       public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
       {
-         for ( Table table : tables )
+         for ( AbstractTable table : tables )
          {
             table.upgrade( oldVersion, newVersion );
          }
@@ -211,9 +211,10 @@ public class RtmDatabase
       
       private void createTables()
       {
-         for ( Table table : tables )
+         for ( AbstractTable table : tables )
          {
             table.create();
+            table.createIndices();
          }
       }
       

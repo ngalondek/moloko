@@ -63,14 +63,14 @@ class RawTasksQuery
    
    
    
-   public Cursor getRawTask( String rawTaskId )
+   public Cursor getRawTask( long rawTaskId )
    {
       final Cursor c = database.getReadable()
                                .query( rawTasksTable.getTableName(),
                                        rawTasksTable.getProjection(),
                                        SEL_QUERY_NON_DELETED,
                                        new String[]
-                                       { rawTaskId },
+                                       { String.valueOf( rawTaskId ) },
                                        null,
                                        null,
                                        null );
@@ -79,14 +79,14 @@ class RawTasksQuery
    
    
    
-   public Cursor getRawTasksOfTaskseries( String taskSeriesId )
+   public Cursor getRawTasksOfTaskseries( long taskSeriesId )
    {
       return getAllRawTasksOfTaskseries( taskSeriesId, false );
    }
    
    
    
-   public Cursor getAllRawTasksOfTaskseries( String taskSeriesId,
+   public Cursor getAllRawTasksOfTaskseries( long taskSeriesId,
                                              boolean includeDeleted )
    {
       final String selection = includeDeleted
@@ -98,7 +98,7 @@ class RawTasksQuery
                                        rawTasksTable.getProjection(),
                                        selection,
                                        new String[]
-                                       { taskSeriesId },
+                                       { String.valueOf( taskSeriesId ) },
                                        null,
                                        null,
                                        null );

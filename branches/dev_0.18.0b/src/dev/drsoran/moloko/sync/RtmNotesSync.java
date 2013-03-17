@@ -40,8 +40,8 @@ import com.mdt.rtm.data.RtmTimeline;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.app.sync.SyncAdapter;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.sync.elements.SyncNote;
@@ -87,7 +87,7 @@ public final class RtmNotesSync
             if ( localNotes.size() > 0 )
             {
                sendNewNotes( service,
-                             (RtmProvider) provider.getLocalContentProvider(),
+                             (ContentRepository) provider.getLocalContentProvider(),
                              timeLineFactory,
                              localNotes,
                              syncResult );
@@ -163,7 +163,7 @@ public final class RtmNotesSync
                // Send our local changes to the server and update the server list of
                // notes with the new elements retrieved from server during
                // the commit.
-               applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
+               applyServerOperations( (ContentRepository) provider.getLocalContentProvider(),
                                       serverOps,
                                       server_Notes );
                
@@ -246,7 +246,7 @@ public final class RtmNotesSync
    
    
    private final static boolean sendNewNotes( Service service,
-                                              RtmProvider localContentProvider,
+                                              ContentRepository localContentProvider,
                                               TimeLineFactory timeLineFactory,
                                               SyncRtmTaskNotesList newNotes,
                                               MolokoSyncResult syncResult )
@@ -280,7 +280,7 @@ public final class RtmNotesSync
    
    
    private final static RtmTaskNote sendNote( Service service,
-                                              RtmProvider provider,
+                                              ContentRepository provider,
                                               RtmTimeline timeline,
                                               SyncNote localNote )
    {
@@ -349,7 +349,7 @@ public final class RtmNotesSync
    
    
    
-   private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
+   private final static void applyServerOperations( ContentRepository rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmTaskNote > > serverOps,
                                                     SyncRtmTaskNotesList serverList ) throws ServiceException
    {

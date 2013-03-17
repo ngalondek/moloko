@@ -29,10 +29,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class Modification implements Comparable< Modification >
@@ -68,9 +65,9 @@ public class Modification implements Comparable< Modification >
    
    
    
-   Modification( String id, Uri entityUri, String colName, String newValue,
-      String syncedValue, boolean syncedValueSet, boolean persistent,
-      long timestamp )
+   private Modification( String id, Uri entityUri, String colName,
+      String newValue, String syncedValue, boolean syncedValueSet,
+      boolean persistent, long timestamp )
    {
       this.id = id;
       this.entityUri = entityUri;
@@ -219,7 +216,7 @@ public class Modification implements Comparable< Modification >
                                                            String colName,
                                                            T newValue )
    {
-      return newModification( DbHelper.contentUriWithId( contentUri, id ),
+      return newModification( DbUtils.contentUriWithId( contentUri, id ),
                               colName,
                               newValue );
    }
@@ -281,8 +278,8 @@ public class Modification implements Comparable< Modification >
                                                                         String colName,
                                                                         T newValue )
    {
-      return newNonPersistentModification( DbHelper.contentUriWithId( contentUri,
-                                                                     id ),
+      return newNonPersistentModification( DbUtils.contentUriWithId( contentUri,
+                                                                      id ),
                                            colName,
                                            newValue );
    }

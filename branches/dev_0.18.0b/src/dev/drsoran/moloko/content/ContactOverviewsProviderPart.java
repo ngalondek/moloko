@@ -241,7 +241,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
                         String[] selectionArgs,
                         String sortOrder )
    {
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbUtils.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )
                                                                         .append( ")" );
@@ -250,7 +250,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
       {
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? DbHelper.bindAll( selection,
+                                                    ? DbUtils.bindAll( selection,
                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );

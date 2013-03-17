@@ -33,8 +33,8 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 
@@ -150,7 +150,7 @@ public final class SyncUtils
    
    
    
-   public final static < T > void applyServerOperations( RtmProvider rtmProvider,
+   public final static < T > void applyServerOperations( ContentRepository rtmProvider,
                                                          List< ? extends IServerSyncOperation< T > > serverOps,
                                                          List< T > sortedServerElements,
                                                          Comparator< ? super T > cmp ) throws ServiceException

@@ -60,9 +60,9 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.AccountCredentials;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.app.services.ISyncService;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.sync.MolokoSyncResult;
 import dev.drsoran.moloko.sync.RtmContactsSync;
@@ -288,10 +288,10 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    
    
    
-   private RtmProvider ensureTransactionSupport( ContentProviderClient provider )
+   private ContentRepository ensureTransactionSupport( ContentProviderClient provider )
    {
-      if ( provider.getLocalContentProvider() instanceof RtmProvider )
-         return (RtmProvider) provider.getLocalContentProvider();
+      if ( provider.getLocalContentProvider() instanceof ContentRepository )
+         return (ContentRepository) provider.getLocalContentProvider();
       else
          throw new IllegalStateException( "no ContentProvider transaction support" );
    }
@@ -300,7 +300,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    
    private void applyTransactional( ContentProviderClient contentProvider )
    {
-      final RtmProvider rtmProvider = ensureTransactionSupport( contentProvider );
+      final ContentRepository rtmProvider = ensureTransactionSupport( contentProvider );
       final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
       transactionalAccess.beginTransaction();
       

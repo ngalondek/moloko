@@ -41,16 +41,14 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.ApplyChangesInfo;
-import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.content.db.RtmListsTable.NewRtmListId;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.MolokoEditDialogFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
 import dev.drsoran.moloko.util.RtmListEditUtils;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class AddRenameListDialogFragment extends MolokoEditDialogFragment
@@ -306,7 +304,9 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       final String text = UiUtils.getTrimmedText( filterEdit );
       
       if ( !TextUtils.isEmpty( text )
-         && RtmSmartFilter.evaluate( text.toString(), false ) == null )
+         && !getUiContext().getParsingService()
+                           .getRtmSmartFilterParsing()
+                           .evaluateRtmSmartFilter( text ).success )
       {
          return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_filter,
                                                  text ),
@@ -341,7 +341,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    private NewRtmListId createNewListId()
    {
       return RtmListsTable.createNewListId( getSherlockActivity().getContentResolver()
-                                                                        .acquireContentProviderClient( Lists.CONTENT_URI ) );
+                                                                 .acquireContentProviderClient( Lists.CONTENT_URI ) );
    }
    
    
@@ -364,7 +364,9 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       {
          filter = new RtmSmartFilter( text );
          if ( filter.getEvaluatedFilterString( false ) == null )
+         {
             filter = null;
+         }
       }
       
       return filter;

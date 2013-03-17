@@ -248,7 +248,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                         String[] selectionArgs,
                         String sortOrder )
    {
-      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbHelper.toCommaList( projection ) )
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( DbUtils.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )
                                                                         .append( " )" );
@@ -257,7 +257,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       {
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
-                                                    ? DbHelper.bindAll( selection,
+                                                    ? DbUtils.bindAll( selection,
                                                                        selectionArgs )
                                                     : selection )
                       .append( " )" );
@@ -341,10 +341,10 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                                                          c.getString( COL_INDICES.get( LocationOverviews.LOCATION_NAME ) ),
                                                          c.getFloat( COL_INDICES.get( LocationOverviews.LONGITUDE ) ),
                                                          c.getFloat( COL_INDICES.get( LocationOverviews.LATITUDE ) ),
-                                                         DbHelper.getOptString( c,
+                                                         DbUtils.getOptString( c,
                                                                                COL_INDICES.get( LocationOverviews.ADDRESS ) ),
                                                          c.getInt( COL_INDICES.get( LocationOverviews.VIEWABLE ) ) != 0,
-                                                         DbHelper.getOptInt( c,
+                                                         DbUtils.getOptInt( c,
                                                                             COL_INDICES.get( LocationOverviews.ZOOM ),
                                                                             0 ) ),
                                         c.getInt( COL_INDICES.get( LocationOverviews.TASKS_COUNT ) ) );

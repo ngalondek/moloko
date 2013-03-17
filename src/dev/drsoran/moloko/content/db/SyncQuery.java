@@ -42,9 +42,9 @@ public class SyncQuery
    
    
    
-   public String getSyncId()
+   public long getSyncId()
    {
-      String id = null;
+      long id = -1;
       Cursor c = null;
       
       try
@@ -62,7 +62,7 @@ public class SyncQuery
          // more than 1 entry in this table
          if ( c.moveToFirst() )
          {
-            id = c.getString( 0 );
+            id = c.getLong( Columns.ID_IDX );
          }
       }
       finally

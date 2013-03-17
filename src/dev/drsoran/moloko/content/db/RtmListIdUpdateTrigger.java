@@ -24,8 +24,8 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
-import dev.drsoran.provider.Rtm.Settings;
-import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
 
 /**
@@ -45,14 +45,36 @@ class RtmListIdUpdateTrigger extends Trigger
    @Override
    public void create() throws SQLException
    {
-      getDatabase().getWritable().execSQL( "CREATE TRIGGER "
-         + RtmListsTable.TABLE_NAME + "_update_list AFTER UPDATE OF "
-         + RtmListsColumns._ID + " ON " + RtmListsTable.TABLE_NAME
-         + " FOR EACH ROW BEGIN UPDATE " + TaskSeries.PATH + " SET "
-         + TaskSeries.LIST_ID + " = new." + RtmListsColumns._ID + " WHERE "
-         + TaskSeries.LIST_ID + " = old." + RtmListsColumns._ID + "; UPDATE "
-         + Settings.PATH + " SET " + Settings.DEFAULTLIST_ID + " = new."
-         + RtmListsColumns._ID + " WHERE " + Settings.DEFAULTLIST_ID
-         + " = old." + RtmListsColumns._ID + "; END;" );
+      final StringBuilder stringBuilder = new StringBuilder();
+      
+      stringBuilder.append( "CREATE TRIGGER " );
+      stringBuilder.append( RtmListsTable.TABLE_NAME );
+      stringBuilder.append( "_update_list AFTER UPDATE OF " );
+      stringBuilder.append( RtmListsColumns._ID );
+      stringBuilder.append( " ON " );
+      stringBuilder.append( RtmListsTable.TABLE_NAME );
+      stringBuilder.append( " FOR EACH ROW BEGIN UPDATE " );
+      stringBuilder.append( RtmTaskSeriesTable.TABLE_NAME );
+      stringBuilder.append( " SET " );
+      stringBuilder.append( RtmTaskSeriesColumns.LIST_ID );
+      stringBuilder.append( " = new." );
+      stringBuilder.append( RtmListsColumns._ID );
+      stringBuilder.append( " WHERE " );
+      stringBuilder.append( RtmTaskSeriesColumns.LIST_ID );
+      stringBuilder.append( " = old." );
+      stringBuilder.append( RtmListsColumns._ID );
+      stringBuilder.append( "; UPDATE " );
+      stringBuilder.append( RtmSettingsTable.TABLE_NAME );
+      stringBuilder.append( " SET " );
+      stringBuilder.append( RtmSettingsColumns.DEFAULTLIST_ID );
+      stringBuilder.append( " = new." );
+      stringBuilder.append( RtmListsColumns._ID );
+      stringBuilder.append( " WHERE " );
+      stringBuilder.append( RtmSettingsColumns.DEFAULTLIST_ID );
+      stringBuilder.append( " = old." );
+      stringBuilder.append( RtmListsColumns._ID );
+      stringBuilder.append( "; END;" );
+      
+      getDatabase().getWritable().execSQL( stringBuilder.toString() );
    }
 }

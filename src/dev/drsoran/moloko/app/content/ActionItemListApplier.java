@@ -28,8 +28,8 @@ import android.accounts.Account;
 import android.os.AsyncTask;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.ReadOnlyAccountException;
-import dev.drsoran.moloko.content.ContentException;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
+import dev.drsoran.moloko.domain.services.ContentException;
 
 
 public class ActionItemListApplier
@@ -100,7 +100,7 @@ public class ActionItemListApplier
    
    private void LogError( Exception e )
    {
-      context.Log().e( DbHelper.class,
+      context.Log().e( DbUtils.class,
                        "Applying ContentProviderActionItemList failed",
                        e );
    }

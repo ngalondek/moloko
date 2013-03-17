@@ -28,7 +28,7 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmLocationsTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -166,7 +166,7 @@ public class RtmLocation extends RtmData implements
 
    public Uri getContentUriWithId()
    {
-      return DbHelper.contentUriWithId( Locations.CONTENT_URI, id );
+      return DbUtils.contentUriWithId( Locations.CONTENT_URI, id );
    }
    
 

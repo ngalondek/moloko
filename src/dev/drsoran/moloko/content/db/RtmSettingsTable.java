@@ -22,32 +22,14 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
+import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
-import dev.drsoran.provider.Rtm.Lists;
 
 
-class RtmSettingsTable extends Table
+class RtmSettingsTable extends AbstractTable
 {
    public final static String TABLE_NAME = "settings";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { RtmSettingsColumns._ID, RtmSettingsColumns.SYNC_TIMESTAMP,
-    RtmSettingsColumns.TIMEZONE, RtmSettingsColumns.DATEFORMAT,
-    RtmSettingsColumns.TIMEFORMAT, RtmSettingsColumns.DEFAULTLIST_ID,
-    RtmSettingsColumns.LANGUAGE };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -77,14 +59,15 @@ class RtmSettingsTable extends Table
       builder.append( RtmSettingsColumns.TIMEFORMAT );
       builder.append( " INTEGER NOT NULL DEFAULT 0, " );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
-      builder.append( " TEXT, " );
+      builder.append( " INTEGER, " );
       builder.append( RtmSettingsColumns.LANGUAGE );
-      builder.append( " TEXT, CONSTRAINT defaultlist FOREIGN KEY ( " );
+      builder.append( " TEXT, " );
+      builder.append( "CONSTRAINT defaultlist FOREIGN KEY (" );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( ") REFERENCES " );
-      builder.append( Lists.PATH );
+      builder.append( RtmListsTable.TABLE_NAME );
       builder.append( "( " );
-      builder.append( Lists._ID );
+      builder.append( RtmListsColumns._ID );
       builder.append( " ) );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
@@ -101,24 +84,8 @@ class RtmSettingsTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return RtmSettingsColumns.PROJECTION;
    }
 }

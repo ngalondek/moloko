@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.Cursor;
+import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
 
 
 public class RtmLocationsQuery
@@ -38,6 +39,22 @@ public class RtmLocationsQuery
    {
       this.database = database;
       this.rtmLocationsTable = rtmLocationsTable;
+   }
+   
+   
+   
+   public Cursor getLocation( long locationId )
+   {
+      final Cursor c = database.getReadable()
+                               .query( rtmLocationsTable.getTableName(),
+                                       rtmLocationsTable.getProjection(),
+                                       RtmLocationsColumns._ID + "="
+                                          + locationId,
+                                       null,
+                                       null,
+                                       null,
+                                       null );
+      return c;
    }
    
    

@@ -30,13 +30,13 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.RtmProvider;
 
 
 public interface IServerSyncOperation< T > extends ISyncOperation
 {
-   public T execute( RtmProvider rtmProvider ) throws ServiceException;
+   public T execute( ContentRepository rtmProvider ) throws ServiceException;
    
 
 

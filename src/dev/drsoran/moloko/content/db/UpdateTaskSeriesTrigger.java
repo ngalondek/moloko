@@ -24,7 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.moloko.content.db.Columns.NotesColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
 import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
 import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
@@ -69,11 +69,11 @@ class UpdateTaskSeriesTrigger extends Trigger
       builder.append( "; UPDATE " );
       builder.append( RtmNotesTable.TABLE_NAME );
       builder.append( " SET " );
-      builder.append( NotesColumns.TASKSERIES_ID );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
       builder.append( " = new." );
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( " WHERE " );
-      builder.append( NotesColumns.TASKSERIES_ID );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
       builder.append( " = old." );
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( "; UPDATE " );

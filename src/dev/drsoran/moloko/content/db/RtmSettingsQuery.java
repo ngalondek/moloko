@@ -43,9 +43,9 @@ public class RtmSettingsQuery
    
    
    
-   public String getSettingsId()
+   public long getSettingsId()
    {
-      String settingsId = null;
+      long settingsId = -1;
       Cursor c = null;
       
       try
@@ -63,8 +63,7 @@ public class RtmSettingsQuery
          // more than 1 entry in this table
          if ( c.moveToFirst() )
          {
-            settingsId = c.getString( rtmSettingsTable.getColumnIndices()
-                                                      .get( RtmSettingsColumns._ID ) );
+            settingsId = c.getLong( Columns.ID_IDX );
          }
       }
       finally

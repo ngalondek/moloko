@@ -42,7 +42,7 @@ public class RtmContactsQuery
    
    
    
-   public Cursor getContact( String contactId )
+   public Cursor getContact( long contactId )
    {
       return getAllContacts( RtmContactsColumns._ID + "=" + contactId );
    }

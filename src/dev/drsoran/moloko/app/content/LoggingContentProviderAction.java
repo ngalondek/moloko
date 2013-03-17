@@ -28,8 +28,8 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.content.ContentProviderAction.Type;
-import dev.drsoran.moloko.content.ContentException;
-import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.ContentRepository;
+import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.util.LogUtils;
 
 
@@ -83,7 +83,7 @@ public class LoggingContentProviderAction implements IContentProviderActionItem
    
    
    @Override
-   public void applyTransactional( RtmProvider rtmProvider ) throws ContentException
+   public void applyTransactional( ContentRepository rtmProvider ) throws ContentException
    {
       LogOperations();
       

@@ -38,7 +38,7 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -98,9 +98,9 @@ public class OutSyncTask extends SyncTaskBase implements
    @Override
    public boolean hasModification( ModificationSet modificationSet )
    {
-      return modificationSet.hasModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+      return modificationSet.hasModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                         taskSeries.getId() ) )
-         || modificationSet.hasModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+         || modificationSet.hasModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                        task.getId() ) );
       
    }
@@ -115,14 +115,14 @@ public class OutSyncTask extends SyncTaskBase implements
        * Change the ID of the local taskseries to the ID of the server taskseries. Referencing entities will also be
        * changed by a DB trigger.
        **/
-      operation.add( ContentProviderOperation.newUpdate( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+      operation.add( ContentProviderOperation.newUpdate( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                    taskSeries.getId() ) )
                                              .withValue( BaseColumns._ID,
                                                          serverElement.taskSeries.getId() )
                                              .build() );
       
       /** Change the ID of the local rawtask to the ID of the server rawtask. **/
-      operation.add( ContentProviderOperation.newUpdate( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+      operation.add( ContentProviderOperation.newUpdate( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                    task.getId() ) )
                                              .withValue( BaseColumns._ID,
                                                          serverElement.task.getId() )
@@ -160,7 +160,7 @@ public class OutSyncTask extends SyncTaskBase implements
          // All differences to the new server element will be added as modification. The Modification.newValue
          // is the local task value and the Modification.syncedValue is the value from the new inserted task
          // from RTM side.
-         final Uri newUri = DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+         final Uri newUri = DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                       serverElement.taskSeries.getId() );
          
          // Recurrence
@@ -198,7 +198,7 @@ public class OutSyncTask extends SyncTaskBase implements
       /** RtmTask **/
       {
          // All differences to the new server element will be added as modification
-         final Uri newUri = DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+         final Uri newUri = DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                       serverElement.task.getId() );
          
          // Priority
@@ -269,7 +269,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                                                                             ? null
                                                                                             : serverElement.getModifiedDate(),
                                                                        getModifiedDate(),
-                                                                       DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                       DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                  taskSeries.getId() ),
                                                                        modifications );
          // ListId
@@ -284,7 +284,7 @@ public class OutSyncTask extends SyncTaskBase implements
             // In case we have no server element (incremental sync), we look for the modification
             if ( serverElement == this )
             {
-               final Modification modification = modifications.find( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+               final Modification modification = modifications.find( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                taskSeries.getId() ),
                                                                      TaskSeries.LIST_ID );
                if ( modification != null )
@@ -382,7 +382,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                                                                             ? null
                                                                                             : serverElement.getModifiedDate(),
                                                                        getModifiedDate(),
-                                                                       DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                       DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                  task.getId() ),
                                                                        modifications );
          // Priority
@@ -479,7 +479,7 @@ public class OutSyncTask extends SyncTaskBase implements
                // In case we have no server element (incremental sync), we look for the modification
                if ( serverElement == this )
                {
-                  final Modification modification = modifications.find( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+                  final Modification modification = modifications.find( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                   task.getId() ),
                                                                         RawTasks.POSTPONED );
                   if ( modification != null )

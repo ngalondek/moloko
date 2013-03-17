@@ -22,32 +22,15 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmContactsColumns;
 import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmContactsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
 
-class ParticipantsTable extends Table
+class ParticipantsTable extends AbstractTable
 {
    public final static String TABLE_NAME = "participants";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { ParticipantsColumns._ID, ParticipantsColumns.CONTACT_ID,
-    ParticipantsColumns.TASKSERIES_ID, ParticipantsColumns.FULLNAME,
-    ParticipantsColumns.USERNAME };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -69,9 +52,9 @@ class ParticipantsTable extends Table
       builder.append( ParticipantsColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_PARTICIPANTS PRIMARY KEY AUTOINCREMENT, " );
       builder.append( ParticipantsColumns.CONTACT_ID );
-      builder.append( " TEXT NOT NULL, " );
+      builder.append( " INTEGER NOT NULL, " );
       builder.append( ParticipantsColumns.TASKSERIES_ID );
-      builder.append( " TEXT NOT NULL, " );
+      builder.append( " INTEGER NOT NULL, " );
       builder.append( ParticipantsColumns.FULLNAME );
       builder.append( " TEXT NOT NULL, " );
       builder.append( ParticipantsColumns.USERNAME );
@@ -106,24 +89,8 @@ class ParticipantsTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return ParticipantsColumns.PROJECTION;
    }
 }

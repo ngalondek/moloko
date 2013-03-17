@@ -24,59 +24,16 @@ package dev.drsoran.moloko.grammar.rtmsmart;
 
 public class RtmSmartFilterReturn
 {
-   public final String queryString;
+   public final boolean success;
    
    public final boolean hasCompletedOperator;
    
-   public final boolean matchQuery;
    
    
-   
-   public RtmSmartFilterReturn( String queryString, boolean hasCompletedOperator )
+   public RtmSmartFilterReturn( boolean success, boolean hasCompletedOperator )
    {
-      this( queryString, hasCompletedOperator, false );
-   }
-   
-   
-   
-   public RtmSmartFilterReturn( String queryString,
-      boolean hasCompletedOperator, boolean matchQuery )
-   {
-      this.queryString = queryString;
+      this.success = success;
       this.hasCompletedOperator = hasCompletedOperator;
-      this.matchQuery = matchQuery;
-   }
-   
-   
-   
-   @Override
-   public boolean equals( Object o )
-   {
-      if ( o == this )
-      {
-         return true;
-      }
-      
-      if ( o == null || o.getClass() != getClass() )
-      {
-         return false;
-      }
-      
-      final RtmSmartFilterReturn other = (RtmSmartFilterReturn) o;
-      
-      return other.queryString.equals( queryString )
-         && other.hasCompletedOperator == hasCompletedOperator;
-   }
-   
-   
-   
-   @Override
-   public int hashCode()
-   {
-      int code = queryString.hashCode();
-      code = code * 31 ^ ( hasCompletedOperator ? 0 : 1 );
-      
-      return code;
    }
    
    
@@ -84,8 +41,8 @@ public class RtmSmartFilterReturn
    @Override
    public String toString()
    {
-      return String.format( "%s, complOp: %b",
-                            queryString,
+      return String.format( "ok: %b; complOp: %b",
+                            success,
                             hasCompletedOperator );
    }
 }

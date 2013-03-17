@@ -39,7 +39,7 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiContext;
@@ -277,7 +277,7 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
       };
       
       getSherlockActivity().getContentResolver()
-                           .registerContentObserver( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+                           .registerContentObserver( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                getTaskAssertNotNull().getId() ),
                                                      false,
                                                      taskChangesObserver );

@@ -50,7 +50,7 @@ import dev.drsoran.moloko.app.notification.MolokoNotificationService;
 import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
 import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.util.Bundles;
@@ -684,7 +684,7 @@ public final class Intents
                                                     String taskId )
    {
       return new Intent( Intent.ACTION_VIEW,
-                         DbHelper.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+                         DbUtils.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
    
    
@@ -701,7 +701,7 @@ public final class Intents
    public final static Intent createEditTaskIntent( Context context, Task task )
    {
       return new Intent( Intent.ACTION_EDIT,
-                         DbHelper.contentUriWithId( Tasks.CONTENT_URI,
+                         DbUtils.contentUriWithId( Tasks.CONTENT_URI,
                                                    task.getId() ) ).putExtras( Extras.createEditTaskExtras( task ) );
    }
    
@@ -736,7 +736,7 @@ public final class Intents
                                                     RtmTaskNote note )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT,
-                                        DbHelper.contentUriWithId( Notes.CONTENT_URI,
+                                        DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                   note.getId() ) );
       
       intent.putExtras( Extras.createEditNoteExtras( task, note ) );

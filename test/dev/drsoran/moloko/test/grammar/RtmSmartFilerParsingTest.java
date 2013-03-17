@@ -49,7 +49,6 @@ import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tags;
@@ -713,6 +712,7 @@ public class RtmSmartFilerParsingTest extends MolokoTestCase
       }
       else
       {
+         // TODO: matchQuery must not be at the domain class
          if ( expectedResult.matchQuery )
          {
             

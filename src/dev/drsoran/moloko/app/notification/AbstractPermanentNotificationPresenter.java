@@ -42,7 +42,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
@@ -115,7 +115,7 @@ abstract class AbstractPermanentNotificationPresenter implements
       if ( tasksCursor.moveToFirst() )
       {
          return Intents.createOpenTaskIntentFromNotification( getContext(),
-                                                              DbHelper.getOptString( tasksCursor,
+                                                              DbUtils.getOptString( tasksCursor,
                                                                                     getColumnIndex( Tasks._ID ) ) );
       }
       
@@ -236,13 +236,13 @@ abstract class AbstractPermanentNotificationPresenter implements
       {
          tasksCursor.moveToFirst();
          
-         final String taskName = DbHelper.getOptString( tasksCursor,
+         final String taskName = DbUtils.getOptString( tasksCursor,
                                                        getColumnIndex( Tasks.TASKSERIES_NAME ) );
          
          // If we have one task to show and this is overdue, show due date.
          if ( overdueCnt == 1 )
          {
-            final String pastString = new OverdueNotificationTaskDateFormatter( context ).getFormattedOverdueDueDate( DbHelper.getOptLong( tasksCursor,
+            final String pastString = new OverdueNotificationTaskDateFormatter( context ).getFormattedOverdueDueDate( DbUtils.getOptLong( tasksCursor,
                                                                                                                                           getColumnIndex( Tasks.DUE_DATE ) ) );
             if ( !TextUtils.isEmpty( pastString ) )
             {
@@ -300,7 +300,7 @@ abstract class AbstractPermanentNotificationPresenter implements
       boolean hasNext = tasksCursor.moveToFirst();
       for ( ; hasNext; hasNext = tasksCursor.moveToNext() )
       {
-         final String priorityString = DbHelper.getOptString( tasksCursor,
+         final String priorityString = DbUtils.getOptString( tasksCursor,
                                                              getColumnIndex( Tasks.PRIORITY ) );
          
          if ( RtmTask.convertPriority( priorityString ) == RtmTask.Priority.High )
@@ -308,7 +308,7 @@ abstract class AbstractPermanentNotificationPresenter implements
             ++numHighPrioTasks;
          }
          
-         final Long due = DbHelper.getOptLong( tasksCursor,
+         final Long due = DbUtils.getOptLong( tasksCursor,
                                               getColumnIndex( Tasks.DUE_DATE ) );
          
          if ( due != null )
@@ -318,7 +318,7 @@ abstract class AbstractPermanentNotificationPresenter implements
             if ( nowCal == null )
                nowCal = MolokoCalendar.getInstance();
             
-            final boolean hasDueTime = DbHelper.getOptBool( tasksCursor,
+            final boolean hasDueTime = DbUtils.getOptBool( tasksCursor,
                                                            getColumnIndex( Tasks.HAS_DUE_TIME ),
                                                            false );
             

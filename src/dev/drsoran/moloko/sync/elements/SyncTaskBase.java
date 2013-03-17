@@ -29,7 +29,7 @@ import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskSeries;
 
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -115,9 +115,9 @@ abstract class SyncTaskBase
 
    public boolean hasModification( ModificationSet modificationSet )
    {
-      return modificationSet.hasModification( DbHelper.contentUriWithId( TaskSeries.CONTENT_URI,
+      return modificationSet.hasModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                         taskSeries.getId() ) )
-         || modificationSet.hasModification( DbHelper.contentUriWithId( RawTasks.CONTENT_URI,
+         || modificationSet.hasModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                        task.getId() ) );
       
    }

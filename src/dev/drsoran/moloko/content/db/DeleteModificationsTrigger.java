@@ -24,7 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.provider.BaseColumns;
-import dev.drsoran.provider.Rtm.Modifications;
+import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
 
 
 /**
@@ -47,9 +47,23 @@ class DeleteModificationsTrigger extends Trigger
    @Override
    public void create() throws SQLException
    {
-      getDatabase().getWritable().execSQL( "CREATE TRIGGER " + getTriggerName()
-         + " AFTER DELETE ON " + tableName + " FOR EACH ROW BEGIN DELETE FROM "
-         + Modifications.PATH + " WHERE " + Modifications.ENTITY_URI + " = '"
-         + tableName + "' || '/' || old." + BaseColumns._ID + ";" + "END;" );
+      final StringBuilder builder = new StringBuilder();
+      
+      builder.append( "CREATE TRIGGER " );
+      builder.append( getTriggerName() );
+      builder.append( " AFTER DELETE ON " );
+      builder.append( tableName );
+      builder.append( " FOR EACH ROW BEGIN DELETE FROM " );
+      builder.append( ModificationsTable.TABLE_NAME );
+      builder.append( " WHERE " );
+      builder.append( ModificationsColumns.ENTITY_URI );
+      builder.append( " = '" );
+      builder.append( tableName );
+      builder.append( "' || '/' || old." );
+      builder.append( BaseColumns._ID );
+      builder.append( ";" );
+      builder.append( "END;" );
+      
+      getDatabase().getWritable().execSQL( builder.toString() );
    }
 }

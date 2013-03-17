@@ -38,7 +38,7 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.ApplyChangesInfo;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -283,7 +283,7 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
       };
       
       getSherlockActivity().getContentResolver()
-                           .registerContentObserver( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+                           .registerContentObserver( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                getNoteAssertNotNull().getId() ),
                                                      false,
                                                      noteChangesObserver );

@@ -24,7 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.moloko.content.db.Columns.NotesColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
 import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
@@ -55,7 +55,7 @@ class DeleteTaskSeriesTrigger extends Trigger
       builder.append( " FOR EACH ROW BEGIN DELETE FROM " );
       builder.append( RtmNotesTable.TABLE_NAME );
       builder.append( " WHERE " );
-      builder.append( NotesColumns.TASKSERIES_ID );
+      builder.append( RtmNotesColumns.TASKSERIES_ID );
       builder.append( " = old." );
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( "; DELETE FROM " );

@@ -34,7 +34,7 @@ import android.os.Parcelable;
 
 import com.mdt.rtm.data.RtmData;
 
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmContactsTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -179,7 +179,7 @@ public class RtmContact extends RtmData implements
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
 
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( DbHelper.contentUriWithId( Participants.CONTENT_URI,
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( DbUtils.contentUriWithId( Participants.CONTENT_URI,
                                                                                                                    id ) )
                                                                              .build() )
                                          .build();
@@ -193,7 +193,7 @@ public class RtmContact extends RtmData implements
          throw new IllegalArgumentException( "Update id " + update.id
             + " differs this id " + id );
       
-      final Uri uri = DbHelper.contentUriWithId( Participants.CONTENT_URI, id );
+      final Uri uri = DbUtils.contentUriWithId( Participants.CONTENT_URI, id );
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       

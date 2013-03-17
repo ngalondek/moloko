@@ -40,8 +40,8 @@ import com.mdt.rtm.data.RtmTimeline;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.app.sync.SyncAdapter;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.content.db.RtmListsTable;
 import dev.drsoran.moloko.sync.elements.SyncRtmList;
@@ -75,7 +75,7 @@ public final class RtmListsSync
          if ( newLists != null )
          {
             sendNewLists( service,
-                          (RtmProvider) provider.getLocalContentProvider(),
+                          (ContentRepository) provider.getLocalContentProvider(),
                           timeLineFactory,
                           new SyncRtmListsList( newLists ),
                           syncResult );
@@ -163,7 +163,7 @@ public final class RtmListsSync
                // Send our local changes to the server and update the server list of
                // lists with the new elements retrieved from server during
                // the commit.
-               applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
+               applyServerOperations( (ContentRepository) provider.getLocalContentProvider(),
                                       serverOps,
                                       server_Lists );
             }
@@ -192,7 +192,7 @@ public final class RtmListsSync
    
    
    private final static boolean sendNewLists( Service service,
-                                              RtmProvider localContentProvider,
+                                              ContentRepository localContentProvider,
                                               TimeLineFactory timeLineFactory,
                                               SyncRtmListsList newLists,
                                               MolokoSyncResult syncResult )
@@ -226,7 +226,7 @@ public final class RtmListsSync
    
    
    private final static RtmList sendList( Service service,
-                                          RtmProvider provider,
+                                          ContentRepository provider,
                                           RtmTimeline timeline,
                                           SyncRtmList localList )
    {
@@ -295,7 +295,7 @@ public final class RtmListsSync
    
    
    
-   private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
+   private final static void applyServerOperations( ContentRepository rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmList > > serverOps,
                                                     SyncRtmListsList serverList ) throws ServiceException
    {

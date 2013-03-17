@@ -22,35 +22,16 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 
 
-class RtmTaskSeriesTable extends Table
+class RtmTaskSeriesTable extends AbstractTable
 {
    public final static String TABLE_NAME = "taskseries";
-   
-   private final static Map< String, String > PROJECTION_MAP = new HashMap< String, String >();
-   
-   private final static String[] PROJECTION =
-   { RtmTaskSeriesColumns._ID, RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE,
-    RtmTaskSeriesColumns.MODIFIED_DATE, RtmTaskSeriesColumns.TASKSERIES_NAME,
-    RtmTaskSeriesColumns.SOURCE, RtmTaskSeriesColumns.URL,
-    RtmTaskSeriesColumns.RECURRENCE, RtmTaskSeriesColumns.RECURRENCE_EVERY,
-    RtmTaskSeriesColumns.LOCATION_ID, RtmTaskSeriesColumns.LIST_ID,
-    RtmTaskSeriesColumns.TAGS };
-   
-   private final static Map< String, Integer > COL_INDICES = new HashMap< String, Integer >();
-   
-   static
-   {
-      initProjectionDependent( PROJECTION, PROJECTION_MAP, COL_INDICES );
-   }
    
    
    
@@ -70,11 +51,13 @@ class RtmTaskSeriesTable extends Table
       builder.append( TABLE_NAME );
       builder.append( " ( " );
       builder.append( RtmTaskSeriesColumns._ID );
-      builder.append( " TEXT NOT NULL, " );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_TASKSERIES PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( RtmTaskSeriesColumns.RTM_TASKSERIES_ID );
+      builder.append( " TEXT, " );
       builder.append( RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE );
       builder.append( " INTEGER NOT NULL, " );
-      builder.append( RtmTaskSeriesColumns.MODIFIED_DATE );
-      builder.append( " INTEGER, " );
+      builder.append( RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE );
+      builder.append( " INTEGER NOT NULL, " );
       builder.append( RtmTaskSeriesColumns.TASKSERIES_NAME );
       builder.append( " TEXT NOT NULL, " );
       builder.append( RtmTaskSeriesColumns.SOURCE );
@@ -86,22 +69,23 @@ class RtmTaskSeriesTable extends Table
       builder.append( RtmTaskSeriesColumns.RECURRENCE_EVERY );
       builder.append( " INTEGER, " );
       builder.append( RtmTaskSeriesColumns.LOCATION_ID );
-      builder.append( " TEXT, " );
+      builder.append( " INTEGER, " );
       builder.append( RtmTaskSeriesColumns.LIST_ID );
-      builder.append( " TEXT NOT NULL, " );
+      builder.append( " INTEGER NOT NULL, " );
       builder.append( RtmTaskSeriesColumns.TAGS );
       builder.append( " TEXT, " );
-      builder.append( "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" );
-      builder.append( RtmTaskSeriesColumns._ID );
-      builder.append( "\" ), " );
       builder.append( "CONSTRAINT list FOREIGN KEY ( " );
       builder.append( RtmTaskSeriesColumns.LIST_ID );
-      builder.append( " ) REFERENCES lists ( \"" );
+      builder.append( " ) REFERENCES " );
+      builder.append( RtmListsTable.TABLE_NAME );
+      builder.append( " ( \"" );
       builder.append( RtmListsColumns._ID );
       builder.append( "\" ), " );
       builder.append( "CONSTRAINT location FOREIGN KEY ( " );
       builder.append( RtmTaskSeriesColumns.LOCATION_ID );
-      builder.append( " ) REFERENCES locations ( \"" );
+      builder.append( " ) REFERENCES " );
+      builder.append( RtmLocationsTable.TABLE_NAME );
+      builder.append( " ( \"" );
       builder.append( RtmLocationsColumns._ID );
       builder.append( "\" )" );
       builder.append( ");" );
@@ -120,24 +104,8 @@ class RtmTaskSeriesTable extends Table
    
    
    @Override
-   public Map< String, String > getProjectionMap()
-   {
-      return PROJECTION_MAP;
-   }
-   
-   
-   
-   @Override
-   public Map< String, Integer > getColumnIndices()
-   {
-      return COL_INDICES;
-   }
-   
-   
-   
-   @Override
    public String[] getProjection()
    {
-      return PROJECTION;
+      return RtmSettingsColumns.PROJECTION;
    }
 }

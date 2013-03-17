@@ -37,7 +37,7 @@ import com.mdt.rtm.data.RtmTimeline;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
@@ -157,7 +157,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    
    public boolean hasModification( ModificationSet modificationSet )
    {
-      return modificationSet.hasModification( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+      return modificationSet.hasModification( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                         note.getId() ) );
    }
    
@@ -181,7 +181,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
       /**
        * Change the ID of the local note to the ID of the server note.
        **/
-      operation.add( ContentProviderOperation.newUpdate( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+      operation.add( ContentProviderOperation.newUpdate( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                    note.getId() ) )
                                              .withValue( Notes._ID,
                                                          serverElement.note.getId() )
@@ -206,7 +206,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
          throw new IllegalArgumentException( "Update id "
             + serverElement.note.getId() + " differs this id " + note.getId() );
       
-      final Uri uri = DbHelper.contentUriWithId( Notes.CONTENT_URI, note.getId() );
+      final Uri uri = DbUtils.contentUriWithId( Notes.CONTENT_URI, note.getId() );
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
@@ -243,7 +243,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                                                    note.getId() ) )
                                                                              .build() )
                                          .build();
@@ -265,7 +265,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
                                                                                          ? null
                                                                                          : serverElement.getModifiedDate(),
                                                                     getModifiedDate(),
-                                                                    DbHelper.contentUriWithId( Notes.CONTENT_URI,
+                                                                    DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                               note.getId() ),
                                                                     modifications );
       // Title and Text

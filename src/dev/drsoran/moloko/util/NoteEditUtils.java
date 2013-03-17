@@ -36,7 +36,7 @@ import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
-import dev.drsoran.moloko.content.db.DbHelper;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.provider.Rtm.Notes;
 
@@ -57,11 +57,11 @@ public final class NoteEditUtils
    {
       final ModificationSet modifications = new ModificationSet();
       
-      modifications.add( Modification.newModification( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+      modifications.add( Modification.newModification( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                  noteId ),
                                                        Notes.NOTE_TITLE,
                                                        title ) );
-      modifications.add( Modification.newModification( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+      modifications.add( Modification.newModification( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                  noteId ),
                                                        Notes.NOTE_TEXT,
                                                        text ) );
@@ -84,7 +84,7 @@ public final class NoteEditUtils
                                        RtmNotesTable.insertLocalCreatedNote( note ) );
       ok = ok
          && actionItemList.add( ContentProviderAction.Type.INSERT,
-                                CreationsProviderPart.newCreation( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+                                CreationsProviderPart.newCreation( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                              note.getId() ),
                                                                    note.getCreatedDate()
                                                                        .getTime() ) );
@@ -111,14 +111,14 @@ public final class NoteEditUtils
          final String noteId = i.next().getId();
          final ModificationSet modifications = new ModificationSet();
          
-         modifications.add( Modification.newNonPersistentModification( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+         modifications.add( Modification.newNonPersistentModification( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                                  noteId ),
                                                                        Notes.NOTE_DELETED,
                                                                        System.currentTimeMillis() ) );
          modifications.add( Modification.newNoteModified( noteId ) );
          
          ok = actionItemList.add( ContentProviderAction.Type.DELETE,
-                                  CreationsProviderPart.deleteCreation( DbHelper.contentUriWithId( Notes.CONTENT_URI,
+                                  CreationsProviderPart.deleteCreation( DbUtils.contentUriWithId( Notes.CONTENT_URI,
                                                                                                   noteId ) ) );
          actionItemList.add( modifications );
       }

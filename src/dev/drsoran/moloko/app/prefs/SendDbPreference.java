@@ -37,7 +37,7 @@ import android.os.Environment;
 import android.util.AttributeSet;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.ContentRepository;
 
 
 class SendDbPreference extends InfoTextPreference
@@ -82,7 +82,7 @@ class SendDbPreference extends InfoTextPreference
    @Override
    protected void onClick()
    {
-      final File rtmDb = context.getDatabasePath( RtmProvider.DATABASE_NAME );
+      final File rtmDb = context.getDatabasePath( ContentRepository.DATABASE_NAME );
       
       if ( rtmDb != null && rtmDb.canRead() )
       {
@@ -131,7 +131,7 @@ class SendDbPreference extends InfoTextPreference
    private File copyDbToExternalStoragePrivateFile( File rtmDb ) throws IOException
    {
       final File tempRtmDbFile = new File( context.getExternalFilesDir( null ),
-                                           RtmProvider.DATABASE_NAME );
+                                           ContentRepository.DATABASE_NAME );
       InputStream is = null;
       OutputStream os = null;
       

@@ -24,7 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.Cursor;
 import android.provider.BaseColumns;
-import dev.drsoran.provider.Rtm.Creations;
+import dev.drsoran.moloko.content.db.Columns.CreationsColumns;
 
 
 public class CreationsQuery
@@ -48,7 +48,7 @@ public class CreationsQuery
       final Cursor c = database.getReadable()
                                .query( creationsTable.getTableName(),
                                        creationsTable.getProjection(),
-                                       Creations._ID + "=" + creationId,
+                                       CreationsColumns._ID + "=" + creationId,
                                        null,
                                        null,
                                        null,
@@ -89,7 +89,7 @@ public class CreationsQuery
       final String query = new StringBuilder( "SELECT " ).append( "%s.* FROM %s," )
                                                          .append( creations )
                                                          .append( " WHERE instr(" )
-                                                         .append( Creations.ENTITY_URI )
+                                                         .append( CreationsColumns.ENTITY_URI )
                                                          .append( ",('%s/' || %s." )
                                                          .append( BaseColumns._ID )
                                                          .append( "))" )

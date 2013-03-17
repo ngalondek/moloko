@@ -26,12 +26,12 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 
-public class Rtm
+class Rtm
 {
    public static final String AUTHORITY = "dev.drsoran.provider.Rtm";
    
    
-   protected static interface ListBaseColumns
+   protected static interface TasksListColumns
    {
       /**
        * The name of the list
@@ -41,19 +41,6 @@ public class Rtm
        */
       public final static String LIST_NAME = "list_name";
       
-      /**
-       * Indicates if the list is a smart list
-       * <P>
-       * Type: INTEGER
-       * </P>
-       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
-       */
-      public final static String IS_SMART_LIST = "smart";
-   }
-   
-   
-   protected static interface ListColumns extends ListBaseColumns
-   {
       /**
        * The created date of the list, 0 for server created lists
        * <P>
@@ -68,7 +55,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String MODIFIED_DATE = "list_modified";
+      public final static String LIST_MODIFIED_DATE = "list_modified";
       
       /**
        * Indicates if the list is deleted.
@@ -106,6 +93,15 @@ public class Rtm
       public final static String POSITION = "position";
       
       /**
+       * Indicates if the list is a smart list
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String IS_SMART_LIST = "smart";
+      
+      /**
        * The smart filer for this list
        * <P>
        * Type: TEXT
@@ -115,7 +111,8 @@ public class Rtm
    }
    
    
-   public static final class Lists implements BaseColumns, ListColumns
+   public final static class TasksLists implements BaseColumns,
+            TasksListColumns
    {
       public final static String PATH = "lists";
       
@@ -134,29 +131,6 @@ public class Rtm
        * The MIME type of a {@link #CONTENT_URI} sub-directory of a single list.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.list";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = POSITION + ", "
-         + LIST_NAME;
-   }
-   
-   
-   public static final class ListOverviews implements BaseColumns, ListColumns
-   {
-      public final static String PATH = "list_overviews";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of list overviews.
-       */
-      public final static String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.list_overview";
       
       /**
        * The number of tasks in the list
@@ -336,34 +310,6 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.location";
       
       /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = LOCATION_NAME;
-   }
-   
-   
-   public static final class LocationOverviews implements BaseColumns,
-            LocationColumns
-   {
-      public final static String PATH = "location_overviews";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing the settings.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.location_overviews";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.location_overviews";
-      
-      /**
        * The number of tasks having this location set
        * <P>
        * Type: INTEGER
@@ -438,7 +384,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String MODIFIED_DATE = "taskseries_modified";
+      public final static String TASKSERIES_MODIFIED_DATE = "taskseries_modified";
       
       /**
        * The name of the taskseries
@@ -496,39 +442,6 @@ public class Rtm
        * </P>
        */
       public final static String LIST_ID = "list_id";
-   }
-   
-   
-   public static final class TaskSeries implements BaseColumns,
-            TaskSeriesColumns, TagColumns
-   {
-      public final static String PATH = "taskseries";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of taskseries.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.taskseries";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single taskseries.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.taskseries";
-      
-      /**
-       * This tags a TaskSeries as 'new' and corresponds to the {@link TaskSeriesColumns} SOURCE field.
-       */
-      public final static String NEW_TASK_SOURCE = "Moloko";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
    
@@ -616,34 +529,7 @@ public class Rtm
    }
    
    
-   public static final class RawTasks implements BaseColumns, RawTaskColumns
-   {
-      public final static String PATH = "rawtasks";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of raw tasks.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.rawtask";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single raw task.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.rawtask";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
-   }
-   
-   
-   public static final class Tasks implements BaseColumns, ListBaseColumns,
+   public static final class Tasks implements BaseColumns, TasksListColumns,
             TaskSeriesColumns, RawTaskColumns, TagColumns, LocationColumns
    {
       public final static String PATH = "tasks";
@@ -731,49 +617,6 @@ public class Rtm
    }
    
    
-   public static final class TagOverviews implements BaseColumns
-   {
-      public final static String PATH = "tag_overviews";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing the settings.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.tag_overviews";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tag_overviews";
-      
-      /**
-       * The tag itself
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String TAG = "tag";
-      
-      /**
-       * The number of tasks tagged with the tag
-       * <P>
-       * Type: INTEGER
-       * </P>
-       */
-      public final static String TASKS_COUNT = "tasks_count";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = TAG + " COLLATE NOCASE";
-   }
-   
-   
    protected static interface SettingsColumns
    {
       /**
@@ -851,48 +694,6 @@ public class Rtm
    }
    
    
-   protected static interface SyncColumns
-   {
-      /**
-       * The time stamp of the last synchronization RTM -> local
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String LAST_IN = "last_in";
-      
-      /**
-       * The time stamp of the last synchronization local -> RTM
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String LAST_OUT = "last_out";
-   }
-   
-   
-   public static final class Sync implements BaseColumns, SyncColumns
-   {
-      public final static String PATH = "sync";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing the settings.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.sync";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.sync";
-   }
-   
-   
    protected static interface ContactColumns
    {
       /**
@@ -933,27 +734,6 @@ public class Rtm
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.contact";
       
-      public static final String DEFAULT_SORT_ORDER = FULLNAME
-         + " COLLATE NOCASE";
-   }
-   
-   
-   public static final class ContactOverviews implements BaseColumns,
-            ContactColumns
-   {
-      public final static String PATH = "contact_overviews";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of list overviews.
-       */
-      public final static String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.contact_overview";
-      
       /**
        * The number of tasks in the list
        * <P>
@@ -962,185 +742,7 @@ public class Rtm
        */
       public final static String TASKS_COUNT = "tasks_count";
       
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = FULLNAME
-         + " COLLATE NOCASE";
-   }
-   
-   
-   protected static interface ParticipantsColumns
-   {
-      /**
-       * The contact ID of the contact who participates
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String CONTACT_ID = "contact_id";
-      
-      /**
-       * The taskseries ID the contact participates in.
-       * <P>
-       * Type: INTEGER (long)
-       * </P>
-       */
-      public final static String TASKSERIES_ID = "taskseries_id";
-      
-      /**
-       * The full name of the contact participates in.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String FULLNAME = "fullname";
-      
-      /**
-       * The user name the contact participates in.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String USERNAME = "username";
-   }
-   
-   
-   public static final class Participants implements BaseColumns,
-            ParticipantsColumns
-   {
-      public final static String PATH = "participants";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing the settings.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.participant";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.participant";
-      
       public static final String DEFAULT_SORT_ORDER = FULLNAME
          + " COLLATE NOCASE";
-   }
-   
-   
-   protected static interface ModificationsColumns
-   {
-      /**
-       * Designates the entity that has been modified by it's Content URI with ID.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String ENTITY_URI = "entity_uri";
-      
-      /**
-       * The name of the modified column of the entity.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String COL_NAME = "col_name";
-      
-      /**
-       * The new value.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String NEW_VALUE = "new_value";
-      
-      /**
-       * The last synchronized value with the RTM server.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String SYNCED_VALUE = "synced_value";
-      
-      /**
-       * The point of time when the modification was inserted.
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String TIMESTAMP = "timestamp";
-   }
-   
-   
-   public static final class Modifications implements BaseColumns,
-            ModificationsColumns
-   {
-      public final static String PATH = "modfications";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing the modifications.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.modifictaion";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of modifications.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.modifications";
-      
-      public static final String DEFAULT_SORT_ORDER = null;
-   }
-   
-   
-   protected static interface CreationsColumns
-   {
-      /**
-       * Designates the entity that has been created by it's Content URI with ID.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String ENTITY_URI = "entity_uri";
-      
-      /**
-       * The point of time when the entity was created.
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String TIMESTAMP = "timestamp";
-   }
-   
-   
-   public static final class Creations implements BaseColumns, CreationsColumns
-   {
-      public final static String PATH = "creations";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing the creation.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.creation";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of creations.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.creations";
-      
-      public static final String DEFAULT_SORT_ORDER = null;
    }
 }

@@ -30,7 +30,7 @@ import java.util.List;
 import android.content.ContentProviderOperation;
 import android.content.SyncResult;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.util.LogUtils;
 
@@ -203,7 +203,7 @@ public class ContentProviderSyncOperation implements
    
    
    @Override
-   public boolean applyTransactional( RtmProvider rtmProvider )
+   public boolean applyTransactional( ContentRepository rtmProvider )
    {
       final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
       

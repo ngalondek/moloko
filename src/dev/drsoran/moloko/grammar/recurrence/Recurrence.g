@@ -62,7 +62,14 @@ parseRecurrence returns[Map< String, Object > res]
      (        
         parse_Interval_Number_or_Text?
         (
-            DAYS                                               { freq = RecurrencePatternParser.VAL_DAILY_LIT;  }
+            (
+                 DAYS
+               | DAILY
+                 {
+                    isEvery = Boolean.TRUE;
+                    interval = 1;
+                 }
+            )                                                  { freq = RecurrencePatternParser.VAL_DAILY_LIT;  }
           | (
                  WEEKS
                | BIWEEKLY
@@ -301,6 +308,8 @@ MONTHS        : 'months' | 'month' | 'mons' | 'mon';
 WEEKS         : 'weeks' | 'week' | 'wks' | 'wk';
 
 DAYS          : 'days' | 'day';
+
+DAILY         : 'daily';
 
 MONTH         : 'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
                 'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |

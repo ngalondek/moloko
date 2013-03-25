@@ -180,6 +180,19 @@ public class RecurrenceParsingTest_en extends RecurrenceParsingTestBase
    
    
    @Test
+   public void every_daily()
+   {
+      parseRecurrence( "daily",
+                       RecurrencePatternParser.VAL_DAILY_LIT,
+                       1,
+                       null,
+                       null,
+                       true );
+   }
+   
+   
+   
+   @Test
    public void every_day_until()
    {
       final Calendar cal = Calendar.getInstance();

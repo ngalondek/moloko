@@ -22,24 +22,19 @@
 
 package dev.drsoran.moloko.grammar.datetime;
 
-import org.antlr.runtime.RecognitionException;
-
 import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.IDateFormatter;
 import dev.drsoran.moloko.grammar.ILocalizedParser;
 
 
 public interface IDateParser extends ILocalizedParser
 {
-   ParseDateReturn parseDate( String date, MolokoCalendar cal, boolean clearTime ) throws RecognitionException;
+   ParseDateReturn parseDate( String date, MolokoCalendar cal, boolean clearTime ) throws GrammarException;
    
    
    
-   ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws RecognitionException;
-   
-   
-   
-   MolokoCalendar getCalendar();
+   ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws GrammarException;
    
    
    

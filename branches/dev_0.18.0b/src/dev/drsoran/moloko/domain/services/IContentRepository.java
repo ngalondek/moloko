@@ -22,15 +22,20 @@
 
 package dev.drsoran.moloko.domain.services;
 
+import java.util.NoSuchElementException;
+
+import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.IContact;
 import dev.drsoran.moloko.domain.model.ITask;
 import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.grammar.GrammarException;
 
 
 public interface IContentRepository
 {
-   ITask getTask( long taskId, int taskContentOptions ) throws ContentException;
+   ITask getTask( long taskId, int taskContentOptions ) throws NoSuchElementException,
+                                                       ContentException;
    
    
    
@@ -39,30 +44,43 @@ public interface IContentRepository
    
    
    Iterable< ITask > getTasksInTasksList( ITasksList tasksList,
-                                          int taskContentOptions ) throws ContentException;
+                                          int taskContentOptions ) throws ContentException,
+                                                                  GrammarException;
    
    
    
-   int getNumberOfTasksInTasksList( ITasksList tasksList ) throws ContentException;
+   ExtendedTaskCount getTaskCountOfTasksList( ITasksList tasksList ) throws ContentException,
+                                                                    GrammarException;
    
    
    
    Iterable< ITask > getTasksFromSmartFilter( RtmSmartFilter smartFilter,
-                                              int taskContentOptions ) throws ContentException;
+                                              int taskContentOptions ) throws ContentException,
+                                                                      GrammarException;
    
    
    
-   ITasksList getTasksList( long tasksListId, int taskListContentOptions ) throws ContentException;
+   ITasksList getTasksList( long tasksListId ) throws NoSuchElementException,
+                                              ContentException;
    
    
    
-   Iterable< ITasksList > getTaskLists( int taskListContentOptions ) throws ContentException;
+   Iterable< ITasksList > getAllTasksLists() throws ContentException;
    
    
    
-   IContact getContact( long contactId ) throws ContentException;
+   Iterable< ITasksList > getPhysicalTasksLists() throws ContentException;
+   
+   
+   
+   IContact getContact( long contactId ) throws NoSuchElementException,
+                                        ContentException;
    
    
    
    Iterable< IContact > getContacts() throws ContentException;
+   
+   
+   
+   int getNumTasksContactIsParticipating( long contactId ) throws ContentException;
 }

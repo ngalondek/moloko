@@ -4,7 +4,7 @@ grammar Recurrence;
 options
 {
    language=Java;
-   superClass=AbstractRecurrenceParser;
+   superClass=AbstractANTLRRecurrenceParser;
 }
 
 @header
@@ -17,7 +17,7 @@ options
 
    import dev.drsoran.moloko.grammar.IDateFormatter;
    import dev.drsoran.moloko.grammar.LexerException;
-   import dev.drsoran.moloko.grammar.recurrence.AbstractRecurrenceParser;
+   import dev.drsoran.moloko.grammar.recurrence.AbstractANTLRRecurrenceParser;
    import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 }
 
@@ -35,8 +35,6 @@ options
    {
       super( null );
    }
-
-   public final static Locale LOCALE = Locale.ENGLISH;  
 }
 
 @lexer::members
@@ -140,10 +138,6 @@ parseRecurrence returns[Map< String, Object > res]
         }
    )?
    ;
-   catch [ RecognitionException e ]
-   {
-      throw e;
-   }
    catch [ NumberFormatException nfe ]
    {
       throw new RecognitionException();
@@ -156,20 +150,12 @@ parseRecurrence returns[Map< String, Object > res]
 recurr_Xst [Set< Integer > res] returns [int firstEntry]
    : x=parse_Xst               { res.add( x ); firstEntry = x; }
    (((AND | COMMA) x=parse_Xst { res.add( x ); })+)?
-   ;
-   catch [ RecognitionException e ]
-   {
-      throw e;
-   }
+   ;   
 
 recurr_WD [Set< String > weekdays, String Xst]
    : parse_Weekday              [weekdays, Xst, true]
    (((AND | COMMA) parse_Weekday[weekdays, Xst, true])+)?
    ;
-   catch [ RecognitionException e ]
-   {
-      throw e;
-   }
 
 recurr_Monthly [Set< String >  weekdays,
                 Set< Integer > ints     ] returns [String  freq,
@@ -201,10 +187,6 @@ recurr_Monthly [Set< String >  weekdays,
           }
        )?
    ;
-   catch [ RecognitionException e ]
-   {
-      throw e;
-   }
 
 parse_Xst returns [int number]
    : n=INT (DOT|ST_S)?
@@ -279,7 +261,7 @@ parse_Weekday [Set< String > weekdays, String Xst, boolean strict] returns [Stri
 parse_Month returns [int number]
    : m=MONTH
    {
-      number = textMonthToMonthNumber( $m.text, LOCALE );
+      number = textMonthToMonthNumber( $m.text, Locale.ENGLISH );
    }
    ;
    catch [ RecognitionException e ]

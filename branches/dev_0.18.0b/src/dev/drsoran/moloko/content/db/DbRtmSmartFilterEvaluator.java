@@ -32,6 +32,7 @@ import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
@@ -494,38 +495,37 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      result.append( "(" ).append( RawTasksColumns.ESTIMATE_MILLIS );
-      
-      final String param = Strings.unquotify( estimation );
-      
-      long estimatedMillis = -1;
-      final char chPos0 = param.charAt( 0 );
-      
-      if ( chPos0 == '<' || chPos0 == '>' )
+      try
       {
-         result.append( " > -1 AND " )
-               .append( RawTasksColumns.ESTIMATE_MILLIS )
-               .append( chPos0 );
+         result.append( "(" ).append( RawTasksColumns.ESTIMATE_MILLIS );
          
-         estimatedMillis = dateTimeParsing.parseEstimated( param.substring( 1 ) );
-      }
-      else
-      {
-         result.append( "=" );
-         estimatedMillis = dateTimeParsing.parseEstimated( param );
-      }
-      
-      // Parser error
-      if ( estimatedMillis != -1 )
-      {
+         final String param = Strings.unquotify( estimation );
+         
+         long estimatedMillis = -1;
+         final char chPos0 = param.charAt( 0 );
+         
+         if ( chPos0 == '<' || chPos0 == '>' )
+         {
+            result.append( " > -1 AND " )
+                  .append( RawTasksColumns.ESTIMATE_MILLIS )
+                  .append( chPos0 );
+            
+            estimatedMillis = dateTimeParsing.parseEstimated( param.substring( 1 ) );
+         }
+         else
+         {
+            result.append( "=" );
+            estimatedMillis = dateTimeParsing.parseEstimated( param );
+         }
+         
          result.append( estimatedMillis ).append( ")" );
+         
+         return true;
       }
-      else
+      catch ( GrammarException e )
       {
          return false;
       }
-      
-      return true;
    }
    
    
@@ -714,7 +714,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       try
       {
          final int val = Integer.parseInt( Strings.unquotify( param ) );
-         result.append( " = " ).append( val );
+         result.append( "=" ).append( val );
       }
       catch ( NumberFormatException e )
       {
@@ -728,44 +728,43 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private boolean equalsTimeParam( String column, String param )
    {
-      final MolokoCalendar cal = dateTimeParsing.parseDateTimeSpec( Strings.unquotify( param ) );
       
-      if ( cal != null )
+      final MolokoCalendar cal;
+      try
       {
-         result.append( "(" ).append( column );
-         
-         // Check if we have 'NEVER'
-         if ( !cal.hasDate() )
-         {
-            result.append( " IS NULL" );
-         }
-         
-         // Check if we have an explicit time
-         // given.
-         else if ( cal.hasTime() )
-         {
-            result.append( " == " ).append( cal.getTimeInMillis() );
-         }
-         else
-         {
-            result.append( " >= " )
-                  .append( cal.getTimeInMillis() )
-                  .append( " AND " );
-            
-            cal.add( Calendar.DAY_OF_YEAR, 1 );
-            
-            result.append( column )
-                  .append( " < " )
-                  .append( cal.getTimeInMillis() );
-         }
-         
-         result.append( ")" );
+         cal = dateTimeParsing.parseDateTimeSpec( Strings.unquotify( param ) );
+      }
+      catch ( GrammarException e )
+      {
+         return false;
+      }
+      
+      result.append( "(" ).append( column );
+      
+      // Check if we have 'NEVER'
+      if ( !cal.hasDate() )
+      {
+         result.append( " IS NULL" );
+      }
+      
+      // Check if we have an explicit time
+      // given.
+      else if ( cal.hasTime() )
+      {
+         result.append( " == " ).append( cal.getTimeInMillis() );
       }
       else
       {
-         // Parser error
-         return false;
+         result.append( " >= " )
+               .append( cal.getTimeInMillis() )
+               .append( " AND " );
+         
+         cal.add( Calendar.DAY_OF_YEAR, 1 );
+         
+         result.append( column ).append( " < " ).append( cal.getTimeInMillis() );
       }
+      
+      result.append( ")" );
       
       return true;
    }
@@ -775,59 +774,36 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    private boolean differsTimeParam( String column, String param, boolean before )
    {
       final String unquotParam = Strings.unquotify( param );
-      final MolokoCalendar cal = dateTimeParsing.parseDateTimeSpec( unquotParam );
       
-      if ( cal != null )
+      MolokoCalendar cal;
+      try
       {
-         result.append( column );
-         
-         // Check if we have 'NEVER'
-         if ( !cal.hasDate() )
+         cal = dateTimeParsing.parseDateTimeSpec( unquotParam );
+      }
+      // If simple time parsing failed, try parse date within
+      catch ( GrammarException e )
+      {
+         try
          {
-            result.append( " IS NOT NULL" );
+            cal = dateTimeParsing.parseDateWithin( unquotParam, before ).endEpoch;
          }
-         else
+         catch ( GrammarException e1 )
          {
-            result.append( ( before ) ? " < " : " > " )
-                  .append( cal.getTimeInMillis() );
+            return false;
          }
       }
       
-      // If simple time parsing failed, try parse date within
+      result.append( column );
+      
+      // Check if we have 'NEVER'
+      if ( !cal.hasDate() )
+      {
+         result.append( " IS NOT NULL" );
+      }
       else
       {
-         final ParseDateWithinReturn dateWithinReturn = dateTimeParsing.parseDateWithin( unquotParam,
-                                                                                         before );
-         
-         result.append( column );
-         
-         if ( dateWithinReturn != null )
-         {
-            // Check if we have 'NEVER'
-            if ( !dateWithinReturn.endEpoch.hasDate() )
-            {
-               result.append( " IS NOT NULL" );
-            }
-            
-            else
-            {
-               if ( before )
-               {
-                  result.append( " < " );
-               }
-               else
-               {
-                  result.append( " > " );
-               }
-               
-               result.append( dateWithinReturn.endEpoch.getTimeInMillis() );
-            }
-         }
-         else
-         {
-            // Parser error
-            return false;
-         }
+         result.append( ( before ) ? " < " : " > " )
+               .append( cal.getTimeInMillis() );
       }
       
       return true;
@@ -837,29 +813,27 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private boolean inTimeParamRange( String column, String param, boolean past )
    {
-      final ParseDateWithinReturn range = dateTimeParsing.parseDateWithin( Strings.unquotify( param ),
-                                                                           past );
-      
-      if ( range != null )
+      try
       {
-         result.append( "(" );
-         result.append( column );
-         result.append( " >= " );
-         result.append( !past ? range.startEpoch.getTimeInMillis()
-                             : range.endEpoch.getTimeInMillis() );
-         result.append( " AND " );
-         result.append( column );
-         result.append( " < " );
-         result.append( !past ? range.endEpoch.getTimeInMillis()
-                             : range.startEpoch.getTimeInMillis() );
-         result.append( ")" );
+         final ParseDateWithinReturn range = dateTimeParsing.parseDateWithin( Strings.unquotify( param ),
+                                                                              past );
+         result.append( "(" )
+               .append( column )
+               .append( " >= " )
+               .append( !past ? range.startEpoch.getTimeInMillis()
+                             : range.endEpoch.getTimeInMillis() )
+               .append( " AND " )
+               .append( column )
+               .append( " < " )
+               .append( !past ? range.endEpoch.getTimeInMillis()
+                             : range.startEpoch.getTimeInMillis() )
+               .append( ")" );
+         
+         return true;
       }
-      else
+      catch ( GrammarException e )
       {
-         // Parser error
          return false;
       }
-      
-      return true;
    }
 }

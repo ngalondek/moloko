@@ -266,7 +266,7 @@
       name="loader_lists" />
    <item
       type="id"
-      name="loader_lists_with_task_count" />
+      name="tasks_lists_loader" />
    <item
       type="id"
       name="loader_note" />
@@ -276,6 +276,9 @@
    <item
       type="id"
       name="loader_contacts" />
+   <item
+      type="id"
+      name="loader_linked_contacts" />
    <item
       type="id"
       name="loader_tags" />

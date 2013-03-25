@@ -32,7 +32,7 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    private String name;
    
-   private int tasksCount = -1;
+   private ExtendedTaskCount tasksCount;
    
    
    
@@ -90,22 +90,23 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    @Override
    public boolean hasTaskCount()
    {
-      return tasksCount > -1;
+      return tasksCount != null;
    }
    
    
    
    @Override
-   public int getTasksCount()
+   public ExtendedTaskCount getTasksCount()
    {
       return tasksCount;
    }
    
    
    
-   public void setTasksCount( int tasksCount )
+   @Override
+   public void setTasksCount( ExtendedTaskCount tasksCount )
    {
-      if ( tasksCount < 0 )
+      if ( tasksCount == null )
       {
          throw new IllegalArgumentException( "tasksCount" );
       }

@@ -38,7 +38,7 @@ import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
 import dev.drsoran.moloko.state.InstanceState;
@@ -352,12 +352,12 @@ class TaskAddFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected ApplyChangesInfo getApplyChangesInfo()
+   protected ApplyContentChangesInfo getApplyChangesInfo()
    {
       saveChanges();
       
       final Task newTask = newTask();
-      final ApplyChangesInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
+      final ApplyContentChangesInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
                                                                        newTask );
       return modifications;
    }

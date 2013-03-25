@@ -42,7 +42,7 @@ import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.loaders.TagsLoader;
+import dev.drsoran.moloko.app.content.loaders.TagsLoader;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.UiUtils.AfterTextChangedWatcher;
@@ -174,7 +174,9 @@ class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
       final List< String > allTagsString = new ArrayList< String >( allTags.size() );
       
       for ( Tag tag : allTags )
+      {
          allTagsString.add( tag.getTag() );
+      }
       
       return allTagsString;
    }

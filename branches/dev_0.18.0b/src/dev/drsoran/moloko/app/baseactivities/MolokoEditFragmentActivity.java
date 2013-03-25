@@ -30,7 +30,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.ReadOnlyAccountException;
 import dev.drsoran.moloko.app.content.ActionItemListApplier;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -71,7 +71,7 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    
    
-   public boolean applyModifications( ApplyChangesInfo applyInfo )
+   public boolean applyModifications( ApplyContentChangesInfo applyInfo )
    {
       if ( applyInfo == null )
       {
@@ -111,7 +111,7 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    
    
-   private void showApplyChangesInfoAsToast( ApplyChangesInfo applyInfo,
+   private void showApplyChangesInfoAsToast( ApplyContentChangesInfo applyInfo,
                                              boolean success )
    {
       Toast.makeText( this,

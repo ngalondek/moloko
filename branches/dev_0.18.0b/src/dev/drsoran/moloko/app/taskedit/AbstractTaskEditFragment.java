@@ -53,10 +53,9 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -74,9 +73,7 @@ import dev.drsoran.moloko.ui.widgets.RecurrenceEditText;
 import dev.drsoran.moloko.util.Bundles;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
-import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -903,7 +900,7 @@ abstract class AbstractTaskEditFragment
    
    
    @Override
-   protected ApplyChangesInfo getApplyChangesInfo()
+   protected ApplyContentChangesInfo getApplyChangesInfo()
    {
       saveChanges();
       
@@ -913,15 +910,15 @@ abstract class AbstractTaskEditFragment
       final ModificationSet modificationSet = createModificationSet( editedTasks );
       final Resources resources = getResources();
       
-      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( modificationSet.toContentProviderActionItemList(),
-                                                                      resources.getQuantityString( R.plurals.toast_save_task,
-                                                                                                   editedTasksCount,
-                                                                                                   editedTasksCount ),
-                                                                      resources.getQuantityString( R.plurals.toast_save_task_ok,
-                                                                                                   editedTasksCount,
-                                                                                                   editedTasksCount ),
-                                                                      resources.getQuantityString( R.plurals.toast_save_task_failed,
-                                                                                                   editedTasksCount ) );
+      final ApplyContentChangesInfo applyChangesInfo = new ApplyContentChangesInfo( modificationSet.toContentProviderActionItemList(),
+                                                                                    resources.getQuantityString( R.plurals.toast_save_task,
+                                                                                                                 editedTasksCount,
+                                                                                                                 editedTasksCount ),
+                                                                                    resources.getQuantityString( R.plurals.toast_save_task_ok,
+                                                                                                                 editedTasksCount,
+                                                                                                                 editedTasksCount ),
+                                                                                    resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                                                 editedTasksCount ) );
       
       return applyChangesInfo;
    }

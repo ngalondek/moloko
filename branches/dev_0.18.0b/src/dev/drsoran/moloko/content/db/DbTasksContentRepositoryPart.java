@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import android.database.Cursor;
 import android.text.TextUtils;
@@ -38,6 +39,7 @@ import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.domain.model.Constants;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
+import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.ITask;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
@@ -47,6 +49,7 @@ import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 class DbTasksContentRepositoryPart
@@ -181,7 +184,8 @@ class DbTasksContentRepositoryPart
    
    
    
-   public ITask getById( long id, int options ) throws ContentException
+   public ITask getById( long id, int options ) throws ContentException,
+                                               NoSuchElementException
    {
       final String selection = new StringBuilder( "AND rawTask_id=" ).append( id )
                                                                      .toString();
@@ -190,7 +194,8 @@ class DbTasksContentRepositoryPart
       
       if ( !tasksIterator.hasNext() )
       {
-         throw new ContentException( "No Task with ID '" + id + "' found." );
+         throw new NoSuchElementException( "No Task with ID '" + id
+            + "' found." );
       }
       
       return tasksIterator.next();
@@ -205,7 +210,7 @@ class DbTasksContentRepositoryPart
    
    
    
-   public int getCount( String selection ) throws ContentException
+   public ExtendedTaskCount getCount( String selection ) throws ContentException
    {
       Cursor c = null;
       
@@ -213,9 +218,9 @@ class DbTasksContentRepositoryPart
       {
          final String rawQuery = selection != null ? TASKS_QUERY + " AND "
             + selection : TASKS_QUERY;
-         c = database.getReadable().rawQuery( rawQuery, null );
          
-         return c.getCount();
+         c = database.getReadable().rawQuery( rawQuery, null );
+         return createTaskCount( c );
       }
       catch ( Throwable e )
       {
@@ -330,6 +335,14 @@ class DbTasksContentRepositoryPart
    
    
    
+   private static void addLocationToTask( Cursor c, Task task, long locationId )
+   {
+      final Location location = createLocationFromCursor( c, locationId );
+      task.setLocation( location );
+   }
+   
+   
+   
    private static Task createTaskFromCursor( Cursor c )
    {
       final Task task = new Task( c.getLong( 0 ),
@@ -383,14 +396,6 @@ class DbTasksContentRepositoryPart
    
    
    
-   private static void addLocationToTask( Cursor c, Task task, long locationId )
-   {
-      final Location location = createLocationFromCursor( c, locationId );
-      task.setLocation( location );
-   }
-   
-   
-   
    private static Note createNoteFromCursor( Cursor c )
    {
       final Note note = new Note( c.getLong( Columns.ID_IDX ),
@@ -430,6 +435,77 @@ class DbTasksContentRepositoryPart
                                               c.getInt( 27 ) != 0,
                                               CursorUtils.getOptInt( c, 28, 10 ) );
       return location;
+   }
+   
+   
+   
+   private ExtendedTaskCount createTaskCount( Cursor c )
+   {
+      int incompleteTaskCount = 0;
+      int completedTaskCount = 0;
+      int dueTodayTaskCount = 0;
+      int dueTomorrowTaskCount = 0;
+      int overDueTaskCount = 0;
+      long sumEstimated = 0;
+      
+      while ( c.moveToNext() )
+      {
+         final boolean isCompleted = !c.isNull( 15 );
+         
+         if ( !isCompleted )
+         {
+            final long dueMillisUtc = CursorUtils.getOptLong( c,
+                                                              17,
+                                                              Constants.NO_TIME );
+            
+            if ( dueMillisUtc != Constants.NO_TIME )
+            {
+               final int diffToNow = MolokoDateUtils.getTimespanInDays( System.currentTimeMillis(),
+                                                                        dueMillisUtc );
+               
+               // Today?
+               if ( diffToNow == 0 )
+               {
+                  ++dueTodayTaskCount;
+               }
+               
+               // Tomorrow?
+               else if ( diffToNow == 1 )
+               {
+                  ++dueTomorrowTaskCount;
+               }
+               
+               // Overdue?
+               else if ( diffToNow < 0 )
+               {
+                  ++overDueTaskCount;
+               }
+            }
+            
+            // Sum up estimated times
+            final long estimateMillis = CursorUtils.getOptLong( c,
+                                                                20,
+                                                                Constants.NO_TIME );
+            
+            if ( estimateMillis != Constants.NO_TIME )
+            {
+               sumEstimated += estimateMillis;
+            }
+         }
+         
+         // Completed?
+         if ( isCompleted )
+         {
+            ++completedTaskCount;
+         }
+      }
+      
+      return new ExtendedTaskCount( incompleteTaskCount,
+                                    completedTaskCount,
+                                    dueTodayTaskCount,
+                                    dueTomorrowTaskCount,
+                                    overDueTaskCount,
+                                    sumEstimated );
    }
    
    

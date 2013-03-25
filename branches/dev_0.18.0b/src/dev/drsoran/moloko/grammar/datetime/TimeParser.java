@@ -1,4 +1,4 @@
-// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Time.g 2013-03-03 19:56:29
+// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Time.g 2013-03-22 12:13:06
 
 package dev.drsoran.moloko.grammar.datetime;
 
@@ -19,7 +19,7 @@ import dev.drsoran.moloko.grammar.LexerException;
 
 @SuppressWarnings(
 { "all", "warnings", "unchecked" } )
-public class TimeParser extends AbstractTimeParser
+public class TimeParser extends AbstractANTLRTimeParser
 {
    public static final String[] tokenNames = new String[]
    { "<invalid>", "<EOR>", "<DOWN>", "<UP>", "AM", "AND", "AT", "COLON",
@@ -65,9 +65,9 @@ public class TimeParser extends AbstractTimeParser
    
    
    // delegates
-   public AbstractTimeParser[] getDelegates()
+   public AbstractANTLRTimeParser[] getDelegates()
    {
-      return new AbstractTimeParser[] {};
+      return new AbstractANTLRTimeParser[] {};
    }
    
    

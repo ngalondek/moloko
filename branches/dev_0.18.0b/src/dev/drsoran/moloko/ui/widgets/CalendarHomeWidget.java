@@ -38,12 +38,10 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.DelayedRun;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
@@ -218,7 +216,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    
    
-   private String getFilterExpression( final MolokoCalendar cal )
+   private String getFilterExpression( MolokoCalendar cal )
    {
       return RtmSmartFilterLexer.OP_DUE_LIT
          + RtmSmartFilterLexer.quotify( getUiContext().getDateFormatter()

@@ -26,7 +26,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -34,8 +33,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class TitleWithSpinnerLayout extends TitleWithViewLayout
@@ -200,33 +197,6 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       for ( int i = 0; i < values.length; ++i )
       {
          this.values[ i ] = values[ i ];
-      }
-   }
-   
-   
-   
-   public void setValues( Cursor c, int colIdx )
-   {
-      if ( c == null )
-      {
-         throw new IllegalArgumentException( "cursor is null" );
-      }
-      
-      this.values = new String[ c.getCount() ];
-      
-      if ( c.getCount() > 0 )
-      {
-         boolean ok = c.moveToFirst();
-         for ( int i = 0; ok && !c.isAfterLast(); c.moveToNext(), ++i )
-         {
-            this.values[ i ] = c.getString( colIdx );
-         }
-         
-         if ( !ok )
-         {
-            this.values = null;
-            LogUtils.logDBError( getContext(), getClass(), Strings.EMPTY_STRING );
-         }
       }
    }
    

@@ -29,7 +29,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.SystemContext;
 
 
 public class RtmDatabase
@@ -50,13 +49,13 @@ public class RtmDatabase
    
    
    
-   public RtmDatabase( SystemContext context )
+   public RtmDatabase( Context context, ILog log )
    {
-      log = context.Log();
-      dbAccess = new DatabaseOpenHelper( context );
-      tables = getTables();
-      triggers = getTriggers();
-      queries = getQueries();
+      this.log = log;
+      this.dbAccess = new DatabaseOpenHelper( context );
+      this.tables = getTables();
+      this.triggers = getTriggers();
+      this.queries = getQueries();
    }
    
    
@@ -86,6 +85,13 @@ public class RtmDatabase
    {
       @SuppressWarnings( "unchecked" )
       final T query = (T) queries.get( queryType );
+      
+      if ( query == null )
+      {
+         throw new IllegalArgumentException( "No query of type '" + queryType
+            + "'" );
+      }
+      
       return query;
    }
    

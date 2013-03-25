@@ -27,12 +27,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.Loader;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.event.IOnTimeChangedListener;
-import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.provider.Rtm.Tasks;
 
 

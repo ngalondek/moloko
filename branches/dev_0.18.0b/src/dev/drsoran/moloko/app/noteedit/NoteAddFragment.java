@@ -36,8 +36,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
-import dev.drsoran.moloko.content.db.RtmNotesTable;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.content.db.RtmNotesTable.NewNoteId;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -166,7 +165,7 @@ class NoteAddFragment extends AbstractNoteEditFragment
    
    
    @Override
-   protected ApplyChangesInfo getChanges()
+   protected ApplyContentChangesInfo getChanges()
    {
       final NewNoteId newNoteId = createNewNoteId();
       final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
@@ -177,8 +176,8 @@ class NoteAddFragment extends AbstractNoteEditFragment
                                                    Strings.nullIfEmpty( UiUtils.getTrimmedText( title ) ),
                                                    Strings.nullIfEmpty( UiUtils.getTrimmedText( text ) ) );
       
-      final ApplyChangesInfo modifications = NoteEditUtils.insertNote( getSherlockActivity(),
-                                                                       newNote );
+      final ApplyContentChangesInfo modifications = NoteEditUtils.insertNote( getSherlockActivity(),
+                                                                              newNote );
       if ( modifications.getActionItems() != null )
       {
          setNewNoteId( newNote.getId() );
@@ -192,6 +191,6 @@ class NoteAddFragment extends AbstractNoteEditFragment
    private NewNoteId createNewNoteId()
    {
       return RtmNotesTable.createNewNoteId( getSherlockActivity().getContentResolver()
-                                                                        .acquireContentProviderClient( Notes.CONTENT_URI ) );
+                                                                 .acquireContentProviderClient( Notes.CONTENT_URI ) );
    }
 }

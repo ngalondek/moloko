@@ -25,83 +25,69 @@ package dev.drsoran.moloko.app.contactslist;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContactOverviewsProviderPart;
-import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.provider.Rtm.ContactOverviews;
-import dev.drsoran.rtm.Contact;
-import dev.drsoran.rtm.RtmContactWithTaskCount;
+import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
+import dev.drsoran.moloko.app.content.loaders.ContactsLoader;
+import dev.drsoran.moloko.content.ContentProviderUtils;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.model.IContact;
+import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
-class ContactsLoader extends AbstractLoader< List< Contact > >
+class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
 {
-   public final static int ID = R.id.loader_contacts;
+   public final static int ID = R.id.loader_linked_contacts;
    
-   private final static String CONTACTS_NOTE_CONTAINS_RTM;
+   private final ContactsLoader contactsLoader;
+   
+   private final static String ANDROID_CONTACTS_NOTE_CONTAINS_RTM;
    
    static
    {
-      CONTACTS_NOTE_CONTAINS_RTM = ContactsContract.Data.MIMETYPE + "='"
-         + ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE + "' AND ( "
+      ANDROID_CONTACTS_NOTE_CONTAINS_RTM = ContactsContract.Data.MIMETYPE
+         + "='" + ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+         + "' AND ( "
          // fullname
          + ContactsContract.CommonDataKinds.Note.NOTE + " like '%RTM:%?%' OR "
          // username
          + ContactsContract.CommonDataKinds.Note.NOTE + " like '%RTM:%?%' )";
    }
    
-   private final String selection;
    
    
-   
-   public ContactsLoader( Context context )
-   {
-      this( context, null );
-   }
-   
-   
-   
-   public ContactsLoader( Context context, String selection )
+   public LinkedContactsLoader( DomainContext context,
+      ContactsLoader contactsLoader )
    {
       super( context );
-      this.selection = selection;
+      this.contactsLoader = contactsLoader;
    }
    
    
    
    @Override
-   protected List< Contact > queryResultInBackground( ContentProviderClient client )
+   protected List< LinkedContact > queryResultInBackground( IContentRepository contentRepository )
    {
-      List< Contact > contacts = null;
-      final List< RtmContactWithTaskCount > rtmContacts = ContactOverviewsProviderPart.getContactOverviews( client,
-                                                                                                            selection );
-      if ( rtmContacts != null )
+      final List< IContact > contacts = contactsLoader.loadInBackground();
+      
+      if ( contactsLoader.hasContentException() )
       {
-         // Try to link the RTM contacts to the phonebook contacts
-         contacts = new ArrayList< Contact >( rtmContacts.size() );
-         
-         for ( RtmContactWithTaskCount rtmContact : rtmContacts )
-         {
-            contacts.add( linkRtmContact( rtmContact ) );
-         }
+         throw contactsLoader.getContentException();
       }
       
-      return contacts;
-   }
-   
-   
-   
-   @Override
-   protected Uri getContentUri()
-   {
-      return ContactOverviews.CONTENT_URI;
+      final List< LinkedContact > linkedContacts = new ArrayList< LinkedContact >( contacts.size() );
+      
+      for ( IContact contact : contacts )
+      {
+         final int numParticipatingTasks = contentRepository.getNumTasksContactIsParticipating( contact.getId() );
+         linkedContacts.add( linkRtmContact( contact, numParticipatingTasks ) );
+      }
+      
+      return linkedContacts;
    }
    
    
@@ -124,30 +110,30 @@ class ContactsLoader extends AbstractLoader< List< Contact > >
    
    
    
-   private Contact linkRtmContact( RtmContactWithTaskCount rtmContact )
+   private LinkedContact linkRtmContact( IContact contact,
+                                         int numParticipatingTasks )
    {
-      Contact contact = new Contact( rtmContact );
-      
-      Cursor c = null;
+      LinkedContact linkedContact = new LinkedContact( contact,
+                                                       numParticipatingTasks );
       
       String lookUpKey = null;
       String photoId = null;
       boolean isLinkedByNotes = false;
       
-      final ContentResolver contentResolver = getContext().getContentResolver();
-      
+      Cursor c = null;
       try
       {
-         Uri lookUpUri = Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_FILTER_URI,
-                                               Uri.encode( contact.getFullname() ) );
+         final Uri lookUpUri = Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_FILTER_URI,
+                                                     Uri.encode( linkedContact.getFullName() ) );
+         final ContentResolver contentResolver = getContext().getContentResolver();
          
          c = contentResolver.query( lookUpUri, new String[]
          { ContactsContract.Contacts._ID, ContactsContract.Contacts.PHOTO_ID,
           ContactsContract.Contacts.LOOKUP_KEY }, null, null, null );
          
-         // Check if a contact with the same full name is in the phonebook. And that it is
+         // Check if a contact with the same full name is in the phonebook and is
          // unique.
-         if ( c != null && c.getCount() == 1 && c.moveToFirst() )
+         if ( c.getCount() == 1 && c.moveToFirst() )
          {
             photoId = c.getString( 1 );
             lookUpKey = c.getString( 2 );
@@ -156,10 +142,13 @@ class ContactsLoader extends AbstractLoader< List< Contact > >
          // Check if a contact with a note starting with RTM: is in the phonebook
          else
          {
-            final String selection = DbUtils.bindAll( CONTACTS_NOTE_CONTAINS_RTM,
-                                                      new String[]
-                                                      { contact.getFullname(),
-                                                       contact.getUsername() } );
+            c.close();
+            
+            final String selection = ContentProviderUtils.bindAll( ANDROID_CONTACTS_NOTE_CONTAINS_RTM,
+                                                                   new String[]
+                                                                   {
+                                                                    linkedContact.getFullName(),
+                                                                    linkedContact.getUserName() } );
             
             c = contentResolver.query( ContactsContract.Data.CONTENT_URI,
                                        new String[]
@@ -173,7 +162,7 @@ class ContactsLoader extends AbstractLoader< List< Contact > >
                                        null,
                                        null );
             
-            if ( c != null && c.moveToFirst() )
+            if ( c.moveToFirst() )
             {
                photoId = c.getString( 1 );
                lookUpKey = c.getString( 4 );
@@ -184,41 +173,37 @@ class ContactsLoader extends AbstractLoader< List< Contact > >
       finally
       {
          if ( c != null )
+         {
             c.close();
+         }
       }
       
       if ( photoId != null )
       {
-         setContactPhoto( photoId, contact );
+         setContactPhoto( photoId, linkedContact );
       }
       
-      contact.setLookUpKey( lookUpKey, isLinkedByNotes );
+      linkedContact.setLookUpKey( lookUpKey, isLinkedByNotes );
       
-      return contact;
+      return linkedContact;
    }
    
    
    
-   private void setContactPhoto( String photoId, Contact contact )
+   private void setContactPhoto( String photoId, LinkedContact contact )
    {
-      Cursor photoCursor = null;
+      final Uri photoUri = ContentProviderUtils.contentUriWithId( ContactsContract.Data.CONTENT_URI,
+                                                                  photoId );
       
-      final Uri photoUri = DbUtils.contentUriWithId( ContactsContract.Data.CONTENT_URI,
-                                                     photoId );
-      
+      Cursor c = null;
       try
       {
-         photoCursor = getContext().getContentResolver()
-                                   .query( photoUri,
-                                           new String[]
-                                           { ContactsContract.CommonDataKinds.Photo.PHOTO },
-                                           null,
-                                           null,
-                                           null );
+         c = getContext().getContentResolver().query( photoUri, new String[]
+         { ContactsContract.CommonDataKinds.Photo.PHOTO }, null, null, null );
          
-         if ( photoCursor != null && photoCursor.moveToNext() )
+         if ( c.moveToNext() )
          {
-            final byte[] data = photoCursor.getBlob( 0 );
+            final byte[] data = c.getBlob( 0 );
             
             if ( data != null )
             {
@@ -228,8 +213,10 @@ class ContactsLoader extends AbstractLoader< List< Contact > >
       }
       finally
       {
-         if ( photoCursor != null )
-            photoCursor.close();
+         if ( c != null )
+         {
+            c.close();
+         }
       }
    }
 }

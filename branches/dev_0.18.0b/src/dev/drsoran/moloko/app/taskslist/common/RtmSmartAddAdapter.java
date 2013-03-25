@@ -37,23 +37,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
 
-import com.mdt.rtm.data.RtmList;
-import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
-import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.content.db.RtmListsTable;
-import dev.drsoran.moloko.content.db.RtmLocationsTable;
+import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.grammar.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.rtm.Tag;
@@ -111,12 +106,16 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       final View view;
       
       if ( convertView == null )
+      {
          view = LayoutInflater.from( context )
                               .inflate( R.layout.sherlock_spinner_dropdown_item,
                                         parent,
                                         false );
+      }
       else
+      {
          view = convertView;
+      }
       
       final Pair< Integer, String > item = data.get( position );
       
@@ -164,16 +163,20 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    
    
-   private final static < T > T findSuggestion( List< Pair< String, T > > list,
-                                                String text )
+   private static < T > T findSuggestion( List< Pair< String, T > > list,
+                                          String text )
    {
       if ( list == null )
+      {
          return null;
+      }
       
       for ( Pair< String, T > pair : list )
       {
          if ( pair.first.equalsIgnoreCase( text ) )
+         {
             return pair.second;
+         }
       }
       
       return null;
@@ -182,7 +185,7 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    private final class Filter extends android.widget.Filter
    {
-      private int listsCnt = 0;
+      private final int listsCnt = 0;
       
       
       
@@ -231,51 +234,45 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                      }
                   }
                   
-                  if ( due_dates != null )
-                     newData = filter( due_dates,
-                                       opLessConstraint,
-                                       R.drawable.ic_button_task_time );
+                  newData = filter( due_dates,
+                                    opLessConstraint,
+                                    R.drawable.ic_button_task_time );
                   break;
                
                case RtmSmartAddTokenizer.OP_PRIORITY:
                   if ( priorities == null )
                   {
                      priorities = new LinkedList< Pair< String, String > >();
-                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.High ),
-                                                  RtmTask.convertPriority( Priority.High ) ) );
-                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.Medium ),
-                                                  RtmTask.convertPriority( Priority.Medium ) ) );
-                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.Low ),
-                                                  RtmTask.convertPriority( Priority.Low ) ) );
-                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.None ),
-                                                  RtmTask.convertPriority( Priority.None ) ) );
+                     priorities.add( Pair.create( Priority.High.toString(),
+                                                  Priority.High.toString() ) );
+                     priorities.add( Pair.create( Priority.Medium.toString(),
+                                                  Priority.Medium.toString() ) );
+                     priorities.add( Pair.create( Priority.Low.toString(),
+                                                  Priority.Low.toString() ) );
+                     priorities.add( Pair.create( Priority.None.toString(),
+                                                  Priority.None.toString() ) );
                   }
                   
-                  if ( priorities != null )
-                     newData = filter( priorities,
-                                       opLessConstraint,
-                                       R.drawable.ic_button_task_priority );
+                  newData = filter( priorities,
+                                    opLessConstraint,
+                                    R.drawable.ic_button_task_priority );
                   break;
                
                case RtmSmartAddTokenizer.OP_LIST_TAGS:
                   if ( lists_and_tags == null )
                   {
+                     lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
+                     
                      {
-                        final RtmLists lists = RtmListsTable.getAllLists( context.getContentResolver()
-                                                                                        .acquireContentProviderClient( Lists.CONTENT_URI ),
-                                                                                 Lists.IS_SMART_LIST
-                                                                                    + "=0 AND "
-                                                                                    + RtmListsTable.SELECTION_EXCLUDE_DELETED_AND_ARCHIVED );
-                        if ( lists != null )
+                        for ( ITasksList tasksList : context.getContentRepository()
+                                                            .getPhysicalTasksLists() )
                         {
-                           lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
-                           for ( RtmList rtmList : lists.getListsPlain() )
-                              lists_and_tags.add( Pair.create( rtmList.getName(),
-                                                               Pair.create( rtmList.getId(),
-                                                                            Boolean.TRUE ) ) );
-                           
-                           listsCnt = lists_and_tags.size();
+                           lists_and_tags.add( Pair.create( tasksList.getName(),
+                                                            Pair.create( String.valueOf( tasksList.getId() ),
+                                                                         Boolean.TRUE ) ) );
                         }
+                        
+                        listsCnt = lists_and_tags.size();
                      }
                      {
                         final List< Tag > tags = TagsProviderPart.getAllTags( context.getContentResolver()
@@ -285,43 +282,42 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                                                                               true );
                         if ( tags != null )
                         {
-                           if ( lists_and_tags == null )
-                              lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
-                           
                            for ( Tag tag : tags )
+                           {
                               lists_and_tags.add( Pair.create( tag.getTag(),
                                                                Pair.create( (String) null,
                                                                             Boolean.FALSE ) ) );
+                           }
                         }
                      }
                   }
                   
-                  if ( lists_and_tags != null )
-                     newData = filter( lists_and_tags,
-                                       opLessConstraint,
-                                       listsCnt - 1,
-                                       R.drawable.ic_button_task_list,
-                                       R.drawable.ic_list_change_tags_tag );
+                  newData = filter( lists_and_tags,
+                                    opLessConstraint,
+                                    listsCnt - 1,
+                                    R.drawable.ic_button_task_list,
+                                    R.drawable.ic_list_change_tags_tag );
                   break;
                
                case RtmSmartAddTokenizer.OP_LOCATION:
                   if ( locations == null )
                   {
                      final List< RtmLocation > dbLocs = RtmLocationsTable.getAllLocations( context.getContentResolver()
-                                                                                                         .acquireContentProviderClient( Locations.CONTENT_URI ) );
+                                                                                                  .acquireContentProviderClient( Locations.CONTENT_URI ) );
                      if ( dbLocs != null )
                      {
                         locations = new LinkedList< Pair< String, String > >();
                         for ( RtmLocation rtmLocation : dbLocs )
+                        {
                            locations.add( Pair.create( rtmLocation.name,
                                                        rtmLocation.id ) );
+                        }
                      }
                   }
                   
-                  if ( locations != null )
-                     newData = filter( locations,
-                                       opLessConstraint,
-                                       R.drawable.ic_button_task_location );
+                  newData = filter( locations,
+                                    opLessConstraint,
+                                    R.drawable.ic_button_task_location );
                   break;
                
                case RtmSmartAddTokenizer.OP_REPEAT:
@@ -342,10 +338,9 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                      }
                   }
                   
-                  if ( repeats != null )
-                     newData = filter( repeats,
-                                       opLessConstraint,
-                                       R.drawable.ic_button_task_recurrent );
+                  newData = filter( repeats,
+                                    opLessConstraint,
+                                    R.drawable.ic_button_task_recurrent );
                   break;
                
                case RtmSmartAddTokenizer.OP_ESTIMATE:
@@ -362,10 +357,9 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                      addEstimate( DateUtils.HOUR_IN_MILLIS );
                   }
                   
-                  if ( estimates != null )
-                     newData = filter( estimates,
-                                       opLessConstraint,
-                                       R.drawable.ic_button_task_thumb );
+                  newData = filter( estimates,
+                                    opLessConstraint,
+                                    R.drawable.ic_button_task_thumb );
                   break;
                
                default :
@@ -449,8 +443,10 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
             final Pair< String, T > value = list.get( i );
             
             if ( value.first.toLowerCase().startsWith( prefix ) )
+            {
                newData.add( Pair.create( i <= toIdx ? toIconId : elseIconId,
                                          value.first ) );
+            }
          }
          
          return newData;

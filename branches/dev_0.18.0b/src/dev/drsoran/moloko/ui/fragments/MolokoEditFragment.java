@@ -25,7 +25,7 @@ package dev.drsoran.moloko.ui.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 
 
@@ -89,14 +89,14 @@ public abstract class MolokoEditFragment extends MolokoFragment implements
    
    
    @Override
-   public final ApplyChangesInfo onFinishEditing()
+   public final ApplyContentChangesInfo onFinishEditing()
    {
       if ( hasChanges() )
       {
          return getChanges();
       }
       
-      return ApplyChangesInfo.EMPTY;
+      return ApplyContentChangesInfo.EMPTY;
    }
    
    
@@ -108,5 +108,5 @@ public abstract class MolokoEditFragment extends MolokoFragment implements
    
    
    
-   protected abstract ApplyChangesInfo getChanges();
+   protected abstract ApplyContentChangesInfo getChanges();
 }

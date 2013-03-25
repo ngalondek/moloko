@@ -27,9 +27,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.ui.ShowButtonTextAsToast;
 import dev.drsoran.moloko.ui.fragments.MolokoFragment;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
-import dev.drsoran.moloko.util.ShowButtonTextAsToast;
 
 
 class QuickAddTaskButtonBarFragment extends MolokoFragment implements

@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 
+@Deprecated
 class Rtm
 {
    public static final String AUTHORITY = "dev.drsoran.provider.Rtm";

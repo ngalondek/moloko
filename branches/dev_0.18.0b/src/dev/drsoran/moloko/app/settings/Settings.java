@@ -47,7 +47,7 @@ import dev.drsoran.rtm.RtmSettings;
 
 public class Settings implements ISettingsService, IOnSettingsChangedListener
 {
-   public final static String NO_DEFAULT_LIST_ID = Strings.EMPTY_STRING;
+   public final static long NO_DEFAULT_LIST_ID = -1L;
    
    public final static String ALL_LISTS = "All";
    
@@ -120,10 +120,10 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    
    
    @Override
-   public String getDefaultListId()
+   public long getDefaultListId()
    {
-      return loadString( context.getString( R.string.key_def_list_local ),
-                         NO_DEFAULT_LIST_ID );
+      return loadLong( context.getString( R.string.key_def_list_local ),
+                       NO_DEFAULT_LIST_ID );
    }
    
    
@@ -133,6 +133,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    {
       setSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ),
                       sync );
+      
       if ( sync && rtmSettings != null )
       {
          String syncedDefList = rtmSettings.getDefaultListId();
@@ -157,15 +158,10 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    
    
    @Override
-   public void setDefaultListId( String id )
+   public void setDefaultListId( long id )
    {
-      if ( TextUtils.isEmpty( id ) )
-      {
-         id = NO_DEFAULT_LIST_ID;
-      }
-      
       storeStringIfChanged( context.getString( R.string.key_def_list_local ),
-                            id );
+                            String.valueOf( id ) );
       setSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ),
                       false );
    }

@@ -40,10 +40,9 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.content.loaders.TaskLoader;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.ParticipantList;
-import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.MenuItemPreparer;
 import dev.drsoran.moloko.ui.UiUtils;

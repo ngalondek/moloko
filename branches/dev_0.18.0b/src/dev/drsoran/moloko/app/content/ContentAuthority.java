@@ -20,13 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.app.content;
 
-public final class ListEntriesAndValues
+public final class ContentAuthority
 {
-   public final static int NONE_IDX = 0;
-   
-   public CharSequence[] entries;
-   
-   public CharSequence[] values;
+   public final static String RTM = "dev.drsoran.provider.Rtm";
 }

@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.grammar.recurrence;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,22 +32,25 @@ import dev.drsoran.moloko.grammar.IDateFormatter;
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.ILocalizedParser;
 import dev.drsoran.moloko.grammar.LazyParserInstanceIterator;
+import dev.drsoran.moloko.grammar.recurrence.de.RecurrenceParserFactoryDe;
+import dev.drsoran.moloko.util.Reflection;
 
 
 public class RecurrenceParserRepository implements IRecurrenceParserRepository
 {
-   private final static List< Class< ? extends IRecurrenceParser > > RecurrenceParserClasses = new ArrayList< Class< ? extends IRecurrenceParser >>( 2 );
+   private final static Method FACTORY_METHOD;
+   
+   private final List< IRecurrenceParserFactory > factories;
    
    private final List< IRecurrenceParser > recurrenceParserInstances = new ArrayList< IRecurrenceParser >();
    
    private final IRecurrencePatternParser recurrencePatternParser;
    
-   private final IDateTimeParsing dateTimeParsing;
-   
    static
    {
-      RecurrenceParserClasses.add( dev.drsoran.moloko.grammar.recurrence.RecurrenceParserImpl.class );
-      RecurrenceParserClasses.add( dev.drsoran.moloko.grammar.recurrence.de.RecurrenceParserImpl.class );
+      FACTORY_METHOD = Reflection.findMethod( IRecurrenceParserFactory.class,
+                                              "createRecurrenceParser" );
+      
    }
    
    
@@ -55,10 +59,14 @@ public class RecurrenceParserRepository implements IRecurrenceParserRepository
       IRecurrenceSentenceLanguage recurrenceSentenceLanguage,
       IDateTimeParsing dateTimeParsing )
    {
-      this.dateTimeParsing = dateTimeParsing;
-      this.recurrencePatternParser = new RecurrencePatternParserImpl( log,
-                                                                      dateFormatter,
-                                                                      recurrenceSentenceLanguage );
+      factories = new ArrayList< IRecurrenceParserFactory >( 2 );
+      
+      factories.add( new RecurrenceParserFactoryEn( dateTimeParsing ) );
+      factories.add( new RecurrenceParserFactoryDe( dateTimeParsing ) );
+      
+      recurrencePatternParser = new RecurrencePatternParserImpl( log,
+                                                                 dateFormatter,
+                                                                 recurrenceSentenceLanguage );
    }
    
    
@@ -66,9 +74,9 @@ public class RecurrenceParserRepository implements IRecurrenceParserRepository
    @Override
    public Iterable< IRecurrenceParser > getRecurrenceParsers()
    {
-      return new LazyParserInstanceIterator< IRecurrenceParser >( RecurrenceParserClasses,
-                                                                  recurrenceParserInstances,
-                                                                  dateTimeParsing );
+      return new LazyParserInstanceIterator< IRecurrenceParser >( factories,
+                                                                  FACTORY_METHOD,
+                                                                  recurrenceParserInstances );
    }
    
    
@@ -100,7 +108,7 @@ public class RecurrenceParserRepository implements IRecurrenceParserRepository
    @Override
    public boolean existsRecurrenceParser( Locale locale )
    {
-      return hasParserClassWithLocale( RecurrenceParserClasses, locale );
+      return hasParserClassWithLocale( locale );
    }
    
    
@@ -121,20 +129,11 @@ public class RecurrenceParserRepository implements IRecurrenceParserRepository
    
    
    
-   private final static boolean equalLocales( Locale locale1, Locale locale2 )
+   private < T > boolean hasParserClassWithLocale( Locale locale )
    {
-      return locale1.hashCode() == locale2.hashCode()
-         || locale1.getLanguage().equalsIgnoreCase( locale2.getLanguage() );
-   }
-   
-   
-   
-   private final < T > boolean hasParserClassWithLocale( Iterable< Class< ? extends T > > classes,
-                                                         Locale locale )
-   {
-      for ( Class< ? extends T > clazz : classes )
+      for ( IRecurrenceParserFactory factory : factories )
       {
-         if ( equalLocales( locale, getLocale( clazz ) ) )
+         if ( equalLocales( locale, factory.getParserLocale() ) )
          {
             return true;
          }
@@ -145,23 +144,9 @@ public class RecurrenceParserRepository implements IRecurrenceParserRepository
    
    
    
-   private final < T > Locale getLocale( Class< T > clazz )
+   private static boolean equalLocales( Locale locale1, Locale locale2 )
    {
-      try
-      {
-         return (Locale) clazz.getField( "LOCALE" ).get( null );
-      }
-      catch ( IllegalArgumentException e )
-      {
-         throw new RuntimeException( e );
-      }
-      catch ( IllegalAccessException e )
-      {
-         throw new RuntimeException( e );
-      }
-      catch ( NoSuchFieldException e )
-      {
-         throw new RuntimeException( e );
-      }
+      return locale1.hashCode() == locale2.hashCode()
+         || locale1.getLanguage().equalsIgnoreCase( locale2.getLanguage() );
    }
 }

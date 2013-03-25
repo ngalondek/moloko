@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -20,54 +20,41 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.noteedit;
+package dev.drsoran.moloko.app.content.loaders;
 
-import android.content.ContentProviderClient;
-import android.content.Context;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.database.ContentObserver;
-import android.net.Uri;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.db.RtmNotesTable;
-import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.model.IContact;
+import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
-class RtmTaskNoteLoader extends AbstractLoader< RtmTaskNote >
+public class ContactsLoader extends AbstractLoader< List< IContact > >
 {
-   public final static int ID = R.id.loader_note;
-   
-   private final String noteId;
+   public final static int ID = R.id.loader_contacts;
    
    
    
-   public RtmTaskNoteLoader( Context context, String noteId )
+   public ContactsLoader( DomainContext context )
    {
       super( context );
-      this.noteId = noteId;
    }
    
    
    
    @Override
-   protected RtmTaskNote queryResultInBackground( ContentProviderClient client )
+   protected List< IContact > queryResultInBackground( IContentRepository contentRepository )
    {
-      RtmTaskNote note = null;
+      final List< IContact > contacts = new ArrayList< IContact >();
+      for ( IContact contact : contentRepository.getContacts() )
+      {
+         contacts.add( contact );
+      }
       
-      if ( noteId != null )
-         note = RtmNotesTable.getNote( client, noteId );
-      
-      return note;
-   }
-   
-   
-   
-   @Override
-   protected Uri getContentUri()
-   {
-      return Notes.CONTENT_URI;
+      return contacts;
    }
    
    
@@ -75,8 +62,8 @@ class RtmTaskNoteLoader extends AbstractLoader< RtmTaskNote >
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      getContext().getContentResolver()
-                  .registerContentObserver( getContentUri(), true, observer );
+      ContactOverviewsProviderPart.registerContentObserver( getContext(),
+                                                            observer );
    }
    
    
@@ -84,6 +71,7 @@ class RtmTaskNoteLoader extends AbstractLoader< RtmTaskNote >
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {
-      getContext().getContentResolver().unregisterContentObserver( observer );
+      ContactOverviewsProviderPart.unregisterContentObserver( getContext(),
+                                                              observer );
    }
 }

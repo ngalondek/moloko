@@ -23,20 +23,24 @@
 package dev.drsoran.moloko.grammar;
 
 import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterParsingReturn;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterTokenCollection;
 
 
 public interface IRtmSmartFilterParsing
 {
-   RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString );
+   RtmSmartFilterParsingReturn evaluateRtmSmartFilter( String filterString ) throws GrammarException;
    
    
    
-   RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString,
-                                                IRtmSmartFilterEvaluator evaluator );
+   RtmSmartFilterParsingReturn evaluateRtmSmartFilter( String filterString,
+                                                       IRtmSmartFilterEvaluator evaluator ) throws GrammarException;
    
    
    
-   RtmSmartFilterTokenCollection getSmartFilterTokens( String filterString );
+   RtmSmartFilterTokenCollection getSmartFilterTokens( String filterString ) throws GrammarException;
+   
+   
+   
+   boolean isParsableSmartFilter( String filterString );
 }

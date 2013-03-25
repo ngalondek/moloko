@@ -22,19 +22,24 @@
 
 package dev.drsoran.moloko.grammar.datetime;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import dev.drsoran.moloko.grammar.ILocalizedParser;
 import dev.drsoran.moloko.grammar.LazyParserInstanceIterator;
+import dev.drsoran.moloko.grammar.datetime.de.DateTimeParserFactoryDe;
+import dev.drsoran.moloko.util.Reflection;
 
 
 public class DateTimeParserRepository implements IDateTimeParserRepository
 {
-   private final static List< Class< ? extends IDateParser > > DateParserClasses = new ArrayList< Class< ? extends IDateParser > >( 2 );
+   private final static List< IDateTimeParserFactory > FACTORIES;
    
-   private final static List< Class< ? extends ITimeParser > > TimeParserClasses = new ArrayList< Class< ? extends ITimeParser >>( 2 );
+   private final static Method FACTORY_METHOD_DATE_PARSER;
+   
+   private final static Method FACTORY_METHOD_TIME_PARSER;
    
    private final List< IDateParser > dateParserInstances = new ArrayList< IDateParser >();
    
@@ -42,11 +47,16 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
    
    static
    {
-      DateParserClasses.add( dev.drsoran.moloko.grammar.datetime.DateParserImpl.class );
-      DateParserClasses.add( dev.drsoran.moloko.grammar.datetime.de.DateParserImpl.class );
+      FACTORIES = new ArrayList< IDateTimeParserFactory >( 2 );
       
-      TimeParserClasses.add( dev.drsoran.moloko.grammar.datetime.TimeParserImpl.class );
-      TimeParserClasses.add( dev.drsoran.moloko.grammar.datetime.de.TimeParserImpl.class );
+      FACTORIES.add( new DateTimeParserFactoryEn() );
+      FACTORIES.add( new DateTimeParserFactoryDe() );
+      
+      FACTORY_METHOD_DATE_PARSER = Reflection.findMethod( IDateTimeParserFactory.class,
+                                                          "createDateParser" );
+      
+      FACTORY_METHOD_TIME_PARSER = Reflection.findMethod( IDateTimeParserFactory.class,
+                                                          "createTimeParser" );
    }
    
    
@@ -54,7 +64,8 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
    @Override
    public Iterable< IDateParser > getDateParsers()
    {
-      return new LazyParserInstanceIterator< IDateParser >( DateParserClasses,
+      return new LazyParserInstanceIterator< IDateParser >( FACTORIES,
+                                                            FACTORY_METHOD_DATE_PARSER,
                                                             dateParserInstances );
    }
    
@@ -63,7 +74,8 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
    @Override
    public Iterable< ITimeParser > getTimeParsers()
    {
-      return new LazyParserInstanceIterator< ITimeParser >( TimeParserClasses,
+      return new LazyParserInstanceIterator< ITimeParser >( FACTORIES,
+                                                            FACTORY_METHOD_TIME_PARSER,
                                                             timeParserInstances );
    }
    
@@ -104,7 +116,7 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
    @Override
    public boolean existsDateParserForLocale( Locale locale )
    {
-      return hasParserClassWithLocale( DateParserClasses, locale );
+      return hasParserClassWithLocale( locale );
    }
    
    
@@ -112,7 +124,7 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
    @Override
    public boolean existsTimeParserForLocale( Locale locale )
    {
-      return hasParserClassWithLocale( TimeParserClasses, locale );
+      return hasParserClassWithLocale( locale );
    }
    
    
@@ -133,20 +145,11 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
    
    
    
-   private final static boolean equalLocales( Locale locale1, Locale locale2 )
+   private < T > boolean hasParserClassWithLocale( Locale locale )
    {
-      return locale1.hashCode() == locale2.hashCode()
-         || locale1.getLanguage().equalsIgnoreCase( locale2.getLanguage() );
-   }
-   
-   
-   
-   private final < T > boolean hasParserClassWithLocale( Iterable< Class< ? extends T > > classes,
-                                                         Locale locale )
-   {
-      for ( Class< ? extends T > clazz : classes )
+      for ( IDateTimeParserFactory factory : FACTORIES )
       {
-         if ( equalLocales( locale, getLocale( clazz ) ) )
+         if ( equalLocales( locale, factory.getParserLocale() ) )
          {
             return true;
          }
@@ -157,23 +160,9 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
    
    
    
-   private final < T > Locale getLocale( Class< T > clazz )
+   private static boolean equalLocales( Locale locale1, Locale locale2 )
    {
-      try
-      {
-         return (Locale) clazz.getField( "LOCALE" ).get( null );
-      }
-      catch ( IllegalArgumentException e )
-      {
-         throw new RuntimeException( e );
-      }
-      catch ( IllegalAccessException e )
-      {
-         throw new RuntimeException( e );
-      }
-      catch ( NoSuchFieldException e )
-      {
-         throw new RuntimeException( e );
-      }
+      return locale1.hashCode() == locale2.hashCode()
+         || locale1.getLanguage().equalsIgnoreCase( locale2.getLanguage() );
    }
 }

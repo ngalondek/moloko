@@ -303,7 +303,8 @@ public class MolokoApp extends Application implements
    private void createDomainServices()
    {
       final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage();
-      domainServicesContainer = new DomainServicesContainer( systemServicesContainer.Log(),
+      domainServicesContainer = new DomainServicesContainer( this,
+                                                             systemServicesContainer.Log(),
                                                              uiServicesContainer.getDateFormatter(),
                                                              recurrenceSentenceLanguage );
    }

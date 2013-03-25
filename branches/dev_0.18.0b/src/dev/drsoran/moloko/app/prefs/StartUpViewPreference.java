@@ -22,12 +22,10 @@
 
 package dev.drsoran.moloko.app.prefs;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -35,13 +33,10 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.db.RtmListsTable;
-import dev.drsoran.moloko.util.ListEntriesAndValues;
-import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.moloko.domain.model.ITasksList;
 
 
 class StartUpViewPreference extends AutoSummaryListPreference implements
@@ -99,8 +94,11 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
                     .equals( newValueStr )
             && getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
          {
-            defListEntriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync( RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
-               | RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
+            final TasksListsEntriesAndValuesLoader entriesAndValuesLoader = new TasksListsEntriesAndValuesLoader( getContext(),
+                                                                                                                  getAppContext().getContentRepository() );
+            
+            defListEntriesAndValues = entriesAndValuesLoader.createEntriesAndValuesSync( TasksListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
+               | TasksListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
             
             if ( defListEntriesAndValues != null )
             {
@@ -132,7 +130,7 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
                      // Check if the client has chosen a list.
                      if ( positive )
                      {
-                        getSettings().setDefaultListId( defListEntriesAndValues.values[ chosenDefListIdx ].toString() );
+                        getSettings().setDefaultListId( Long.parseLong( defListEntriesAndValues.values[ chosenDefListIdx ].toString() ) );
                         
                         defaultListName = defListEntriesAndValues.entries[ chosenDefListIdx ].toString();
                         currentStartUpValueIdx = 0;
@@ -206,29 +204,18 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    
    private void setDefaultListNameFromDatabase()
    {
-      final String defListId = getSettings().getDefaultListId();
-      if ( !TextUtils.isEmpty( defListId ) )
+      final long defListId = getSettings().getDefaultListId();
+      if ( defListId != Settings.NO_DEFAULT_LIST_ID )
       {
-         ContentProviderClient client = null;
-         
          try
          {
-            client = getContext().getContentResolver()
-                                 .acquireContentProviderClient( Lists.CONTENT_URI );
-            
-            final Collection< String > defaultListNameCollection = RtmListsTable.resolveListIdsToListNames( client,
-                                                                                                                   Collections.singleton( defListId ) );
-            if ( !defaultListNameCollection.isEmpty() )
-            {
-               defaultListName = defaultListNameCollection.iterator().next();
-            }
+            ITasksList defaultList = getAppContext().getContentRepository()
+                                                    .getTasksList( defListId );
+            defaultListName = defaultList.getName();
          }
-         finally
+         catch ( NoSuchElementException e )
          {
-            if ( client != null )
-            {
-               client.release();
-            }
+            defaultListName = null;
          }
       }
    }

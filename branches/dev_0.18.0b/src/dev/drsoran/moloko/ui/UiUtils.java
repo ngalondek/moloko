@@ -50,7 +50,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
 
@@ -192,32 +191,6 @@ public final class UiUtils
       }
       
       return dropDownView;
-   }
-   
-   
-   
-   public final static void setListTasksCountView( TextView tasksCount,
-                                                   RtmListWithTaskCount list )
-   {
-      final int numTasks = list.getTaskCount();
-      tasksCount.setText( String.valueOf( numTasks ) );
-      
-      if ( list.hasSmartFilter() )
-      {
-         if ( list.isSmartFilterValid() )
-         {
-            tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart );
-         }
-         else
-         {
-            tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart_fail );
-            tasksCount.setText( "?" );
-         }
-      }
-      else
-      {
-         tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd );
-      }
    }
    
    

@@ -36,20 +36,21 @@ import org.antlr.runtime.TokenStream;
 import dev.drsoran.moloko.MolokoCalendar;
 
 
-public abstract class AbstractTimeParser extends Parser
+public abstract class AbstractANTLRTimeParser extends Parser
 {
    private boolean success = true;
    
    
    
-   protected AbstractTimeParser( TokenStream input )
+   protected AbstractANTLRTimeParser( TokenStream input )
    {
       super( input );
    }
    
    
    
-   protected AbstractTimeParser( TokenStream input, RecognizerSharedState state )
+   protected AbstractANTLRTimeParser( TokenStream input,
+      RecognizerSharedState state )
    {
       super( input, state );
    }
@@ -134,4 +135,18 @@ public abstract class AbstractTimeParser extends Parser
    {
       success = false;
    }
+   
+   
+   
+   public abstract ParseTimeReturn parseTime( MolokoCalendar cal,
+                                              boolean adjustDay ) throws RecognitionException;
+   
+   
+   
+   public abstract ParseTimeReturn parseTimeSpec( MolokoCalendar cal,
+                                                  boolean adjustDay ) throws RecognitionException;
+   
+   
+   
+   public abstract long parseTimeEstimate() throws RecognitionException;
 }

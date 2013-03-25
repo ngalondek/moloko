@@ -49,19 +49,15 @@ import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.notification.MolokoNotificationService;
 import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
 import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
-import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.util.Bundles;
-import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
-import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
@@ -219,39 +215,37 @@ public final class Intents
       
       
       public final static Bundle createOpenListExtras( Context context,
-                                                       RtmListWithTaskCount list,
+                                                       ITasksList list,
                                                        String additionalSmartFilter )
       {
-         String filterString = Strings.EMPTY_STRING;
+         final RtmSmartFilterBuilder smartFilterBuilder = new RtmSmartFilterBuilder();
          
          // If we open a non-smart list
-         if ( !list.hasSmartFilter() )
+         if ( !list.isSmartList() )
          {
-            filterString = RtmSmartFilterLexer.OP_LIST_LIT
-               + RtmSmartFilterLexer.quotify( list.getName() );
+            smartFilterBuilder.list( list.getName() );
          }
          
          // if we open a smart list
          else
          {
-            filterString = list.getSmartFilter().getFilterString();
+            smartFilterBuilder.filter( list.getSmartFilter() );
          }
          
          if ( additionalSmartFilter != null )
          {
-            if ( filterString.length() > 0 )
-               filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " ("
-                  + additionalSmartFilter + ")" );
-            else
-               filterString = additionalSmartFilter;
+            smartFilterBuilder.and()
+                              .lParenth()
+                              .filterString( additionalSmartFilter )
+                              .rParenth();
          }
          
          final Bundle extras = createSmartFilterExtras( context,
-                                                        new RtmSmartFilter( filterString ),
+                                                        smartFilterBuilder.toSmartFilter(),
                                                         context.getString( R.string.taskslist_actionbar,
                                                                            list.getName() ) );
          extras.putString( Intents.Extras.KEY_LIST_NAME, list.getName() );
-         extras.putString( Intents.Extras.KEY_LIST_ID, list.getId() );
+         extras.putLong( Intents.Extras.KEY_LIST_ID, list.getId() );
          
          return extras;
       }
@@ -259,13 +253,13 @@ public final class Intents
       
       
       public final static Bundle createOpenLocationExtras( Context context,
-                                                           String name )
+                                                           String locationName )
       {
          return createSmartFilterExtras( context,
-                                         new RtmSmartFilter( RtmSmartFilterLexer.OP_LOCATION_LIT
-                                            + RtmSmartFilterLexer.quotify( name ) ),
+                                         new RtmSmartFilterBuilder().location( locationName )
+                                                                    .toSmartFilter(),
                                          context.getString( R.string.taskslist_actionbar,
-                                                            name ) );
+                                                            locationName ) );
       }
       
       
@@ -276,8 +270,8 @@ public final class Intents
       {
          // Here we take the username cause the fullname can be ambiguous.
          return createSmartFilterExtras( context,
-                                         new RtmSmartFilter( RtmSmartFilterLexer.OP_SHARED_WITH_LIT
-                                            + RtmSmartFilterLexer.quotify( username ) ),
+                                         new RtmSmartFilterBuilder().sharedWith( username )
+                                                                    .toSmartFilter(),
                                          context.getString( R.string.taskslist_actionbar,
                                                             fullname ) );
       }
@@ -298,26 +292,34 @@ public final class Intents
                                                        List< String > tags,
                                                        String logicalOperator )
       {
-         if ( tags.size() > 1 && logicalOperator == null )
+         final int tagsSize = tags.size();
+         
+         if ( tagsSize == 0 )
+         {
+            throw new IllegalArgumentException( "tags must not be empty" );
+         }
+         
+         if ( tagsSize > 1 && logicalOperator == null )
+         {
             throw new IllegalArgumentException( "logicalOperator must not be null with multiple tags" );
+         }
          
-         final StringBuilder filterString = new StringBuilder();
+         final RtmSmartFilterBuilder smartFilterBuilder = new RtmSmartFilterBuilder();
          
-         for ( int i = 0, cnt = tags.size(); i < cnt; ++i )
+         for ( int i = 0; i < tagsSize; ++i )
          {
             final String tag = tags.get( i );
-            
-            filterString.append( RtmSmartFilterLexer.OP_TAG_LIT ).append( tag );
+            smartFilterBuilder.tag( tag );
             
             // not last element
-            if ( i < cnt - 1 )
-               filterString.append( " " )
-                           .append( logicalOperator )
-                           .append( " " );
+            if ( i < tagsSize - 1 )
+            {
+               smartFilterBuilder.filterString( logicalOperator );
+            }
          }
          
          return createSmartFilterExtras( context,
-                                         new RtmSmartFilter( filterString.toString() ),
+                                         smartFilterBuilder.toSmartFilter(),
                                          context.getString( R.string.taskslist_actionbar,
                                                             TextUtils.join( ", ",
                                                                             tags ) ) );
@@ -553,7 +555,9 @@ public final class Intents
                                                                                          + id );
          
          if ( list != null )
+         {
             intent = createOpenListIntent( context, list, filter );
+         }
          
          client.release();
       }

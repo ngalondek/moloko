@@ -22,9 +22,6 @@
 
 package dev.drsoran.moloko.app;
 
-import dev.drsoran.moloko.util.LogUtils;
-
-
 public class ReadOnlyAccountException extends Exception
 {
    

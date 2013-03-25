@@ -22,7 +22,11 @@
 
 package dev.drsoran.moloko.domain;
 
+import android.content.Context;
 import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.content.db.DbContentRepository;
+import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IDomainServices;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.grammar.DateTimeParsing;
@@ -43,9 +47,12 @@ public class DomainServicesContainer implements IDomainServices
 {
    private final IParsingService parsingService;
    
+   private final IContentRepository contentRepository;
    
    
-   public DomainServicesContainer( ILog log, IDateFormatter dateFormatContext,
+   
+   public DomainServicesContainer( Context context, ILog log,
+      IDateFormatter dateFormatContext,
       IRecurrenceSentenceLanguage recurrenceSentenceLanguage )
    {
       final IDateTimeParserRepository dateTimeParserRepository = new DateTimeParserRepository();
@@ -63,6 +70,11 @@ public class DomainServicesContainer implements IDomainServices
       this.parsingService = new ParsingService( dateTimeParsing,
                                                 recurrenceParsing,
                                                 rtmSmartFilterParsing );
+      
+      final RtmDatabase database = new RtmDatabase( context, log );
+      this.contentRepository = new DbContentRepository( database,
+                                                        dateTimeParsing,
+                                                        rtmSmartFilterParsing );
    }
    
    
@@ -71,6 +83,14 @@ public class DomainServicesContainer implements IDomainServices
    public IParsingService getParsingService()
    {
       return parsingService;
+   }
+   
+   
+   
+   @Override
+   public IContentRepository getContentRepository()
+   {
+      return contentRepository;
    }
    
    

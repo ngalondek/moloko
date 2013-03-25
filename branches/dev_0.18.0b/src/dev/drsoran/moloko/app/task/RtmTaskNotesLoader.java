@@ -35,10 +35,10 @@ import android.os.RemoteException;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
-import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.RawTasks;

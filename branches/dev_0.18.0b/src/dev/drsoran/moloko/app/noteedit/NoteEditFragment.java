@@ -37,8 +37,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
-import dev.drsoran.moloko.content.db.DbUtils;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -211,16 +210,16 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
    
    
    @Override
-   protected ApplyChangesInfo getChanges()
+   protected ApplyContentChangesInfo getChanges()
    {
       final String title = UiUtils.getTrimmedText( this.title );
       final String text = UiUtils.getTrimmedText( this.text );
       
       final RtmTaskNote note = getNoteAssertNotNull();
-      final ApplyChangesInfo modifications = NoteEditUtils.setNoteTitleAndText( getSherlockActivity(),
-                                                                                note.getId(),
-                                                                                title,
-                                                                                text );
+      final ApplyContentChangesInfo modifications = NoteEditUtils.setNoteTitleAndText( getSherlockActivity(),
+                                                                                       note.getId(),
+                                                                                       title,
+                                                                                       text );
       
       return modifications;
    }

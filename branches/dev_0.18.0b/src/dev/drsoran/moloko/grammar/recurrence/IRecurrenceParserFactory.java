@@ -20,29 +20,16 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.grammar.rtmsmart;
+package dev.drsoran.moloko.grammar.recurrence;
 
-public class RtmSmartFilterReturn
+import java.util.Locale;
+
+
+public interface IRecurrenceParserFactory
 {
-   public final boolean success;
-   
-   public final boolean hasCompletedOperator;
+   IRecurrenceParser createRecurrenceParser();
    
    
    
-   public RtmSmartFilterReturn( boolean success, boolean hasCompletedOperator )
-   {
-      this.success = success;
-      this.hasCompletedOperator = hasCompletedOperator;
-   }
-   
-   
-   
-   @Override
-   public String toString()
-   {
-      return String.format( "ok: %b; complOp: %b",
-                            success,
-                            hasCompletedOperator );
-   }
+   Locale getParserLocale();
 }

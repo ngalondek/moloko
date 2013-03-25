@@ -22,9 +22,11 @@
 
 package dev.drsoran.moloko.domain.services;
 
-
-
 public interface IDomainServices
 {
    IParsingService getParsingService();
+   
+   
+   
+   IContentRepository getContentRepository();
 }

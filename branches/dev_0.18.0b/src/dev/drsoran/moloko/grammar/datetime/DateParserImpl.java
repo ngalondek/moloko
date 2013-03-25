@@ -24,21 +24,33 @@ package dev.drsoran.moloko.grammar.datetime;
 
 import java.util.Locale;
 
+import org.antlr.runtime.Lexer;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.IDateFormatter;
 
 
 public class DateParserImpl implements IDateParser
 {
-   private final DateParser parser = new DateParser();
+   private final AbstractANTLRDateParser parser;
    
-   private final DateLexer lexer = new DateLexer();
+   private final Lexer lexer;
    
-   public final static Locale LOCALE = Locale.ENGLISH;
+   private final Locale locale;
+   
+   
+   
+   public DateParserImpl( Locale locale, AbstractANTLRDateParser dateParser,
+      Lexer dateLexer )
+   {
+      this.locale = locale;
+      this.parser = dateParser;
+      this.lexer = dateLexer;
+   }
    
    
    
@@ -53,24 +65,37 @@ public class DateParserImpl implements IDateParser
    @Override
    public ParseDateReturn parseDate( String date,
                                      MolokoCalendar cal,
-                                     boolean clearTime ) throws RecognitionException
+                                     boolean clearTime ) throws GrammarException
    {
       prepareLexerAndParser( date );
       
-      return parser.parseDate( cal, clearTime );
+      try
+      {
+         return parser.parseDate( cal, clearTime );
+      }
+      catch ( RecognitionException e )
+      {
+         throw new GrammarException( "Failed to parse date '" + date + "'", e );
+      }
    }
    
    
    
    @Override
-   public ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws RecognitionException
+   public ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws GrammarException
    {
       prepareLexerAndParser( dateWithin );
       
-      final DateParser.parseDateWithin_return res = parser.parseDateWithin( past );
-      
-      return res != null ? new ParseDateWithinReturn( res.epochStart,
-                                                      res.epochEnd ) : null;
+      try
+      {
+         final ParseDateWithinReturn res = parser.parseDateWithin( past );
+         return res;
+      }
+      catch ( RecognitionException e )
+      {
+         throw new GrammarException( "Failed to parse date within '"
+            + dateWithin + "'", e );
+      }
    }
    
    
@@ -78,15 +103,7 @@ public class DateParserImpl implements IDateParser
    @Override
    public Locale getLocale()
    {
-      return LOCALE;
-   }
-   
-   
-   
-   @Override
-   public MolokoCalendar getCalendar()
-   {
-      return MolokoCalendar.getInstance();
+      return locale;
    }
    
    

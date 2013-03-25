@@ -38,7 +38,7 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.IDateFormatter;
 
 
-public abstract class AbstractDateParser extends Parser
+public abstract class AbstractANTLRDateParser extends Parser
 {
    protected IDateFormatter dateFormatContext;
    
@@ -46,14 +46,15 @@ public abstract class AbstractDateParser extends Parser
    
    
    
-   protected AbstractDateParser( TokenStream input )
+   protected AbstractANTLRDateParser( TokenStream input )
    {
       super( input );
    }
    
    
    
-   protected AbstractDateParser( TokenStream input, RecognizerSharedState state )
+   protected AbstractANTLRDateParser( TokenStream input,
+      RecognizerSharedState state )
    {
       super( input, state );
    }
@@ -340,6 +341,15 @@ public abstract class AbstractDateParser extends Parser
    {
       return success;
    }
+   
+   
+   
+   public abstract ParseDateReturn parseDate( MolokoCalendar cal,
+                                              boolean clearTime ) throws RecognitionException;
+   
+   
+   
+   public abstract ParseDateWithinReturn parseDateWithin( boolean past ) throws RecognitionException;
    
    
    

@@ -25,12 +25,12 @@ package dev.drsoran.moloko.app.content;
 import dev.drsoran.moloko.util.Strings;
 
 
-public final class ApplyChangesInfo
+public final class ApplyContentChangesInfo
 {
-   public final static ApplyChangesInfo EMPTY = new ApplyChangesInfo( ContentProviderActionItemList.EMPTY,
-                                                                      Strings.EMPTY_STRING,
-                                                                      Strings.EMPTY_STRING,
-                                                                      Strings.EMPTY_STRING );
+   public final static ApplyContentChangesInfo EMPTY = new ApplyContentChangesInfo( ContentProviderActionItemList.EMPTY,
+                                                                                    Strings.EMPTY_STRING,
+                                                                                    Strings.EMPTY_STRING,
+                                                                                    Strings.EMPTY_STRING );
    
    private final ContentProviderActionItemList actionItems;
    
@@ -44,7 +44,7 @@ public final class ApplyChangesInfo
    
    
    
-   public ApplyChangesInfo( ContentProviderActionItemList actionItems,
+   public ApplyContentChangesInfo( ContentProviderActionItemList actionItems,
       String progressMessage, String applySuccessMessage,
       String applyFailedMessage )
    {
@@ -98,12 +98,12 @@ public final class ApplyChangesInfo
    
    
    
-   public static ApplyChangesInfo failed( String applyFailedMessage )
+   public static ApplyContentChangesInfo failed( String applyFailedMessage )
    {
-      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( ContentProviderActionItemList.EMPTY,
-                                                                      Strings.EMPTY_STRING,
-                                                                      Strings.EMPTY_STRING,
-                                                                      applyFailedMessage );
+      final ApplyContentChangesInfo applyChangesInfo = new ApplyContentChangesInfo( ContentProviderActionItemList.EMPTY,
+                                                                                    Strings.EMPTY_STRING,
+                                                                                    Strings.EMPTY_STRING,
+                                                                                    applyFailedMessage );
       applyChangesInfo.failed = true;
       
       return applyChangesInfo;

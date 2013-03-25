@@ -31,7 +31,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderAction;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.Modification;
@@ -53,7 +53,7 @@ public final class TaskEditUtils
    
    
    
-   public final static ApplyChangesInfo setTaskCompletion( Context context,
+   public final static ApplyContentChangesInfo setTaskCompletion( Context context,
                                                            Task task,
                                                            boolean complete )
    {
@@ -64,7 +64,7 @@ public final class TaskEditUtils
    
    
    
-   public final static ApplyChangesInfo setTasksCompletion( Context context,
+   public final static ApplyContentChangesInfo setTasksCompletion( Context context,
                                                             List< ? extends Task > tasks,
                                                             boolean complete )
    {
@@ -92,7 +92,7 @@ public final class TaskEditUtils
       final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
                                              : Strings.EMPTY_STRING;
       
-      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+      return new ApplyContentChangesInfo( modifications.toContentProviderActionItemList(),
                                    resources.getQuantityString( R.plurals.toast_save_task,
                                                                 tasksCount,
                                                                 tasksCount ),
@@ -108,14 +108,14 @@ public final class TaskEditUtils
    
    
    
-   public final static ApplyChangesInfo postponeTask( Context context, Task task )
+   public final static ApplyContentChangesInfo postponeTask( Context context, Task task )
    {
       return postponeTasks( context, Collections.singletonList( task ) );
    }
    
    
    
-   public final static ApplyChangesInfo postponeTasks( Context context,
+   public final static ApplyContentChangesInfo postponeTasks( Context context,
                                                        List< ? extends Task > tasks )
    {
       /**
@@ -191,7 +191,7 @@ public final class TaskEditUtils
       final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
                                              : Strings.EMPTY_STRING;
       
-      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+      return new ApplyContentChangesInfo( modifications.toContentProviderActionItemList(),
                                    resources.getQuantityString( R.plurals.toast_save_task,
                                                                 tasksCount,
                                                                 tasksCount ),
@@ -205,7 +205,7 @@ public final class TaskEditUtils
    
    
    
-   public final static ApplyChangesInfo insertTask( Context context, Task task )
+   public final static ApplyContentChangesInfo insertTask( Context context, Task task )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
@@ -230,7 +230,7 @@ public final class TaskEditUtils
       }
       
       final String taskName = task.getName();
-      return new ApplyChangesInfo( actionItemList,
+      return new ApplyContentChangesInfo( actionItemList,
                                    context.getString( R.string.toast_insert_task,
                                                       taskName ),
                                    context.getString( R.string.toast_insert_task_ok,
@@ -241,14 +241,14 @@ public final class TaskEditUtils
    
    
    
-   public final static ApplyChangesInfo deleteTask( Context context, Task task )
+   public final static ApplyContentChangesInfo deleteTask( Context context, Task task )
    {
       return deleteTasks( context, Collections.singletonList( task ) );
    }
    
    
    
-   public final static ApplyChangesInfo deleteTasks( Context context,
+   public final static ApplyContentChangesInfo deleteTasks( Context context,
                                                      List< ? extends Task > tasks )
    {
       boolean ok = true;
@@ -289,7 +289,7 @@ public final class TaskEditUtils
       final String taskName = tasksCount == 1 ? tasks.get( 0 ).getName()
                                              : Strings.EMPTY_STRING;
       
-      return new ApplyChangesInfo( actionItemList,
+      return new ApplyContentChangesInfo( actionItemList,
                                    resources.getQuantityString( R.plurals.toast_delete_task,
                                                                 tasksCount,
                                                                 tasksCount,

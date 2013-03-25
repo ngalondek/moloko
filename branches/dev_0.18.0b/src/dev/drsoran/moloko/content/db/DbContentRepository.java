@@ -22,17 +22,23 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.util.NoSuchElementException;
+
+import android.util.Pair;
 import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
+import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.IContact;
 import dev.drsoran.moloko.domain.model.ITask;
 import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.IRtmSmartFilterParsing;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterParsingReturn;
 
 
 public class DbContentRepository implements IContentRepository
@@ -42,6 +48,10 @@ public class DbContentRepository implements IContentRepository
    private final static String SEL_NO_COMPLETED_AND_DELETED_TASKS;
    
    private final DbTasksContentRepositoryPart tasksRepositoryPart;
+   
+   private final DbTasksListsContentRepositoryPart tasksListsRepositoryPart;
+   
+   private final DbContactsContentRepositoryPart contactsRepositoryPart;
    
    private final DbRtmSmartFilterEvaluator dbSmartFilterEvaluator;
    
@@ -68,6 +78,8 @@ public class DbContentRepository implements IContentRepository
       IRtmSmartFilterParsing smartFilterParsing )
    {
       this.tasksRepositoryPart = new DbTasksContentRepositoryPart( database );
+      this.tasksListsRepositoryPart = new DbTasksListsContentRepositoryPart( database );
+      this.contactsRepositoryPart = new DbContactsContentRepositoryPart( database );
       this.dbSmartFilterEvaluator = new DbRtmSmartFilterEvaluator( dateTimeParsing );
       this.smartFilterParsing = smartFilterParsing;
    }
@@ -75,7 +87,8 @@ public class DbContentRepository implements IContentRepository
    
    
    @Override
-   public ITask getTask( long taskId, int taskContentOptions ) throws ContentException
+   public ITask getTask( long taskId, int taskContentOptions ) throws NoSuchElementException,
+                                                              ContentException
    {
       return tasksRepositoryPart.getById( taskId, taskContentOptions );
    }
@@ -92,7 +105,8 @@ public class DbContentRepository implements IContentRepository
    
    @Override
    public Iterable< ITask > getTasksInTasksList( ITasksList tasksList,
-                                                 int taskContentOptions ) throws ContentException
+                                                 int taskContentOptions ) throws ContentException,
+                                                                         GrammarException
    {
       if ( tasksList.isSmartList() )
       {
@@ -108,7 +122,8 @@ public class DbContentRepository implements IContentRepository
    
    
    @Override
-   public int getNumberOfTasksInTasksList( ITasksList tasksList ) throws ContentException
+   public ExtendedTaskCount getTaskCountOfTasksList( ITasksList tasksList ) throws ContentException,
+                                                                           GrammarException
    {
       if ( tasksList.isSmartList() )
       {
@@ -124,7 +139,8 @@ public class DbContentRepository implements IContentRepository
    
    @Override
    public Iterable< ITask > getTasksFromSmartFilter( RtmSmartFilter smartFilter,
-                                                     int taskContentOptions ) throws ContentException
+                                                     int taskContentOptions ) throws ContentException,
+                                                                             GrammarException
    {
       return evaluateSmartFilterAndQueryTasks( smartFilter, taskContentOptions );
    }
@@ -132,25 +148,36 @@ public class DbContentRepository implements IContentRepository
    
    
    @Override
-   public ITasksList getTasksList( long tasksListId, int taskListContentOptions ) throws ContentException
+   public ITasksList getTasksList( long tasksListId ) throws NoSuchElementException,
+                                                     ContentException
    {
-      return null;
+      return tasksListsRepositoryPart.getById( tasksListId );
    }
    
    
    
    @Override
-   public Iterable< ITasksList > getTaskLists( int taskListContentOptions ) throws ContentException
+   public Iterable< ITasksList > getAllTasksLists() throws ContentException
    {
-      return null;
+      return tasksListsRepositoryPart.getAll( null );
    }
    
    
    
    @Override
-   public IContact getContact( long contactId ) throws ContentException
+   public Iterable< ITasksList > getPhysicalTasksLists() throws ContentException
    {
-      return null;
+      return tasksListsRepositoryPart.getAll( RtmListsTable.TABLE_NAME + "."
+         + RtmListsColumns.IS_SMART_LIST + "=0" );
+   }
+   
+   
+   
+   @Override
+   public IContact getContact( long contactId ) throws NoSuchElementException,
+                                               ContentException
+   {
+      return contactsRepositoryPart.getById( contactId );
    }
    
    
@@ -158,7 +185,16 @@ public class DbContentRepository implements IContentRepository
    @Override
    public Iterable< IContact > getContacts() throws ContentException
    {
-      return null;
+      return contactsRepositoryPart.getAll();
+   }
+   
+   
+   
+   @Override
+   public int getNumTasksContactIsParticipating( long contactId ) throws ContentException
+   {
+      return contactsRepositoryPart.getNumTasksContactIsParticipating( contactId,
+                                                                       SEL_NO_COMPLETED_AND_DELETED_TASKS );
    }
    
    
@@ -166,91 +202,109 @@ public class DbContentRepository implements IContentRepository
    private Iterable< ITask > getTasksInPhysicalList( ITasksList tasksList,
                                                      int options ) throws ContentException
    {
-      final String selection = getSelectionForPhysicalList( tasksList );
+      final String selection = getSelectionForTasksInPhysicalListBuilder( tasksList ).toString();
       return tasksRepositoryPart.getAll( selection, options );
    }
    
    
    
-   private int getTasksCountInPhysicalList( ITasksList tasksList ) throws ContentException
+   private ExtendedTaskCount getTasksCountInPhysicalList( ITasksList tasksList ) throws ContentException
    {
-      final String selection = getSelectionForPhysicalList( tasksList );
+      final String selection = getSelectionForTasksInListBuilder( tasksList ).append( " AND " )
+                                                                             .append( SEL_NO_DELETED_TASKS )
+                                                                             .toString();
       return tasksRepositoryPart.getCount( selection );
    }
    
    
    
-   private int getTasksCountFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException
+   private ExtendedTaskCount getTasksCountFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException,
+                                                                                       GrammarException
    {
-      final String selection = getSelectionFromSmartFilter( smartFilter );
+      final String selection = getSelectionTasksCountFromSmartFilter( smartFilter );
       return tasksRepositoryPart.getCount( selection );
    }
    
    
    
    private Iterable< ITask > evaluateSmartFilterAndQueryTasks( RtmSmartFilter smartFilter,
-                                                               int options ) throws ContentException
+                                                               int options ) throws ContentException,
+                                                                            GrammarException
    {
-      final String selection = getSelectionFromSmartFilter( smartFilter );
+      final String selection = getSelectionForTasksFromSmartFilter( smartFilter );
       return tasksRepositoryPart.getAll( selection, options );
    }
    
    
    
-   private String getSelectionForPhysicalList( ITasksList tasksList )
+   private String getSelectionForTasksFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException,
+                                                                                   GrammarException
+   {
+      final Pair< StringBuilder, RtmSmartFilterParsingReturn > selectionBuilderWithResult = getSelectionFromSmartFilterBuilder( smartFilter );
+      final StringBuilder selectionBuilder = selectionBuilderWithResult.first;
+      final RtmSmartFilterParsingReturn evaluationResult = selectionBuilderWithResult.second;
+      
+      // The predefined, static selections are added first to maintain speed gain from table indices.
+      //
+      // SPECIAL CASE: If the filter contains any operator 'completed or status:completed',
+      // we include completed tasks. Otherwise we would never show such tasks.
+      if ( !evaluationResult.hasCompletedOperator )
+      {
+         selectionBuilder.insert( 0, SEL_NO_COMPLETED_AND_DELETED_TASKS );
+      }
+      else
+      {
+         selectionBuilder.insert( 0, SEL_NO_DELETED_TASKS );
+      }
+      
+      return selectionBuilder.toString();
+   }
+   
+   
+   
+   private String getSelectionTasksCountFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException,
+                                                                                     GrammarException
+   {
+      final Pair< StringBuilder, RtmSmartFilterParsingReturn > selectionBuilderWithResult = getSelectionFromSmartFilterBuilder( smartFilter );
+      final StringBuilder selectionBuilder = selectionBuilderWithResult.first;
+      
+      // The predefined, static selections are added first to maintain speed gain from table indices.
+      selectionBuilder.insert( 0, SEL_NO_DELETED_TASKS );
+      
+      return selectionBuilder.toString();
+   }
+   
+   
+   
+   private StringBuilder getSelectionForTasksInPhysicalListBuilder( ITasksList tasksList )
+   {
+      final StringBuilder selection = getSelectionForTasksInListBuilder( tasksList ).append( " AND " )
+                                                                                    .append( SEL_NO_COMPLETED_AND_DELETED_TASKS );
+      return selection;
+   }
+   
+   
+   
+   private StringBuilder getSelectionForTasksInListBuilder( ITasksList tasksList )
    {
       final StringBuilder selection = new StringBuilder().append( RtmTaskSeriesTable.TABLE_NAME )
                                                          .append( "." )
                                                          .append( RtmTaskSeriesColumns.LIST_ID )
                                                          .append( "=" )
-                                                         .append( tasksList.getId() )
-                                                         .append( " AND " )
-                                                         .append( SEL_NO_COMPLETED_AND_DELETED_TASKS );
-      return selection.toString();
+                                                         .append( tasksList.getId() );
+      return selection;
    }
    
    
    
-   private String getSelectionFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException
+   private Pair< StringBuilder, RtmSmartFilterParsingReturn > getSelectionFromSmartFilterBuilder( RtmSmartFilter smartFilter ) throws GrammarException
    {
-      final RtmSmartFilterReturn evaluationResult = smartFilterParsing.evaluateRtmSmartFilter( smartFilter.getFilterString(),
-                                                                                               dbSmartFilterEvaluator );
+      final RtmSmartFilterParsingReturn evaluationResult = smartFilterParsing.evaluateRtmSmartFilter( smartFilter.getFilterString(),
+                                                                                                      dbSmartFilterEvaluator );
       try
       {
-         if ( evaluationResult.success )
-         {
-            final StringBuilder queryBuilder;
-            
-            // The predefined, static selections are added first to maintain speed gain from table indices.
-            //
-            // SPECIAL CASE: If the filter contains any operator 'completed or status:completed',
-            // we include completed tasks. Otherwise we would never show tasks in
-            // such lists. In all other cases we exclude completed tasks.
-            if ( !evaluationResult.hasCompletedOperator )
-            {
-               queryBuilder = new StringBuilder( SEL_NO_COMPLETED_AND_DELETED_TASKS );
-            }
-            else
-            {
-               queryBuilder = new StringBuilder( SEL_NO_DELETED_TASKS );
-            }
-            
-            final String evaluatedQuery = dbSmartFilterEvaluator.getQuery();
-            
-            // If the filter is empty, it is semantical equal to evaluating to "TRUE", so we
-            // leave the filter away.
-            if ( evaluatedQuery.length() > 0 )
-            {
-               queryBuilder.append( " AND " ).append( evaluatedQuery );
-            }
-            
-            return queryBuilder.toString();
-         }
-         else
-         {
-            throw new ContentException( "Unable to evaluate smart filter '"
-               + smartFilter.getFilterString() + "'" );
-         }
+         return Pair.create( new StringBuilder( dbSmartFilterEvaluator.getQuery() ),
+                             evaluationResult );
       }
       finally
       {

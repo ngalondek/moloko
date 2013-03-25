@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.loaders;
+package dev.drsoran.moloko.app.content.loaders;
 
 import java.util.Comparator;
 import java.util.List;

@@ -47,13 +47,13 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.content.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
-import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.RtmListWithTaskCount;
-import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 import dev.drsoran.rtm.Task;
 
 
@@ -214,7 +214,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private void startLoadingRtmLists()
    {
-      getSupportLoaderManager().initLoader( RtmListWithTaskCountLoader.ID,
+      getSupportLoaderManager().initLoader( TasksListsLoader.ID,
                                             Bundle.EMPTY,
                                             this );
    }
@@ -450,7 +450,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          }
          else
          {
-            final ExtendedListInfo extendedListInfo = list.getExtendedListInfo( this );
+            final ExtendedTaskCount extendedListInfo = list.getExtendedListInfo( this );
             
             Bundle config = Intents.Extras.createOpenListExtras( context,
                                                                  list,
@@ -547,7 +547,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public Loader< List< RtmListWithTaskCount >> onCreateLoader( int id,
                                                                 Bundle args )
    {
-      final RtmListWithTaskCountLoader loader = new RtmListWithTaskCountLoader( this );
+      final TasksListsLoader loader = new TasksListsLoader( this );
       loader.setPreExpandExtendedListInfoAfterLoad( true );
       
       return loader;

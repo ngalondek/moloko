@@ -43,14 +43,14 @@ public interface IRecurrenceParsing
    /**
     * @return The human readable pattern sentence, ready to be displayed in the system language.
     */
-   String parseRecurrencePatternToSentence( String pattern, boolean isEvery );
+   String parseRecurrencePatternToSentence( String pattern, boolean isEvery ) throws GrammarException;
    
    
    
    /**
     * @return Map< Token type, values >
     */
-   Map< Integer, List< Object >> parseRecurrencePattern( String pattern );
+   Map< Integer, List< Object >> parseRecurrencePattern( String pattern ) throws GrammarException;
    
    
    

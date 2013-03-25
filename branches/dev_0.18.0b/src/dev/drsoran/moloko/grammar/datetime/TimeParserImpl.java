@@ -25,30 +25,49 @@ package dev.drsoran.moloko.grammar.datetime;
 import java.util.Locale;
 
 import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.Lexer;
 import org.antlr.runtime.RecognitionException;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.grammar.GrammarException;
 
 
 public class TimeParserImpl implements ITimeParser
 {
-   private final TimeParser parser = new TimeParser();
+   private final AbstractANTLRTimeParser parser;
    
-   private final TimeLexer lexer = new TimeLexer();
+   private final Lexer lexer;
    
-   public final static Locale LOCALE = Locale.ENGLISH;
+   private final Locale locale;
+   
+   
+   
+   public TimeParserImpl( Locale locale, AbstractANTLRTimeParser timeParser,
+      Lexer timeLexer )
+   {
+      this.locale = locale;
+      this.parser = timeParser;
+      this.lexer = timeLexer;
+   }
    
    
    
    @Override
    public ParseTimeReturn parseTime( String time,
                                      MolokoCalendar cal,
-                                     boolean adjustDay ) throws RecognitionException
+                                     boolean adjustDay ) throws GrammarException
    {
       prepareLexerAndParser( time );
       
-      return parser.parseTime( cal, adjustDay );
+      try
+      {
+         return parser.parseTime( cal, adjustDay );
+      }
+      catch ( RecognitionException e )
+      {
+         throw new GrammarException( "Failed to parse time '" + time + "'", e );
+      }
    }
    
    
@@ -56,21 +75,37 @@ public class TimeParserImpl implements ITimeParser
    @Override
    public ParseTimeReturn parseTimeSpec( String timeSpec,
                                          MolokoCalendar cal,
-                                         boolean adjustDay ) throws RecognitionException
+                                         boolean adjustDay ) throws GrammarException
    {
       prepareLexerAndParser( timeSpec );
       
-      return parser.parseTimeSpec( cal, adjustDay );
+      try
+      {
+         return parser.parseTimeSpec( cal, adjustDay );
+      }
+      catch ( RecognitionException e )
+      {
+         throw new GrammarException( "Failed to parse time spec'" + timeSpec
+            + "'", e );
+      }
    }
    
    
    
    @Override
-   public long parseTimeEstimate( String timeEstimate ) throws RecognitionException
+   public long parseTimeEstimate( String timeEstimate ) throws GrammarException
    {
       prepareLexerAndParser( timeEstimate );
       
-      return parser.parseTimeEstimate();
+      try
+      {
+         return parser.parseTimeEstimate();
+      }
+      catch ( RecognitionException e )
+      {
+         throw new GrammarException( "Failed to parse time estimation'"
+            + timeEstimate + "'", e );
+      }
    }
    
    
@@ -78,15 +113,7 @@ public class TimeParserImpl implements ITimeParser
    @Override
    public Locale getLocale()
    {
-      return LOCALE;
-   }
-   
-   
-   
-   @Override
-   public MolokoCalendar getCalendar()
-   {
-      return MolokoCalendar.getInstance();
+      return locale;
    }
    
    
@@ -99,5 +126,4 @@ public class TimeParserImpl implements ITimeParser
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       parser.setTokenStream( antlrTokens );
    }
-   
 }

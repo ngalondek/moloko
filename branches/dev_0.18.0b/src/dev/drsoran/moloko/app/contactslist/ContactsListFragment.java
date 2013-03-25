@@ -38,12 +38,13 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.content.loaders.ContactsLoader;
+import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
-import dev.drsoran.rtm.Contact;
 
 
-class ContactsListFragment extends MolokoListFragment< Contact >
+class ContactsListFragment extends MolokoListFragment< LinkedContact >
 {
    private IContactsListFragmentListener listener;
    
@@ -119,11 +120,11 @@ class ContactsListFragment extends MolokoListFragment< Contact >
       super.onCreateContextMenu( menu, v, menuInfo );
       
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-      final Contact contact = getListAdapter().getItem( info.position );
+      final LinkedContact contact = getListAdapter().getItem( info.position );
       
       if ( contact.getLookUpKey() != null )
       {
-         final String fullname = contact.getFullname();
+         final String fullname = contact.getFullName();
          menu.add( Menu.NONE,
                    R.id.ctx_menu_show_phonebook_contact,
                    Menu.NONE,
@@ -142,7 +143,7 @@ class ContactsListFragment extends MolokoListFragment< Contact >
       switch ( item.getItemId() )
       {
          case R.id.ctx_menu_show_phonebook_contact:
-            final Contact contact = getListAdapter().getItem( info.position );
+            final LinkedContact contact = getListAdapter().getItem( info.position );
             
             if ( listener != null )
                listener.onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
@@ -161,16 +162,16 @@ class ContactsListFragment extends MolokoListFragment< Contact >
    {
       if ( listener != null )
       {
-         final Contact contact = getListAdapter().getItem( position );
-         listener.onShowTasksOfContact( contact.getFullname(),
-                                        contact.getUsername() );
+         final LinkedContact contact = getListAdapter().getItem( position );
+         listener.onShowTasksOfContact( contact.getFullName(),
+                                        contact.getUserName() );
       }
    }
    
    
    
    @Override
-   public SwappableArrayAdapter< Contact > createListAdapter()
+   public SwappableArrayAdapter< LinkedContact > createListAdapter()
    {
       return new ContactsListAdapter( this );
    }
@@ -178,9 +179,13 @@ class ContactsListFragment extends MolokoListFragment< Contact >
    
    
    @Override
-   public Loader< List< Contact >> newLoaderInstance( int id, Bundle config )
+   public Loader< List< LinkedContact >> newLoaderInstance( int id,
+                                                            Bundle config )
    {
-      return new ContactsLoader( getSherlockActivity() );
+      final DomainContext domainContext = getUiContext().asDomainContext();
+      final ContactsLoader contactsLoader = new ContactsLoader( domainContext );
+      
+      return new LinkedContactsLoader( domainContext, contactsLoader );
    }
    
    
@@ -209,7 +214,7 @@ class ContactsListFragment extends MolokoListFragment< Contact >
    
    
    
-   public void onCallButtonClicked( Contact contact )
+   public void onCallButtonClicked( LinkedContact contact )
    {
       if ( listener != null )
       {

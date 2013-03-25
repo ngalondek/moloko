@@ -24,8 +24,6 @@ package dev.drsoran.moloko.grammar;
 
 import java.util.Locale;
 
-import org.antlr.runtime.RecognitionException;
-
 import android.util.Pair;
 
 
@@ -40,7 +38,7 @@ class ParserLanguageDetector
    
    public static < TParser extends ILocalizedParser, TResult > Pair< TParser, TResult > detectLanguageAndParse( TParser existingParser,
                                                                                                                 Iterable< TParser > availableParsers,
-                                                                                                                IParserFunc< TParser, TResult > parserFunc ) throws RecognitionException
+                                                                                                                IParserFunc< TParser, TResult > parserFunc )
    {
       TResult result = null;
       Locale dontTryLocale = null;
@@ -69,7 +67,7 @@ class ParserLanguageDetector
          }
       }
       
-      throw new RecognitionException();
+      return Pair.< TParser, TResult > create( null, null );
    }
    
    
@@ -83,12 +81,8 @@ class ParserLanguageDetector
       {
          result = parserFunc.call( existingParser );
       }
-      catch ( Exception e )
+      catch ( GrammarException e )
       {
-         if ( !( e instanceof RecognitionException ) )
-         {
-            throw new RuntimeException( e );
-         }
       }
       
       return result;

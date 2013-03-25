@@ -40,7 +40,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TaskSearchResultActivity extends
@@ -195,8 +194,9 @@ public class TaskSearchResultActivity extends
    
    private void evaluateAndStoreQuery()
    {
-      final RtmSmartFilter filter = evaluateRtmSmartFilter();
-      if ( filter != null )
+      if ( getAppContext().getParsingService()
+                          .getRtmSmartFilterParsing()
+                          .isParsableSmartFilter( getQueryFromIntent() ) )
       {
          onQuerySucceeded();
       }
@@ -204,23 +204,6 @@ public class TaskSearchResultActivity extends
       {
          onQueryFailed();
       }
-   }
-   
-   
-   
-   private RtmSmartFilter evaluateRtmSmartFilter()
-   {
-      RtmSmartFilter filter = new RtmSmartFilter( getQueryFromIntent() );
-      
-      // Collect tokens for the quick add task fragment
-      final String evalQuery = filter.getEvaluatedFilterString( true );
-      
-      if ( evalQuery == null )
-      {
-         filter = null;
-      }
-      
-      return filter;
    }
    
    

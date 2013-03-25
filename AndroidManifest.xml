@@ -61,13 +61,6 @@
       android:hardwareAccelerated="true"
       android:allowBackup="true">
 
-      <!-- Content Provider -->
-      <provider
-         android:name=".content.RtmProvider"
-         android:authorities="dev.drsoran.provider.Rtm"
-         android:syncable="true"
-         android:exported="false" />
-
       <provider
          android:name=".app.search.TasksSearchRecentSuggestionsProvider"
          android:authorities="dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider"

@@ -22,27 +22,22 @@
 
 package dev.drsoran.moloko.grammar.datetime;
 
-import org.antlr.runtime.RecognitionException;
-
 import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.ILocalizedParser;
 
 
 public interface ITimeParser extends ILocalizedParser
 {
-   ParseTimeReturn parseTime( String time, MolokoCalendar cal, boolean adjustDay ) throws RecognitionException;
+   ParseTimeReturn parseTime( String time, MolokoCalendar cal, boolean adjustDay ) throws GrammarException;
    
    
    
    ParseTimeReturn parseTimeSpec( String timeSpec,
                                   MolokoCalendar cal,
-                                  boolean adjustDay ) throws RecognitionException;
+                                  boolean adjustDay ) throws GrammarException;
    
    
    
-   long parseTimeEstimate( String timeEstimate ) throws RecognitionException;
-   
-   
-   
-   MolokoCalendar getCalendar();
+   long parseTimeEstimate( String timeEstimate ) throws GrammarException;
 }

@@ -22,6 +22,11 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import android.database.Cursor;
 import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
 import dev.drsoran.moloko.domain.model.ITasksList;
@@ -30,56 +35,65 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.SmartList;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 
 
 class DbTasksListsContentRepositoryPart
 {
-   private final IContentRepository contentRepository;
-   
    private final RtmListsQuery listsQuery;
    
    
    
-   public DbTasksListsContentRepositoryPart( RtmDatabase database,
-      IContentRepository contentRepository )
+   public DbTasksListsContentRepositoryPart( RtmDatabase database )
    {
-      this.contentRepository = contentRepository;
       this.listsQuery = database.getQuery( RtmListsQuery.class );
    }
    
    
    
-   public ITasksList getById( long id, int options ) throws ContentException
+   public ITasksList getById( long id ) throws NoSuchElementException,
+                                       ContentException
    {
-      TasksList tasksList;
+      final Iterator< ITasksList > listsIterator = getListsFromDb( RtmListsColumns._ID
+         + "=" + id ).iterator();
+      
+      if ( listsIterator.hasNext() )
+      {
+         return listsIterator.next();
+      }
+      else
+      {
+         throw new NoSuchElementException( "No TasksList with ID '" + id + "'" );
+      }
+   }
+   
+   
+   
+   public Iterable< ITasksList > getAll( String selection ) throws ContentException
+   {
+      return getListsFromDb( selection );
+   }
+   
+   
+   
+   private Iterable< ITasksList > getListsFromDb( String selection ) throws ContentException
+   {
+      final Collection< ITasksList > tasksLists = new ArrayList< ITasksList >();
+      
       Cursor c = null;
       
       try
       {
-         try
-         {
-            c = listsQuery.getList( id );
-         }
-         catch ( Throwable e )
-         {
-            throw new ContentException( e );
-         }
+         c = listsQuery.getAllLists( selection );
          
-         if ( c.moveToNext() )
+         while ( c.moveToNext() )
          {
-            tasksList = createTasksListFromCursor( c );
-            
-            if ( ( options & TasksListContentOptions.WITH_TASKSCOUNT ) != 0 )
-            {
-               addTasksCountToTasksList( tasksList );
-            }
+            final TasksList tasksList = createTasksListFromCursor( c );
+            tasksLists.add( tasksList );
          }
-         else
-         {
-            throw new ContentException( "No TasksList with ID '" + id + "'" );
-         }
+      }
+      catch ( Throwable e )
+      {
+         throw new ContentException( e );
       }
       finally
       {
@@ -89,14 +103,7 @@ class DbTasksListsContentRepositoryPart
          }
       }
       
-      return tasksList;
-   }
-   
-   
-   
-   public Iterable< ITasksList > getAll( int options ) throws ContentException
-   {
-      return getTasksFromDb( selection, options );
+      return tasksLists;
    }
    
    
@@ -127,13 +134,5 @@ class DbTasksListsContentRepositoryPart
       }
       
       return tasksList;
-   }
-   
-   
-   
-   private void addTasksCountToTasksList( TasksList tasksList ) throws ContentException
-   {
-      final int tasksCount = contentRepository.getNumberOfTasksInTasksList( tasksList );
-      tasksList.setTasksCount( tasksCount );
    }
 }

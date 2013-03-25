@@ -20,56 +20,40 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.lists;
+package dev.drsoran.moloko.app.content.loaders;
 
-import android.content.ContentProviderClient;
-import android.content.Context;
 import android.database.ContentObserver;
-import android.net.Uri;
-
-import com.mdt.rtm.data.RtmLists;
-
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.db.RtmListsTable;
-import dev.drsoran.moloko.loaders.AbstractLoader;
-import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.model.ITask;
+import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
-class RtmListsLoader extends AbstractLoader< RtmLists >
+public class TaskLoader extends AbstractLoader< ITask >
 {
-   public final static int ID = R.id.loader_lists;
+   public final static int ID = R.id.loader_task;
    
-   private final String slelection;
+   private final long taskId;
    
-   
-   
-   public RtmListsLoader( Context context )
-   {
-      this( context, Lists.LIST_DELETED + " IS NULL" );
-   }
+   private final int taskContentOptions;
    
    
    
-   public RtmListsLoader( Context context, String selection )
+   public TaskLoader( DomainContext context, long taskId, int taskContentOptions )
    {
       super( context );
-      this.slelection = selection;
+      
+      this.taskId = taskId;
+      this.taskContentOptions = taskContentOptions;
    }
    
    
    
    @Override
-   protected RtmLists queryResultInBackground( ContentProviderClient client )
+   protected ITask queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
-      return RtmListsTable.getAllLists( client, slelection );
-   }
-   
-   
-   
-   @Override
-   protected Uri getContentUri()
-   {
-      return Lists.CONTENT_URI;
+      return contentRepository.getTask( taskId, taskContentOptions );
    }
    
    
@@ -77,8 +61,7 @@ class RtmListsLoader extends AbstractLoader< RtmLists >
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      getContext().getContentResolver()
-                  .registerContentObserver( getContentUri(), true, observer );
+      TasksProviderPart.registerContentObserver( getContext(), observer );
    }
    
    
@@ -86,6 +69,6 @@ class RtmListsLoader extends AbstractLoader< RtmLists >
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {
-      getContext().getContentResolver().unregisterContentObserver( observer );
+      TasksProviderPart.unregisterContentObserver( getContext(), observer );
    }
 }

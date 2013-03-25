@@ -22,13 +22,11 @@
 
 package dev.drsoran.moloko.grammar;
 
-import org.antlr.runtime.RecognitionException;
-
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.grammar.rtmsmart.NullRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterParsingReturn;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterTokenCollection;
 import dev.drsoran.moloko.grammar.rtmsmart.TokenCollectingEvaluator;
 
@@ -49,7 +47,7 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    
    
    @Override
-   public RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString )
+   public RtmSmartFilterParsingReturn evaluateRtmSmartFilter( String filterString ) throws GrammarException
    {
       return evaluateRtmSmartFilter( filterString, null );
    }
@@ -57,8 +55,8 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    
    
    @Override
-   public RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString,
-                                                       IRtmSmartFilterEvaluator evaluator )
+   public RtmSmartFilterParsingReturn evaluateRtmSmartFilter( String filterString,
+                                                              IRtmSmartFilterEvaluator evaluator ) throws GrammarException
    {
       try
       {
@@ -68,16 +66,14 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
          rtmSmartFilterLexer.setEvaluator( evaluator );
          rtmSmartFilterLexer.startEvaluation();
          
-         return new RtmSmartFilterReturn( true,
-                                          rtmSmartFilterLexer.hasStatusCompletedOperator() );
+         return new RtmSmartFilterParsingReturn( rtmSmartFilterLexer.hasStatusCompletedOperator() );
       }
-      catch ( RecognitionException e )
+      catch ( GrammarException e )
       {
          log.w( RtmSmartFilterParsing.class, "Failed to lex smart filter '"
             + filterString + "'", e );
          
-         return new RtmSmartFilterReturn( false,
-                                          rtmSmartFilterLexer.hasStatusCompletedOperator() );
+         throw e;
       }
       finally
       {
@@ -89,7 +85,7 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    
    
    @Override
-   public RtmSmartFilterTokenCollection getSmartFilterTokens( String filterString )
+   public RtmSmartFilterTokenCollection getSmartFilterTokens( String filterString ) throws GrammarException
    {
       try
       {
@@ -102,17 +98,33 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
          
          return new RtmSmartFilterTokenCollection( tokenCollector.getTokens() );
       }
-      catch ( RecognitionException e )
+      catch ( GrammarException e )
       {
          log.w( RtmSmartFilterParsing.class, "Failed to lex smart filter '"
             + filterString + "'", e );
          
-         return null;
+         throw e;
       }
       finally
       {
          rtmSmartFilterLexer.reset();
          rtmSmartFilterLexer.setEvaluator( null );
+      }
+   }
+   
+   
+   
+   @Override
+   public boolean isParsableSmartFilter( String filterString )
+   {
+      try
+      {
+         evaluateRtmSmartFilter( filterString );
+         return true;
+      }
+      catch ( GrammarException e )
+      {
+         return false;
       }
    }
 }

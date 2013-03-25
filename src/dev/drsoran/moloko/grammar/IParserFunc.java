@@ -22,10 +22,9 @@
 
 package dev.drsoran.moloko.grammar;
 
-import org.antlr.runtime.RecognitionException;
 
 
 public interface IParserFunc< TParser extends ILocalizedParser, TResult >
 {
-   TResult call( TParser parser ) throws RecognitionException;
+   TResult call( TParser parser ) throws GrammarException;
 }

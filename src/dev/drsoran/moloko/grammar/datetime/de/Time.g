@@ -5,7 +5,7 @@ grammar Time;
 options
 {
    language=Java;
-   superClass=AbstractTimeParser;
+   superClass=AbstractANTLRTimeParser;
 }
 
 @header
@@ -16,7 +16,7 @@ options
    
    import dev.drsoran.moloko.MolokoCalendar;
    import dev.drsoran.moloko.grammar.datetime.ParseTimeReturn;
-   import dev.drsoran.moloko.grammar.datetime.AbstractTimeParser;
+   import dev.drsoran.moloko.grammar.datetime.AbstractANTLRTimeParser;
    import dev.drsoran.moloko.grammar.LexerException;
 }
 

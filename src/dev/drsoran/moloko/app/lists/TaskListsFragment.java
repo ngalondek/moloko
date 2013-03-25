@@ -38,17 +38,17 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.content.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.lists.TaskListsAdapter.IOnGroupIndicatorClickedListener;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
+import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.ui.fragments.MolokoExpandableListFragment;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
-class TaskListsFragment extends
-         MolokoExpandableListFragment< RtmListWithTaskCount > implements
-         IOnGroupIndicatorClickedListener, IOnSettingsChangedListener
+class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
+         implements IOnGroupIndicatorClickedListener,
+         IOnSettingsChangedListener
 {
    private ITaskListsFragmentListener listener;
    
@@ -150,11 +150,10 @@ class TaskListsFragment extends
       super.onCreateContextMenu( menu, v, menuInfo );
       
       final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
-      final RtmListWithTaskCount list = getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
+      final ITasksList list = getList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
       final String listName = list.getName();
-      final boolean listIsLocked = list.getLocked() != 0;
       
-      if ( isWritableAccess() && !listIsLocked )
+      if ( isWritableAccess() && !list.isLocked() )
       {
          getSherlockActivity().getMenuInflater()
                               .inflate( R.menu.tasklists_group_context_rwd,
@@ -191,9 +190,8 @@ class TaskListsFragment extends
          menu.findItem( R.id.ctx_menu_collapse ).setVisible( false );
       }
       
-      final boolean isDefaultList = list.getId()
-                                        .equals( appContext.getSettings()
-                                                           .getDefaultListId() );
+      final boolean isDefaultList = list.getId() == appContext.getSettings()
+                                                              .getDefaultListId();
       menu.findItem( R.id.ctx_menu_set_default_list )
           .setVisible( !isDefaultList );
       menu.findItem( R.id.ctx_menu_unset_default_list )
@@ -309,10 +307,9 @@ class TaskListsFragment extends
    
    
    @Override
-   public Loader< List< RtmListWithTaskCount >> newLoaderInstance( int id,
-                                                                   Bundle config )
+   public Loader< List< ITasksList >> newLoaderInstance( int id, Bundle config )
    {
-      return new RtmListWithTaskCountLoader( getSherlockActivity() );
+      return new TasksListsLoader( appContext.asDomainContext(), true );
    }
    
    
@@ -328,7 +325,7 @@ class TaskListsFragment extends
    @Override
    public int getLoaderId()
    {
-      return RtmListsLoader.ID;
+      return TasksListsLoader.ID;
    }
    
    
@@ -341,9 +338,9 @@ class TaskListsFragment extends
    
    
    
-   public RtmListWithTaskCount getRtmList( int flatPos )
+   public ITasksList getList( int flatPos )
    {
-      return (RtmListWithTaskCount) getExpandableListAdapter().getGroup( flatPos );
+      return (ITasksList) getExpandableListAdapter().getGroup( flatPos );
    }
    
    
@@ -361,7 +358,7 @@ class TaskListsFragment extends
    
    private void setAsDefaultList( int pos )
    {
-      appContext.getSettings().setDefaultListId( getRtmList( pos ).getId() );
+      appContext.getSettings().setDefaultListId( getList( pos ).getId() );
    }
    
    

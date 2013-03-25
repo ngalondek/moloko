@@ -37,7 +37,7 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.listsedit.AddRenameListDialogFragment;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.state.InstanceState;
@@ -192,7 +192,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       if ( tasks.size() == 1 )
       {
-         final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+         final ApplyContentChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
                                                                                   tasks,
                                                                                   true );
          applyModifications( modifications );
@@ -216,7 +216,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       if ( tasks.size() == 1 )
       {
-         final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+         final ApplyContentChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
                                                                                   tasks,
                                                                                   false );
          applyModifications( modifications );
@@ -240,7 +240,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       if ( tasks.size() == 1 )
       {
-         final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
+         final ApplyContentChangesInfo modifications = TaskEditUtils.postponeTasks( this,
                                                                              tasks );
          applyModifications( modifications );
       }
@@ -455,7 +455,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+      final ApplyContentChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
                                                                                tasks,
                                                                                true );
       applyModifications( modifications );
@@ -466,7 +466,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void incompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
+      final ApplyContentChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
                                                                                tasks,
                                                                                false );
       applyModifications( modifications );
@@ -477,7 +477,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void postponeSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
+      final ApplyContentChangesInfo modifications = TaskEditUtils.postponeTasks( this,
                                                                           tasks );
       applyModifications( modifications );
       getTasksListFragment().getMolokoListView().clearChoices();
@@ -487,7 +487,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void deleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyChangesInfo modifications = TaskEditUtils.deleteTasks( this,
+      final ApplyContentChangesInfo modifications = TaskEditUtils.deleteTasks( this,
                                                                         tasks );
       applyModifications( modifications );
       getTasksListFragment().getMolokoListView().clearChoices();

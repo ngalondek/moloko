@@ -9,7 +9,7 @@ grammar Date;
 options
 {
    language=Java;
-   superClass=AbstractDateParser;
+   superClass=AbstractANTLRDateParser;
 }
 
 @header
@@ -19,7 +19,8 @@ options
    import java.util.Calendar;
    
    import dev.drsoran.moloko.grammar.datetime.ParseDateReturn;
-   import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
+   import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
+   import dev.drsoran.moloko.grammar.datetime.AbstractANTLRDateParser;
    import dev.drsoran.moloko.grammar.LexerException;
    import dev.drsoran.moloko.grammar.IDateFormatter;
    import dev.drsoran.moloko.MolokoCalendar;
@@ -203,18 +204,20 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
    )
    ;
 
-parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar epochEnd]
+parseDateWithin[boolean past] returns [ParseDateWithinReturn res]
    @init
-   {
-      retval.epochStart = getCalendar();
-      int amount        = 1;
-      int unit          = Calendar.DAY_OF_YEAR;
+   {  
+      final MolokoCalendar epochStart = getCalendar();
+      int amount                      = 1;
+      int unit                        = Calendar.DAY_OF_YEAR;
    }
    @after
    {
-      retval.epochEnd = getCalendar();
-      retval.epochEnd.setTimeInMillis( retval.epochStart.getTimeInMillis() );
-      retval.epochEnd.add( unit, past ? -amount : amount );      
+      final MolokoCalendar epochEnd = getCalendar();
+      epochEnd.setTimeInMillis( epochStart.getTimeInMillis() );
+      epochEnd.add( unit, past ? -amount : amount );
+      
+      res = new ParseDateWithinReturn(epochStart, epochEnd);
    }
    : (  a=INT
         {
@@ -242,7 +245,7 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
             unit = Calendar.YEAR;
          }
       )?
-      (OF parseDate[retval.epochStart, false])?
+      (OF parseDate[epochStart, false])?
    ;
    catch [NumberFormatException e]
    {
@@ -282,10 +285,6 @@ date_on [MolokoCalendar cal]
    : ON? (   date_on_Xst_of_M[$cal]           
            | date_on_weekday [$cal])
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_on_Xst_of_M [MolokoCalendar cal]
    @init
@@ -371,10 +370,6 @@ date_end_of_the_MW [MolokoCalendar cal]
             rollToEndOf( Calendar.DAY_OF_MONTH, cal );
          })
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_natural [MolokoCalendar cal]
    : TODAY
@@ -389,10 +384,6 @@ date_natural [MolokoCalendar cal]
         cal.add( Calendar.DAY_OF_YEAR, -1 );
      }
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 // TOKENS
 

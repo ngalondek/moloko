@@ -33,14 +33,16 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.antlr.runtime.Parser;
+import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.TokenStream;
 
 import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 
 
-public abstract class AbstractRecurrenceParser extends Parser
+public abstract class AbstractANTLRRecurrenceParser extends Parser
 {
    private final static CmpWeekday CMP_WEEKDAY = new CmpWeekday();
    
@@ -64,14 +66,14 @@ public abstract class AbstractRecurrenceParser extends Parser
    
    
    
-   protected AbstractRecurrenceParser( TokenStream input )
+   protected AbstractANTLRRecurrenceParser( TokenStream input )
    {
       this( input, new RecognizerSharedState() );
    }
    
    
    
-   protected AbstractRecurrenceParser( TokenStream input,
+   protected AbstractANTLRRecurrenceParser( TokenStream input,
       RecognizerSharedState state )
    {
       super( input, state );
@@ -122,13 +124,16 @@ public abstract class AbstractRecurrenceParser extends Parser
    
    protected void setUntil( String dateTimeString )
    {
-      final MolokoCalendar untilDate = dateTimeParsing.parseDateTimeSpec( dateTimeString );
-      
-      if ( untilDate != null )
+      try
       {
+         final MolokoCalendar untilDate = dateTimeParsing.parseDateTimeSpec( dateTimeString );
          final SimpleDateFormat sdf = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
+         
          res.put( RecurrencePatternParser.OP_UNTIL_LIT,
                   sdf.format( untilDate.getTime() ) );
+      }
+      catch ( GrammarException e )
+      {
       }
    }
    
@@ -236,4 +241,8 @@ public abstract class AbstractRecurrenceParser extends Parser
       
       return result.toString();
    }
+   
+   
+   
+   public abstract Map< String, Object > parseRecurrence() throws RecognitionException;
 }

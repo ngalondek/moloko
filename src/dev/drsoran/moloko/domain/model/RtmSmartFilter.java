@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import android.text.TextUtils;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Strings;
 
@@ -32,15 +33,13 @@ public class RtmSmartFilter
    
    
    
-   public RtmSmartFilter()
-   {
-      this( Strings.EMPTY_STRING );
-   }
-   
-   
-   
    public RtmSmartFilter( String filter )
    {
+      if ( TextUtils.isEmpty( filter ) )
+      {
+         throw new IllegalArgumentException( "filter" );
+      }
+      
       this.filter = transformFilter( filter );
    }
    

@@ -26,31 +26,35 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.Lexer;
 import org.antlr.runtime.RecognitionException;
 
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
+import dev.drsoran.moloko.grammar.GrammarException;
 
 
 public class RecurrenceParserImpl implements IRecurrenceParser
 {
-   private final RecurrenceParser parser = new RecurrenceParser();
+   private final AbstractANTLRRecurrenceParser parser;
    
-   private final RecurrenceLexer lexer = new RecurrenceLexer();
+   private final Lexer lexer;
    
-   public final static Locale LOCALE = RecurrenceParser.LOCALE;
+   private final Locale locale;
    
    
    
-   public RecurrenceParserImpl( IDateTimeParsing dateTimeParsing )
+   public RecurrenceParserImpl( Locale locale,
+      AbstractANTLRRecurrenceParser recurrenceParser, Lexer recurrenceLexer )
    {
-      parser.setDateTimeParsing( dateTimeParsing );
+      this.locale = locale;
+      this.parser = recurrenceParser;
+      this.lexer = recurrenceLexer;
    }
    
    
    
    @Override
-   public Map< String, Object > parseRecurrence( String recurrence ) throws RecognitionException
+   public Map< String, Object > parseRecurrence( String recurrence ) throws GrammarException
    {
       lexer.setCharStream( new ANTLRNoCaseStringStream( recurrence ) );
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
@@ -59,6 +63,11 @@ public class RecurrenceParserImpl implements IRecurrenceParser
       try
       {
          return parser.parseRecurrence();
+      }
+      catch ( RecognitionException e )
+      {
+         throw new GrammarException( "Failed parser recurrence '" + recurrence
+            + "'", e );
       }
       finally
       {
@@ -71,6 +80,6 @@ public class RecurrenceParserImpl implements IRecurrenceParser
    @Override
    public Locale getLocale()
    {
-      return LOCALE;
+      return locale;
    }
 }

@@ -30,6 +30,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.ListTagCloudEntry;
 import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.LocationTagCloudEntry;
 import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.TagCloudEntry;
@@ -37,7 +38,6 @@ import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.TagTagCloudEntry;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.content.LocationOverviewsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -106,7 +106,7 @@ class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
          
          for ( RtmListWithTaskCount list : lists )
          {
-            if ( list.getTaskCount() > 0 )
+            if ( list.getNumTasksParticipating() > 0 )
             {
                cloudEntries.add( new ListTagCloudEntry( list ) );
             }

@@ -107,7 +107,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public int getNumberOfTasks()
       {
-         return list.getTaskCount();
+         return list.getNumTasksParticipating();
       }
       
       

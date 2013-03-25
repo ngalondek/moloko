@@ -20,13 +20,37 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.services;
+package dev.drsoran.moloko.grammar;
 
-public final class TasksListContentOptions
+public class GrammarException extends Exception
 {
-   public final static int MINIMAL = 0;
    
-   public final static int WITH_TASKSCOUNT = 1 << 0;
+   private static final long serialVersionUID = 3399794736981799686L;
    
-   public final static int COMPLETE = WITH_TASKSCOUNT;
+   
+   
+   public GrammarException()
+   {
+   }
+   
+   
+   
+   public GrammarException( String detailMessage )
+   {
+      super( detailMessage );
+   }
+   
+   
+   
+   public GrammarException( Throwable throwable )
+   {
+      super( throwable );
+   }
+   
+   
+   
+   public GrammarException( String detailMessage, Throwable throwable )
+   {
+      super( detailMessage, throwable );
+   }
 }

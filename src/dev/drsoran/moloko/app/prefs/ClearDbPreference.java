@@ -40,9 +40,6 @@ import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.IRtmProviderPart;
-import dev.drsoran.provider.Rtm;
 
 
 class ClearDbPreference extends InfoTextPreference
@@ -98,10 +95,14 @@ class ClearDbPreference extends InfoTextPreference
                                                                           for ( int i = 0; i < checked.length; ++i )
                                                                           {
                                                                              if ( checked[ i ] )
+                                                                             {
                                                                                 clearList.add( parts.get( i ) );
+                                                                             }
                                                                           }
                                                                           if ( clearList.size() > 0 )
+                                                                          {
                                                                              clear( clearList );
+                                                                          }
                                                                        }
                                                                     } )
                                                 .setNegativeButton( android.R.string.no,
@@ -167,9 +168,10 @@ class ClearDbPreference extends InfoTextPreference
          protected void onPostExecute( Void result )
          {
             if ( dialog != null )
+            {
                dialog.dismiss();
-            
-            dialog = null;
+               dialog = null;
+            }
             
             Toast.makeText( getContext(),
                             failed.get()

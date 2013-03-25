@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,48 +20,20 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm;
+package dev.drsoran.moloko.grammar.datetime;
 
-public class RtmContactWithTaskCount
+import java.util.Locale;
+
+
+public interface IDateTimeParserFactory
 {
-   private final RtmContact contact;
-   
-   private final int taskCount;
+   IDateParser createDateParser();
    
    
-
-   public RtmContactWithTaskCount( RtmContact contact, int taskCount )
-   {
-      this.contact = contact;
-      this.taskCount = taskCount;
-   }
    
-
-
-   public String getId()
-   {
-      return contact.getId();
-   }
+   ITimeParser createTimeParser();
    
-
-
-   public String getFullname()
-   {
-      return contact.getFullname();
-   }
    
-
-
-   public String getUsername()
-   {
-      return contact.getUsername();
-   }
    
-
-
-   public int getTaskCount()
-   {
-      return taskCount;
-   }
-   
+   Locale getParserLocale();
 }

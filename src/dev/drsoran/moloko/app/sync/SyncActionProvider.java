@@ -36,7 +36,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.app.services.SyncStartResult;
-import dev.drsoran.moloko.util.ShowButtonTextAsToast;
+import dev.drsoran.moloko.ui.ShowButtonTextAsToast;
 
 
 public class SyncActionProvider extends ActionProvider

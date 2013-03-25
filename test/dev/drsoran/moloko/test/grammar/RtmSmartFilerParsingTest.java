@@ -46,7 +46,7 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.RtmSmartFilterParsing;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterReturn;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterParsingReturn;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.provider.Rtm.Locations;
@@ -581,7 +581,7 @@ public class RtmSmartFilerParsingTest extends MolokoTestCase
                          + " OR (tag:z1w AND dueAfter:\"1 week of now\")"
                          + " OR (tag:z1m AND dueAfter:\"1 month of now\")"
                          + " OR (tag:z2w AND dueAfter:\"2 weeks of now\")",
-                      new RtmSmartFilterReturn( "\\( \\( \\(tags = 'zzz' OR tags like 'zzz,%' OR tags like '%,zzz,%' OR tags like '%,zzz'\\) AND due > \\d+ \\)"
+                      new RtmSmartFilterParsingReturn( "\\( \\( \\(tags = 'zzz' OR tags like 'zzz,%' OR tags like '%,zzz,%' OR tags like '%,zzz'\\) AND due > \\d+ \\)"
                                                    + " OR \\( \\(tags = 'z1d' OR tags like 'z1d,%' OR tags like '%,z1d,%' OR tags like '%,z1d'\\) AND due > \\d+ \\)"
                                                    + " OR \\( \\(tags = 'z2d' OR tags like 'z2d,%' OR tags like '%,z2d,%' OR tags like '%,z2d'\\) AND due > \\d+ \\)"
                                                    + " OR \\( \\(tags = 'z1w' OR tags like 'z1w,%' OR tags like '%,z1w,%' OR tags like '%,z1w'\\) AND due > \\d+ \\)"
@@ -681,28 +681,28 @@ public class RtmSmartFilerParsingTest extends MolokoTestCase
    
    
    
-   private RtmSmartFilterReturn query( String queryString )
+   private RtmSmartFilterParsingReturn query( String queryString )
    {
       return query( queryString, false );
    }
    
    
    
-   private RtmSmartFilterReturn query( String queryString,
+   private RtmSmartFilterParsingReturn query( String queryString,
                                        boolean hasCompletedOp )
    {
-      return new RtmSmartFilterReturn( "( " + queryString + " )",
+      return new RtmSmartFilterParsingReturn( "( " + queryString + " )",
                                        hasCompletedOp );
    }
    
    
    
    private void evaluateFilter( String filterString,
-                                RtmSmartFilterReturn expectedResult,
+                                RtmSmartFilterParsingReturn expectedResult,
                                 RtmSmartFilterToken... expectedTokens )
    {
       final ArrayList< RtmSmartFilterToken > lexedTokens = new ArrayList< RtmSmartFilterToken >();
-      final RtmSmartFilterReturn result = smartFilterParsing.evaluateRtmSmartFilter( filterString,
+      final RtmSmartFilterParsingReturn result = smartFilterParsing.evaluateRtmSmartFilter( filterString,
                                                                                      lexedTokens );
       
       if ( expectedResult == null )

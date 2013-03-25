@@ -72,5 +72,9 @@ public interface ITasksList
    
    
    
-   int getTasksCount();
+   ExtendedTaskCount getTasksCount();
+   
+   
+   
+   void setTasksCount( ExtendedTaskCount taskCount );
 }

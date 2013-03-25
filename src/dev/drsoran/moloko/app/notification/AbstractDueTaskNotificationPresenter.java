@@ -41,8 +41,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.IAccountService;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;

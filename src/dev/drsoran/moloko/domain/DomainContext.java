@@ -28,6 +28,7 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IDomainServices;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.event.ISystemEventService;
@@ -89,5 +90,12 @@ public final class DomainContext extends ContextWrapper
    public IParsingService getParsingService()
    {
       return domainServices.getParsingService();
+   }
+   
+   
+   
+   public IContentRepository getContentRepository()
+   {
+      return domainServices.getContentRepository();
    }
 }

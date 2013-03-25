@@ -30,19 +30,19 @@ import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
 
 public interface IDateTimeParsing
 {
-   MolokoCalendar parseTimeOrTimeSpec( String spec );
+   MolokoCalendar parseTimeOrTimeSpec( String spec ) throws GrammarException;
    
    
    
-   MolokoCalendar parseDateTimeSpec( String spec );
+   MolokoCalendar parseDateTimeSpec( String spec ) throws GrammarException;
    
    
    
-   long parseEstimated( String estimated );
+   long parseEstimated( String estimated ) throws GrammarException;
    
    
    
-   ParseDateWithinReturn parseDateWithin( String range, boolean past );
+   ParseDateWithinReturn parseDateWithin( String range, boolean past ) throws GrammarException;
    
    
    

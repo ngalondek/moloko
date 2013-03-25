@@ -37,7 +37,6 @@ import android.os.Environment;
 import android.util.AttributeSet;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentRepository;
 
 
 class SendDbPreference extends InfoTextPreference

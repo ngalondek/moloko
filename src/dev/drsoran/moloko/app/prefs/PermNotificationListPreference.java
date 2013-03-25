@@ -37,8 +37,8 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.util.ListEntriesAndValues;
 
 
 public class PermNotificationListPreference extends MultiSelectListPreference
@@ -61,7 +61,9 @@ public class PermNotificationListPreference extends MultiSelectListPreference
       super( context, attrs );
       autoSummaryImpl = new AutoSummary< String >( context, attrs, this );
       
-      final ListEntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( context ).createEntriesAndValuesSync( 0 );
+      final AppContext appContext = AppContext.get( context );
+      final ListEntriesAndValues entriesAndValues = new TasksListsEntriesAndValuesLoader( appContext,
+                                                                                          appContext.getContentRepository() ).createEntriesAndValuesSync( 0 );
       if ( entriesAndValues != null )
       {
          setEntries( entriesAndValues.entries );

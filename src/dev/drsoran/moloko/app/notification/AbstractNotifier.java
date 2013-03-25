@@ -28,8 +28,8 @@ import android.support.v4.content.Loader.OnLoadCompleteListener;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.loaders.AbstractLoader;
 
 
 abstract class AbstractNotifier implements IStatusbarNotifier,

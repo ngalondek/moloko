@@ -22,16 +22,12 @@
 
 package dev.drsoran.moloko.app.startup;
 
+import java.util.NoSuchElementException;
+
 import android.accounts.Account;
 import android.app.Dialog;
-import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.text.TextUtils;
-
-import com.mdt.rtm.data.RtmList;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
@@ -41,8 +37,6 @@ import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.provider.Rtm.ListOverviews;
-import dev.drsoran.provider.Rtm.Lists;
 
 
 public class StartUpActivity extends MolokoFragmentActivity
@@ -164,37 +158,20 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    private void determineStartupView()
    {
-      if ( settings != null )
+      final int startUpView = settings.getStartupView();
+      
+      if ( startUpView == Settings.STARTUP_VIEW_DEFAULT_LIST )
       {
-         final int startUpView = settings.getStartupView();
+         // Check that the set default list exists and can be shown
+         final long defaultListId = settings.getDefaultListId();
          
-         if ( startUpView == Settings.STARTUP_VIEW_DEFAULT_LIST )
+         if ( !existsDefaultList( defaultListId ) )
          {
-            // Check that the set default list exists and can be shown
-            final String defaultListId = settings.getDefaultListId();
-            
-            try
-            {
-               if ( !existsList( defaultListId ) )
-               {
-                  new AlertDialogFragment.Builder( R.id.dlg_startup_default_list_not_exists ).setTitle( getString( R.string.dlg_missing_def_list_title ) )
-                                                                                             .setIcon( R.drawable.ic_prefs_info )
-                                                                                             .setMessage( getString( R.string.dlg_missing_def_list_text ) )
-                                                                                             .setNeutralButton( R.string.btn_continue )
-                                                                                             .show( this );
-               }
-               else
-               {
-                  switchToNextState();
-               }
-            }
-            catch ( RemoteException e )
-            {
-               // We simply ignore the exception and start with default view.
-               // Perhaps next time it works again.
-               settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-               switchToNextState();
-            }
+            new AlertDialogFragment.Builder( R.id.dlg_startup_default_list_not_exists ).setTitle( getString( R.string.dlg_missing_def_list_title ) )
+                                                                                       .setIcon( R.drawable.ic_prefs_info )
+                                                                                       .setMessage( getString( R.string.dlg_missing_def_list_text ) )
+                                                                                       .setNeutralButton( R.string.btn_continue )
+                                                                                       .show( this );
          }
          else
          {
@@ -203,7 +180,7 @@ public class StartUpActivity extends MolokoFragmentActivity
       }
       else
       {
-         throw new IllegalStateException( "Moloko settings instace is null." );
+         switchToNextState();
       }
    }
    
@@ -300,36 +277,17 @@ public class StartUpActivity extends MolokoFragmentActivity
    
    
    
-   private boolean existsList( String id ) throws RemoteException
+   private boolean existsDefaultList( long id )
    {
-      boolean exists = !TextUtils.isEmpty( id );
-      
-      if ( exists )
+      try
       {
-         ContentProviderClient client = null;
-         try
-         {
-            client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
-            exists = client != null;
-            
-            if ( exists )
-            {
-               final RtmList list = RtmListsTable.getList( client, id );
-               exists = list != null;
-               exists = exists && list.getArchived() == 0;
-               exists = exists && list.getDeletedDate() == null;
-            }
-         }
-         finally
-         {
-            if ( client != null )
-            {
-               client.release();
-            }
-         }
+         getAppContext().getContentRepository().getTasksList( id );
+         return true;
       }
-      
-      return exists;
+      catch ( NoSuchElementException e )
+      {
+         return false;
+      }
    }
    
    

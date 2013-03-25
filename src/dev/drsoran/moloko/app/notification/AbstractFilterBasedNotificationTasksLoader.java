@@ -24,7 +24,7 @@ package dev.drsoran.moloko.app.notification;
 
 import android.content.Context;
 import android.database.Cursor;
-import dev.drsoran.moloko.loaders.AbstractLoader;
+import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 
 
 abstract class AbstractFilterBasedNotificationTasksLoader extends

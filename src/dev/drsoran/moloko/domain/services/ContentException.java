@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.domain.services;
 
-public class ContentException extends Exception
+public class ContentException extends RuntimeException
 {
    
    private static final long serialVersionUID = 8983613853726479118L;

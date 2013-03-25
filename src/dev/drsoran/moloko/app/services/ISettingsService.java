@@ -28,6 +28,7 @@ import java.util.Map;
 
 import android.net.Uri;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
+import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
 import dev.drsoran.rtm.RtmSettings;
 
 
@@ -42,7 +43,7 @@ public interface ISettingsService
    
    
    
-   String getDefaultListId();
+   long getDefaultListId();
    
    
    
@@ -54,7 +55,7 @@ public interface ISettingsService
    
    
    
-   void setDefaultListId( String id );
+   void setDefaultListId( long id );
    
    
    

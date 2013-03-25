@@ -31,10 +31,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
-import dev.drsoran.rtm.Contact;
 
 
-class ContactsListAdapter extends SwappableArrayAdapter< Contact >
+class ContactsListAdapter extends SwappableArrayAdapter< LinkedContact >
 {
    private final ContactsListFragment context;
    
@@ -68,7 +67,7 @@ class ContactsListAdapter extends SwappableArrayAdapter< Contact >
       final TextView numSharedTasks = (TextView) convertView.findViewById( R.id.contactslist_listitem_num_shared );
       final View callButton = convertView.findViewById( R.id.contactslist_listitem_btn_call );
       
-      final Contact contact = getItem( position );
+      final LinkedContact contact = getItem( position );
       final Bitmap photo = contact.getPhoto();
       
       if ( photo != null )
@@ -76,10 +75,10 @@ class ContactsListAdapter extends SwappableArrayAdapter< Contact >
       else
          picture.setImageResource( R.drawable.ic_list_contactslist_user );
       
-      fullname.setText( contact.getFullname() );
-      username.setText( contact.getUsername() );
+      fullname.setText( contact.getFullName() );
+      username.setText( contact.getUserName() );
       
-      final int numShared = contact.getTaskCount();
+      final int numShared = contact.getNumTasksParticipating();
       
       numSharedTasks.setText( context.getString( R.string.contactslist_listitem_num_tasks,
                                                  numShared,
@@ -99,12 +98,12 @@ class ContactsListAdapter extends SwappableArrayAdapter< Contact >
    @Override
    public long getItemId( int position )
    {
-      return Long.parseLong( getItem( position ).getId() );
+      return getItem( position ).getId();
    }
    
    
    
-   private int setCallButton( final View view, final Contact contact )
+   private int setCallButton( final View view, final LinkedContact contact )
    {
       view.setOnClickListener( new OnClickListener()
       {

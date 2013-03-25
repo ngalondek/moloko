@@ -59,19 +59,25 @@ public class ParticipantsQuery
    
    
    
-   public int getNumTasksContactIsParticipating( String contactId )
+   public int getNumTasksContactIsParticipating( long contactId,
+                                                 String selection )
    {
       int numTasksParticipating = -1;
       Cursor c = null;
       
       try
       {
+         final String selectionContactId = ParticipantsColumns.CONTACT_ID + "="
+            + contactId;
+         
+         selection = selection != null ? selectionContactId + " AND "
+            + selection : selectionContactId;
+         
          c = database.getReadable().query( participantsTable.getTableName(),
                                            new String[]
                                            { ParticipantsColumns._ID,
                                             ParticipantsColumns.CONTACT_ID },
-                                           ParticipantsColumns.CONTACT_ID + "="
-                                              + contactId,
+                                           selection,
                                            null,
                                            null,
                                            null,

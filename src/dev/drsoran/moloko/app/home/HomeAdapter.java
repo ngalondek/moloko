@@ -38,7 +38,6 @@ import dev.drsoran.moloko.ui.layouts.SimpleHomeWidgetLayout;
 import dev.drsoran.moloko.ui.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.ui.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.ui.widgets.OverDueTasksHomeWidget;
-import dev.drsoran.provider.Rtm.ListOverviews;
 
 
 class HomeAdapter extends BaseAdapter

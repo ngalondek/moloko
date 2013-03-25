@@ -37,8 +37,8 @@ import com.mdt.rtm.data.RtmAuth;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.content.ContentAuthority;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.provider.Rtm;
 
 
 public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
@@ -146,7 +146,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
             if ( ok )
             {
                ContentResolver.setSyncAutomatically( account,
-                                                     Rtm.AUTHORITY,
+                                                     ContentAuthority.RTM,
                                                      true );
             }
          }

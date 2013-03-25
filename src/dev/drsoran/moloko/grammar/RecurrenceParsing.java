@@ -29,8 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.antlr.runtime.RecognitionException;
-
 import android.text.TextUtils;
 import android.util.Pair;
 import dev.drsoran.moloko.ILog;
@@ -114,7 +112,7 @@ public class RecurrenceParsing implements IRecurrenceParsing
       final Pair< String, Boolean > result = detectLanguageAndParseRecurrence( new IParserFunc< IRecurrenceParser, Pair< String, Boolean > >()
       {
          @Override
-         public Pair< String, Boolean > call( IRecurrenceParser recurrenceParser ) throws RecognitionException
+         public Pair< String, Boolean > call( IRecurrenceParser recurrenceParser ) throws GrammarException
          {
             return parseRecurrence( recurrenceParser, recurrence );
          }
@@ -139,41 +137,21 @@ public class RecurrenceParsing implements IRecurrenceParsing
    
    
    private Pair< String, Boolean > parseRecurrence( IRecurrenceParser recurrenceParser,
-                                                    String recurrence )
+                                                    String recurrence ) throws GrammarException
    {
-      Pair< String, Boolean > result;
+      final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence( recurrence );
+      final Boolean isEvery = (Boolean) patternObjects.remove( RecurrencePatternParser.IS_EVERY );
       
-      try
-      {
-         final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence( recurrence );
-         final Boolean isEvery = (Boolean) patternObjects.remove( RecurrencePatternParser.IS_EVERY );
-         result = Pair.create( joinRecurrencePattern( patternObjects ), isEvery );
-      }
-      catch ( RecognitionException e )
-      {
-         result = null;
-      }
-      
-      return result;
+      return Pair.create( joinRecurrencePattern( patternObjects ), isEvery );
    }
    
    
    
    private < T > T detectLanguageAndParseRecurrence( IParserFunc< IRecurrenceParser, T > parserFunc )
    {
-      Pair< IRecurrenceParser, T > detectResult;
-      try
-      {
-         detectResult = ParserLanguageDetector.detectLanguageAndParse( recurrenceParser,
-                                                                       parserRepository.getRecurrenceParsers(),
-                                                                       parserFunc );
-      }
-      catch ( RecognitionException e )
-      {
-         recurrenceParser = null;
-         return null;
-      }
-      
+      final Pair< IRecurrenceParser, T > detectResult = ParserLanguageDetector.detectLanguageAndParse( recurrenceParser,
+                                                                                                       parserRepository.getRecurrenceParsers(),
+                                                                                                       parserFunc );
       recurrenceParser = detectResult.first;
       return detectResult.second;
    }
@@ -191,7 +169,9 @@ public class RecurrenceParsing implements IRecurrenceParsing
          sb.append( key ).append( "=" ).append( parts.get( key ) );
          
          if ( i.hasNext() )
+         {
             sb.append( RecurrencePatternParser.OPERATOR_SEP );
+         }
       }
       
       return sb.toString();

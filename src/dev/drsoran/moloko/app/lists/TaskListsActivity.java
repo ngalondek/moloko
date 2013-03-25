@@ -29,19 +29,19 @@ import android.support.v4.app.DialogFragment;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.listsedit.AddRenameListDialogFragment;
+import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
 import dev.drsoran.moloko.util.RtmListEditUtils;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TaskListsActivity extends MolokoEditFragmentActivity implements
@@ -54,7 +54,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    @InstanceState( key = Config.LIST_TO_DELETE,
                    defaultValue = InstanceState.NULL )
-   private RtmList listToDelete;
+   private ITasksList listToDelete;
    
    
    
@@ -112,14 +112,14 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void openList( int pos )
    {
-      final RtmListWithTaskCount rtmList = getRtmList( pos );
+      final ITasksList tasksList = getList( pos );
       
       // Check if the smart filter could be parsed. Otherwise
       // we do not fire the intent.
-      if ( rtmList.isSmartFilterValid() )
+      if ( isSmartFilterValid( tasksList.getSmartFilter() ) )
       {
          final Intent intent = Intents.createOpenListIntent( this,
-                                                             rtmList,
+                                                             tasksList,
                                                              null );
          startActivityWithHomeAction( intent, getClass() );
       }
@@ -138,8 +138,8 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void deleteList( int pos )
    {
-      final RtmListWithTaskCount list = getRtmList( pos );
-      setListToDelete( list.getRtmList() );
+      final ITasksList list = getList( pos );
+      setListToDelete( list );
       
       UiUtils.showDeleteElementDialog( this, list.getName() );
    }
@@ -149,7 +149,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void renameList( int pos )
    {
-      showRenameListDialog( getRtmList( pos ) );
+      showRenameListDialog( getList( pos ) );
    }
    
    
@@ -179,19 +179,19 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private void showRenameListDialog( RtmListWithTaskCount list )
+   private void showRenameListDialog( ITasksList list )
    {
       createAddRenameListDialogFragment( createRenameListFragmentConfig( list ) );
    }
    
    
    
-   private Bundle createRenameListFragmentConfig( RtmListWithTaskCount list )
+   private Bundle createRenameListFragmentConfig( ITasksList list )
    {
       final Bundle config = new Bundle();
       
-      config.putParcelable( Intents.Extras.KEY_LIST, list.getRtmList() );
-      if ( list.getRtmList().getSmartFilter() != null )
+      config.putParcelable( Intents.Extras.KEY_LIST, list );
+      if ( list.isSmartList() )
       {
          config.putParcelable( Intents.Extras.KEY_FILTER, list.getRtmList()
                                                               .getSmartFilter() );
@@ -209,10 +209,10 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private RtmListWithTaskCount getRtmList( int pos )
+   private ITasksList getList( int pos )
    {
       final TaskListsFragment taskListsFragment = (TaskListsFragment) getSupportFragmentManager().findFragmentById( R.id.frag_tasklists );
-      return taskListsFragment.getRtmList( pos );
+      return taskListsFragment.getList( pos );
    }
    
    
@@ -232,8 +232,8 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    {
       if ( which == Dialog.BUTTON_POSITIVE )
       {
-         final ApplyChangesInfo modifications = RtmListEditUtils.deleteList( this,
-                                                                             getListToDelete() );
+         final ApplyContentChangesInfo modifications = RtmListEditUtils.deleteList( this,
+                                                                                    getListToDelete() );
          applyModifications( modifications );
       }
       
@@ -242,14 +242,23 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private RtmList getListToDelete()
+   private boolean isSmartFilterValid( RtmSmartFilter smartFilter )
+   {
+      return getAppContext().getParsingService()
+                            .getRtmSmartFilterParsing()
+                            .isParsableSmartFilter( smartFilter.getFilterString() );
+   }
+   
+   
+   
+   private ITasksList getListToDelete()
    {
       return listToDelete;
    }
    
    
    
-   private void setListToDelete( RtmList listToDelete )
+   private void setListToDelete( ITasksList listToDelete )
    {
       this.listToDelete = listToDelete;
    }

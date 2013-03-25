@@ -10,6 +10,7 @@ options
    package dev.drsoran.moloko.grammar.rtmsmart;
    
    import org.antlr.runtime.RecognitionException;
+   import dev.drsoran.moloko.grammar.GrammarException;
 }
 
 
@@ -107,10 +108,11 @@ options
 
    // STATUS VARIABLES   
 
-   private boolean hasStatusCompletedOp = false;
+   private boolean hasStatusCompletedOp;
 
-   private boolean error = false;      
+   private boolean error;
 
+   private RecognitionException innerException;
 
 
    public void setEvaluator(IRtmSmartFilterEvaluator evaluator)
@@ -120,20 +122,34 @@ options
 
 
 
-   public void startEvaluation() throws RecognitionException
+   public void startEvaluation() throws GrammarException
    {
+      Token currentToken = null;
+      
       if ( !error )
       {
          hasStatusCompletedOp = false;
          
-         while ( !error && nextToken() != Token.EOF_TOKEN )
+         for ( currentToken = nextToken(); !error
+            && currentToken != Token.EOF_TOKEN; currentToken = nextToken() )
          {
          }
       }
       
       if ( error )
       {
-         throw new RecognitionException();
+         final String exceptionMessage = String.format( "Failed to evaluate RTM smart filter. Last token was '\%s':\%d.",
+                                                        currentToken,
+                                                        getCharPositionInLine() );
+         
+         if ( innerException != null )
+         {
+            throw new GrammarException( exceptionMessage, innerException );
+         }
+         else
+         {
+            throw new GrammarException( exceptionMessage );
+         }
       }
    }
 
@@ -146,6 +162,7 @@ options
 		
       hasStatusCompletedOp = false;      
       error = false;
+      innerException = null;
    }
 
 
@@ -153,8 +170,10 @@ options
    @Override
    public void reportError( RecognitionException e )
    {
-      super.reportError( e );
       error = true;
+      innerException = e;
+                  
+      super.reportError( e );
    }
 
 

@@ -24,7 +24,6 @@ package dev.drsoran.moloko.app.prefs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.util.ListEntriesAndValues;
 
 
 class DefaultListPreference extends SyncableListPreference
@@ -33,8 +32,9 @@ class DefaultListPreference extends SyncableListPreference
    {
       super( context, attrs );
       
-      final ListEntriesAndValues entriesAndValues = new RtmListsEntriesAndValuesLoader( getContext() ).createEntriesAndValuesSync( RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
-         | RtmListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
+      final ListEntriesAndValues entriesAndValues = new TasksListsEntriesAndValuesLoader( getContext(),
+                                                                                          getAppContext().getContentRepository() ).createEntriesAndValuesSync( TasksListsEntriesAndValuesLoader.FLAG_INCLUDE_NONE
+         | TasksListsEntriesAndValuesLoader.FLAG_INCLUDE_SMART_LISTS );
       
       if ( entriesAndValues != null )
       {
@@ -58,5 +58,4 @@ class DefaultListPreference extends SyncableListPreference
    {
       getSettings().setDefaultListIdSyncWithRtm( value );
    }
-   
 }

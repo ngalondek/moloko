@@ -40,7 +40,7 @@ import com.mdt.rtm.data.RtmList;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.content.db.RtmListsTable.NewRtmListId;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.state.InstanceState;
@@ -244,7 +244,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    @Override
-   protected ApplyChangesInfo getChanges()
+   protected ApplyContentChangesInfo getChanges()
    {
       if ( list == null )
       {
@@ -306,7 +306,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       if ( !TextUtils.isEmpty( text )
          && !getUiContext().getParsingService()
                            .getRtmSmartFilterParsing()
-                           .evaluateRtmSmartFilter( text ).success )
+                           .isParsableSmartFilter( text ) )
       {
          return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_filter,
                                                  text ),
@@ -318,7 +318,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    
-   private ApplyChangesInfo createNewList()
+   private ApplyContentChangesInfo createNewList()
    {
       final NewRtmListId newListId = createNewListId();
       final Date createdDate = new Date();
@@ -346,7 +346,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    
-   private ApplyChangesInfo renameList( RtmList list )
+   private ApplyContentChangesInfo renameList( RtmList list )
    {
       return RtmListEditUtils.setListName( getSherlockActivity(),
                                            list.getId(),
@@ -363,10 +363,6 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       if ( !TextUtils.isEmpty( text ) )
       {
          filter = new RtmSmartFilter( text );
-         if ( filter.getEvaluatedFilterString( false ) == null )
-         {
-            filter = null;
-         }
       }
       
       return filter;

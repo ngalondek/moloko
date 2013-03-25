@@ -41,10 +41,10 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
+import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
-import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 class TaskListsAdapter extends BaseExpandableListAdapter
@@ -90,7 +90,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    private final LayoutInflater inflater;
    
-   private final ArrayList< RtmListWithTaskCount > lists;
+   private final List< ITasksList > lists;
    
    private StateListDrawable groupIndicatorDrawable;
    
@@ -99,13 +99,13 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    
    public TaskListsAdapter( AppContext context, int groupId, int childId,
-      List< RtmListWithTaskCount > lists )
+      List< ITasksList > lists )
    {
       this.context = context;
       this.groupId = groupId;
       this.childId = childId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-      this.lists = new ArrayList< RtmListWithTaskCount >( lists );
+      this.lists = new ArrayList< ITasksList >( lists );
       
       obtainGroupIndicatorDrawable();
    }
@@ -125,21 +125,17 @@ class TaskListsAdapter extends BaseExpandableListAdapter
       switch ( childPosition + 1 )
       {
          case DUE_TODAY_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition )
-                                         .getExtendedListInfo( context ).dueTodayTaskCount );
+            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().dueTodayTaskCount );
          case DUE_TOMORROW_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition )
-                                         .getExtendedListInfo( context ).dueTomorrowTaskCount );
+            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().dueTomorrowTaskCount );
          case OVER_DUE_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition )
-                                         .getExtendedListInfo( context ).overDueTaskCount );
+            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().overDueTaskCount );
          case COMPLETED_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition )
-                                         .getExtendedListInfo( context ).completedTaskCount );
+            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().completedTaskCount );
          case SUM_ESTIMATE:
             return context.getDateFormatter()
                           .formatEstimated( lists.get( groupPosition )
-                                                 .getExtendedListInfo( context ).sumEstimated );
+                                                 .getTasksCount().sumEstimated );
          default :
             return null;
       }
@@ -149,7 +145,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    public Intent getChildIntent( int groupPosition, int childPosition )
    {
-      final RtmListWithTaskCount list = lists.get( groupPosition );
+      final ITasksList list = lists.get( groupPosition );
       Intent intent = null;
       
       switch ( childPosition + 1 )
@@ -332,7 +328,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
       
       final ImageView groupIndicator = (ImageView) view.findViewById( R.id.tasklists_group_indicator );
       final TextView listName = (TextView) view.findViewById( R.id.tasklists_group_list_name );
-      final TextView tasksCount = (TextView) view.findViewById( R.id.tasklists_group_num_tasks );
+      final TextView tasksCountView = (TextView) view.findViewById( R.id.tasklists_group_num_tasks );
       final ViewGroup iconsContainer = (ViewGroup) view.findViewById( R.id.tasklists_group_icons_container );
       
       groupIndicatorDrawable.setState( isExpanded ? GROUP_EXPANDED_STATE_SET
@@ -343,22 +339,22 @@ class TaskListsAdapter extends BaseExpandableListAdapter
       final Drawable drawable = groupIndicatorDrawable.getCurrent();
       groupIndicator.setImageDrawable( drawable );
       
-      final RtmListWithTaskCount rtmList = lists.get( groupPosition );
-      final String listNameStr = rtmList.getName();
+      final ITasksList list = lists.get( groupPosition );
+      final String listNameStr = list.getName();
       
       listName.setText( listNameStr );
       
-      UiUtils.setListTasksCountView( tasksCount, rtmList );
+      setListTasksCountView( tasksCountView, list );
       
       addConditionalIcon( iconsContainer,
                           R.drawable.ic_list_tasklists_flag,
                           ID_ICON_DEFAULT_LIST,
-                          rtmList.getId().equals( context.getSettings()
-                                                         .getDefaultListId() ) );
+                          list.getId() == context.getSettings()
+                                                 .getDefaultListId() );
       addConditionalIcon( iconsContainer,
                           R.drawable.ic_list_tasklists_lock,
                           ID_ICON_LOCKED,
-                          rtmList.getLocked() != 0 );
+                          list.isLocked() );
       
       return view;
    }
@@ -409,6 +405,33 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    
    
+   private static void setListTasksCountView( TextView tasksCountView,
+                                              ITasksList list )
+   {
+      final ExtendedTaskCount tasksCount = list.getTasksCount();
+      
+      if ( tasksCount == null )
+      {
+         tasksCountView.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_fail );
+         tasksCountView.setText( "?" );
+      }
+      else
+      {
+         if ( list.isSmartList() )
+         {
+            tasksCountView.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart );
+         }
+         else
+         {
+            tasksCountView.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd );
+         }
+         
+         tasksCountView.setText( String.valueOf( tasksCount.incompleteTaskCount ) );
+      }
+   }
+   
+   
+   
    private void addConditionalIcon( ViewGroup container,
                                     int resId,
                                     int iconId,
@@ -440,4 +463,5 @@ class TaskListsAdapter extends BaseExpandableListAdapter
             container.setVisibility( View.GONE );
       }
    }
+   
 }

@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.grammar;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,30 +31,33 @@ import java.util.List;
 public final class LazyParserInstanceIterator< T > implements Iterable< T >,
          Iterator< T >
 {
-   private final List< Class< ? extends T > > classes;
+   private final List< ? > factories;
+   
+   private final Method factoryMethod;
    
    private final List< T > instances;
    
-   private final Object[] ctorArgs;
+   private final Object[] factoryMethodArgs;
    
-   private int classesIndex;
+   private int factoryIndex;
    
    
    
-   public LazyParserInstanceIterator( List< Class< ? extends T > > classes,
-      List< T > instances )
+   public LazyParserInstanceIterator( List< ? > factories,
+      Method factoryMethod, List< T > instances )
    {
-      this( classes, instances, (Object[]) null );
+      this( factories, factoryMethod, instances, (Object[]) null );
    }
    
    
    
-   public LazyParserInstanceIterator( List< Class< ? extends T > > classes,
-      List< T > instances, Object... ctorArgs )
+   public LazyParserInstanceIterator( List< ? > factories,
+      Method factoryMethod, List< T > instances, Object... factoryMethodArgs )
    {
-      this.classes = classes;
+      this.factories = factories;
+      this.factoryMethod = factoryMethod;
       this.instances = instances;
-      this.ctorArgs = ctorArgs;
+      this.factoryMethodArgs = factoryMethodArgs;
    }
    
    
@@ -62,7 +65,7 @@ public final class LazyParserInstanceIterator< T > implements Iterable< T >,
    @Override
    public Iterator< T > iterator()
    {
-      classesIndex = 0;
+      factoryIndex = 0;
       return this;
    }
    
@@ -84,12 +87,12 @@ public final class LazyParserInstanceIterator< T > implements Iterable< T >,
          throw new UnsupportedOperationException( "No next element." );
       }
       
-      if ( instances.size() - 1 < classesIndex )
+      if ( instances.size() - 1 < factoryIndex )
       {
          addInstance();
       }
       
-      return instances.get( classesIndex++ );
+      return instances.get( factoryIndex++ );
    }
    
    
@@ -104,7 +107,7 @@ public final class LazyParserInstanceIterator< T > implements Iterable< T >,
    
    private boolean hasNextImpl()
    {
-      final boolean hasNext = classes.size() > classesIndex;
+      final boolean hasNext = factories.size() > factoryIndex;
       return hasNext;
    }
    
@@ -112,67 +115,29 @@ public final class LazyParserInstanceIterator< T > implements Iterable< T >,
    
    private void addInstance()
    {
-      final Class< ? extends T > clazz = classes.get( classesIndex );
-      T instance;
-      
-      if ( ctorArgs != null && ctorArgs.length > 0 )
-      {
-         instance = createInstanceWithParams( clazz );
-      }
-      else
-      {
-         instance = createParamLessInstance( clazz );
-      }
+      final Object factory = factories.get( factoryIndex );
+      final T instance = callFactoryMethod( factory );
       
       instances.add( instance );
    }
    
    
    
-   private T createParamLessInstance( Class< ? extends T > clazz )
+   private T callFactoryMethod( Object factory )
    {
       try
       {
-         return clazz.newInstance();
-      }
-      catch ( InstantiationException e )
-      {
-         throw new RuntimeException( e );
+         @SuppressWarnings( "unchecked" )
+         final T instance = (T) factoryMethod.invoke( factory,
+                                                      factoryMethodArgs );
+         
+         return instance;
       }
       catch ( IllegalAccessException e )
-      {
-         throw new RuntimeException( e );
-      }
-   }
-   
-   
-   
-   private T createInstanceWithParams( Class< ? extends T > clazz )
-   {
-      try
-      {
-         final Class< ? >[] ctorTypes = new Class< ? >[ ctorArgs.length ];
-         for ( int i = 0; i < ctorArgs.length; ++i )
-         {
-            ctorTypes[ i ] = ctorArgs[ i ].getClass();
-         }
-         
-         final Constructor< ? extends T > ctor = clazz.getConstructor( ctorTypes );
-         return ctor.newInstance( ctorArgs );
-      }
-      catch ( NoSuchMethodException e )
       {
          throw new RuntimeException( e );
       }
       catch ( IllegalArgumentException e )
-      {
-         throw new RuntimeException( e );
-      }
-      catch ( InstantiationException e )
-      {
-         throw new RuntimeException( e );
-      }
-      catch ( IllegalAccessException e )
       {
          throw new RuntimeException( e );
       }

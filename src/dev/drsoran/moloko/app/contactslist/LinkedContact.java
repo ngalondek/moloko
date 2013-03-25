@@ -20,15 +20,18 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm;
+package dev.drsoran.moloko.app.contactslist;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import dev.drsoran.moloko.domain.model.IContact;
 
 
-public class Contact
+class LinkedContact
 {
-   RtmContactWithTaskCount rtmContact;
+   private final IContact contact;
+   
+   private final int numTasksParticipating;
    
    private String lookUpKey;
    
@@ -37,88 +40,86 @@ public class Contact
    private boolean isLinkedByNotes;
    
    
-
-   public Contact( RtmContactWithTaskCount rtmContact )
+   
+   public LinkedContact( IContact contact, int numTasksParticipating )
    {
-      this.rtmContact = rtmContact;
-      this.lookUpKey = null;
-      this.photo = null;
-      this.isLinkedByNotes = false;
+      this.contact = contact;
+      this.numTasksParticipating = numTasksParticipating;
    }
    
-
-
-   public String getFullname()
+   
+   
+   public long getId()
    {
-      return rtmContact.getFullname();
+      return contact.getId();
    }
    
-
-
-   public String getId()
+   
+   
+   public String getFullName()
    {
-      return rtmContact.getId();
+      return contact.getFullName();
    }
    
-
-
-   public int getTaskCount()
+   
+   
+   public String getUserName()
    {
-      return rtmContact.getTaskCount();
+      return contact.getUserName();
    }
    
-
-
-   public String getUsername()
+   
+   
+   public int getNumTasksParticipating()
    {
-      return rtmContact.getUsername();
+      return numTasksParticipating;
    }
    
-
-
+   
+   
    public String getLookUpKey()
    {
       return lookUpKey;
    }
    
-
-
+   
+   
    public void setLookUpKey( String lookUpKey, boolean linkedByNotes )
    {
       this.lookUpKey = lookUpKey;
       this.isLinkedByNotes = linkedByNotes;
    }
    
-
-
+   
+   
    public Bitmap getPhoto()
    {
       return photo;
    }
    
-
-
+   
+   
    public void setPhoto( Bitmap photo )
    {
       this.photo = photo;
    }
    
-
-
+   
+   
    public boolean isLinkedByNotes()
    {
       return isLinkedByNotes;
    }
    
-
-
+   
+   
    public void setLinkedByNotes( boolean isLinkedByNotes )
    {
       this.isLinkedByNotes = isLinkedByNotes;
    }
    
-
-
+   
+   
    public void setPhoto( byte[] data )
    {
       try

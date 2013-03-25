@@ -30,7 +30,7 @@ import android.content.Context;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderAction;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.content.Modification;
@@ -50,7 +50,7 @@ public final class NoteEditUtils
    
    
    
-   public final static ApplyChangesInfo setNoteTitleAndText( Context context,
+   public final static ApplyContentChangesInfo setNoteTitleAndText( Context context,
                                                              String noteId,
                                                              String title,
                                                              String text )
@@ -67,7 +67,7 @@ public final class NoteEditUtils
                                                        text ) );
       modifications.add( Modification.newNoteModified( noteId ) );
       
-      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+      return new ApplyContentChangesInfo( modifications.toContentProviderActionItemList(),
                                    context.getString( R.string.toast_save_note ),
                                    context.getString( R.string.toast_save_note_ok ),
                                    context.getString( R.string.toast_save_note_failed ) );
@@ -75,7 +75,7 @@ public final class NoteEditUtils
    
    
    
-   public final static ApplyChangesInfo insertNote( Context context,
+   public final static ApplyContentChangesInfo insertNote( Context context,
                                                     RtmTaskNote note )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
@@ -92,7 +92,7 @@ public final class NoteEditUtils
       if ( !ok )
          actionItemList = null;
       
-      return new ApplyChangesInfo( actionItemList,
+      return new ApplyContentChangesInfo( actionItemList,
                                    context.getString( R.string.toast_insert_note ),
                                    context.getString( R.string.toast_insert_note_ok ),
                                    context.getString( R.string.toast_insert_note_fail ) );
@@ -100,7 +100,7 @@ public final class NoteEditUtils
    
    
    
-   public final static ApplyChangesInfo deleteNotes( Context context,
+   public final static ApplyContentChangesInfo deleteNotes( Context context,
                                                      Collection< RtmTaskNote > notes )
    {
       boolean ok = true;
@@ -126,7 +126,7 @@ public final class NoteEditUtils
       if ( !ok )
          actionItemList = null;
       
-      return new ApplyChangesInfo( actionItemList,
+      return new ApplyContentChangesInfo( actionItemList,
                                    context.getString( R.string.toast_delete_note ),
                                    context.getString( R.string.toast_delete_note_ok ),
                                    context.getString( R.string.toast_delete_note_failed ) );

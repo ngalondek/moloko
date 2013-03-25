@@ -26,8 +26,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.antlr.runtime.RecognitionException;
-
+import android.text.TextUtils;
 import android.util.Pair;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
@@ -58,158 +57,149 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    @Override
-   public MolokoCalendar parseTimeOrTimeSpec( String spec )
+   public MolokoCalendar parseTimeOrTimeSpec( String spec ) throws GrammarException
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
-      
-      boolean error = false;
       
       try
       {
          parseTimeSpec( spec, cal, false );
       }
-      catch ( RecognitionException e )
+      catch ( GrammarException e )
       {
-         try
-         {
-            parseTime( spec, cal, false );
-         }
-         catch ( RecognitionException e1 )
-         {
-            error = true;
-         }
+         parseTime( spec, cal, false );
       }
       
-      return ( !error ) ? cal : null;
+      return cal;
    }
    
    
    
    @Override
-   public MolokoCalendar parseDateTimeSpec( String spec )
+   public MolokoCalendar parseDateTimeSpec( String spec ) throws GrammarException
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      if ( TextUtils.isEmpty( spec ) )
+      {
+         throw new GrammarException( "An empty spec is not parsable." );
+      }
       
-      boolean parsingFailed = true;
-      boolean hasTime = false;
-      boolean hasDate = false;
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final int specLength = spec.length();
       
       int startOfDatePos = 0;
+      GrammarException lastGrammarException = null;
       
       // first try to parse time spec
       try
       {
-         parsingFailed = false;
          final Matcher timePrefixMatcher = TIME_PREFIX_PATTERN.matcher( spec );
          
          if ( timePrefixMatcher.find() )
          {
             // The parser can adjust the day of week
             // for times in the past.
-            parseTimeSpec( timePrefixMatcher.group(), cal, !hasDate );
-            
+            parseTimeSpec( timePrefixMatcher.group(), cal, !cal.hasDate() );
             startOfDatePos = timePrefixMatcher.end();
-            hasTime = cal.hasTime();
          }
       }
-      catch ( RecognitionException e )
+      catch ( GrammarException e )
       {
-         parsingFailed = true;
+         lastGrammarException = e;
       }
       
-      final String datePart = spec.substring( startOfDatePos, spec.length() );
-      boolean eof = datePart.length() == 0;
+      final String datePart = spec.substring( startOfDatePos, specLength );
+      boolean hasMoreToParse = datePart.length() > 0;
       
-      int endOfDatePos = spec.length();
-      if ( !eof )
+      // If we only had a time, then check if at least the time parsing succeeded.
+      if ( !hasMoreToParse )
       {
-         parsingFailed = false;
-         
-         try
+         if ( lastGrammarException != null )
          {
-            final ParseDateReturn ret = parseDate( datePart, cal, !hasTime );
-            eof = ret.isEof;
-            endOfDatePos = ret.lastParsedCharPos;
-            hasDate = cal.hasDate();
+            throw lastGrammarException;
          }
-         catch ( RecognitionException e )
+         else
          {
-            endOfDatePos = 0;
-            parsingFailed = true;
+            throw new GrammarException();
          }
+      }
+      
+      // Try parsing the date part as Date
+      lastGrammarException = null;
+      int endOfDatePos;
+      try
+      {
+         final ParseDateReturn ret = parseDate( datePart, cal, !cal.hasTime() );
+         hasMoreToParse = !ret.isEof;
+         endOfDatePos = ret.lastParsedCharPos;
+      }
+      catch ( GrammarException e )
+      {
+         lastGrammarException = e;
+         endOfDatePos = 0;
+      }
+      
+      // Check if there is a time trailing or we only have a time.
+      // The parser can NOT adjust the day of week for times in the past if we have already
+      // parsed a date.
+      if ( hasMoreToParse && !cal.hasTime() )
+      {
+         lastGrammarException = null;
          
-         // Check if there is a time trailing or we only have a time.
-         // The parser can NOT adjust the day of week for times in the past if we have already
-         // parsed a date.
-         if ( !eof && !hasTime )
+         final String potentialTimePart = spec.substring( endOfDatePos,
+                                                          specLength );
+         hasMoreToParse = potentialTimePart.length() > 0;
+         
+         if ( hasMoreToParse )
          {
-            final String potentialTimePart = spec.substring( endOfDatePos,
-                                                             spec.length() );
-            
-            eof = potentialTimePart.length() == 0;
-            if ( !eof )
+            try
             {
-               parsingFailed = false;
+               hasMoreToParse = !parseTime( potentialTimePart,
+                                            cal,
+                                            !cal.hasDate() ).isEof;
+            }
+            catch ( GrammarException e )
+            {
+               lastGrammarException = e;
+            }
+            
+            if ( hasMoreToParse && !cal.hasTime() )
+            {
+               lastGrammarException = null;
                
                try
                {
-                  eof = parseTime( potentialTimePart, cal, !hasDate ).isEof;
-                  hasTime = cal.hasTime();
+                  parseTimeSpec( potentialTimePart, cal, !cal.hasDate() );
                }
-               catch ( RecognitionException re2 )
+               catch ( GrammarException e )
                {
-                  parsingFailed = true;
-               }
-               
-               if ( !eof && !hasTime )
-               {
-                  parsingFailed = false;
-                  
-                  try
-                  {
-                     eof = parseTimeSpec( potentialTimePart, cal, !hasDate ).isEof;
-                     hasTime = cal.hasTime();
-                  }
-                  catch ( RecognitionException re3 )
-                  {
-                     parsingFailed = true;
-                  }
+                  lastGrammarException = e;
                }
             }
          }
       }
       
-      return !parsingFailed ? cal : null;
+      if ( lastGrammarException != null )
+      {
+         throw lastGrammarException;
+      }
+      
+      return cal;
    }
    
    
    
    @Override
-   public long parseEstimated( String estimated )
+   public long parseEstimated( String estimated ) throws GrammarException
    {
-      try
-      {
-         return parseTimeEstimate( estimated );
-      }
-      catch ( RecognitionException e )
-      {
-         return -1L;
-      }
+      return parseTimeEstimate( estimated );
    }
    
    
    
    @Override
-   public ParseDateWithinReturn parseDateWithin( String range, boolean past )
+   public ParseDateWithinReturn parseDateWithin( String range, boolean past ) throws GrammarException
    {
-      try
-      {
-         return parseDateWithinImpl( range, past );
-      }
-      catch ( RecognitionException e )
-      {
-         return null;
-      }
+      return parseDateWithinImpl( range, past );
    }
    
    
@@ -224,12 +214,12 @@ public class DateTimeParsing implements IDateTimeParsing
    
    private ParseTimeReturn parseTime( final String time,
                                       final MolokoCalendar cal,
-                                      final boolean adjustDay ) throws RecognitionException
+                                      final boolean adjustDay ) throws GrammarException
    {
       return detectLanguageAndParseTime( new IParserFunc< ITimeParser, ParseTimeReturn >()
       {
          @Override
-         public ParseTimeReturn call( ITimeParser timeParser ) throws RecognitionException
+         public ParseTimeReturn call( ITimeParser timeParser ) throws GrammarException
          {
             return timeParser.parseTime( time, cal, adjustDay );
          }
@@ -240,12 +230,12 @@ public class DateTimeParsing implements IDateTimeParsing
    
    private ParseTimeReturn parseTimeSpec( final String timeSpec,
                                           final MolokoCalendar cal,
-                                          final boolean adjustDay ) throws RecognitionException
+                                          final boolean adjustDay ) throws GrammarException
    {
       return detectLanguageAndParseTime( new IParserFunc< ITimeParser, ParseTimeReturn >()
       {
          @Override
-         public ParseTimeReturn call( ITimeParser timeParser ) throws RecognitionException
+         public ParseTimeReturn call( ITimeParser timeParser ) throws GrammarException
          {
             return timeParser.parseTimeSpec( timeSpec, cal, adjustDay );
          }
@@ -254,12 +244,12 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private long parseTimeEstimate( final String timeEstimate ) throws RecognitionException
+   private long parseTimeEstimate( final String timeEstimate ) throws GrammarException
    {
       return detectLanguageAndParseTime( new IParserFunc< ITimeParser, Long >()
       {
          @Override
-         public Long call( ITimeParser timeParser ) throws RecognitionException
+         public Long call( ITimeParser timeParser ) throws GrammarException
          {
             final Long res = timeParser.parseTimeEstimate( timeEstimate );
             return res != null ? res.longValue() : -1;
@@ -271,12 +261,12 @@ public class DateTimeParsing implements IDateTimeParsing
    
    private ParseDateReturn parseDate( final String date,
                                       final MolokoCalendar cal,
-                                      final boolean clearTime ) throws RecognitionException
+                                      final boolean clearTime ) throws GrammarException
    {
       return detectLanguageAndParseDate( new IParserFunc< IDateParser, ParseDateReturn >()
       {
          @Override
-         public ParseDateReturn call( IDateParser dateParser ) throws RecognitionException
+         public ParseDateReturn call( IDateParser dateParser ) throws GrammarException
          {
             return dateParser.parseDate( date, cal, clearTime );
          }
@@ -286,12 +276,12 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    private ParseDateWithinReturn parseDateWithinImpl( final String range,
-                                                      final boolean past ) throws RecognitionException
+                                                      final boolean past ) throws GrammarException
    {
       return detectLanguageAndParseDate( new IParserFunc< IDateParser, ParseDateWithinReturn >()
       {
          @Override
-         public ParseDateWithinReturn call( IDateParser dateParser ) throws RecognitionException
+         public ParseDateWithinReturn call( IDateParser dateParser ) throws GrammarException
          {
             return dateParser.parseDateWithin( range, past );
          }
@@ -300,11 +290,17 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private < T > T detectLanguageAndParseDate( IParserFunc< IDateParser, T > parserFunc ) throws RecognitionException
+   private < T > T detectLanguageAndParseDate( IParserFunc< IDateParser, T > parserFunc ) throws GrammarException
    {
       final Pair< IDateParser, T > detectResult = ParserLanguageDetector.detectLanguageAndParse( dateParser,
                                                                                                  parserRepository.getDateParsers(),
                                                                                                  parserFunc );
+      
+      if ( detectResult.first == null )
+      {
+         throw new GrammarException();
+      }
+      
       dateParser = detectResult.first;
       
       return detectResult.second;
@@ -312,11 +308,17 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private < T > T detectLanguageAndParseTime( IParserFunc< ITimeParser, T > parserFunc ) throws RecognitionException
+   private < T > T detectLanguageAndParseTime( IParserFunc< ITimeParser, T > parserFunc ) throws GrammarException
    {
       final Pair< ITimeParser, T > detectResult = ParserLanguageDetector.detectLanguageAndParse( timeParser,
                                                                                                  parserRepository.getTimeParsers(),
                                                                                                  parserFunc );
+      
+      if ( detectResult.first == null )
+      {
+         throw new GrammarException();
+      }
+      
       timeParser = detectResult.first;
       
       return detectResult.second;

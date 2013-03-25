@@ -32,7 +32,7 @@ import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.ApplyChangesInfo;
+import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderAction;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.app.settings.Settings;
@@ -54,7 +54,7 @@ public final class RtmListEditUtils
    
    
    
-   public final static ApplyChangesInfo setListName( Context context,
+   public final static ApplyContentChangesInfo setListName( Context context,
                                                      String listId,
                                                      String name )
    {
@@ -66,7 +66,7 @@ public final class RtmListEditUtils
                                                        name ) );
       modifications.add( Modification.newListModified( listId ) );
       
-      return new ApplyChangesInfo( modifications.toContentProviderActionItemList(),
+      return new ApplyContentChangesInfo( modifications.toContentProviderActionItemList(),
                                    context.getString( R.string.toast_save_list ),
                                    context.getString( R.string.toast_save_list_ok ),
                                    context.getString( R.string.toast_save_list_failed ) );
@@ -74,7 +74,7 @@ public final class RtmListEditUtils
    
    
    
-   public final static ApplyChangesInfo deleteListByName( Context context,
+   public final static ApplyContentChangesInfo deleteListByName( Context context,
                                                           String listName )
    {
       final ContentProviderClient client = context.getContentResolver()
@@ -93,13 +93,13 @@ public final class RtmListEditUtils
          client.release();
       }
       
-      return ApplyChangesInfo.failed( context.getString( R.string.toast_delete_list_failed,
+      return ApplyContentChangesInfo.failed( context.getString( R.string.toast_delete_list_failed,
                                                          listName ) );
    }
    
    
    
-   public final static ApplyChangesInfo insertList( Context context,
+   public final static ApplyContentChangesInfo insertList( Context context,
                                                     RtmList list )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
@@ -119,7 +119,7 @@ public final class RtmListEditUtils
       
       final String listname = list.getName();
       
-      return new ApplyChangesInfo( actionItemList,
+      return new ApplyContentChangesInfo( actionItemList,
                                    context.getString( R.string.toast_insert_list,
                                                       listname ),
                                    context.getString( R.string.toast_insert_list_ok,
@@ -130,7 +130,7 @@ public final class RtmListEditUtils
    
    
    
-   public final static ApplyChangesInfo deleteList( Context context,
+   public final static ApplyContentChangesInfo deleteList( Context context,
                                                     RtmList list )
    {
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
@@ -198,7 +198,7 @@ public final class RtmListEditUtils
                                                    listName );
       }
       
-      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( actionItemList,
+      final ApplyContentChangesInfo applyChangesInfo = new ApplyContentChangesInfo( actionItemList,
                                                                       context.getString( R.string.toast_delete_list,
                                                                                          listName ),
                                                                       context.getString( R.string.toast_delete_list_ok,

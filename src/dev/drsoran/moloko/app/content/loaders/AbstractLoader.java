@@ -20,31 +20,57 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.loaders;
+package dev.drsoran.moloko.app.content.loaders;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.content.ContentProviderClient;
-import android.content.Context;
 import android.database.ContentObserver;
-import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
-import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
 public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
 {
    private final ForceLoadContentObserver observer = new ForceLoadContentObserver();
    
-   private volatile D result;
-   
    private final AtomicBoolean respectContentChanges = new AtomicBoolean( true );
    
+   private final IContentRepository contentRepository;
+   
+   private volatile D result;
+   
+   private volatile ContentException contentException;
    
    
-   protected AbstractLoader( Context context )
+   
+   protected AbstractLoader( DomainContext context )
    {
       super( context );
+      this.contentRepository = context.getContentRepository();
+   }
+   
+   
+   
+   public boolean hasContentException()
+   {
+      return contentException != null;
+   }
+   
+   
+   
+   // TODO: Handle contentException
+   public ContentException getContentException()
+   {
+      return contentException;
+   }
+   
+   
+   
+   public void clearContentException()
+   {
+      contentException = null;
    }
    
    
@@ -54,9 +80,13 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       respectContentChanges.set( respect );
       
       if ( respect )
+      {
          registerContentObserver( observer );
+      }
       else
+      {
          unregisterContentObserver( observer );
+      }
    }
    
    
@@ -64,35 +94,25 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    @Override
    public D loadInBackground()
    {
+      clearContentException();
+      
       D result = null;
       
-      final ContentProviderClient client = getContentProviderClient();
-      
-      if ( client != null )
+      try
       {
-         result = queryResultInBackground( client );
-         
-         client.release();
+         result = queryResultInBackground( contentRepository );
          
          if ( result != null && respectContentChanges.get() )
+         {
             registerContentObserver( observer );
+         }
       }
-      else
+      catch ( ContentException e )
       {
-         LogUtils.logDBError( getContext(),
-                              getClass(),
-                              LogUtils.GENERIC_DB_ERROR );
+         contentException = e;
       }
       
       return result;
-   }
-   
-   
-   
-   protected ContentProviderClient getContentProviderClient()
-   {
-      return getContext().getContentResolver()
-                         .acquireContentProviderClient( getContentUri() );
    }
    
    
@@ -161,6 +181,7 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       if ( result != null )
       {
          clearResult( result );
+         clearContentException();
       }
    }
    
@@ -169,12 +190,13 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    @Override
    protected void onReset()
    {
-      super.onReset();
-      
       // Ensure the loader is stopped
       onStopLoading();
       
       result = null;
+      clearContentException();
+      
+      super.onReset();
    }
    
    
@@ -185,11 +207,7 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    
    
-   abstract protected D queryResultInBackground( ContentProviderClient client );
-   
-   
-   
-   abstract protected Uri getContentUri();
+   abstract protected D queryResultInBackground( IContentRepository respository ) throws ContentException;
    
    
    

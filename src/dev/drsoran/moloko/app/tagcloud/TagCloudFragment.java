@@ -42,10 +42,10 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 import dev.drsoran.rtm.LocationWithTaskCount;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.TagWithTaskCount;
 
 
@@ -321,13 +321,13 @@ class TagCloudFragment extends
    public static class ListTagCloudEntry extends TagCloudEntry implements
             View.OnClickListener
    {
-      private final RtmListWithTaskCount list;
+      private final ITasksList list;
       
       
       
-      public ListTagCloudEntry( RtmListWithTaskCount list )
+      public ListTagCloudEntry( ITasksList list )
       {
-         super( list.getName(), list.getTaskCount() );
+         super( list.getName(), list.getTasksCount() );
          this.list = list;
       }
       

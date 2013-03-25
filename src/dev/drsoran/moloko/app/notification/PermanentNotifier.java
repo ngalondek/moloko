@@ -29,10 +29,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.content.Loader;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
 import dev.drsoran.moloko.event.IOnTimeChangedListener;
-import dev.drsoran.moloko.loaders.AbstractLoader;
 
 
 class PermanentNotifier extends AbstractNotifier

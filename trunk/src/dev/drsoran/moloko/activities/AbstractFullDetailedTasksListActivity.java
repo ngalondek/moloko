@@ -127,7 +127,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    @Override
    public void onQuickAddAddNewTask( Bundle parsedValues )
    {
-      activeActionMode.finish();
+      finishActiveActionMode();
       startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
    }
    
@@ -189,6 +189,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       {
          startActivity( Intents.createEditMultipleTasksIntent( this, tasks ) );
       }
+      
+      finishActiveActionMode();
    }
    
    
@@ -198,10 +200,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       if ( tasks.size() == 1 )
       {
-         final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                                  tasks,
-                                                                                  true );
-         applyModifications( modifications );
+         completeSelectedTasks( tasks );
       }
       else
       {
@@ -222,10 +221,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       if ( tasks.size() == 1 )
       {
-         final ApplyChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                                  tasks,
-                                                                                  false );
-         applyModifications( modifications );
+         incompleteSelectedTasks( tasks );
       }
       else
       {
@@ -246,9 +242,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    {
       if ( tasks.size() == 1 )
       {
-         final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
-                                                                             tasks );
-         applyModifications( modifications );
+         postponeSelectedTasks( tasks );
       }
       else
       {
@@ -344,10 +338,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
             break;
       }
       
-      if ( activeActionMode != null )
-      {
-         activeActionMode.finish();
-      }
+      finishActiveActionMode();
    }
    
    
@@ -457,7 +448,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                tasks,
                                                                                true );
       applyModifications( modifications );
-      getTasksListFragment().getMolokoListView().clearChoices();
+      clearListChoices();
    }
    
    
@@ -468,7 +459,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                tasks,
                                                                                false );
       applyModifications( modifications );
-      getTasksListFragment().getMolokoListView().clearChoices();
+      clearListChoices();
    }
    
    
@@ -478,7 +469,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       final ApplyChangesInfo modifications = TaskEditUtils.postponeTasks( this,
                                                                           tasks );
       applyModifications( modifications );
-      getTasksListFragment().getMolokoListView().clearChoices();
+      clearListChoices();
    }
    
    
@@ -488,7 +479,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       final ApplyChangesInfo modifications = TaskEditUtils.deleteTasks( this,
                                                                         tasks );
       applyModifications( modifications );
-      getTasksListFragment().getMolokoListView().clearChoices();
+      clearListChoices();
    }
    
    
@@ -581,5 +572,22 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private List< Task > getSelectedTasks()
    {
       return getTasksListFragment().getMolokoListView().getCheckedItems();
+   }
+   
+   
+   
+   private void clearListChoices()
+   {
+      getTasksListFragment().getMolokoListView().clearChoices();
+   }
+   
+   
+   
+   private void finishActiveActionMode()
+   {
+      if ( activeActionMode != null )
+      {
+         activeActionMode.finish();
+      }
    }
 }

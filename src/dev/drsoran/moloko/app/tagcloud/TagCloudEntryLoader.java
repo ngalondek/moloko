@@ -24,26 +24,18 @@ package dev.drsoran.moloko.app.tagcloud;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import android.content.ContentProviderClient;
-import android.content.Context;
 import android.database.ContentObserver;
-import android.net.Uri;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
-import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.ListTagCloudEntry;
-import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.LocationTagCloudEntry;
-import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.TagCloudEntry;
-import dev.drsoran.moloko.app.tagcloud.TagCloudFragment.TagTagCloudEntry;
-import dev.drsoran.moloko.content.ListOverviewsProviderPart;
-import dev.drsoran.moloko.content.LocationOverviewsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.ListOverviews;
-import dev.drsoran.rtm.LocationWithTaskCount;
-import dev.drsoran.rtm.RtmListWithTaskCount;
-import dev.drsoran.rtm.TagWithTaskCount;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.model.ITask;
+import dev.drsoran.moloko.domain.model.Location;
+import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
 class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
@@ -52,7 +44,7 @@ class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
    
    
    
-   public TagCloudEntryLoader( Context context )
+   public TagCloudEntryLoader( DomainContext context )
    {
       super( context );
    }
@@ -60,90 +52,49 @@ class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
    
    
    @Override
-   protected List< TagCloudEntry > queryResultInBackground( ContentProviderClient client )
+   protected List< TagCloudEntry > queryResultInBackground( IContentRepository contentRepository )
    {
-      // Fetch all lists and their task count
-      List< RtmListWithTaskCount > lists = null;
+      final SortedMap< TagCloudEntry, TagCloudEntry > tagCloudEntries = new TreeMap< TagCloudEntry, TagCloudEntry >();
+      
+      final Iterable< ITask > tasks = contentRepository.getTasks( TaskContentOptions.MINIMAL );
+      for ( ITask task : tasks )
       {
-         // get all non smart lists
-         lists = ListOverviewsProviderPart.getListsOverview( client,
-                                                             ListOverviews.IS_SMART_LIST
-                                                                + " = 0" );
-         if ( lists == null )
+         addOrIncrement( tagCloudEntries,
+                         new TasksListTagCloudEntry( task.getListId(),
+                                                     task.getListName() ) );
+         
+         final Location location = task.getLocation();
+         if ( location != null )
          {
-            LogUtils.logDBError( getContext(), getClass(), "Lists" );
+            addOrIncrement( tagCloudEntries,
+                            new LocationTagCloudEntry( location ) );
+         }
+         
+         for ( String tag : task.getTags() )
+         {
+            addOrIncrement( tagCloudEntries, new TagTagCloudEntry( tag ) );
          }
       }
       
-      // Fetch all Tags and their task count
-      List< TagWithTaskCount > tags = null;
-      {
-         tags = TagsProviderPart.getAllTagsWithTaskCount( client );
-         
-         if ( tags == null )
-         {
-            LogUtils.logDBError( getContext(), getClass(), "Tags" );
-         }
-      }
+      final List< TagCloudEntry > cloudEntriesList = new ArrayList< TagCloudEntry >( tagCloudEntries.keySet() );
       
-      // Fetch all Locations and their task count
-      List< LocationWithTaskCount > locations = null;
-      {
-         locations = LocationOverviewsProviderPart.getLocationsOverview( client,
-                                                                         null );
-         if ( locations == null )
-         {
-            LogUtils.logDBError( getContext(), getClass(), "Locations" );
-         }
-      }
-      
-      List< TagCloudEntry > cloudEntries = null;
-      
-      if ( lists != null && tags != null && locations != null )
-      {
-         final int count = lists.size() + tags.size() + locations.size();
-         cloudEntries = new ArrayList< TagCloudEntry >( count );
-         
-         for ( RtmListWithTaskCount list : lists )
-         {
-            if ( list.getNumTasksParticipating() > 0 )
-            {
-               cloudEntries.add( new ListTagCloudEntry( list ) );
-            }
-         }
-         
-         for ( TagWithTaskCount tag : tags )
-         {
-            cloudEntries.add( new TagTagCloudEntry( tag ) );
-         }
-         
-         for ( LocationWithTaskCount location : locations )
-         {
-            if ( location.getIncompleteTaskCount() > 0 )
-            {
-               cloudEntries.add( new LocationTagCloudEntry( location ) );
-            }
-         }
-      }
-      
-      return cloudEntries;
+      return cloudEntriesList;
    }
    
    
    
-   @Override
-   protected Uri getContentUri()
+   private void addOrIncrement( SortedMap< TagCloudEntry, TagCloudEntry > tagCloudEntries,
+                                TagCloudEntry tagCloudEntry )
    {
-      return Uri.EMPTY;
-   }
-   
-   
-   
-   @Override
-   protected ContentProviderClient getContentProviderClient()
-   {
-      return getContext().getContentResolver()
-                         .acquireContentProviderClient( Rtm.AUTHORITY );
+      final TagCloudEntry existingEntry = tagCloudEntries.get( tagCloudEntry );
+      if ( existingEntry != null )
+      {
+         existingEntry.setCount( existingEntry.getCount() + 1 );
+      }
+      else
+      {
+         tagCloudEntries.put( tagCloudEntry, tagCloudEntry );
+      }
    }
    
    

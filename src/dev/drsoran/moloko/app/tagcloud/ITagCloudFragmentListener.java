@@ -1,13 +1,11 @@
 package dev.drsoran.moloko.app.tagcloud;
 
-import com.mdt.rtm.data.RtmLocation;
-
-import dev.drsoran.rtm.RtmListWithTaskCount;
+import dev.drsoran.moloko.domain.model.Location;
 
 
 interface ITagCloudFragmentListener
 {
-   void onOpenList( RtmListWithTaskCount list );
+   void onOpenList( long listId );
    
    
    
@@ -15,9 +13,9 @@ interface ITagCloudFragmentListener
    
    
    
-   void onOpenLocation( RtmLocation location );
+   void onOpenLocation( Location location );
    
    
    
-   void onOpenLocationWithOtherApp( RtmLocation location );
+   void onOpenLocationWithOtherApp( Location location );
 }

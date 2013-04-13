@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.content.ContentValues;
+import android.database.SQLException;
 
 
 interface ITable
@@ -39,13 +40,13 @@ interface ITable
    
    
    
-   long insert( ContentValues initialValues );
+   long insert( ContentValues initialValues ) throws SQLException;
    
    
    
-   int update( String id, ContentValues values, String where, String[] whereArgs );
+   int update( long id, ContentValues values, String where, String[] whereArgs );
    
    
    
-   int delete( String id, String where, String[] whereArgs );
+   int delete( long id, String where, String[] whereArgs );
 }

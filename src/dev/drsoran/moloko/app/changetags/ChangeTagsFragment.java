@@ -48,10 +48,9 @@ import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.UiUtils.AfterTextChangedWatcher;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.Tag;
 
 
-class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
+class ChangeTagsFragment extends MolokoLoaderFragment< List< String > >
 {
    public static class ChangeTag
    {
@@ -164,21 +163,6 @@ class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
    public List< String > getChosenTags()
    {
       return chosenTags;
-   }
-   
-   
-   
-   public List< String > getAllTagsAssertNotNull()
-   {
-      final List< Tag > allTags = getLoaderDataAssertNotNull();
-      final List< String > allTagsString = new ArrayList< String >( allTags.size() );
-      
-      for ( Tag tag : allTags )
-      {
-         allTagsString.add( tag.getTag() );
-      }
-      
-      return allTagsString;
    }
    
    
@@ -310,7 +294,7 @@ class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
       // Duplicates will be filtered out
       ensureUniqueTags();
       
-      final List< String > allTags = getAllTagsAssertNotNull();
+      final List< String > allTags = getLoaderDataAssertNotNull();
       final List< ChangeTag > changeTags = new ArrayList< ChangeTag >( chosenTags.size()
          + allTags.size() );
       
@@ -331,12 +315,9 @@ class ChangeTagsFragment extends MolokoLoaderFragment< List< Tag > >
    
    
    @Override
-   public Loader< List< Tag > > newLoaderInstance( int id, Bundle args )
+   public Loader< List< String > > newLoaderInstance( int id, Bundle args )
    {
-      final TagsLoader loader = new TagsLoader( getSherlockActivity(),
-                                                null,
-                                                new Tag.ASC_ALPHA(),
-                                                true );
+      final TagsLoader loader = new TagsLoader( getUiContext().asDomainContext() );
       loader.setRespectContentChanges( false );
       
       return loader;

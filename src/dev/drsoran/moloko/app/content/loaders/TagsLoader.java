@@ -22,75 +22,39 @@
 
 package dev.drsoran.moloko.app.content.loaders;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ContentProviderClient;
-import android.content.Context;
 import android.database.ContentObserver;
-import android.net.Uri;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.provider.Rtm.Tags;
-import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.Tag;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
-public class TagsLoader extends AbstractLoader< List< Tag > >
+public class TagsLoader extends AbstractLoader< List< String > >
 {
    public final static int ID = R.id.loader_tags;
    
    
-   public final static class Config
-   {
-      public final static String TASKSERIES_ID = Tasks.TASKSERIES_ID;
-      
-      public final static String COMPARATOR = "comparator";
-      
-      public final static String DISTINCT = "distinct";
-   }
    
-   private final String taskSeriesId;
-   
-   private final Comparator< Tag > comparator;
-   
-   private final boolean distinct;
-   
-   
-   
-   public TagsLoader( Context context )
-   {
-      this( context, null, null, true );
-   }
-   
-   
-   
-   public TagsLoader( Context context, String taskSeriesId,
-      Comparator< Tag > comparator, boolean distinct )
+   public TagsLoader( DomainContext context )
    {
       super( context );
-      this.taskSeriesId = taskSeriesId;
-      this.comparator = comparator;
-      this.distinct = distinct;
    }
    
    
    
    @Override
-   protected List< Tag > queryResultInBackground( ContentProviderClient client )
+   protected List< String > queryResultInBackground( IContentRepository contentRepository )
    {
-      return TagsProviderPart.getAllTags( client,
-                                          taskSeriesId,
-                                          comparator,
-                                          distinct );
-   }
-   
-   
-   
-   @Override
-   protected Uri getContentUri()
-   {
-      return Tags.CONTENT_URI;
+      final List< String > tags = new ArrayList< String >();
+      
+      for ( String tag : contentRepository.getTags() )
+      {
+         tags.add( tag );
+      }
+      
+      return tags;
    }
    
    

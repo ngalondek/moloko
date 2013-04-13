@@ -25,6 +25,9 @@
  */
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.util.Strings;
+
+
 public class Recurrence
 {
    private final String pattern;
@@ -51,5 +54,42 @@ public class Recurrence
    public boolean isEveryRecurrence()
    {
       return isEveryRecurrence;
+   }
+   
+   
+   
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( o == this )
+      {
+         return true;
+      }
+      if ( o == null )
+      {
+         return false;
+      }
+      if ( o.getClass() != Recurrence.class )
+      {
+         return false;
+      }
+      
+      final Recurrence other = (Recurrence) o;
+      
+      return Strings.equals( pattern, other.pattern )
+         && isEveryRecurrence == other.isEveryRecurrence;
+   }
+   
+   
+   
+   @Override
+   public int hashCode()
+   {
+      int result = 17;
+      
+      result = 31 * result + ( pattern != null ? pattern.hashCode() : 0 );
+      result = 31 * result + ( isEveryRecurrence ? 1 : 0 );
+      
+      return result;
    }
 }

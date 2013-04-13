@@ -20,9 +20,23 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.content;
+package dev.drsoran.moloko.content.db;
 
-public final class ContentAuthority
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import dev.drsoran.moloko.content.ContentMimeTypes;
+
+
+class ContentMimeTypeToTableMapper
 {
-   public final static String RTM = "dev.drsoran.provider.Rtm";
+   private final static Map< String, Collection< String >> MimeTypeToTablesMap;
+   
+   static
+   {
+      MimeTypeToTablesMap = new HashMap< String, Collection< String > >( 10 );
+      
+      MimeTypeToTablesMap.put( ContentMimeTypes.TASKS_CONTENT_ITEM_TYPE, value );
+   }
 }

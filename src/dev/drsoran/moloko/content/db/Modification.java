@@ -20,21 +20,19 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.content;
+package dev.drsoran.moloko.content.db;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.moloko.content.ContentCompare;
 
 
 public class Modification implements Comparable< Modification >
 {
-   private final String id;
+   private final long id;
    
    private final Uri entityUri;
    
@@ -44,11 +42,11 @@ public class Modification implements Comparable< Modification >
    
    private final String syncedValue;
    
-   private final boolean synedValueSet;
+   private final boolean isSetSyncedValue;
    
    private final boolean persistent;
    
-   private final long timestamp;
+   private final long timestampMillisUtc;
    
    
    private final static class SortColumnName implements
@@ -65,8 +63,8 @@ public class Modification implements Comparable< Modification >
    
    
    
-   private Modification( String id, Uri entityUri, String colName,
-      String newValue, String syncedValue, boolean syncedValueSet,
+   private Modification( long id, Uri entityUri, String colName,
+      String newValue, String syncedValue, boolean isSetSyncedValue,
       boolean persistent, long timestamp )
    {
       this.id = id;
@@ -74,14 +72,14 @@ public class Modification implements Comparable< Modification >
       this.colName = colName;
       this.newValue = newValue;
       this.syncedValue = syncedValue;
-      this.synedValueSet = syncedValueSet;
+      this.isSetSyncedValue = isSetSyncedValue;
       this.persistent = persistent;
-      this.timestamp = timestamp;
+      this.timestampMillisUtc = timestamp;
    }
    
    
    
-   public String getId()
+   public long getId()
    {
       return id;
    }
@@ -130,9 +128,9 @@ public class Modification implements Comparable< Modification >
    
    
    
-   public boolean isSyncedValueSet()
+   public boolean isSetSyncedValue()
    {
-      return synedValueSet;
+      return isSetSyncedValue;
    }
    
    
@@ -146,7 +144,7 @@ public class Modification implements Comparable< Modification >
    
    public long getTimestamp()
    {
-      return timestamp;
+      return timestampMillisUtc;
    }
    
    
@@ -155,10 +153,14 @@ public class Modification implements Comparable< Modification >
    public boolean equals( Object o )
    {
       if ( this == o )
+      {
          return true;
+      }
       
-      if ( !( o instanceof Modification ) )
+      if ( getClass() != o.getClass() )
+      {
          return false;
+      }
       
       final Modification other = (Modification) o;
       
@@ -206,28 +208,17 @@ public class Modification implements Comparable< Modification >
    public String toString()
    {
       return "<Mod, " + id + ", " + entityUri + ", " + colName + ", "
-         + newValue + ", " + syncedValue + ", " + new Date( timestamp ) + ">";
+         + newValue + ", " + syncedValue + ", " + new Date( timestampMillisUtc )
+         + ">";
    }
    
    
    
-   public final static < T > Modification newModification( Uri contentUri,
-                                                           String id,
-                                                           String colName,
-                                                           T newValue )
+   public static < T > Modification newModification( Uri entityUri,
+                                                     String colName,
+                                                     T newValue )
    {
-      return newModification( DbUtils.contentUriWithId( contentUri, id ),
-                              colName,
-                              newValue );
-   }
-   
-   
-   
-   public final static < T > Modification newModification( Uri entityUri,
-                                                           String colName,
-                                                           T newValue )
-   {
-      return new Modification( null,
+      return new Modification( -1L,
                                entityUri,
                                colName,
                                toString( newValue ),
@@ -239,12 +230,12 @@ public class Modification implements Comparable< Modification >
    
    
    
-   public final static < T > Modification newModification( Uri entityUri,
-                                                           String colName,
-                                                           T newValue,
-                                                           T synedValue )
+   public static < T > Modification newModification( Uri entityUri,
+                                                     String colName,
+                                                     T newValue,
+                                                     T synedValue )
    {
-      return new Modification( null,
+      return new Modification( -1L,
                                entityUri,
                                colName,
                                toString( newValue ),
@@ -256,41 +247,11 @@ public class Modification implements Comparable< Modification >
    
    
    
-   public final static < T > ContentProviderOperation newModificationOperation( Uri entityUri,
-                                                                                String colName,
-                                                                                T newValue,
-                                                                                T syncedValue )
+   public static < T > Modification newNonPersistentModification( Uri entityUri,
+                                                                  String colName,
+                                                                  T newValue )
    {
-      return ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
-                                     .withValues( ModificationsProviderPart.getContentValues( null,
-                                                                                              newModification( entityUri,
-                                                                                                               colName,
-                                                                                                               newValue,
-                                                                                                               syncedValue ),
-                                                                                              true ) )
-                                     .build();
-   }
-   
-   
-   
-   public final static < T > Modification newNonPersistentModification( Uri contentUri,
-                                                                        String id,
-                                                                        String colName,
-                                                                        T newValue )
-   {
-      return newNonPersistentModification( DbUtils.contentUriWithId( contentUri,
-                                                                      id ),
-                                           colName,
-                                           newValue );
-   }
-   
-   
-   
-   public final static < T > Modification newNonPersistentModification( Uri entityUri,
-                                                                        String colName,
-                                                                        T newValue )
-   {
-      return new Modification( null,
+      return new Modification( -1L,
                                entityUri,
                                colName,
                                toString( newValue ),
@@ -302,69 +263,44 @@ public class Modification implements Comparable< Modification >
    
    
    
-   public final static Modification newTaskModified( String taskSeriesId )
+   public static < V > void addIfDifferent( Collection< Modification > modifications,
+                                            Uri entityUri,
+                                            String colName,
+                                            V existingValue,
+                                            V updatedValue )
    {
-      return newNonPersistentModification( TaskSeries.CONTENT_URI,
-                                           taskSeriesId,
-                                           TaskSeries.MODIFIED_DATE,
-                                           System.currentTimeMillis() );
+      if ( ContentCompare.isDifferent( existingValue, updatedValue ) )
+      {
+         modifications.add( Modification.newModification( entityUri,
+                                                          colName,
+                                                          updatedValue,
+                                                          existingValue ) );
+      }
    }
    
    
    
-   public final static Modification newNoteModified( String noteId )
+   public static < V > void addIfDifferentNonPersistent( Collection< Modification > modifications,
+                                                         Uri entityUri,
+                                                         String colName,
+                                                         V existingValue,
+                                                         V updatedValue )
    {
-      return newNonPersistentModification( Notes.CONTENT_URI,
-                                           noteId,
-                                           Notes.NOTE_MODIFIED_DATE,
-                                           System.currentTimeMillis() );
-   }
-   
-   
-   
-   public final static Modification newListModified( String listId )
-   {
-      return newNonPersistentModification( Lists.CONTENT_URI,
-                                           listId,
-                                           Lists.MODIFIED_DATE,
-                                           System.currentTimeMillis() );
-   }
-   
-   
-   
-   public final static < T > T get( Cursor c, int column, Class< T > valueClass )
-   {
-      if ( c == null )
-         throw new NullPointerException( "key is null" );
-      
-      if ( c.isNull( column ) )
-         return null;
-      
-      return fromString( c.getString( column ), valueClass );
-   }
-   
-   
-   
-   public final static < T > void put( ContentValues contentValues,
-                                       String key,
-                                       T value )
-   {
-      if ( key == null )
-         throw new NullPointerException( "key is null" );
-      
-      if ( value == null )
-         contentValues.putNull( key );
-      else
-         contentValues.put( key, toString( value ) );
+      if ( ContentCompare.isDifferent( existingValue, updatedValue ) )
+      {
+         modifications.add( Modification.newNonPersistentModification( entityUri,
+                                                                       colName,
+                                                                       updatedValue ) );
+      }
    }
    
    
    
    @SuppressWarnings( "unchecked" )
-   private final static < T > T fromString( String value, Class< T > valueClass )
+   private static < T > T fromString( String value, Class< T > valueClass )
    {
       if ( valueClass == null )
-         throw new NullPointerException( "valueClass is null" );
+         throw new IllegalArgumentException( "valueClass" );
       
       if ( value == null )
          return null;

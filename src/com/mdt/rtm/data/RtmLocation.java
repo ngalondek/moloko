@@ -201,7 +201,7 @@ public class RtmLocation extends RtmData implements
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      if ( SyncUtils.hasChanged( name, update.name ) )
+      if ( SyncUtils.isDifferent( name, update.name ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Locations.LOCATION_NAME,
                                                          update.name )
@@ -219,7 +219,7 @@ public class RtmLocation extends RtmData implements
                                                          update.latitude )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( address, update.address ) )
+      if ( SyncUtils.isDifferent( address, update.address ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Locations.ADDRESS,
                                                          update.address )

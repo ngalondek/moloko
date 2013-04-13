@@ -31,8 +31,8 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TasksListActivity extends AbstractFullDetailedTasksListActivity

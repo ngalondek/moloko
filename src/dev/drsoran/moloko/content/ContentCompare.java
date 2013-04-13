@@ -20,46 +20,55 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.model;
+package dev.drsoran.moloko.content;
 
-public class SmartList extends TasksList implements ISmartList
+public final class ContentCompare
 {
-   private RtmSmartFilter smartFilter;
-   
-   
-   
-   public SmartList( long id, long createdMillisUtc, int position,
-      boolean locked, boolean archived, RtmSmartFilter smartFilter )
+   private ContentCompare()
    {
-      super( id, createdMillisUtc, position, locked, archived );
-      this.smartFilter = smartFilter;
+      throw new AssertionError();
    }
    
    
    
-   @Override
-   public boolean isSmartList()
+   public static < V > boolean isDifferent( V oldVal, V newVal )
    {
-      return true;
+      return ( oldVal == null && newVal != null )
+         || ( oldVal != null && ( newVal == null || !oldVal.equals( newVal ) ) );
    }
    
    
    
-   @Override
-   public RtmSmartFilter getSmartFilter()
+   public static boolean isDifferent( int oldVal, int newVal )
    {
-      return smartFilter;
+      return oldVal != newVal;
    }
    
    
    
-   public void setSmartFilter( RtmSmartFilter smartFilter )
+   public static boolean isDifferent( long oldVal, long newVal )
    {
-      if ( smartFilter == null )
-      {
-         throw new IllegalArgumentException( "smartFilter" );
-      }
-      
-      this.smartFilter = smartFilter;
+      return oldVal != newVal;
+   }
+   
+   
+   
+   public static boolean isDifferent( double oldVal, double newVal )
+   {
+      return oldVal != newVal;
+   }
+   
+   
+   
+   public static boolean isDifferent( float oldVal, float newVal )
+   {
+      return oldVal != newVal;
+   }
+   
+   
+   
+   public static boolean isDifferent( boolean oldVal, boolean newVal )
+   {
+      return oldVal != newVal;
    }
 }

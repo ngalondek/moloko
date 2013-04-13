@@ -20,65 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.model;
+package dev.drsoran.moloko.content;
 
-public interface ITasksList
+public final class ContentAuthority
 {
-   long getId();
-   
-   
-   
-   long getCreatedMillisUtc();
-   
-   
-   
-   long getModifiedMillisUtc();
-   
-   
-   
-   boolean isModified();
-   
-   
-   
-   long getDeletedMillisUtc();
-   
-   
-   
-   boolean isDeleted();
-   
-   
-   
-   String getName();
-   
-   
-   
-   int getPosition();
-   
-   
-   
-   boolean isLocked();
-   
-   
-   
-   boolean isArchived();
-   
-   
-   
-   boolean isSmartList();
-   
-   
-   
-   RtmSmartFilter getSmartFilter();
-   
-   
-   
-   boolean hasTaskCount();
-   
-   
-   
-   ExtendedTaskCount getTasksCount();
-   
-   
-   
-   void setTasksCount( ExtendedTaskCount taskCount );
+   public final static String RTM = "dev.drsoran.provider.Rtm";
 }

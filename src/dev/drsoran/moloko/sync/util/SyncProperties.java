@@ -25,8 +25,8 @@ package dev.drsoran.moloko.sync.util;
 import java.util.Date;
 
 import android.net.Uri;
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.db.Modification;
 
 
 public class SyncProperties

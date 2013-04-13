@@ -256,7 +256,7 @@ public class RtmSettings extends RtmData implements
                                                             .getTime() )
                                           .build() );
       
-      if ( SyncUtils.hasChanged( timezone, update.timezone ) )
+      if ( SyncUtils.isDifferent( timezone, update.timezone ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.TIMEZONE,
                                                          update.timezone )
@@ -274,13 +274,13 @@ public class RtmSettings extends RtmData implements
                                                          update.timeFormat )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( defaultListId, update.defaultListId ) )
+      if ( SyncUtils.isDifferent( defaultListId, update.defaultListId ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.DEFAULTLIST_ID,
                                                          update.defaultListId )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( language, update.language ) )
+      if ( SyncUtils.isDifferent( language, update.language ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.LANGUAGE,
                                                          update.language )

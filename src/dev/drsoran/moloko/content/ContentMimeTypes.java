@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.content;
+package dev.drsoran.moloko.content;
 
 public final class ContentMimeTypes
 {
@@ -30,37 +30,37 @@ public final class ContentMimeTypes
    }
    
    /**
-    * The MIME type of {@link #CONTENT_URI} providing a directory of lists.
+    * The MIME type of providing a directory of lists.
     */
    public static final String TASKS_LISTS_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.list";
    
    /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single list.
+    * The MIME type of a sub-directory of a single list.
     */
    public static final String TASKS_LIST_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.list";
    
    /**
-    * The MIME type of {@link #CONTENT_URI} providing a directory of tasks.
+    * The MIME type of providing a directory of tasks.
     */
    public static final String TASK_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.task";
    
    /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single task.
+    * The MIME type of a sub-directory of a single task.
     */
    public static final String TASKS_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.task";
    
    /**
-    * The MIME type of {@link #CONTENT_URI} providing a directory of tags.
+    * The MIME type of providing a directory of tags.
     */
    public static final String TAGS_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.tag";
    
    /**
-    * The MIME type of {@link #CONTENT_URI} providing the contacts.
+    * The MIME type of providing the contacts.
     */
    public static final String CONTACTS_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.contact";
    
    /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single contact.
+    * The MIME type of a sub-directory of a single contact.
     */
    public static final String CONTACT_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.contact";
 }

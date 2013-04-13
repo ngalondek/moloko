@@ -42,8 +42,8 @@ import com.mdt.rtm.TimeLineResult;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.util.Strings;
 

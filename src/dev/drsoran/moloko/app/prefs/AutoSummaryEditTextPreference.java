@@ -114,7 +114,7 @@ class AutoSummaryEditTextPreference extends EditTextPreference implements
          final String currentValue = getText();
          final String persistedValue = getPersistedString( currentValue );
          
-         if ( SyncUtils.hasChanged( currentValue, persistedValue ) )
+         if ( SyncUtils.isDifferent( currentValue, persistedValue ) )
          {
             setText( persistedValue );
             notifyChanged();

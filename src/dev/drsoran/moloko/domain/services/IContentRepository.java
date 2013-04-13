@@ -24,6 +24,7 @@ package dev.drsoran.moloko.domain.services;
 
 import java.util.NoSuchElementException;
 
+import android.database.ContentObserver;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.IContact;
 import dev.drsoran.moloko.domain.model.ITask;
@@ -34,6 +35,18 @@ import dev.drsoran.moloko.grammar.GrammarException;
 
 public interface IContentRepository
 {
+   void registerContentObserver( ContentObserver observer,
+                                 String contentMimeType,
+                                 Long itemId );
+   
+   
+   
+   void unregisterContentObserver( ContentObserver observer,
+                                   String contentMimeType,
+                                   Long itemId );
+   
+   
+   
    ITask getTask( long taskId, int taskContentOptions ) throws NoSuchElementException,
                                                        ContentException;
    
@@ -83,4 +96,8 @@ public interface IContentRepository
    
    
    int getNumTasksContactIsParticipating( long contactId ) throws ContentException;
+   
+   
+   
+   Iterable< String > getTags() throws ContentException;
 }

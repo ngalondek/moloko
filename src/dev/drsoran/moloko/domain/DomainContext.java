@@ -28,6 +28,7 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IDomainServices;
 import dev.drsoran.moloko.domain.services.IParsingService;
@@ -97,5 +98,12 @@ public final class DomainContext extends ContextWrapper
    public IContentRepository getContentRepository()
    {
       return domainServices.getContentRepository();
+   }
+   
+   
+   
+   public IContentEditService getContentEditService()
+   {
+      return domainServices.getContentEditService();
    }
 }

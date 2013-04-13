@@ -34,10 +34,10 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
@@ -210,27 +210,27 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      if ( SyncUtils.hasChanged( note.getCreatedDate(),
+      if ( SyncUtils.isDifferent( note.getCreatedDate(),
                                  serverElement.getCreatedDate() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Notes.NOTE_CREATED_DATE,
                                                          MolokoDateUtils.getTime( serverElement.getCreatedDate() ) )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( note.getModifiedDate(),
+      if ( SyncUtils.isDifferent( note.getModifiedDate(),
                                  serverElement.getModifiedDate() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Notes.NOTE_MODIFIED_DATE,
                                                          MolokoDateUtils.getTime( serverElement.getModifiedDate() ) )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( note.getTitle(), serverElement.note.getTitle() ) )
+      if ( SyncUtils.isDifferent( note.getTitle(), serverElement.note.getTitle() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Notes.NOTE_TITLE,
                                                          serverElement.note.getTitle() )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( note.getText(), serverElement.note.getText() ) )
+      if ( SyncUtils.isDifferent( note.getText(), serverElement.note.getText() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Notes.NOTE_TEXT,
                                                          serverElement.note.getText() )

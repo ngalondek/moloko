@@ -35,7 +35,7 @@ public final class ContentProviderUtils
    
    
    
-   public final static String bindAll( String selection, String[] selectionArgs )
+   public static String bindAll( String selection, String[] selectionArgs )
    {
       String result = selection;
       
@@ -49,7 +49,7 @@ public final class ContentProviderUtils
    
    
    
-   public final static Uri contentUriWithId( Uri contentUri, String id )
+   public static Uri contentUriWithId( Uri contentUri, String id )
    {
       return ( !TextUtils.isEmpty( id ) ) ? contentUri.buildUpon()
                                                       .appendEncodedPath( id )

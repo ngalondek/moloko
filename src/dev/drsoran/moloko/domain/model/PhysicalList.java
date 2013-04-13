@@ -24,10 +24,10 @@ package dev.drsoran.moloko.domain.model;
 
 public class PhysicalList extends TasksList implements IPhysicalList
 {
-   public PhysicalList( long id, long createdMillisUtc, boolean locked,
-      boolean archived )
+   public PhysicalList( long id, long createdMillisUtc, int position,
+      boolean locked, boolean archived )
    {
-      super( id, createdMillisUtc, locked, archived );
+      super( id, createdMillisUtc, position, locked, archived );
    }
    
    

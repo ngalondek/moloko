@@ -50,17 +50,16 @@ import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.app.content.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
+import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          implements ITasksListFragmentListener, OnNavigationListener,
-         OnBackStackChangedListener,
-         LoaderCallbacks< List< RtmListWithTaskCount > >
+         OnBackStackChangedListener, LoaderCallbacks< List< ITasksList > >
 {
    protected final static long CUSTOM_NAVIGATION_ITEM_ID = 0L;
    
@@ -82,7 +81,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                    defaultValue = InstanceState.NO_DEFAULT )
    private SparseArray< SelectedNavigationItem > backStackNavigationItems;
    
-   private List< RtmListWithTaskCount > loadedRtmLists;
+   private List< ITasksList > loadedRtmLists;
    
    private TasksListNavigationAdapter actionBarNavigationAdapter;
    
@@ -235,7 +234,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   public final Task getTask( String taskId )
+   public final Task getTask( long taskId )
    {
       return getTasksListFragment().getTask( taskId );
    }
@@ -279,20 +278,20 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   public String getListIdFromIntent()
+   public long getListIdFromIntent()
    {
-      final String listId = getIntent().getExtras()
-                                       .getString( Intents.Extras.KEY_LIST_ID );
+      final long listId = getIntent().getExtras()
+                                     .getLong( Intents.Extras.KEY_LIST_ID, -1L );
       return listId;
    }
    
    
    
-   public String getActiveListId()
+   public long getActiveListId()
    {
       if ( isListNavigationMode() )
       {
-         return String.valueOf( selectedNavigationItem.id );
+         return selectedNavigationItem.id;
       }
       else
       {
@@ -393,10 +392,10 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private void setSelectedNavigationItemIdFromIntent()
    {
-      final String listIdFromIntent = getListIdFromIntent();
-      selectedNavigationItem.id = !TextUtils.isEmpty( listIdFromIntent )
-                                                                        ? Long.valueOf( listIdFromIntent )
-                                                                        : CUSTOM_NAVIGATION_ITEM_ID;
+      final long listIdFromIntent = getListIdFromIntent();
+      selectedNavigationItem.id = listIdFromIntent != -1L
+                                                         ? listIdFromIntent
+                                                         : CUSTOM_NAVIGATION_ITEM_ID;
    }
    
    
@@ -438,9 +437,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       final Context context = getSupportActionBar().getThemedContext();
       
       final List< IItem > actionBarNavigationItems = new ArrayList< IItem >( loadedRtmLists.size() );
-      for ( Iterator< RtmListWithTaskCount > i = loadedRtmLists.iterator(); i.hasNext(); )
+      for ( Iterator< ITasksList > i = loadedRtmLists.iterator(); i.hasNext(); )
       {
-         final RtmListWithTaskCount list = i.next();
+         final ITasksList list = i.next();
          
          if ( Long.valueOf( list.getId() ) != selectedNavigationItem.id )
          {
@@ -596,7 +595,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    @Override
-   public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
+   public void onLoaderReset( Loader< List< ITasksList >> loader )
    {
       setStandardNavigationMode();
    }

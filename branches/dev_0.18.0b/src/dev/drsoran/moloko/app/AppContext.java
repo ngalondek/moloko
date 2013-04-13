@@ -36,6 +36,7 @@ import dev.drsoran.moloko.app.services.IConnectionService;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.event.ISystemEventService;
@@ -175,5 +176,12 @@ public final class AppContext extends ContextWrapper
    public IContentRepository getContentRepository()
    {
       return domainContext.getContentRepository();
+   }
+   
+   
+   
+   public IContentEditService getContentEditService()
+   {
+      return domainContext.getContentEditService();
    }
 }

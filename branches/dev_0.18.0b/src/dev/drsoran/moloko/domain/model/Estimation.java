@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.util.Strings;
+
+
 public class Estimation
 {
    private final String sentence;
@@ -48,5 +51,42 @@ public class Estimation
    public long getMillisUtc()
    {
       return estimateMillisUtc;
+   }
+   
+   
+   
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( o == this )
+      {
+         return true;
+      }
+      if ( o == null )
+      {
+         return false;
+      }
+      if ( o.getClass() != Estimation.class )
+      {
+         return false;
+      }
+      
+      final Estimation other = (Estimation) o;
+      
+      return Strings.equals( sentence, other.sentence )
+         && estimateMillisUtc == other.estimateMillisUtc;
+   }
+   
+   
+   
+   @Override
+   public int hashCode()
+   {
+      int result = 17;
+      
+      result = 31 * result + ( sentence != null ? sentence.hashCode() : 0 );
+      result = 31 * result + (int) estimateMillisUtc;
+      
+      return result;
    }
 }

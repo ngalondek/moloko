@@ -24,8 +24,10 @@ package dev.drsoran.moloko.domain;
 
 import android.content.Context;
 import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.content.db.DbContentEditService;
 import dev.drsoran.moloko.content.db.DbContentRepository;
 import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IDomainServices;
 import dev.drsoran.moloko.domain.services.IParsingService;
@@ -48,6 +50,8 @@ public class DomainServicesContainer implements IDomainServices
    private final IParsingService parsingService;
    
    private final IContentRepository contentRepository;
+   
+   private final IContentEditService contentEditService;
    
    
    
@@ -75,6 +79,9 @@ public class DomainServicesContainer implements IDomainServices
       this.contentRepository = new DbContentRepository( database,
                                                         dateTimeParsing,
                                                         rtmSmartFilterParsing );
+      
+      this.contentEditService = new DbContentEditService( database,
+                                                          contentRepository );
    }
    
    
@@ -91,6 +98,14 @@ public class DomainServicesContainer implements IDomainServices
    public IContentRepository getContentRepository()
    {
       return contentRepository;
+   }
+   
+   
+   
+   @Override
+   public IContentEditService getContentEditService()
+   {
+      return contentEditService;
    }
    
    

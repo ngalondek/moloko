@@ -28,6 +28,10 @@ public interface ITask
    
    
    
+   long getSeriesId();
+   
+   
+   
    long getCreatedMillisUtc();
    
    
@@ -104,7 +108,23 @@ public interface ITask
    
    
    
+   INote getNote( long noteId );
+   
+   
+   
+   boolean hasNote( long noteId );
+   
+   
+   
    Iterable< Participant > getParticipants();
+   
+   
+   
+   Participant getParticipant( long participantId );
+   
+   
+   
+   boolean isParticipating( long participantId );
    
    
    

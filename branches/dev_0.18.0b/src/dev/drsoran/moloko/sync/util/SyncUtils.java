@@ -33,8 +33,7 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 
@@ -71,14 +70,6 @@ public final class SyncUtils
    }
    
    
-   
-   public final static < V > boolean hasChanged( V oldVal, V newVal )
-   {
-      return ( oldVal == null && newVal != null )
-         || ( oldVal != null && ( newVal == null || !oldVal.equals( newVal ) ) );
-   }
-   
-   
    public enum SyncResultDirection
    {
       NOTHING, LOCAL, SERVER
@@ -102,7 +93,7 @@ public final class SyncUtils
          syncDir = SyncResultDirection.SERVER;
       }
       
-      else if ( hasChanged( serverValue, localValue ) )
+      else if ( isDifferent( serverValue, localValue ) )
       {
          // Check if the local value was modified
          if ( modification != null )
@@ -111,7 +102,7 @@ public final class SyncUtils
             final V syncedValue = modification.getSyncedValue( valueClass );
             
             // Check if the server value has changed compared to the last synced value.
-            if ( hasChanged( syncedValue, serverValue ) )
+            if ( isDifferent( syncedValue, serverValue ) )
             {
                // CONFLICT: Local and server element has changed.
                // Let the modified date of the elements decide in which direction to sync.

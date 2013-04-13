@@ -39,6 +39,8 @@ public class Task extends LifeTimeManaged implements ITask
    
    private final String listName;
    
+   private long seriesId = -1L;
+   
    private String name;
    
    private String source = Strings.EMPTY_STRING;
@@ -86,6 +88,21 @@ public class Task extends LifeTimeManaged implements ITask
    public long getId()
    {
       return id;
+   }
+   
+   
+   
+   @Override
+   public long getSeriesId()
+   {
+      return seriesId;
+   }
+   
+   
+   
+   public void setSeriesId( long seriesId )
+   {
+      this.seriesId = seriesId;
    }
    
    
@@ -312,6 +329,30 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
+   @Override
+   public INote getNote( long noteId )
+   {
+      for ( INote note : getNotes() )
+      {
+         if ( note.getId() == noteId )
+         {
+            return note;
+         }
+      }
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public boolean hasNote( long noteId )
+   {
+      return getNote( noteId ) != null;
+   }
+   
+   
+   
    public void setNotes( Iterable< ? extends INote > notes )
    {
       if ( notes == null )
@@ -381,6 +422,30 @@ public class Task extends LifeTimeManaged implements ITask
       
       ensureParticipantsContainer();
       return participants.add( participant );
+   }
+   
+   
+   
+   @Override
+   public Participant getParticipant( long participantId )
+   {
+      for ( Participant participant : getParticipants() )
+      {
+         if ( participant.getId() == participantId )
+         {
+            return participant;
+         }
+      }
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public boolean isParticipating( long participantId )
+   {
+      return getParticipant( participantId ) != null;
    }
    
    

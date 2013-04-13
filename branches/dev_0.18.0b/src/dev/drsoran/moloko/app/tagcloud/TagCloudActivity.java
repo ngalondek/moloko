@@ -27,13 +27,12 @@ import java.util.Collections;
 import android.os.Bundle;
 
 import com.actionbarsherlock.view.Menu;
-import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TagCloudActivity extends MolokoFragmentActivity implements
@@ -60,11 +59,11 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onOpenList( RtmListWithTaskCount list )
+   public void onOpenList( long listId )
    {
-      startActivityWithHomeAction( Intents.createOpenListIntent( this,
-                                                                 list,
-                                                                 null ),
+      startActivityWithHomeAction( Intents.createOpenListIntentById( this,
+                                                                     listId,
+                                                                     null ),
                                    getClass() );
    }
    
@@ -82,17 +81,17 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onOpenLocation( RtmLocation location )
+   public void onOpenLocation( Location location )
    {
       startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
-                                                                           location.name ),
+                                                                           location.getName() ),
                                    getClass() );
    }
    
    
    
    @Override
-   public void onOpenLocationWithOtherApp( RtmLocation location )
+   public void onOpenLocationWithOtherApp( Location location )
    {
       startActivity( Intents.createOpenLocationWithOtherAppChooser( location ) );
    }

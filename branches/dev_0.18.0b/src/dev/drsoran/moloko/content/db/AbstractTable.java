@@ -109,72 +109,66 @@ abstract class AbstractTable implements ITable
    @Override
    public long insert( ContentValues initialValues )
    {
-      long newRowId = -1;
-      
-      if ( initialValues != null && initialValues.containsKey( BaseColumns._ID ) )
+      if ( initialValues == null )
       {
-         initialValues = getInitialValues( initialValues );
-         final SQLiteDatabase db = database.getWritable();
-         
-         newRowId = db.insertWithOnConflict( tableName,
-                                             BaseColumns._ID,
-                                             initialValues,
-                                             getInsertConflictHandler() );
-         
-         // TODO: This is content provider logic
-         
-         // final String id = initialValues.getAsString( BaseColumns._ID );
-         
-         // if ( rowId > 0 )
-         // {
-         // if ( TextUtils.isEmpty( id ) )
-         // {
-         // uri = ContentUris.withAppendedId( getContentUri(), rowId );
-         // }
-         // else
-         // {
-         // uri = Queries.contentUriWithId( getContentUri(), id );
-         // }
-         // }
+         throw new IllegalArgumentException( "initialValues" );
       }
       
-      return newRowId;
+      final SQLiteDatabase db = database.getWritable();
+      final long rowId = db.insertWithOnConflict( tableName,
+                                                  BaseColumns._ID,
+                                                  initialValues,
+                                                  getInsertConflictHandler() );
+      
+      if ( rowId == -1L )
+      {
+         throw new SQLException( "Failed to insert content values" );
+      }
+      
+      return rowId;
    }
    
    
    
    @Override
-   public int update( String id,
+   public int update( long id,
                       ContentValues values,
                       String where,
                       String[] whereArgs )
    {
-      final SQLiteDatabase db = database.getWritable();
+      if ( values == null )
+      {
+         throw new IllegalArgumentException( "values" );
+      }
       
       int numUpdated = 0;
       
-      if ( id == null )
+      if ( values.size() > 0 )
       {
-         numUpdated = db.updateWithOnConflict( tableName,
-                                               values,
-                                               where,
-                                               whereArgs,
-                                               getUpdateConflictHandler() );
-      }
-      else
-      {
-         final StringBuilder sb = new StringBuilder( ITEM_ID_EQUALS ).append( id );
-         
-         if ( !TextUtils.isEmpty( where ) )
+         final SQLiteDatabase db = database.getWritable();
+         if ( id == -1L )
          {
-            sb.append( " AND (" ).append( where ).append( ')' );
+            numUpdated = db.updateWithOnConflict( tableName,
+                                                  values,
+                                                  where,
+                                                  whereArgs,
+                                                  getUpdateConflictHandler() );
          }
-         
-         numUpdated = db.updateWithOnConflict( tableName,
-                                               values,
-                                               sb.toString(),
-                                               whereArgs,
-                                               getUpdateConflictHandler() );
+         else
+         {
+            final StringBuilder sb = new StringBuilder( ITEM_ID_EQUALS ).append( id );
+            
+            if ( !TextUtils.isEmpty( where ) )
+            {
+               sb.append( " AND (" ).append( where ).append( ')' );
+            }
+            
+            numUpdated = db.updateWithOnConflict( tableName,
+                                                  values,
+                                                  sb.toString(),
+                                                  whereArgs,
+                                                  getUpdateConflictHandler() );
+         }
       }
       
       return numUpdated;
@@ -183,13 +177,13 @@ abstract class AbstractTable implements ITable
    
    
    @Override
-   public int delete( String id, String where, String[] whereArgs )
+   public int delete( long id, String where, String[] whereArgs )
    {
       final SQLiteDatabase db = database.getWritable();
       
       int numDeleted = 0;
       
-      if ( id == null )
+      if ( id == -1L )
       {
          numDeleted = db.delete( tableName, where, whereArgs );
       }

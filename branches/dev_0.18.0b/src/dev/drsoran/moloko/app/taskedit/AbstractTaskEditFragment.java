@@ -54,8 +54,8 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -556,7 +556,7 @@ abstract class AbstractTaskEditFragment
    {
       final String joinedTags = TextUtils.join( Tasks.TAGS_SEPARATOR, tags );
       
-      if ( SyncUtils.hasChanged( getCurrentValue( Tasks.TAGS, String.class ),
+      if ( SyncUtils.isDifferent( getCurrentValue( Tasks.TAGS, String.class ),
                                  joinedTags ) )
       {
          putChange( Tasks.TAGS, joinedTags, String.class );
@@ -883,7 +883,7 @@ abstract class AbstractTaskEditFragment
       }
       
       // Check if it has reverted to the initial value
-      if ( SyncUtils.hasChanged( value, initialValues.get( key ) ) )
+      if ( SyncUtils.isDifferent( value, initialValues.get( key ) ) )
       {
          if ( changes == null )
             changes = new Bundle();
@@ -939,7 +939,7 @@ abstract class AbstractTaskEditFragment
             final String taskName = getCurrentValue( Tasks.TASKSERIES_NAME,
                                                      String.class );
             
-            if ( SyncUtils.hasChanged( task.getName(), taskName ) )
+            if ( SyncUtils.isDifferent( task.getName(), taskName ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
@@ -955,7 +955,7 @@ abstract class AbstractTaskEditFragment
             final String selectedListId = getCurrentValue( Tasks.LIST_ID,
                                                            String.class );
             
-            if ( SyncUtils.hasChanged( task.getListId(), selectedListId ) )
+            if ( SyncUtils.isDifferent( task.getListId(), selectedListId ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
@@ -971,7 +971,7 @@ abstract class AbstractTaskEditFragment
             final String selectedPriority = getCurrentValue( Tasks.PRIORITY,
                                                              String.class );
             
-            if ( SyncUtils.hasChanged( RtmTask.convertPriority( task.getPriority() ),
+            if ( SyncUtils.isDifferent( RtmTask.convertPriority( task.getPriority() ),
                                        selectedPriority ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
@@ -987,7 +987,7 @@ abstract class AbstractTaskEditFragment
          {
             final String tags = getCurrentValue( Tasks.TAGS, String.class );
             
-            if ( SyncUtils.hasChanged( tags,
+            if ( SyncUtils.isDifferent( tags,
                                        TextUtils.join( Tags.TAGS_SEPARATOR,
                                                        task.getTags() ) ) )
             {
@@ -1007,7 +1007,7 @@ abstract class AbstractTaskEditFragment
             if ( newDue == -1 )
                newDue = null;
             
-            if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( task.getDue() ),
+            if ( SyncUtils.isDifferent( MolokoDateUtils.getTime( task.getDue() ),
                                        newDue ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
@@ -1023,7 +1023,7 @@ abstract class AbstractTaskEditFragment
             final boolean newHasDueTime = getCurrentValue( Tasks.HAS_DUE_TIME,
                                                            Boolean.class );
             
-            if ( SyncUtils.hasChanged( task.hasDueTime(), newHasDueTime ) )
+            if ( SyncUtils.isDifferent( task.hasDueTime(), newHasDueTime ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
@@ -1042,7 +1042,7 @@ abstract class AbstractTaskEditFragment
             final String recurrence = getCurrentValue( Tasks.RECURRENCE,
                                                        String.class );
             
-            if ( SyncUtils.hasChanged( task.getRecurrence(), recurrence ) )
+            if ( SyncUtils.isDifferent( task.getRecurrence(), recurrence ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
@@ -1054,7 +1054,7 @@ abstract class AbstractTaskEditFragment
             final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
                                                                Boolean.class );
             
-            if ( SyncUtils.hasChanged( task.isEveryRecurrence(),
+            if ( SyncUtils.isDifferent( task.isEveryRecurrence(),
                                        isEveryRecurrence ) )
             {
                // The flag RECURRENCE_EVERY will not be synced out. RTM parses only the recurrence sentence.
@@ -1072,7 +1072,7 @@ abstract class AbstractTaskEditFragment
             final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
                                                          Long.class );
             
-            if ( SyncUtils.hasChanged( task.getEstimateMillis(), estimateMillis ) )
+            if ( SyncUtils.isDifferent( task.getEstimateMillis(), estimateMillis ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
@@ -1094,7 +1094,7 @@ abstract class AbstractTaskEditFragment
             final String selectedLocation = getCurrentValue( Tasks.LOCATION_ID,
                                                              String.class );
             
-            if ( SyncUtils.hasChanged( task.getLocationId(), selectedLocation ) )
+            if ( SyncUtils.isDifferent( task.getLocationId(), selectedLocation ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
@@ -1110,7 +1110,7 @@ abstract class AbstractTaskEditFragment
             final String newUrl = Strings.nullIfEmpty( getCurrentValue( Tasks.URL,
                                                                         String.class ) );
             
-            if ( SyncUtils.hasChanged( task.getUrl(), newUrl ) )
+            if ( SyncUtils.isDifferent( task.getUrl(), newUrl ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),

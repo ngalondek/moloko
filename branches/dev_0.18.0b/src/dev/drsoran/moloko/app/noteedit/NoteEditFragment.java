@@ -201,9 +201,9 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
    {
       final RtmTaskNote note = getNoteAssertNotNull();
       
-      return SyncUtils.hasChanged( Strings.nullIfEmpty( note.getTitle() ),
+      return SyncUtils.isDifferent( Strings.nullIfEmpty( note.getTitle() ),
                                    Strings.nullIfEmpty( UiUtils.getTrimmedText( title ) ) )
-         || SyncUtils.hasChanged( Strings.nullIfEmpty( note.getText() ),
+         || SyncUtils.isDifferent( Strings.nullIfEmpty( note.getText() ),
                                   Strings.nullIfEmpty( UiUtils.getTrimmedText( text ) ) );
    }
    

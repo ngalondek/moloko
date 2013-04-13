@@ -147,7 +147,7 @@ public class AutoSummaryListPreference extends ListPreference implements
          final String currentValue = getValue();
          final String persistedValue = getPersistedString( currentValue );
          
-         if ( SyncUtils.hasChanged( currentValue, persistedValue ) )
+         if ( SyncUtils.isDifferent( currentValue, persistedValue ) )
          {
             setValue( persistedValue );
             notifyChanged();

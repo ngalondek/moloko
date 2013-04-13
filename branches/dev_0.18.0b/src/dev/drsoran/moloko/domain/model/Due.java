@@ -49,4 +49,41 @@ public class Due
    {
       return hasDueTime;
    }
+   
+   
+   
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( o == this )
+      {
+         return true;
+      }
+      if ( o == null )
+      {
+         return false;
+      }
+      if ( o.getClass() != Due.class )
+      {
+         return false;
+      }
+      
+      final Due other = (Due) o;
+      
+      return dueMillisUtc == other.dueMillisUtc
+         && hasDueTime == other.hasDueTime;
+   }
+   
+   
+   
+   @Override
+   public int hashCode()
+   {
+      int result = 17;
+      
+      result = 31 * result + (int) dueMillisUtc;
+      result = 31 * result + ( hasDueTime ? 1 : 0 );
+      
+      return result;
+   }
 }

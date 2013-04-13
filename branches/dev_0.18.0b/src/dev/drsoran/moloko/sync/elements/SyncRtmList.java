@@ -178,48 +178,48 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
       final Uri uri = DbUtils.contentUriWithId( Lists.CONTENT_URI, getId() );
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      if ( SyncUtils.hasChanged( list.getName(), serverElement.list.getName() ) )
+      if ( SyncUtils.isDifferent( list.getName(), serverElement.list.getName() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Lists.LIST_NAME,
                                                          serverElement.list.getName() )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( list.getCreatedDate() ),
+      if ( SyncUtils.isDifferent( MolokoDateUtils.getTime( list.getCreatedDate() ),
                                  MolokoDateUtils.getTime( serverElement.list.getCreatedDate() ) ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Lists.CREATED_DATE,
                                                          MolokoDateUtils.getTime( serverElement.list.getCreatedDate() ) )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( list.getModifiedDate() ),
+      if ( SyncUtils.isDifferent( MolokoDateUtils.getTime( list.getModifiedDate() ),
                                  MolokoDateUtils.getTime( serverElement.list.getModifiedDate() ) ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Lists.MODIFIED_DATE,
                                                          MolokoDateUtils.getTime( serverElement.list.getModifiedDate() ) )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( list.getDeletedDate() ),
+      if ( SyncUtils.isDifferent( MolokoDateUtils.getTime( list.getDeletedDate() ),
                                  MolokoDateUtils.getTime( serverElement.list.getDeletedDate() ) ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Lists.LIST_DELETED,
                                                          MolokoDateUtils.getTime( serverElement.list.getDeletedDate() ) )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( list.getLocked(),
+      if ( SyncUtils.isDifferent( list.getLocked(),
                                  serverElement.list.getLocked() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Lists.LOCKED,
                                                          serverElement.list.getLocked() )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( list.getArchived(),
+      if ( SyncUtils.isDifferent( list.getArchived(),
                                  serverElement.list.getArchived() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Lists.ARCHIVED,
                                                          serverElement.list.getArchived() )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( list.getPosition(),
+      if ( SyncUtils.isDifferent( list.getPosition(),
                                  serverElement.list.getPosition() ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Lists.POSITION,

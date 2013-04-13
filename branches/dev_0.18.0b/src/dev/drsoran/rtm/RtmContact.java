@@ -197,13 +197,13 @@ public class RtmContact extends RtmData implements
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      if ( SyncUtils.hasChanged( fullname, update.fullname ) )
+      if ( SyncUtils.isDifferent( fullname, update.fullname ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Contacts.FULLNAME,
                                                          update.fullname )
                                              .build() );
       
-      if ( SyncUtils.hasChanged( username, update.username ) )
+      if ( SyncUtils.isDifferent( username, update.username ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Contacts.USERNAME,
                                                          update.fullname )

@@ -112,6 +112,7 @@ class DbTasksListsContentRepositoryPart
    {
       final long id = c.getLong( Columns.ID_IDX );
       final long createdMillis = c.getLong( RtmListsColumns.LIST_CREATED_DATE_IDX );
+      final int position = c.getInt( RtmListsColumns.POSITION_IDX );
       final boolean isLocked = c.getInt( RtmListsColumns.LOCKED_IDX ) != 0;
       final boolean isArchved = c.getInt( RtmListsColumns.ARCHIVED_IDX ) != 0;
       final boolean isSmartList = c.getInt( RtmListsColumns.IS_SMART_LIST_IDX ) != 0;
@@ -124,13 +125,18 @@ class DbTasksListsContentRepositoryPart
          
          tasksList = new SmartList( id,
                                     createdMillis,
+                                    position,
                                     isLocked,
                                     isArchved,
                                     smartFilter );
       }
       else
       {
-         tasksList = new PhysicalList( id, createdMillis, isLocked, isArchved );
+         tasksList = new PhysicalList( id,
+                                       createdMillis,
+                                       position,
+                                       isLocked,
+                                       isArchved );
       }
       
       return tasksList;

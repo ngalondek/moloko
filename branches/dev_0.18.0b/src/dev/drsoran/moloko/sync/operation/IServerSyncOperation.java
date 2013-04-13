@@ -31,7 +31,7 @@ import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
 import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.db.Modification;
 
 
 public interface IServerSyncOperation< T > extends ISyncOperation

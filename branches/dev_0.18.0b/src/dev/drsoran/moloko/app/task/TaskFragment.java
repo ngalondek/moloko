@@ -568,7 +568,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private void setParticipantsSection( ViewGroup view, Task task )
    {
-      final ParticipantList participants = task.getParticipants();
+      final Iterable< Participant > participants = task.getParticipants();
       
       if ( participants != null && participants.getCount() > 0 )
       {

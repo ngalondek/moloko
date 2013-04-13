@@ -35,10 +35,10 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -164,7 +164,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                                       serverElement.taskSeries.getId() );
          
          // Recurrence
-         if ( SyncUtils.hasChanged( taskSeries.getRecurrence(),
+         if ( SyncUtils.isDifferent( taskSeries.getRecurrence(),
                                     serverElement.taskSeries.getRecurrence() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.RECURRENCE,
@@ -172,7 +172,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                                                   serverElement.taskSeries.getRecurrence() ) );
          
          // Tags
-         if ( SyncUtils.hasChanged( taskSeries.getTagsJoined(),
+         if ( SyncUtils.isDifferent( taskSeries.getTagsJoined(),
                                     serverElement.taskSeries.getTagsJoined() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.TAGS,
@@ -180,14 +180,14 @@ public class OutSyncTask extends SyncTaskBase implements
                                                                   serverElement.taskSeries.getTagsJoined() ) );
          
          // Location
-         if ( SyncUtils.hasChanged( taskSeries.getLocationId(),
+         if ( SyncUtils.isDifferent( taskSeries.getLocationId(),
                                     serverElement.taskSeries.getLocationId() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.LOCATION_ID,
                                                                   taskSeries.getLocationId(),
                                                                   serverElement.taskSeries.getLocationId() ) );
          // URL
-         if ( SyncUtils.hasChanged( taskSeries.getURL(),
+         if ( SyncUtils.isDifferent( taskSeries.getURL(),
                                     serverElement.taskSeries.getURL() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.URL,
@@ -202,7 +202,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                                       serverElement.task.getId() );
          
          // Priority
-         if ( SyncUtils.hasChanged( task.getPriority(),
+         if ( SyncUtils.isDifferent( task.getPriority(),
                                     serverElement.task.getPriority() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.PRIORITY,
@@ -210,7 +210,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                                                   RtmTask.convertPriority( serverElement.task.getPriority() ) ) );
          
          // Completed date
-         if ( SyncUtils.hasChanged( task.getCompleted(),
+         if ( SyncUtils.isDifferent( task.getCompleted(),
                                     serverElement.task.getCompleted() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.COMPLETED_DATE,
@@ -218,14 +218,14 @@ public class OutSyncTask extends SyncTaskBase implements
                                                                   MolokoDateUtils.getTime( serverElement.task.getCompleted() ) ) );
          
          // Due date
-         if ( SyncUtils.hasChanged( task.getDue(), serverElement.task.getDue() ) )
+         if ( SyncUtils.isDifferent( task.getDue(), serverElement.task.getDue() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.DUE_DATE,
                                                                   MolokoDateUtils.getTime( task.getDue() ),
                                                                   MolokoDateUtils.getTime( serverElement.task.getDue() ) ) );
          
          // Has due time
-         if ( SyncUtils.hasChanged( task.getHasDueTime(),
+         if ( SyncUtils.isDifferent( task.getHasDueTime(),
                                     serverElement.task.getHasDueTime() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.HAS_DUE_TIME,
@@ -233,7 +233,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                                                   serverElement.task.getHasDueTime() ) );
          
          // Estimate
-         if ( SyncUtils.hasChanged( task.getEstimate(),
+         if ( SyncUtils.isDifferent( task.getEstimate(),
                                     serverElement.task.getEstimate() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.ESTIMATE,

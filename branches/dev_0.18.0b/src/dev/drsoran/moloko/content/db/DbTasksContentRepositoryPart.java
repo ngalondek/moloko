@@ -24,11 +24,14 @@ package dev.drsoran.moloko.content.db;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
 import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
@@ -56,6 +59,8 @@ class DbTasksContentRepositoryPart
 {
    private final static String TASKS_QUERY;
    
+   private final static String TAGS_QUERY;
+   
    private final RtmDatabase database;
    
    private RtmNotesQuery notesQuery;
@@ -71,115 +76,144 @@ class DbTasksContentRepositoryPart
    
    static
    {
-      final StringBuilder builder = new StringBuilder( "SELECT " );
+      final StringBuilder tasksQuerybuilder = new StringBuilder( "SELECT " );
       
       // Columns
       // 0
-      builder.append( RawTasksTable.TABLE_NAME )
-             .append( "." )
-             .append( RawTasksColumns._ID )
-             .append( " AS rawTask_id" )
-             // 1
-             .append( RtmTaskSeriesTable.TABLE_NAME )
-             .append( "." )
-             .append( RtmTaskSeriesColumns._ID )
-             .append( " AS rtmtaskseries_id" )
-             // 2
-             .append( RtmListsTable.TABLE_NAME )
-             .append( "." )
-             .append( RtmListsColumns._ID )
-             .append( " AS rtmtaskslist_id" )
-             // 3
-             .append( RtmTaskSeriesColumns.RTM_TASKSERIES_ID )
-             // 4
-             .append( RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE )
-             // 5
-             .append( RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE )
-             // 6
-             .append( RtmTaskSeriesColumns.TASKSERIES_NAME )
-             // 7
-             .append( RtmTaskSeriesColumns.SOURCE )
-             // 8
-             .append( RtmTaskSeriesColumns.URL )
-             // 9
-             .append( RtmTaskSeriesColumns.TAGS )
-             // 10
-             .append( RtmTaskSeriesColumns.RECURRENCE )
-             // 11
-             .append( RtmTaskSeriesColumns.RECURRENCE_EVERY )
-             // 12
-             .append( RtmTaskSeriesColumns.LOCATION_ID )
-             // 13
-             .append( RawTasksColumns.ADDED_DATE )
-             // 14
-             .append( RawTasksColumns.DELETED_DATE )
-             // 15
-             .append( RawTasksColumns.COMPLETED_DATE )
-             // 16
-             .append( RawTasksColumns.PRIORITY )
-             // 17
-             .append( RawTasksColumns.DUE_DATE )
-             // 18
-             .append( RawTasksColumns.HAS_DUE_TIME )
-             // 19
-             .append( RawTasksColumns.ESTIMATE )
-             // 20
-             .append( RawTasksColumns.ESTIMATE_MILLIS )
-             // 21
-             .append( RawTasksColumns.POSTPONED )
-             // 22
-             .append( RtmListsColumns.LIST_NAME )
-             // 23
-             .append( RtmLocationsColumns.LOCATION_NAME )
-             // 24
-             .append( RtmLocationsColumns.LONGITUDE )
-             // 25
-             .append( RtmLocationsColumns.LATITUDE )
-             // 26
-             .append( RtmLocationsColumns.ADDRESS )
-             // 27
-             .append( RtmLocationsColumns.VIEWABLE )
-             // 28
-             .append( RtmLocationsColumns.ZOOM );
+      tasksQuerybuilder.append( RawTasksTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RawTasksColumns._ID )
+                       .append( " AS rawTask_id" )
+                       // 1
+                       .append( RtmTaskSeriesTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RtmTaskSeriesColumns._ID )
+                       .append( " AS rtmtaskseries_id" )
+                       // 2
+                       .append( RtmListsTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RtmListsColumns._ID )
+                       .append( " AS rtmtaskslist_id" )
+                       // 3
+                       .append( RtmTaskSeriesColumns.RTM_TASKSERIES_ID )
+                       // 4
+                       .append( RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE )
+                       // 5
+                       .append( RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE )
+                       // 6
+                       .append( RtmTaskSeriesColumns.TASKSERIES_NAME )
+                       // 7
+                       .append( RtmTaskSeriesColumns.SOURCE )
+                       // 8
+                       .append( RtmTaskSeriesColumns.URL )
+                       // 9
+                       .append( RtmTaskSeriesColumns.TAGS )
+                       // 10
+                       .append( RtmTaskSeriesColumns.RECURRENCE )
+                       // 11
+                       .append( RtmTaskSeriesColumns.RECURRENCE_EVERY )
+                       // 12
+                       .append( RtmTaskSeriesColumns.LOCATION_ID )
+                       // 13
+                       .append( RawTasksColumns.ADDED_DATE )
+                       // 14
+                       .append( RawTasksColumns.DELETED_DATE )
+                       // 15
+                       .append( RawTasksColumns.COMPLETED_DATE )
+                       // 16
+                       .append( RawTasksColumns.PRIORITY )
+                       // 17
+                       .append( RawTasksColumns.DUE_DATE )
+                       // 18
+                       .append( RawTasksColumns.HAS_DUE_TIME )
+                       // 19
+                       .append( RawTasksColumns.ESTIMATE )
+                       // 20
+                       .append( RawTasksColumns.ESTIMATE_MILLIS )
+                       // 21
+                       .append( RawTasksColumns.POSTPONED )
+                       // 22
+                       .append( RtmListsColumns.LIST_NAME )
+                       // 23
+                       .append( RtmLocationsColumns.LOCATION_NAME )
+                       // 24
+                       .append( RtmLocationsColumns.LONGITUDE )
+                       // 25
+                       .append( RtmLocationsColumns.LATITUDE )
+                       // 26
+                       .append( RtmLocationsColumns.ADDRESS )
+                       // 27
+                       .append( RtmLocationsColumns.VIEWABLE )
+                       // 28
+                       .append( RtmLocationsColumns.ZOOM );
       
       // Tables
-      builder.append( " FROM " )
-             .append( RtmTaskSeriesTable.TABLE_NAME )
-             .append( "," )
-             .append( RawTasksTable.TABLE_NAME )
-             .append( "," )
-             .append( RtmListsTable.TABLE_NAME );
+      tasksQuerybuilder.append( " FROM " )
+                       .append( RtmTaskSeriesTable.TABLE_NAME )
+                       .append( "," )
+                       .append( RawTasksTable.TABLE_NAME )
+                       .append( "," )
+                       .append( RtmListsTable.TABLE_NAME );
       
       // Joins
-      builder.append( " LEFT OUTER JOIN " )
-             .append( RtmLocationsTable.TABLE_NAME )
-             .append( " ON " )
-             .append( RtmTaskSeriesTable.TABLE_NAME )
-             .append( "." )
-             .append( RtmTaskSeriesColumns.LOCATION_ID )
-             .append( "=" )
-             .append( RtmLocationsTable.TABLE_NAME )
-             .append( "." )
-             .append( RtmLocationsColumns._ID );
+      tasksQuerybuilder.append( " LEFT OUTER JOIN " )
+                       .append( RtmLocationsTable.TABLE_NAME )
+                       .append( " ON " )
+                       .append( RtmTaskSeriesTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RtmTaskSeriesColumns.LOCATION_ID )
+                       .append( "=" )
+                       .append( RtmLocationsTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RtmLocationsColumns._ID );
       
       // Where
-      builder.append( RtmTaskSeriesTable.TABLE_NAME )
-             .append( "." )
-             .append( RtmTaskSeriesColumns.LIST_ID )
-             .append( "=" )
-             .append( RtmListsTable.TABLE_NAME )
-             .append( "." )
-             .append( RtmListsColumns._ID )
-             .append( " AND " )
-             .append( RtmTaskSeriesTable.TABLE_NAME )
-             .append( "." )
-             .append( RtmTaskSeriesColumns._ID )
-             .append( "=" )
-             .append( RawTasksTable.TABLE_NAME )
-             .append( "." )
-             .append( RawTasksColumns.TASKSERIES_ID );
+      tasksQuerybuilder.append( RtmTaskSeriesTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RtmTaskSeriesColumns.LIST_ID )
+                       .append( "=" )
+                       .append( RtmListsTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RtmListsColumns._ID )
+                       .append( " AND " )
+                       .append( RtmTaskSeriesTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RtmTaskSeriesColumns._ID )
+                       .append( "=" )
+                       .append( RawTasksTable.TABLE_NAME )
+                       .append( "." )
+                       .append( RawTasksColumns.TASKSERIES_ID );
       
-      TASKS_QUERY = builder.toString();
+      TASKS_QUERY = tasksQuerybuilder.toString();
+      
+      TAGS_QUERY = SQLiteQueryBuilder.buildQueryString( true,
+      // tables
+                                                        RtmTaskSeriesTable.TABLE_NAME
+                                                           + ","
+                                                           + RawTasksTable.TABLE_NAME,
+                                                        
+                                                        // columns
+                                                        new String[]
+                                                        { RtmTaskSeriesColumns.TAGS },
+                                                        
+                                                        // where
+                                                        RawTasksTable.TABLE_NAME
+                                                           + "."
+                                                           + RawTasksColumns.TASKSERIES_ID
+                                                           + "="
+                                                           + RtmTaskSeriesTable.TABLE_NAME
+                                                           + "."
+                                                           + RtmTaskSeriesColumns._ID
+                                                           + " AND "
+                                                           + RtmTaskSeriesTable.TABLE_NAME
+                                                           + "."
+                                                           + RtmTaskSeriesColumns.TAGS
+                                                           + " IS NOT NULL",
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null )
+                                     .toString();
    }
    
    
@@ -237,6 +271,45 @@ class DbTasksContentRepositoryPart
    
    
    
+   public Iterable< String > getTags( String selection )
+   {
+      final Set< String > tags = new HashSet< String >();
+      Cursor c = null;
+      
+      try
+      {
+         final String rawQuery = selection != null ? TAGS_QUERY + " AND "
+            + selection : TAGS_QUERY;
+         
+         c = database.getReadable().rawQuery( rawQuery, null );
+         
+         while ( c.moveToNext() )
+         {
+            final String[] tagSplitted = c.getString( 0 )
+                                          .split( RtmTaskSeriesColumns.TAGS_SEPARATOR );
+            for ( String tag : tagSplitted )
+            {
+               tags.add( tag );
+            }
+         }
+         
+         return tags;
+      }
+      catch ( Throwable e )
+      {
+         throw new ContentException( e );
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
+      }
+   }
+   
+   
+   
    private List< ITask > getTasksFromDb( String selection, int options ) throws ContentException
    {
       final List< ITask > tasks = new ArrayList< ITask >();
@@ -253,16 +326,15 @@ class DbTasksContentRepositoryPart
             do
             {
                final Task task = createTaskFromCursor( c );
-               final long taskSeriesId = c.getLong( 1 );
                
                if ( ( options & TaskContentOptions.WITH_NOTES ) != 0 )
                {
-                  addNotesToTask( task, taskSeriesId );
+                  addNotesToTask( task );
                }
                
                if ( ( options & TaskContentOptions.WITH_PARTICIPANTS ) != 0 )
                {
-                  addParticipantsToTask( task, taskSeriesId );
+                  addParticipantsToTask( task );
                }
                
                tasks.add( task );
@@ -287,12 +359,12 @@ class DbTasksContentRepositoryPart
    
    
    
-   private void addNotesToTask( Task task, long taskSeriesId )
+   private void addNotesToTask( Task task )
    {
       Cursor c = null;
       try
       {
-         c = getNotesQuery().getNotesOfTaskSeries( taskSeriesId );
+         c = getNotesQuery().getNotesOfTaskSeries( task.getSeriesId() );
          
          while ( c.moveToNext() )
          {
@@ -311,12 +383,12 @@ class DbTasksContentRepositoryPart
    
    
    
-   private void addParticipantsToTask( Task task, long taskSeriesId )
+   private void addParticipantsToTask( Task task )
    {
       Cursor c = null;
       try
       {
-         c = getParticipantsQuery().getParticipants( taskSeriesId );
+         c = getParticipantsQuery().getParticipants( task.getSeriesId() );
          
          while ( c.moveToNext() )
          {
@@ -352,6 +424,7 @@ class DbTasksContentRepositoryPart
                                   c.getLong( 2 ),
                                   c.getString( 22 ) );
       
+      task.setSeriesId( c.getLong( 1 ) );
       task.setModifiedMillisUtc( c.getLong( 4 ) );
       task.setSource( CursorUtils.getOptString( c, 7 ) );
       task.setUrl( CursorUtils.getOptString( c, 8 ) );

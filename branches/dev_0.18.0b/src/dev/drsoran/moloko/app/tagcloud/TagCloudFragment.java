@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.app.tagcloud;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -39,18 +38,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
-import dev.drsoran.rtm.LocationWithTaskCount;
-import dev.drsoran.rtm.TagWithTaskCount;
 
 
-class TagCloudFragment extends
-         MolokoLoaderFragment< List< TagCloudFragment.TagCloudEntry > >
+class TagCloudFragment extends MolokoLoaderFragment< List< TagCloudEntry > >
 {
    /**
     * Relationship between task count and text size.
@@ -137,7 +131,7 @@ class TagCloudFragment extends
    @Override
    public Loader< List< TagCloudEntry > > newLoaderInstance( int id, Bundle args )
    {
-      return new TagCloudEntryLoader( getSherlockActivity() );
+      return new TagCloudEntryLoader( getUiContext().asDomainContext() );
    }
    
    
@@ -158,12 +152,9 @@ class TagCloudFragment extends
    
    
    
-   private void showTagCloudEntries( final List< TagCloudEntry > cloudEntries )
+   private void showTagCloudEntries( List< TagCloudEntry > cloudEntries )
    {
       final Activity activity = getSherlockActivity();
-      
-      // Sort all cloud entries by their name
-      Collections.sort( cloudEntries );
       
       final int size = cloudEntries.size();
       final List< Button > buttons = new ArrayList< Button >( size );
@@ -174,14 +165,14 @@ class TagCloudFragment extends
          
          final Button cloudEntryButton = new Button( activity );
          cloudEntryButton.setId( i );
-         cloudEntryButton.setText( cloudEntry.name );
+         cloudEntryButton.setText( cloudEntry.getName() );
          cloudEntryButton.setTextSize( TypedValue.COMPLEX_UNIT_SP,
-                                       18 * getMagnifyFactor( cloudEntry.count ) );
+                                       18 * getMagnifyFactor( cloudEntry.getCount() ) );
          
          cloudEntry.present( cloudEntryButton );
          cloudEntry.setTagCloudFragmentListener( listener );
          
-         if ( cloudEntry.count > 1 )
+         if ( cloudEntry.getCount() > 1 )
          {
             cloudEntryButton.setTypeface( Typeface.DEFAULT_BOLD );
          }
@@ -265,205 +256,5 @@ class TagCloudFragment extends
       }
       
       return result;
-   }
-   
-   
-   public static abstract class TagCloudEntry implements
-            Comparable< TagCloudEntry >
-   {
-      private ITagCloudFragmentListener listener;
-      
-      public final String name;
-      
-      public final int count;
-      
-      
-      
-      protected TagCloudEntry( String name, int count )
-      {
-         this.name = name;
-         this.count = count;
-      }
-      
-      
-      
-      @Override
-      public int compareTo( TagCloudEntry other )
-      {
-         return name.compareToIgnoreCase( other.name );
-      }
-      
-      
-      
-      public void setTagCloudFragmentListener( ITagCloudFragmentListener listener )
-      {
-         this.listener = listener;
-      }
-      
-      
-      
-      public ITagCloudFragmentListener getTagCloudFragmentListener()
-      {
-         return listener;
-      }
-      
-      
-      
-      public abstract void present( Button button );
-      
-      
-      
-      @Override
-      public abstract String toString();
-   }
-   
-   
-   public static class ListTagCloudEntry extends TagCloudEntry implements
-            View.OnClickListener
-   {
-      private final ITasksList list;
-      
-      
-      
-      public ListTagCloudEntry( ITasksList list )
-      {
-         super( list.getName(), list.getTasksCount() );
-         this.list = list;
-      }
-      
-      
-      
-      @Override
-      public void present( Button button )
-      {
-         button.setOnClickListener( this );
-         button.setBackgroundResource( R.drawable.tagcloud_list_bgnd );
-         button.setTextColor( button.getContext()
-                                    .getResources()
-                                    .getColor( R.color.tagcloud_listname_text_normal ) );
-      }
-      
-      
-      
-      @Override
-      public void onClick( View v )
-      {
-         if ( getTagCloudFragmentListener() != null )
-         {
-            getTagCloudFragmentListener().onOpenList( list );
-         }
-      }
-      
-      
-      
-      @Override
-      public String toString()
-      {
-         return "List";
-      }
-   }
-   
-   
-   public static class TagTagCloudEntry extends TagCloudEntry implements
-            View.OnClickListener
-   {
-      public TagTagCloudEntry( TagWithTaskCount tag )
-      {
-         super( tag.getTag(), tag.getTaskCount() );
-      }
-      
-      
-      
-      @Override
-      public void present( Button button )
-      {
-         button.setOnClickListener( this );
-         button.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
-         button.setTextColor( button.getContext()
-                                    .getResources()
-                                    .getColor( R.color.tagcloud_tag_text_normal ) );
-      }
-      
-      
-      
-      @Override
-      public void onClick( View v )
-      {
-         if ( getTagCloudFragmentListener() != null )
-         {
-            getTagCloudFragmentListener().onOpenTag( name );
-         }
-      }
-      
-      
-      
-      @Override
-      public String toString()
-      {
-         return "Tag";
-      }
-   }
-   
-   
-   public static class LocationTagCloudEntry extends TagCloudEntry implements
-            View.OnClickListener, View.OnLongClickListener
-   {
-      private final RtmLocation location;
-      
-      
-      
-      public LocationTagCloudEntry( LocationWithTaskCount location )
-      {
-         super( location.getRtmLocation().name,
-                location.getIncompleteTaskCount() );
-         this.location = location.getRtmLocation();
-      }
-      
-      
-      
-      @Override
-      public void present( Button button )
-      {
-         button.setOnClickListener( this );
-         button.setLongClickable( true );
-         button.setOnLongClickListener( this );
-         button.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
-         button.setTextColor( button.getContext()
-                                    .getResources()
-                                    .getColor( R.color.tagcloud_tag_text_normal ) );
-      }
-      
-      
-      
-      @Override
-      public boolean onLongClick( View v )
-      {
-         if ( getTagCloudFragmentListener() != null )
-         {
-            getTagCloudFragmentListener().onOpenLocationWithOtherApp( location );
-            return true;
-         }
-         
-         return false;
-      }
-      
-      
-      
-      @Override
-      public void onClick( View v )
-      {
-         if ( getTagCloudFragmentListener() != null )
-         {
-            getTagCloudFragmentListener().onOpenLocation( location );
-         }
-      }
-      
-      
-      
-      @Override
-      public String toString()
-      {
-         return "Location";
-      }
    }
 }

@@ -199,6 +199,14 @@ public class DbContentRepository implements IContentRepository
    
    
    
+   @Override
+   public Iterable< String > getTags() throws ContentException
+   {
+      return tasksRepositoryPart.getTags( SEL_NO_COMPLETED_AND_DELETED_TASKS );
+   }
+   
+   
+   
    private Iterable< ITask > getTasksInPhysicalList( ITasksList tasksList,
                                                      int options ) throws ContentException
    {

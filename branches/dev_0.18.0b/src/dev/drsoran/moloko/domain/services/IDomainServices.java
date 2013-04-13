@@ -29,4 +29,8 @@ public interface IDomainServices
    
    
    IContentRepository getContentRepository();
+   
+   
+   
+   IContentEditService getContentEditService();
 }

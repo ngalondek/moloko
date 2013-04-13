@@ -26,6 +26,8 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
 {
    private final long id;
    
+   private final int position;
+   
    private final boolean locked;
    
    private final boolean archived;
@@ -36,12 +38,13 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   protected TasksList( long id, long createdMillisUtc, boolean locked,
-      boolean archived )
+   protected TasksList( long id, long createdMillisUtc, int position,
+      boolean locked, boolean archived )
    {
       super( createdMillisUtc );
       
       this.id = id;
+      this.position = position;
       this.locked = locked;
       this.archived = archived;
    }
@@ -67,6 +70,14 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    public void setName( String name )
    {
       this.name = name;
+   }
+   
+   
+   
+   @Override
+   public int getPosition()
+   {
+      return position;
    }
    
    

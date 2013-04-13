@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.util.Strings;
+
+
 public class Location
 {
    private final long id;
@@ -99,5 +102,51 @@ public class Location
    public int getZoom()
    {
       return zoom;
+   }
+   
+   
+   
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( o == this )
+      {
+         return true;
+      }
+      
+      if ( o == null )
+      {
+         return false;
+      }
+      
+      if ( o.getClass() != Location.class )
+      {
+         return false;
+      }
+      
+      final Location other = (Location) o;
+      
+      return id == other.id && longitude == other.longitude
+         && latitude == other.latitude && isViewable == other.isViewable
+         && zoom == other.zoom && Strings.equals( name, other.name )
+         && Strings.equals( address, other.address );
+   }
+   
+   
+   
+   @Override
+   public int hashCode()
+   {
+      int result = 17;
+      
+      result = 31 * result + (int) id;
+      result = 31 * result + (int) longitude;
+      result = 31 * result + (int) latitude;
+      result = 31 * result + ( isViewable ? 0 : 1 );
+      result = 31 * result + zoom;
+      result = 31 * result + ( name != null ? name.hashCode() : 0 );
+      result = 31 * result + ( address != null ? address.hashCode() : 0 );
+      
+      return result;
    }
 }

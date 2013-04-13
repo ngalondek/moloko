@@ -28,19 +28,12 @@ import android.net.Uri;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskSeries;
 
-import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.ParticipantsTable;
-import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
-import dev.drsoran.moloko.content.db.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation.Builder;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.TaskSeries;
-import dev.drsoran.rtm.ParticipantList;
 
 
 public class InSyncTask extends SyncTaskBase implements
@@ -82,7 +75,7 @@ public class InSyncTask extends SyncTaskBase implements
       // Insert new taskseries
       operation.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
                                              .withValues( RtmTaskSeriesTable.getContentValues( taskSeries,
-                                                                                                      true ) )
+                                                                                               true ) )
                                              .build() );
       
       // Insert task
@@ -108,7 +101,7 @@ public class InSyncTask extends SyncTaskBase implements
       final ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
       
       // Check for a moved task. The task with the same ID is now in another taskseries.
-      final boolean hasTaskMoved = SyncUtils.hasChanged( serverElement.taskSeries.getId(),
+      final boolean hasTaskMoved = SyncUtils.isDifferent( serverElement.taskSeries.getId(),
                                                          taskSeries.getId() );
       
       if ( hasTaskMoved )
@@ -116,7 +109,7 @@ public class InSyncTask extends SyncTaskBase implements
          // Insert new taskseries
          operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
                                                  .withValues( RtmTaskSeriesTable.getContentValues( serverElement.taskSeries,
-                                                                                                          true ) )
+                                                                                                   true ) )
                                                  .build() );
          
          // Insert participants
@@ -152,61 +145,61 @@ public class InSyncTask extends SyncTaskBase implements
       //
       // The former taskseries will be removed by a trigger in RtmTasksProviderPart if it
       // references no more rawtasks after move.
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getId(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getId(),
                                  taskSeries.getId() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.TASKSERIES_ID,
                                                              serverElement.taskSeries.getId() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getDue(), task.getDue() ) )
+      if ( SyncUtils.isDifferent( serverElement.task.getDue(), task.getDue() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.DUE_DATE,
                                                              MolokoDateUtils.getTime( serverElement.task.getDue() ) )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getHasDueTime(),
+      if ( SyncUtils.isDifferent( serverElement.task.getHasDueTime(),
                                  task.getHasDueTime() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.HAS_DUE_TIME,
                                                              serverElement.task.getHasDueTime() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getAdded(), task.getAdded() ) )
+      if ( SyncUtils.isDifferent( serverElement.task.getAdded(), task.getAdded() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.ADDED_DATE,
                                                              MolokoDateUtils.getTime( serverElement.task.getAdded() ) )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getCompleted(),
+      if ( SyncUtils.isDifferent( serverElement.task.getCompleted(),
                                  task.getCompleted() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.COMPLETED_DATE,
                                                              MolokoDateUtils.getTime( serverElement.task.getCompleted() ) )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getPriority(),
+      if ( SyncUtils.isDifferent( serverElement.task.getPriority(),
                                  task.getPriority() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.PRIORITY,
                                                              RtmTask.convertPriority( serverElement.task.getPriority() ) )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getPostponed(),
+      if ( SyncUtils.isDifferent( serverElement.task.getPostponed(),
                                  task.getPostponed() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.POSTPONED,
                                                              serverElement.task.getPostponed() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getEstimate(),
+      if ( SyncUtils.isDifferent( serverElement.task.getEstimate(),
                                  task.getEstimate() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.ESTIMATE,
                                                              serverElement.task.getEstimate() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.task.getEstimateMillis(),
+      if ( SyncUtils.isDifferent( serverElement.task.getEstimateMillis(),
                                  task.getEstimateMillis() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( RawTasks.ESTIMATE_MILLIS,
@@ -229,63 +222,63 @@ public class InSyncTask extends SyncTaskBase implements
       final Uri contentUri = DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                        taskSeries.getId() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getListId(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getListId(),
                                  taskSeries.getListId() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.LIST_ID,
                                                              serverElement.taskSeries.getListId() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getCreatedDate(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getCreatedDate(),
                                  taskSeries.getCreatedDate() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.TASKSERIES_CREATED_DATE,
                                                              MolokoDateUtils.getTime( serverElement.taskSeries.getCreatedDate() ) )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getModifiedDate(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getModifiedDate(),
                                  taskSeries.getModifiedDate() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.MODIFIED_DATE,
                                                              MolokoDateUtils.getTime( serverElement.taskSeries.getModifiedDate() ) )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getName(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getName(),
                                  taskSeries.getName() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.TASKSERIES_NAME,
                                                              serverElement.taskSeries.getName() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getSource(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getSource(),
                                  taskSeries.getSource() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.SOURCE,
                                                              serverElement.taskSeries.getSource() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getLocationId(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getLocationId(),
                                  taskSeries.getLocationId() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.LOCATION_ID,
                                                              serverElement.taskSeries.getLocationId() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getURL(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getURL(),
                                  taskSeries.getURL() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.URL,
                                                              serverElement.taskSeries.getURL() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( serverElement.taskSeries.getRecurrence(),
+      if ( SyncUtils.isDifferent( serverElement.taskSeries.getRecurrence(),
                                  taskSeries.getRecurrence() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.RECURRENCE,
                                                              serverElement.taskSeries.getRecurrence() )
                                                  .build() );
       
-      if ( SyncUtils.hasChanged( Boolean.valueOf( serverElement.taskSeries.isEveryRecurrence() ),
+      if ( SyncUtils.isDifferent( Boolean.valueOf( serverElement.taskSeries.isEveryRecurrence() ),
                                  Boolean.valueOf( taskSeries.isEveryRecurrence() ) ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                  .withValue( TaskSeries.RECURRENCE_EVERY,
@@ -297,7 +290,7 @@ public class InSyncTask extends SyncTaskBase implements
       {
          final String joinedServerTags = serverElement.taskSeries.getTagsJoined();
          
-         if ( SyncUtils.hasChanged( joinedServerTags,
+         if ( SyncUtils.isDifferent( joinedServerTags,
                                     taskSeries.getTagsJoined() ) )
             operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                     .withValue( TaskSeries.TAGS,

@@ -24,10 +24,8 @@ package dev.drsoran.moloko.content.db;
 
 import java.util.Iterator;
 
-import android.content.ContentProviderClient;
-import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 
 final class DbUtils
@@ -39,9 +37,51 @@ final class DbUtils
    
    
    
-   public final static < T > String toColumnList( Iterable< T > set,
-                                                  String colName,
-                                                  String seperator )
+   public static void doTransactional( SQLiteDatabase sqliteDatabase,
+                                       Runnable action )
+   {
+      try
+      {
+         sqliteDatabase.beginTransaction();
+         
+         action.run();
+         
+         sqliteDatabase.setTransactionSuccessful();
+      }
+      finally
+      {
+         sqliteDatabase.endTransaction();
+      }
+   }
+   
+   
+   
+   public static Uri entityUriWithId( String tableName, long id )
+   {
+      return new Uri.Builder().authority( tableName )
+                              .path( String.valueOf( id ) )
+                              .build();
+   }
+   
+   
+   
+   public static String getTableNameFromEntityUri( Uri entityUri )
+   {
+      return entityUri.getAuthority();
+   }
+   
+   
+   
+   public static long getIdFromEntityUri( Uri entityUri )
+   {
+      return Long.parseLong( entityUri.getLastPathSegment() );
+   }
+   
+   
+   
+   public static < T > String toColumnList( Iterable< T > set,
+                                            String colName,
+                                            String seperator )
    {
       final StringBuilder sb = new StringBuilder();
       
@@ -58,46 +98,5 @@ final class DbUtils
       }
       
       return sb.toString();
-   }
-   
-   
-   
-   public final static String getNextId( ContentProviderClient client,
-                                         Uri contentUri )
-   {
-      Cursor c = null;
-      String newId = null;
-      
-      try
-      {
-         c = client.query( contentUri, new String[]
-         { BaseColumns._ID }, null, null, null );
-         
-         if ( c != null )
-         {
-            if ( c.getCount() > 0 )
-            {
-               long longId = -1;
-               
-               for ( boolean ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final long id = c.getLong( 0 );
-                  if ( id > longId )
-                     longId = id;
-               }
-               
-               newId = String.valueOf( longId + 1 );
-            }
-            else
-               newId = String.valueOf( 1L );
-         }
-      }
-      finally
-      {
-         if ( c != null )
-            c.close();
-      }
-      
-      return newId;
    }
 }

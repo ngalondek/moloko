@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -122,8 +123,7 @@ class DbTasksContentEditPart
                                                                        ContentException
    {
       final ITask existingTask = contentRepository.getTask( taskId,
-                                                              TaskContentOptions.WITH_NOTES
-                                                                 | TaskContentOptions.WITH_PARTICIPANTS );
+                                                            TaskContentOptions.COMPLETE );
       
       DbUtils.doTransactional( database.getWritable(), new Runnable()
       {
@@ -363,12 +363,12 @@ class DbTasksContentEditPart
    
    
    
-   private static void collectTaskSeriesModifications( Collection< Modification > modifications,
-                                                       ITask existingTask,
-                                                       ITask updatedTask )
+   private void collectTaskSeriesModifications( Collection< Modification > modifications,
+                                                ITask existingTask,
+                                                ITask updatedTask )
    {
-      final Uri entityUri = DbUtils.entityUriWithId( RtmTaskSeriesTable.TABLE_NAME,
-                                                     existingTask.getSeriesId() );
+      final Uri entityUri = ContentUris.withAppendedId( rtmTaskSeriesTable.getUri(),
+                                                        existingTask.getId() );
       
       Modification.addIfDifferent( modifications,
                                    entityUri,
@@ -462,12 +462,12 @@ class DbTasksContentEditPart
    
    
    
-   private static void collectRawTaskModifications( Collection< Modification > modifications,
-                                                    ITask existingTask,
-                                                    ITask updatedTask )
+   private void collectRawTaskModifications( Collection< Modification > modifications,
+                                             ITask existingTask,
+                                             ITask updatedTask )
    {
-      final Uri entityUri = DbUtils.entityUriWithId( RawTasksTable.TABLE_NAME,
-                                                     existingTask.getId() );
+      final Uri entityUri = ContentUris.withAppendedId( rawTasksTable.getUri(),
+                                                        existingTask.getId() );
       
       Modification.addIfDifferent( modifications,
                                    entityUri,
@@ -560,17 +560,17 @@ class DbTasksContentEditPart
    
    
    
-   private static void collectParticipantsModifications( Collection< Modification > modifications,
-                                                         ITask existingTask,
-                                                         ITask updatedTask )
+   private void collectParticipantsModifications( Collection< Modification > modifications,
+                                                  ITask existingTask,
+                                                  ITask updatedTask )
    {
       for ( Participant updateParticipant : updatedTask.getParticipants() )
       {
          final Participant existingParticipant = existingTask.getParticipant( updateParticipant.getId() );
          if ( existingParticipant != null )
          {
-            final Uri entityUri = DbUtils.entityUriWithId( ParticipantsTable.TABLE_NAME,
-                                                           existingParticipant.getId() );
+            final Uri entityUri = ContentUris.withAppendedId( participantsTable.getUri(),
+                                                              existingParticipant.getId() );
             
             Modification.addIfDifferentNonPersistent( modifications,
                                                       entityUri,
@@ -595,17 +595,17 @@ class DbTasksContentEditPart
    
    
    
-   private static void collectNotesModifications( Collection< Modification > modifications,
-                                                  ITask existingTask,
-                                                  ITask updatedTask )
+   private void collectNotesModifications( Collection< Modification > modifications,
+                                           ITask existingTask,
+                                           ITask updatedTask )
    {
       for ( INote updateNote : updatedTask.getNotes() )
       {
          final INote existingNote = existingTask.getNote( updateNote.getId() );
          if ( existingNote != null )
          {
-            final Uri entityUri = DbUtils.entityUriWithId( RtmNotesTable.TABLE_NAME,
-                                                           existingNote.getId() );
+            final Uri entityUri = ContentUris.withAppendedId( notesTable.getUri(),
+                                                              existingNote.getId() );
             
             Modification.addIfDifferentNonPersistent( modifications,
                                                       entityUri,

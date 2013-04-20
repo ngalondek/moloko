@@ -45,6 +45,8 @@ import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterParsingReturn;
 
 public class DbContentRepository implements IContentRepository
 {
+   // TODO: It is wrong to decide here to hide deleted tasks. This is business logic and has to be
+   // in the domain layer.
    private final static String SEL_NO_DELETED_TASKS;
    
    private final static String SEL_NO_COMPLETED_AND_DELETED_TASKS;
@@ -98,6 +100,13 @@ public class DbContentRepository implements IContentRepository
    @Override
    public void unregisterContentObserver( ContentObserver observer )
    {
+   }
+   
+   
+   
+   public void shutdown()
+   {
+      
    }
    
    

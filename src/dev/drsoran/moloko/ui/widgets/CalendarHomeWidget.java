@@ -111,7 +111,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    {
       super.start();
       
-      TasksProviderPart.registerContentObserver( getContext(), dbObserver );
+      TasksProviderPart.put( getContext(), dbObserver );
       setCalendarDayInWidget();
    }
    

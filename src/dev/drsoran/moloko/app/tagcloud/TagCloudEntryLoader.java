@@ -102,9 +102,9 @@ class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      ListOverviewsProviderPart.registerContentObserver( getContext(), observer );
-      TagsProviderPart.registerContentObserver( getContext(), observer );
-      LocationOverviewsProviderPart.registerContentObserver( getContext(),
+      ListOverviewsProviderPart.put( getContext(), observer );
+      TagsProviderPart.put( getContext(), observer );
+      LocationOverviewsProviderPart.put( getContext(),
                                                              observer );
    }
    

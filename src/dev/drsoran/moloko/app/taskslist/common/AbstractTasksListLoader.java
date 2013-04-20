@@ -62,7 +62,7 @@ abstract class AbstractTasksListLoader< T extends Task > extends
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      TasksProviderPart.registerContentObserver( getContext(), observer );
+      TasksProviderPart.put( getContext(), observer );
    }
    
    

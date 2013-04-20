@@ -111,7 +111,7 @@ class PermanentNotifierTasksLoader extends
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      TasksProviderPart.registerContentObserver( getContext(), observer );
+      TasksProviderPart.put( getContext(), observer );
    }
    
    

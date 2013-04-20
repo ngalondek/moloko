@@ -24,11 +24,20 @@ package dev.drsoran.moloko.content.db;
 
 import android.content.ContentValues;
 import android.database.SQLException;
+import android.net.Uri;
 
 
 interface ITable
 {
    String getTableName();
+   
+   
+   
+   Uri getUri();
+   
+   
+   
+   Uri getItemUri();
    
    
    
@@ -52,9 +61,9 @@ interface ITable
    
    
    
-   void registerContentChangeObserver( ITableChangedObserver observer );
+   void registerTableChangedObserver( ITableChangedObserver observer );
    
    
    
-   void unregisterContentChangeObserver( ITableChangedObserver observer );
+   void unregisterTableChangeObserver( ITableChangedObserver observer );
 }

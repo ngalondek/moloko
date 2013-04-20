@@ -22,9 +22,11 @@
 
 package dev.drsoran.moloko.content.db;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import dev.drsoran.moloko.ILog;
@@ -42,6 +44,10 @@ abstract class AbstractTable implements ITable
    
    private final String tableName;
    
+   private final Uri tableUri;
+   
+   private final Uri tableItemUri;
+   
    
    
    protected AbstractTable( RtmDatabase database, String tableName )
@@ -49,6 +55,11 @@ abstract class AbstractTable implements ITable
       this.log = database.Log();
       this.database = database;
       this.tableName = tableName;
+      this.tableUri = new Uri.Builder().scheme( "db" )
+                                       .authority( "RtmDb" )
+                                       .path( tableName )
+                                       .build();
+      this.tableItemUri = tableUri.buildUpon().appendPath( "#" ).build();
    }
    
    
@@ -57,6 +68,22 @@ abstract class AbstractTable implements ITable
    public final String getTableName()
    {
       return tableName;
+   }
+   
+   
+   
+   @Override
+   public Uri getUri()
+   {
+      return tableUri;
+   }
+   
+   
+   
+   @Override
+   public Uri getItemUri()
+   {
+      return tableItemUri;
    }
    
    
@@ -233,7 +260,7 @@ abstract class AbstractTable implements ITable
    
    
    @Override
-   public void registerContentChangeObserver( ITableChangedObserver observer )
+   public void registerTableChangedObserver( ITableChangedObserver observer )
    {
       contentChangedOservable.registerObserver( observer );
    }
@@ -241,7 +268,7 @@ abstract class AbstractTable implements ITable
    
    
    @Override
-   public void unregisterContentChangeObserver( ITableChangedObserver observer )
+   public void unregisterTableChangeObserver( ITableChangedObserver observer )
    {
       contentChangedOservable.unregisterObserver( observer );
    }
@@ -250,14 +277,15 @@ abstract class AbstractTable implements ITable
    
    protected void notifyContentChanged()
    {
-      contentChangedOservable.notifyTableChanged( tableName );
+      contentChangedOservable.notifyTableChanged( tableUri );
    }
    
    
    
    protected void notifyContentChanged( long id )
    {
-      contentChangedOservable.notifyTableChanged( tableName, id );
+      contentChangedOservable.notifyTableChanged( ContentUris.withAppendedId( tableUri,
+                                                                              id ) );
    }
    
    

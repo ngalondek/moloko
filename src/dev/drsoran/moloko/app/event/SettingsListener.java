@@ -151,7 +151,7 @@ class SettingsListener implements OnSharedPreferenceChangeListener
             onSettingChanged( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED );
          }
       };
-      RtmSettingsTable.registerContentObserver( context,
+      RtmSettingsTable.put( context,
                                                        rtmSettingsChangedObserver );
    }
    

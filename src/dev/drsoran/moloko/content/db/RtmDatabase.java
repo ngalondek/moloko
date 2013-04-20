@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.UriMatcher;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import dev.drsoran.moloko.ILog;
 
 
@@ -47,6 +49,8 @@ public class RtmDatabase
    
    private final Map< Class< ? >, Object > queries;
    
+   private final UriMatcher tableUriMatcher;
+   
    
    
    public RtmDatabase( Context context, ILog log )
@@ -56,6 +60,7 @@ public class RtmDatabase
       this.tables = getTables();
       this.triggers = getTriggers();
       this.queries = getQueries();
+      this.tableUriMatcher = createTableUriMatcher();
    }
    
    
@@ -108,6 +113,26 @@ public class RtmDatabase
       }
       
       return null;
+   }
+   
+   
+   
+   public ITable getTable( Uri tableUri )
+   {
+      final int tableIndex = tableUriMatcher.match( tableUri );
+      if ( tableIndex > 0 )
+      {
+         return tables[ tableIndex ];
+      }
+      
+      return null;
+   }
+   
+   
+   
+   public UriMatcher getTableUriMatcher()
+   {
+      return tableUriMatcher;
    }
    
    
@@ -178,6 +203,33 @@ public class RtmDatabase
                                   (SyncTable) getTable( SyncTable.TABLE_NAME ) ) );
       
       return queries;
+   }
+   
+   
+   
+   private UriMatcher createTableUriMatcher()
+   {
+      final UriMatcher tableUriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
+      
+      // We register both, table and table item, to the same match code and so to the
+      // same index in the tables array. So they both match to the same entry.
+      int matchCode = 0;
+      for ( ITable table : tables )
+      {
+         final Uri tableUri = table.getUri();
+         tableUriMatcher.addURI( tableUri.getAuthority(),
+                                 tableUri.getPath(),
+                                 matchCode );
+         
+         final Uri tableItemUri = table.getItemUri();
+         tableUriMatcher.addURI( tableItemUri.getAuthority(),
+                                 tableItemUri.getPath(),
+                                 matchCode );
+         
+         ++matchCode;
+      }
+      
+      return tableUriMatcher;
    }
    
    

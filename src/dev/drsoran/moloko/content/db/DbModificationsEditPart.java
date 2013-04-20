@@ -99,8 +99,8 @@ class DbModificationsEditPart
    private void updateEntity( Modification modification )
    {
       final Uri entityUri = modification.getEntityUri();
-      final String tableName = DbUtils.getTableNameFromEntityUri( entityUri );
-      final long entityId = DbUtils.getIdFromEntityUri( entityUri );
+      final String tableName = entityUri.getPath();
+      final long entityId = Long.parseLong( entityUri.getLastPathSegment() );
       
       final ContentValues updateValues = new ContentValues( 1 );
       updateValues.put( modification.getColName(), modification.getNewValue() );

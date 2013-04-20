@@ -25,25 +25,16 @@ package dev.drsoran.moloko.content.db;
 import java.util.ArrayList;
 
 import android.database.Observable;
+import android.net.Uri;
 
 
 class TableChangedObservable extends Observable< ITableChangedObserver >
 {
-   public void notifyTableChanged( String tableName )
+   public void notifyTableChanged( Uri tableUri )
    {
       for ( ITableChangedObserver observer : getObservers() )
       {
-         observer.onTableChanged( tableName );
-      }
-   }
-   
-   
-   
-   public void notifyTableChanged( String tableName, long id )
-   {
-      for ( ITableChangedObserver observer : getObservers() )
-      {
-         observer.onTableChanged( tableName, id );
+         observer.onTableChanged( tableUri );
       }
    }
    

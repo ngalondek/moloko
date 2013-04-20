@@ -100,7 +100,7 @@ class HoleDayDueTasksLoader extends AbstractLoader< Cursor >
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      TasksProviderPart.registerContentObserver( getContext(), observer );
+      TasksProviderPart.put( getContext(), observer );
    }
    
    

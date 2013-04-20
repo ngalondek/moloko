@@ -26,9 +26,5 @@ public final class TaskContentOptions
 {
    public final static int MINIMAL = 0;
    
-   public final static int WITH_NOTES = 1 << 0;
-   
-   public final static int WITH_PARTICIPANTS = 1 << 1;
-   
-   public final static int COMPLETE = WITH_NOTES | WITH_PARTICIPANTS;
+   public final static int COMPLETE = 1;
 }

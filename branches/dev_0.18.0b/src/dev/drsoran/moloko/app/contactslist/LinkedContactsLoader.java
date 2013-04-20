@@ -95,7 +95,7 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      ContactOverviewsProviderPart.registerContentObserver( getContext(),
+      ContactOverviewsProviderPart.put( getContext(),
                                                             observer );
    }
    

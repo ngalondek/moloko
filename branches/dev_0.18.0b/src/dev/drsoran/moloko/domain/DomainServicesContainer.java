@@ -49,7 +49,7 @@ public class DomainServicesContainer implements IDomainServices
 {
    private final IParsingService parsingService;
    
-   private final IContentRepository contentRepository;
+   private final DbContentRepository contentRepository;
    
    private final IContentEditService contentEditService;
    
@@ -86,6 +86,13 @@ public class DomainServicesContainer implements IDomainServices
    
    
    
+   public void shutdown()
+   {
+      contentRepository.shutdown();
+   }
+   
+   
+   
    @Override
    public IParsingService getParsingService()
    {
@@ -115,4 +122,5 @@ public class DomainServicesContainer implements IDomainServices
       parsingService.getRecurrenceParsing()
                     .setRecurrenceSentenceLanguage( recurrenceSentenceLanguage );
    }
+   
 }

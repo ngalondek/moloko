@@ -366,6 +366,9 @@
 <table-figure refid="1735ee1:12b714ecdc7:-7fed" x="928" y="59"/>
 <table-figure refid="bf1775:12cd4b4f24d:-7fd8" x="201" y="689"/>
 <table-figure refid="bf1775:12cd4b4f24d:-7fcd" x="207" y="527"/>
+<fk-figure refid="bf1775:12cd4b4f24d:-7f05">
+<source-terminal x="39" y="13"/>
+</fk-figure>
 <table-figure refid="8339e4:12d9ed556c8:-7fe6" x="931" y="149"/>
 <table-figure refid="1ecfc22:12e03bc8e0c:-7fe5" x="931" y="282"/>
 </diagram>

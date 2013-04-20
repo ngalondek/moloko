@@ -32,7 +32,10 @@ import java.util.Set;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.net.Uri;
 import android.text.TextUtils;
+import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.UriLookup;
 import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
 import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
@@ -67,15 +70,9 @@ class DbTasksContentRepositoryPart
    
    private ParticipantsQuery participantsQuery;
    
-   
-   
-   public DbTasksContentRepositoryPart( RtmDatabase database )
-   {
-      this.database = database;
-   }
-   
    static
    {
+      
       final StringBuilder tasksQuerybuilder = new StringBuilder( "SELECT " );
       
       // Columns
@@ -218,6 +215,48 @@ class DbTasksContentRepositoryPart
    
    
    
+   public DbTasksContentRepositoryPart( RtmDatabase database )
+   {
+      this.database = database;
+   }
+   
+   
+   
+   public UriLookup< Uri > getContentUriToTableUriLookUp()
+   {
+      final UriLookup< Uri > lookup = new UriLookup< Uri >( ContentUris.MATCHER );
+      
+      final ITable rawTasksTable = database.getTable( RawTasksTable.TABLE_NAME );
+      final ITable taskSeriesTable = database.getTable( RtmTaskSeriesTable.TABLE_NAME );
+      final ITable locationsTable = database.getTable( RtmLocationsTable.TABLE_NAME );
+      final ITable notesTable = database.getTable( RtmNotesTable.TABLE_NAME );
+      final ITable participantsTable = database.getTable( ParticipantsTable.TABLE_NAME );
+      
+      lookup.put( ContentUris.TASKS_CONTENT_URI,
+                  rawTasksTable.getUri(),
+                  rawTasksTable.getItemUri(),
+                  taskSeriesTable.getUri(),
+                  taskSeriesTable.getItemUri(),
+                  locationsTable.getUri(),
+                  locationsTable.getItemUri(),
+                  notesTable.getUri(),
+                  notesTable.getItemUri(),
+                  participantsTable.getUri(),
+                  participantsTable.getItemUri() );
+      
+      lookup.put( ContentUris.TASKS_MINIMAL_CONTENT_URI,
+                  rawTasksTable.getUri(),
+                  rawTasksTable.getItemUri(),
+                  taskSeriesTable.getUri(),
+                  taskSeriesTable.getItemUri(),
+                  locationsTable.getUri(),
+                  locationsTable.getItemUri() );
+      
+      return lookup;
+   }
+   
+   
+   
    public ITask getById( long id, int options ) throws ContentException,
                                                NoSuchElementException
    {
@@ -327,13 +366,9 @@ class DbTasksContentRepositoryPart
             {
                final Task task = createTaskFromCursor( c );
                
-               if ( ( options & TaskContentOptions.WITH_NOTES ) != 0 )
+               if ( options == TaskContentOptions.COMPLETE )
                {
                   addNotesToTask( task );
-               }
-               
-               if ( ( options & TaskContentOptions.WITH_PARTICIPANTS ) != 0 )
-               {
                   addParticipantsToTask( task );
                }
                

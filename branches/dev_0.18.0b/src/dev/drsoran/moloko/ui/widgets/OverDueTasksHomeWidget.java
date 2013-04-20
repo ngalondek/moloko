@@ -100,7 +100,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    public void start()
    {
       super.start();
-      TasksProviderPart.registerContentObserver( getContext(), dbObserver );
+      TasksProviderPart.put( getContext(), dbObserver );
    }
    
    

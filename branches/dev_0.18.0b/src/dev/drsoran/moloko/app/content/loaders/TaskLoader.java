@@ -54,7 +54,7 @@ public class TaskLoader extends AbstractLoader< ITask >
    @Override
    public Uri getContentUri()
    {
-      return ContentUris.contentUriWithId( ContentUris.TASK_CONTENT_URI, taskId );
+      return ContentUris.contentUriWithId( ContentUris.TASKS_CONTENT_URI, taskId );
    }
    
    

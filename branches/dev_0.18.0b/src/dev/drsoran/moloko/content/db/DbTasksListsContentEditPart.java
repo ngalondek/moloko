@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
 import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
@@ -178,12 +179,12 @@ class DbTasksListsContentEditPart
    
    
    
-   private static void collectTasksListModifications( Collection< Modification > modifications,
-                                                      ITasksList existingTasksList,
-                                                      ITasksList updatedTasksList )
+   private void collectTasksListModifications( Collection< Modification > modifications,
+                                               ITasksList existingTasksList,
+                                               ITasksList updatedTasksList )
    {
-      final Uri entityUri = DbUtils.entityUriWithId( RtmListsTable.TABLE_NAME,
-                                                     existingTasksList.getId() );
+      final Uri entityUri = ContentUris.withAppendedId( tasksListTable.getUri(),
+                                                        existingTasksList.getId() );
       
       Modification.addIfDifferentNonPersistent( modifications,
                                                 entityUri,

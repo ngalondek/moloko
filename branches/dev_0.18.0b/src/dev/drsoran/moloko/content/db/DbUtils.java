@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content.db;
 import java.util.Iterator;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 
 
 final class DbUtils
@@ -52,29 +51,6 @@ final class DbUtils
       {
          sqliteDatabase.endTransaction();
       }
-   }
-   
-   
-   
-   public static Uri entityUriWithId( String tableName, long id )
-   {
-      return new Uri.Builder().authority( tableName )
-                              .path( String.valueOf( id ) )
-                              .build();
-   }
-   
-   
-   
-   public static String getTableNameFromEntityUri( Uri entityUri )
-   {
-      return entityUri.getAuthority();
-   }
-   
-   
-   
-   public static long getIdFromEntityUri( Uri entityUri )
-   {
-      return Long.parseLong( entityUri.getLastPathSegment() );
    }
    
    

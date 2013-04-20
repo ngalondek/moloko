@@ -100,6 +100,7 @@ public class MolokoApp extends Application implements
    {
       unregisterNotificationSettingsListener();
       deleteAppServices();
+      deleteDomainServices();
       
       super.onTerminate();
    }
@@ -315,6 +316,14 @@ public class MolokoApp extends Application implements
    {
       appServicesContainer.shutdown();
       appServicesContainer = null;
+   }
+   
+   
+   
+   private void deleteDomainServices()
+   {
+      domainServicesContainer.shutdown();
+      domainServicesContainer = null;
    }
    
    

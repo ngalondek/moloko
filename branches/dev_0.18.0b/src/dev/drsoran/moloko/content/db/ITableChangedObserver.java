@@ -22,11 +22,10 @@
 
 package dev.drsoran.moloko.content.db;
 
+import android.net.Uri;
+
+
 public interface ITableChangedObserver
 {
-   void onTableChanged( String tableName );
-   
-   
-   
-   void onTableChanged( String tableName, long id );
+   void onTableChanged( Uri tableUri );
 }

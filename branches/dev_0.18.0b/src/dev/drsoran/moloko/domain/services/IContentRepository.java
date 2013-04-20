@@ -25,6 +25,7 @@ package dev.drsoran.moloko.domain.services;
 import java.util.NoSuchElementException;
 
 import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.IContact;
 import dev.drsoran.moloko.domain.model.ITask;
@@ -35,15 +36,11 @@ import dev.drsoran.moloko.grammar.GrammarException;
 
 public interface IContentRepository
 {
-   void registerContentObserver( ContentObserver observer,
-                                 String contentMimeType,
-                                 Long itemId );
+   void registerContentObserver( ContentObserver observer, Uri contentUri );
    
    
    
-   void unregisterContentObserver( ContentObserver observer,
-                                   String contentMimeType,
-                                   Long itemId );
+   void unregisterContentObserver( ContentObserver observer );
    
    
    

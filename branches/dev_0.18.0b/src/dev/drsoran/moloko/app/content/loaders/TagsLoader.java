@@ -25,8 +25,9 @@ package dev.drsoran.moloko.app.content.loaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 
@@ -45,6 +46,14 @@ public class TagsLoader extends AbstractLoader< List< String > >
    
    
    @Override
+   public Uri getContentUri()
+   {
+      return ContentUris.TAGS_CONTENT_URI;
+   }
+   
+   
+   
+   @Override
    protected List< String > queryResultInBackground( IContentRepository contentRepository )
    {
       final List< String > tags = new ArrayList< String >();
@@ -55,21 +64,5 @@ public class TagsLoader extends AbstractLoader< List< String > >
       }
       
       return tags;
-   }
-   
-   
-   
-   @Override
-   protected void registerContentObserver( ContentObserver observer )
-   {
-      TagsProviderPart.registerContentObserver( getContext(), observer );
-   }
-   
-   
-   
-   @Override
-   protected void unregisterContentObserver( ContentObserver observer )
-   {
-      TagsProviderPart.unregisterContentObserver( getContext(), observer );
    }
 }

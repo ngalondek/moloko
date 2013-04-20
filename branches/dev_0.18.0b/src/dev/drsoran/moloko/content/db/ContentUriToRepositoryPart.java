@@ -22,21 +22,20 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import dev.drsoran.moloko.content.ContentMimeTypes;
 
 
-class ContentMimeTypeToTableMapper
+class ContentUriToRepositoryPart
 {
-   private final static Map< String, Collection< String >> MimeTypeToTablesMap;
+   // private final static Map< String, Collection< String >> MimeTypeToTablesMap;
    
    static
    {
-      MimeTypeToTablesMap = new HashMap< String, Collection< String > >( 10 );
-      
-      MimeTypeToTablesMap.put( ContentMimeTypes.TASKS_CONTENT_ITEM_TYPE, value );
+      // MimeTypeToTablesMap = new HashMap< String, Collection< String > >( 10 );
+      //
+      // final Collection< String > taskContentItemTypeTables = new ArrayList< String >();
+      // taskContentItemTypeTables.add( Tasks )
+      //
+      // MimeTypeToTablesMap.put( ContentMimeTypes.TASKS_CONTENT_ITEM_TYPE, value );
+      // MimeTypeToTablesMap.put( ContentMimeTypes.TASKS_CONTENT_ITEM_TYPE, value );
    }
 }

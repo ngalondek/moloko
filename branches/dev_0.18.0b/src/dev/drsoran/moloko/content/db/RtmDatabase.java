@@ -128,11 +128,9 @@ public class RtmDatabase
    private Trigger[] getTriggers()
    {
       return new Trigger[]
-      { new RtmListIdUpdateTrigger( this ),
-       new DefaultListSettingConsistencyTrigger( this ),
-       new DeleteRawTaskTrigger( this ), new UpdateRawTaskTrigger( this ),
-       new DeleteTaskSeriesTrigger( this ),
-       new UpdateTaskSeriesTrigger( this ), new DeleteContactTrigger( this ),
+      { new DefaultListSettingConsistencyTrigger( this ),
+       new DeleteRawTaskTrigger( this ), new DeleteTaskSeriesTrigger( this ),
+       new DeleteContactTrigger( this ),
        new DeleteModificationsTrigger( this, RtmListsTable.TABLE_NAME ),
        new DeleteModificationsTrigger( this, RawTasksTable.TABLE_NAME ),
        new DeleteModificationsTrigger( this, RtmTaskSeriesTable.TABLE_NAME ),

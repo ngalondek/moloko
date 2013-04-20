@@ -22,8 +22,9 @@
 
 package dev.drsoran.moloko.app.content.loaders;
 
-import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.ITask;
 import dev.drsoran.moloko.domain.services.ContentException;
@@ -51,24 +52,16 @@ public class TaskLoader extends AbstractLoader< ITask >
    
    
    @Override
+   public Uri getContentUri()
+   {
+      return ContentUris.contentUriWithId( ContentUris.TASK_CONTENT_URI, taskId );
+   }
+   
+   
+   
+   @Override
    protected ITask queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
       return contentRepository.getTask( taskId, taskContentOptions );
-   }
-   
-   
-   
-   @Override
-   protected void registerContentObserver( ContentObserver observer )
-   {
-      TasksProviderPart.registerContentObserver( getContext(), observer );
-   }
-   
-   
-   
-   @Override
-   protected void unregisterContentObserver( ContentObserver observer )
-   {
-      TasksProviderPart.unregisterContentObserver( getContext(), observer );
    }
 }

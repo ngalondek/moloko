@@ -34,6 +34,8 @@ abstract class AbstractTable implements ITable
 {
    private final static String ITEM_ID_EQUALS = BaseColumns._ID + "=";
    
+   private final TableChangedObservable contentChangedOservable = new TableChangedObservable();
+   
    private final ILog log;
    
    private final RtmDatabase database;
@@ -107,7 +109,7 @@ abstract class AbstractTable implements ITable
    
    
    @Override
-   public long insert( ContentValues initialValues )
+   public long insert( ContentValues initialValues ) throws SQLException
    {
       if ( initialValues == null )
       {
@@ -124,6 +126,8 @@ abstract class AbstractTable implements ITable
       {
          throw new SQLException( "Failed to insert content values" );
       }
+      
+      notifyContentChanged( rowId );
       
       return rowId;
    }
@@ -160,7 +164,7 @@ abstract class AbstractTable implements ITable
             
             if ( !TextUtils.isEmpty( where ) )
             {
-               sb.append( " AND (" ).append( where ).append( ')' );
+               sb.append( " AND (" ).append( where ).append( ")" );
             }
             
             numUpdated = db.updateWithOnConflict( tableName,
@@ -169,6 +173,11 @@ abstract class AbstractTable implements ITable
                                                   whereArgs,
                                                   getUpdateConflictHandler() );
          }
+      }
+      
+      if ( numUpdated > 0 )
+      {
+         notifyContentChanged( id );
       }
       
       return numUpdated;
@@ -193,10 +202,15 @@ abstract class AbstractTable implements ITable
          
          if ( !TextUtils.isEmpty( where ) )
          {
-            sb.append( " AND (" ).append( where ).append( ')' );
+            sb.append( " AND (" ).append( where ).append( ")" );
          }
          
          numDeleted = db.delete( tableName, sb.toString(), whereArgs );
+      }
+      
+      if ( numDeleted > 0 )
+      {
+         notifyContentChanged( id );
       }
       
       return numDeleted;
@@ -218,10 +232,35 @@ abstract class AbstractTable implements ITable
    
    
    
-   public abstract void create() throws SQLException;
+   @Override
+   public void registerContentChangeObserver( ITableChangedObserver observer )
+   {
+      contentChangedOservable.registerObserver( observer );
+   }
    
    
    
    @Override
-   public abstract String getDefaultSortOrder();
+   public void unregisterContentChangeObserver( ITableChangedObserver observer )
+   {
+      contentChangedOservable.unregisterObserver( observer );
+   }
+   
+   
+   
+   protected void notifyContentChanged()
+   {
+      contentChangedOservable.notifyTableChanged( tableName );
+   }
+   
+   
+   
+   protected void notifyContentChanged( long id )
+   {
+      contentChangedOservable.notifyTableChanged( tableName, id );
+   }
+   
+   
+   
+   public abstract void create() throws SQLException;
 }

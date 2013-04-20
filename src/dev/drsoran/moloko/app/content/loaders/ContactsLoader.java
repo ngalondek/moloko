@@ -25,8 +25,9 @@ package dev.drsoran.moloko.app.content.loaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.IContact;
 import dev.drsoran.moloko.domain.services.IContentRepository;
@@ -46,6 +47,14 @@ public class ContactsLoader extends AbstractLoader< List< IContact > >
    
    
    @Override
+   public Uri getContentUri()
+   {
+      return ContentUris.CONTACTS_CONTENT_URI;
+   }
+   
+   
+   
+   @Override
    protected List< IContact > queryResultInBackground( IContentRepository contentRepository )
    {
       final List< IContact > contacts = new ArrayList< IContact >();
@@ -55,23 +64,5 @@ public class ContactsLoader extends AbstractLoader< List< IContact > >
       }
       
       return contacts;
-   }
-   
-   
-   
-   @Override
-   protected void registerContentObserver( ContentObserver observer )
-   {
-      ContactOverviewsProviderPart.registerContentObserver( getContext(),
-                                                            observer );
-   }
-   
-   
-   
-   @Override
-   protected void unregisterContentObserver( ContentObserver observer )
-   {
-      ContactOverviewsProviderPart.unregisterContentObserver( getContext(),
-                                                              observer );
    }
 }

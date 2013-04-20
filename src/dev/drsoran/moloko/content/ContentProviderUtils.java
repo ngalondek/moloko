@@ -22,10 +22,9 @@
 
 package dev.drsoran.moloko.content;
 
-import android.net.Uri;
-import android.text.TextUtils;
 
 
+@Deprecated
 public final class ContentProviderUtils
 {
    private ContentProviderUtils()
@@ -45,14 +44,5 @@ public final class ContentProviderUtils
       }
       
       return result.toString();
-   }
-   
-   
-   
-   public static Uri contentUriWithId( Uri contentUri, String id )
-   {
-      return ( !TextUtils.isEmpty( id ) ) ? contentUri.buildUpon()
-                                                      .appendEncodedPath( id )
-                                                      .build() : contentUri;
    }
 }

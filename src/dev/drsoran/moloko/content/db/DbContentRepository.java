@@ -24,6 +24,8 @@ package dev.drsoran.moloko.content.db;
 
 import java.util.NoSuchElementException;
 
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.util.Pair;
 import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
 import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
@@ -82,6 +84,20 @@ public class DbContentRepository implements IContentRepository
       this.contactsRepositoryPart = new DbContactsContentRepositoryPart( database );
       this.dbSmartFilterEvaluator = new DbRtmSmartFilterEvaluator( dateTimeParsing );
       this.smartFilterParsing = smartFilterParsing;
+   }
+   
+   
+   
+   @Override
+   public void registerContentObserver( ContentObserver observer, Uri contentUri )
+   {
+   }
+   
+   
+   
+   @Override
+   public void unregisterContentObserver( ContentObserver observer )
+   {
    }
    
    

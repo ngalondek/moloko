@@ -25,8 +25,9 @@ package dev.drsoran.moloko.app.content.loaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.ITasksList;
@@ -47,6 +48,14 @@ public class TasksListsLoader extends AbstractLoader< List< ITasksList > >
    {
       super( context );
       this.includeTasksCount = includeTasksCount;
+   }
+   
+   
+   
+   @Override
+   public Uri getContentUri()
+   {
+      return ContentUris.TASKS_LISTS_CONTENT_URI;
    }
    
    
@@ -74,22 +83,5 @@ public class TasksListsLoader extends AbstractLoader< List< ITasksList > >
       }
       
       return list;
-   }
-   
-   
-   
-   @Override
-   protected void registerContentObserver( ContentObserver observer )
-   {
-      ListOverviewsProviderPart.registerContentObserver( getContext(), observer );
-   }
-   
-   
-   
-   @Override
-   protected void unregisterContentObserver( ContentObserver observer )
-   {
-      ListOverviewsProviderPart.unregisterContentObserver( getContext(),
-                                                           observer );
    }
 }

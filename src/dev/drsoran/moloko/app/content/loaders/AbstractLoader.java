@@ -25,6 +25,7 @@ package dev.drsoran.moloko.app.content.loaders;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.database.ContentObserver;
+import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.services.ContentException;
@@ -207,13 +208,23 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    
    
+   private void registerContentObserver( ContentObserver observer )
+   {
+      contentRepository.registerContentObserver( observer, getContentUri() );
+   }
+   
+   
+   
+   private void unregisterContentObserver( ContentObserver observer )
+   {
+      contentRepository.unregisterContentObserver( observer );
+   }
+   
+   
+   
+   abstract public Uri getContentUri();
+   
+   
+   
    abstract protected D queryResultInBackground( IContentRepository respository ) throws ContentException;
-   
-   
-   
-   abstract protected void registerContentObserver( ContentObserver observer );
-   
-   
-   
-   abstract protected void unregisterContentObserver( ContentObserver observer );
 }

@@ -30,7 +30,7 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.ContentCompare;
 
 
-public class Modification implements Comparable< Modification >
+class Modification implements Comparable< Modification >
 {
    private final long id;
    

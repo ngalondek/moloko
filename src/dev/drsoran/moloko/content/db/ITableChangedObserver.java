@@ -22,39 +22,11 @@
 
 package dev.drsoran.moloko.content.db;
 
-import android.content.ContentValues;
-import android.database.SQLException;
-
-
-interface ITable
+public interface ITableChangedObserver
 {
-   String getTableName();
+   void onTableChanged( String tableName );
    
    
    
-   String getDefaultSortOrder();
-   
-   
-   
-   String[] getProjection();
-   
-   
-   
-   long insert( ContentValues initialValues ) throws SQLException;
-   
-   
-   
-   int update( long id, ContentValues values, String where, String[] whereArgs );
-   
-   
-   
-   int delete( long id, String where, String[] whereArgs );
-   
-   
-   
-   void registerContentChangeObserver( ITableChangedObserver observer );
-   
-   
-   
-   void unregisterContentChangeObserver( ITableChangedObserver observer );
+   void onTableChanged( String tableName, long id );
 }

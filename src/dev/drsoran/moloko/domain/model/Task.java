@@ -26,20 +26,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import android.text.TextUtils;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class Task extends LifeTimeManaged implements ITask
+public class Task extends LifeTimeManaged
 {
    private final long id;
    
    private final long addedMillisUtc;
    
-   private final long listId;
+   private long listId;
    
-   private final String listName;
+   private String listName;
    
-   private long seriesId = -1L;
+   private long locationId;
+   
+   private String locationName;
    
    private String name;
    
@@ -61,30 +65,23 @@ public class Task extends LifeTimeManaged implements ITask
    
    private Collection< String > tags;
    
-   private Collection< INote > notes;
+   private Collection< Note > notes;
    
    private Collection< Participant > participants;
    
-   private Location location;
    
    
-   
-   public Task( long id, String name, long createdMillisUtc,
-      long addedMillisUtc, long listId, String listName )
+   public Task( long id, long createdMillisUtc, long addedMillisUtc )
    {
       super( createdMillisUtc );
       
       this.id = id;
-      this.name = name;
       this.completedMillisUtc = createdMillisUtc;
       this.addedMillisUtc = addedMillisUtc;
-      this.listId = listId;
-      this.listName = listName;
    }
    
    
    
-   @Override
    public long getId()
    {
       return id;
@@ -92,22 +89,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
-   public long getSeriesId()
-   {
-      return seriesId;
-   }
-   
-   
-   
-   public void setSeriesId( long seriesId )
-   {
-      this.seriesId = seriesId;
-   }
-   
-   
-   
-   @Override
    public String getName()
    {
       return name;
@@ -117,7 +98,7 @@ public class Task extends LifeTimeManaged implements ITask
    
    public void setName( String name )
    {
-      if ( name == null )
+      if ( TextUtils.isEmpty( name ) )
       {
          throw new IllegalArgumentException( "name" );
       }
@@ -127,7 +108,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public String getSource()
    {
       return source;
@@ -147,7 +127,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public String getUrl()
    {
       return url;
@@ -167,7 +146,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public long getAddedMillisUtc()
    {
       return addedMillisUtc;
@@ -175,7 +153,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public long getCompletedMillisUtc()
    {
       return completedMillisUtc;
@@ -195,7 +172,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public boolean isComplete()
    {
       return completedMillisUtc != Constants.NO_TIME;
@@ -203,7 +179,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public Priority getPriority()
    {
       return priority;
@@ -218,7 +193,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public int getPostponedCount()
    {
       return numPostponed;
@@ -238,7 +212,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public boolean isPostponed()
    {
       return numPostponed > 0;
@@ -246,7 +219,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public Due getDue()
    {
       return due;
@@ -266,7 +238,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public Recurrence getRecurrence()
    {
       return recurrence;
@@ -286,7 +257,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public Estimation getEstimation()
    {
       return estimation;
@@ -306,7 +276,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public Iterable< String > getTags()
    {
       return tags != null ? tags : Collections.< String > emptyList();
@@ -321,18 +290,16 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
-   public Iterable< INote > getNotes()
+   public Iterable< Note > getNotes()
    {
-      return notes != null ? notes : Collections.< INote > emptyList();
+      return notes != null ? notes : Collections.< Note > emptyList();
    }
    
    
    
-   @Override
-   public INote getNote( long noteId )
+   public Note getNote( long noteId )
    {
-      for ( INote note : getNotes() )
+      for ( Note note : getNotes() )
       {
          if ( note.getId() == noteId )
          {
@@ -345,7 +312,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public boolean hasNote( long noteId )
    {
       return getNote( noteId ) != null;
@@ -353,7 +319,7 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   public void setNotes( Iterable< ? extends INote > notes )
+   public void setNotes( Iterable< ? extends Note > notes )
    {
       if ( notes == null )
       {
@@ -404,7 +370,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public Iterable< Participant > getParticipants()
    {
       return participants != null ? participants
@@ -426,7 +391,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public Participant getParticipant( long participantId )
    {
       for ( Participant participant : getParticipants() )
@@ -442,7 +406,6 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public boolean isParticipating( long participantId )
    {
       return getParticipant( participantId ) != null;
@@ -450,22 +413,41 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
-   public Location getLocation()
+   public long getLocationId()
    {
-      return location;
+      return locationId;
    }
    
    
    
-   public void setLocation( Location location )
+   public String getLocationName()
    {
-      this.location = location;
+      return locationName;
    }
    
    
    
-   @Override
+   public boolean isLocated()
+   {
+      return locationId != Constants.NO_ID;
+   }
+   
+   
+   
+   public void setLocation( long locationId, String locationName )
+   {
+      if ( locationId != Constants.NO_ID && locationName == null )
+      {
+         throw new IllegalArgumentException( "locationName" );
+      }
+      
+      this.locationId = locationId;
+      this.locationName = ( locationId != Constants.NO_ID ) ? locationName
+                                                           : null;
+   }
+   
+   
+   
    public long getListId()
    {
       return listId;
@@ -473,10 +455,28 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   @Override
    public String getListName()
    {
       return listName;
+   }
+   
+   
+   
+   public void setList( long listId, String listName )
+   {
+      if ( listId < 1 )
+      {
+         throw new IllegalArgumentException( "listId" );
+      }
+      
+      if ( TextUtils.isEmpty( listName ) )
+      {
+         throw new IllegalArgumentException( "listName" );
+      }
+      
+      this.listId = listId;
+      this.listName = listName;
+      
    }
    
    
@@ -485,7 +485,7 @@ public class Task extends LifeTimeManaged implements ITask
    {
       if ( notes == null )
       {
-         notes = new ArrayList< INote >();
+         notes = new ArrayList< Note >();
       }
    }
    
@@ -501,9 +501,9 @@ public class Task extends LifeTimeManaged implements ITask
    
    
    
-   private void addNotes( Iterable< ? extends INote > notes )
+   private void addNotes( Iterable< ? extends Note > notes )
    {
-      for ( INote note : notes )
+      for ( Note note : notes )
       {
          this.notes.add( note );
       }

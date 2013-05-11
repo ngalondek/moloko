@@ -26,12 +26,13 @@ import java.util.Calendar;
 
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
-import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
@@ -39,7 +40,7 @@ import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.util.Strings;
 
 
-class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
+public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
 {
    private final static String DEFAULT_OPERATOR = " AND ";
    
@@ -60,7 +61,8 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    
-   public String getQuery()
+   @Override
+   public String getResult()
    {
       result.insert( 0, "( " ).append( " )" );
       return result.toString();
@@ -68,6 +70,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    
+   @Override
    public void reset()
    {
       result.setLength( 0 );
@@ -80,7 +83,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      result.append( RtmListsColumns.LIST_NAME );
+      result.append( RtmTasksListColumns.LIST_NAME );
       likeStringParam( listName );
       
       return true;
@@ -93,7 +96,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      result.append( RawTasksColumns.PRIORITY );
+      result.append( RtmRawTaskColumns.PRIORITY );
       likeStringParam( priority );
       
       return true;
@@ -106,7 +109,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      result.append( RawTasksColumns.COMPLETED_DATE );
+      result.append( RtmRawTaskColumns.COMPLETED_DATE );
       
       if ( completed )
       {
@@ -197,7 +200,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      result.append( RtmLocationsColumns.LOCATION_NAME );
+      result.append( RtmLocationColumns.LOCATION_NAME );
       likeStringParam( locationName );
       
       return true;
@@ -219,7 +222,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
                .append( " IS NOT NULL AND " )
                .append( RtmTaskSeriesColumns.LOCATION_ID )
                .append( " IN (SELECT " )
-               .append( RtmLocationsColumns._ID )
+               .append( RtmLocationColumns._ID )
                .append( " FROM " )
                .append( RtmLocationsTable.TABLE_NAME )
                .append( "))" );
@@ -273,21 +276,21 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       ensureOperatorAndResetState();
       
       result.append( "(SELECT " )
-            .append( RtmNotesColumns.TASKSERIES_ID )
+            .append( RtmNoteColumns.TASKSERIES_ID )
             .append( " FROM " )
             .append( RtmNotesTable.TABLE_NAME )
             .append( " WHERE " )
-            .append( RtmNotesColumns.TASKSERIES_ID )
+            .append( RtmNoteColumns.TASKSERIES_ID )
             .append( "=" )
             .append( RtmTaskSeriesTable.TABLE_NAME )
             .append( "." )
             .append( RtmTaskSeriesColumns._ID )
             .append( " AND " )
-            .append( RtmNotesColumns.NOTE_TITLE );
+            .append( RtmNoteColumns.NOTE_TITLE );
       
       containsStringParam( titleOrText );
       
-      result.append( " OR " ).append( RtmNotesColumns.NOTE_TEXT );
+      result.append( " OR " ).append( RtmNoteColumns.NOTE_TEXT );
       
       containsStringParam( titleOrText );
       
@@ -317,7 +320,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       }
       
       result.append( "(SELECT " )
-            .append( RtmNotesColumns.TASKSERIES_ID )
+            .append( RtmNoteColumns.TASKSERIES_ID )
             .append( " FROM " )
             .append( RtmNotesTable.TABLE_NAME )
             .append( "))" );
@@ -332,7 +335,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = equalsTimeParam( RawTasksColumns.DUE_DATE, due );
+      final boolean ok = equalsTimeParam( RtmRawTaskColumns.DUE_DATE, due );
       
       return ok;
    }
@@ -344,7 +347,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = differsTimeParam( RawTasksColumns.DUE_DATE,
+      final boolean ok = differsTimeParam( RtmRawTaskColumns.DUE_DATE,
                                            dueAfter,
                                            false );
       
@@ -358,7 +361,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = differsTimeParam( RawTasksColumns.DUE_DATE,
+      final boolean ok = differsTimeParam( RtmRawTaskColumns.DUE_DATE,
                                            dueBefore,
                                            true );
       
@@ -372,7 +375,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = inTimeParamRange( RawTasksColumns.DUE_DATE,
+      final boolean ok = inTimeParamRange( RtmRawTaskColumns.DUE_DATE,
                                            dueWithIn,
                                            false );
       
@@ -386,7 +389,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = equalsTimeParam( RawTasksColumns.COMPLETED_DATE,
+      final boolean ok = equalsTimeParam( RtmRawTaskColumns.COMPLETED_DATE,
                                           completed );
       
       return ok;
@@ -399,7 +402,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = differsTimeParam( RawTasksColumns.COMPLETED_DATE,
+      final boolean ok = differsTimeParam( RtmRawTaskColumns.COMPLETED_DATE,
                                            completedAfter,
                                            false );
       
@@ -413,7 +416,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = differsTimeParam( RawTasksColumns.COMPLETED_DATE,
+      final boolean ok = differsTimeParam( RtmRawTaskColumns.COMPLETED_DATE,
                                            completedBefore,
                                            true );
       
@@ -427,7 +430,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = inTimeParamRange( RawTasksColumns.COMPLETED_DATE,
+      final boolean ok = inTimeParamRange( RtmRawTaskColumns.COMPLETED_DATE,
                                            completedWithIn,
                                            true );
       
@@ -441,7 +444,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = equalsTimeParam( RawTasksColumns.ADDED_DATE, added );
+      final boolean ok = equalsTimeParam( RtmRawTaskColumns.ADDED_DATE, added );
       
       return ok;
    }
@@ -453,7 +456,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = differsTimeParam( RawTasksColumns.ADDED_DATE,
+      final boolean ok = differsTimeParam( RtmRawTaskColumns.ADDED_DATE,
                                            addedAfter,
                                            false );
       
@@ -467,7 +470,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = differsTimeParam( RawTasksColumns.ADDED_DATE,
+      final boolean ok = differsTimeParam( RtmRawTaskColumns.ADDED_DATE,
                                            addedBefore,
                                            true );
       
@@ -481,7 +484,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetState();
       
-      final boolean ok = inTimeParamRange( RawTasksColumns.ADDED_DATE,
+      final boolean ok = inTimeParamRange( RtmRawTaskColumns.ADDED_DATE,
                                            addedWithIn,
                                            true );
       
@@ -497,17 +500,19 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       
       try
       {
-         result.append( "(" ).append( RawTasksColumns.ESTIMATE_MILLIS );
+         result.append( "(" ).append( RtmRawTaskColumns.ESTIMATE_MILLIS );
          
          final String param = Strings.unquotify( estimation );
          
-         long estimatedMillis = -1;
+         long estimatedMillis = Constants.NO_TIME;
          final char chPos0 = param.charAt( 0 );
          
          if ( chPos0 == '<' || chPos0 == '>' )
          {
-            result.append( " > -1 AND " )
-                  .append( RawTasksColumns.ESTIMATE_MILLIS )
+            result.append( " > " )
+                  .append( Constants.NO_TIME )
+                  .append( " AND " )
+                  .append( RtmRawTaskColumns.ESTIMATE_MILLIS )
                   .append( chPos0 );
             
             estimatedMillis = dateTimeParsing.parseEstimated( param.substring( 1 ) );
@@ -534,7 +539,7 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    public boolean evalPostponed( String postponed )
    {
       ensureOperatorAndResetState();
-      result.append( RawTasksColumns.POSTPONED );
+      result.append( RtmRawTaskColumns.POSTPONED );
       
       boolean ok = true;
       
@@ -578,9 +583,9 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       }
       
       result.append( "(SELECT " )
-            .append( ParticipantsColumns.TASKSERIES_ID )
+            .append( RtmParticipantColumns.TASKSERIES_ID )
             .append( " FROM " )
-            .append( ParticipantsTable.TABLE_NAME )
+            .append( RtmParticipantsTable.TABLE_NAME )
             .append( "))" );
       
       return true;
@@ -594,21 +599,21 @@ class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       ensureOperatorAndResetState();
       
       result.append( "(SELECT " )
-            .append( ParticipantsColumns.TASKSERIES_ID )
+            .append( RtmParticipantColumns.TASKSERIES_ID )
             .append( " FROM " )
-            .append( ParticipantsTable.TABLE_NAME )
+            .append( RtmParticipantsTable.TABLE_NAME )
             .append( " WHERE " )
-            .append( ParticipantsColumns.TASKSERIES_ID )
+            .append( RtmParticipantColumns.TASKSERIES_ID )
             .append( "=" )
             .append( RtmTaskSeriesTable.TABLE_NAME )
             .append( "." )
             .append( RtmTaskSeriesColumns._ID )
             .append( " AND " )
-            .append( ParticipantsColumns.FULLNAME );
+            .append( RtmParticipantColumns.FULLNAME );
       
       containsStringParam( sharedWith );
       
-      result.append( " OR " ).append( ParticipantsColumns.USERNAME );
+      result.append( " OR " ).append( RtmParticipantColumns.USERNAME );
       
       containsStringParam( sharedWith );
       

@@ -35,7 +35,8 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.ModificationsProviderPart;
-import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.content.db.RtmTasksListsTable;
+import dev.drsoran.moloko.content.db.TableColumns.Lists;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -46,7 +47,6 @@ import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -135,7 +135,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Lists.CONTENT_URI )
-                                                                             .withValues( RtmListsTable.getContentValues( list,
+                                                                             .withValues( RtmTasksListsTable.getContentValues( list,
                                                                                                                                  true ) )
                                                                              .build() )
                                          .build();

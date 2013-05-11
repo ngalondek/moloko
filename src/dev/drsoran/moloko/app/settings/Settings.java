@@ -40,9 +40,9 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
+import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.RtmSettings;
 
 
 public class Settings implements ISettingsService, IOnSettingsChangedListener
@@ -548,7 +548,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    private void loadRtmSettings()
    {
       final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( dev.drsoran.provider.Rtm.Settings.CONTENT_URI );
+                                                  .acquireContentProviderClient( dev.dev.drsoran.moloko.content.db.Settings.CONTENT_URI );
       
       if ( client != null )
       {

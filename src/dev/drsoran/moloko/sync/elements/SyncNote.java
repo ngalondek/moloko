@@ -34,12 +34,13 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.Modification;
-import dev.drsoran.moloko.content.db.ModificationsProviderPart;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
+import dev.drsoran.moloko.content.db.TableColumns.Notes;
+import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.domain.model.ModificationSet;
+import dev.drsoran.moloko.domain.model.ModificationsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -52,7 +53,6 @@ import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Notes;
 
 
 public class SyncNote implements IContentProviderSyncable< SyncNote >,

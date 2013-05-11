@@ -55,7 +55,7 @@ class ClearDbPreference extends InfoTextPreference
    protected void onClick()
    {
       final ContentProviderClient client = getContext().getContentResolver()
-                                                       .acquireContentProviderClient( Rtm.AUTHORITY );
+                                                       .acquireContentProviderClient( TableColumns.AUTHORITY );
       if ( client != null
          && ( client.getLocalContentProvider() instanceof ContentRepository ) )
       {
@@ -140,7 +140,7 @@ class ClearDbPreference extends InfoTextPreference
          protected Void doInBackground( Void... params )
          {
             final ContentProviderClient client = getContext().getContentResolver()
-                                                             .acquireContentProviderClient( Rtm.AUTHORITY );
+                                                             .acquireContentProviderClient( TableColumns.AUTHORITY );
             
             if ( client != null
                && ( client.getLocalContentProvider() instanceof ContentRepository ) )

@@ -30,8 +30,8 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.provider.Rtm;
 
 
 public class ContentProviderAction implements IContentProviderActionItem
@@ -179,7 +179,7 @@ public class ContentProviderAction implements IContentProviderActionItem
       
       try
       {
-         client = contentResolver.acquireContentProviderClient( Rtm.AUTHORITY );
+         client = contentResolver.acquireContentProviderClient( TableColumns.AUTHORITY );
          client.applyBatch( operations );
       }
       catch ( Throwable e )

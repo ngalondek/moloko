@@ -49,14 +49,14 @@ import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.notification.MolokoNotificationService;
 import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
 import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
+import dev.drsoran.moloko.content.db.TableColumns.Notes;
+import dev.drsoran.moloko.content.db.TableColumns.Tags;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.util.Bundles;
-import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.Tags;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
@@ -517,7 +517,7 @@ public final class Intents
    {
       final Intent intent = new Intent( Settings.ACTION_SYNC_SETTINGS );
       
-      intent.putExtra( Settings.EXTRA_AUTHORITIES, Rtm.AUTHORITY );
+      intent.putExtra( Settings.EXTRA_AUTHORITIES, TableColumns.AUTHORITY );
       
       return intent;
    }

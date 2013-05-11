@@ -36,12 +36,12 @@ import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmContactsTable;
+import dev.drsoran.moloko.content.db.TableColumns.Contacts;
+import dev.drsoran.moloko.content.db.TableColumns.Participants;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.provider.Rtm.Contacts;
-import dev.drsoran.provider.Rtm.Participants;
 
 
 public class RtmContact extends RtmData implements

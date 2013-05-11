@@ -24,18 +24,18 @@ package dev.drsoran.moloko.domain.services;
 
 import java.util.NoSuchElementException;
 
-import dev.drsoran.moloko.domain.model.ITask;
-import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.TasksList;
 
 
 public interface IContentEditService
 {
-   void insertTask( ITask task ) throws ContentException;
+   void insertTask( Task task ) throws ContentException;
    
    
    
-   void updateTask( long taskId, ITask updatedTask ) throws NoSuchElementException,
-                                                    ContentException;
+   void updateTask( long taskId, Task updatedTask ) throws NoSuchElementException,
+                                                   ContentException;
    
    
    
@@ -44,12 +44,12 @@ public interface IContentEditService
    
    
    
-   void insertTasksList( ITasksList tasksList ) throws ContentException;
+   void insertTasksList( TasksList tasksList ) throws ContentException;
    
    
    
-   void updateTasksList( long tasksListId, ITasksList updatedTasksList ) throws NoSuchElementException,
-                                                                        ContentException;
+   void updateTasksList( long tasksListId, TasksList updatedTasksList ) throws NoSuchElementException,
+                                                                       ContentException;
    
    
    

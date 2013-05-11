@@ -43,16 +43,16 @@ import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.moloko.content.db.TableColumns.Locations;
+import dev.drsoran.moloko.content.db.TableColumns.Notes;
+import dev.drsoran.moloko.content.db.TableColumns.Tags;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.RtmSmartFilterParsing;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterParsingReturn;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.provider.Rtm.Locations;
-import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.Tags;
-import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class RtmSmartFilerParsingTest extends MolokoTestCase

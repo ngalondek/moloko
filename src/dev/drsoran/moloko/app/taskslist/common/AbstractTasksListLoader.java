@@ -29,7 +29,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.rtm.Task;
 
 

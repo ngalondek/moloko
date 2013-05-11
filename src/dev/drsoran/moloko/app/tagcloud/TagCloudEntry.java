@@ -22,22 +22,21 @@
 
 package dev.drsoran.moloko.app.tagcloud;
 
-import android.widget.Button;
-
-
-abstract class TagCloudEntry implements Comparable< TagCloudEntry >
+public class TagCloudEntry implements Comparable< TagCloudEntry >
 {
-   private ITagCloudFragmentListener listener;
+   private final TagCloudEntryType type;
    
    private final String name;
    
-   private int count;
+   private final int count;
    
    
    
-   protected TagCloudEntry( String name )
+   public TagCloudEntry( TagCloudEntryType type, String name, int count )
    {
+      this.type = type;
       this.name = name;
+      this.count = count;
    }
    
    
@@ -49,6 +48,13 @@ abstract class TagCloudEntry implements Comparable< TagCloudEntry >
    
    
    
+   public TagCloudEntryType getType()
+   {
+      return type;
+   }
+   
+   
+   
    public int getCount()
    {
       return count;
@@ -56,39 +62,29 @@ abstract class TagCloudEntry implements Comparable< TagCloudEntry >
    
    
    
-   public void setCount( int count )
-   {
-      this.count = count;
-   }
-   
-   
-   
    @Override
    public int compareTo( TagCloudEntry other )
    {
-      return name.compareToIgnoreCase( other.name );
+      int res = type.compareTo( other.type );
+      
+      if ( res == 0 )
+      {
+         res = name.compareToIgnoreCase( other.name );
+      }
+      
+      if ( res == 0 )
+      {
+         res = count - other.count;
+      }
+      
+      return res;
    }
-   
-   
-   
-   public void setTagCloudFragmentListener( ITagCloudFragmentListener listener )
-   {
-      this.listener = listener;
-   }
-   
-   
-   
-   public ITagCloudFragmentListener getTagCloudFragmentListener()
-   {
-      return listener;
-   }
-   
-   
-   
-   public abstract void present( Button button );
    
    
    
    @Override
-   public abstract String toString();
+   public String toString()
+   {
+      return "<" + type + ": " + name + "(" + count + ")>";
+   }
 }

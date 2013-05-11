@@ -34,8 +34,8 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.rtm.RtmContacts;
-import dev.drsoran.rtm.RtmSettings;
 
 
 /**

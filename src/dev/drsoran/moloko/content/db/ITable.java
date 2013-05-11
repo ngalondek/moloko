@@ -23,8 +23,8 @@
 package dev.drsoran.moloko.content.db;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.SQLException;
-import android.net.Uri;
 
 
 interface ITable
@@ -33,19 +33,18 @@ interface ITable
    
    
    
-   Uri getUri();
-   
-   
-   
-   Uri getItemUri();
-   
-   
-   
    String getDefaultSortOrder();
    
    
    
    String[] getProjection();
+   
+   
+   
+   Cursor query( String[] projection,
+                 String selection,
+                 String[] selectionArgs,
+                 String sortOrder );
    
    
    
@@ -58,12 +57,4 @@ interface ITable
    
    
    int delete( long id, String where, String[] whereArgs );
-   
-   
-   
-   void registerTableChangedObserver( ITableChangedObserver observer );
-   
-   
-   
-   void unregisterTableChangeObserver( ITableChangedObserver observer );
 }

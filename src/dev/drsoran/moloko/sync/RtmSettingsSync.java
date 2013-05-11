@@ -31,8 +31,8 @@ import com.mdt.rtm.ServiceInternalException;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.content.db.RtmSettingsTable;
+import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.rtm.RtmSettings;
 
 
 public final class RtmSettingsSync

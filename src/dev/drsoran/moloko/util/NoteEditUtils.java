@@ -33,12 +33,12 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderAction;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
-import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.moloko.content.db.TableColumns.Notes;
+import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.domain.model.ModificationSet;
 
 
 public final class NoteEditUtils

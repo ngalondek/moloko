@@ -5,9 +5,9 @@
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>680</x>
-      <y>230</y>
+      <y>190</y>
       <w>130</w>
-      <h>250</h>
+      <h>290</h>
     </coordinates>
     <panel_attributes>&lt;&lt;entity&gt;&gt;
 &lt;&lt;modifiable&gt;&gt;
@@ -24,6 +24,8 @@ Priority
 Postponed
 ListID
 ListName
+LocationID
+LocationName
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -55,8 +57,8 @@ IsEvery</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>1000</x>
-      <y>400</y>
+      <x>1170</x>
+      <y>180</y>
       <w>100</w>
       <h>150</h>
     </coordinates>
@@ -71,19 +73,6 @@ Address
 Zoom
 </panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>780</x>
-      <y>380</y>
-      <w>240</w>
-      <h>70</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-&gt;&gt;&gt;
-is located at
-r1=0..1</panel_attributes>
-    <additional_attributes>220;50;30;50</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -287,10 +276,10 @@ r2=n
       <x>720</x>
       <y>50</y>
       <w>50</w>
-      <h>200</h>
+      <h>160</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;30;180</additional_attributes>
+    <additional_attributes>30;30;30;140</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -353,8 +342,8 @@ Fullname
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>1130</x>
-      <y>430</y>
+      <x>1140</x>
+      <y>370</y>
       <w>180</w>
       <h>70</h>
     </coordinates>
@@ -368,19 +357,19 @@ bg=yellow
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>1070</x>
-      <y>430</y>
-      <w>80</w>
-      <h>50</h>
+      <x>1190</x>
+      <y>300</y>
+      <w>50</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes/>
-    <additional_attributes>30;30;60;30</additional_attributes>
+    <additional_attributes>30;30;30;70</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>1130</x>
-      <y>310</y>
+      <x>900</x>
+      <y>430</y>
       <w>180</w>
       <h>70</h>
     </coordinates>
@@ -394,13 +383,13 @@ bg=yellow
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>1070</x>
-      <y>320</y>
-      <w>80</w>
-      <h>50</h>
+      <x>1010</x>
+      <y>360</y>
+      <w>50</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes/>
-    <additional_attributes>30;30;60;30</additional_attributes>
+    <additional_attributes>30;30;30;70</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -469,5 +458,18 @@ SumEstimatated</panel_attributes>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
     <additional_attributes>30;30;60;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1130</x>
+      <y>150</y>
+      <w>200</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>bt=.
+Aggregate Location
+</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

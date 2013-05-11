@@ -39,10 +39,10 @@ import dev.drsoran.moloko.app.services.IConnectionService;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.app.services.SyncStartResult;
+import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.content.db.SyncTable;
+import dev.drsoran.moloko.content.db.TableColumns.Sync;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.Sync;
 
 
 public class SyncService implements ISyncService, IOnSettingsChangedListener,
@@ -98,7 +98,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
          bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
          bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
          
-         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+         ContentResolver.requestSync( account, TableColumns.AUTHORITY, bundle );
          
          return SyncStartResult.Ok;
       }
@@ -120,7 +120,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
                             true );
          bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, false );
          
-         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+         ContentResolver.requestSync( account, TableColumns.AUTHORITY, bundle );
          
          return SyncStartResult.Ok;
       }
@@ -138,7 +138,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
       bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
       bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
       
-      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+      ContentResolver.requestSync( account, TableColumns.AUTHORITY, bundle );
    }
    
    
@@ -147,7 +147,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
    public boolean isReadyToSync( Account account )
    {
       return connectionService.hasInternetConnection()
-         && ContentResolver.getSyncAutomatically( account, Rtm.AUTHORITY );
+         && ContentResolver.getSyncAutomatically( account, TableColumns.AUTHORITY );
    }
    
    
@@ -155,8 +155,8 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
    @Override
    public boolean isSyncing( Account account )
    {
-      return !ContentResolver.isSyncPending( account, Rtm.AUTHORITY )
-         && ContentResolver.isSyncActive( account, Rtm.AUTHORITY );
+      return !ContentResolver.isSyncPending( account, TableColumns.AUTHORITY )
+         && ContentResolver.isSyncActive( account, TableColumns.AUTHORITY );
    }
    
    
@@ -164,7 +164,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
    @Override
    public void cancelSync( Account account )
    {
-      ContentResolver.cancelSync( account, Rtm.AUTHORITY );
+      ContentResolver.cancelSync( account, TableColumns.AUTHORITY );
    }
    
    
@@ -237,7 +237,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
       if ( account != null )
       {
          ContentResolver.removePeriodicSync( account,
-                                             Rtm.AUTHORITY,
+                                             TableColumns.AUTHORITY,
                                              getExtras() );
          
          log.i( getClass(), "Removed periodic sync" );
@@ -301,7 +301,7 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
       if ( account != null )
       {
          ContentResolver.addPeriodicSync( account,
-                                          Rtm.AUTHORITY,
+                                          TableColumns.AUTHORITY,
                                           getExtras(),
                                           intervalMs / 1000 );
          

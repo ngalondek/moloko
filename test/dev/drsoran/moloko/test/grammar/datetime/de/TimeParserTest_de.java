@@ -1,11 +1,13 @@
 package dev.drsoran.moloko.test.grammar.datetime.de;
 
+import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
-import dev.drsoran.moloko.grammar.datetime.de.TimeParserImpl;
+import dev.drsoran.moloko.grammar.datetime.TimeParserImpl;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.MolokoTestRunner_de;
 import dev.drsoran.moloko.test.grammar.datetime.TimeParserTestHelper;
@@ -24,7 +26,7 @@ public class TimeParserTest_de extends MolokoTestCase
    {
       super.setUp();
       
-      final ITimeParser timeParser = new TimeParserImpl();
+      final ITimeParser timeParser = new TimeParserImpl( Locale.getDefault() );
       timeParserTestHelper = new TimeParserTestHelper( timeParser );
    }
    

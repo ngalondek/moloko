@@ -22,18 +22,16 @@
 
 package dev.drsoran.moloko.content;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.NoSuchElementException;
 
 import android.content.UriMatcher;
 import android.net.Uri;
+import android.util.SparseArray;
 
 
 public final class UriLookup< T >
 {
-   private final List< UriLookUpEntry > lookUp = new ArrayList< UriLookUpEntry >();
+   private final SparseArray< T > lookUp = new SparseArray< T >();
    
    private final UriMatcher uriMatcher;
    
@@ -50,33 +48,21 @@ public final class UriLookup< T >
    {
       if ( !contains( object ) )
       {
-         int matchType = getMatchTypeForUri( uri );
-         lookUp.add( new UriLookUpEntry( matchType, object ) );
+         putUri( uri, object );
          
          for ( Uri otherUri : otherUris )
          {
-            matchType = getMatchTypeForUri( otherUri );
-            lookUp.add( new UriLookUpEntry( matchType, object ) );
+            putUri( otherUri, object );
          }
       }
    }
    
    
    
-   public Collection< T > get( Uri uri ) throws IllegalArgumentException
+   public T get( Uri uri ) throws NoSuchElementException
    {
       final int matchType = getMatchTypeForUri( uri );
-      final Collection< T > matches = new ArrayList< T >();
-      
-      for ( UriLookUpEntry entry : lookUp )
-      {
-         if ( entry.UriMatchType == matchType )
-         {
-            matches.add( entry.Object );
-         }
-      }
-      
-      return matches;
+      return lookUp.get( matchType );
    }
    
    
@@ -90,55 +76,47 @@ public final class UriLookup< T >
    
    public boolean contains( T object )
    {
-      for ( UriLookUpEntry entry : lookUp )
-      {
-         if ( entry.Object == object )
-         {
-            return true;
-         }
-      }
-      
-      return false;
+      return lookUp.indexOfValue( object ) > -1;
    }
    
    
    
-   public void remove( T object, Uri uri ) throws IllegalArgumentException
+   public void remove( Uri uri ) throws NoSuchElementException
    {
       final int matchType = getMatchTypeForUri( uri );
-      for ( Iterator< UriLookUpEntry > i = lookUp.iterator(); i.hasNext(); )
-      {
-         final UriLookUpEntry entry = i.next();
-         if ( entry.Object == object && entry.UriMatchType == matchType )
-         {
-            i.remove();
-         }
-      }
+      lookUp.remove( matchType );
    }
    
    
    
-   public void removeAll( T object )
+   public void removeAll()
    {
-      for ( Iterator< UriLookUpEntry > i = lookUp.iterator(); i.hasNext(); )
-      {
-         final UriLookUpEntry entry = i.next();
-         if ( entry.Object == object )
-         {
-            i.remove();
-         }
-      }
+      lookUp.clear();
    }
    
    
    
-   private int getMatchTypeForUri( Uri uri ) throws IllegalArgumentException
+   private void putUri( Uri uri, T object ) throws IllegalArgumentException
    {
       final int matchType = tryGetMatchTypeForUri( uri );
       if ( matchType == UriMatcher.NO_MATCH )
       {
          throw new IllegalArgumentException( "The URI '" + uri
-            + "' cannot be matched to a valid URI" );
+            + "' is not valid." );
+      }
+      
+      lookUp.put( matchType, object );
+   }
+   
+   
+   
+   private int getMatchTypeForUri( Uri uri ) throws NoSuchElementException
+   {
+      final int matchType = tryGetMatchTypeForUri( uri );
+      if ( matchType == UriMatcher.NO_MATCH )
+      {
+         throw new NoSuchElementException( "The URI '" + uri
+            + "' cannot be matched to an existing URI" );
       }
       
       return matchType;
@@ -150,21 +128,5 @@ public final class UriLookup< T >
    {
       final int matchType = uriMatcher.match( uri );
       return matchType;
-   }
-   
-   
-   private final class UriLookUpEntry
-   {
-      public final int UriMatchType;
-      
-      public final T Object;
-      
-      
-      
-      public UriLookUpEntry( int uriMatchType, T object )
-      {
-         UriMatchType = uriMatchType;
-         Object = object;
-      }
    }
 }

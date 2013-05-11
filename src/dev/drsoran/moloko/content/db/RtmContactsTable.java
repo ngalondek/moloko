@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmContactsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 
 
 class RtmContactsTable extends AbstractTable
@@ -46,15 +46,15 @@ class RtmContactsTable extends AbstractTable
       
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
-      builder.append( " ( " );
-      builder.append( RtmContactsColumns._ID );
+      builder.append( "( " );
+      builder.append( RtmContactColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_CONTACTS PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( RtmContactsColumns.RTM_CONTACT_ID );
+      builder.append( RtmContactColumns.FULLNAME );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( RtmContactsColumns.FULLNAME );
+      builder.append( RtmContactColumns.USERNAME );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( RtmContactsColumns.USERNAME );
-      builder.append( " TEXT NOT NULL" );
+      builder.append( RtmContactColumns.RTM_CONTACT_ID );
+      builder.append( " TEXT NOT NULL " );
       builder.append( " );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
@@ -65,7 +65,7 @@ class RtmContactsTable extends AbstractTable
    @Override
    public String getDefaultSortOrder()
    {
-      return RtmContactsColumns.DEFAULT_SORT_ORDER;
+      return RtmContactColumns.DEFAULT_SORT_ORDER;
    }
    
    
@@ -73,6 +73,6 @@ class RtmContactsTable extends AbstractTable
    @Override
    public String[] getProjection()
    {
-      return RtmContactsColumns.PROJECTION;
+      return RtmContactColumns.TABLE_PROJECTION;
    }
 }

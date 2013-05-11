@@ -30,8 +30,8 @@ import com.mdt.rtm.data.RtmTaskSeries;
 
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.moloko.content.db.TableColumns.RawTasks;
+import dev.drsoran.moloko.content.db.TableColumns.TaskSeries;
 
 
 abstract class SyncTaskBase

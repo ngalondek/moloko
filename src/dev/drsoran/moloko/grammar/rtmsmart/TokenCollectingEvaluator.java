@@ -45,6 +45,25 @@ public class TokenCollectingEvaluator implements IRtmSmartFilterEvaluator
    
    
    
+   @Override
+   public String getResult()
+   {
+      return decorated.getResult();
+   }
+   
+   
+   
+   @Override
+   public void reset()
+   {
+      tokens.clear();
+      opNot = false;
+      
+      decorated.reset();
+   }
+   
+   
+   
    public Collection< RtmSmartFilterToken > getTokens()
    {
       return tokens;

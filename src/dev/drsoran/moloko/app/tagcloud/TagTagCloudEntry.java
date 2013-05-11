@@ -27,22 +27,18 @@ import android.widget.Button;
 import dev.drsoran.moloko.R;
 
 
-class TagTagCloudEntry extends TagCloudEntry implements View.OnClickListener
+class TagTagCloudEntry extends PresentableTagCloudEntry implements
+         View.OnClickListener
 {
-   public TagTagCloudEntry( String tag )
+   public TagTagCloudEntry( TagCloudEntry tagCloudEntry )
    {
-      super( tag );
-   }
-   
-   
-   
-   @Override
-   public int compareTo( TagCloudEntry other )
-   {
-      final int cmpType = TagTagCloudEntry.class.getName()
-                                                .compareTo( other.getClass()
-                                                                 .getName() );
-      return cmpType + super.compareTo( other );
+      super( tagCloudEntry );
+      
+      if ( tagCloudEntry.getType() != TagCloudEntryType.Tag )
+      {
+         throw new IllegalArgumentException( "Expected tag cloud entry of type "
+            + TagCloudEntryType.Tag );
+      }
    }
    
    
@@ -64,15 +60,7 @@ class TagTagCloudEntry extends TagCloudEntry implements View.OnClickListener
    {
       if ( getTagCloudFragmentListener() != null )
       {
-         getTagCloudFragmentListener().onOpenTag( getName() );
+         getTagCloudFragmentListener().onOpenTag( getTagCloudEntry().getName() );
       }
-   }
-   
-   
-   
-   @Override
-   public String toString()
-   {
-      return "Tag";
    }
 }

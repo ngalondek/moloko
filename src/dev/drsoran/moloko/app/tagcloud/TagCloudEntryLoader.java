@@ -34,11 +34,12 @@ import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.ITask;
 import dev.drsoran.moloko.domain.model.Location;
+import dev.drsoran.moloko.domain.model.TagTagCloudEntry;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
-class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
+class TagCloudEntryLoader extends AbstractLoader< List< PresentableTagCloudEntry > >
 {
    public final static int ID = R.id.loader_tag_cloud_entry;
    
@@ -52,11 +53,11 @@ class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
    
    
    @Override
-   protected List< TagCloudEntry > queryResultInBackground( IContentRepository contentRepository )
+   protected List< PresentableTagCloudEntry > queryResultInBackground( IContentRepository contentRepository )
    {
-      final SortedMap< TagCloudEntry, TagCloudEntry > tagCloudEntries = new TreeMap< TagCloudEntry, TagCloudEntry >();
+      final SortedMap< PresentableTagCloudEntry, PresentableTagCloudEntry > tagCloudEntries = new TreeMap< PresentableTagCloudEntry, PresentableTagCloudEntry >();
       
-      final Iterable< ITask > tasks = contentRepository.getTasks( TaskContentOptions.MINIMAL );
+      final Iterable< ITask > tasks = contentRepository.getAllTasks( TaskContentOptions.MINIMAL );
       for ( ITask task : tasks )
       {
          addOrIncrement( tagCloudEntries,
@@ -76,17 +77,17 @@ class TagCloudEntryLoader extends AbstractLoader< List< TagCloudEntry > >
          }
       }
       
-      final List< TagCloudEntry > cloudEntriesList = new ArrayList< TagCloudEntry >( tagCloudEntries.keySet() );
+      final List< PresentableTagCloudEntry > cloudEntriesList = new ArrayList< PresentableTagCloudEntry >( tagCloudEntries.keySet() );
       
       return cloudEntriesList;
    }
    
    
    
-   private void addOrIncrement( SortedMap< TagCloudEntry, TagCloudEntry > tagCloudEntries,
-                                TagCloudEntry tagCloudEntry )
+   private void addOrIncrement( SortedMap< PresentableTagCloudEntry, PresentableTagCloudEntry > tagCloudEntries,
+                                PresentableTagCloudEntry tagCloudEntry )
    {
-      final TagCloudEntry existingEntry = tagCloudEntries.get( tagCloudEntry );
+      final PresentableTagCloudEntry existingEntry = tagCloudEntries.get( tagCloudEntry );
       if ( existingEntry != null )
       {
          existingEntry.setCount( existingEntry.getCount() + 1 );

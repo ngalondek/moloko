@@ -22,18 +22,13 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.Context;
-import android.content.UriMatcher;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
 import dev.drsoran.moloko.ILog;
 
 
-public class RtmDatabase
+class RtmDatabase
 {
    private final static String DATABASE_NAME = "rtm.db";
    
@@ -43,13 +38,9 @@ public class RtmDatabase
    
    private final DatabaseOpenHelper dbAccess;
    
-   private final AbstractTable[] tables;
+   private AbstractTable[] tables;
    
-   private final Trigger[] triggers;
-   
-   private final Map< Class< ? >, Object > queries;
-   
-   private final UriMatcher tableUriMatcher;
+   private AbstractTrigger[] triggers;
    
    
    
@@ -57,10 +48,6 @@ public class RtmDatabase
    {
       this.log = log;
       this.dbAccess = new DatabaseOpenHelper( context );
-      this.tables = getTables();
-      this.triggers = getTriggers();
-      this.queries = getQueries();
-      this.tableUriMatcher = createTableUriMatcher();
    }
    
    
@@ -86,25 +73,9 @@ public class RtmDatabase
    
    
    
-   public < T > T getQuery( Class< T > queryType )
-   {
-      @SuppressWarnings( "unchecked" )
-      final T query = (T) queries.get( queryType );
-      
-      if ( query == null )
-      {
-         throw new IllegalArgumentException( "No query of type '" + queryType
-            + "'" );
-      }
-      
-      return query;
-   }
-   
-   
-   
    public ITable getTable( String tableName )
    {
-      for ( ITable table : tables )
+      for ( ITable table : getTables() )
       {
          if ( table.getTableName().equals( tableName ) )
          {
@@ -117,119 +88,41 @@ public class RtmDatabase
    
    
    
-   public ITable getTable( Uri tableUri )
-   {
-      final int tableIndex = tableUriMatcher.match( tableUri );
-      if ( tableIndex > 0 )
-      {
-         return tables[ tableIndex ];
-      }
-      
-      return null;
-   }
-   
-   
-   
-   public UriMatcher getTableUriMatcher()
-   {
-      return tableUriMatcher;
-   }
-   
-   
-   
    private AbstractTable[] getTables()
    {
-      return new AbstractTable[]
-      { new RtmListsTable( this ), new CreationsTable( this ),
-       new ModificationsTable( this ), new RawTasksTable( this ),
-       new RtmTaskSeriesTable( this ), new RtmNotesTable( this ),
-       new RtmContactsTable( this ), new ParticipantsTable( this ),
-       new RtmLocationsTable( this ), new RtmSettingsTable( this ),
-       new SyncTable( this ) };
-   }
-   
-   
-   
-   private Trigger[] getTriggers()
-   {
-      return new Trigger[]
-      { new DefaultListSettingConsistencyTrigger( this ),
-       new DeleteRawTaskTrigger( this ), new DeleteTaskSeriesTrigger( this ),
-       new DeleteContactTrigger( this ),
-       new DeleteModificationsTrigger( this, RtmListsTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( this, RawTasksTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( this, RtmTaskSeriesTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( this, RtmNotesTable.TABLE_NAME ) };
-   }
-   
-   
-   
-   private Map< Class< ? >, Object > getQueries()
-   {
-      final Map< Class< ? >, Object > queries = new HashMap< Class< ? >, Object >();
-      
-      queries.put( RtmListsQuery.class,
-                   new RtmListsQuery( this,
-                                      (RtmListsTable) getTable( RtmListsTable.TABLE_NAME ) ) );
-      queries.put( CreationsQuery.class,
-                   new CreationsQuery( this,
-                                       (CreationsTable) getTable( CreationsTable.TABLE_NAME ) ) );
-      queries.put( ModificationsQuery.class,
-                   new ModificationsQuery( this,
-                                           (ModificationsTable) getTable( ModificationsTable.TABLE_NAME ) ) );
-      queries.put( RawTasksQuery.class,
-                   new RawTasksQuery( this,
-                                      (RawTasksTable) getTable( RawTasksTable.TABLE_NAME ) ) );
-      queries.put( RtmTaskSeriesQuery.class,
-                   new RtmTaskSeriesQuery( this,
-                                           (RtmTaskSeriesTable) getTable( RtmTaskSeriesTable.TABLE_NAME ) ) );
-      queries.put( RtmNotesQuery.class,
-                   new RtmNotesQuery( this,
-                                      (RtmNotesTable) getTable( RtmNotesTable.TABLE_NAME ) ) );
-      queries.put( RtmSettingsQuery.class,
-                   new RtmSettingsQuery( this,
-                                         (RtmSettingsTable) getTable( RtmSettingsTable.TABLE_NAME ) ) );
-      queries.put( RtmContactsQuery.class,
-                   new RtmContactsQuery( this,
-                                         (RtmContactsTable) getTable( RtmContactsTable.TABLE_NAME ) ) );
-      queries.put( ParticipantsQuery.class,
-                   new ParticipantsQuery( this,
-                                          (ParticipantsTable) getTable( ParticipantsTable.TABLE_NAME ) ) );
-      queries.put( RtmLocationsQuery.class,
-                   new RtmLocationsQuery( this,
-                                          (RtmLocationsTable) getTable( RtmLocationsTable.TABLE_NAME ) ) );
-      queries.put( SyncQuery.class,
-                   new SyncQuery( this,
-                                  (SyncTable) getTable( SyncTable.TABLE_NAME ) ) );
-      
-      return queries;
-   }
-   
-   
-   
-   private UriMatcher createTableUriMatcher()
-   {
-      final UriMatcher tableUriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
-      
-      // We register both, table and table item, to the same match code and so to the
-      // same index in the tables array. So they both match to the same entry.
-      int matchCode = 0;
-      for ( ITable table : tables )
+      if ( tables == null )
       {
-         final Uri tableUri = table.getUri();
-         tableUriMatcher.addURI( tableUri.getAuthority(),
-                                 tableUri.getPath(),
-                                 matchCode );
-         
-         final Uri tableItemUri = table.getItemUri();
-         tableUriMatcher.addURI( tableItemUri.getAuthority(),
-                                 tableItemUri.getPath(),
-                                 matchCode );
-         
-         ++matchCode;
+         tables = new AbstractTable[]
+         { new RtmTasksListsTable( this ), new CreationsTable( this ),
+          new ModificationsTable( this ), new RtmRawTasksTable( this ),
+          new RtmTaskSeriesTable( this ), new RtmNotesTable( this ),
+          new RtmContactsTable( this ), new RtmParticipantsTable( this ),
+          new RtmLocationsTable( this ), new RtmSettingsTable( this ),
+          new SyncTable( this ) };
       }
       
-      return tableUriMatcher;
+      return tables;
+   }
+   
+   
+   
+   private AbstractTrigger[] getTriggers()
+   {
+      if ( triggers == null )
+      {
+         triggers = new AbstractTrigger[]
+         {
+          new DefaultListSettingConsistencyTrigger( this ),
+          new DeleteRawTaskTrigger( this ),
+          new DeleteTaskSeriesTrigger( this ),
+          new DeleteContactTrigger( this ),
+          new DeleteModificationsTrigger( this, RtmTasksListsTable.TABLE_NAME ),
+          new DeleteModificationsTrigger( this, RtmRawTasksTable.TABLE_NAME ),
+          new DeleteModificationsTrigger( this, RtmTaskSeriesTable.TABLE_NAME ),
+          new DeleteModificationsTrigger( this, RtmNotesTable.TABLE_NAME ) };
+      }
+      
+      return triggers;
    }
    
    
@@ -257,7 +150,7 @@ public class RtmDatabase
       @Override
       public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
       {
-         for ( AbstractTable table : tables )
+         for ( AbstractTable table : getTables() )
          {
             table.upgrade( oldVersion, newVersion );
          }
@@ -267,7 +160,7 @@ public class RtmDatabase
       
       private void createTables()
       {
-         for ( AbstractTable table : tables )
+         for ( AbstractTable table : getTables() )
          {
             table.create();
             table.createIndices();
@@ -278,7 +171,7 @@ public class RtmDatabase
       
       private void createTriggers()
       {
-         for ( Trigger trigger : triggers )
+         for ( AbstractTrigger trigger : getTriggers() )
          {
             trigger.create();
          }

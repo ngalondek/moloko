@@ -33,7 +33,7 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 

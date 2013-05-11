@@ -24,13 +24,13 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.provider.BaseColumns;
-import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
+import dev.drsoran.moloko.content.Columns.ModificationColumns;
 
 
 /**
  * If a RTM element gets deleted we also delete all possible open modifications for this element.
  */
-class DeleteModificationsTrigger extends Trigger
+class DeleteModificationsTrigger extends AbstractTrigger
 {
    private final String tableName;
    
@@ -56,7 +56,7 @@ class DeleteModificationsTrigger extends Trigger
       builder.append( " FOR EACH ROW BEGIN DELETE FROM " );
       builder.append( ModificationsTable.TABLE_NAME );
       builder.append( " WHERE " );
-      builder.append( ModificationsColumns.ENTITY_URI );
+      builder.append( ModificationColumns.ENTITY_URI );
       builder.append( " = '" );
       builder.append( tableName );
       builder.append( "' || '/' || old." );

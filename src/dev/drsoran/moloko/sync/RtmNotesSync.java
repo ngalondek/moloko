@@ -44,6 +44,7 @@ import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.content.db.RtmNotesTable;
+import dev.drsoran.moloko.content.db.TableColumns.Notes;
 import dev.drsoran.moloko.sync.elements.SyncNote;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskNotesList;
@@ -53,7 +54,6 @@ import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.provider.Rtm.Notes;
 
 
 public final class RtmNotesSync

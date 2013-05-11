@@ -24,28 +24,27 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
+import dev.drsoran.moloko.content.Columns.ModificationColumns;
 
 
-public class ModificationsQuery
+class ModificationsQuery
 {
-   private final static String SEL_QUERY_MODIFICATION = new StringBuilder( 100 ).append( ModificationsColumns.ENTITY_URI )
+   private final static String SEL_QUERY_MODIFICATION = new StringBuilder( 100 ).append( ModificationColumns.ENTITY_URI )
                                                                                 .append( "=? AND " )
-                                                                                .append( ModificationsColumns.COL_NAME )
+                                                                                .append( ModificationColumns.COL_NAME )
                                                                                 .append( "=?" )
                                                                                 .toString();
    
-   private final static String SEL_QUERY_MODIFICATIONS = new StringBuilder( ModificationsColumns.ENTITY_URI ).append( "=?" )
-                                                                                                             .toString();
+   private final static String SEL_QUERY_MODIFICATIONS = new StringBuilder( ModificationColumns.ENTITY_URI ).append( "=?" )
+                                                                                                            .toString();
    
    private final RtmDatabase database;
    
-   private final ModificationsTable modificationsTable;
+   private final ITable modificationsTable;
    
    
    
-   public ModificationsQuery( RtmDatabase database,
-      ModificationsTable modificationsTable )
+   public ModificationsQuery( RtmDatabase database, ITable modificationsTable )
    {
       this.database = database;
       this.modificationsTable = modificationsTable;
@@ -72,7 +71,7 @@ public class ModificationsQuery
    public Cursor getModifications( String tableName, String... otherTableNames )
    {
       final StringBuilder selectionBuilder = new StringBuilder();
-      selectionBuilder.append( ModificationsColumns.ENTITY_URI )
+      selectionBuilder.append( ModificationColumns.ENTITY_URI )
                       .append( " like '" )
                       .append( tableName )
                       .append( "%'" );
@@ -83,7 +82,7 @@ public class ModificationsQuery
          
          for ( int i = 0; i < otherTableNames.length; ++i )
          {
-            selectionBuilder.append( ModificationsColumns.ENTITY_URI )
+            selectionBuilder.append( ModificationColumns.ENTITY_URI )
                             .append( " like '" )
                             .append( otherTableNames[ i ] )
                             .append( "%'" );

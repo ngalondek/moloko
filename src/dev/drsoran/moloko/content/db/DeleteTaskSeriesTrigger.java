@@ -24,15 +24,16 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
-import dev.drsoran.moloko.content.db.Columns.ParticipantsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
 
 /**
- * If a taskseries gets deleted, we also delete all referenced notes and all referenced participants
+ * If a taskseries gets deleted, we also delete all referenced notes and all referenced participants and all referenced
+ * tags
  */
-class DeleteTaskSeriesTrigger extends Trigger
+class DeleteTaskSeriesTrigger extends AbstractTrigger
 {
    public DeleteTaskSeriesTrigger( RtmDatabase database )
    {
@@ -55,15 +56,16 @@ class DeleteTaskSeriesTrigger extends Trigger
       builder.append( " FOR EACH ROW BEGIN DELETE FROM " );
       builder.append( RtmNotesTable.TABLE_NAME );
       builder.append( " WHERE " );
-      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( " = old." );
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( "; DELETE FROM " );
-      builder.append( ParticipantsTable.TABLE_NAME );
+      builder.append( RtmParticipantsTable.TABLE_NAME );
       builder.append( " WHERE " );
-      builder.append( ParticipantsColumns.TASKSERIES_ID );
+      builder.append( RtmParticipantColumns.TASKSERIES_ID );
       builder.append( " = old." );
       builder.append( RtmTaskSeriesColumns._ID );
+      
       builder.append( "; END;" );
       
       db.execSQL( builder.toString() );

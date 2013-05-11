@@ -32,8 +32,8 @@ import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.event.IOnTimeChangedListener;
-import dev.drsoran.provider.Rtm.Tasks;
 
 
 class DueTasksNotifier extends AbstractNotifier

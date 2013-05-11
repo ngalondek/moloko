@@ -28,44 +28,50 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Location;
 
 
-class LocationTagCloudEntry extends TagCloudEntry implements
+class LocationTagCloudEntry extends PresentableTagCloudEntry implements
          View.OnClickListener, View.OnLongClickListener
 {
    private final Location location;
    
    
    
-   public LocationTagCloudEntry( Location location )
+   public LocationTagCloudEntry( Location location, TagCloudEntry tagCloudEntry )
    {
-      super( location.getName() );
+      super( tagCloudEntry );
+      
+      if ( tagCloudEntry.getType() != TagCloudEntryType.Location )
+      {
+         throw new IllegalArgumentException( "Expected tag cloud entry of type "
+            + TagCloudEntryType.Location );
+      }
+      
       this.location = location;
    }
    
    
    
    @Override
-   public int compareTo( TagCloudEntry other )
+   public int compareTo( PresentableTagCloudEntry another )
    {
-      int cmp = LocationTagCloudEntry.class.getName()
-                                           .compareTo( other.getClass()
-                                                            .getName() );
-      if ( cmp == 0 )
+      int res = super.compareTo( another );
+      
+      // super compare implies type checking
+      if ( res == 0 )
       {
-         final LocationTagCloudEntry otherLocationTagCloudEntry = (LocationTagCloudEntry) other;
-         final long otherLocationId = otherLocationTagCloudEntry.location.getId();
+         final long otherLocationId = ( (LocationTagCloudEntry) another ).location.getId();
          final long locationId = location.getId();
          
          if ( otherLocationId < locationId )
          {
-            cmp = -1;
+            res = -1;
          }
          else if ( otherLocationId > locationId )
          {
-            cmp = 1;
+            res = 1;
          }
       }
       
-      return cmp + super.compareTo( other );
+      return res;
    }
    
    
@@ -105,13 +111,5 @@ class LocationTagCloudEntry extends TagCloudEntry implements
       {
          getTagCloudFragmentListener().onOpenLocation( location );
       }
-   }
-   
-   
-   
-   @Override
-   public String toString()
-   {
-      return "Location";
    }
 }

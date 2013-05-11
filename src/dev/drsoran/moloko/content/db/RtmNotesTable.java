@@ -23,20 +23,13 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmNotesColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
 
 class RtmNotesTable extends AbstractTable
 {
    public final static String TABLE_NAME = "notes";
-   
-   
-   @Deprecated
-   public final static class NewNoteId
-   {
-      public String noteId;
-   }
    
    
    
@@ -54,25 +47,25 @@ class RtmNotesTable extends AbstractTable
       
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
-      builder.append( " ( " );
-      builder.append( RtmNotesColumns._ID );
+      builder.append( "( " );
+      builder.append( RtmNoteColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_NOTES PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( RtmNotesColumns.RTM_NOTE_ID );
-      builder.append( " TEXT, " );
-      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( " INTEGER NOT NULL, " );
-      builder.append( RtmNotesColumns.NOTE_CREATED_DATE );
+      builder.append( RtmNoteColumns.NOTE_CREATED_DATE );
       builder.append( " INTEGER NOT NULL, " );
-      builder.append( RtmNotesColumns.NOTE_MODIFIED_DATE );
+      builder.append( RtmNoteColumns.NOTE_MODIFIED_DATE );
       builder.append( " INTEGER NOT NULL, " );
-      builder.append( RtmNotesColumns.NOTE_DELETED_DATE );
+      builder.append( RtmNoteColumns.NOTE_DELETED_DATE );
       builder.append( " INTEGER, " );
-      builder.append( RtmNotesColumns.NOTE_TITLE );
+      builder.append( RtmNoteColumns.NOTE_TITLE );
       builder.append( " TEXT, " );
-      builder.append( RtmNotesColumns.NOTE_TEXT );
+      builder.append( RtmNoteColumns.NOTE_TEXT );
       builder.append( " TEXT NOT NULL, " );
+      builder.append( RtmNoteColumns.RTM_NOTE_ID );
+      builder.append( " TEXT, " );
       builder.append( "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( " );
-      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( " ) REFERENCES " );
       builder.append( RtmTaskSeriesTable.TABLE_NAME );
       builder.append( " ( " );
@@ -92,11 +85,11 @@ class RtmNotesTable extends AbstractTable
       builder.append( "CREATE INDEX " );
       builder.append( TABLE_NAME );
       builder.append( "_" );
-      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( " ON " );
       builder.append( TABLE_NAME );
       builder.append( "(" );
-      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( ");" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
@@ -112,7 +105,7 @@ class RtmNotesTable extends AbstractTable
       builder.append( "DROP INDEX " );
       builder.append( TABLE_NAME );
       builder.append( "_" );
-      builder.append( RtmNotesColumns.TASKSERIES_ID );
+      builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( ";" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
@@ -123,7 +116,7 @@ class RtmNotesTable extends AbstractTable
    @Override
    public String getDefaultSortOrder()
    {
-      return RtmNotesColumns.DEFAULT_SORT_ORDER;
+      return RtmNoteColumns.DEFAULT_SORT_ORDER;
    }
    
    
@@ -131,6 +124,6 @@ class RtmNotesTable extends AbstractTable
    @Override
    public String[] getProjection()
    {
-      return RtmNotesColumns.PROJECTION;
+      return RtmNoteColumns.TABLE_PROJECTION;
    }
 }

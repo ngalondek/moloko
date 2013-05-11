@@ -32,8 +32,8 @@ import com.xtremelabs.robolectric.annotation.Values;
 
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
+import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserImpl;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
-import dev.drsoran.moloko.grammar.recurrence.de.RecurrenceParserImpl;
 import dev.drsoran.moloko.test.MolokoTestRunner_de;
 
 

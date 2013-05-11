@@ -149,4 +149,16 @@ public class Location
       
       return result;
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Location [id=%s, name=%s, address=%s, isViewable=%s]",
+                            id,
+                            name,
+                            address,
+                            isViewable );
+   }
 }

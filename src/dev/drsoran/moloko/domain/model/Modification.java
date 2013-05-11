@@ -208,9 +208,13 @@ public class Modification implements Comparable< Modification >
    @Override
    public String toString()
    {
-      return "<Mod, " + id + ", " + entityUri + ", " + colName + ", "
-         + newValue + ", " + syncedValue + ", " + new Date( timestampMillisUtc )
-         + ">";
+      return String.format( "Modification [id=%s, entityUri=%s, col=%s, new=%s, synced=%s, time=%s]",
+                            id,
+                            entityUri,
+                            colName,
+                            newValue,
+                            syncedValue,
+                            new Date( timestampMillisUtc ) );
    }
    
    

@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.domain.model;
 
+
+
 public final class ExtendedTaskCount
 {
    public final int incompleteTaskCount;
@@ -38,9 +40,9 @@ public final class ExtendedTaskCount
    
    
    
-   public ExtendedTaskCount( int incompleteTaskCount,
-      int completedTaskCount, int dueTodayTaskCount, int dueTomorrowTaskCount,
-      int overDueTaskCount, long sumEstimated )
+   public ExtendedTaskCount( int incompleteTaskCount, int completedTaskCount,
+      int dueTodayTaskCount, int dueTomorrowTaskCount, int overDueTaskCount,
+      long sumEstimated )
    {
       this.incompleteTaskCount = incompleteTaskCount;
       this.completedTaskCount = completedTaskCount;
@@ -48,5 +50,19 @@ public final class ExtendedTaskCount
       this.dueTomorrowTaskCount = dueTomorrowTaskCount;
       this.overDueTaskCount = overDueTaskCount;
       this.sumEstimated = sumEstimated;
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "ExtendedTaskCount [incompleteTaskCount=%s, completedTaskCount=%s, dueTodayTaskCount=%s, dueTomorrowTaskCount=%s, overDueTaskCount=%s, sumEstimated=%s]",
+                            incompleteTaskCount,
+                            completedTaskCount,
+                            dueTodayTaskCount,
+                            dueTomorrowTaskCount,
+                            overDueTaskCount,
+                            sumEstimated );
    }
 }

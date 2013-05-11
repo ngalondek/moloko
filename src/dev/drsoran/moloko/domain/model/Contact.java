@@ -59,4 +59,16 @@ public class Contact
    {
       return fullName;
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Contact [id=%s, userName=%s, fullName=%s]",
+                            id,
+                            userName,
+                            fullName );
+   }
+   
 }

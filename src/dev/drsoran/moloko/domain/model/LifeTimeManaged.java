@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.util.Date;
+
 import dev.drsoran.moloko.content.Constants;
 
 
@@ -102,5 +104,20 @@ abstract class LifeTimeManaged
    public boolean isDeleted()
    {
       return deletedMillisUtc != Constants.NO_TIME;
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "created: %s, modified: %s, deleted: %s",
+                            new Date( createdMillisUtc ),
+                            modifiedMillisUtc != Constants.NO_TIME
+                                                                  ? new Date( modifiedMillisUtc )
+                                                                  : "never",
+                            deletedMillisUtc != Constants.NO_TIME
+                                                                 ? new Date( deletedMillisUtc )
+                                                                 : "never" );
    }
 }

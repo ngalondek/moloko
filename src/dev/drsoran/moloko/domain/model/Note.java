@@ -85,4 +85,16 @@ public class Note extends LifeTimeManaged
       
       this.text = text;
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Note [id=%s, %s, title=%s, text=%s]",
+                            id,
+                            super.toString(),
+                            title.substring( 0, Math.min( title.length(), 100 ) ),
+                            text.substring( 0, Math.min( text.length(), 100 ) ) );
+   }
 }

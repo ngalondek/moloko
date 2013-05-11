@@ -508,4 +508,20 @@ public class Task extends LifeTimeManaged
          this.notes.add( note );
       }
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Task [id=%s, name=%s, %s, added=%s, completed=%s, listId=%s, listName=%s, notes=%s]",
+                            id,
+                            name,
+                            super.toString(),
+                            addedMillisUtc,
+                            completedMillisUtc,
+                            listId,
+                            listName,
+                            notes.size() );
+   }
 }

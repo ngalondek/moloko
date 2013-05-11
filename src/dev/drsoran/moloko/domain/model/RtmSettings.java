@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.domain.model;
 
-
-
 public class RtmSettings
 {
    private final long syncTimeStampMillis;
@@ -92,4 +90,19 @@ public class RtmSettings
    {
       return language;
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "RtmSettings [sync=%s, timezone=%s, dateFormat=%s, timeFormat=%s, defaultListId=%s, language=%s]",
+                            syncTimeStampMillis,
+                            timezone,
+                            dateFormat,
+                            timeFormat,
+                            defaultListId,
+                            language );
+   }
+   
 }

@@ -89,4 +89,14 @@ public class Estimation
       
       return result;
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Estimation [sentence=%s, estimateMillisUtc=%s]",
+                            sentence,
+                            estimateMillisUtc );
+   }
 }

@@ -92,4 +92,14 @@ public class Recurrence
       
       return result;
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Recurrence [pattern=%s, isEvery=%s]",
+                            pattern,
+                            isEveryRecurrence );
+   }
 }

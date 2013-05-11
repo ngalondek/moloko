@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.domain.model;
 
+
+
 public class Due
 {
    private final long dueMillisUtc;
@@ -85,5 +87,15 @@ public class Due
       result = 31 * result + ( hasDueTime ? 1 : 0 );
       
       return result;
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Due [dueMillisUtc=%s, hasDueTime=%s]",
+                            dueMillisUtc,
+                            hasDueTime );
    }
 }

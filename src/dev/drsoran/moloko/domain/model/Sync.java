@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.util.Date;
+
 import dev.drsoran.moloko.content.Constants;
 
 
@@ -65,5 +67,15 @@ public class Sync
    public boolean hasEverSyncedOut()
    {
       return lastSyncOutMillis != Constants.NO_TIME;
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Sync [lastSyncIn=%s, lastSyncOut=%s]",
+                            new Date( lastSyncInMillis ),
+                            new Date( lastSyncOutMillis ) );
    }
 }

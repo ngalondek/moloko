@@ -8,10 +8,10 @@ import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.grammar.datetime.DateParserImpl;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
-import dev.drsoran.moloko.grammar.datetime.de.DateParserImpl;
-import dev.drsoran.moloko.grammar.datetime.de.TimeParserImpl;
+import dev.drsoran.moloko.grammar.datetime.TimeParserImpl;
 import dev.drsoran.moloko.test.MolokoTestRunner_de;
 
 

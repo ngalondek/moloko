@@ -97,4 +97,16 @@ public class Participant
          return 0;
       }
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return String.format( "Participant [id=%s, contactId=%s, fullname=%s, username=%s]",
+                            id,
+                            contactId,
+                            fullname,
+                            username );
+   }
 }

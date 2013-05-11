@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding=".apt_generated/|bin/" kind="src" output="bin" path=""/>
+	<classpathentry excluding=".apt_generated/|bin/|dev/drsoran/moloko/test/grammar/|dev/drsoran/moloko/test/unit/grammar/" kind="src" output="bin" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Moloko"/>
 	<classpathentry kind="lib" path="lib/robolectric-1.2-with-dependencies.jar" sourcepath="lib/robolectric-1.2-sources.jar"/>

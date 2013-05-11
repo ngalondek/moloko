@@ -81,7 +81,7 @@ public class RtmSmartFilter
    @Override
    public String toString()
    {
-      return new StringBuilder( "<" ).append( filter ).append( ">" ).toString();
+      return String.format( "RtmSmartFilter [filter=%s]", filter );
    }
    
    

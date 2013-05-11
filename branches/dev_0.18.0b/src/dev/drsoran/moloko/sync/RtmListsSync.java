@@ -43,7 +43,8 @@ import dev.drsoran.moloko.app.sync.SyncAdapter;
 import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.content.db.RtmTasksListsTable;
+import dev.drsoran.moloko.content.db.TableColumns.Lists;
 import dev.drsoran.moloko.sync.elements.SyncRtmList;
 import dev.drsoran.moloko.sync.elements.SyncRtmListsList;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -52,7 +53,6 @@ import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.provider.Rtm.Lists;
 
 
 public final class RtmListsSync
@@ -70,7 +70,7 @@ public final class RtmListsSync
       // Check if we have server write access
       if ( timeLineFactory != null )
       {
-         final List< RtmList > newLists = RtmListsTable.getLocalCreatedLists( provider );
+         final List< RtmList > newLists = RtmTasksListsTable.getLocalCreatedLists( provider );
          
          if ( newLists != null )
          {
@@ -90,7 +90,7 @@ public final class RtmListsSync
       SyncRtmListsList local_Lists = null;
       {
          // Get all lists from local database
-         final RtmLists local_ListsOfLists = RtmListsTable.getAllLists( provider,
+         final RtmLists local_ListsOfLists = RtmTasksListsTable.getAllLists( provider,
                                                                                null );
          
          if ( local_ListsOfLists == null )
@@ -138,7 +138,7 @@ public final class RtmListsSync
          
          if ( !doOutSync )
          {
-            numDeleted = RtmListsTable.getDeletedListsCount( provider );
+            numDeleted = RtmTasksListsTable.getDeletedListsCount( provider );
             doOutSync = numDeleted > 0;
          }
          

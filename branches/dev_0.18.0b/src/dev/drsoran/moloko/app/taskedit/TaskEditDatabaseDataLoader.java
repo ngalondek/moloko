@@ -35,11 +35,11 @@ import com.mdt.rtm.data.RtmLocation;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.taskedit.AbstractTaskEditFragment.TaskEditDatabaseData;
-import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.content.db.TableColumns;
+import dev.drsoran.moloko.content.db.RtmTasksListsTable;
 import dev.drsoran.moloko.content.db.RtmLocationsTable;
-import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.provider.Rtm.Locations;
+import dev.drsoran.moloko.content.db.TableColumns.Lists;
+import dev.drsoran.moloko.content.db.TableColumns.Locations;
 
 
 class TaskEditDatabaseDataLoader extends AbstractLoader< TaskEditDatabaseData >
@@ -63,7 +63,7 @@ class TaskEditDatabaseDataLoader extends AbstractLoader< TaskEditDatabaseData >
    {
       TaskEditDatabaseData data = null;
       
-      final RtmLists lists = RtmListsTable.getAllLists( client,
+      final RtmLists lists = RtmTasksListsTable.getAllLists( client,
                                                                LISTS_SELECTION );
       if ( lists != null )
       {
@@ -84,7 +84,7 @@ class TaskEditDatabaseDataLoader extends AbstractLoader< TaskEditDatabaseData >
    protected ContentProviderClient getContentProviderClient()
    {
       return getContext().getContentResolver()
-                         .acquireContentProviderClient( Rtm.AUTHORITY );
+                         .acquireContentProviderClient( TableColumns.AUTHORITY );
    }
    
    

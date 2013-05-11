@@ -23,10 +23,9 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 
 class RtmTaskSeriesTable extends AbstractTable
@@ -49,11 +48,9 @@ class RtmTaskSeriesTable extends AbstractTable
       
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
-      builder.append( " ( " );
+      builder.append( "( " );
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_TASKSERIES PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( RtmTaskSeriesColumns.RTM_TASKSERIES_ID );
-      builder.append( " TEXT, " );
       builder.append( RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE );
       builder.append( " INTEGER NOT NULL, " );
       builder.append( RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE );
@@ -74,19 +71,21 @@ class RtmTaskSeriesTable extends AbstractTable
       builder.append( " INTEGER NOT NULL, " );
       builder.append( RtmTaskSeriesColumns.TAGS );
       builder.append( " TEXT, " );
+      builder.append( RtmTaskSeriesColumns.RTM_TASKSERIES_ID );
+      builder.append( " TEXT, " );
       builder.append( "CONSTRAINT list FOREIGN KEY ( " );
       builder.append( RtmTaskSeriesColumns.LIST_ID );
       builder.append( " ) REFERENCES " );
-      builder.append( RtmListsTable.TABLE_NAME );
+      builder.append( RtmTasksListsTable.TABLE_NAME );
       builder.append( " ( \"" );
-      builder.append( RtmListsColumns._ID );
+      builder.append( RtmTasksListColumns._ID );
       builder.append( "\" ), " );
       builder.append( "CONSTRAINT location FOREIGN KEY ( " );
       builder.append( RtmTaskSeriesColumns.LOCATION_ID );
       builder.append( " ) REFERENCES " );
       builder.append( RtmLocationsTable.TABLE_NAME );
       builder.append( " ( \"" );
-      builder.append( RtmLocationsColumns._ID );
+      builder.append( RtmLocationColumns._ID );
       builder.append( "\" )" );
       builder.append( ");" );
       
@@ -98,7 +97,7 @@ class RtmTaskSeriesTable extends AbstractTable
    @Override
    public String getDefaultSortOrder()
    {
-      return RtmTaskSeriesColumns.DEFAULT_SORT_ORDER;
+      return RtmTaskSeriesColumns._ID + " ASC";
    }
    
    
@@ -106,6 +105,6 @@ class RtmTaskSeriesTable extends AbstractTable
    @Override
    public String[] getProjection()
    {
-      return RtmSettingsColumns.PROJECTION;
+      return RtmTaskSeriesColumns.TABLE_PROJECTION;
    }
 }

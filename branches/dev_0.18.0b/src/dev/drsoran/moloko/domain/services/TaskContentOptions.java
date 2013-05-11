@@ -22,9 +22,7 @@
 
 package dev.drsoran.moloko.domain.services;
 
-public final class TaskContentOptions
+public enum TaskContentOptions
 {
-   public final static int MINIMAL = 0;
-   
-   public final static int COMPLETE = 1;
+   Minimal, Complete
 }

@@ -41,7 +41,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.content.db.RtmListsTable.NewRtmListId;
+import dev.drsoran.moloko.content.db.RtmTasksListsTable.NewRtmListId;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -340,7 +340,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    private NewRtmListId createNewListId()
    {
-      return RtmListsTable.createNewListId( getSherlockActivity().getContentResolver()
+      return RtmTasksListsTable.createNewListId( getSherlockActivity().getContentResolver()
                                                                  .acquireContentProviderClient( Lists.CONTENT_URI ) );
    }
    

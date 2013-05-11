@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.content.Constants;
+
+
 abstract class LifeTimeManaged
 {
    private final long createdMillisUtc;

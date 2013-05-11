@@ -23,14 +23,14 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 
 /**
  * If a list gets deleted, check the default list setting
  */
-class DefaultListSettingConsistencyTrigger extends Trigger
+class DefaultListSettingConsistencyTrigger extends AbstractTrigger
 {
    
    public DefaultListSettingConsistencyTrigger( RtmDatabase database )
@@ -48,13 +48,13 @@ class DefaultListSettingConsistencyTrigger extends Trigger
       builder.append( "CREATE TRIGGER " );
       builder.append( getTriggerName() );
       builder.append( " AFTER DELETE ON " );
-      builder.append( RtmListsTable.TABLE_NAME );
+      builder.append( RtmTasksListsTable.TABLE_NAME );
       builder.append( " BEGIN UPDATE " );
       builder.append( RtmSettingsTable.TABLE_NAME );
       builder.append( " SET " );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( " = NULL WHERE old." );
-      builder.append( RtmListsColumns._ID );
+      builder.append( RtmTasksListColumns._ID );
       builder.append( " = " );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( "; END;" );

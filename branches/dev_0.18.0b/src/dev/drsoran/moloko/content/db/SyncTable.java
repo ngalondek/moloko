@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.SyncColumns;
+import dev.drsoran.moloko.content.Columns.SyncColumns;
 
 
 class SyncTable extends AbstractTable
@@ -46,7 +46,7 @@ class SyncTable extends AbstractTable
       
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
-      builder.append( " ( " );
+      builder.append( "( " );
       builder.append( SyncColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_SYNC PRIMARY KEY AUTOINCREMENT, " );
       builder.append( SyncColumns.LAST_IN );

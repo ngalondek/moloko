@@ -37,6 +37,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
+import dev.drsoran.moloko.content.db.TableColumns.Notes;
 import dev.drsoran.moloko.content.db.RtmNotesTable.NewNoteId;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -44,7 +45,6 @@ import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.Task;
 
 

@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.CreationsColumns;
+import dev.drsoran.moloko.content.Columns.CreationsColumns;
 
 
 class CreationsTable extends AbstractTable

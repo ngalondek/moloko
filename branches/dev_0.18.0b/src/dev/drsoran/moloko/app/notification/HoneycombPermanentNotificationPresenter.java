@@ -36,7 +36,7 @@ import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.rtm.Task;
 
 

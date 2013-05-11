@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmLocationsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 
 
 class RtmLocationsTable extends AbstractTable
@@ -47,22 +47,22 @@ class RtmLocationsTable extends AbstractTable
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
       builder.append( " ( " );
-      builder.append( RtmLocationsColumns._ID );
+      builder.append( RtmLocationColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_LOCATIONS PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( RtmLocationsColumns.RTM_LOCATION_ID );
-      builder.append( " TEXT NOT NULL , " );
-      builder.append( RtmLocationsColumns.LOCATION_NAME );
+      builder.append( RtmLocationColumns.LOCATION_NAME );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( RtmLocationsColumns.LONGITUDE );
+      builder.append( RtmLocationColumns.LONGITUDE );
       builder.append( " REAL NOT NULL, " );
-      builder.append( RtmLocationsColumns.LATITUDE );
+      builder.append( RtmLocationColumns.LATITUDE );
       builder.append( " REAL NOT NULL, " );
-      builder.append( RtmLocationsColumns.ADDRESS );
+      builder.append( RtmLocationColumns.ADDRESS );
       builder.append( " TEXT, " );
-      builder.append( RtmLocationsColumns.VIEWABLE );
+      builder.append( RtmLocationColumns.VIEWABLE );
       builder.append( " INTEGER NOT NULL DEFAULT 1, " );
-      builder.append( RtmLocationsColumns.ZOOM );
-      builder.append( " INTEGER" );
+      builder.append( RtmLocationColumns.ZOOM );
+      builder.append( " INTEGER NOT NULL, " );
+      builder.append( RtmLocationColumns.RTM_LOCATION_ID );
+      builder.append( " TEXT NOT NULL" );
       builder.append( " );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );
@@ -73,7 +73,7 @@ class RtmLocationsTable extends AbstractTable
    @Override
    public String getDefaultSortOrder()
    {
-      return RtmLocationsColumns.DEFAULT_SORT_ORDER;
+      return RtmLocationColumns.DEFAULT_SORT_ORDER;
    }
    
    
@@ -81,6 +81,6 @@ class RtmLocationsTable extends AbstractTable
    @Override
    public String[] getProjection()
    {
-      return RtmLocationsColumns.PROJECTION;
+      return RtmLocationColumns.TABLE_PROJECTION;
    }
 }

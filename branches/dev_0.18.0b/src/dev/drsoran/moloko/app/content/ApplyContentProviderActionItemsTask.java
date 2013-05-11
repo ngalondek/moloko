@@ -26,8 +26,8 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.os.AsyncTask;
 import dev.drsoran.moloko.content.ContentRepository;
+import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.provider.Rtm;
 
 
 class ApplyContentProviderActionItemsTask extends
@@ -70,7 +70,7 @@ class ApplyContentProviderActionItemsTask extends
          try
          {
             client = context.getContentResolver()
-                            .acquireContentProviderClient( Rtm.AUTHORITY );
+                            .acquireContentProviderClient( TableColumns.AUTHORITY );
             
             final ContentRepository localProvider = (ContentRepository) client.getLocalContentProvider();
             final ContentProviderActionItemList list = params[ 0 ];

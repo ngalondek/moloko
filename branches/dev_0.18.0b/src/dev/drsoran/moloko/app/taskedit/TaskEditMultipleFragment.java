@@ -41,10 +41,10 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 

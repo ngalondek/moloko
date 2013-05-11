@@ -28,8 +28,8 @@ import java.util.Map;
 
 import android.net.Uri;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
-import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
-import dev.drsoran.rtm.RtmSettings;
+import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
+import dev.drsoran.moloko.domain.model.RtmSettings;
 
 
 public interface ISettingsService

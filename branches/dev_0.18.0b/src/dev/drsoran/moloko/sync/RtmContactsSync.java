@@ -96,7 +96,7 @@ public final class RtmContactsSync
          return false;
       }
       
-      final List< RtmContact > server_Contacts = server_ListOfContacts.getContacts();
+      final List< RtmContact > server_Contacts = server_ListOfContacts.getAllContacts();
       
       final ContentProviderSyncableList< RtmContact > local_SyncList = new ContentProviderSyncableList< RtmContact >( local_ListOfContacts,
                                                                                                                       RtmContact.LESS_ID );

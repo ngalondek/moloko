@@ -38,13 +38,13 @@ import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
+import dev.drsoran.moloko.content.db.TableColumns.Notes;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Notes;
 
 
 class NoteEditFragment extends AbstractNoteEditFragment implements

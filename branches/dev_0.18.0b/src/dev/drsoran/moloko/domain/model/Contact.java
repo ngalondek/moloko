@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
-public class Contact implements IContact
+public class Contact
 {
    private final long id;
    
@@ -41,7 +41,6 @@ public class Contact implements IContact
    
    
    
-   @Override
    public long getId()
    {
       return id;
@@ -49,16 +48,14 @@ public class Contact implements IContact
    
    
    
-   @Override
-   public String getUserName()
+   public String getUsername()
    {
       return userName;
    }
    
    
    
-   @Override
-   public String getFullName()
+   public String getFullname()
    {
       return fullName;
    }

@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.ModificationsColumns;
+import dev.drsoran.moloko.content.Columns.ModificationColumns;
 
 
 class ModificationsTable extends AbstractTable
@@ -47,17 +47,17 @@ class ModificationsTable extends AbstractTable
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
       builder.append( " ( " );
-      builder.append( ModificationsColumns._ID );
+      builder.append( ModificationColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_MODIFICATIONS PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( ModificationsColumns.ENTITY_URI );
+      builder.append( ModificationColumns.ENTITY_URI );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( ModificationsColumns.COL_NAME );
+      builder.append( ModificationColumns.COL_NAME );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( ModificationsColumns.NEW_VALUE );
+      builder.append( ModificationColumns.NEW_VALUE );
       builder.append( " TEXT, " );
-      builder.append( ModificationsColumns.SYNCED_VALUE );
+      builder.append( ModificationColumns.SYNCED_VALUE );
       builder.append( " TEXT, " );
-      builder.append( ModificationsColumns.TIMESTAMP );
+      builder.append( ModificationColumns.TIMESTAMP );
       builder.append( " INTEGER NOT NULL" );
       builder.append( ");" );
       
@@ -69,7 +69,7 @@ class ModificationsTable extends AbstractTable
    @Override
    public String getDefaultSortOrder()
    {
-      return ModificationsColumns.DEFAULT_SORT_ORDER;
+      return ModificationColumns.DEFAULT_SORT_ORDER;
    }
    
    
@@ -77,6 +77,6 @@ class ModificationsTable extends AbstractTable
    @Override
    public String[] getProjection()
    {
-      return ModificationsColumns.PROJECTION;
+      return ModificationColumns.PROJECTION;
    }
 }

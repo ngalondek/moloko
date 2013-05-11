@@ -58,14 +58,14 @@ class LinkedContact
    
    public String getFullName()
    {
-      return contact.getFullName();
+      return contact.getFullname();
    }
    
    
    
    public String getUserName()
    {
-      return contact.getUserName();
+      return contact.getUsername();
    }
    
    

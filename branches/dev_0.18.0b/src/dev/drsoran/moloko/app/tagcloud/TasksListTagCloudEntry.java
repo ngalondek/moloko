@@ -27,43 +27,50 @@ import android.widget.Button;
 import dev.drsoran.moloko.R;
 
 
-class TasksListTagCloudEntry extends TagCloudEntry implements
+class TasksListTagCloudEntry extends PresentableTagCloudEntry implements
          View.OnClickListener
 {
    private final long listId;
    
    
    
-   public TasksListTagCloudEntry( long listId, String listName )
+   public TasksListTagCloudEntry( long listId, TagCloudEntry tagCloudEntry )
    {
-      super( listName );
+      super( tagCloudEntry );
+      
+      if ( tagCloudEntry.getType() != TagCloudEntryType.TasksList )
+      {
+         throw new IllegalArgumentException( "Expected tag cloud entry of type "
+            + TagCloudEntryType.TasksList );
+      }
+      
       this.listId = listId;
    }
    
    
    
    @Override
-   public int compareTo( TagCloudEntry other )
+   public int compareTo( PresentableTagCloudEntry other )
    {
-      int cmp = TasksListTagCloudEntry.class.getName()
-                                            .compareTo( other.getClass()
-                                                             .getName() );
-      if ( cmp == 0 )
+      int res = super.compareTo( other );
+      
+      // super compare implies type checking
+      if ( res == 0 )
       {
          final TasksListTagCloudEntry otherTasksListEntry = (TasksListTagCloudEntry) other;
          final long otherListId = otherTasksListEntry.listId;
          
          if ( otherListId < listId )
          {
-            cmp = -1;
+            res = -1;
          }
          else if ( otherListId > listId )
          {
-            cmp = 1;
+            res = 1;
          }
       }
       
-      return cmp + super.compareTo( other );
+      return res;
    }
    
    
@@ -87,13 +94,5 @@ class TasksListTagCloudEntry extends TagCloudEntry implements
       {
          getTagCloudFragmentListener().onOpenList( listId );
       }
-   }
-   
-   
-   
-   @Override
-   public String toString()
-   {
-      return "List";
    }
 }

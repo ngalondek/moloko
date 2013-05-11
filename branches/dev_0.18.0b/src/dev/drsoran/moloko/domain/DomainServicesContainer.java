@@ -22,11 +22,10 @@
 
 package dev.drsoran.moloko.domain;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.content.db.DbContentEditService;
-import dev.drsoran.moloko.content.db.DbContentRepository;
-import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IDomainServices;
@@ -43,13 +42,14 @@ import dev.drsoran.moloko.grammar.datetime.IDateTimeParserRepository;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParserRepository;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceSentenceLanguage;
 import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserRepository;
+import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
 
 
 public class DomainServicesContainer implements IDomainServices
 {
    private final IParsingService parsingService;
    
-   private final DbContentRepository contentRepository;
+   private final ContentRepository contentRepository;
    
    private final IContentEditService contentEditService;
    
@@ -71,24 +71,37 @@ public class DomainServicesContainer implements IDomainServices
       
       final IRtmSmartFilterParsing rtmSmartFilterParsing = new RtmSmartFilterParsing( log );
       
-      this.parsingService = new ParsingService( dateTimeParsing,
-                                                recurrenceParsing,
-                                                rtmSmartFilterParsing );
+      parsingService = new ParsingService( dateTimeParsing,
+                                           recurrenceParsing,
+                                           rtmSmartFilterParsing );
       
-      final RtmDatabase database = new RtmDatabase( context, log );
-      this.contentRepository = new DbContentRepository( database,
-                                                        dateTimeParsing,
-                                                        rtmSmartFilterParsing );
+      final IRtmSmartFilterEvaluator dbSmartFilterEvaluator = new DbRtmSmartFilterEvaluator( dateTimeParsing );
+      final ContentResolver contentResolver = context.getContentResolver();
+      final IModelElementFactory modelElementFactory = new DefaultModelElementFactory();
       
-      this.contentEditService = new DbContentEditService( database,
-                                                          contentRepository );
-   }
-   
-   
-   
-   public void shutdown()
-   {
-      contentRepository.shutdown();
+      contentRepository = new ContentRepository( contentResolver,
+                                                 modelElementFactory,
+                                                 dateTimeParsing,
+                                                 rtmSmartFilterParsing,
+                                                 dbSmartFilterEvaluator );
+      
+      final IContentValuesFactory contentValuesFactory = new DefaultContentValuesFactory();
+      final IModificationsApplier modificationsApplier = new DefaultModificationsApplier( contentResolver,
+                                                                                          contentValuesFactory );
+      
+      contentEditService = new ContentEditService( new TaskContentEditHandler( contentResolver,
+                                                                               contentValuesFactory,
+                                                                               modificationsApplier ),
+                                                   new TasksListContentEditHandler( contentResolver,
+                                                                                    contentValuesFactory,
+                                                                                    modificationsApplier ),
+                                                   new TaskNoteContentEditHandler( contentResolver,
+                                                                                   contentValuesFactory,
+                                                                                   modificationsApplier ),
+                                                   new TaskParticipantContentEditHandler( contentResolver,
+                                                                                          contentValuesFactory,
+                                                                                          modificationsApplier ),
+                                                   contentRepository );
    }
    
    

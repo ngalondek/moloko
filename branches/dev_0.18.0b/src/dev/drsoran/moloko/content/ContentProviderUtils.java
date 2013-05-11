@@ -24,7 +24,7 @@ package dev.drsoran.moloko.content;
 
 
 
-@Deprecated
+
 public final class ContentProviderUtils
 {
    private ContentProviderUtils()

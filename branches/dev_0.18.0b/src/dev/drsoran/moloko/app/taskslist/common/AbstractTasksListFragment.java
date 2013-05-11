@@ -48,13 +48,13 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoMultiChoiceModalListFragment;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 

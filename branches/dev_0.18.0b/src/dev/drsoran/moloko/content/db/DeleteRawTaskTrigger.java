@@ -24,18 +24,18 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.moloko.content.db.Columns.RawTasksColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
 
 /**
  * If a RawTask gets deleted, also delete the associated taskseries if it contains no RawTasks anymore
  */
-class DeleteRawTaskTrigger extends Trigger
+class DeleteRawTaskTrigger extends AbstractTrigger
 {
    public DeleteRawTaskTrigger( RtmDatabase database )
    {
-      super( database, RawTasksTable.TABLE_NAME + "_delete_rawtask" );
+      super( database, RtmRawTasksTable.TABLE_NAME + "_delete_rawtask" );
    }
    
    
@@ -44,7 +44,7 @@ class DeleteRawTaskTrigger extends Trigger
    public void create() throws SQLException
    {
       final SQLiteDatabase db = getDatabase().getWritable();
-      final String rawTasks = RawTasksTable.TABLE_NAME;
+      final String rawTasks = RtmRawTasksTable.TABLE_NAME;
       final String taskSeries = RtmTaskSeriesTable.TABLE_NAME;
       
       final StringBuilder builder = new StringBuilder();
@@ -60,15 +60,15 @@ class DeleteRawTaskTrigger extends Trigger
       builder.append( "." );
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( " = old." );
-      builder.append( RawTasksColumns.TASKSERIES_ID );
+      builder.append( RtmRawTaskColumns.TASKSERIES_ID );
       builder.append( " AND NOT EXISTS (SELECT " );
-      builder.append( RawTasksColumns._ID );
+      builder.append( RtmRawTaskColumns._ID );
       builder.append( " FROM " );
       builder.append( rawTasks );
       builder.append( " WHERE old." );
-      builder.append( RawTasksColumns.TASKSERIES_ID );
+      builder.append( RtmRawTaskColumns.TASKSERIES_ID );
       builder.append( " = " );
-      builder.append( RawTasksColumns.TASKSERIES_ID );
+      builder.append( RtmRawTaskColumns.TASKSERIES_ID );
       builder.append( "); END;" );
       
       db.execSQL( builder.toString() );

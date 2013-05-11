@@ -9,12 +9,6 @@
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff8" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fc6" mandatory="false" name="rtm_rawtask_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5b5dad:12bf1b86973:-7fdd" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff7" mandatory="false" name="due">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
@@ -42,6 +36,12 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="-1" id="2e2d78:12bca86c927:-7fea" mandatory="false" name="estimateMillis">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fc6" mandatory="false" name="rtm_rawtask_id">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5b5dad:12bf1b86973:-7fdd" mandatory="true" name="taskseries_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
 </column-list>
 <primary-key id="5122f2:128cb6194ba:-7ffe" name="PK_RAWTASKS">
 <primary-key-column name="_id"/>
@@ -57,16 +57,13 @@
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fea" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fc9" mandatory="false" name="rtm_taskseries_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe7" mandatory="true" name="taskseries_created">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe7" mandatory="true" name="task_created">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe6" mandatory="true" name="taskseries_modified">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe6" mandatory="true" name="task_modified">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe5" mandatory="true" name="taskseries_name">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe5" mandatory="true" name="task_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe2" mandatory="false" name="source" remarks="By what API">
@@ -87,7 +84,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7be4" mandatory="true" name="list_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="30cf9d:12e87655ae6:-7fe2" mandatory="false" name="tags">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fc9" mandatory="false" name="rtm_taskseries_id">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
@@ -108,12 +105,6 @@
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f55" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fb8" mandatory="false" name="rtm_note_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="11fb115:12949b0b028:-7fcb" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f54" mandatory="true" name="note_created">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
@@ -127,6 +118,12 @@
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f51" mandatory="true" name="note_text">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="11fb115:12949b0b028:-7fcb" mandatory="true" name="taskseries_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fb8" mandatory="false" name="rtm_note_id">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
@@ -143,9 +140,6 @@
 <column-list>
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe2" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fcc" mandatory="false" name="rtm_list_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe1" mandatory="true" name="list_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
@@ -174,6 +168,9 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="1181493:1296ebc05fe:-7fe9" mandatory="false" name="filter">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fcc" mandatory="false" name="rtm_list_id">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
 </column-list>
 <primary-key id="190abb9:128ce294477:-7fe7" name="PK_LISTS">
 <primary-key-column name="_id"/>
@@ -183,9 +180,6 @@
 <column-list>
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2b" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fc1" mandatory="true" name="rtm_location_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2a" mandatory="true" name="location_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
@@ -202,8 +196,11 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="1" id="190abb9:128ce294477:-7f26" mandatory="true" name="viewable">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f25" mandatory="false" name="zoom">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f25" mandatory="true" name="zoom">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fc1" mandatory="true" name="rtm_location_id">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
 <primary-key id="190abb9:128ce294477:-7f34" name="PK_LOCATIONS">
@@ -264,13 +261,13 @@
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="bf1775:12cd4b4f24d:-7fd2" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fb5" mandatory="true" name="rtm_contact_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="bf1775:12cd4b4f24d:-7fcf" mandatory="true" name="fullname">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="bf1775:12cd4b4f24d:-7fce" mandatory="true" name="username">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fb5" mandatory="true" name="rtm_contact_id">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
@@ -286,14 +283,14 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="bf1775:12cd4b4f24d:-7fc8" mandatory="true" name="contact_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="bf1775:12cd4b4f24d:-7fc7" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="102f5ed:12cdb425c7c:-7fe2" mandatory="true" name="fullname">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="102f5ed:12cdb425c7c:-7fe1" mandatory="true" name="username">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="bf1775:12cd4b4f24d:-7fc7" mandatory="true" name="taskseries_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 </column-list>
 <primary-key id="bf1775:12cd4b4f24d:-7fcc" name="PK_PARTICIPANTS">
@@ -349,6 +346,25 @@
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
+<table id="39aaa206:13e476b4580:-7f84" name="tags">
+<column-list>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="39aaa206:13e476b4580:-7f7c" mandatory="true" name="_id" remarks="TaskSeries ID">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="39aaa206:13e476b4580:-7f7b" mandatory="true" name="tag">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+</column-list>
+<primary-key id="39aaa206:13e476b4580:-7f83" name="PK_TAGS">
+<primary-key-column name="_id"/>
+<primary-key-column name="tag"/>
+</primary-key>
+<foreign-key-list>
+<foreign-key id="39aaa206:13e476b4580:-7f07" name="tagged" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
+</foreign-key>
+</foreign-key-list>
+</table>
 </table-list>
 </schema>
 </schema-list>
@@ -371,5 +387,6 @@
 </fk-figure>
 <table-figure refid="8339e4:12d9ed556c8:-7fe6" x="931" y="149"/>
 <table-figure refid="1ecfc22:12e03bc8e0c:-7fe5" x="931" y="282"/>
+<table-figure refid="39aaa206:13e476b4580:-7f84" x="658" y="556"/>
 </diagram>
 </clay-model>

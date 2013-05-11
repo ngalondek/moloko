@@ -44,7 +44,7 @@ import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 
 
-class TagCloudFragment extends MolokoLoaderFragment< List< TagCloudEntry > >
+class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEntry > >
 {
    /**
     * Relationship between task count and text size.
@@ -114,7 +114,7 @@ class TagCloudFragment extends MolokoLoaderFragment< List< TagCloudEntry > >
    @Override
    public void initContentAfterDataLoaded( ViewGroup container )
    {
-      final List< TagCloudEntry > cloudEntries = getLoaderDataAssertNotNull();
+      final List< PresentableTagCloudEntry > cloudEntries = getLoaderDataAssertNotNull();
       
       if ( cloudEntries.size() > 0 )
       {
@@ -129,7 +129,7 @@ class TagCloudFragment extends MolokoLoaderFragment< List< TagCloudEntry > >
    
    
    @Override
-   public Loader< List< TagCloudEntry > > newLoaderInstance( int id, Bundle args )
+   public Loader< List< PresentableTagCloudEntry > > newLoaderInstance( int id, Bundle args )
    {
       return new TagCloudEntryLoader( getUiContext().asDomainContext() );
    }
@@ -152,7 +152,7 @@ class TagCloudFragment extends MolokoLoaderFragment< List< TagCloudEntry > >
    
    
    
-   private void showTagCloudEntries( List< TagCloudEntry > cloudEntries )
+   private void showTagCloudEntries( List< PresentableTagCloudEntry > cloudEntries )
    {
       final Activity activity = getSherlockActivity();
       
@@ -161,7 +161,7 @@ class TagCloudFragment extends MolokoLoaderFragment< List< TagCloudEntry > >
       
       for ( int i = 0; i < size; ++i )
       {
-         final TagCloudEntry cloudEntry = cloudEntries.get( i );
+         final PresentableTagCloudEntry cloudEntry = cloudEntries.get( i );
          
          final Button cloudEntryButton = new Button( activity );
          cloudEntryButton.setId( i );

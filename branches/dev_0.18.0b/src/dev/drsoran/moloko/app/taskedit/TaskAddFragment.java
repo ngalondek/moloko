@@ -41,11 +41,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
+import dev.drsoran.moloko.content.db.TableColumns.TaskSeries;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.provider.Rtm.TaskSeries;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 

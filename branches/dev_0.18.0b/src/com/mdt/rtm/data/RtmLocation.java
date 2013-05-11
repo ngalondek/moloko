@@ -30,11 +30,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.content.db.RtmLocationsTable;
+import dev.drsoran.moloko.content.db.TableColumns.Locations;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.provider.Rtm.Locations;
 
 
 /**

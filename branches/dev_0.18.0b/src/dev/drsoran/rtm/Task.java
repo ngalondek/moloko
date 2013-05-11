@@ -34,9 +34,9 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.moloko.content.db.TableColumns.Tags;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.provider.Rtm.Tags;
-import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class Task implements Parcelable

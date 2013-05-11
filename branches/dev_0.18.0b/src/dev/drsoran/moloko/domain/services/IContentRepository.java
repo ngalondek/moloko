@@ -24,76 +24,73 @@ package dev.drsoran.moloko.domain.services;
 
 import java.util.NoSuchElementException;
 
-import android.database.ContentObserver;
+import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
-import dev.drsoran.moloko.domain.model.IContact;
-import dev.drsoran.moloko.domain.model.ITask;
-import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.grammar.GrammarException;
 
 
 public interface IContentRepository
 {
-   void registerTasksContentObserver( ContentObserver observer );
+   Task getTask( long taskId, TaskContentOptions taskContentOptions ) throws NoSuchElementException,
+                                                                     ContentException;
    
    
    
-   void unregisterContentObserver( ContentObserver observer );
+   Iterable< Task > getAllTasks( TaskContentOptions taskContentOptions ) throws ContentException;
    
    
    
-   ITask getTask( long taskId, int taskContentOptions ) throws NoSuchElementException,
-                                                       ContentException;
+   Iterable< Task > getTasksInTasksList( TasksList tasksList,
+                                         TaskContentOptions taskContentOptions ) throws ContentException,
+                                                                                GrammarException;
    
    
    
-   Iterable< ITask > getTasks( int taskContentOptions ) throws ContentException;
+   ExtendedTaskCount getTaskCountOfTasksList( TasksList tasksList ) throws ContentException,
+                                                                   GrammarException;
    
    
    
-   Iterable< ITask > getTasksInTasksList( ITasksList tasksList,
-                                          int taskContentOptions ) throws ContentException,
-                                                                  GrammarException;
+   Iterable< Task > getTasksFromSmartFilter( RtmSmartFilter smartFilter,
+                                             TaskContentOptions taskContentOptions ) throws ContentException,
+                                                                                    GrammarException;
    
    
    
-   ExtendedTaskCount getTaskCountOfTasksList( ITasksList tasksList ) throws ContentException,
-                                                                    GrammarException;
+   TasksList getTasksList( long tasksListId ) throws NoSuchElementException,
+                                             ContentException;
    
    
    
-   Iterable< ITask > getTasksFromSmartFilter( RtmSmartFilter smartFilter,
-                                              int taskContentOptions ) throws ContentException,
-                                                                      GrammarException;
+   Iterable< TasksList > getAllTasksLists() throws ContentException;
    
    
    
-   ITasksList getTasksList( long tasksListId ) throws NoSuchElementException,
-                                              ContentException;
+   Iterable< TasksList > getPhysicalTasksLists() throws ContentException;
    
    
    
-   Iterable< ITasksList > getAllTasksLists() throws ContentException;
+   Iterable< String > getAllTags() throws ContentException;
    
    
    
-   Iterable< ITasksList > getPhysicalTasksLists() throws ContentException;
+   Contact getContact( long contactId ) throws NoSuchElementException,
+                                       ContentException;
    
    
    
-   IContact getContact( long contactId ) throws NoSuchElementException,
-                                        ContentException;
+   Iterable< Contact > getAllContacts() throws ContentException;
    
    
    
-   Iterable< IContact > getContacts() throws ContentException;
+   Location getLocation( long locationId ) throws NoSuchElementException,
+                                          ContentException;
    
    
    
-   int getNumTasksContactIsParticipating( long contactId ) throws ContentException;
-   
-   
-   
-   Iterable< String > getTags() throws ContentException;
+   Iterable< Location > getAllLocations() throws ContentException;
 }

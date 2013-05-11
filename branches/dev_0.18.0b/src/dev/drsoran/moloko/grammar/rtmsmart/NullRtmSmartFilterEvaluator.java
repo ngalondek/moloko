@@ -22,8 +22,26 @@
 
 package dev.drsoran.moloko.grammar.rtmsmart;
 
+import dev.drsoran.moloko.util.Strings;
+
+
 public class NullRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
 {
+   @Override
+   public String getResult()
+   {
+      return Strings.EMPTY_STRING;
+   }
+   
+   
+   
+   @Override
+   public void reset()
+   {
+   }
+   
+   
+   
    @Override
    public boolean evalList( String listName )
    {

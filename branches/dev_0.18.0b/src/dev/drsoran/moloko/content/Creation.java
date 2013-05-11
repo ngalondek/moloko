@@ -25,6 +25,7 @@ package dev.drsoran.moloko.content;
 import android.net.Uri;
 
 
+@Deprecated
 public final class Creation
 {
    private final String id;
@@ -34,7 +35,7 @@ public final class Creation
    private final long timeStamp;
    
    
-
+   
    private Creation( String id, Uri entityUri, long timeStamp )
    {
       this.id = id;
@@ -42,29 +43,29 @@ public final class Creation
       this.timeStamp = timeStamp;
    }
    
-
-
+   
+   
    public String getId()
    {
       return id;
    }
    
-
-
+   
+   
    public Uri getEntityUri()
    {
       return entityUri;
    }
    
-
-
+   
+   
    public long getTimeStamp()
    {
       return timeStamp;
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {
@@ -73,22 +74,22 @@ public final class Creation
       return entityUri.getLastPathSegment();
    }
    
-
-
+   
+   
    public final static Creation newCreation( Uri entityUri )
    {
       return newCreation( null, entityUri, System.currentTimeMillis() );
    }
    
-
-
+   
+   
    public final static Creation newCreation( Uri entityUri, long creationDate )
    {
       return newCreation( null, entityUri, creationDate );
    }
    
-
-
+   
+   
    public final static Creation newCreation( String id,
                                              Uri entityUri,
                                              long creationDate )

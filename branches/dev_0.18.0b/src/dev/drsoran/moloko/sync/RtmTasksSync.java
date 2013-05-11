@@ -47,6 +47,8 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
 import dev.drsoran.moloko.content.db.RtmTasksProviderPart;
+import dev.drsoran.moloko.content.db.TableColumns.RawTasks;
+import dev.drsoran.moloko.content.db.TableColumns.TaskSeries;
 import dev.drsoran.moloko.sync.elements.InSyncTask;
 import dev.drsoran.moloko.sync.elements.OutSyncTask;
 import dev.drsoran.moloko.sync.elements.ServerSyncRtmTaskList;
@@ -57,8 +59,6 @@ import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public final class RtmTasksSync

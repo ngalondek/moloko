@@ -34,13 +34,13 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderAction;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.Modification;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.moloko.content.db.TableColumns.RawTasks;
+import dev.drsoran.moloko.content.db.TableColumns.TaskSeries;
+import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.domain.model.ModificationSet;
 import dev.drsoran.rtm.Task;
 
 

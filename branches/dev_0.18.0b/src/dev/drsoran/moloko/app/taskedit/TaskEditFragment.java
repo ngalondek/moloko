@@ -41,12 +41,12 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.loaders.TaskLoader;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.content.db.DbUtils;
+import dev.drsoran.moloko.content.db.TableColumns.RawTasks;
+import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 

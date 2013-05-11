@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
-public abstract class TasksList extends LifeTimeManaged implements ITasksList
+public class TasksList extends LifeTimeManaged
 {
    private final long id;
    
@@ -36,9 +36,11 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    private ExtendedTaskCount tasksCount;
    
+   private RtmSmartFilter smartFilter;
    
    
-   protected TasksList( long id, long createdMillisUtc, int position,
+   
+   public TasksList( long id, long createdMillisUtc, int position,
       boolean locked, boolean archived )
    {
       super( createdMillisUtc );
@@ -51,7 +53,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public long getId()
    {
       return id;
@@ -59,7 +60,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public String getName()
    {
       return name;
@@ -74,7 +74,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public int getPosition()
    {
       return position;
@@ -82,7 +81,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public boolean isLocked()
    {
       return locked;
@@ -90,7 +88,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public boolean isArchived()
    {
       return archived;
@@ -98,7 +95,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public boolean hasTaskCount()
    {
       return tasksCount != null;
@@ -106,7 +102,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public ExtendedTaskCount getTasksCount()
    {
       return tasksCount;
@@ -114,7 +109,6 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
    
    
    
-   @Override
    public void setTasksCount( ExtendedTaskCount tasksCount )
    {
       if ( tasksCount == null )
@@ -123,5 +117,26 @@ public abstract class TasksList extends LifeTimeManaged implements ITasksList
       }
       
       this.tasksCount = tasksCount;
+   }
+   
+   
+   
+   public boolean isSmartList()
+   {
+      return smartFilter != null;
+   }
+   
+   
+   
+   public RtmSmartFilter getSmartFilter()
+   {
+      return smartFilter;
+   }
+   
+   
+   
+   public void setSmartFilter( RtmSmartFilter filter )
+   {
+      this.smartFilter = filter;
    }
 }

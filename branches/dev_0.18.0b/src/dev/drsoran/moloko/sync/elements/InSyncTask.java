@@ -88,7 +88,7 @@ public class InSyncTask extends SyncTaskBase implements
       final ParticipantList participantList = taskSeries.getParticipants();
       
       if ( participantList.getCount() > 0 )
-         operation.addAll( ParticipantsTable.insertParticipants( participantList ) );
+         operation.addAll( RtmParticipantsTable.insertParticipants( participantList ) );
       
       return operation.build();
    }
@@ -116,7 +116,7 @@ public class InSyncTask extends SyncTaskBase implements
          final ParticipantList participantList = serverElement.taskSeries.getParticipants();
          
          if ( participantList.getCount() > 0 )
-            operations.addAll( ParticipantsTable.insertParticipants( participantList ) );
+            operations.addAll( RtmParticipantsTable.insertParticipants( participantList ) );
       }
       
       // Sync task

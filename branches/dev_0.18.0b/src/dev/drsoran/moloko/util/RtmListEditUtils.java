@@ -36,13 +36,13 @@ import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.app.content.ContentProviderAction;
 import dev.drsoran.moloko.app.content.ContentProviderActionItemList;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.db.CreationsProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.Modification;
-import dev.drsoran.moloko.content.db.RtmListsTable;
+import dev.drsoran.moloko.content.db.RtmTasksListsTable;
 import dev.drsoran.moloko.content.db.RtmTaskSeriesTable;
-import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.moloko.content.db.TableColumns.Lists;
+import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.domain.model.ModificationSet;
 
 
 public final class RtmListEditUtils
@@ -81,7 +81,7 @@ public final class RtmListEditUtils
                                                   .acquireContentProviderClient( Lists.CONTENT_URI );
       try
       {
-         final RtmList list = RtmListsTable.getListByName( client,
+         final RtmList list = RtmTasksListsTable.getListByName( client,
                                                                   listName );
          if ( list != null )
          {
@@ -105,7 +105,7 @@ public final class RtmListEditUtils
       ContentProviderActionItemList actionItemList = new ContentProviderActionItemList();
       
       boolean ok = actionItemList.add( ContentProviderAction.Type.INSERT,
-                                       RtmListsTable.insertLocalCreatedList( list ) );
+                                       RtmTasksListsTable.insertLocalCreatedList( list ) );
       ok = ok
          && actionItemList.add( ContentProviderAction.Type.INSERT,
                                 CreationsProviderPart.newCreation( DbUtils.contentUriWithId( Lists.CONTENT_URI,

@@ -24,6 +24,14 @@ package dev.drsoran.moloko.grammar.rtmsmart;
 
 public interface IRtmSmartFilterEvaluator
 {
+   String getResult();
+   
+   
+   
+   void reset();
+   
+   
+   
    boolean evalList( String listName );
    
    

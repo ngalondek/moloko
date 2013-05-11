@@ -23,8 +23,8 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
-import dev.drsoran.moloko.content.db.Columns.RtmListsColumns;
-import dev.drsoran.moloko.content.db.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 
 class RtmSettingsTable extends AbstractTable
@@ -47,7 +47,7 @@ class RtmSettingsTable extends AbstractTable
       
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
-      builder.append( " ( " );
+      builder.append( "( " );
       builder.append( RtmSettingsColumns._ID );
       builder.append( " INTEGER NOT NULL CONSTRAINT PK_SETTINGS PRIMARY KEY AUTOINCREMENT, " );
       builder.append( RtmSettingsColumns.SYNC_TIMESTAMP );
@@ -65,9 +65,9 @@ class RtmSettingsTable extends AbstractTable
       builder.append( "CONSTRAINT defaultlist FOREIGN KEY (" );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( ") REFERENCES " );
-      builder.append( RtmListsTable.TABLE_NAME );
+      builder.append( RtmTasksListsTable.TABLE_NAME );
       builder.append( "( " );
-      builder.append( RtmListsColumns._ID );
+      builder.append( RtmTasksListColumns._ID );
       builder.append( " ) );" );
       
       getDatabase().getWritable().execSQL( builder.toString() );

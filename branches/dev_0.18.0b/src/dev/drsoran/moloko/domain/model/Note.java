@@ -25,7 +25,7 @@ package dev.drsoran.moloko.domain.model;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class Note extends LifeTimeManaged implements INote
+public class Note extends LifeTimeManaged
 {
    private final long id;
    
@@ -43,7 +43,6 @@ public class Note extends LifeTimeManaged implements INote
    
    
    
-   @Override
    public long getId()
    {
       return id;
@@ -51,7 +50,6 @@ public class Note extends LifeTimeManaged implements INote
    
    
    
-   @Override
    public String getTitle()
    {
       return title;
@@ -71,7 +69,6 @@ public class Note extends LifeTimeManaged implements INote
    
    
    
-   @Override
    public String getText()
    {
       return text;

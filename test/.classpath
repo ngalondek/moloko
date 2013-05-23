@@ -3,7 +3,6 @@
 	<classpathentry excluding=".apt_generated/|bin/|dev/drsoran/moloko/test/grammar/|dev/drsoran/moloko/test/unit/grammar/" kind="src" output="bin" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Moloko"/>
-	<classpathentry kind="lib" path="lib/robolectric-1.2-with-dependencies.jar" sourcepath="lib/robolectric-1.2-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/android-15"/>
 	<classpathentry kind="lib" path="/Moloko/libs/antlr-runtime-3.2.jar"/>
@@ -16,5 +15,6 @@
 	<classpathentry kind="lib" path="lib/cglib-nodep-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/easymock-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-1.3.jar"/>
+	<classpathentry kind="lib" path="/Moloko/test/lib/robolectric-2.1-with-dependencies.jar" sourcepath="/Moloko/test/lib/robolectric-2.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

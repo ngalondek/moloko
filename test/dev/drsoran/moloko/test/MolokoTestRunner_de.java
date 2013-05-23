@@ -26,31 +26,32 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 import org.junit.runners.model.InitializationError;
+import org.robolectric.annotation.Config;
 
 
+@Config( qualifiers = "de" )
 public class MolokoTestRunner_de extends MolokoTestRunner
 {
-   
    public MolokoTestRunner_de( Class< ? > testClass )
       throws InitializationError
    {
       super( testClass );
+      Locale.setDefault( Locale.GERMAN );
    }
    
    
    
-   @Override
-   public void beforeTest( Method method )
-   {
-      if ( !isInitialized() )
-      {
-         Locale.setDefault( Locale.GERMAN );
-      }
-      
-      super.beforeTest( method );
-   }
-   
-   
+   // @Override
+   // public void beforeTest( Method method )
+   // {
+   // if ( !isInitialized() )
+   // {
+   // Locale.setDefault( Locale.GERMAN );
+   // }
+   //
+   // super.beforeTest( method );
+   // }
+   //
    
    @Override
    public String getValuesResQualifiers()

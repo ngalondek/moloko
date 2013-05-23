@@ -426,7 +426,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
             tasksCountView.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd );
          }
          
-         tasksCountView.setText( String.valueOf( tasksCount.incompleteTaskCount ) );
+         tasksCountView.setText( String.valueOf( tasksCount.getIncompleteTaskCount() ) );
       }
    }
    

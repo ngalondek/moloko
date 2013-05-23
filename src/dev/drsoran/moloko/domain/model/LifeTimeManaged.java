@@ -39,7 +39,7 @@ abstract class LifeTimeManaged
    
    protected LifeTimeManaged( long createdMillisUtc )
    {
-      if ( createdMillisUtc < Constants.NO_TIME )
+      if ( createdMillisUtc == Constants.NO_TIME )
       {
          throw new IllegalArgumentException( "createdMillisUtc" );
       }
@@ -65,11 +65,6 @@ abstract class LifeTimeManaged
    
    public void setModifiedMillisUtc( long modifiedMillisUtc )
    {
-      if ( modifiedMillisUtc < Constants.NO_TIME )
-      {
-         throw new IllegalArgumentException( "modifiedMillisUtc" );
-      }
-      
       this.modifiedMillisUtc = modifiedMillisUtc;
    }
    
@@ -91,11 +86,6 @@ abstract class LifeTimeManaged
    
    public void setDeletedMillisUtc( long deletedMillisUtc )
    {
-      if ( deletedMillisUtc < Constants.NO_TIME )
-      {
-         throw new IllegalArgumentException( "deletedMillisUtc" );
-      }
-      
       this.deletedMillisUtc = deletedMillisUtc;
    }
    

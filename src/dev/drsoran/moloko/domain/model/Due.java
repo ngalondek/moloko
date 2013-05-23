@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.content.Constants;
 
 
 public class Due
@@ -34,6 +35,11 @@ public class Due
    
    public Due( long dueMillisUtc, boolean hasDueTime )
    {
+      if ( dueMillisUtc == Constants.NO_TIME && hasDueTime )
+      {
+         throw new IllegalArgumentException( "hasDueTime set but no time" );
+      }
+      
       this.dueMillisUtc = dueMillisUtc;
       this.hasDueTime = hasDueTime;
    }

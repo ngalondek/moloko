@@ -102,39 +102,110 @@ public final class Strings
    
    
    
-   public final static Object convertTo( String value, Class< ? > valueClass )
+   public static boolean isNullOrEmpty( CharSequence charSequence )
    {
-      if ( valueClass == String.class )
+      return charSequence == null || charSequence.length() == 0;
+   }
+   
+   
+   
+   public static < T > T convertTo( String value, Class< T > valueClass )
+   {
+      Object converted;
+      
+      if ( value == null )
       {
-         return value;
+         converted = null;
+      }
+      
+      else if ( valueClass == String.class )
+      {
+         converted = value;
       }
       
       else if ( valueClass == Long.class || valueClass == long.class )
       {
-         return Long.parseLong( value );
+         converted = Long.parseLong( value );
       }
       
       else if ( valueClass == Integer.class || valueClass == int.class )
       {
-         return Integer.parseInt( value );
+         converted = Integer.parseInt( value );
       }
       
       else if ( valueClass == Boolean.class || valueClass == boolean.class )
       {
-         return Boolean.parseBoolean( value );
+         converted = Boolean.parseBoolean( value );
       }
       
       else if ( valueClass == Float.class || valueClass == float.class )
       {
-         return Float.parseFloat( value );
+         converted = Float.parseFloat( value );
       }
       
       else if ( valueClass == Double.class || valueClass == double.class )
       {
-         return Double.parseDouble( value );
+         converted = Double.parseDouble( value );
       }
       
-      throw new IllegalArgumentException( "The type " + valueClass.getName()
-         + " is not supported" );
+      else
+      {
+         throw new IllegalArgumentException( "The type " + valueClass.getName()
+            + " is not supported" );
+      }
+      
+      @SuppressWarnings( "unchecked" )
+      final T casted = (T) converted;
+      return casted;
+   }
+   
+   
+   
+   public static < T > String convertFrom( T value )
+   {
+      if ( value == null )
+      {
+         return null;
+      }
+      
+      Class< ? > valueClass = value.getClass();
+      String converted;
+      if ( valueClass == String.class )
+      {
+         converted = (String) value;
+      }
+      
+      else if ( valueClass == Long.class || valueClass == long.class )
+      {
+         converted = Long.toString( (Long) value );
+      }
+      
+      else if ( valueClass == Integer.class || valueClass == int.class )
+      {
+         converted = Integer.toString( (Integer) value );
+      }
+      
+      else if ( valueClass == Boolean.class || valueClass == boolean.class )
+      {
+         converted = Boolean.toString( (Boolean) value );
+      }
+      
+      else if ( valueClass == Float.class || valueClass == float.class )
+      {
+         converted = Float.toString( (Float) value );
+      }
+      
+      else if ( valueClass == Double.class || valueClass == double.class )
+      {
+         converted = Double.toString( (Double) value );
+      }
+      
+      else
+      {
+         throw new IllegalArgumentException( "The type " + valueClass.getName()
+            + " is not supported" );
+      }
+      
+      return converted;
    }
 }

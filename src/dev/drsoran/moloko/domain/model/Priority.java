@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
-import android.text.TextUtils;
+import dev.drsoran.moloko.util.Strings;
 
 
 public enum Priority
@@ -50,9 +50,9 @@ public enum Priority
    
    public final static Priority fromString( String priorityString )
    {
-      if ( TextUtils.isEmpty( priorityString ) )
+      if ( Strings.isNullOrEmpty( priorityString ) )
       {
-         return Priority.None;
+         throw new IllegalArgumentException( "priorityString" );
       }
       
       switch ( priorityString.charAt( 0 ) )

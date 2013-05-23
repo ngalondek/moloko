@@ -22,19 +22,61 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;
 
-import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.domain.model.Contact;
 
 
-public class ContactFixture extends MolokoTestCase
+public class ContactFixture
 {
    @Test
    public void testContact()
    {
-      fail( "Not yet implemented" );
+      new Contact( 1, "user", "full" );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testContactInvId()
+   {
+      new Contact( Constants.NO_ID, "user", "full" );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testContactNullUser()
+   {
+      new Contact( 1, null, "full" );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testContactEmptyUser()
+   {
+      new Contact( 1, "", "full" );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testContactNullName()
+   {
+      new Contact( 1, "user", null );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testContactEmptyName()
+   {
+      new Contact( 1, "user", "" );
    }
    
    
@@ -42,7 +84,7 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testGetId()
    {
-      fail( "Not yet implemented" );
+      assertThat( new Contact( 1L, "user", "full" ).getId(), is( 1L ) );
    }
    
    
@@ -50,7 +92,7 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testGetUsername()
    {
-      fail( "Not yet implemented" );
+      assertThat( new Contact( 1L, "user", "full" ).getUsername(), is( "user" ) );
    }
    
    
@@ -58,6 +100,14 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testGetFullname()
    {
-      fail( "Not yet implemented" );
+      assertThat( new Contact( 1L, "user", "full" ).getFullname(), is( "full" ) );
+   }
+   
+   
+   
+   @Test
+   public void testToString()
+   {
+      new Contact( 1L, "user", "full" ).toString();
    }
 }

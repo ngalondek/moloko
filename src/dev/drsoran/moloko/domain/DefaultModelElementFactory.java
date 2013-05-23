@@ -118,9 +118,15 @@ public class DefaultModelElementFactory implements IModelElementFactory
       {
          final TasksList tasksList = new TasksList( c.getLong( Columns.ID_IDX ),
                                                     c.getLong( TasksListColumns.LIST_CREATED_DATE_IDX ),
+                                                    c.getString( TasksListColumns.LIST_NAME_IDX ),
                                                     c.getInt( TasksListColumns.POSITION_IDX ),
                                                     c.getInt( TasksListColumns.LOCKED_IDX ) != 0,
                                                     c.getInt( TasksListColumns.ARCHIVED_IDX ) != 0 );
+         
+         tasksList.setModifiedMillisUtc( c.getLong( TasksListColumns.LIST_MODIFIED_DATE_IDX ) );
+         tasksList.setDeletedMillisUtc( CursorUtils.getOptLong( c,
+                                                                TasksListColumns.LIST_DELETED_DATE_IDX,
+                                                                Constants.NO_TIME ) );
          
          if ( c.getInt( TasksListColumns.IS_SMART_LIST_IDX ) != 0 )
          {
@@ -139,11 +145,11 @@ public class DefaultModelElementFactory implements IModelElementFactory
       {
          final Task task = new Task( c.getLong( Columns.ID_IDX ),
                                      c.getLong( TaskColumns.TASK_CREATED_DATE_IDX ),
-                                     c.getLong( TaskColumns.ADDED_DATE_IDX ) );
+                                     c.getLong( TaskColumns.ADDED_DATE_IDX ),
+                                     c.getString( TaskColumns.TASK_NAME_IDX ),
+                                     c.getLong( TaskColumns.LIST_ID_IDX ),
+                                     c.getString( TaskColumns.LIST_NAME_IDX ) );
          
-         task.setName( c.getString( TaskColumns.TASK_NAME_IDX ) );
-         task.setList( c.getLong( TaskColumns.LIST_ID_IDX ),
-                       c.getString( TaskColumns.LIST_NAME_IDX ) );
          task.setLocation( CursorUtils.getOptLong( c,
                                                    TaskColumns.LOCATION_ID_IDX,
                                                    Constants.NO_ID ),

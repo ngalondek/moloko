@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import android.text.TextUtils;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.util.Strings;
 
@@ -41,7 +40,7 @@ public class Task extends LifeTimeManaged
    
    private String listName;
    
-   private long locationId;
+   private long locationId = Constants.NO_ID;
    
    private String locationName;
    
@@ -71,13 +70,37 @@ public class Task extends LifeTimeManaged
    
    
    
-   public Task( long id, long createdMillisUtc, long addedMillisUtc )
+   public Task( long id, long createdMillisUtc, long addedMillisUtc,
+      String name, long listId, String listName )
    {
       super( createdMillisUtc );
+      
+      if ( addedMillisUtc == Constants.NO_TIME )
+      {
+         throw new IllegalArgumentException( "addedMillisUtc" );
+      }
+      
+      if ( Strings.isNullOrEmpty( name ) )
+      {
+         throw new IllegalArgumentException( "name" );
+      }
+      
+      if ( listId == Constants.NO_ID )
+      {
+         throw new IllegalArgumentException( "listId" );
+      }
+      
+      if ( Strings.isNullOrEmpty( listName ) )
+      {
+         throw new IllegalArgumentException( "listName" );
+      }
       
       this.id = id;
       this.completedMillisUtc = createdMillisUtc;
       this.addedMillisUtc = addedMillisUtc;
+      this.name = name;
+      this.listId = listId;
+      this.listName = listName;
    }
    
    
@@ -98,7 +121,7 @@ public class Task extends LifeTimeManaged
    
    public void setName( String name )
    {
-      if ( TextUtils.isEmpty( name ) )
+      if ( Strings.isNullOrEmpty( name ) )
       {
          throw new IllegalArgumentException( "name" );
       }
@@ -117,11 +140,6 @@ public class Task extends LifeTimeManaged
    
    public void setSource( String source )
    {
-      if ( source == null )
-      {
-         throw new IllegalArgumentException( "source" );
-      }
-      
       this.source = source;
    }
    
@@ -136,11 +154,6 @@ public class Task extends LifeTimeManaged
    
    public void setUrl( String url )
    {
-      if ( url == null )
-      {
-         throw new IllegalArgumentException( "url" );
-      }
-      
       this.url = url;
    }
    
@@ -162,11 +175,6 @@ public class Task extends LifeTimeManaged
    
    public void setCompletedMillisUtc( long completedMillisUtc )
    {
-      if ( completedMillisUtc < Constants.NO_TIME )
-      {
-         throw new IllegalArgumentException( "completedMillisUtc" );
-      }
-      
       this.completedMillisUtc = completedMillisUtc;
    }
    
@@ -228,11 +236,6 @@ public class Task extends LifeTimeManaged
    
    public void setDue( Due due )
    {
-      if ( due == null )
-      {
-         throw new IllegalArgumentException( "due" );
-      }
-      
       this.due = due;
    }
    
@@ -247,11 +250,6 @@ public class Task extends LifeTimeManaged
    
    public void setRecurrence( Recurrence recurrence )
    {
-      if ( recurrence == null )
-      {
-         throw new IllegalArgumentException( "recurrence" );
-      }
-      
       this.recurrence = recurrence;
    }
    
@@ -266,11 +264,6 @@ public class Task extends LifeTimeManaged
    
    public void setEstimation( Estimation estimation )
    {
-      if ( estimation == null )
-      {
-         throw new IllegalArgumentException( "estimation" );
-      }
-      
       this.estimation = estimation;
    }
    
@@ -323,19 +316,24 @@ public class Task extends LifeTimeManaged
    {
       if ( notes == null )
       {
-         throw new IllegalArgumentException( "notes" );
-      }
-      
-      if ( this.notes == null )
-      {
-         ensureNotesContainer();
+         if ( this.notes != null )
+         {
+            this.notes.clear();
+         }
       }
       else
       {
-         this.notes.clear();
+         if ( this.notes == null )
+         {
+            ensureNotesContainer();
+         }
+         else
+         {
+            this.notes.clear();
+         }
+         
+         addNotes( notes );
       }
-      
-      addNotes( notes );
    }
    
    
@@ -441,6 +439,11 @@ public class Task extends LifeTimeManaged
          throw new IllegalArgumentException( "locationName" );
       }
       
+      if ( locationId == Constants.NO_ID && locationName != null )
+      {
+         throw new IllegalArgumentException( "Provided location name but no location ID." );
+      }
+      
       this.locationId = locationId;
       this.locationName = ( locationId != Constants.NO_ID ) ? locationName
                                                            : null;
@@ -464,19 +467,18 @@ public class Task extends LifeTimeManaged
    
    public void setList( long listId, String listName )
    {
-      if ( listId < 1 )
+      if ( listId == Constants.NO_ID )
       {
          throw new IllegalArgumentException( "listId" );
       }
       
-      if ( TextUtils.isEmpty( listName ) )
+      if ( Strings.isNullOrEmpty( listName ) )
       {
          throw new IllegalArgumentException( "listName" );
       }
       
       this.listId = listId;
       this.listName = listName;
-      
    }
    
    
@@ -522,6 +524,6 @@ public class Task extends LifeTimeManaged
                             completedMillisUtc,
                             listId,
                             listName,
-                            notes.size() );
+                            notes != null ? notes.size() : 0 );
    }
 }

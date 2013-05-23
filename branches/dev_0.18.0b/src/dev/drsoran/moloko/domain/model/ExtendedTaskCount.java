@@ -22,21 +22,19 @@
 
 package dev.drsoran.moloko.domain.model;
 
-
-
 public final class ExtendedTaskCount
 {
-   public final int incompleteTaskCount;
+   private final int incompleteTaskCount;
    
-   public final int completedTaskCount;
+   private final int completedTaskCount;
    
-   public final int dueTodayTaskCount;
+   private final int dueTodayTaskCount;
    
-   public final int dueTomorrowTaskCount;
+   private final int dueTomorrowTaskCount;
    
-   public final int overDueTaskCount;
+   private final int overDueTaskCount;
    
-   public final long sumEstimated;
+   private final long sumEstimated;
    
    
    
@@ -44,6 +42,31 @@ public final class ExtendedTaskCount
       int dueTodayTaskCount, int dueTomorrowTaskCount, int overDueTaskCount,
       long sumEstimated )
    {
+      if ( incompleteTaskCount < 0 )
+      {
+         throw new IllegalArgumentException( "incompleteTaskCount" );
+      }
+      if ( completedTaskCount < 0 )
+      {
+         throw new IllegalArgumentException( "completedTaskCount" );
+      }
+      if ( dueTodayTaskCount < 0 )
+      {
+         throw new IllegalArgumentException( "dueTodayTaskCount" );
+      }
+      if ( dueTomorrowTaskCount < 0 )
+      {
+         throw new IllegalArgumentException( "dueTomorrowTaskCount" );
+      }
+      if ( overDueTaskCount < 0 )
+      {
+         throw new IllegalArgumentException( "overDueTaskCount" );
+      }
+      if ( sumEstimated < 0 )
+      {
+         throw new IllegalArgumentException( "sumEstimated" );
+      }
+      
       this.incompleteTaskCount = incompleteTaskCount;
       this.completedTaskCount = completedTaskCount;
       this.dueTodayTaskCount = dueTodayTaskCount;
@@ -54,15 +77,57 @@ public final class ExtendedTaskCount
    
    
    
+   public int getIncompleteTaskCount()
+   {
+      return incompleteTaskCount;
+   }
+   
+   
+   
+   public int getCompletedTaskCount()
+   {
+      return completedTaskCount;
+   }
+   
+   
+   
+   public int getDueTodayTaskCount()
+   {
+      return dueTodayTaskCount;
+   }
+   
+   
+   
+   public int getDueTomorrowTaskCount()
+   {
+      return dueTomorrowTaskCount;
+   }
+   
+   
+   
+   public int getOverDueTaskCount()
+   {
+      return overDueTaskCount;
+   }
+   
+   
+   
+   public long getSumEstimated()
+   {
+      return sumEstimated;
+   }
+   
+   
+   
    @Override
    public String toString()
    {
       return String.format( "ExtendedTaskCount [incompleteTaskCount=%s, completedTaskCount=%s, dueTodayTaskCount=%s, dueTomorrowTaskCount=%s, overDueTaskCount=%s, sumEstimated=%s]",
-                            incompleteTaskCount,
-                            completedTaskCount,
-                            dueTodayTaskCount,
-                            dueTomorrowTaskCount,
-                            overDueTaskCount,
-                            sumEstimated );
+                            getIncompleteTaskCount(),
+                            getCompletedTaskCount(),
+                            getDueTodayTaskCount(),
+                            getDueTomorrowTaskCount(),
+                            getOverDueTaskCount(),
+                            getSumEstimated() );
    }
 }

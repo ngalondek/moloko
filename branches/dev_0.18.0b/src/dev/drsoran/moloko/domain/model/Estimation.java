@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -35,6 +36,16 @@ public class Estimation
    
    public Estimation( String sentence, long estimateMillisUtc )
    {
+      if ( Strings.isNullOrEmpty( sentence ) )
+      {
+         throw new IllegalArgumentException( "sentence" );
+      }
+      
+      if ( estimateMillisUtc == Constants.NO_TIME )
+      {
+         throw new IllegalArgumentException( "estimateMillisUtc" );
+      }
+      
       this.sentence = sentence;
       this.estimateMillisUtc = estimateMillisUtc;
    }
@@ -73,7 +84,7 @@ public class Estimation
       
       final Estimation other = (Estimation) o;
       
-      return Strings.equals( sentence, other.sentence )
+      return sentence.equals( other.sentence )
          && estimateMillisUtc == other.estimateMillisUtc;
    }
    
@@ -84,7 +95,7 @@ public class Estimation
    {
       int result = 17;
       
-      result = 31 * result + ( sentence != null ? sentence.hashCode() : 0 );
+      result = 31 * result + sentence.hashCode();
       result = 31 * result + (int) estimateMillisUtc;
       
       return result;

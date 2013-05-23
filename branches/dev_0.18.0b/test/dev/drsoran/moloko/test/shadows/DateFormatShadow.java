@@ -26,11 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
+
 import android.content.Context;
 import android.text.format.DateFormat;
-
-import com.xtremelabs.robolectric.internal.Implementation;
-import com.xtremelabs.robolectric.internal.Implements;
 
 
 @Implements( DateFormat.class )

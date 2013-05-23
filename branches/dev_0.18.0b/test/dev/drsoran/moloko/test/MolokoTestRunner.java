@@ -25,21 +25,23 @@ package dev.drsoran.moloko.test;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import org.acra.ACRA;
 import org.junit.runners.model.InitializationError;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowContextWrapper;
 
 import android.app.Application;
-
-import com.xtremelabs.robolectric.Robolectric;
-import com.xtremelabs.robolectric.RobolectricConfig;
-import com.xtremelabs.robolectric.RobolectricTestRunner;
-import com.xtremelabs.robolectric.res.RobolectricPackageManager;
-import com.xtremelabs.robolectric.shadows.ShadowContextWrapper;
-
+import android.text.format.DateFormat;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.test.shadows.ACRAShadow;
 import dev.drsoran.moloko.test.shadows.DateFormatShadow;
 
 
+@Config( shadows =
+{ ACRAShadow.class } )
 abstract class MolokoTestRunner extends RobolectricTestRunner
 {
    private MolokoApp molokoApp;
@@ -53,10 +55,10 @@ abstract class MolokoTestRunner extends RobolectricTestRunner
    protected MolokoTestRunner( Class< ? > testClass )
       throws InitializationError
    {
-      super( testClass, new RobolectricConfig( new File( "." ) ) );
-      
-      addClassOrPackageToInstrument( "org.acra.ACRA" );
-      addClassOrPackageToInstrument( "android.text.format.DateFormat" );
+      super( testClass );
+      //
+      // addClassOrPackageToInstrument( "org.acra.ACRA" );
+      // addClassOrPackageToInstrument( "android.text.format.DateFormat" );
    }
    
    
@@ -75,62 +77,59 @@ abstract class MolokoTestRunner extends RobolectricTestRunner
    
    
    
-   @Override
-   public void internalBeforeTest( Method method )
-   {
-      if ( !isInitialized )
-      {
-         robolectricConfig.setValuesResQualifiers( getValuesResQualifiers() );
-      }
-      
-      super.internalBeforeTest( method );
-   }
+   // @Override
+   // public void internalBeforeTest( Method method )
+   // {
+   // if ( !isInitialized )
+   // {
+   // robolectricConfig.setValuesResQualifiers( getValuesResQualifiers() );
+   // }
+   //
+   // super.internalBeforeTest( method );
+   // }
+   //
    
+   // @Override
+   // public void beforeTest( Method method )
+   // {
+   // super.beforeTest( method );
+   //
+   // if ( !isInitialized )
+   // {
+   // shadowApp.getResourceLoader()
+   // .reloadValuesResouces( robolectricConfig.getValuesResQualifiers() );
+   // }
+   //
+   // molokoApp.onCreate();
+   //
+   // isInitialized = true;
+   // }
+   //
    
+   //
+   // @Override
+   // protected void bindShadowClasses()
+   // {
+   // super.bindShadowClasses();
+   //
+   // Robolectric.bindShadowClass( ACRAShadow.class );
+   // Robolectric.bindShadowClass( DateFormatShadow.class );
+   // }
+   //
+   //
    
-   @Override
-   public void beforeTest( Method method )
-   {
-      super.beforeTest( method );
-      
-      if ( !isInitialized )
-      {
-         shadowApp.getResourceLoader()
-                  .reloadValuesResouces( robolectricConfig.getValuesResQualifiers() );
-      }
-      
-      molokoApp.onCreate();
-      
-      isInitialized = true;
-   }
-   
-   
-   
-   @Override
-   protected void bindShadowClasses()
-   {
-      super.bindShadowClasses();
-      
-      Robolectric.bindShadowClass( ACRAShadow.class );
-      Robolectric.bindShadowClass( DateFormatShadow.class );
-   }
-   
-   
-   
-   @Override
-   protected Application createApplication()
-   {
-      molokoApp = new MolokoApp();
-      shadowApp = Robolectric.shadowOf( molokoApp );
-      
-      shadowApp.setPackageName( "dev.drsoran.moloko" );
-      shadowApp.setPackageManager( new RobolectricPackageManager( molokoApp,
-                                                                  robolectricConfig ) );
-      
-      return molokoApp;
-   }
-   
-   
+   // @Override
+   // protected Application createApplication()
+   // {
+   // molokoApp = new MolokoApp();
+   // shadowApp = Robolectric.shadowOf( molokoApp );
+   //
+   // shadowApp.setPackageName( "dev.drsoran.moloko" );
+   // shadowApp.setPackageManager( new RobolectricPackageManager( molokoApp,
+   // robolectricConfig ) );
+   //
+   // return molokoApp;
+   // }
    
    public abstract String getValuesResQualifiers();
 }

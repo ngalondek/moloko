@@ -22,13 +22,12 @@
 
 package dev.drsoran.moloko.domain.model;
 
-import java.util.Comparator;
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class Participant
 {
-   public final static LessContactIdComperator LESS_CONTACT_ID = new LessContactIdComperator();
-   
    private final long id;
    
    private final long contactId;
@@ -41,6 +40,26 @@ public class Participant
    
    public Participant( long id, long contactId, String fullname, String username )
    {
+      if ( id == Constants.NO_ID )
+      {
+         throw new IllegalArgumentException( "id" );
+      }
+      
+      if ( contactId == Constants.NO_ID )
+      {
+         throw new IllegalArgumentException( "contactId" );
+      }
+      
+      if ( fullname == null )
+      {
+         throw new IllegalArgumentException( "fullname" );
+      }
+      
+      if ( Strings.isNullOrEmpty( username ) )
+      {
+         throw new IllegalArgumentException( "username" );
+      }
+      
       this.id = id;
       this.contactId = contactId;
       this.fullname = fullname;
@@ -73,29 +92,6 @@ public class Participant
    public String getUsername()
    {
       return username;
-   }
-   
-   
-   private static final class LessContactIdComperator implements
-            Comparator< Participant >
-   {
-      @Override
-      public int compare( Participant object1, Participant object2 )
-      {
-         final long contactId1 = object1.contactId;
-         final long contactId2 = object2.contactId;
-         
-         if ( contactId1 > contactId2 )
-         {
-            return 1;
-         }
-         if ( contactId1 < contactId2 )
-         {
-            return -1;
-         }
-         
-         return 0;
-      }
    }
    
    

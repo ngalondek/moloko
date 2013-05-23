@@ -23,11 +23,10 @@
 package dev.drsoran.moloko.test.shadows;
 
 import org.acra.ACRA;
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
 
 import android.app.Application;
-
-import com.xtremelabs.robolectric.internal.Implementation;
-import com.xtremelabs.robolectric.internal.Implements;
 
 
 @Implements( ACRA.class )

@@ -75,7 +75,9 @@ public class Sync
    public String toString()
    {
       return String.format( "Sync [lastSyncIn=%s, lastSyncOut=%s]",
-                            new Date( lastSyncInMillis ),
-                            new Date( lastSyncOutMillis ) );
+                            hasEverSyncedIn() ? new Date( lastSyncInMillis )
+                                             : "never",
+                            hasEverSyncedOut() ? new Date( lastSyncOutMillis )
+                                              : "never" );
    }
 }

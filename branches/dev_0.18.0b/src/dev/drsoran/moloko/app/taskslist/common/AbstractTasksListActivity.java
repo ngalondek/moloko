@@ -466,7 +466,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getCompletedSubtitle(),
                                                                                               list,
-                                                                                              extendedListInfo.completedTaskCount ).setTasksListConfig( config ) );
+                                                                                              extendedListInfo.getCompletedTaskCount() ).setTasksListConfig( config ) );
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,
@@ -476,7 +476,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getOverdueSubtitle(),
                                                                                               list,
-                                                                                              extendedListInfo.overDueTaskCount ).setTasksListConfig( config ) );
+                                                                                              extendedListInfo.getOverDueTaskCount() ).setTasksListConfig( config ) );
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,
@@ -486,7 +486,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getDueTodaySubtitle(),
                                                                                               list,
-                                                                                              extendedListInfo.dueTodayTaskCount ).setTasksListConfig( config ) );
+                                                                                              extendedListInfo.getDueTodayTaskCount() ).setTasksListConfig( config ) );
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,
@@ -496,7 +496,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getDueTomorrowSubtitle(),
                                                                                               list,
-                                                                                              extendedListInfo.dueTomorrowTaskCount ).setTasksListConfig( config ) );
+                                                                                              extendedListInfo.getDueTomorrowTaskCount() ).setTasksListConfig( config ) );
          }
       }
       

@@ -23,18 +23,16 @@
 package dev.drsoran.moloko.domain.model;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 
 import android.net.Uri;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentCompare;
+import dev.drsoran.moloko.util.Strings;
 
 
-public class Modification implements Comparable< Modification >
+public class Modification
 {
-   private final long id;
-   
    private final Uri entityUri;
    
    private final String colName;
@@ -50,25 +48,26 @@ public class Modification implements Comparable< Modification >
    private final long timestampMillisUtc;
    
    
-   private final static class SortColumnName implements
-            Comparator< Modification >
+   
+   private Modification( Uri entityUri, String colName, String newValue,
+      String syncedValue, boolean isSetSyncedValue, boolean persistent,
+      long timestamp )
    {
-      @Override
-      public int compare( Modification object1, Modification object2 )
+      if ( entityUri == null )
       {
-         return object1.colName.compareTo( object2.colName );
+         throw new IllegalArgumentException( "entityUri" );
       }
-   }
-   
-   public final static SortColumnName SORT_COLUMN_NAME = new SortColumnName();
-   
-   
-   
-   private Modification( long id, Uri entityUri, String colName,
-      String newValue, String syncedValue, boolean isSetSyncedValue,
-      boolean persistent, long timestamp )
-   {
-      this.id = id;
+      
+      if ( Strings.isNullOrEmpty( colName ) )
+      {
+         throw new IllegalArgumentException( "colName" );
+      }
+      
+      if ( timestamp == Constants.NO_TIME )
+      {
+         throw new IllegalArgumentException( "timestamp" );
+      }
+      
       this.entityUri = entityUri;
       this.colName = colName;
       this.newValue = newValue;
@@ -76,13 +75,6 @@ public class Modification implements Comparable< Modification >
       this.isSetSyncedValue = isSetSyncedValue;
       this.persistent = persistent;
       this.timestampMillisUtc = timestamp;
-   }
-   
-   
-   
-   public long getId()
-   {
-      return id;
    }
    
    
@@ -110,7 +102,7 @@ public class Modification implements Comparable< Modification >
    
    public < T > T getNewValue( Class< T > valueClass )
    {
-      return fromString( newValue, valueClass );
+      return Strings.convertTo( newValue, valueClass );
    }
    
    
@@ -124,7 +116,7 @@ public class Modification implements Comparable< Modification >
    
    public < T > T getSyncedValue( Class< T > valueClass )
    {
-      return fromString( syncedValue, valueClass );
+      return Strings.convertTo( syncedValue, valueClass );
    }
    
    
@@ -153,6 +145,11 @@ public class Modification implements Comparable< Modification >
    @Override
    public boolean equals( Object o )
    {
+      if ( o == null )
+      {
+         return false;
+      }
+      
       if ( this == o )
       {
          return true;
@@ -190,26 +187,9 @@ public class Modification implements Comparable< Modification >
    
    
    @Override
-   public int compareTo( Modification another )
-   {
-      int cmp = entityUri.compareTo( another.entityUri );
-      if ( cmp != 0 )
-         return cmp;
-      
-      cmp = colName.compareTo( another.colName );
-      if ( cmp != 0 )
-         return cmp;
-      
-      return 0;
-   }
-   
-   
-   
-   @Override
    public String toString()
    {
-      return String.format( "Modification [id=%s, entityUri=%s, col=%s, new=%s, synced=%s, time=%s]",
-                            id,
+      return String.format( "Modification [entityUri=%s, col=%s, new=%s, synced=%s, time=%s]",
                             entityUri,
                             colName,
                             newValue,
@@ -223,10 +203,9 @@ public class Modification implements Comparable< Modification >
                                                      String colName,
                                                      T newValue )
    {
-      return new Modification( Constants.NO_ID,
-                               entityUri,
+      return new Modification( entityUri,
                                colName,
-                               toString( newValue ),
+                               Strings.convertFrom( newValue ),
                                null,
                                false,
                                true,
@@ -240,11 +219,10 @@ public class Modification implements Comparable< Modification >
                                                      T newValue,
                                                      T synedValue )
    {
-      return new Modification( Constants.NO_ID,
-                               entityUri,
+      return new Modification( entityUri,
                                colName,
-                               toString( newValue ),
-                               toString( synedValue ),
+                               Strings.convertFrom( newValue ),
+                               Strings.convertFrom( synedValue ),
                                true,
                                true,
                                System.currentTimeMillis() );
@@ -258,11 +236,10 @@ public class Modification implements Comparable< Modification >
                                                      T synedValue,
                                                      long timeStamp )
    {
-      return new Modification( Constants.NO_ID,
-                               entityUri,
+      return new Modification( entityUri,
                                colName,
-                               toString( newValue ),
-                               toString( synedValue ),
+                               Strings.convertFrom( newValue ),
+                               Strings.convertFrom( synedValue ),
                                true,
                                true,
                                timeStamp );
@@ -274,10 +251,9 @@ public class Modification implements Comparable< Modification >
                                                                   String colName,
                                                                   T newValue )
    {
-      return new Modification( Constants.NO_ID,
-                               entityUri,
+      return new Modification( entityUri,
                                colName,
-                               toString( newValue ),
+                               Strings.convertFrom( newValue ),
                                null,
                                false,
                                false,
@@ -292,6 +268,11 @@ public class Modification implements Comparable< Modification >
                                             V existingValue,
                                             V updatedValue )
    {
+      if ( modifications == null )
+      {
+         throw new IllegalArgumentException( "modifications" );
+      }
+      
       if ( ContentCompare.isDifferent( existingValue, updatedValue ) )
       {
          modifications.add( Modification.newModification( entityUri,
@@ -309,65 +290,16 @@ public class Modification implements Comparable< Modification >
                                                          V existingValue,
                                                          V updatedValue )
    {
+      if ( modifications == null )
+      {
+         throw new IllegalArgumentException( "modifications" );
+      }
+      
       if ( ContentCompare.isDifferent( existingValue, updatedValue ) )
       {
          modifications.add( Modification.newNonPersistentModification( entityUri,
                                                                        colName,
                                                                        updatedValue ) );
       }
-   }
-   
-   
-   
-   @SuppressWarnings( "unchecked" )
-   private static < T > T fromString( String value, Class< T > valueClass )
-   {
-      if ( valueClass == null )
-         throw new IllegalArgumentException( "valueClass" );
-      
-      if ( value == null )
-         return null;
-      else if ( valueClass.equals( String.class ) )
-         return (T) value;
-      else if ( valueClass.equals( Integer.class ) )
-         return (T) Integer.valueOf( value );
-      else if ( valueClass.equals( Long.class ) )
-         return (T) Long.valueOf( value );
-      else if ( valueClass.equals( Double.class ) )
-         return (T) Double.valueOf( value );
-      else if ( valueClass.equals( Float.class ) )
-         return (T) Float.valueOf( value );
-      else if ( valueClass.equals( Short.class ) )
-         return (T) Short.valueOf( value );
-      else if ( valueClass.equals( Boolean.class ) )
-         return (T) Boolean.valueOf( ( Integer.valueOf( value ) != 0 ) );
-      else
-         throw new IllegalArgumentException( "Unsupported data type of valueType "
-            + valueClass.getName() );
-   }
-   
-   
-   
-   private final static < T > String toString( T value )
-   {
-      if ( value == null )
-         return null;
-      else if ( value instanceof String )
-         return (String) value;
-      else if ( value instanceof Integer )
-         return Integer.toString( (Integer) value );
-      else if ( value instanceof Long )
-         return Long.toString( (Long) value );
-      else if ( value instanceof Double )
-         return Double.toString( (Double) value );
-      else if ( value instanceof Float )
-         return Float.toString( (Float) value );
-      else if ( value instanceof Short )
-         return Short.toString( (Short) value );
-      else if ( value instanceof Boolean )
-         return ( (Boolean) value ) ? "1" : "0";
-      else
-         throw new IllegalArgumentException( "Unsupported data type of value "
-            + value.getClass().getName() );
    }
 }

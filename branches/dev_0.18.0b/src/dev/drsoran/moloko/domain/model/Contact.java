@@ -22,6 +22,10 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.util.Strings;
+
+
 public class Contact
 {
    private final long id;
@@ -34,6 +38,21 @@ public class Contact
    
    public Contact( long id, String userName, String fullName )
    {
+      if ( id == Constants.NO_ID )
+      {
+         throw new IllegalArgumentException( "id" );
+      }
+      
+      if ( Strings.isNullOrEmpty( userName ) )
+      {
+         throw new IllegalArgumentException( "userName" );
+      }
+      
+      if ( Strings.isNullOrEmpty( fullName ) )
+      {
+         throw new IllegalArgumentException( "fullname" );
+      }
+      
       this.id = id;
       this.userName = userName;
       this.fullName = fullName;

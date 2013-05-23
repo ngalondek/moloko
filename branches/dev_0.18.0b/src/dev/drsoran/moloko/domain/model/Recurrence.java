@@ -38,6 +38,11 @@ public class Recurrence
    
    public Recurrence( String pattern, boolean isEveryRecurrence )
    {
+      if ( Strings.isNullOrEmpty( pattern ) )
+      {
+         throw new IllegalArgumentException( "pattern" );
+      }
+      
       this.pattern = pattern;
       this.isEveryRecurrence = isEveryRecurrence;
    }
@@ -87,7 +92,7 @@ public class Recurrence
    {
       int result = 17;
       
-      result = 31 * result + ( pattern != null ? pattern.hashCode() : 0 );
+      result = 31 * result + pattern.hashCode();
       result = 31 * result + ( isEveryRecurrence ? 1 : 0 );
       
       return result;

@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.domain.model;
 
-import android.text.TextUtils;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Strings;
 
@@ -35,7 +34,7 @@ public class RtmSmartFilter
    
    public RtmSmartFilter( String filter )
    {
-      if ( TextUtils.isEmpty( filter ) )
+      if ( Strings.isNullOrEmpty( filter ) )
       {
          throw new IllegalArgumentException( "filter" );
       }
@@ -79,6 +78,14 @@ public class RtmSmartFilter
    
    
    @Override
+   public int hashCode()
+   {
+      return filter.hashCode();
+   }
+   
+   
+   
+   @Override
    public String toString()
    {
       return String.format( "RtmSmartFilter [filter=%s]", filter );
@@ -90,7 +97,7 @@ public class RtmSmartFilter
    {
       // Check if there was no operator used. If so it has the
       // same meaning as operator name:
-      if ( filter.length() > 0 && !filter.contains( ":" ) )
+      if ( !filter.contains( ":" ) )
       {
          filter = RtmSmartFilterLexer.OP_NAME_LIT + Strings.quotify( filter );
       }

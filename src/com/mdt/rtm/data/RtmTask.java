@@ -372,7 +372,7 @@ public class RtmTask extends RtmData
    {
       if ( !TextUtils.isEmpty( estimate ) )
       {
-         this.estimateMillis = RtmDateTimeParsing.parseEstimated( estimate );
+         this.estimateMillis = RtmDateTimeParsing.getTimeStruct( estimate );
       }
       else
       {

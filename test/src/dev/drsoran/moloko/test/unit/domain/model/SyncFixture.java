@@ -33,10 +33,11 @@ import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Sync;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
 @RunWith( Theories.class )
-public class SyncFixture
+public class SyncFixture extends MolokoTestCase
 {
    @DataPoint
    public final static long NO_TIME = Constants.NO_TIME;

@@ -23,6 +23,21 @@ public final class Bundles
                                  Object value,
                                  Class< ? > type )
    {
+      if ( bundle == null )
+      {
+         throw new IllegalArgumentException( "bundle" );
+      }
+      
+      if ( Strings.isNullOrEmpty( key ) )
+      {
+         throw new IllegalArgumentException( "key" );
+      }
+      
+      if ( type == null )
+      {
+         throw new IllegalArgumentException( "type" );
+      }
+      
       if ( type == String.class )
       {
          bundle.putString( key, String.class.cast( value ) );
@@ -107,7 +122,7 @@ public final class Bundles
    {
       if ( value == null )
       {
-         throw new IllegalArgumentException( "value can not be null." );
+         throw new IllegalArgumentException( "value" );
       }
       
       put( bundle, key, value, value.getClass() );

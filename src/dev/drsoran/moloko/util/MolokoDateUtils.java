@@ -22,37 +22,18 @@
 
 package dev.drsoran.moloko.util;
 
-import java.util.Date;
 import java.util.TimeZone;
 
 import android.text.format.DateUtils;
 import android.text.format.Time;
-
-import com.mdt.rtm.data.RtmData;
-
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.rtm.ParcelableDate;
 
 
 public class MolokoDateUtils
 {
-   public final static class EstimateStruct
-   {
-      public final int days;
-      
-      public final int hours;
-      
-      public final int minutes;
-      
-      
-      
-      public EstimateStruct( int days, int hours, int minutes )
-      {
-         this.days = days;
-         this.hours = hours;
-         this.minutes = minutes;
-      }
-   }
+   public static final int HOUR_IN_SECONDS = 3600;
+   
+   public static final int DAY_IN_SECONDS = 24 * HOUR_IN_SECONDS;
    
    
    
@@ -65,16 +46,12 @@ public class MolokoDateUtils
    
    public final static MolokoCalendar newCalendar( long millis )
    {
+      if ( millis < 0 )
+      {
+         throw new IllegalArgumentException( "millis" );
+      }
+      
       final MolokoCalendar cal = MolokoCalendar.getInstance();
-      cal.setTimeInMillis( millis );
-      return cal;
-   }
-   
-   
-   
-   public final static MolokoCalendar newCalendarUTC( long millis )
-   {
-      final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
       cal.setTimeInMillis( millis );
       return cal;
    }
@@ -92,6 +69,11 @@ public class MolokoDateUtils
    
    public final static Time newTime( long millis )
    {
+      if ( millis < 0 )
+      {
+         throw new IllegalArgumentException( "millis" );
+      }
+      
       final Time t = new Time( TimeZone.getDefault().getID() );
       t.set( millis );
       return t;
@@ -101,30 +83,41 @@ public class MolokoDateUtils
    
    public static boolean isToday( long when )
    {
-      return ( getTimespanInDays( System.currentTimeMillis(), when ) == 0 );
+      return getTimespanInDays( System.currentTimeMillis(), when ) == 0;
    }
    
    
    
    public static boolean isDaysBefore( long when, long reference )
    {
-      return ( getTimespanInDays( when, reference ) > 0 );
+      return getTimespanInDays( when, reference ) > 0;
    }
    
    
    
    public static boolean isDaysAfter( long when, long reference )
    {
-      return ( getTimespanInDays( when, reference ) < 0 );
+      return getTimespanInDays( when, reference ) < 0;
    }
    
    
    
    public static int getTimespanInDays( long start, long end )
    {
+      if ( start < 0 )
+      {
+         throw new IllegalArgumentException( "start" );
+      }
+      if ( end < 0 )
+      {
+         throw new IllegalArgumentException( "end" );
+      }
+      
       final TimeZone timeZone = TimeZone.getDefault();
-      final int offStart = timeZone.getOffset( start ) / 1000; // in sec.
-      final int offEnd = timeZone.getOffset( end ) / 1000; // in sec.
+      final int offStart = timeZone.getOffset( start )
+         / (int) DateUtils.SECOND_IN_MILLIS; // in sec.
+      final int offEnd = timeZone.getOffset( end )
+         / (int) DateUtils.SECOND_IN_MILLIS; // in sec.
       
       final int span = Time.getJulianDay( end, offEnd )
          - Time.getJulianDay( start, offStart );
@@ -134,17 +127,27 @@ public class MolokoDateUtils
    
    
    
-   public static long getFittingDateUtilsResolution( long time, long now )
+   public static long getFittingDateUtilsResolution( long millis, long nowMillis )
    {
-      final int diff = (int) ( ( ( time >= now ) ? time - now : now - time ) / 1000 );
+      if ( millis < 0 )
+      {
+         throw new IllegalArgumentException( "millis" );
+      }
+      if ( nowMillis < 0 )
+      {
+         throw new IllegalArgumentException( "nowMillis" );
+      }
+      
+      final int diff = (int) ( ( ( millis >= nowMillis ) ? millis - nowMillis
+                                                        : nowMillis - millis ) / DateUtils.SECOND_IN_MILLIS );
       
       // 1..n days
-      if ( diff >= 3600 * 24 )
+      if ( diff >= DAY_IN_SECONDS )
       {
          return DateUtils.DAY_IN_MILLIS;
       }
       // 1..24 hours
-      else if ( diff >= 3600 )
+      else if ( diff >= HOUR_IN_SECONDS )
       {
          return DateUtils.HOUR_IN_MILLIS;
       }
@@ -162,122 +165,57 @@ public class MolokoDateUtils
    
    
    
-   public final static Date parseRtmDate( String rtmDateStr )
-   {
-      try
-      {
-         return RtmData.parseDate( rtmDateStr );
-      }
-      catch ( RuntimeException e )
-      {
-         throw new IllegalArgumentException( e );
-      }
-   }
-   
-   
-   
-   public final static String getDayOfWeekString( int calendarDayOfWeek,
-                                                  boolean abbrev )
+   public final static String getDayOfWeekString( int calendarDayOfWeek )
    {
       return DateUtils.getDayOfWeekString( calendarDayOfWeek,
-                                           abbrev ? DateUtils.LENGTH_SHORT
-                                                 : DateUtils.LENGTH_LONG );
+                                           DateUtils.LENGTH_LONG );
    }
    
    
    
-   public final static Date getDate( ParcelableDate parcelableDate )
+   public final static String getAbbreviatedDayOfWeekString( int calendarDayOfWeek )
    {
-      return getDate( parcelableDate, null );
+      return DateUtils.getDayOfWeekString( calendarDayOfWeek,
+                                           DateUtils.LENGTH_SHORT );
    }
    
    
    
-   public final static Date getDate( ParcelableDate parcelableDate,
-                                     Date defaultValue )
+   public final static TimeStruct getTimeStruct( long millis )
    {
-      Date ret = defaultValue;
+      if ( millis < 0 )
+      {
+         throw new IllegalArgumentException( "millis" );
+      }
       
-      if ( parcelableDate != null )
-         ret = parcelableDate.getDate();
-      
-      return ret;
-   }
-   
-   
-   
-   public final static Long getTime( ParcelableDate parcelableDate )
-   {
-      return getTime( parcelableDate, null );
-   }
-   
-   
-   
-   public final static Long getTime( ParcelableDate parcelableDate,
-                                     Long defaultValue )
-   {
-      Long ret = defaultValue;
-      
-      if ( parcelableDate != null )
-         ret = Long.valueOf( parcelableDate.getTime() );
-      
-      return ret;
-   }
-   
-   
-   
-   public final static Long getTime( Date date )
-   {
-      return getTime( date, null );
-   }
-   
-   
-   
-   public final static Long getTime( Date date, Long defaultValue )
-   {
-      Long ret = defaultValue;
-      
-      if ( date != null )
-         ret = Long.valueOf( date.getTime() );
-      
-      return ret;
-   }
-   
-   
-   
-   public final static EstimateStruct parseEstimated( long millis )
-   {
       int days = 0;
       int hours = 0;
       int minutes = 0;
+      int seconds = 0;
       
-      if ( millis > -1 )
+      seconds = (int) ( millis / DateUtils.SECOND_IN_MILLIS );
+      
+      if ( seconds >= 60 )
       {
-         int timeSeconds = (int) ( millis / 1000 );
-         
-         // Minute is minimal resolution
-         if ( timeSeconds >= 60 )
+         if ( seconds >= DAY_IN_SECONDS )
          {
-            if ( timeSeconds >= 3600 * 24 )
-            {
-               days = timeSeconds / 3600 / 24;
-               timeSeconds -= days * 3600 * 24;
-            }
-            
-            if ( timeSeconds >= 3600 )
-            {
-               hours = timeSeconds / 3600;
-               timeSeconds -= hours * 3600;
-            }
-            
-            if ( timeSeconds >= 60 )
-            {
-               minutes = timeSeconds / 60;
-               timeSeconds -= minutes * 60;
-            }
+            days = seconds / HOUR_IN_SECONDS / 24;
+            seconds -= days * DAY_IN_SECONDS;
+         }
+         
+         if ( seconds >= HOUR_IN_SECONDS )
+         {
+            hours = seconds / HOUR_IN_SECONDS;
+            seconds -= hours * HOUR_IN_SECONDS;
+         }
+         
+         if ( seconds >= 60 )
+         {
+            minutes = seconds / 60;
+            seconds -= minutes * 60;
          }
       }
       
-      return new EstimateStruct( days, hours, minutes );
+      return new TimeStruct( days, hours, minutes, seconds );
    }
 }

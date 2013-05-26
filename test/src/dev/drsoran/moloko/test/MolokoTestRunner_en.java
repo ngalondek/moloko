@@ -22,23 +22,39 @@
 
 package dev.drsoran.moloko.test;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import java.util.Locale;
+
+import org.junit.runners.model.InitializationError;
+import org.robolectric.annotation.Config;
 
 
-@RunWith( MolokoTestRunner_en.class )
-public abstract class MolokoTestCase
+@Config( qualifiers = "en" )
+public class MolokoTestRunner_en extends MolokoTestRunner
 {
-   @Before
-   public void setUp()
+   
+   public MolokoTestRunner_en( Class< ? > testClass )
+      throws InitializationError
    {
+      super( testClass );
+      Locale.setDefault( Locale.US );
    }
    
    
    
-   @After
-   public void tearDown()
+   // @Override
+   // public void beforeTest( Method method )
+   // {
+   // if ( !isInitialized() )
+   // {
+   // Locale.setDefault( Locale.US );
+   // }
+   //
+   // super.beforeTest( method );
+   // }
+   
+   @Override
+   public String getValuesResQualifiers()
    {
+      return "";
    }
 }

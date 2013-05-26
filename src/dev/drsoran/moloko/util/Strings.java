@@ -22,8 +22,9 @@
 
 package dev.drsoran.moloko.util;
 
+import java.text.MessageFormat;
+
 import android.text.Editable;
-import android.text.TextUtils;
 
 
 public final class Strings
@@ -41,6 +42,11 @@ public final class Strings
    
    public static boolean isQuotified( String input )
    {
+      if ( input == null )
+      {
+         throw new IllegalArgumentException( "input" );
+      }
+      
       return input.matches( "\"(?:[^\"\\\\]|\\\\.)*\"" );
    }
    
@@ -48,18 +54,30 @@ public final class Strings
    
    public static String unquotify( String input )
    {
-      return input.replaceAll( "(\"|')", "" );
+      if ( input == null )
+      {
+         throw new IllegalArgumentException( "input" );
+      }
+      
+      return input.replaceAll( "(\")", "" );
    }
    
    
    
    public static String quotify( String input )
    {
-      return "\"" + input + "\"";
+      if ( input == null )
+      {
+         throw new IllegalArgumentException( "input" );
+      }
+      
+      return MessageFormat.format( "\"{0}\"", input );
    }
    
    
    
+   @Deprecated
+   // TODO: This method does not belongs to Strings class. This is UI scope
    public final static String getTrimmed( Editable editable )
    {
       return editable.toString().trim();
@@ -67,35 +85,40 @@ public final class Strings
    
    
    
-   public final static String emptyIfNull( String string )
+   public final static String emptyIfNull( String input )
    {
-      return ( string == null ) ? EMPTY_STRING : string;
+      return ( input == null ) ? EMPTY_STRING : input;
    }
    
    
    
-   public final static CharSequence emptyIfNull( CharSequence string )
+   public final static CharSequence emptyIfNull( CharSequence input )
    {
-      return ( string == null ) ? EMPTY_STRING : string;
+      return ( input == null ) ? EMPTY_STRING : input;
    }
    
    
    
-   public final static String nullIfEmpty( String string )
+   public final static String nullIfEmpty( String input )
    {
-      return ( TextUtils.isEmpty( string ) ) ? null : string;
+      return (String) nullIfEmpty( (CharSequence) input );
    }
    
    
    
-   public final static CharSequence nullIfEmpty( CharSequence string )
+   public final static CharSequence nullIfEmpty( CharSequence input )
    {
-      return ( string == null || string.length() == 0 ) ? null : string;
+      if ( input == null )
+      {
+         throw new IllegalArgumentException( "input" );
+      }
+      
+      return input.length() == 0 ? null : input;
    }
    
    
    
-   public final static boolean equals( String lhs, String rhs )
+   public final static boolean equalsNullAware( String lhs, String rhs )
    {
       return ( lhs == rhs ) || ( lhs != null && lhs.equals( rhs ) );
    }
@@ -109,7 +132,7 @@ public final class Strings
    
    
    
-   public static < T > T convertTo( String value, Class< T > valueClass )
+   public static < T > T convertTo( String value, Class< T > valueClass ) throws NumberFormatException
    {
       Object converted;
       
@@ -175,27 +198,27 @@ public final class Strings
          converted = (String) value;
       }
       
-      else if ( valueClass == Long.class || valueClass == long.class )
+      else if ( valueClass == Long.class )
       {
          converted = Long.toString( (Long) value );
       }
       
-      else if ( valueClass == Integer.class || valueClass == int.class )
+      else if ( valueClass == Integer.class )
       {
          converted = Integer.toString( (Integer) value );
       }
       
-      else if ( valueClass == Boolean.class || valueClass == boolean.class )
+      else if ( valueClass == Boolean.class )
       {
          converted = Boolean.toString( (Boolean) value );
       }
       
-      else if ( valueClass == Float.class || valueClass == float.class )
+      else if ( valueClass == Float.class )
       {
          converted = Float.toString( (Float) value );
       }
       
-      else if ( valueClass == Double.class || valueClass == double.class )
+      else if ( valueClass == Double.class )
       {
          converted = Double.toString( (Double) value );
       }

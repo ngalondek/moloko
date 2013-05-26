@@ -28,9 +28,10 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class ExtendedTaskCountFixture
+public class ExtendedTaskCountFixture extends MolokoTestCase
 {
    @Test
    public void testExtendedTaskCount()

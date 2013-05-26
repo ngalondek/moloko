@@ -70,7 +70,7 @@ public class RtmSmartFilter
       }
       
       final RtmSmartFilter other = (RtmSmartFilter) o;
-      final boolean equal = Strings.equals( filter, other.filter );
+      final boolean equal = Strings.equalsNullAware( filter, other.filter );
       
       return equal;
    }

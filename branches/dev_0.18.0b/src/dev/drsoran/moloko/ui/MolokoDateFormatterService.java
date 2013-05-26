@@ -27,8 +27,8 @@ import android.content.res.Resources;
 import android.text.format.DateFormat;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
+import dev.drsoran.moloko.util.TimeStruct;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils.EstimateStruct;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -97,7 +97,7 @@ final class MolokoDateFormatterService implements IDateFormatterService
    @Override
    public String formatDateNumeric( String part1, String part2 )
    {
-      return formatDateNumeric( part1, part2, null );
+      return context.getString( R.string.numeric_date_pattern, part1, part2 );
    }
    
    
@@ -105,13 +105,10 @@ final class MolokoDateFormatterService implements IDateFormatterService
    @Override
    public String formatDateNumeric( String part1, String part2, String part3 )
    {
-      if ( part3 == null )
-         return context.getString( R.string.numeric_date_pattern, part1, part2 );
-      else
-         return context.getString( R.string.numeric_date_pattern_year,
-                                   part1,
-                                   part2,
-                                   part3 );
+      return context.getString( R.string.numeric_date_pattern_year,
+                                part1,
+                                part2,
+                                part3 );
    }
    
    
@@ -141,7 +138,7 @@ final class MolokoDateFormatterService implements IDateFormatterService
       
       if ( millis > -1 )
       {
-         final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( millis );
+         final TimeStruct estimateStruct = MolokoDateUtils.getTimeStruct( millis );
          final StringBuilder stringBuilder = new StringBuilder();
          
          if ( estimateStruct.days > 0 )

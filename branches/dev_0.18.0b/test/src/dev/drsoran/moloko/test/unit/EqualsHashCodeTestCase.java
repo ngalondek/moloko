@@ -12,6 +12,8 @@ import junit.framework.AssertionFailedError;
 import org.junit.Before;
 import org.junit.Test;
 
+import dev.drsoran.moloko.test.MolokoTestCase;
+
 
 /**
  * Extend me in order to test a class's functional compliance with the <code>equals</code> and <code>hashCode</code>
@@ -28,7 +30,7 @@ import org.junit.Test;
  * @see java.lang.Object#hashCode()
  */
 @SuppressWarnings( "javadoc" )
-public abstract class EqualsHashCodeTestCase
+public abstract class EqualsHashCodeTestCase extends MolokoTestCase
 {
    private Object eq1;
    
@@ -78,6 +80,7 @@ public abstract class EqualsHashCodeTestCase
     * 
     * @throws Exception
     */
+   @Override
    @Before
    public void setUp() throws Exception
    {

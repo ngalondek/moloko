@@ -23,11 +23,19 @@
 package dev.drsoran.moloko.util;
 
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 
 
 public final class Reflection
 {
-   public final static < T > Method findMethod( Class< T > clazz, String name )
+   private Reflection()
+   {
+      throw new AssertionError();
+   }
+   
+   
+   
+   public final static < T > Method findMethod( Class< T > clazz, String name ) throws NoSuchMethodException
    {
       Method method = null;
       
@@ -41,8 +49,9 @@ public final class Reflection
       
       if ( method == null )
       {
-         throw new RuntimeException( "The class " + clazz.getName()
-            + " does not has a method " + name );
+         throw new NoSuchMethodException( MessageFormat.format( "The class {0} does not has a method {1}",
+                                                                clazz.getName(),
+                                                                name ) );
       }
       
       return method;

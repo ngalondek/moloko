@@ -38,6 +38,16 @@ public class DelayedRun
                                Runnable action,
                                long afterMillis )
    {
+      if ( handler == null )
+      {
+         throw new IllegalArgumentException( "handler" );
+      }
+      
+      if ( action == null )
+      {
+         throw new IllegalArgumentException( "action" );
+      }
+      
       handler.removeRunnable( action );
       handler.postDelayed( action, afterMillis );
       

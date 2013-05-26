@@ -26,14 +26,13 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ListenerList< T >
 {
-   public final Method method;
+   private final Method method;
    
    
    private final class ListenerEntry
@@ -52,27 +51,29 @@ public class ListenerList< T >
       
       
       
-      boolean isDead()
+      public boolean isDead()
       {
          return listener.get() == null;
       }
       
       
       
-      boolean matches( int setting )
+      public boolean matches( int setting )
       {
          return ( ( mask & setting ) != 0 );
       }
       
       
       
-      void notify( int mask )
+      public void notify( int mask )
       {
-         if ( listener.get() != null )
+         T listenerStrong = listener.get();
+         
+         if ( listenerStrong != null )
          {
             try
             {
-               method.invoke( listener.get(), mask );
+               method.invoke( listenerStrong, mask );
             }
             catch ( IllegalArgumentException e )
             {
@@ -91,13 +92,15 @@ public class ListenerList< T >
       
       
       
-      void notify( int mask, Object value )
+      public void notify( int mask, Object value )
       {
-         if ( listener.get() != null )
+         T listenerStrong = listener.get();
+         
+         if ( listenerStrong != null )
          {
             try
             {
-               method.invoke( listener.get(), mask, value );
+               method.invoke( listenerStrong, mask, value );
             }
             catch ( IllegalArgumentException e )
             {
@@ -125,6 +128,11 @@ public class ListenerList< T >
    
    public ListenerList( Method method )
    {
+      if ( method == null )
+      {
+         throw new IllegalArgumentException( "method" );
+      }
+      
       this.method = method;
    }
    
@@ -132,20 +140,31 @@ public class ListenerList< T >
    
    public void registerListener( int which, T listener )
    {
-      if ( listener != null )
+      if ( listener == null )
       {
-         listeners.add( new ListenerEntry( which, listener ) );
+         throw new IllegalArgumentException( "listener" );
       }
+      
+      listeners.add( new ListenerEntry( which, listener ) );
    }
    
    
    
    public void unregisterListener( T listener )
    {
-      if ( listener != null )
+      if ( listener == null )
       {
-         removeListener( listener );
+         throw new IllegalArgumentException( "listener" );
       }
+      
+      removeListener( listener );
+   }
+   
+   
+   
+   public int size()
+   {
+      return listeners.size();
    }
    
    
@@ -159,65 +178,43 @@ public class ListenerList< T >
    
    public void notifyListeners( int mask )
    {
-      List< ListenerEntry > deadEntries = null;
-      
-      for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
+      for ( int i = listeners.size() - 1; i >= 0; --i )
       {
-         final ListenerEntry entry = i.next();
+         final ListenerEntry entry = listeners.get( i );
          
-         // Check if we have a dead entry
          if ( entry.isDead() )
          {
-            if ( deadEntries == null )
-               deadEntries = new LinkedList< ListenerEntry >();
-            deadEntries.add( entry );
+            listeners.remove( i );
          }
          else if ( entry.matches( mask ) )
+         {
             entry.notify( mask );
+         }
       }
-      
-      if ( deadEntries != null )
-         listeners.removeAll( deadEntries );
    }
    
    
    
    public void notifyListeners( int mask, Object value )
    {
-      if ( mask > 0 )
+      for ( int i = listeners.size() - 1; i >= 0; --i )
       {
-         List< ListenerEntry > deadEntries = null;
+         final ListenerEntry entry = listeners.get( i );
          
-         for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
+         if ( entry.isDead() )
          {
-            final ListenerEntry entry = i.next();
-            
-            // Check if we have a dead entry
-            if ( entry.isDead() )
-            {
-               if ( deadEntries == null )
-               {
-                  deadEntries = new LinkedList< ListenerEntry >();
-               }
-               
-               deadEntries.add( entry );
-            }
-            else if ( entry.matches( mask ) )
-            {
-               entry.notify( mask, value );
-            }
+            listeners.remove( i );
          }
-         
-         if ( deadEntries != null )
+         else if ( entry.matches( mask ) )
          {
-            listeners.removeAll( deadEntries );
+            entry.notify( mask, value );
          }
       }
    }
    
    
    
-   public boolean removeListener( T listener )
+   private void removeListener( T listener )
    {
       ListenerEntry entryToRemove = null;
       
@@ -232,6 +229,9 @@ public class ListenerList< T >
          }
       }
       
-      return listeners.remove( entryToRemove );
+      if ( entryToRemove != null )
+      {
+         listeners.remove( entryToRemove );
+      }
    }
 }

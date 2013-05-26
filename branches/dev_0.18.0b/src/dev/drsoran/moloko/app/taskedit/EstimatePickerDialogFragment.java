@@ -41,8 +41,8 @@ import android.view.View;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.util.TimeStruct;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils.EstimateStruct;
 
 
 class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
@@ -137,7 +137,7 @@ class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    private Pair< Integer, Integer > getValueAndUnitFromMillis()
    {
-      final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( estimateMillis );
+      final TimeStruct estimateStruct = MolokoDateUtils.getTimeStruct( estimateMillis );
       
       int value = 1;
       int unit = UNIT_DAY;

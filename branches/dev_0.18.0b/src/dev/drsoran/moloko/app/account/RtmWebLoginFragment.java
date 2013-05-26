@@ -268,11 +268,11 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    {
       final String buttonText = button.getText().toString();
       
-      if ( Strings.equals( buttonText, getString( R.string.btn_cancel ) ) )
+      if ( Strings.equalsNullAware( buttonText, getString( R.string.btn_cancel ) ) )
       {
          notifyAuthenticationCanceled();
       }
-      else if ( Strings.equals( buttonText, getString( R.string.btn_continue ) ) )
+      else if ( Strings.equalsNullAware( buttonText, getString( R.string.btn_continue ) ) )
       {
          authenticator.completeAuthentication( this );
       }

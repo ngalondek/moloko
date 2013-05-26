@@ -28,9 +28,10 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Priority;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class PriorityFixture
+public class PriorityFixture extends MolokoTestCase
 {
    
    @Test

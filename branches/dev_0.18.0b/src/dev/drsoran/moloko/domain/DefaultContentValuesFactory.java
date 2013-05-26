@@ -403,11 +403,6 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
       {
          final ContentValues values = new ContentValues();
          
-         if ( modification.getId() != Constants.NO_ID )
-         {
-            values.put( ModificationColumns._ID, modification.getId() );
-         }
-         
          values.put( ModificationColumns.ENTITY_URI,
                      modification.getEntityUri().toString() );
          values.put( ModificationColumns.COL_NAME, modification.getColName() );

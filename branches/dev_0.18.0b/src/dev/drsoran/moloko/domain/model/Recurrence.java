@@ -81,7 +81,7 @@ public class Recurrence
       
       final Recurrence other = (Recurrence) o;
       
-      return Strings.equals( pattern, other.pattern )
+      return Strings.equalsNullAware( pattern, other.pattern )
          && isEveryRecurrence == other.isEveryRecurrence;
    }
    

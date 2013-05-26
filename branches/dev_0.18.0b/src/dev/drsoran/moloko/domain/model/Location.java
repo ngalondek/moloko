@@ -139,8 +139,8 @@ public class Location
       
       return id == other.id && longitude == other.longitude
          && latitude == other.latitude && isViewable == other.isViewable
-         && zoom == other.zoom && Strings.equals( name, other.name )
-         && Strings.equals( address, other.address );
+         && zoom == other.zoom && Strings.equalsNullAware( name, other.name )
+         && Strings.equalsNullAware( address, other.address );
    }
    
    

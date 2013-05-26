@@ -20,20 +20,26 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.unit.domain.model;
+package dev.drsoran.moloko.test.unit;
 
-import dev.drsoran.moloko.content.Constants;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 
-class ModelTestCase
+public class PrivateCtorCaller
 {
-   public static final long ID = 1;
-   
-   public static final long NO_ID = Constants.NO_ID;
-   
-   public static final long NOW = System.currentTimeMillis();
-   
-   public static final long LATER = NOW + 3600 * 1000;
-   
-   public static final long NEVER = Constants.NO_TIME;
+   public final static < T > void callPrivateCtor( Class< T > clazz ) throws Throwable
+   {
+      final Constructor< T > ctor = clazz.getDeclaredConstructor( (Class< ? >[]) null );
+      ctor.setAccessible( true );
+      
+      try
+      {
+         ctor.newInstance( (Object[]) null );
+      }
+      catch ( InvocationTargetException e )
+      {
+         throw e.getCause();
+      }
+   }
 }

@@ -294,7 +294,7 @@ class QuickAddTaskActionModeInputHandler
                         {
                            final long estimated = context.getParsingService()
                                                          .getDateTimeParsing()
-                                                         .parseEstimated( token.text );
+                                                         .getTimeStruct( token.text );
                            if ( estimated != -1 )
                            {
                               config.putString( Tasks.ESTIMATE,

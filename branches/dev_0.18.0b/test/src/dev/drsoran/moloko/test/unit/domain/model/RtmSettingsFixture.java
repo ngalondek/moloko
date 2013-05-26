@@ -32,10 +32,11 @@ import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
 @RunWith( Theories.class )
-public class RtmSettingsFixture
+public class RtmSettingsFixture extends MolokoTestCase
 {
    @DataPoint
    public final static long ID = 1L;

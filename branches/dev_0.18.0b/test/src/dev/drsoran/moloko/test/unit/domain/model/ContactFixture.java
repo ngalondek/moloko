@@ -29,9 +29,10 @@ import org.junit.Test;
 
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Contact;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class ContactFixture
+public class ContactFixture extends MolokoTestCase
 {
    @Test
    public void testContact()

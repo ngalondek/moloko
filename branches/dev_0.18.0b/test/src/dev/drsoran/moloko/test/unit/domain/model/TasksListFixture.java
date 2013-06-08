@@ -22,17 +22,26 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.*;
+import static dev.drsoran.moloko.test.TestConstants.LATER;
+import static dev.drsoran.moloko.test.TestConstants.NEVER;
+import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.moloko.test.TestConstants.NO_ID;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class TasksListFixture extends ModelTestCase
+public class TasksListFixture extends MolokoTestCase
 {
    @Test
    public void testTasksListNoId()
@@ -45,7 +54,7 @@ public class TasksListFixture extends ModelTestCase
    @Test
    public void testTasksList()
    {
-      new TasksList( ID, NOW, "list", 0, false, false );
+      new TasksList( 1, NOW, "list", 0, false, false );
    }
    
    
@@ -53,7 +62,7 @@ public class TasksListFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTasksListNoCreatedMillis()
    {
-      new TasksList( ID, NEVER, "list", 0, false, false );
+      new TasksList( 1, NEVER, "list", 0, false, false );
    }
    
    
@@ -61,7 +70,7 @@ public class TasksListFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTasksListNullName()
    {
-      new TasksList( ID, NEVER, null, 0, false, false );
+      new TasksList( 1, NEVER, null, 0, false, false );
    }
    
    
@@ -69,7 +78,7 @@ public class TasksListFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTasksListEmptyName()
    {
-      new TasksList( ID, NEVER, "", 0, false, false );
+      new TasksList( 1, NEVER, "", 0, false, false );
    }
    
    
@@ -77,8 +86,8 @@ public class TasksListFixture extends ModelTestCase
    @Test
    public void testGetId()
    {
-      assertThat( new TasksList( ID, NOW, "list", 0, false, false ).getId(),
-                  is( ID ) );
+      assertThat( new TasksList( 1, NOW, "list", 0, false, false ).getId(),
+                  is( 1L ) );
    }
    
    

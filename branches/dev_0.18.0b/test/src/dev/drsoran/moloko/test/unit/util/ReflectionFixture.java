@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.unit.PrivateCtorCaller;
+import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.util.Reflection;
 
 

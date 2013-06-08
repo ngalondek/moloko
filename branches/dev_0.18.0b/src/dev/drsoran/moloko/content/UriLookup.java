@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.content;
 
+import java.text.MessageFormat;
 import java.util.NoSuchElementException;
 
 import android.content.UriMatcher;
@@ -39,36 +40,54 @@ public final class UriLookup< T >
    
    public UriLookup( UriMatcher uriMatcher )
    {
+      if ( uriMatcher == null )
+      {
+         throw new IllegalArgumentException( "uriMatcher" );
+      }
+      
       this.uriMatcher = uriMatcher;
    }
    
    
    
-   public void put( T object, Uri uri, Uri... otherUris ) throws IllegalArgumentException
+   public void put( T object, int matchType ) throws IllegalArgumentException
    {
-      if ( !contains( object ) )
+      if ( matchType == UriMatcher.NO_MATCH )
       {
-         putUri( uri, object );
-         
-         for ( Uri otherUri : otherUris )
-         {
-            putUri( otherUri, object );
-         }
+         throw new IllegalArgumentException( "matchType" );
       }
+      
+      lookUp.put( matchType, object );
    }
    
    
    
    public T get( Uri uri ) throws NoSuchElementException
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       final int matchType = getMatchTypeForUri( uri );
-      return lookUp.get( matchType );
+      final int index = lookUp.indexOfKey( matchType );
+      if ( index == -1 )
+      {
+         throwNoSuchUri( uri );
+      }
+      
+      return lookUp.valueAt( index );
    }
    
    
    
    public boolean canLookUp( Uri uri )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       return tryGetMatchTypeForUri( uri ) != UriMatcher.NO_MATCH;
    }
    
@@ -83,6 +102,11 @@ public final class UriLookup< T >
    
    public void remove( Uri uri ) throws NoSuchElementException
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       final int matchType = getMatchTypeForUri( uri );
       lookUp.remove( matchType );
    }
@@ -96,16 +120,9 @@ public final class UriLookup< T >
    
    
    
-   private void putUri( Uri uri, T object ) throws IllegalArgumentException
+   public int size()
    {
-      final int matchType = tryGetMatchTypeForUri( uri );
-      if ( matchType == UriMatcher.NO_MATCH )
-      {
-         throw new IllegalArgumentException( "The URI '" + uri
-            + "' is not valid." );
-      }
-      
-      lookUp.put( matchType, object );
+      return lookUp.size();
    }
    
    
@@ -115,8 +132,7 @@ public final class UriLookup< T >
       final int matchType = tryGetMatchTypeForUri( uri );
       if ( matchType == UriMatcher.NO_MATCH )
       {
-         throw new NoSuchElementException( "The URI '" + uri
-            + "' cannot be matched to an existing URI" );
+         throwNoSuchUri( uri );
       }
       
       return matchType;
@@ -129,4 +145,13 @@ public final class UriLookup< T >
       final int matchType = uriMatcher.match( uri );
       return matchType;
    }
+   
+   
+   
+   private void throwNoSuchUri( Uri uri ) throws NoSuchElementException
+   {
+      throw new NoSuchElementException( MessageFormat.format( "The URI ''{0}'' cannot be matched to an existing URI",
+                                                              uri ) );
+   }
+   
 }

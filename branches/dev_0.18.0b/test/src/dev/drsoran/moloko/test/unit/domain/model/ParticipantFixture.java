@@ -22,21 +22,24 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.*;
+import static dev.drsoran.moloko.test.TestConstants.NO_ID;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Participant;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class ParticipantFixture extends ModelTestCase
+public class ParticipantFixture extends MolokoTestCase
 {
    
    @Test
    public void testParticipant()
    {
       createParticipant();
-      new Participant( ID, 2, "", "user" );
+      new Participant( 1, 2, "", "user" );
    }
    
    
@@ -52,7 +55,7 @@ public class ParticipantFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testParticipantNoContactId()
    {
-      new Participant( ID, NO_ID, "name", "user" );
+      new Participant( 1, NO_ID, "name", "user" );
    }
    
    
@@ -60,7 +63,7 @@ public class ParticipantFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testParticipantNullName()
    {
-      new Participant( ID, 2, null, "user" );
+      new Participant( 1, 2, null, "user" );
    }
    
    
@@ -68,7 +71,7 @@ public class ParticipantFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testParticipantNullUser()
    {
-      new Participant( ID, 2, "name", null );
+      new Participant( 1, 2, "name", null );
    }
    
    
@@ -76,7 +79,7 @@ public class ParticipantFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testParticipantEmptyUser()
    {
-      new Participant( ID, 2, "name", "" );
+      new Participant( 1, 2, "name", "" );
    }
    
    
@@ -84,7 +87,7 @@ public class ParticipantFixture extends ModelTestCase
    @Test
    public void testGetId()
    {
-      assertThat( createParticipant().getId(), is( ID ) );
+      assertThat( createParticipant().getId(), is( 1L ) );
    }
    
    
@@ -123,6 +126,6 @@ public class ParticipantFixture extends ModelTestCase
    
    private Participant createParticipant()
    {
-      return new Participant( ID, 2, "name", "user" );
+      return new Participant( 1, 2, "name", "user" );
    }
 }

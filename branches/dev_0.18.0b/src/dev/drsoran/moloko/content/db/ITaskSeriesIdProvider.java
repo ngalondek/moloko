@@ -22,7 +22,10 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.util.NoSuchElementException;
+
+
 interface ITaskSeriesIdProvider
 {
-   long getTaskSeriesIdOfTask( long taskId );
+   long getTaskSeriesIdOfTask( long taskId ) throws NoSuchElementException;
 }

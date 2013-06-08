@@ -25,32 +25,12 @@ package dev.drsoran.moloko.content.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 
 
 abstract class AbstractContentUriHandler implements IContentUriHandler
 {
-   private final ILog log;
-   
-   
-   
-   protected AbstractContentUriHandler( ILog log )
-   {
-      this.log = log;
-   }
-   
-   
-   
-   public ILog Log()
-   {
-      return log;
-   }
-   
-   
-   
    @Override
    public final Cursor query( Uri contentUri,
                               String[] projection,
@@ -59,33 +39,23 @@ abstract class AbstractContentUriHandler implements IContentUriHandler
                               String sortOrder )
    {
       final long id = ContentUris.getLastPathIdFromUri( contentUri );
-      try
+      
+      if ( id == Constants.NO_ID )
       {
-         if ( id == Constants.NO_ID )
-         {
-            return queryAll( contentUri,
-                             projection,
-                             selection,
-                             selectionArgs,
-                             sortOrder );
-         }
-         else
-         {
-            return queryElement( contentUri,
-                                 id,
-                                 projection,
-                                 selection,
-                                 selectionArgs,
-                                 sortOrder );
-         }
+         return queryAll( contentUri,
+                          projection,
+                          selection,
+                          selectionArgs,
+                          sortOrder );
       }
-      catch ( Exception e )
+      else
       {
-         Log().e( getClass(),
-                  "Failed to perform a query for content URI '" + contentUri
-                     + "'",
-                  e );
-         return null;
+         return queryElement( contentUri,
+                              id,
+                              projection,
+                              selection,
+                              selectionArgs,
+                              sortOrder );
       }
    }
    
@@ -94,11 +64,6 @@ abstract class AbstractContentUriHandler implements IContentUriHandler
    @Override
    public final long insert( Uri contentUri, ContentValues initialValues )
    {
-      if ( initialValues == null )
-      {
-         throw new IllegalArgumentException( "initialValues" );
-      }
-      
       final long id = ContentUris.getLastPathIdFromUri( contentUri );
       if ( id != Constants.NO_ID )
       {
@@ -106,18 +71,7 @@ abstract class AbstractContentUriHandler implements IContentUriHandler
             + contentUri + "' must not contain an ID." );
       }
       
-      try
-      {
-         return insertElement( contentUri, initialValues );
-      }
-      catch ( Exception e )
-      {
-         Log().e( getClass(),
-                  "Failed to insert to content URI '" + contentUri + "'",
-                  e );
-         
-         return Constants.NO_ID;
-      }
+      return insertElement( contentUri, initialValues );
    }
    
    
@@ -128,15 +82,6 @@ abstract class AbstractContentUriHandler implements IContentUriHandler
                             String where,
                             String[] whereArgs )
    {
-      if ( values == null )
-      {
-         throw new IllegalArgumentException( "values" );
-      }
-      
-      if ( !TextUtils.isEmpty( where ) )
-      {
-         throw new UnsupportedOperationException( "An update with a 'where clause' is not supported" );
-      }
       
       final long id = ContentUris.getLastPathIdFromUri( contentUri );
       if ( id == Constants.NO_ID )
@@ -145,17 +90,7 @@ abstract class AbstractContentUriHandler implements IContentUriHandler
             + contentUri + "' must contain an element ID." );
       }
       
-      try
-      {
-         return updateElement( contentUri, id, values );
-      }
-      catch ( Exception e )
-      {
-         Log().e( getClass(),
-                  "Failed to update the content URI '" + contentUri + "'",
-                  e );
-         return 0;
-      }
+      return updateElement( contentUri, id, values );
    }
    
    
@@ -165,23 +100,13 @@ abstract class AbstractContentUriHandler implements IContentUriHandler
    {
       final long id = ContentUris.getLastPathIdFromUri( contentUri );
       
-      try
+      if ( id == Constants.NO_ID )
       {
-         if ( id == Constants.NO_ID )
-         {
-            return deleteAll( contentUri, where, whereArgs );
-         }
-         else
-         {
-            return deleteElement( contentUri, id, where, whereArgs );
-         }
+         return deleteAll( contentUri, where, whereArgs );
       }
-      catch ( Exception e )
+      else
       {
-         Log().e( getClass(),
-                  "Failed to delete from content URI '" + contentUri + "'",
-                  e );
-         return 0;
+         return deleteElement( contentUri, id, where, whereArgs );
       }
    }
    

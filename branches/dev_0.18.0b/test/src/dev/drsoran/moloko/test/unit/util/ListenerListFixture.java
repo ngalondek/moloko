@@ -26,7 +26,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -94,7 +93,7 @@ public class ListenerListFixture extends MolokoTestCase
       final TestListener testListener = new TestListener( MASK_A );
       
       listenerListMask.registerListener( MASK_A, testListener );
-      assumeThat( listenerListMask.size(), is( 1 ) );
+      assertThat( listenerListMask.size(), is( 1 ) );
       
       listenerListMask.unregisterListener( testListener );
       assertThat( listenerListMask.size(), is( 0 ) );
@@ -116,7 +115,7 @@ public class ListenerListFixture extends MolokoTestCase
       final TestListener testListener = new TestListener( MASK_A );
       
       listenerListMask.registerListener( MASK_A, testListener );
-      assumeThat( listenerListMask.size(), is( 1 ) );
+      assertThat( listenerListMask.size(), is( 1 ) );
       
       listenerListMask.clear();
       assertThat( listenerListMask.size(), is( 0 ) );
@@ -221,12 +220,12 @@ public class ListenerListFixture extends MolokoTestCase
       listenerListMask.registerListener( MASK_A, testListener1 );
       listenerListMask.registerListener( MASK_A, testListener2 );
       
-      assumeThat( listenerListMask.size(), is( 2 ) );
+      assertThat( listenerListMask.size(), is( 2 ) );
       
       testListener2 = null;
       System.gc();
       
-      assumeThat( listenerListMask.size(), is( 2 ) );
+      assertThat( listenerListMask.size(), is( 2 ) );
       listenerListMask.notifyListeners( MASK_A );
       
       assertThat( testListener1.EventCnt, is( 1 ) );

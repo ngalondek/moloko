@@ -80,21 +80,28 @@ public class ListCursor implements Cursor
    @Override
    public boolean move( int offset )
    {
+      if ( list.isEmpty() )
+      {
+         position = -1;
+         return false;
+      }
+      
       int newPosition = position + offset;
       
+      boolean ok = true;
       if ( newPosition < 0 )
       {
          newPosition = -1;
-         return false;
+         ok = false;
       }
       else if ( newPosition >= list.size() )
       {
          newPosition = list.size();
-         return false;
+         ok = false;
       }
       
       position = newPosition;
-      return true;
+      return ok;
    }
    
    
@@ -102,7 +109,7 @@ public class ListCursor implements Cursor
    @Override
    public boolean moveToPosition( int position )
    {
-      if ( position > 0 && position < list.size() )
+      if ( position > -1 && position < list.size() )
       {
          this.position = position;
          return true;
@@ -167,7 +174,8 @@ public class ListCursor implements Cursor
    @Override
    public boolean isLast()
    {
-      return position == list.size() - 1;
+      final int listSize = list.size();
+      return listSize > 0 && position == listSize - 1;
    }
    
    
@@ -175,7 +183,7 @@ public class ListCursor implements Cursor
    @Override
    public boolean isBeforeFirst()
    {
-      return position < 0;
+      return !list.isEmpty() && position < 0;
    }
    
    
@@ -183,7 +191,8 @@ public class ListCursor implements Cursor
    @Override
    public boolean isAfterLast()
    {
-      return position >= list.size();
+      final int listSize = list.size();
+      return listSize > 0 && position >= listSize;
    }
    
    
@@ -207,7 +216,7 @@ public class ListCursor implements Cursor
    @Override
    public int getColumnIndexOrThrow( String columnName ) throws IllegalArgumentException
    {
-      final int index = getColumnIndexOrThrow( columnName );
+      final int index = getColumnIndex( columnName );
       if ( index < 0 )
       {
          throw new IllegalArgumentException( "columnName" );
@@ -253,7 +262,8 @@ public class ListCursor implements Cursor
    @Override
    public String getString( int columnIndex )
    {
-      return String.valueOf( get( columnIndex ) );
+      final Object o = get( columnIndex );
+      return o == null ? null : String.valueOf( o );
    }
    
    
@@ -262,8 +272,16 @@ public class ListCursor implements Cursor
    public void copyStringToBuffer( int columnIndex, CharArrayBuffer buffer )
    {
       final String value = getString( columnIndex );
-      buffer.data = value.toCharArray();
-      buffer.sizeCopied = value.length();
+      if ( value != null )
+      {
+         buffer.data = value.toCharArray();
+         buffer.sizeCopied = value.length();
+      }
+      else
+      {
+         buffer.data = null;
+         buffer.sizeCopied = 0;
+      }
    }
    
    
@@ -271,7 +289,8 @@ public class ListCursor implements Cursor
    @Override
    public short getShort( int columnIndex )
    {
-      return Short.parseShort( getString( columnIndex ) );
+      final String str = getString( columnIndex );
+      return str == null ? 0 : Short.parseShort( str );
    }
    
    
@@ -279,7 +298,8 @@ public class ListCursor implements Cursor
    @Override
    public int getInt( int columnIndex )
    {
-      return Integer.parseInt( getString( columnIndex ) );
+      final String str = getString( columnIndex );
+      return str == null ? 0 : Integer.parseInt( str );
    }
    
    
@@ -287,7 +307,8 @@ public class ListCursor implements Cursor
    @Override
    public long getLong( int columnIndex )
    {
-      return Long.parseLong( getString( columnIndex ) );
+      final String str = getString( columnIndex );
+      return str == null ? 0L : Long.parseLong( str );
    }
    
    
@@ -295,7 +316,8 @@ public class ListCursor implements Cursor
    @Override
    public float getFloat( int columnIndex )
    {
-      return Float.parseFloat( getString( columnIndex ) );
+      final String str = getString( columnIndex );
+      return str == null ? 0.0f : Float.parseFloat( str );
    }
    
    
@@ -303,7 +325,8 @@ public class ListCursor implements Cursor
    @Override
    public double getDouble( int columnIndex )
    {
-      return Double.parseDouble( getString( columnIndex ) );
+      final String str = getString( columnIndex );
+      return str == null ? 0.0 : Double.parseDouble( str );
    }
    
    

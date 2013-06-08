@@ -33,7 +33,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.ListCursor;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
@@ -62,9 +61,8 @@ class TagsContentUriHandler extends AbstractContentUriHandler
    
    
    
-   public TagsContentUriHandler( ILog log, SQLiteDatabase database )
+   public TagsContentUriHandler( SQLiteDatabase database )
    {
-      super( log );
       this.database = database;
    }
    

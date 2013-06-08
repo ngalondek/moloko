@@ -27,7 +27,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 
 
-interface ITable
+public interface ITable
 {
    String getTableName();
    

@@ -22,17 +22,17 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.moloko.test.TestConstants;
 
 
 @RunWith( Theories.class )
@@ -42,13 +42,13 @@ public class RtmSettingsFixture extends MolokoTestCase
    public final static long ID = 1L;
    
    @DataPoint
-   public final static long NO_ID = Constants.NO_ID;
+   public final static long NO_ID = TestConstants.NO_ID;
    
    @DataPoint
-   public final static long NOW = System.currentTimeMillis();
+   public final static long NOW = TestConstants.NOW;
    
    @DataPoint
-   public final static long NEVER = Constants.NO_TIME;
+   public final static long NEVER = TestConstants.NEVER;
    
    @DataPoint
    public final static String TEST_STRING = "testString";

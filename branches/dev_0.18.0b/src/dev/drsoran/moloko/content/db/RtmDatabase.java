@@ -28,7 +28,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import dev.drsoran.moloko.ILog;
 
 
-class RtmDatabase
+public class RtmDatabase
 {
    private final static String DATABASE_NAME = "rtm.db";
    
@@ -46,8 +46,17 @@ class RtmDatabase
    
    public RtmDatabase( Context context, ILog log )
    {
+      this( context, log, DATABASE_NAME );
+   }
+   
+   
+   
+   public RtmDatabase( Context context, ILog log, String databaseName )
+   {
       this.log = log;
-      this.dbAccess = new DatabaseOpenHelper( context );
+      this.dbAccess = new DatabaseOpenHelper( context,
+                                              databaseName,
+                                              RtmDatabase.DATABASE_VERSION );
    }
    
    
@@ -62,6 +71,13 @@ class RtmDatabase
    public SQLiteDatabase getReadable()
    {
       return dbAccess.getReadableDatabase();
+   }
+   
+   
+   
+   public void close()
+   {
+      dbAccess.close();
    }
    
    
@@ -128,12 +144,10 @@ class RtmDatabase
    
    private class DatabaseOpenHelper extends SQLiteOpenHelper
    {
-      public DatabaseOpenHelper( Context context )
+      public DatabaseOpenHelper( Context context, String databaseName,
+         int version )
       {
-         super( context,
-                RtmDatabase.DATABASE_NAME,
-                null,
-                RtmDatabase.DATABASE_VERSION );
+         super( context, databaseName, null, version );
       }
       
       

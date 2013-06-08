@@ -22,21 +22,28 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.*;
+import static dev.drsoran.moloko.test.TestConstants.LATER;
+import static dev.drsoran.moloko.test.TestConstants.NEVER;
+import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.moloko.test.TestConstants.NO_ID;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Note;
+import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class NoteFixture extends ModelTestCase
+public class NoteFixture extends MolokoTestCase
 {
    @Test
    public void testNote()
    {
-      new Note( ID, NOW );
+      new Note( 1, NOW );
    }
    
    
@@ -52,7 +59,7 @@ public class NoteFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNoteNoCreatedMillis()
    {
-      new Note( ID, NEVER );
+      new Note( 1, NEVER );
    }
    
    
@@ -60,7 +67,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testGetId()
    {
-      assertThat( new Note( ID, NOW ).getId(), is( ID ) );
+      assertThat( new Note( 1, NOW ).getId(), is( 1L ) );
    }
    
    
@@ -68,7 +75,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testGetTitle()
    {
-      assertThat( new Note( ID, NOW ).getTitle(), is( Strings.EMPTY_STRING ) );
+      assertThat( new Note( 1, NOW ).getTitle(), is( Strings.EMPTY_STRING ) );
    }
    
    
@@ -76,7 +83,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testSetTitle()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       note.setTitle( "title" );
       assertThat( note.getTitle(), is( "title" ) );
       
@@ -89,7 +96,7 @@ public class NoteFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testSetTitleNull()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       note.setTitle( null );
    }
    
@@ -98,7 +105,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testGetText()
    {
-      assertThat( new Note( ID, NOW ).getText(), is( Strings.EMPTY_STRING ) );
+      assertThat( new Note( 1, NOW ).getText(), is( Strings.EMPTY_STRING ) );
    }
    
    
@@ -106,7 +113,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testSetText()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       note.setText( "text" );
       assertThat( note.getText(), is( "text" ) );
       note.setText( "" );
@@ -118,7 +125,7 @@ public class NoteFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testSetTextNull()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       note.setText( null );
    }
    
@@ -127,7 +134,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testGetCreatedMillisUtc()
    {
-      assertThat( new Note( ID, NOW ).getCreatedMillisUtc(), is( NOW ) );
+      assertThat( new Note( 1, NOW ).getCreatedMillisUtc(), is( NOW ) );
    }
    
    
@@ -135,7 +142,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testGetModifiedMillisUtc()
    {
-      assertThat( new Note( ID, NOW ).getModifiedMillisUtc(), is( NEVER ) );
+      assertThat( new Note( 1, NOW ).getModifiedMillisUtc(), is( NEVER ) );
    }
    
    
@@ -143,7 +150,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testSetModifiedMillisUtc()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       note.setModifiedMillisUtc( LATER );
       assertThat( note.getModifiedMillisUtc(), is( LATER ) );
    }
@@ -153,7 +160,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testIsModified()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       assertFalse( note.isModified() );
       
       note.setModifiedMillisUtc( LATER );
@@ -165,7 +172,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testGetDeletedMillisUtc()
    {
-      assertThat( new Note( ID, NOW ).getDeletedMillisUtc(), is( NEVER ) );
+      assertThat( new Note( 1, NOW ).getDeletedMillisUtc(), is( NEVER ) );
    }
    
    
@@ -173,7 +180,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testSetDeletedMillisUtc()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       note.setDeletedMillisUtc( LATER );
       assertThat( note.getDeletedMillisUtc(), is( LATER ) );
    }
@@ -183,7 +190,7 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testIsDeleted()
    {
-      final Note note = new Note( ID, NOW );
+      final Note note = new Note( 1, NOW );
       assertFalse( note.isDeleted() );
       
       note.setDeletedMillisUtc( LATER );
@@ -195,6 +202,6 @@ public class NoteFixture extends ModelTestCase
    @Test
    public void testToString()
    {
-      new Note( ID, NOW ).toString();
+      new Note( 1, NOW ).toString();
    }
 }

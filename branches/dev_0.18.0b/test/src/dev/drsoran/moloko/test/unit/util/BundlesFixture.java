@@ -36,7 +36,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
-import dev.drsoran.moloko.test.unit.PrivateCtorCaller;
+import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.util.Bundles;
 
 

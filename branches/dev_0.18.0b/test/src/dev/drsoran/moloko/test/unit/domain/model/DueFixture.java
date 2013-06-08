@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Assume;
 import org.junit.Test;
@@ -34,17 +34,18 @@ import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Due;
-import dev.drsoran.moloko.test.unit.EqualsHashCodeTestCase;
+import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
+import dev.drsoran.moloko.test.TestConstants;
 
 
 @RunWith( Theories.class )
 public class DueFixture extends EqualsHashCodeTestCase
 {
    @DataPoint
-   public final static long NOW = System.currentTimeMillis();
+   public final static long NOW = TestConstants.NOW;
    
    @DataPoint
-   public final static long NEVER = Constants.NO_TIME;
+   public final static long NEVER = TestConstants.NEVER;
    
    @DataPoint
    public final static boolean HAS_TIME = true;

@@ -22,8 +22,10 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static dev.drsoran.moloko.test.unit.IterableAsserts.assertCount;
-import static dev.drsoran.moloko.test.unit.IterableAsserts.assertEmpty;
+import static dev.drsoran.moloko.test.IterableAsserts.assertCount;
+import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
+import static dev.drsoran.moloko.test.TestConstants.NEVER;
+import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
@@ -42,19 +44,14 @@ import org.robolectric.annotation.Config;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
 import dev.drsoran.moloko.test.MolokoTestRunner_en;
-import dev.drsoran.moloko.test.unit.EqualsHashCodeTestCase;
 
 
 @RunWith( MolokoTestRunner_en.class )
 @Config( manifest = Config.NONE )
 public class ModificationFixture extends EqualsHashCodeTestCase
 {
-   private final static long NOW = System.currentTimeMillis();
-   
-   private final static long NEVER = Constants.NO_TIME;
-   
-   
    
    @Test
    public void testGetEntityUri()

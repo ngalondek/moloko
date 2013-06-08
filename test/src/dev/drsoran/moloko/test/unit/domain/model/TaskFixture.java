@@ -22,8 +22,12 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static dev.drsoran.moloko.test.unit.IterableAsserts.assertEmpty;
-import static dev.drsoran.moloko.test.unit.IterableAsserts.assertEqualSet;
+import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
+import static dev.drsoran.moloko.test.IterableAsserts.assertEqualSet;
+import static dev.drsoran.moloko.test.TestConstants.LATER;
+import static dev.drsoran.moloko.test.TestConstants.NEVER;
+import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.moloko.test.TestConstants.NO_ID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -43,9 +47,10 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class TaskFixture extends ModelTestCase
+public class TaskFixture extends MolokoTestCase
 {
    @Test
    public void testTask()
@@ -66,7 +71,7 @@ public class TaskFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTaskNoCreatedMillis()
    {
-      new Task( ID, NEVER, NOW, "task", 1L, "list" );
+      new Task( 1, NEVER, NOW, "task", 1L, "list" );
    }
    
    
@@ -74,7 +79,7 @@ public class TaskFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTaskNoAddedMillis()
    {
-      new Task( ID, NOW, NEVER, "task", 1L, "list" );
+      new Task( 1, NOW, NEVER, "task", 1L, "list" );
    }
    
    
@@ -82,7 +87,7 @@ public class TaskFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTaskNullTaskName()
    {
-      new Task( ID, NOW, NOW, null, 1L, "list" );
+      new Task( 1, NOW, NOW, null, 1L, "list" );
    }
    
    
@@ -90,7 +95,7 @@ public class TaskFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTaskEmptyTaskName()
    {
-      new Task( ID, NOW, NOW, "", 1L, "list" );
+      new Task( 1, NOW, NOW, "", 1L, "list" );
    }
    
    
@@ -98,7 +103,7 @@ public class TaskFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTaskNoListId()
    {
-      new Task( ID, NOW, NOW, "task", NO_ID, "list" );
+      new Task( 1, NOW, NOW, "task", NO_ID, "list" );
    }
    
    
@@ -106,7 +111,7 @@ public class TaskFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTaskNullListName()
    {
-      new Task( ID, NOW, NOW, "task", 1L, null );
+      new Task( 1, NOW, NOW, "task", 1L, null );
    }
    
    
@@ -114,7 +119,7 @@ public class TaskFixture extends ModelTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testTaskEmptyListName()
    {
-      new Task( ID, NOW, NOW, "task", 1L, "" );
+      new Task( 1, NOW, NOW, "task", 1L, "" );
    }
    
    
@@ -122,7 +127,7 @@ public class TaskFixture extends ModelTestCase
    @Test
    public void testGetId()
    {
-      assertThat( createTask().getId(), is( ID ) );
+      assertThat( createTask().getId(), is( 1L ) );
    }
    
    
@@ -189,7 +194,7 @@ public class TaskFixture extends ModelTestCase
    @Test
    public void testGetAddedMillisUtc()
    {
-      assertThat( new Task( ID, NOW, LATER, "task", 1L, "list" ).getAddedMillisUtc(),
+      assertThat( new Task( 1, NOW, LATER, "task", 1L, "list" ).getAddedMillisUtc(),
                   is( LATER ) );
    }
    
@@ -744,7 +749,7 @@ public class TaskFixture extends ModelTestCase
    
    private Task createTask()
    {
-      final Task task = new Task( ID, NOW, LATER, "task", 1L, "list" );
+      final Task task = new Task( 1, NOW, LATER, "task", 1L, "list" );
       return task;
    }
    

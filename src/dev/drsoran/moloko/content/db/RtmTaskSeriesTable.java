@@ -97,7 +97,7 @@ class RtmTaskSeriesTable extends AbstractTable
    @Override
    public String getDefaultSortOrder()
    {
-      return RtmTaskSeriesColumns._ID + " ASC";
+      return RtmTaskSeriesColumns.DEFAULT_SORT_ORDER;
    }
    
    

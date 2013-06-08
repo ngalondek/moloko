@@ -22,21 +22,25 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
+import dev.drsoran.moloko.util.Strings;
 
 
 class TasksContentUriHandler extends AbstractContentUriHandler implements
@@ -50,6 +54,9 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
    
    private final static SQLiteQueryBuilder TASK_SERIES_OF_RAW_TASK_QUERY;
    
+   private final static Matcher ID_REPLACER = Pattern.compile( "\\b"
+      + TaskColumns._ID ).matcher( Strings.EMPTY_STRING );
+   
    private final SQLiteDatabase database;
    
    private final ITable rtmTaskSeriesTable;
@@ -59,7 +66,7 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
    static
    {
       TASK_QUERY_TABLE_NAMES = RtmTaskSeriesTable.TABLE_NAME + ", "
-         + RtmRawTasksTable.TABLE_NAME + ", " + RtmTaskSeriesTable.TABLE_NAME
+         + RtmRawTasksTable.TABLE_NAME + ", " + RtmTasksListsTable.TABLE_NAME
          + " LEFT OUTER JOIN " + RtmLocationsTable.TABLE_NAME + " ON "
          + RtmTaskSeriesTable.TABLE_NAME + "."
          + RtmTaskSeriesColumns.LOCATION_ID + "="
@@ -72,6 +79,7 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
          + RtmRawTasksTable.TABLE_NAME + "." + RtmRawTaskColumns.TASKSERIES_ID;
       
       TASK_QUERY_PROJECTION_MAP = new HashMap< String, String >( TaskColumns.PROJECTION.length );
+      
       for ( String column : TaskColumns.PROJECTION )
       {
          // We map the Task ID to the RawTask ID
@@ -93,11 +101,9 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
    
    
    
-   public TasksContentUriHandler( ILog log, SQLiteDatabase database,
+   public TasksContentUriHandler( SQLiteDatabase database,
       ITable rtmTaskSeriesTable, ITable rtmRawTasksTable )
    {
-      super( log );
-      
       this.database = database;
       this.rtmTaskSeriesTable = rtmTaskSeriesTable;
       this.rtmRawTasksTable = rtmRawTasksTable;
@@ -106,7 +112,7 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
    
    
    @Override
-   public long getTaskSeriesIdOfTask( long taskId )
+   public long getTaskSeriesIdOfTask( long taskId ) throws NoSuchElementException
    {
       Cursor rawTaskCursor = null;
       try
@@ -119,7 +125,8 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
                                                  null );
          if ( !rawTaskCursor.moveToNext() )
          {
-            return Constants.NO_ID;
+            throw new NoSuchElementException( MessageFormat.format( "No task with ID ''{0}''",
+                                                                    taskId ) );
          }
          
          return rawTaskCursor.getLong( 0 );
@@ -143,16 +150,21 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
                                   String[] selectionArgs,
                                   String sortOrder )
    {
-      final SQLiteQueryBuilder queryBuilder = getTasksQueryBuilder();
-      queryBuilder.appendWhere( TaskColumns._ID + "=" + String.valueOf( id ) );
+      final SQLiteQueryBuilder queryBuilder = getTasksQueryBuilder( getIdMapping()
+         + "=" + String.valueOf( id ) );
       
-      return queryBuilder.query( database,
-                                 projection,
-                                 selection,
-                                 selectionArgs,
-                                 null,
-                                 null,
-                                 sortOrder );
+      return performQuery( queryBuilder,
+                           projection,
+                           selection,
+                           selectionArgs,
+                           sortOrder );
+   }
+   
+   
+   
+   private String getIdMapping()
+   {
+      return TASK_QUERY_PROJECTION_MAP.get( TaskColumns._ID );
    }
    
    
@@ -165,13 +177,45 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
                               String sortOrder )
    {
       final SQLiteQueryBuilder queryBuilder = getTasksQueryBuilder();
-      return queryBuilder.query( database,
-                                 projection,
-                                 selection,
-                                 selectionArgs,
-                                 null,
-                                 null,
-                                 sortOrder );
+      return performQuery( queryBuilder,
+                           projection,
+                           selection,
+                           selectionArgs,
+                           sortOrder );
+   }
+   
+   
+   
+   private Cursor performQuery( SQLiteQueryBuilder queryBuilder,
+                                String[] projection,
+                                String selection,
+                                String[] selectionArgs,
+                                String sortOrder )
+   {
+      selection = mapAllIdsToRawTasksId( selection );
+      
+      final String rawQueryString = queryBuilder.buildQuery( projection,
+                                                             selection,
+                                                             null,
+                                                             null,
+                                                             sortOrder,
+                                                             null );
+      
+      return database.rawQuery( rawQueryString, selectionArgs );
+   }
+   
+   
+   
+   private String mapAllIdsToRawTasksId( String selection )
+   {
+      String result = selection;
+      
+      if ( !Strings.isNullOrEmpty( selection ) )
+      {
+         result = ID_REPLACER.reset( selection ).replaceAll( getIdMapping() );
+      }
+      
+      return result;
    }
    
    
@@ -254,9 +298,23 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
    
    private SQLiteQueryBuilder getTasksQueryBuilder()
    {
+      return getTasksQueryBuilder( null );
+   }
+   
+   
+   
+   private SQLiteQueryBuilder getTasksQueryBuilder( String additionalWhere )
+   {
       final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
       queryBuilder.setTables( TASK_QUERY_TABLE_NAMES );
       queryBuilder.setProjectionMap( TASK_QUERY_PROJECTION_MAP );
+      
+      if ( additionalWhere != null )
+      {
+         queryBuilder.appendWhere( additionalWhere );
+         queryBuilder.appendWhere( " AND " );
+      }
+      
       queryBuilder.appendWhere( TASK_QUERY_ALL_WHERE_CLAUSE );
       
       return queryBuilder;

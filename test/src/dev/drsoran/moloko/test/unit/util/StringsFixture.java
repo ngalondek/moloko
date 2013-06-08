@@ -33,7 +33,7 @@ import java.math.BigDecimal;
 import org.junit.Test;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.unit.PrivateCtorCaller;
+import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.util.Strings;
 
 

@@ -28,7 +28,6 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
 import dev.drsoran.moloko.content.Constants;
@@ -44,10 +43,8 @@ class TaskCountContentUriHandler extends AbstractContentUriHandler
    
    
    
-   public TaskCountContentUriHandler( ILog log,
-      IContentUriHandler tasksContentUriHandler )
+   public TaskCountContentUriHandler( IContentUriHandler tasksContentUriHandler )
    {
-      super( log );
       this.tasksContentUriHandler = tasksContentUriHandler;
    }
    
@@ -112,10 +109,18 @@ class TaskCountContentUriHandler extends AbstractContentUriHandler
       
       while ( tasksCursor.moveToNext() )
       {
-         final boolean isCompleted = !tasksCursor.isNull( TaskColumns.COMPLETED_DATE_IDX );
+         final boolean isTaskCompleted = !tasksCursor.isNull( TaskColumns.COMPLETED_DATE_IDX );
          
-         if ( !isCompleted )
+         if ( isTaskCompleted )
          {
+            ++completedTaskCount;
+         }
+         
+         // We deliver additional information only for incompleted tasks.
+         else
+         {
+            ++incompleteTaskCount;
+            
             final long dueMillisUtc = CursorUtils.getOptLong( tasksCursor,
                                                               TaskColumns.DUE_IDX,
                                                               Constants.NO_TIME );
@@ -144,7 +149,6 @@ class TaskCountContentUriHandler extends AbstractContentUriHandler
                }
             }
             
-            // Sum up estimated times
             final long estimateMillis = CursorUtils.getOptLong( tasksCursor,
                                                                 TaskColumns.ESTIMATE_MILLIS_IDX,
                                                                 Constants.NO_TIME );
@@ -152,12 +156,6 @@ class TaskCountContentUriHandler extends AbstractContentUriHandler
             {
                sumEstimated += estimateMillis;
             }
-         }
-         
-         // Completed?
-         if ( isCompleted )
-         {
-            ++completedTaskCount;
          }
       }
       

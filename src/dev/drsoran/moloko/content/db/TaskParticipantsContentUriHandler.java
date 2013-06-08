@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
@@ -39,11 +38,9 @@ class TaskParticipantsContentUriHandler extends AbstractContentUriHandler
    
    
    
-   public TaskParticipantsContentUriHandler( ILog log,
-      ITable rtmParticipantsTable, ITaskSeriesIdProvider taskSeriesIdProvider )
+   public TaskParticipantsContentUriHandler( ITable rtmParticipantsTable,
+      ITaskSeriesIdProvider taskSeriesIdProvider )
    {
-      super( log );
-      
       this.rtmParticipantsTable = rtmParticipantsTable;
       this.taskSeriesIdProvider = taskSeriesIdProvider;
    }

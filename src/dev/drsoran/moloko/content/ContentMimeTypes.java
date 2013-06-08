@@ -31,34 +31,58 @@ public final class ContentMimeTypes
    
    static
    {
+      TASKS_LIST_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.tasklist";
+      
+      TASKS_LIST_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.taskslist";
+      
+      TASK_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.task";
+      
+      TASK_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.task";
+      
+      TASK_NOTE_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.task.note";
+      
+      TASK_NOTE_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.task.note";
+      
+      TASK_PARTICIPANT_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.task.participant";
+      
+      TASK_PARTICIPANT_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.task.participant";
+      
+      LOCATION_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.location";
+      
+      LOCATION_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.location";
+      
+      CONTACT_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.contact";
+      
+      CONTACT_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.contact";
+      
+      TAGS_CONTENT_TYPE = "vnd.android.cursor.item/vnd.moloko.content.tag";
+      
       final UriLookup< String > lookup = new UriLookup< String >( ContentUris.MATCHER );
       
       lookup.put( ContentMimeTypes.TASKS_LIST_CONTENT_TYPE,
-                  ContentUris.TASKS_LISTS_CONTENT_URI );
+                  ContentUris.MATCH_TASKS_LISTS );
       lookup.put( ContentMimeTypes.TASKS_LIST_CONTENT_ITEM_TYPE,
-                  ContentUris.TASKS_LISTS_CONTENT_URI_ID );
-      lookup.put( ContentMimeTypes.TASK_CONTENT_TYPE,
-                  ContentUris.TASKS_CONTENT_URI );
+                  ContentUris.MATCH_TASKS_LISTS_ID );
+      lookup.put( ContentMimeTypes.TASK_CONTENT_TYPE, ContentUris.MATCH_TASKS );
       lookup.put( ContentMimeTypes.TASK_CONTENT_ITEM_TYPE,
-                  ContentUris.TASKS_CONTENT_URI_ID );
+                  ContentUris.MATCH_TASKS_ID );
       lookup.put( ContentMimeTypes.TASK_NOTE_CONTENT_TYPE,
-                  ContentUris.TASK_NOTES_CONTENT_URI );
-      lookup.put( ContentMimeTypes.TASK_NOTES_CONTENT_ITEM_TYPE,
-                  ContentUris.TASK_NOTES_CONTENT_URI_ID );
+                  ContentUris.MATCH_TASK_NOTES );
+      lookup.put( ContentMimeTypes.TASK_NOTE_CONTENT_ITEM_TYPE,
+                  ContentUris.MATCH_TASK_NOTES_ID );
       lookup.put( ContentMimeTypes.TASK_PARTICIPANT_CONTENT_TYPE,
-                  ContentUris.TASK_PARTICIPANTS_CONTENT_URI );
+                  ContentUris.MATCH_TASK_PARTICIPANTS );
       lookup.put( ContentMimeTypes.TASK_PARTICIPANT_CONTENT_ITEM_TYPE,
-                  ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID );
+                  ContentUris.MATCH_TASK_PARTICIPANTS_ID );
       lookup.put( ContentMimeTypes.LOCATION_CONTENT_TYPE,
-                  ContentUris.LOCATIONS_CONTENT_URI );
+                  ContentUris.MATCH_LOCATIONS );
       lookup.put( ContentMimeTypes.LOCATION_CONTENT_ITEM_TYPE,
-                  ContentUris.LOCATIONS_CONTENT_URI_ID );
+                  ContentUris.MATCH_LOCATIONS_ID );
       lookup.put( ContentMimeTypes.CONTACT_CONTENT_TYPE,
-                  ContentUris.CONTACTS_CONTENT_URI );
+                  ContentUris.MATCH_CONTACTS );
       lookup.put( ContentMimeTypes.CONTACT_CONTENT_ITEM_TYPE,
-                  ContentUris.CONTACTS_CONTENT_URI_ID );
-      lookup.put( ContentMimeTypes.TAGS_CONTENT_TYPE,
-                  ContentUris.TAGS_CONTENT_URI );
+                  ContentUris.MATCH_CONTACTS_ID );
+      lookup.put( ContentMimeTypes.TAGS_CONTENT_TYPE, ContentUris.MATCH_TAGS );
       
       CONTENT_URI_MIME_TYPE_LOOKUP = lookup;
    }
@@ -68,65 +92,65 @@ public final class ContentMimeTypes
    /**
     * The MIME type of providing a directory of lists.
     */
-   public static final String TASKS_LIST_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.tasklist";
+   public static final String TASKS_LIST_CONTENT_TYPE;
    
    /**
     * The MIME type of a sub-directory of a single list.
     */
-   public static final String TASKS_LIST_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.taskslist";
+   public static final String TASKS_LIST_CONTENT_ITEM_TYPE;
    
    /**
     * The MIME type of providing a directory of tasks.
     */
-   public static final String TASK_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.task";
+   public static final String TASK_CONTENT_TYPE;
    
    /**
     * The MIME type of a sub-directory of a single task.
     */
-   public static final String TASK_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.task";
+   public static final String TASK_CONTENT_ITEM_TYPE;
    
    /**
     * The MIME type of providing a directory of notes for a task.
     */
-   public static final String TASK_NOTE_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.task.note";
+   public static final String TASK_NOTE_CONTENT_TYPE;
    
    /**
     * The MIME type of a sub-directory of a single note for a task.
     */
-   public static final String TASK_NOTES_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.task.note";
+   public static final String TASK_NOTE_CONTENT_ITEM_TYPE;
    
    /**
     * The MIME type of providing a directory of participants of a task.
     */
-   public static final String TASK_PARTICIPANT_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.task.participant";
+   public static final String TASK_PARTICIPANT_CONTENT_TYPE;
    
    /**
     * The MIME type of a sub-directory of a single participants of a task.
     */
-   public static final String TASK_PARTICIPANT_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.task.participant";
+   public static final String TASK_PARTICIPANT_CONTENT_ITEM_TYPE;
    
    /**
     * The MIME type of providing the locations.
     */
-   public static final String LOCATION_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.location";
+   public static final String LOCATION_CONTENT_TYPE;
    
    /**
     * The MIME type of a sub-directory of a single location.
     */
-   public static final String LOCATION_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.location";
+   public static final String LOCATION_CONTENT_ITEM_TYPE;
    
    /**
     * The MIME type of providing the contacts.
     */
-   public static final String CONTACT_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.contact";
+   public static final String CONTACT_CONTENT_TYPE;
    
    /**
     * The MIME type of a sub-directory of a single contact.
     */
-   public static final String CONTACT_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.contact";
+   public static final String CONTACT_CONTENT_ITEM_TYPE;
    
    /**
     * The MIME type of a sub-directory of tags.
     */
-   public static final String TAGS_CONTENT_TYPE = "vnd.android.cursor.item/vnd.moloko.content.tag";
+   public static final String TAGS_CONTENT_TYPE;
 }

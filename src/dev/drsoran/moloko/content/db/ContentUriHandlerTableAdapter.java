@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Constants;
 
 
@@ -35,9 +34,8 @@ class ContentUriHandlerTableAdapter extends AbstractContentUriHandler
    
    
    
-   public ContentUriHandlerTableAdapter( ILog log, ITable tableToAdapt )
+   public ContentUriHandlerTableAdapter( ITable tableToAdapt )
    {
-      super( log );
       this.table = tableToAdapt;
    }
    

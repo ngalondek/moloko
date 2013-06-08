@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.content;
 
-
+import java.text.MessageFormat;
 
 
 public final class ContentProviderUtils
@@ -34,12 +34,24 @@ public final class ContentProviderUtils
    
    
    
-   public static String bindAll( String selection, String[] selectionArgs )
+   public static String bindAll( String selection, String... selectionArgs )
    {
+      if ( selection == null )
+      {
+         throw new IllegalArgumentException( "selection" );
+      }
+      
       String result = selection;
       
       for ( int i = 0; i < selectionArgs.length; i++ )
       {
+         final String selectionArg = selectionArgs[ i ];
+         if ( selectionArg == null )
+         {
+            throw new IllegalArgumentException( MessageFormat.format( "Selection argument {0} is null",
+                                                                      i ) );
+         }
+         
          result = result.replaceFirst( "\\?", selectionArgs[ i ] );
       }
       

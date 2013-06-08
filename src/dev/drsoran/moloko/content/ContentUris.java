@@ -34,6 +34,48 @@ import android.net.Uri;
 
 public final class ContentUris
 {
+   private static final String TASKS_LISTS_URI_PATH = "lists";
+   
+   private static final String TASKS_LISTS_ID_URI_PATH = "lists/#";
+   
+   private static final String TASKS_URI_PATH = "tasks";
+   
+   private static final String TASKS_ID_URI_PATH = "tasks/#";
+   
+   private static final String TASKS_COUNT_URI_PATH = "tasks/count";
+   
+   private static final String TASK_NOTES_URI_PATH = "tasks/#/notes";
+   
+   private static final String TASK_NOTES_ID_URI_PATH = "tasks/#/notes/#";
+   
+   private static final String TASK_PARTICIPANTS_URI_PATH = "tasks/#/participants";
+   
+   private static final String TASK_PARTICIPANTS_ID_URI_PATH = "tasks/#/participants/#";
+   
+   private static final String LOCATIONS_URI_PATH = "locations";
+   
+   private static final String LOCATIONS_ID_URI_PATH = "locations/#";
+   
+   private static final String CONTACTS_URI_PATH = "contacts";
+   
+   private static final String CONTACTS_ID_URI_PATH = "contacts/#";
+   
+   private static final String TAGS_URI_PATH = "tags";
+   
+   private static final String MODIFICATIONS_URI_PATH = "modifications";
+   
+   private static final String MODIFICATIONS_ID_URI_PATH = "modifications/#";
+   
+   private static final String RTM_SETTINGS_URI_PATH = "rtm_settings";
+   
+   private static final String RTM_SETTINGS_ID_URI_PATH = "rtm_settings/#";
+   
+   private static final String SYNC_URI_PATH = "sync";
+   
+   private static final String SYNC_ID_URI_PATH = "sync/#";
+   
+   
+   
    private ContentUris()
    {
       throw new AssertionError();
@@ -41,52 +83,91 @@ public final class ContentUris
    
    static
    {
-      UriMatcher uriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
+      TASKS_LISTS_CONTENT_URI = buildUri( TASKS_LISTS_URI_PATH );
+      
+      TASKS_LISTS_CONTENT_URI_ID = buildUri( TASKS_LISTS_ID_URI_PATH );
+      
+      TASKS_CONTENT_URI = buildUri( TASKS_URI_PATH );
+      
+      TASKS_CONTENT_URI_ID = buildUri( TASKS_ID_URI_PATH );
+      
+      TASKS_COUNT_CONTENT_URI = buildUri( TASKS_COUNT_URI_PATH );
+      
+      TASK_NOTES_CONTENT_URI = buildUri( TASK_NOTES_URI_PATH );
+      
+      TASK_NOTES_CONTENT_URI_ID = buildUri( TASK_NOTES_ID_URI_PATH );
+      
+      TASK_PARTICIPANTS_CONTENT_URI = buildUri( TASK_PARTICIPANTS_URI_PATH );
+      
+      TASK_PARTICIPANTS_CONTENT_URI_ID = buildUri( TASK_PARTICIPANTS_ID_URI_PATH );
+      
+      LOCATIONS_CONTENT_URI = buildUri( LOCATIONS_URI_PATH );
+      
+      LOCATIONS_CONTENT_URI_ID = buildUri( LOCATIONS_ID_URI_PATH );
+      
+      CONTACTS_CONTENT_URI = buildUri( CONTACTS_URI_PATH );
+      
+      CONTACTS_CONTENT_URI_ID = buildUri( CONTACTS_ID_URI_PATH );
+      
+      TAGS_CONTENT_URI = buildUri( TAGS_URI_PATH );
+      
+      MODIFICATIONS_CONTENT_URI = buildUri( MODIFICATIONS_URI_PATH );
+      
+      MODIFICATIONS_CONTENT_URI_ID = buildUri( MODIFICATIONS_ID_URI_PATH );
+      
+      RTM_SETTINGS_CONTENT_URI = buildUri( RTM_SETTINGS_URI_PATH );
+      
+      RTM_SETTINGS_CONTENT_URI_ID = buildUri( RTM_SETTINGS_ID_URI_PATH );
+      
+      SYNC_CONTENT_URI = buildUri( SYNC_URI_PATH );
+      
+      SYNC_CONTENT_URI_ID = buildUri( SYNC_ID_URI_PATH );
+      
+      final UriMatcher uriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
       uriMatcher.addURI( RTM,
-                         ContentUris.TASKS_LISTS_CONTENT_URI.getPath(),
+                         TASKS_LISTS_URI_PATH,
                          ContentUris.MATCH_TASKS_LISTS );
       uriMatcher.addURI( RTM,
-                         ContentUris.TASKS_LISTS_CONTENT_URI_ID.getPath(),
+                         TASKS_LISTS_ID_URI_PATH,
                          ContentUris.MATCH_TASKS_LISTS_ID );
+      uriMatcher.addURI( RTM, TASKS_URI_PATH, ContentUris.MATCH_TASKS );
+      uriMatcher.addURI( RTM, TASKS_ID_URI_PATH, ContentUris.MATCH_TASKS_ID );
       uriMatcher.addURI( RTM,
-                         ContentUris.TASKS_CONTENT_URI.getPath(),
-                         ContentUris.MATCH_TASKS );
-      uriMatcher.addURI( RTM,
-                         ContentUris.TASKS_CONTENT_URI_ID.getPath(),
-                         ContentUris.MATCH_TASKS_ID );
-      uriMatcher.addURI( RTM,
-                         ContentUris.TASKS_COUNT_CONTENT_URI.getPath(),
+                         TASKS_COUNT_URI_PATH,
                          ContentUris.MATCH_TASKS_COUNT );
+      uriMatcher.addURI( RTM, TASK_NOTES_URI_PATH, ContentUris.MATCH_TASK_NOTES );
       uriMatcher.addURI( RTM,
-                         ContentUris.TASK_NOTES_CONTENT_URI.getPath(),
-                         ContentUris.MATCH_TASK_NOTES );
-      uriMatcher.addURI( RTM,
-                         ContentUris.TASK_NOTES_CONTENT_URI_ID.getPath(),
+                         TASK_NOTES_ID_URI_PATH,
                          ContentUris.MATCH_TASK_NOTES_ID );
       uriMatcher.addURI( RTM,
-                         ContentUris.TASK_PARTICIPANTS_CONTENT_URI.getPath(),
+                         TASK_PARTICIPANTS_URI_PATH,
                          ContentUris.MATCH_TASK_PARTICIPANTS );
       uriMatcher.addURI( RTM,
-                         ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID.getPath(),
+                         TASK_PARTICIPANTS_ID_URI_PATH,
                          ContentUris.MATCH_TASK_PARTICIPANTS_ID );
+      uriMatcher.addURI( RTM, LOCATIONS_URI_PATH, ContentUris.MATCH_LOCATIONS );
       uriMatcher.addURI( RTM,
-                         ContentUris.LOCATIONS_CONTENT_URI.getPath(),
-                         ContentUris.MATCH_LOCATIONS );
-      uriMatcher.addURI( RTM,
-                         ContentUris.LOCATIONS_CONTENT_URI_ID.getPath(),
+                         LOCATIONS_ID_URI_PATH,
                          ContentUris.MATCH_LOCATIONS_ID );
+      uriMatcher.addURI( RTM, CONTACTS_URI_PATH, ContentUris.MATCH_CONTACTS );
       uriMatcher.addURI( RTM,
-                         ContentUris.CONTACTS_CONTENT_URI.getPath(),
-                         ContentUris.MATCH_CONTACTS );
-      uriMatcher.addURI( RTM,
-                         ContentUris.CONTACTS_CONTENT_URI_ID.getPath(),
+                         CONTACTS_ID_URI_PATH,
                          ContentUris.MATCH_CONTACTS_ID );
+      uriMatcher.addURI( RTM, TAGS_URI_PATH, ContentUris.MATCH_TAGS );
       uriMatcher.addURI( RTM,
-                         ContentUris.TAGS_CONTENT_URI.getPath(),
-                         ContentUris.MATCH_TAGS );
-      uriMatcher.addURI( RTM,
-                         ContentUris.MODIFICATIONS_CONTENT_URI.getPath(),
+                         MODIFICATIONS_URI_PATH,
                          ContentUris.MATCH_MODIFICATIONS );
+      uriMatcher.addURI( RTM,
+                         MODIFICATIONS_ID_URI_PATH,
+                         ContentUris.MATCH_MODIFICATIONS_ID );
+      uriMatcher.addURI( RTM,
+                         RTM_SETTINGS_URI_PATH,
+                         ContentUris.MATCH_RTM_SETTINGS );
+      uriMatcher.addURI( RTM,
+                         RTM_SETTINGS_ID_URI_PATH,
+                         ContentUris.MATCH_RTM_SETTINGS_ID );
+      uriMatcher.addURI( RTM, SYNC_URI_PATH, ContentUris.MATCH_SYNC );
+      uriMatcher.addURI( RTM, SYNC_ID_URI_PATH, ContentUris.MATCH_SYNC_ID );
       
       MATCHER = uriMatcher;
    }
@@ -123,90 +204,65 @@ public final class ContentUris
    
    public final static int MATCH_MODIFICATIONS = 15;
    
-   public final static int MATCH_RTM_SETTINGS = 16;
+   public final static int MATCH_MODIFICATIONS_ID = 16;
    
-   public final static int MATCH_SYNC = 17;
+   public final static int MATCH_RTM_SETTINGS = 17;
    
-   public static final Uri TASKS_LISTS_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                                      .authority( RTM )
-                                                                      .path( "lists" )
-                                                                      .build();
+   public final static int MATCH_RTM_SETTINGS_ID = 18;
    
-   public static final Uri TASKS_LISTS_CONTENT_URI_ID = ContentUris.TASKS_LISTS_CONTENT_URI.buildUpon()
-                                                                                           .appendEncodedPath( "#" )
-                                                                                           .build();
+   public final static int MATCH_SYNC = 19;
    
-   public static final Uri TASKS_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                                .authority( RTM )
-                                                                .path( "tasks" )
-                                                                .build();
+   public final static int MATCH_SYNC_ID = 20;
    
-   public static final Uri TASKS_CONTENT_URI_ID = ContentUris.TASKS_CONTENT_URI.buildUpon()
-                                                                               .appendEncodedPath( "#" )
-                                                                               .build();
+   public static final Uri TASKS_LISTS_CONTENT_URI;
    
-   public static final Uri TASKS_COUNT_CONTENT_URI = ContentUris.TASKS_CONTENT_URI.buildUpon()
-                                                                                  .appendEncodedPath( "count" )
-                                                                                  .build();
+   public static final Uri TASKS_LISTS_CONTENT_URI_ID;
    
-   public static final Uri TASK_NOTES_CONTENT_URI = ContentUris.TASKS_CONTENT_URI_ID.buildUpon()
-                                                                                    .appendEncodedPath( "notes" )
-                                                                                    .build();
+   public static final Uri TASKS_CONTENT_URI;
    
-   public static final Uri TASK_NOTES_CONTENT_URI_ID = ContentUris.TASK_NOTES_CONTENT_URI.buildUpon()
-                                                                                         .appendEncodedPath( "#" )
-                                                                                         .build();
+   public static final Uri TASKS_CONTENT_URI_ID;
    
-   public static final Uri TASK_PARTICIPANTS_CONTENT_URI = ContentUris.TASKS_CONTENT_URI_ID.buildUpon()
-                                                                                           .appendEncodedPath( "participants" )
-                                                                                           .build();
+   public static final Uri TASKS_COUNT_CONTENT_URI;
    
-   public static final Uri TASK_PARTICIPANTS_CONTENT_URI_ID = ContentUris.TASK_PARTICIPANTS_CONTENT_URI.buildUpon()
-                                                                                                       .appendEncodedPath( "#" )
-                                                                                                       .build();
+   public static final Uri TASK_NOTES_CONTENT_URI;
    
-   public static final Uri LOCATIONS_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                                    .authority( RTM )
-                                                                    .path( "locations" )
-                                                                    .build();
+   public static final Uri TASK_NOTES_CONTENT_URI_ID;
    
-   public static final Uri LOCATIONS_CONTENT_URI_ID = ContentUris.LOCATIONS_CONTENT_URI.buildUpon()
-                                                                                       .appendEncodedPath( "#" )
-                                                                                       .build();
+   public static final Uri TASK_PARTICIPANTS_CONTENT_URI;
    
-   public static final Uri CONTACTS_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                                   .authority( RTM )
-                                                                   .path( "contacts" )
-                                                                   .build();
+   public static final Uri TASK_PARTICIPANTS_CONTENT_URI_ID;
    
-   public static final Uri CONTACTS_CONTENT_URI_ID = ContentUris.CONTACTS_CONTENT_URI.buildUpon()
-                                                                                     .appendEncodedPath( "#" )
-                                                                                     .build();
+   public static final Uri LOCATIONS_CONTENT_URI;
    
-   public static final Uri TAGS_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                               .authority( RTM )
-                                                               .path( "tags" )
-                                                               .build();
+   public static final Uri LOCATIONS_CONTENT_URI_ID;
    
-   public static final Uri MODIFICATIONS_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                                        .authority( RTM )
-                                                                        .path( "modifications" )
-                                                                        .build();
+   public static final Uri CONTACTS_CONTENT_URI;
    
-   public static final Uri RTM_SETTINGS_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                                       .authority( RTM )
-                                                                       .path( "rtm_settings" )
-                                                                       .build();
+   public static final Uri CONTACTS_CONTENT_URI_ID;
    
-   public static final Uri SYNC_CONTENT_URI = new Uri.Builder().scheme( SCHEME_CONTENT )
-                                                               .authority( RTM )
-                                                               .path( "sync" )
-                                                               .build();
+   public static final Uri TAGS_CONTENT_URI;
+   
+   public static final Uri MODIFICATIONS_CONTENT_URI;
+   
+   public static final Uri MODIFICATIONS_CONTENT_URI_ID;
+   
+   public static final Uri RTM_SETTINGS_CONTENT_URI;
+   
+   public static final Uri RTM_SETTINGS_CONTENT_URI_ID;
+   
+   public static final Uri SYNC_CONTENT_URI;
+   
+   public static final Uri SYNC_CONTENT_URI_ID;
    
    
    
    public static List< Long > getIdsFromUri( Uri uri )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       final List< Long > ids = new ArrayList< Long >();
       
       for ( String part : uri.getPathSegments() )
@@ -227,13 +283,24 @@ public final class ContentUris
    
    public static long getTaskIdFromUri( Uri uri )
    {
-      return getIdsFromUri( uri ).get( 0 ).longValue();
+      final List< Long > ids = getIdsFromUri( uri );
+      if ( ids.isEmpty() )
+      {
+         return Constants.NO_ID;
+      }
+      
+      return ids.get( 0 ).longValue();
    }
    
    
    
    public static Uri bindAggregationIdToUri( Uri uri, long aggregationRootId )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       final String boundUriString = uri.toString()
                                        .replaceFirst( "#",
                                                       String.valueOf( aggregationRootId ) );
@@ -246,6 +313,11 @@ public final class ContentUris
                                                    long aggregationRootId,
                                                    long elementId ) throws IllegalArgumentException
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       final StringBuilder stringBuilder = new StringBuilder( uri.toString() );
       
       final int posRootId = stringBuilder.indexOf( "#" );
@@ -277,6 +349,11 @@ public final class ContentUris
    
    public static long getLastPathIdFromUri( Uri uri )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       final String idString = uri.getLastPathSegment();
       try
       {
@@ -292,6 +369,11 @@ public final class ContentUris
    
    public static Uri bindElementId( Uri uri, long elementId )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       final StringBuilder stringBuilder = new StringBuilder( uri.toString() );
       final int posElementId = stringBuilder.lastIndexOf( "#" );
       if ( posElementId == -1 )
@@ -305,5 +387,15 @@ public final class ContentUris
                              String.valueOf( elementId ) );
       
       return Uri.parse( stringBuilder.toString() );
+   }
+   
+   
+   
+   private static Uri buildUri( String path )
+   {
+      return new Uri.Builder().scheme( SCHEME_CONTENT )
+                              .authority( RTM )
+                              .appendEncodedPath( path )
+                              .build();
    }
 }

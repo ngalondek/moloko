@@ -22,13 +22,13 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.test.unit.EqualsHashCodeTestCase;
+import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
 
 
 public class RtmSmartFilterFixture extends EqualsHashCodeTestCase

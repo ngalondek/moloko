@@ -22,9 +22,10 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
@@ -34,19 +35,20 @@ import org.junit.runner.RunWith;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.moloko.test.TestConstants;
 
 
 @RunWith( Theories.class )
 public class SyncFixture extends MolokoTestCase
 {
    @DataPoint
-   public final static long NO_TIME = Constants.NO_TIME;
+   public final static long NO_TIME = TestConstants.NEVER;
    
    @DataPoint
-   public final static long NOW = System.currentTimeMillis();
+   public final static long NOW = TestConstants.NOW;
    
    @DataPoint
-   public final static long LATER = NOW + 3600 * 1000;
+   public final static long LATER = TestConstants.LATER;
    
    
    

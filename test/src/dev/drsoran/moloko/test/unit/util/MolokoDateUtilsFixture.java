@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.test.unit.util;
 
+import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -34,8 +35,8 @@ import org.robolectric.annotation.Config;
 
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
+import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.test.shadows.DateUtilsShadow;
-import dev.drsoran.moloko.test.unit.PrivateCtorCaller;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.TimeStruct;
 
@@ -44,10 +45,6 @@ import dev.drsoran.moloko.util.TimeStruct;
 { DateUtilsShadow.class } )
 public class MolokoDateUtilsFixture extends MolokoRoboTestCase
 {
-   private final static long NOW = System.currentTimeMillis();
-   
-   
-   
    @Test( expected = AssertionError.class )
    public void testPrivateCtor() throws Throwable
    {
@@ -76,8 +73,8 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    @Test
    public void testNewTime()
    {
-      final long nowMillis = ( System.currentTimeMillis() / 1000 ) * 1000;
-      final long newTimeMillis = ( MolokoDateUtils.newTime().toMillis( true ) / 1000 ) * 1000;
+      final long nowMillis = ( System.currentTimeMillis() / 10000 ) * 10000;
+      final long newTimeMillis = ( MolokoDateUtils.newTime().toMillis( true ) / 10000 ) * 10000;
       assertThat( newTimeMillis, is( nowMillis ) );
    }
    

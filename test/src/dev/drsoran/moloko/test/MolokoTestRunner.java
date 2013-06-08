@@ -22,22 +22,13 @@
 
 package dev.drsoran.moloko.test;
 
-import java.io.File;
-import java.lang.reflect.Method;
-
-import org.acra.ACRA;
 import org.junit.runners.model.InitializationError;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowContextWrapper;
 
-import android.app.Application;
-import android.text.format.DateFormat;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.test.shadows.ACRAShadow;
-import dev.drsoran.moloko.test.shadows.DateFormatShadow;
 
 
 @Config( shadows =

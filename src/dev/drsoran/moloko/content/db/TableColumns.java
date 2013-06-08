@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 
 
-final class TableColumns
+public final class TableColumns
 {
    public final static class RtmTasksListColumns extends TasksListColumns
    {
@@ -44,7 +45,7 @@ final class TableColumns
       
       static
       {
-         final List< String > baseProjection = Arrays.asList( TasksListColumns.PROJECTION );
+         final List< String > baseProjection = new ArrayList< String >( Arrays.asList( TasksListColumns.PROJECTION ) );
          baseProjection.add( RTM_LIST_ID );
          
          RtmTasksListColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );
@@ -101,6 +102,8 @@ final class TableColumns
       public final static int RTM_TASKSERIES_ID_IDX = 11;
       
       public final static String TAGS_SEPARATOR = TaskColumns.TAGS_SEPARATOR;
+      
+      public final static String DEFAULT_SORT_ORDER = TaskColumns.DEFAULT_SORT_ORDER;
       
       public final static String[] TABLE_PROJECTION =
       { _ID, TASKSERIES_CREATED_DATE, TASKSERIES_MODIFIED_DATE,
@@ -176,7 +179,7 @@ final class TableColumns
       
       static
       {
-         final List< String > baseProjection = Arrays.asList( NoteColumns.PROJECTION );
+         final List< String > baseProjection = new ArrayList< String >( Arrays.asList( NoteColumns.PROJECTION ) );
          baseProjection.add( TASKSERIES_ID );
          baseProjection.add( RTM_NOTE_ID );
          
@@ -195,7 +198,7 @@ final class TableColumns
       
       static
       {
-         final List< String > baseProjection = Arrays.asList( ContactColumns.PROJECTION );
+         final List< String > baseProjection = new ArrayList< String >( Arrays.asList( ContactColumns.PROJECTION ) );
          baseProjection.add( RTM_CONTACT_ID );
          
          RtmContactColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );
@@ -213,7 +216,7 @@ final class TableColumns
       
       static
       {
-         final List< String > baseProjection = Arrays.asList( ParticipantColumns.PROJECTION );
+         final List< String > baseProjection = new ArrayList< String >( Arrays.asList( ParticipantColumns.PROJECTION ) );
          baseProjection.add( TASKSERIES_ID );
          
          RtmParticipantColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );
@@ -231,7 +234,7 @@ final class TableColumns
       
       static
       {
-         final List< String > baseProjection = Arrays.asList( LocationColumns.PROJECTION );
+         final List< String > baseProjection = new ArrayList< String >( Arrays.asList( LocationColumns.PROJECTION ) );
          baseProjection.add( RTM_LOCATION_ID );
          
          RtmLocationColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );

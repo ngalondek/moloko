@@ -34,6 +34,7 @@ import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.content.ContentMimeTypes;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.UriLookup;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class DbContentProvider extends ContentProvider
@@ -46,16 +47,46 @@ public class DbContentProvider extends ContentProvider
    
    
    
+   public DbContentProvider()
+   {
+   }
+   
+   
+   
+   public DbContentProvider( RtmDatabase database, ILog log )
+   {
+      this.database = database;
+      this.log = log;
+   }
+   
+   
+   
    @Override
    public boolean onCreate()
    {
       final Context context = getContext();
       
-      log = SystemContext.get( context ).Log();
-      contentUriToHandlerLookup = createContentUriToHandlerLookup();
-      database = new RtmDatabase( context, log );
+      if ( log == null )
+      {
+         log = SystemContext.get( context ).Log();
+      }
       
+      if ( database == null )
+      {
+         database = new RtmDatabase( context, log );
+      }
+      
+      contentUriToHandlerLookup = createContentUriToHandlerLookup();
       return true;
+   }
+   
+   
+   
+   @Override
+   public void shutdown()
+   {
+      database.close();
+      super.shutdown();
    }
    
    
@@ -67,6 +98,16 @@ public class DbContentProvider extends ContentProvider
                         String[] selectionArgs,
                         String sortOrder )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
+      if ( projection == null )
+      {
+         throw new IllegalArgumentException( "projection" );
+      }
+      
       final IContentUriHandler handlerToQuery;
       try
       {
@@ -89,6 +130,16 @@ public class DbContentProvider extends ContentProvider
    @Override
    public Uri insert( Uri uri, ContentValues values )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
+      if ( values == null )
+      {
+         throw new IllegalArgumentException( "values" );
+      }
+      
       long insertedElementId;
       final IContentUriHandler handlerToInsertInto;
       try
@@ -113,6 +164,11 @@ public class DbContentProvider extends ContentProvider
    @Override
    public int delete( Uri uri, String selection, String[] selectionArgs )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       int numDeleted;
       final IContentUriHandler handlerToDeleteFrom;
       try
@@ -142,6 +198,21 @@ public class DbContentProvider extends ContentProvider
                       String selection,
                       String[] selectionArgs )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
+      if ( values == null )
+      {
+         throw new IllegalArgumentException( "values" );
+      }
+      
+      if ( !Strings.isNullOrEmpty( selection ) )
+      {
+         throw new IllegalArgumentException( "An update with a 'where clause' is not supported" );
+      }
+      
       int numUpdated;
       final IContentUriHandler handlerToUpdate;
       try
@@ -171,6 +242,11 @@ public class DbContentProvider extends ContentProvider
    @Override
    public String getType( Uri uri )
    {
+      if ( uri == null )
+      {
+         throw new IllegalArgumentException( "uri" );
+      }
+      
       String mimeType;
       
       try
@@ -193,58 +269,51 @@ public class DbContentProvider extends ContentProvider
    {
       final UriLookup< IContentUriHandler > handlerLookup = new UriLookup< IContentUriHandler >( ContentUris.MATCHER );
       
-      IContentUriHandler handler = new ContentUriHandlerTableAdapter( log,
-                                                                      database.getTable( RtmTasksListsTable.TABLE_NAME ) );
-      handlerLookup.put( handler, ContentUris.TASKS_LISTS_CONTENT_URI );
-      handlerLookup.put( handler, ContentUris.TASKS_LISTS_CONTENT_URI_ID );
+      IContentUriHandler handler = new ContentUriHandlerTableAdapter( database.getTable( RtmTasksListsTable.TABLE_NAME ) );
+      handlerLookup.put( handler, ContentUris.MATCH_TASKS_LISTS );
+      handlerLookup.put( handler, ContentUris.MATCH_TASKS_LISTS_ID );
       
-      final TasksContentUriHandler tasksContentUriHandler = new TasksContentUriHandler( log,
-                                                                                        database.getWritable(),
+      final TasksContentUriHandler tasksContentUriHandler = new TasksContentUriHandler( database.getWritable(),
                                                                                         database.getTable( RtmTaskSeriesTable.TABLE_NAME ),
                                                                                         database.getTable( RtmRawTasksTable.TABLE_NAME ) );
-      handlerLookup.put( tasksContentUriHandler, ContentUris.TASKS_CONTENT_URI );
-      handlerLookup.put( tasksContentUriHandler,
-                         ContentUris.TASKS_CONTENT_URI_ID );
+      handlerLookup.put( tasksContentUriHandler, ContentUris.MATCH_TASKS );
+      handlerLookup.put( tasksContentUriHandler, ContentUris.MATCH_TASKS_ID );
       
-      handler = new TaskCountContentUriHandler( log, tasksContentUriHandler );
-      handlerLookup.put( handler, ContentUris.TASKS_COUNT_CONTENT_URI );
+      handler = new ReadOnlyContentUriHandler( new TaskCountContentUriHandler( tasksContentUriHandler ) );
+      handlerLookup.put( handler, ContentUris.MATCH_TASKS_COUNT );
       
-      handler = new TaskNotesContentUriHandler( log,
-                                                database.getTable( RtmNotesTable.TABLE_NAME ),
+      handler = new TaskNotesContentUriHandler( database.getTable( RtmNotesTable.TABLE_NAME ),
                                                 tasksContentUriHandler );
-      handlerLookup.put( handler, ContentUris.TASK_NOTES_CONTENT_URI );
-      handlerLookup.put( handler, ContentUris.TASK_NOTES_CONTENT_URI_ID );
+      handlerLookup.put( handler, ContentUris.MATCH_TASK_NOTES );
+      handlerLookup.put( handler, ContentUris.MATCH_TASK_NOTES_ID );
       
-      handler = new TaskParticipantsContentUriHandler( log,
-                                                       database.getTable( RtmParticipantsTable.TABLE_NAME ),
-                                                       tasksContentUriHandler );
-      handlerLookup.put( handler, ContentUris.TASK_PARTICIPANTS_CONTENT_URI );
-      handlerLookup.put( handler, ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID );
+      handler = new ReadOnlyContentUriHandler( new TaskParticipantsContentUriHandler( database.getTable( RtmParticipantsTable.TABLE_NAME ),
+                                                                                      tasksContentUriHandler ) );
+      handlerLookup.put( handler, ContentUris.MATCH_TASK_PARTICIPANTS );
+      handlerLookup.put( handler, ContentUris.MATCH_TASK_PARTICIPANTS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( log,
-                                                   database.getTable( RtmLocationsTable.TABLE_NAME ) );
-      handlerLookup.put( handler, ContentUris.LOCATIONS_CONTENT_URI );
-      handlerLookup.put( handler, ContentUris.LOCATIONS_CONTENT_URI_ID );
+      handler = new ReadOnlyContentUriHandler( new ContentUriHandlerTableAdapter( database.getTable( RtmLocationsTable.TABLE_NAME ) ) );
+      handlerLookup.put( handler, ContentUris.MATCH_LOCATIONS );
+      handlerLookup.put( handler, ContentUris.MATCH_LOCATIONS_ID );
       
-      handler = new TagsContentUriHandler( log, database.getReadable() );
-      handlerLookup.put( handler, ContentUris.TAGS_CONTENT_URI );
+      handler = new ReadOnlyContentUriHandler( new TagsContentUriHandler( database.getReadable() ) );
+      handlerLookup.put( handler, ContentUris.MATCH_TAGS );
       
-      handler = new ContentUriHandlerTableAdapter( log,
-                                                   database.getTable( RtmContactsTable.TABLE_NAME ) );
-      handlerLookup.put( handler, ContentUris.CONTACTS_CONTENT_URI );
-      handlerLookup.put( handler, ContentUris.CONTACTS_CONTENT_URI_ID );
+      handler = new ReadOnlyContentUriHandler( new ContentUriHandlerTableAdapter( database.getTable( RtmContactsTable.TABLE_NAME ) ) );
+      handlerLookup.put( handler, ContentUris.MATCH_CONTACTS );
+      handlerLookup.put( handler, ContentUris.MATCH_CONTACTS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( log,
-                                                   database.getTable( ModificationsTable.TABLE_NAME ) );
-      handlerLookup.put( handler, ContentUris.MODIFICATIONS_CONTENT_URI );
+      handler = new ContentUriHandlerTableAdapter( database.getTable( ModificationsTable.TABLE_NAME ) );
+      handlerLookup.put( handler, ContentUris.MATCH_MODIFICATIONS );
+      handlerLookup.put( handler, ContentUris.MATCH_MODIFICATIONS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( log,
-                                                   database.getTable( RtmSettingsTable.TABLE_NAME ) );
-      handlerLookup.put( handler, ContentUris.RTM_SETTINGS_CONTENT_URI );
+      handler = new ContentUriHandlerTableAdapter( database.getTable( RtmSettingsTable.TABLE_NAME ) );
+      handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS );
+      handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( log,
-                                                   database.getTable( SyncTable.TABLE_NAME ) );
-      handlerLookup.put( handler, ContentUris.SYNC_CONTENT_URI );
+      handler = new ContentUriHandlerTableAdapter( database.getTable( SyncTable.TABLE_NAME ) );
+      handlerLookup.put( handler, ContentUris.MATCH_SYNC );
+      handlerLookup.put( handler, ContentUris.MATCH_SYNC_ID );
       
       return handlerLookup;
    }

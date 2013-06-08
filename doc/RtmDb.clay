@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <clay-model clay-version="2.0.1">
-<database-model alias="Rtm" author="Ronny Röhricht" begin-script="" end-script="" id="5122f2:128cb6194ba:-8000" name="RtmDb" sql-dialect-id="jp.azzurri.clay.dialect.SQLite_3_5_6_Dialect" version="1.0">
+<database-model alias="rtm" author="Ronny Röhricht" begin-script="" end-script="" id="5122f2:128cb6194ba:-8000" name="RtmDb" sql-dialect-id="jp.azzurri.clay.dialect.SQLite_3_5_6_Dialect" version="1.0">
 <schema-list>
-<schema id="5122f2:128cb6194ba:-7ffd" name="Rtm">
+<schema id="5122f2:128cb6194ba:-7ffd" name="rtm">
 <table-list>
 <table id="5122f2:128cb6194ba:-7fff" name="rawtasks">
 <column-list>
@@ -47,7 +47,7 @@
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="5b5dad:12bf1b86973:-7fd1" name="rawtasks_taskseries_ref" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key id="5b5dad:12bf1b86973:-7fd1" name="rawtasks_taskseries_ref" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="rtm" source-entity-role="" source-multiplicity="1..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
 <foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
@@ -84,6 +84,9 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7be4" mandatory="true" name="list_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="6d924890:13f0e1b583b:-7fc4" mandatory="false" name="tags">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="755329d0:13d702f3cd7:-7fc9" mandatory="false" name="rtm_taskseries_id">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
@@ -92,10 +95,10 @@
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="163c031:128fe8bf79f:-7fb0" name="list" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LISTS" referenced-table="lists" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key id="163c031:128fe8bf79f:-7fb0" name="list" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LISTS" referenced-table="lists" referenced-table-schema="rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
 <foreign-key-column column-name="list_id" referenced-key-column-name="_id"/>
 </foreign-key>
-<foreign-key id="190abb9:128ce294477:-7ee4" name="location" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LOCATIONS" referenced-table="locations" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
+<foreign-key id="190abb9:128ce294477:-7ee4" name="location" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LOCATIONS" referenced-table="locations" referenced-table-schema="rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
 <foreign-key-column column-name="location_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
@@ -131,7 +134,7 @@
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="11fb115:12949b0b028:-7f74" name="notes_taskseries_ref" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key id="11fb115:12949b0b028:-7f74" name="notes_taskseries_ref" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
 <foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
@@ -235,7 +238,7 @@
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="3b2fd2:12b0f7019ac:-7fc1" name="defaultlist" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LISTS" referenced-table="lists" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..1" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
+<foreign-key id="3b2fd2:12b0f7019ac:-7fc1" name="defaultlist" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LISTS" referenced-table="lists" referenced-table-schema="rtm" source-entity-role="" source-multiplicity="0..1" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
 <foreign-key-column column-name="defaultlist_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
@@ -297,10 +300,10 @@
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="bf1775:12cd4b4f24d:-7f05" name="participant" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key id="bf1775:12cd4b4f24d:-7f05" name="participant" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
 <foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
 </foreign-key>
-<foreign-key id="bf1775:12cd4b4f24d:-7e4f" name="participates" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_CONTACTS" referenced-table="contacts" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
+<foreign-key id="bf1775:12cd4b4f24d:-7e4f" name="participates" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_CONTACTS" referenced-table="contacts" referenced-table-schema="rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
 <foreign-key-column column-name="contact_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
@@ -346,25 +349,6 @@
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
-<table id="39aaa206:13e476b4580:-7f84" name="tags">
-<column-list>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="39aaa206:13e476b4580:-7f7c" mandatory="true" name="_id" remarks="TaskSeries ID">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="39aaa206:13e476b4580:-7f7b" mandatory="true" name="tag">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-</column-list>
-<primary-key id="39aaa206:13e476b4580:-7f83" name="PK_TAGS">
-<primary-key-column name="_id"/>
-<primary-key-column name="tag"/>
-</primary-key>
-<foreign-key-list>
-<foreign-key id="39aaa206:13e476b4580:-7f07" name="tagged" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
-</foreign-key>
-</foreign-key-list>
-</table>
 </table-list>
 </schema>
 </schema-list>
@@ -387,6 +371,5 @@
 </fk-figure>
 <table-figure refid="8339e4:12d9ed556c8:-7fe6" x="931" y="149"/>
 <table-figure refid="1ecfc22:12e03bc8e0c:-7fe5" x="931" y="282"/>
-<table-figure refid="39aaa206:13e476b4580:-7f84" x="658" y="556"/>
 </diagram>
 </clay-model>

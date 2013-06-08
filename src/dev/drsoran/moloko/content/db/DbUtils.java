@@ -22,12 +22,10 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.util.Iterator;
-
 import android.database.sqlite.SQLiteDatabase;
 
 
-final class DbUtils
+public final class DbUtils
 {
    private DbUtils()
    {
@@ -39,6 +37,16 @@ final class DbUtils
    public static void doTransactional( SQLiteDatabase sqliteDatabase,
                                        Runnable action )
    {
+      if ( sqliteDatabase == null )
+      {
+         throw new IllegalArgumentException( "sqliteDatabase" );
+      }
+      
+      if ( action == null )
+      {
+         throw new IllegalArgumentException( "action" );
+      }
+      
       try
       {
          sqliteDatabase.beginTransaction();
@@ -51,28 +59,5 @@ final class DbUtils
       {
          sqliteDatabase.endTransaction();
       }
-   }
-   
-   
-   
-   public static < T > String toColumnList( Iterable< T > set,
-                                            String colName,
-                                            String seperator )
-   {
-      final StringBuilder sb = new StringBuilder();
-      
-      for ( Iterator< T > i = set.iterator(); i.hasNext(); )
-      {
-         final T obj = i.next();
-         
-         sb.append( colName ).append( "=" ).append( obj.toString() );
-         
-         if ( i.hasNext() )
-         {
-            sb.append( seperator );
-         }
-      }
-      
-      return sb.toString();
    }
 }

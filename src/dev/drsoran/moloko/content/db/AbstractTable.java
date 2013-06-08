@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.text.MessageFormat;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -29,9 +31,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.provider.BaseColumns;
-import android.text.TextUtils;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.util.Strings;
 
 
 abstract class AbstractTable implements ITable
@@ -80,9 +82,10 @@ abstract class AbstractTable implements ITable
    public void upgrade( int oldVersion, int newVersion ) throws SQLException
    {
       Log().w( AbstractTable.class,
-               "Upgrading database '" + getTableName() + "' from version "
-                  + oldVersion + " to " + newVersion
-                  + ", which will destroy all old data" );
+               MessageFormat.format( "Upgrading database ''{0}'' from version {1} to {2}, which will destroy all old data",
+                                     getTableName(),
+                                     oldVersion,
+                                     newVersion ) );
       
       dropIndices();
       drop();
@@ -94,8 +97,9 @@ abstract class AbstractTable implements ITable
    
    public void drop()
    {
-      getDatabase().getWritable().execSQL( "DROP TABLE IF EXISTS "
-         + getTableName() );
+      getDatabase().getWritable()
+                   .execSQL( MessageFormat.format( "DROP TABLE IF EXISTS {0}",
+                                                   getTableName() ) );
    }
    
    
@@ -118,23 +122,26 @@ abstract class AbstractTable implements ITable
                         String[] selectionArgs,
                         String sortOrder ) throws SQLException
    {
-      final SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-      builder.setTables( getTableName() );
-      
       try
       {
-         return builder.query( getDatabase().getReadable(),
-                               projection,
-                               selection,
-                               selectionArgs,
-                               null,
-                               null,
-                               sortOrder );
+         final SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+         builder.setTables( getTableName() );
+         
+         final String rawQueryString = builder.buildQuery( projection,
+                                                           selection,
+                                                           null,
+                                                           null,
+                                                           sortOrder,
+                                                           null );
+         
+         return getDatabase().getReadable().rawQuery( rawQueryString,
+                                                      selectionArgs );
       }
       catch ( Exception e )
       {
-         throw new SQLiteException( "Failed to perform a query for table '"
-            + getTableName() + "'", e );
+         throw new SQLiteException( MessageFormat.format( "Failed to perform a query for table ''{0}''",
+                                                          getTableName() ),
+                                    e );
       }
    }
    
@@ -158,8 +165,8 @@ abstract class AbstractTable implements ITable
       
       if ( rowId == Constants.NO_ID )
       {
-         throw new SQLException( "Failed to insert content values in table '"
-            + getTableName() + "'" );
+         throw new SQLException( MessageFormat.format( "Failed to insert content values in table ''{0}''",
+                                                       getTableName() ) );
       }
       
       return rowId;
@@ -189,12 +196,10 @@ abstract class AbstractTable implements ITable
       
       if ( values.size() > 0 )
       {
+         where = itemIdAndWhereClause( id, where );
+         
          final SQLiteDatabase db = getDatabase().getWritable();
-         numUpdated = db.updateWithOnConflict( getTableName(),
-                                               values,
-                                               where,
-                                               whereArgs,
-                                               getUpdateConflictHandler() );
+         numUpdated = db.update( getTableName(), values, where, whereArgs );
       }
       
       return numUpdated;
@@ -215,17 +220,25 @@ abstract class AbstractTable implements ITable
       }
       else
       {
-         final StringBuilder sb = new StringBuilder( ITEM_ID_EQUALS ).append( id );
-         
-         if ( !TextUtils.isEmpty( where ) )
-         {
-            sb.append( " AND (" ).append( where ).append( ")" );
-         }
-         
-         numDeleted = db.delete( getTableName(), sb.toString(), whereArgs );
+         where = itemIdAndWhereClause( id, where );
+         numDeleted = db.delete( getTableName(), where, whereArgs );
       }
       
       return numDeleted;
+   }
+   
+   
+   
+   private String itemIdAndWhereClause( long id, String where )
+   {
+      final StringBuilder sb = new StringBuilder( ITEM_ID_EQUALS ).append( id );
+      
+      if ( !Strings.isNullOrEmpty( where ) )
+      {
+         sb.append( " AND (" ).append( where ).append( ")" );
+      }
+      
+      return sb.toString();
    }
    
    
@@ -237,21 +250,15 @@ abstract class AbstractTable implements ITable
       
       if ( contentValueId != null && contentValueId.longValue() != existingId )
       {
-         throw new IllegalArgumentException( "Trying to change the element ID from '"
-            + existingId + "' to '" + contentValueId.longValue() + "'" );
+         throw new IllegalArgumentException( MessageFormat.format( "Trying to change the element ID from ''{0}'' to ''{1}''",
+                                                                   existingId,
+                                                                   contentValueId.longValue() ) );
       }
    }
    
    
    
    public int getInsertConflictHandler()
-   {
-      return SQLiteDatabase.CONFLICT_REPLACE;
-   }
-   
-   
-   
-   public int getUpdateConflictHandler()
    {
       return SQLiteDatabase.CONFLICT_REPLACE;
    }

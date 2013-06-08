@@ -606,7 +606,7 @@ public final class Columns
        */
       public final static String INCOMPLETE = "incomplete";
       
-      public final static int INCOMPLETE_IDX = 1;
+      public final static int INCOMPLETE_IDX = 0;
       
       /**
        * The count of completed tasks
@@ -616,7 +616,7 @@ public final class Columns
        */
       public final static String COMPLETED = "completed";
       
-      public final static int COMPLETED_IDX = 2;
+      public final static int COMPLETED_IDX = 1;
       
       /**
        * The count of tasks that due today
@@ -626,7 +626,7 @@ public final class Columns
        */
       public final static String DUE_TODAY = "due_today";
       
-      public final static int DUE_TODAY_IDX = 3;
+      public final static int DUE_TODAY_IDX = 2;
       
       /**
        * The count of tasks that due tomorrow
@@ -636,7 +636,7 @@ public final class Columns
        */
       public final static String DUE_TOMORROW = "due_tomorrow";
       
-      public final static int DUE_TOMORROW_IDX = 4;
+      public final static int DUE_TOMORROW_IDX = 3;
       
       /**
        * The count of tasks overdue
@@ -646,7 +646,7 @@ public final class Columns
        */
       public final static String OVERDUE = "overdue";
       
-      public final static int OVERDUE_IDX = 5;
+      public final static int OVERDUE_IDX = 4;
       
       /**
        * The sum of estimation milliseconds
@@ -656,7 +656,7 @@ public final class Columns
        */
       public final static String SUM_ESTIMATED = "sum_estimated";
       
-      public final static int SUM_ESTIMATED_IDX = 6;
+      public final static int SUM_ESTIMATED_IDX = 5;
       
       public final static String[] PROJECTION =
       { INCOMPLETE, COMPLETED, DUE_TODAY, DUE_TOMORROW, OVERDUE, SUM_ESTIMATED };

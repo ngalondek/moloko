@@ -20,27 +20,21 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.grammar;
+package dev.drsoran.moloko.test.unit.grammar.old;
 
 import java.text.ParseException;
 import java.util.Calendar;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import com.xtremelabs.robolectric.annotation.Values;
 
 import dev.drsoran.moloko.grammar.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
 import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserImpl;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
-import dev.drsoran.moloko.test.MolokoTestRunner_de;
 
 
-@RunWith( MolokoTestRunner_de.class )
-public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
+public class RecurrenceParsingTest_en extends RecurrenceParsingTestBase
 {
-   
    @Override
    public IRecurrenceParser createRecurrenceParser( IDateTimeParsing dateTimeParsing )
    {
@@ -50,10 +44,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_year()
    {
-      parseRecurrence( "jedes Jahr",
+      parseRecurrence( "every year",
                        RecurrencePatternParser.VAL_YEARLY_LIT,
                        1,
                        null,
@@ -64,10 +57,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_yearly_by_month_and_weekday()
    {
-      parseRecurrence( "jedes jahr am 1. freitag, montag im januar",
+      parseRecurrence( "every year on the 1st friday, monday of january",
                        RecurrencePatternParser.VAL_YEARLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -80,10 +72,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_week_by_day()
    {
-      parseRecurrence( "jeden Dienstag",
+      parseRecurrence( "every tuesday",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -94,10 +85,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_week_by_day_multiple()
    {
-      parseRecurrence( "jeden montag, Mittwoch",
+      parseRecurrence( "every monday, wednesday",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -108,10 +98,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_2_weeks()
    {
-      parseRecurrence( "alle 2 wochen",
+      parseRecurrence( "every 2 weeks",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        2,
                        null,
@@ -122,10 +111,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_2_weeks_by_day()
    {
-      parseRecurrence( "jeden 2. freitag",
+      parseRecurrence( "every 2nd friday",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        2,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -136,17 +124,16 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_weekly_by_day_multiple_until() throws ParseException
    {
-      parseRecurrence( "jeden montag, mittwoch bis 10.1.2010",
+      parseRecurrence( "every monday, wednesday until 1/10/2010",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
                        "MO,WE",
                        null,
                        null,
-                       getRecurrenceDateFormat().format( getDateParse().parse( "10.1.2010" ) ),
+                       getRecurrenceDateFormat().format( getDateParse().parse( "1/10/2010" ) ),
                        -1,
                        true );
    }
@@ -154,10 +141,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_weekday()
    {
-      parseRecurrence( "jeden wochentag",
+      parseRecurrence( "every weekday",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -168,10 +154,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_weekly_by_weekday()
    {
-      parseRecurrence( "jeden 3. Dienstag",
+      parseRecurrence( "every 3. tuesday",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        3,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -182,10 +167,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_day()
    {
-      parseRecurrence( "jeden tag",
+      parseRecurrence( "every day",
                        RecurrencePatternParser.VAL_DAILY_LIT,
                        1,
                        null,
@@ -196,7 +180,19 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
+   public void every_daily()
+   {
+      parseRecurrence( "daily",
+                       RecurrencePatternParser.VAL_DAILY_LIT,
+                       1,
+                       null,
+                       null,
+                       true );
+   }
+   
+   
+   
+   @Test
    public void every_day_until()
    {
       final Calendar cal = Calendar.getInstance();
@@ -208,7 +204,7 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
       cal.set( Calendar.SECOND, 0 );
       cal.set( Calendar.MILLISECOND, 0 );
       
-      parseRecurrence( "jeden tag bis morgen",
+      parseRecurrence( "every day until tomorrow",
                        RecurrencePatternParser.VAL_DAILY_LIT,
                        1,
                        null,
@@ -223,10 +219,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_day_for()
    {
-      parseRecurrence( "jeden tag für 10 mal",
+      parseRecurrence( "every day for 10 times",
                        RecurrencePatternParser.VAL_DAILY_LIT,
                        1,
                        null,
@@ -241,10 +236,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_3_months()
    {
-      parseRecurrence( "alle 3 monate",
+      parseRecurrence( "every 3 months",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        3,
                        null,
@@ -255,10 +249,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void after_monthly()
    {
-      parseRecurrence( "nach 1 monat",
+      parseRecurrence( "after 1 month",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        null,
@@ -269,10 +262,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void after_monthly_textual()
    {
-      parseRecurrence( "nach einem monat",
+      parseRecurrence( "after one month",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        null,
@@ -283,10 +275,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void after_2_monthly()
    {
-      parseRecurrence( "nach 2 monaten",
+      parseRecurrence( "after 2 months",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        2,
                        null,
@@ -297,10 +288,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_monthly_by_monthday()
    {
-      parseRecurrence( "jeden monat am 4.",
+      parseRecurrence( "every month on the 4th",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYMONTHDAY_LIT,
@@ -311,10 +301,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_monthly_by_monthday_multiple()
    {
-      parseRecurrence( "jeder 1. und 25.",
+      parseRecurrence( "every 1st and 25th",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYMONTHDAY_LIT,
@@ -325,10 +314,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_monthly_by_weekday()
    {
-      parseRecurrence( "jeden monat am 3. Dienstag",
+      parseRecurrence( "every month on the 3rd tuesday",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -339,10 +327,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_monthly_by_last_weekday()
    {
-      parseRecurrence( "jeden monat am letzten montag",
+      parseRecurrence( "every month on the last monday",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -353,10 +340,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_monthly_by_2nd_last_weekday()
    {
-      parseRecurrence( "jeden monat am 2. letzten freitag",
+      parseRecurrence( "every month on the 2nd last friday",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
@@ -367,10 +353,9 @@ public class RecurrenceParsingTest_de extends RecurrenceParsingTestBase
    
    
    @Test
-   @Values( qualifiers = "de" )
    public void every_monthly_by_first_weekday()
    {
-      parseRecurrence( "jeden monat am 1. freitag",
+      parseRecurrence( "every month on the 1st friday",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,

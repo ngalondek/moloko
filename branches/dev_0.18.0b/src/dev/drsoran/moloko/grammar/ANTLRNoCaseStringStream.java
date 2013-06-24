@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.grammar;
 
 import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CharStream;
 
 
 public class ANTLRNoCaseStringStream extends ANTLRStringStream
@@ -33,8 +32,8 @@ public class ANTLRNoCaseStringStream extends ANTLRStringStream
       super( string );
    }
    
-
-
+   
+   
    @Override
    public int LA( int i )
    {
@@ -50,7 +49,7 @@ public class ANTLRNoCaseStringStream extends ANTLRStringStream
       
       if ( ( p + i - 1 ) >= n )
       {
-         return CharStream.EOF;
+         return EOF;
       }
       
       return Character.toLowerCase( data[ p + i - 1 ] );

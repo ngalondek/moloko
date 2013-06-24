@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -88,24 +88,27 @@ class TagsContentUriHandler extends AbstractContentUriHandler
                               String[] selectionArgs,
                               String sortOrder )
    {
+      // We don't support sort order because this would include parsing SQL
+      // syntax.
+      if ( sortOrder != null )
+      {
+         throw new IllegalArgumentException( "Sort order is not supported for Tags" );
+      }
+      
       final SQLiteQueryBuilder queryBuilder = getTagsQueryBuilder();
       
       Cursor tasksCursor = null;
       try
       {
-         tasksCursor = queryBuilder.query( database,
-                                           new String[]
-                                           { RtmTaskSeriesColumns.TAGS },
-                                           selection,
-                                           selectionArgs,
-                                           null,
-                                           null,
-                                           null );
+         final String rawQueryString = queryBuilder.buildQuery( new String[]
+         { RtmTaskSeriesColumns.TAGS }, selection, null, null, sortOrder, null );
          
-         final Set< String > tags = new HashSet< String >( tasksCursor.getCount() );
+         tasksCursor = database.rawQuery( rawQueryString, selectionArgs );
+         
+         final Set< String > tags = new LinkedHashSet< String >( tasksCursor.getCount() );
          while ( tasksCursor.moveToNext() )
          {
-            final String separatedTags = tasksCursor.getColumnName( 0 );
+            final String separatedTags = tasksCursor.getString( 0 );
             for ( String tag : TextUtils.split( separatedTags,
                                                 RtmTaskSeriesColumns.TAGS_SEPARATOR ) )
             {

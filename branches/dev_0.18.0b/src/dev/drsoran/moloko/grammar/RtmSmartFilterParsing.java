@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.grammar;
 
+import java.text.MessageFormat;
+
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.grammar.rtmsmart.NullRtmSmartFilterEvaluator;
@@ -58,28 +60,7 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    public RtmSmartFilterParsingReturn evaluateRtmSmartFilter( String filterString,
                                                               IRtmSmartFilterEvaluator evaluator ) throws GrammarException
    {
-      try
-      {
-         final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterString );
-         
-         rtmSmartFilterLexer.setCharStream( input );
-         rtmSmartFilterLexer.setEvaluator( evaluator );
-         rtmSmartFilterLexer.startEvaluation();
-         
-         return new RtmSmartFilterParsingReturn( rtmSmartFilterLexer.hasStatusCompletedOperator() );
-      }
-      catch ( GrammarException e )
-      {
-         log.w( RtmSmartFilterParsing.class, "Failed to lex smart filter '"
-            + filterString + "'", e );
-         
-         throw e;
-      }
-      finally
-      {
-         rtmSmartFilterLexer.reset();
-         rtmSmartFilterLexer.setEvaluator( null );
-      }
+      return lexSmartFilter( filterString, evaluator );
    }
    
    
@@ -87,29 +68,10 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    @Override
    public RtmSmartFilterTokenCollection getSmartFilterTokens( String filterString ) throws GrammarException
    {
-      try
-      {
-         final TokenCollectingEvaluator tokenCollector = new TokenCollectingEvaluator( new NullRtmSmartFilterEvaluator() );
-         final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterString );
-         
-         rtmSmartFilterLexer.setCharStream( input );
-         rtmSmartFilterLexer.setEvaluator( tokenCollector );
-         rtmSmartFilterLexer.startEvaluation();
-         
-         return new RtmSmartFilterTokenCollection( tokenCollector.getTokens() );
-      }
-      catch ( GrammarException e )
-      {
-         log.w( RtmSmartFilterParsing.class, "Failed to lex smart filter '"
-            + filterString + "'", e );
-         
-         throw e;
-      }
-      finally
-      {
-         rtmSmartFilterLexer.reset();
-         rtmSmartFilterLexer.setEvaluator( null );
-      }
+      final TokenCollectingEvaluator tokenCollector = new TokenCollectingEvaluator( new NullRtmSmartFilterEvaluator() );
+      lexSmartFilter( filterString, tokenCollector );
+      
+      return new RtmSmartFilterTokenCollection( tokenCollector.getTokens() );
    }
    
    
@@ -125,6 +87,37 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
       catch ( GrammarException e )
       {
          return false;
+      }
+   }
+   
+   
+   
+   private RtmSmartFilterParsingReturn lexSmartFilter( String filterString,
+                                                       IRtmSmartFilterEvaluator evaluator ) throws GrammarException
+   {
+      try
+      {
+         final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterString );
+         
+         rtmSmartFilterLexer.setCharStream( input );
+         rtmSmartFilterLexer.setEvaluator( evaluator );
+         rtmSmartFilterLexer.startEvaluation();
+         
+         return new RtmSmartFilterParsingReturn( rtmSmartFilterLexer.hasStatusCompletedOperator() );
+      }
+      catch ( GrammarException e )
+      {
+         log.w( RtmSmartFilterParsing.class,
+                MessageFormat.format( "Failed to lex smart filter ''{0}''",
+                                      filterString ),
+                e );
+         
+         throw e;
+      }
+      finally
+      {
+         rtmSmartFilterLexer.reset();
+         rtmSmartFilterLexer.setEvaluator( null );
       }
    }
 }

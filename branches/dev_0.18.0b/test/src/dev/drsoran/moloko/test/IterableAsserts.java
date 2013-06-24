@@ -78,6 +78,13 @@ public final class IterableAsserts
    
    
    
+   public static < T > void assertNotEmpty( Iterable< T > iterable )
+   {
+      assertTrue( iterable.iterator().hasNext() );
+   }
+   
+   
+   
    public static < T > void assertCount( Iterable< T > iterable, int count )
    {
       int cnt = 0;

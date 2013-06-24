@@ -101,7 +101,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder isTagged( boolean isTagged )
    {
-      smartFilterString.append( RtmSmartFilterLexer.OP_IS_TAGGED )
+      smartFilterString.append( RtmSmartFilterLexer.OP_IS_TAGGED_LIT )
                        .append( isTagged ? RtmSmartFilterLexer.TRUE_LIT
                                         : RtmSmartFilterLexer.FALSE_LIT )
                        .append( " " );
@@ -175,7 +175,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder due( String date )
    {
-      smartFilterString.append( RtmSmartFilterLexer.OP_DUE )
+      smartFilterString.append( RtmSmartFilterLexer.OP_DUE_LIT )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -185,7 +185,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder due()
    {
-      smartFilterString.append( RtmSmartFilterLexer.OP_DUE );
+      smartFilterString.append( RtmSmartFilterLexer.OP_DUE_LIT );
       return this;
    }
    
@@ -377,6 +377,11 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder postponed( int postponedCount )
    {
+      if ( postponedCount < 0 )
+      {
+         throw new IllegalArgumentException( "postponedCount" );
+      }
+      
       smartFilterString.append( RtmSmartFilterLexer.OP_POSTPONED_LIT )
                        .append( postponedCount )
                        .append( " " );

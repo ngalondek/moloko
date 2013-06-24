@@ -27,7 +27,7 @@ import java.util.Locale;
 import android.util.Pair;
 
 
-class ParserLanguageDetector
+public class ParserLanguageDetector
 {
    private ParserLanguageDetector()
    {
@@ -51,7 +51,11 @@ class ParserLanguageDetector
          result = TryParse( existingParser, parserFunc );
       }
       
-      if ( result == null )
+      if ( result != null )
+      {
+         return Pair.create( existingParser, result );
+      }
+      else
       {
          for ( TParser parser : availableParsers )
          {

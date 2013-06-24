@@ -106,11 +106,11 @@ public class ContentUrisFixture extends MolokoRoboTestCase
       assertThat( uri.toString(), is( "http://www.google.de/1/de/" ) );
       
       uri = ContentUris.bindAggregationIdToUri( Uri.parse( "http://www.google.de/#/de/#" ),
-                                                1L );
-      assertThat( uri.toString(), is( "http://www.google.de/1/de/#" ) );
+                                                10L );
+      assertThat( uri.toString(), is( "http://www.google.de/10/de/#" ) );
       
       uri = ContentUris.bindAggregationIdToUri( Uri.parse( "http://www.google.de/" ),
-                                                1L );
+                                                100L );
       assertThat( uri.toString(), is( "http://www.google.de/" ) );
    }
    
@@ -131,6 +131,16 @@ public class ContentUrisFixture extends MolokoRoboTestCase
                                                           1L,
                                                           2L );
       assertThat( uri.toString(), is( "http://www.google.de/1/de/2" ) );
+      
+      uri = ContentUris.bindAggregatedElementIdToUri( Uri.parse( "http://www.google.de/#/de/#" ),
+                                                      10L,
+                                                      2L );
+      assertThat( uri.toString(), is( "http://www.google.de/10/de/2" ) );
+      
+      uri = ContentUris.bindAggregatedElementIdToUri( Uri.parse( "http://www.google.de/#/de/#" ),
+                                                      1L,
+                                                      20L );
+      assertThat( uri.toString(), is( "http://www.google.de/1/de/20" ) );
    }
    
    
@@ -194,12 +204,12 @@ public class ContentUrisFixture extends MolokoRoboTestCase
       assertThat( uri.toString(), is( "http://www.google.de/1" ) );
       
       uri = ContentUris.bindElementId( Uri.parse( "http://www.google.de/#/de/#" ),
-                                       1L );
-      assertThat( uri.toString(), is( "http://www.google.de/#/de/1" ) );
+                                       10L );
+      assertThat( uri.toString(), is( "http://www.google.de/#/de/10" ) );
       
       uri = ContentUris.bindElementId( Uri.parse( "http://www.google.de/de/#" ),
-                                       1L );
-      assertThat( uri.toString(), is( "http://www.google.de/de/1" ) );
+                                       100L );
+      assertThat( uri.toString(), is( "http://www.google.de/de/100" ) );
    }
    
    

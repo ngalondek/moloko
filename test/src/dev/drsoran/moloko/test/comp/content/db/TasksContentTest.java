@@ -119,7 +119,7 @@ public class TasksContentTest extends MolokoReadWriteDbContentTestCase
       
       assertThat( c.getCount(), is( 1 ) );
       assertThat( c.moveToNext(), is( true ) );
-      checkContent( c, c.getLong( Columns.ID_IDX ) );
+      checkContent( c, 1 );
    }
    
    
@@ -195,8 +195,10 @@ public class TasksContentTest extends MolokoReadWriteDbContentTestCase
    
    
    @Override
-   protected void checkContent( Cursor c, long rowId )
+   protected void checkContent( Cursor c, int rowNumber )
    {
+      final long rowId = c.getLong( Columns.ID_IDX );
+      
       switch ( (int) rowId )
       {
          case 1:

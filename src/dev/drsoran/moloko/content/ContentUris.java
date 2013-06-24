@@ -328,6 +328,10 @@ public final class ContentUris
             + "' did not contains a place holder '#' for the aggregation root ID." );
       }
       
+      stringBuilder.replace( posRootId,
+                             posRootId + 1,
+                             String.valueOf( aggregationRootId ) );
+      
       final int posElementId = stringBuilder.indexOf( "#", posRootId + 1 );
       if ( posElementId == -1 )
       {
@@ -335,9 +339,6 @@ public final class ContentUris
             + "' did not contains a place holder '#' for the element ID." );
       }
       
-      stringBuilder.replace( posRootId,
-                             posRootId + 1,
-                             String.valueOf( aggregationRootId ) );
       stringBuilder.replace( posElementId,
                              posElementId + 1,
                              String.valueOf( elementId ) );

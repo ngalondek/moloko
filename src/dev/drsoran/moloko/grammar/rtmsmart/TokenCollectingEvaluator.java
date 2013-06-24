@@ -40,6 +40,11 @@ public class TokenCollectingEvaluator implements IRtmSmartFilterEvaluator
    
    public TokenCollectingEvaluator( IRtmSmartFilterEvaluator decorated )
    {
+      if ( decorated == null )
+      {
+         throw new IllegalArgumentException( "decorated" );
+      }
+      
       this.decorated = decorated;
    }
    

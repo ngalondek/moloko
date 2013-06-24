@@ -211,10 +211,17 @@ public class TaskCountContentTest extends MolokoReadDbContentTestCase
    
    
    @Override
-   protected void checkContent( Cursor c, long rowId )
+   protected void checkContent( Cursor c, int rowNumber )
    {
-      // We only have one row
-      checkResult( c, 5, 2, 1, 1, 1, 44400000 );
+      switch ( rowNumber )
+      {
+         case 1:
+            checkResult( c, 5, 2, 1, 1, 1, 44400000 );
+            break;
+         
+         default :
+            fail( "Unexpected row number " + rowNumber );
+      }
    }
    
    

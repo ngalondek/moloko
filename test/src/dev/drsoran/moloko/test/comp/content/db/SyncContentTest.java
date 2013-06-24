@@ -138,8 +138,10 @@ public class SyncContentTest extends MolokoReadWriteDbContentTestCase
    
    
    @Override
-   protected void checkContent( Cursor c, long rowId )
+   protected void checkContent( Cursor c, int rowNumber )
    {
+      final long rowId = c.getLong( Columns.ID_IDX );
+      
       if ( rowId == 1 )
       {
          checkResult( c, 1L, 1356998400000L, Constants.NO_TIME );

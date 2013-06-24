@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.grammar;
+package dev.drsoran.moloko.test.unit.grammar.old;
 
 import java.util.Calendar;
 import java.util.Collections;

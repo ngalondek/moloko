@@ -22,8 +22,10 @@
 
 package dev.drsoran.moloko.test.comp.content.db;
 
-import static dev.drsoran.moloko.content.Columns.ContactColumns.FULLNAME_IDX;
-import static dev.drsoran.moloko.content.Columns.ContactColumns.USERNAME_IDX;
+import static dev.drsoran.moloko.content.Columns.ParticipantColumns.CONTACT_ID_IDX;
+import static dev.drsoran.moloko.content.Columns.ParticipantColumns.FULLNAME_IDX;
+import static dev.drsoran.moloko.content.Columns.ParticipantColumns.PROJECTION;
+import static dev.drsoran.moloko.content.Columns.ParticipantColumns.USERNAME_IDX;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -33,17 +35,16 @@ import org.junit.Rule;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.test.MolokoReadDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
 
 
-public class ContactsContentTest extends MolokoReadDbContentTestCase
+public class TaskParticipantsContentTest extends MolokoReadDbContentTestCase
 {
    @Rule
-   public SQLiteScript sqliteScript = new SQLiteScript( ContactsContentTest.class,
-                                                        "ContactsContentTest.sql" );
+   public SQLiteScript sqliteScript = new SQLiteScript( TaskParticipantsContentTest.class,
+                                                        "TaskParticipantsContentTest.sql" );
    
    
    
@@ -66,7 +67,8 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
    @Override
    protected Uri getContentUri()
    {
-      return ContentUris.CONTACTS_CONTENT_URI;
+      return ContentUris.bindAggregationIdToUri( ContentUris.TASK_PARTICIPANTS_CONTENT_URI,
+                                                 100L );
    }
    
    
@@ -74,7 +76,9 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
    @Override
    protected Uri getContentUriWithId_1()
    {
-      return ContentUris.bindElementId( ContentUris.CONTACTS_CONTENT_URI_ID, 1L );
+      return ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID,
+                                                       100L,
+                                                       1L );
    }
    
    
@@ -82,8 +86,9 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
    @Override
    protected Uri getContentUriWithNotExistingId()
    {
-      return ContentUris.bindElementId( ContentUris.CONTACTS_CONTENT_URI_ID,
-                                        500L );
+      return ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID,
+                                                       100L,
+                                                       500L );
    }
    
    
@@ -91,7 +96,7 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
    @Override
    protected String[] getProjection()
    {
-      return ContactColumns.PROJECTION;
+      return PROJECTION;
    }
    
    
@@ -104,11 +109,11 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
       switch ( (int) rowId )
       {
          case 1:
-            checkResult( c, 1L, "Full Name1", "User1" );
+            checkResult( c, 1L, 1L, "Full Name1", "User1" );
             break;
          
          case 2:
-            checkResult( c, 2L, "Full Name2", "User2" );
+            checkResult( c, 2L, 2L, "Full Name2", "User2" );
             break;
          
          default :
@@ -120,11 +125,13 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
    
    private static void checkResult( Cursor c,
                                     long id,
-                                    String fullname,
-                                    String username )
+                                    long contactId,
+                                    String fullName,
+                                    String userName )
    {
       assertThat( c.getLong( Columns.ID_IDX ), is( id ) );
-      assertThat( c.getString( FULLNAME_IDX ), is( fullname ) );
-      assertThat( c.getString( USERNAME_IDX ), is( username ) );
+      assertThat( c.getLong( CONTACT_ID_IDX ), is( contactId ) );
+      assertThat( c.getString( FULLNAME_IDX ), is( fullName ) );
+      assertThat( c.getString( USERNAME_IDX ), is( userName ) );
    }
 }

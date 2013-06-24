@@ -24,7 +24,6 @@ package dev.drsoran.moloko.content.db;
 
 import java.util.Calendar;
 
-import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
@@ -56,6 +55,11 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    public DbRtmSmartFilterEvaluator( IDateTimeParsing dateTimeParsing )
    {
+      if ( dateTimeParsing == null )
+      {
+         throw new IllegalArgumentException( "dateTimeParsing" );
+      }
+      
       this.dateTimeParsing = dateTimeParsing;
    }
    
@@ -64,6 +68,11 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public String getResult()
    {
+      if ( result.length() == 0 )
+      {
+         return null;
+      }
+      
       result.insert( 0, "( " ).append( " )" );
       return result.toString();
    }
@@ -74,6 +83,10 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    public void reset()
    {
       result.setLength( 0 );
+      
+      // We do not insert the default operator for the first, lexed token.
+      // So this starts as true.
+      lexedOperator = true;
    }
    
    
@@ -81,7 +94,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalList( String listName )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( RtmTasksListColumns.LIST_NAME );
       likeStringParam( listName );
@@ -94,7 +107,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalPriority( String priority )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( RtmRawTaskColumns.PRIORITY );
       likeStringParam( priority );
@@ -107,7 +120,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalStatus( boolean completed )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( RtmRawTaskColumns.COMPLETED_DATE );
       
@@ -128,7 +141,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalTag( String tag )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final String unqString = Strings.unquotify( tag );
       
@@ -165,7 +178,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalTagContains( String tagContains )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( RtmTaskSeriesColumns.TAGS );
       containsStringParam( tagContains );
@@ -178,7 +191,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalIsTagged( boolean isTagged )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       result.append( RtmTaskSeriesColumns.TAGS );
       
       if ( isTagged )
@@ -198,7 +211,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalLocation( String locationName )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( RtmLocationColumns.LOCATION_NAME );
       likeStringParam( locationName );
@@ -211,7 +224,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalIsLocated( boolean isLocated )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       if ( isLocated )
       {
@@ -240,7 +253,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalIsRepeating( boolean isRepeating )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       result.append( RtmTaskSeriesColumns.RECURRENCE );
       
       if ( isRepeating )
@@ -260,7 +273,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalTaskName( String taskName )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( RtmTaskSeriesColumns.TASKSERIES_NAME );
       containsStringParam( taskName );
@@ -273,7 +286,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalNoteContains( String titleOrText )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( "(SELECT " )
             .append( RtmNoteColumns.TASKSERIES_ID )
@@ -304,10 +317,11 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalHasNotes( boolean hasNotes )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( "(" )
             .append( RtmTaskSeriesTable.TABLE_NAME )
+            .append( "." )
             .append( RtmTaskSeriesColumns._ID );
       
       if ( hasNotes )
@@ -333,7 +347,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalDue( String due )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = equalsTimeParam( RtmRawTaskColumns.DUE_DATE, due );
       
@@ -345,7 +359,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalDueAfter( String dueAfter )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = differsTimeParam( RtmRawTaskColumns.DUE_DATE,
                                            dueAfter,
@@ -359,7 +373,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalDueBefore( String dueBefore )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = differsTimeParam( RtmRawTaskColumns.DUE_DATE,
                                            dueBefore,
@@ -373,7 +387,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalDueWithIn( String dueWithIn )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = inTimeParamRange( RtmRawTaskColumns.DUE_DATE,
                                            dueWithIn,
@@ -387,7 +401,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalCompleted( String completed )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = equalsTimeParam( RtmRawTaskColumns.COMPLETED_DATE,
                                           completed );
@@ -400,7 +414,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalCompletedAfter( String completedAfter )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = differsTimeParam( RtmRawTaskColumns.COMPLETED_DATE,
                                            completedAfter,
@@ -414,7 +428,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalCompletedBefore( String completedBefore )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = differsTimeParam( RtmRawTaskColumns.COMPLETED_DATE,
                                            completedBefore,
@@ -428,7 +442,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalCompletedWithIn( String completedWithIn )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = inTimeParamRange( RtmRawTaskColumns.COMPLETED_DATE,
                                            completedWithIn,
@@ -442,7 +456,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalAdded( String added )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = equalsTimeParam( RtmRawTaskColumns.ADDED_DATE, added );
       
@@ -454,7 +468,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalAddedAfter( String addedAfter )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = differsTimeParam( RtmRawTaskColumns.ADDED_DATE,
                                            addedAfter,
@@ -468,7 +482,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalAddedBefore( String addedBefore )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = differsTimeParam( RtmRawTaskColumns.ADDED_DATE,
                                            addedBefore,
@@ -482,7 +496,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalAddedWithIn( String addedWithIn )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       final boolean ok = inTimeParamRange( RtmRawTaskColumns.ADDED_DATE,
                                            addedWithIn,
@@ -496,13 +510,13 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalTimeEstimate( String estimation )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       try
       {
          result.append( "(" ).append( RtmRawTaskColumns.ESTIMATE_MILLIS );
          
-         final String param = Strings.unquotify( estimation );
+         final String param = Strings.unquotify( estimation ).trim();
          
          long estimatedMillis = Constants.NO_TIME;
          final char chPos0 = param.charAt( 0 );
@@ -538,12 +552,12 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalPostponed( String postponed )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       result.append( RtmRawTaskColumns.POSTPONED );
       
       boolean ok = true;
       
-      if ( !TextUtils.isEmpty( postponed ) )
+      if ( !Strings.isNullOrEmpty( postponed ) )
       {
          if ( Strings.isQuotified( postponed ) )
          {
@@ -567,10 +581,11 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalIsShared( boolean isShared )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( "(" )
             .append( RtmTaskSeriesTable.TABLE_NAME )
+            .append( "." )
             .append( RtmTaskSeriesColumns._ID );
       
       if ( isShared )
@@ -596,7 +611,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalSharedWith( String sharedWith )
    {
-      ensureOperatorAndResetState();
+      ensureOperatorAndResetLexedOperatorState();
       
       result.append( "(SELECT " )
             .append( RtmParticipantColumns.TASKSERIES_ID )
@@ -639,6 +654,8 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    public boolean evalRightParenthesis()
    {
       result.append( " )" );
+      lexedOperator = false;
+      
       return true;
    }
    
@@ -681,14 +698,14 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       if ( !lexedOperator )
       {
-         result.append( " " ).append( DEFAULT_OPERATOR ).append( " " );
+         result.append( DEFAULT_OPERATOR );
          lexedOperator = true;
       }
    }
    
    
    
-   private final void ensureOperatorAndResetState()
+   private final void ensureOperatorAndResetLexedOperatorState()
    {
       ensureOperator();
       lexedOperator = false;
@@ -733,7 +750,6 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private boolean equalsTimeParam( String column, String param )
    {
-      
       final MolokoCalendar cal;
       try
       {
@@ -798,18 +814,20 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
          }
       }
       
-      result.append( column );
+      result.append( "(" ).append( column );
       
       // Check if we have 'NEVER'
       if ( !cal.hasDate() )
       {
-         result.append( " IS NOT NULL" );
+         result.append( " IS NULL" );
       }
       else
       {
          result.append( ( before ) ? " < " : " > " )
                .append( cal.getTimeInMillis() );
       }
+      
+      result.append( ")" );
       
       return true;
    }

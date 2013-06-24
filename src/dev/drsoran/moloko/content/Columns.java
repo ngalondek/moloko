@@ -589,7 +589,7 @@ public final class Columns
        */
       public final static String TAG = "tag";
       
-      public final static int TAG_IDX = 1;
+      public final static int TAG_IDX = 0;
       
       public final static String[] PROJECTION =
       { TAG };

@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.test.grammar;
+package dev.drsoran.moloko.test.unit.grammar.old;
 
 import java.util.Calendar;
 
@@ -12,11 +12,11 @@ import dev.drsoran.moloko.grammar.datetime.DateParserImpl;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.TimeParserImpl;
-import dev.drsoran.moloko.test.MolokoTestRunner_de;
+import dev.drsoran.moloko.test.MolokoTestRunner_en;
 
 
-@RunWith( MolokoTestRunner_de.class )
-public class DateTimeParsingTest_de extends DateTimeParsingTestBase
+@RunWith( MolokoTestRunner_en.class )
+public class DateTimeParsingTest_en extends DateTimeParsingTestBase
 {
    @Override
    public IDateParser createDateParser( IDateFormatter dateFormatter )
@@ -41,7 +41,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
    public void date_time_now()
    {
       final Calendar cal = Calendar.getInstance();
-      parseDate( "jetzt",
+      parseDate( "now",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -60,7 +60,12 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.add( Calendar.HOUR_OF_DAY, 1 );
       
       final int hour_24 = cal.get( Calendar.HOUR_OF_DAY );
-      final String time = String.format( "%d:00", hour_24 );
+      final int hour_12 = cal.get( Calendar.HOUR );
+      final String time = String.format( "%d%s",
+                                         hour_12,
+                                         cal.get( Calendar.AM_PM ) == Calendar.AM
+                                                                                 ? "am"
+                                                                                 : "pm" );
       
       parseDate( time,
                  cal.get( Calendar.DAY_OF_MONTH ),
@@ -80,9 +85,14 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.setTimeInMillis( System.currentTimeMillis() );
       
       final int hour_24 = cal.get( Calendar.HOUR_OF_DAY );
+      final int hour_12 = cal.get( Calendar.HOUR );
       cal.add( Calendar.DAY_OF_WEEK, 1 );
       
-      final String time = String.format( "%d:00", hour_24 );
+      final String time = String.format( "%d%s",
+                                         hour_12,
+                                         cal.get( Calendar.AM_PM ) == Calendar.AM
+                                                                                 ? "am"
+                                                                                 : "pm" );
       
       parseDate( time,
                  cal.get( Calendar.DAY_OF_MONTH ),
@@ -102,7 +112,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.setHasDate( false );
       cal.setHasTime( false );
       
-      parseDate( "nie",
+      parseDate( "never",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -119,7 +129,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
    public void date_today()
    {
       final MolokoCalendar cal = getDateParserCalendar();
-      parseDate( "heute",
+      parseDate( "today",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -128,25 +138,10 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
    
    
    @Test
-   public void date_today_at_time()
+   public void date_today_short_at_time()
    {
       final MolokoCalendar cal = getDateParserCalendar();
-      parseDate( "heute@12",
-                 cal.get( Calendar.DAY_OF_MONTH ),
-                 cal.get( Calendar.MONTH ),
-                 cal.get( Calendar.YEAR ),
-                 12,
-                 0,
-                 0 );
-   }
-   
-   
-   
-   @Test
-   public void date_today_at_time1()
-   {
-      final MolokoCalendar cal = getDateParserCalendar();
-      parseDate( "heute@1310",
+      parseDate( "tod@1310",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -162,11 +157,43 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
    {
       final MolokoCalendar cal = getDateParserCalendar();
       cal.add( Calendar.DAY_OF_MONTH, 1 );
-      parseDate( "morgen@9",
+      parseDate( "tomorrow@9",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
                  9,
+                 0,
+                 0 );
+   }
+   
+   
+   
+   @Test
+   public void date_tommorow_at_time()
+   {
+      final MolokoCalendar cal = getDateParserCalendar();
+      cal.add( Calendar.DAY_OF_MONTH, 1 );
+      parseDate( "tommorow@12",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ),
+                 12,
+                 0,
+                 0 );
+   }
+   
+   
+   
+   @Test
+   public void date_tomorrow_short_at_time()
+   {
+      final MolokoCalendar cal = getDateParserCalendar();
+      cal.add( Calendar.DAY_OF_MONTH, 1 );
+      parseDate( "tom@12",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ),
+                 12,
                  0,
                  0 );
    }
@@ -179,7 +206,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       final MolokoCalendar cal = getDateParserCalendar();
       cal.set( Calendar.DAY_OF_MONTH,
                cal.getActualMaximum( Calendar.DAY_OF_MONTH ) );
-      parseDate( "ende des monats",
+      parseDate( "end of month",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -193,7 +220,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       final MolokoCalendar cal = getDateParserCalendar();
       cal.add( Calendar.YEAR, 1 );
       cal.add( Calendar.MONTH, 2 );
-      parseDate( "in 1 jahr und 2 monaten@7",
+      parseDate( "in 1 year and 2 mons@7",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -210,27 +237,10 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       final MolokoCalendar cal = getDateParserCalendar();
       cal.add( Calendar.WEEK_OF_YEAR, 1 );
       
-      parseDate( "1 woche",
+      parseDate( "1 week",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
-   }
-   
-   
-   
-   @Test
-   public void date_in_year_month_at_time1()
-   {
-      final MolokoCalendar cal = getDateParserCalendar();
-      cal.add( Calendar.YEAR, 1 );
-      cal.add( Calendar.MONTH, 2 );
-      parseDate( "in 1 jahr und 2 monaten um 7",
-                 cal.get( Calendar.DAY_OF_MONTH ),
-                 cal.get( Calendar.MONTH ),
-                 cal.get( Calendar.YEAR ),
-                 7,
-                 0,
-                 0 );
    }
    
    
@@ -252,7 +262,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       // due to "next" Monday
       cal.add( Calendar.WEEK_OF_YEAR, 1 );
       
-      parseDate( "nächster montag 7:10",
+      parseDate( "next monday 7:10",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -273,7 +283,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       if ( cal.before( getDateParserCalendar() ) )
          cal.add( Calendar.YEAR, 1 );
       
-      parseDate( "am 3. juli",
+      parseDate( "on july 3rd",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -291,7 +301,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       if ( cal.before( getDateParserCalendar() ) )
          cal.add( Calendar.MONTH, 1 );
       
-      parseDate( "am 21. 2000",
+      parseDate( "on 21st 2000",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -310,7 +320,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.JULY );
       cal.set( Calendar.DAY_OF_MONTH, 3 );
       
-      parseDate( "am 3. juli 2000",
+      parseDate( "on july 3rd 2000",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -327,7 +337,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       if ( cal.before( getDateParserCalendar() ) )
          cal.add( Calendar.MONTH, 1 );
       
-      parseDate( "am 21.",
+      parseDate( "on 21st",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -345,7 +355,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       if ( cal.before( getDateParserCalendar() ) )
          cal.add( Calendar.YEAR, 1 );
       
-      parseDate( "am 3. des junis",
+      parseDate( "on 3rd of june",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -361,7 +371,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.FEBRUARY );
       cal.set( Calendar.DAY_OF_MONTH, 21 );
       
-      parseDate( "am 21. des feb 6",
+      parseDate( "on 21st of feb 6",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -377,7 +387,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.JULY );
       cal.set( Calendar.DAY_OF_MONTH, 1 );
       
-      parseDate( "1. juli 2011",
+      parseDate( "1-july-2011",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -393,7 +403,24 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.OCTOBER );
       cal.set( Calendar.DAY_OF_MONTH, 10 );
       
-      parseDate( "10.10.2010",
+      parseDate( "10/10/2010",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ) );
+   }
+   
+   
+   
+   @Test
+   public void date_month_day_year_numeric()
+   {
+      final MolokoCalendar cal = getDateParserCalendar();
+      cal.set( Calendar.YEAR, 2010 );
+      cal.set( Calendar.MONTH, Calendar.JANUARY );
+      cal.set( Calendar.DAY_OF_MONTH, 13 );
+      
+      // M/d/y
+      parseDate( "1/13/2010",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -408,7 +435,8 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.DECEMBER );
       cal.set( Calendar.DAY_OF_MONTH, 24 );
       
-      parseDate( "24.12.",
+      // M/d
+      parseDate( "12/24",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ) );
@@ -424,7 +452,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.OCTOBER );
       cal.set( Calendar.DAY_OF_MONTH, 10 );
       
-      parseDate( "10.10.2010 13:00",
+      parseDate( "10/10/2010 1 PM",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -443,7 +471,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.OCTOBER );
       cal.set( Calendar.DAY_OF_MONTH, 10 );
       
-      parseDate( "10.10.2010, 13h 15 minuten",
+      parseDate( "10/10/2010, 13h 15 minutes",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -462,50 +490,12 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.OCTOBER );
       cal.set( Calendar.DAY_OF_MONTH, 10 );
       
-      parseDate( "13:15, 10.10.2010",
+      parseDate( "13:15, 10/10/2010",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
                  13,
                  15,
-                 0 );
-   }
-   
-   
-   
-   @Test
-   public void time_am_date_numeric()
-   {
-      final MolokoCalendar cal = getDateParserCalendar();
-      cal.set( Calendar.YEAR, 2010 );
-      cal.set( Calendar.MONTH, Calendar.OCTOBER );
-      cal.set( Calendar.DAY_OF_MONTH, 10 );
-      
-      parseDate( "4:10 vormittags, 10.10.2010",
-                 cal.get( Calendar.DAY_OF_MONTH ),
-                 cal.get( Calendar.MONTH ),
-                 cal.get( Calendar.YEAR ),
-                 4,
-                 10,
-                 0 );
-   }
-   
-   
-   
-   @Test
-   public void time_pm__date_numeric()
-   {
-      final MolokoCalendar cal = getDateParserCalendar();
-      cal.set( Calendar.YEAR, 2010 );
-      cal.set( Calendar.MONTH, Calendar.OCTOBER );
-      cal.set( Calendar.DAY_OF_MONTH, 10 );
-      
-      parseDate( "4:10 nachm., 10.10.2010",
-                 cal.get( Calendar.DAY_OF_MONTH ),
-                 cal.get( Calendar.MONTH ),
-                 cal.get( Calendar.YEAR ),
-                 16,
-                 10,
                  0 );
    }
    
@@ -519,7 +509,45 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       cal.set( Calendar.MONTH, Calendar.OCTOBER );
       cal.set( Calendar.DAY_OF_MONTH, 10 );
       
-      parseDate( "4:10, 10.10.2010",
+      parseDate( "4:10am, 10/10/2010",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ),
+                 4,
+                 10,
+                 0 );
+   }
+   
+   
+   
+   @Test
+   public void time_date_numeric2()
+   {
+      final MolokoCalendar cal = getDateParserCalendar();
+      cal.set( Calendar.YEAR, 2010 );
+      cal.set( Calendar.MONTH, Calendar.OCTOBER );
+      cal.set( Calendar.DAY_OF_MONTH, 10 );
+      
+      parseDate( "4:10p, 10/10/2010",
+                 cal.get( Calendar.DAY_OF_MONTH ),
+                 cal.get( Calendar.MONTH ),
+                 cal.get( Calendar.YEAR ),
+                 16,
+                 10,
+                 0 );
+   }
+   
+   
+   
+   @Test
+   public void time_date_numeric3()
+   {
+      final MolokoCalendar cal = getDateParserCalendar();
+      cal.set( Calendar.YEAR, 2010 );
+      cal.set( Calendar.MONTH, Calendar.OCTOBER );
+      cal.set( Calendar.DAY_OF_MONTH, 10 );
+      
+      parseDate( "4:10, 10/10/2010",
                  cal.get( Calendar.DAY_OF_MONTH ),
                  cal.get( Calendar.MONTH ),
                  cal.get( Calendar.YEAR ),
@@ -538,7 +566,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       
       final MolokoCalendar start = getDateParserCalendar();
       
-      parseDateWithin( "1 tag",
+      parseDateWithin( "1 day",
                        false,
                        start.get( Calendar.YEAR ),
                        start.get( Calendar.MONTH ),
@@ -560,7 +588,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       
       final MolokoCalendar start = MolokoCalendar.getInstance();
       
-      parseDateWithin( "1 tag ab heute",
+      parseDateWithin( "1 day of now",
                        false,
                        start.get( Calendar.YEAR ),
                        start.get( Calendar.MONTH ),
@@ -583,7 +611,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       final MolokoCalendar start = getDateParserCalendar();
       start.add( Calendar.DAY_OF_YEAR, 1 );
       
-      parseDateWithin( "1 tag ab morgen",
+      parseDateWithin( "1 day of tomorrow",
                        false,
                        start.get( Calendar.YEAR ),
                        start.get( Calendar.MONTH ),
@@ -606,7 +634,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       final MolokoCalendar start = getDateParserCalendar();
       start.add( Calendar.DAY_OF_YEAR, 1 );
       
-      parseDateWithin( "ein tag ab morgen",
+      parseDateWithin( "a day of tomorrow",
                        false,
                        start.get( Calendar.YEAR ),
                        start.get( Calendar.MONTH ),
@@ -628,7 +656,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       
       final MolokoCalendar start = getDateParserCalendar();
       
-      parseDateWithin( "2 tage ab heute",
+      parseDateWithin( "2 days of today",
                        false,
                        start.get( Calendar.YEAR ),
                        start.get( Calendar.MONTH ),
@@ -656,7 +684,7 @@ public class DateTimeParsingTest_de extends DateTimeParsingTestBase
       start.set( Calendar.MONTH, Calendar.JULY );
       start.set( Calendar.DAY_OF_MONTH, 3 );
       
-      parseDateWithin( "2 wochen ab 3. juli 2010",
+      parseDateWithin( "2 weeks of july-3rd 2010",
                        true,
                        start.get( Calendar.YEAR ),
                        start.get( Calendar.MONTH ),

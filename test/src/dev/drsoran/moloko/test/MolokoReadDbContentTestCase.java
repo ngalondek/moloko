@@ -32,7 +32,6 @@ import org.junit.Test;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.moloko.content.Columns;
 
 
 public abstract class MolokoReadDbContentTestCase extends
@@ -80,7 +79,7 @@ public abstract class MolokoReadDbContentTestCase extends
                                       getProjection(),
                                       null,
                                       null,
-                                      null );
+                                      getQueryAllSortOrder() );
       assertNotNull( c );
       
       final int numRows = getNumberOfQueryAllRows();
@@ -89,7 +88,7 @@ public abstract class MolokoReadDbContentTestCase extends
       for ( int i = 0; i < numRows; i++ )
       {
          assertThat( c.moveToNext(), is( true ) );
-         checkContent( c, c.getLong( Columns.ID_IDX ) );
+         checkContent( c, i + 1 );
       }
    }
    
@@ -109,7 +108,7 @@ public abstract class MolokoReadDbContentTestCase extends
       
       assertThat( c.getCount(), is( 1 ) );
       assertThat( c.moveToNext(), is( true ) );
-      checkContent( c, c.getLong( Columns.ID_IDX ) );
+      checkContent( c, 1 );
    }
    
    
@@ -145,7 +144,7 @@ public abstract class MolokoReadDbContentTestCase extends
       
       assertThat( c.getCount(), is( 1 ) );
       assertThat( c.moveToNext(), is( true ) );
-      checkContent( c, c.getLong( Columns.ID_IDX ) );
+      checkContent( c, 1 );
    }
    
    
@@ -165,7 +164,7 @@ public abstract class MolokoReadDbContentTestCase extends
       
       assertThat( c.getCount(), is( 1 ) );
       assertThat( c.moveToNext(), is( true ) );
-      checkContent( c, c.getLong( Columns.ID_IDX ) );
+      checkContent( c, 1 );
    }
    
    
@@ -250,6 +249,13 @@ public abstract class MolokoReadDbContentTestCase extends
    
    
    
+   public String getQueryAllSortOrder()
+   {
+      return null;
+   }
+   
+   
+   
    protected abstract Iterable< String > getSqlStatements();
    
    
@@ -274,5 +280,5 @@ public abstract class MolokoReadDbContentTestCase extends
    
    
    
-   protected abstract void checkContent( Cursor c, long rowId );
+   protected abstract void checkContent( Cursor c, int rowNumber );
 }

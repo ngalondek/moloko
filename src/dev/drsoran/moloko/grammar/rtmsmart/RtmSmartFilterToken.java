@@ -26,6 +26,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+// TODO: Remove the parceling
 public class RtmSmartFilterToken implements Parcelable
 {
    public final int operatorType;

@@ -36,77 +36,36 @@ public class RtmSmartFilterTokenCollection implements
 {
    private final Collection< RtmSmartFilterToken > impl;
    
+   private Collection< RtmSmartFilterToken > uniqueTokens;
+   
    
    
    public RtmSmartFilterTokenCollection(
       Collection< RtmSmartFilterToken > tokens )
    {
+      if ( tokens == null )
+      {
+         throw new IllegalArgumentException( "tokens" );
+      }
+      
       impl = Collections.unmodifiableCollection( new ArrayList< RtmSmartFilterToken >( tokens ) );
    }
    
    
    
-   /**
-    * Ambiguous is determined by the number a token exists in the list of given tokens. This is the simplest approach to
-    * avoid situation with complex logical expressions where a token is entered negated and not negated.
-    * 
-    * TODO: Use more sophisticated approach like BDDs
-    */
-   
    public Collection< RtmSmartFilterToken > getUniqueTokens()
    {
-      final List< RtmSmartFilterToken > filterTokens = new LinkedList< RtmSmartFilterToken >( impl );
-      
-      Collections.sort( filterTokens, new Comparator< RtmSmartFilterToken >()
+      if ( uniqueTokens == null )
       {
-         @Override
-         public int compare( RtmSmartFilterToken object1,
-                             RtmSmartFilterToken object2 )
-         {
-            return object1.operatorType - object2.operatorType;
-         }
-      } );
-      
-      for ( int i = 0, cnt = filterTokens.size(); i < cnt; )
-      {
-         boolean ambiguous = false;
-         
-         RtmSmartFilterToken filterToken = filterTokens.get( i );
-         
-         // next token
-         int startI = i++;
-         
-         // Look ahead if we have a row of equal operators
-         for ( ; i < cnt
-            && filterTokens.get( i ).operatorType == filterToken.operatorType; ++i )
-         {
-            ambiguous = true;
-            
-            // remove equal token in row
-            filterTokens.set( i, null );
-         }
-         
-         if ( ambiguous )
-         {
-            // Remove first token of the row
-            filterTokens.set( startI, null );
-         }
+         uniqueTokens = collectUniqueTokens();
       }
       
-      for ( Iterator< RtmSmartFilterToken > i = filterTokens.iterator(); i.hasNext(); )
-      {
-         if ( i.next() == null )
-         {
-            i.remove();
-         }
-      }
-      
-      return filterTokens;
+      return uniqueTokens;
    }
    
    
    
-   public boolean hasOperator( int operator, boolean negated )
+   public boolean hasUniqueOperator( int operator, boolean negated )
    {
       for ( RtmSmartFilterToken token : getUniqueTokens() )
       {
@@ -121,9 +80,9 @@ public class RtmSmartFilterTokenCollection implements
    
    
    
-   public boolean hasOperatorAndValue( int operator,
-                                       String value,
-                                       boolean negated )
+   public boolean hasUniqueOperatorWithValue( int operator,
+                                              String value,
+                                              boolean negated )
    {
       for ( RtmSmartFilterToken token : getUniqueTokens() )
       {
@@ -161,25 +120,25 @@ public class RtmSmartFilterTokenCollection implements
    
    
    @Override
-   public boolean add( RtmSmartFilterToken object )
+   public boolean add( RtmSmartFilterToken object ) throws UnsupportedOperationException
    {
-      return impl.add( object );
+      throw new UnsupportedOperationException();
    }
    
    
    
    @Override
-   public boolean addAll( Collection< ? extends RtmSmartFilterToken > collection )
+   public boolean addAll( Collection< ? extends RtmSmartFilterToken > collection ) throws UnsupportedOperationException
    {
-      return impl.addAll( collection );
+      throw new UnsupportedOperationException();
    }
    
    
    
    @Override
-   public void clear()
+   public void clear() throws UnsupportedOperationException
    {
-      impl.clear();
+      throw new UnsupportedOperationException();
    }
    
    
@@ -235,23 +194,23 @@ public class RtmSmartFilterTokenCollection implements
    @Override
    public boolean remove( Object object )
    {
-      return impl.remove( object );
+      throw new UnsupportedOperationException();
    }
    
    
    
    @Override
-   public boolean removeAll( Collection< ? > collection )
+   public boolean removeAll( Collection< ? > collection ) throws UnsupportedOperationException
    {
-      return impl.removeAll( collection );
+      throw new UnsupportedOperationException();
    }
    
    
    
    @Override
-   public boolean retainAll( Collection< ? > collection )
+   public boolean retainAll( Collection< ? > collection ) throws UnsupportedOperationException
    {
-      return impl.retainAll( collection );
+      throw new UnsupportedOperationException();
    }
    
    
@@ -276,5 +235,64 @@ public class RtmSmartFilterTokenCollection implements
    public < T > T[] toArray( T[] array )
    {
       return impl.toArray( array );
+   }
+   
+   
+   
+   /**
+    * Ambiguous is determined by the number a token exists in the list of given tokens. This is the simplest approach to
+    * avoid situation with complex logical expressions where a token is entered negated and not negated.
+    * 
+    * TODO: Use more sophisticated approach like BDDs
+    */
+   private Collection< RtmSmartFilterToken > collectUniqueTokens()
+   {
+      final List< RtmSmartFilterToken > filterTokens = new LinkedList< RtmSmartFilterToken >( impl );
+      
+      Collections.sort( filterTokens, new Comparator< RtmSmartFilterToken >()
+      {
+         @Override
+         public int compare( RtmSmartFilterToken object1,
+                             RtmSmartFilterToken object2 )
+         {
+            return object1.operatorType - object2.operatorType;
+         }
+      } );
+      
+      for ( int i = 0, cnt = filterTokens.size(); i < cnt; )
+      {
+         boolean ambiguous = false;
+         
+         RtmSmartFilterToken filterToken = filterTokens.get( i );
+         
+         // next token
+         int startI = i++;
+         
+         // Look ahead if we have a row of equal operators
+         for ( ; i < cnt
+            && filterTokens.get( i ).operatorType == filterToken.operatorType; ++i )
+         {
+            ambiguous = true;
+            
+            // remove equal token in row
+            filterTokens.set( i, null );
+         }
+         
+         if ( ambiguous )
+         {
+            // Remove first token of the row
+            filterTokens.set( startI, null );
+         }
+      }
+      
+      for ( Iterator< RtmSmartFilterToken > i = filterTokens.iterator(); i.hasNext(); )
+      {
+         if ( i.next() == null )
+         {
+            i.remove();
+         }
+      }
+      
+      return Collections.unmodifiableCollection( filterTokens );
    }
 }

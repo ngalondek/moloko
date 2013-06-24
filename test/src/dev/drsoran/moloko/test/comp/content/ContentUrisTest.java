@@ -69,7 +69,7 @@ public class ContentUrisTest extends MolokoRoboTestCase
                   is( ContentUris.MATCH_TASK_PARTICIPANTS ) );
       
       assertThat( ContentUris.MATCHER.match( ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID,
-                                                                                       1L,
+                                                                                       100L,
                                                                                        2L ) ),
                   is( ContentUris.MATCH_TASK_PARTICIPANTS_ID ) );
       

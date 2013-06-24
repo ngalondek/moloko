@@ -121,8 +121,10 @@ public class TasksListsContentTest extends MolokoReadWriteDbContentTestCase
    
    
    @Override
-   protected void checkContent( Cursor c, long rowId )
+   protected void checkContent( Cursor c, int rowNumber )
    {
+      final long rowId = c.getLong( Columns.ID_IDX );
+      
       switch ( (int) rowId )
       {
          case 1:

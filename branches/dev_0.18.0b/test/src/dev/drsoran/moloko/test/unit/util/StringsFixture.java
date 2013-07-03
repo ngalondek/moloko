@@ -66,7 +66,15 @@ public class StringsFixture extends MolokoTestCase
       assertFalse( Strings.isQuotified( "" ) );
       assertTrue( Strings.isQuotified( "\"\"" ) );
       assertTrue( Strings.isQuotified( "\"longer test\"" ) );
-      assertFalse( Strings.isQuotified( "\"longer \"test\"\"" ) );
+      assertTrue( Strings.isQuotified( "\"longer \"test\"\"" ) );
+      
+      assertTrue( Strings.isQuotified( "'test'" ) );
+      assertFalse( Strings.isQuotified( "'test" ) );
+      assertFalse( Strings.isQuotified( "test'" ) );
+      assertFalse( Strings.isQuotified( "te'st" ) );
+      assertTrue( Strings.isQuotified( "''" ) );
+      assertTrue( Strings.isQuotified( "'longer test'" ) );
+      assertTrue( Strings.isQuotified( "'longer 'test''" ) );
    }
    
    
@@ -84,14 +92,22 @@ public class StringsFixture extends MolokoTestCase
    {
       assertThat( Strings.unquotify( "test" ), is( "test" ) );
       assertThat( Strings.unquotify( "\"test\"" ), is( "test" ) );
-      assertThat( Strings.unquotify( "\"test" ), is( "test" ) );
-      assertThat( Strings.unquotify( "test\"" ), is( "test" ) );
-      assertThat( Strings.unquotify( "te\"st" ), is( "test" ) );
+      assertThat( Strings.unquotify( "\"test" ), is( "\"test" ) );
+      assertThat( Strings.unquotify( "test\"" ), is( "test\"" ) );
+      assertThat( Strings.unquotify( "te\"st" ), is( "te\"st" ) );
       assertThat( Strings.unquotify( "" ), is( "" ) );
       assertThat( Strings.unquotify( "\"\"" ), is( "" ) );
       assertThat( Strings.unquotify( "\"longer test\"" ), is( "longer test" ) );
       assertThat( Strings.unquotify( "\"longer \"test\"\"" ),
-                  is( "longer test" ) );
+                  is( "longer \"test\"" ) );
+      
+      assertThat( Strings.unquotify( "'test'" ), is( "test" ) );
+      assertThat( Strings.unquotify( "'test" ), is( "'test" ) );
+      assertThat( Strings.unquotify( "test'" ), is( "test'" ) );
+      assertThat( Strings.unquotify( "te'st" ), is( "te'st" ) );
+      assertThat( Strings.unquotify( "''" ), is( "" ) );
+      assertThat( Strings.unquotify( "'longer test'" ), is( "longer test" ) );
+      assertThat( Strings.unquotify( "'longer 'test''" ), is( "longer 'test'" ) );
    }
    
    

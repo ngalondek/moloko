@@ -160,22 +160,6 @@ public class RtmSmartFilterTokenCollection implements
    
    
    @Override
-   public boolean equals( Object object )
-   {
-      return impl.equals( object );
-   }
-   
-   
-   
-   @Override
-   public int hashCode()
-   {
-      return impl.hashCode();
-   }
-   
-   
-   
-   @Override
    public boolean isEmpty()
    {
       return impl.isEmpty();

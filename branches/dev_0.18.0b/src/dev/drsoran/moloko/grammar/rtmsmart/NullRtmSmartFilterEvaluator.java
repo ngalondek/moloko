@@ -235,7 +235,7 @@ public class NullRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    @Override
-   public boolean evalTimeEstimate( String estimation )
+   public boolean evalTimeEstimate( String relation, String estimation )
    {
       return true;
    }
@@ -243,7 +243,7 @@ public class NullRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    @Override
-   public boolean evalPostponed( String postponed )
+   public boolean evalPostponed( String relation, int postponedCount )
    {
       return true;
    }

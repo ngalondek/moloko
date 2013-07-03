@@ -52,6 +52,7 @@ public class PriorityFixture extends MolokoTestCase
       assertThat( Priority.fromString( "2" ), is( Priority.Medium ) );
       assertThat( Priority.fromString( "3" ), is( Priority.Low ) );
       assertThat( Priority.fromString( "n" ), is( Priority.None ) );
+      assertThat( Priority.fromString( "N" ), is( Priority.None ) );
    }
    
    

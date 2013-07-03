@@ -143,31 +143,29 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetLexedOperatorState();
       
-      final String unqString = Strings.unquotify( tag );
-      
       result.append( "(" ).append( RtmTaskSeriesColumns.TAGS )
       // Exact match if only 1 tag
             .append( " = '" )
-            .append( unqString )
+            .append( tag )
             .append( "' OR " )
             // match for the case tag, (prefix)
             .append( RtmTaskSeriesColumns.TAGS )
             .append( " LIKE '" )
-            .append( unqString )
+            .append( tag )
             .append( RtmTaskSeriesColumns.TAGS_SEPARATOR )
             .append( "%' OR " )
             // match for the case ,tag, (infix)
             .append( RtmTaskSeriesColumns.TAGS )
             .append( " LIKE '%" )
             .append( RtmTaskSeriesColumns.TAGS_SEPARATOR )
-            .append( unqString )
+            .append( tag )
             .append( RtmTaskSeriesColumns.TAGS_SEPARATOR )
             .append( "%' OR " )
             // match for the case ,tag (suffix)
             .append( RtmTaskSeriesColumns.TAGS )
             .append( " LIKE '%" )
             .append( RtmTaskSeriesColumns.TAGS_SEPARATOR )
-            .append( unqString )
+            .append( tag )
             .append( "')" );
       
       return true;
@@ -508,7 +506,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    @Override
-   public boolean evalTimeEstimate( String estimation )
+   public boolean evalTimeEstimate( String relation, String estimation )
    {
       ensureOperatorAndResetLexedOperatorState();
       
@@ -516,26 +514,21 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       {
          result.append( "(" ).append( RtmRawTaskColumns.ESTIMATE_MILLIS );
          
-         final String param = Strings.unquotify( estimation ).trim();
-         
          long estimatedMillis = Constants.NO_TIME;
-         final char chPos0 = param.charAt( 0 );
-         
-         if ( chPos0 == '<' || chPos0 == '>' )
+         if ( !Strings.isNullOrEmpty( relation ) )
          {
             result.append( " > " )
                   .append( Constants.NO_TIME )
                   .append( " AND " )
                   .append( RtmRawTaskColumns.ESTIMATE_MILLIS )
-                  .append( chPos0 );
-            
-            estimatedMillis = dateTimeParsing.parseEstimated( param.substring( 1 ) );
+                  .append( relation );
          }
          else
          {
             result.append( "=" );
-            estimatedMillis = dateTimeParsing.parseEstimated( param );
          }
+         
+         estimatedMillis = dateTimeParsing.parseEstimated( estimation );
          
          result.append( estimatedMillis ).append( ")" );
          
@@ -550,28 +543,23 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    @Override
-   public boolean evalPostponed( String postponed )
+   public boolean evalPostponed( String relation, int postponedCount )
    {
       ensureOperatorAndResetLexedOperatorState();
       result.append( RtmRawTaskColumns.POSTPONED );
       
       boolean ok = true;
       
-      if ( !Strings.isNullOrEmpty( postponed ) )
+      if ( !Strings.isNullOrEmpty( relation ) )
       {
-         if ( Strings.isQuotified( postponed ) )
-         {
-            result.append( Strings.unquotify( postponed ) );
-         }
-         else
-         {
-            ok = equalsIntParam( postponed );
-         }
+         result.append( relation );
       }
       else
       {
-         ok = false;
+         result.append( "=" );
       }
+      
+      result.append( postponedCount );
       
       return ok;
    }
@@ -715,35 +703,14 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private void likeStringParam( String param )
    {
-      result.append( " LIKE '" )
-            .append( Strings.unquotify( param ) )
-            .append( "'" );
+      result.append( " LIKE '" ).append( param ).append( "'" );
    }
    
    
    
    private void containsStringParam( String param )
    {
-      result.append( " LIKE '%" )
-            .append( Strings.unquotify( param ) )
-            .append( "%'" );
-   }
-   
-   
-   
-   private boolean equalsIntParam( String param )
-   {
-      try
-      {
-         final int val = Integer.parseInt( Strings.unquotify( param ) );
-         result.append( "=" ).append( val );
-      }
-      catch ( NumberFormatException e )
-      {
-         return false;
-      }
-      
-      return true;
+      result.append( " LIKE '%" ).append( param ).append( "%'" );
    }
    
    
@@ -753,7 +720,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       final MolokoCalendar cal;
       try
       {
-         cal = dateTimeParsing.parseDateTimeSpec( Strings.unquotify( param ) );
+         cal = dateTimeParsing.parseDateTimeSpec( param );
       }
       catch ( GrammarException e )
       {
@@ -794,19 +761,17 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private boolean differsTimeParam( String column, String param, boolean before )
    {
-      final String unquotParam = Strings.unquotify( param );
-      
       MolokoCalendar cal;
       try
       {
-         cal = dateTimeParsing.parseDateTimeSpec( unquotParam );
+         cal = dateTimeParsing.parseDateTimeSpec( param );
       }
       // If simple time parsing failed, try parse date within
       catch ( GrammarException e )
       {
          try
          {
-            cal = dateTimeParsing.parseDateWithin( unquotParam, before ).endEpoch;
+            cal = dateTimeParsing.parseDateWithin( param, before ).endEpoch;
          }
          catch ( GrammarException e1 )
          {
@@ -838,7 +803,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       try
       {
-         final ParseDateWithinReturn range = dateTimeParsing.parseDateWithin( Strings.unquotify( param ),
+         final ParseDateWithinReturn range = dateTimeParsing.parseDateWithin( param,
                                                                               past );
          result.append( "(" )
                .append( column )

@@ -303,19 +303,21 @@ public class TokenCollectingEvaluator implements IRtmSmartFilterEvaluator
    
    
    @Override
-   public boolean evalTimeEstimate( String estimation )
+   public boolean evalTimeEstimate( String relation, String estimation )
    {
-      addRtmToken( RtmSmartFilterLexer.OP_TIME_ESTIMATE, estimation );
-      return decorated.evalTimeEstimate( estimation );
+      addRtmToken( RtmSmartFilterLexer.OP_TIME_ESTIMATE, relation + estimation );
+      return decorated.evalTimeEstimate( relation, estimation );
    }
    
    
    
    @Override
-   public boolean evalPostponed( String postponed )
+   public boolean evalPostponed( String relation, int postponedCount )
    {
-      addRtmToken( RtmSmartFilterLexer.OP_POSTPONED, postponed );
-      return decorated.evalPostponed( postponed );
+      addRtmToken( RtmSmartFilterLexer.OP_POSTPONED,
+                   Strings.emptyIfNull( relation )
+                      + String.valueOf( postponedCount ) );
+      return decorated.evalPostponed( relation, postponedCount );
    }
    
    
@@ -385,8 +387,6 @@ public class TokenCollectingEvaluator implements IRtmSmartFilterEvaluator
    
    private void addRtmToken( int type, String param )
    {
-      tokens.add( new RtmSmartFilterToken( type,
-                                           Strings.unquotify( param ),
-                                           opNot ) );
+      tokens.add( new RtmSmartFilterToken( type, param, opNot ) );
    }
 }

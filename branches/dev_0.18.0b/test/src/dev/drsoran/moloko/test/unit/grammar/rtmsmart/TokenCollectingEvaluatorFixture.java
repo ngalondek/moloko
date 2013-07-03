@@ -143,7 +143,7 @@ public class TokenCollectingEvaluatorFixture extends MolokoTestCase
    public void testGetTokens()
    {
       assertEmpty( evaluator.getTokens() );
-      assertTrue( evaluator.evalList( "" ) );
+      assertTrue( evaluator.evalList( "List" ) );
       assertNotEmpty( evaluator.getTokens() );
    }
    
@@ -393,7 +393,12 @@ public class TokenCollectingEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalTimeEstimate()
    {
-      assertTrue( evaluator.evalTimeEstimate( "2 days" ) );
+      assertTrue( evaluator.evalTimeEstimate( ">", "2 days" ) );
+      assertToken( OP_TIME_ESTIMATE, ">2 days" );
+      
+      evaluator.reset();
+      
+      assertTrue( evaluator.evalTimeEstimate( "", "2 days" ) );
       assertToken( OP_TIME_ESTIMATE, "2 days" );
    }
    
@@ -402,8 +407,13 @@ public class TokenCollectingEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalPostponed()
    {
-      assertTrue( evaluator.evalPostponed( "0" ) );
+      assertTrue( evaluator.evalPostponed( "", 0 ) );
       assertToken( OP_POSTPONED, "0" );
+      
+      evaluator.reset();
+      
+      assertTrue( evaluator.evalPostponed( ">", 10 ) );
+      assertToken( OP_POSTPONED, ">10" );
    }
    
    

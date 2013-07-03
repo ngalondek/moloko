@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.util;
 
 import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.text.Editable;
 
@@ -30,6 +32,10 @@ import android.text.Editable;
 public final class Strings
 {
    public final static String EMPTY_STRING = "";
+   
+   private final static Pattern QUOTED_STRING_PATTERN = Pattern.compile( "^(\"|').*(\"|')$" );
+   
+   private final static Pattern UNQUOTE_STRING_PATTERN = Pattern.compile( "^(\"|')(.*)(\"|')$" );
    
    
    
@@ -47,7 +53,7 @@ public final class Strings
          throw new IllegalArgumentException( "input" );
       }
       
-      return input.matches( "\"(?:[^\"\\\\]|\\\\.)*\"" );
+      return QUOTED_STRING_PATTERN.matcher( input ).matches();
    }
    
    
@@ -59,7 +65,13 @@ public final class Strings
          throw new IllegalArgumentException( "input" );
       }
       
-      return input.replaceAll( "(\")", "" );
+      final Matcher matcher = UNQUOTE_STRING_PATTERN.matcher( input );
+      if ( matcher.matches() )
+      {
+         return matcher.group( 2 );
+      }
+      
+      return input;
    }
    
    

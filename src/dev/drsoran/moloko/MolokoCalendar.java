@@ -30,7 +30,7 @@ import java.util.TimeZone;
 
 public final class MolokoCalendar
 {
-   private final Calendar impl = Calendar.getInstance();
+   private final Calendar impl;
    
    private boolean hasDate = true;
    
@@ -40,7 +40,15 @@ public final class MolokoCalendar
    
    private MolokoCalendar( TimeZone timezone )
    {
+      this( Calendar.getInstance() );
       impl.setTimeZone( timezone );
+   }
+   
+   
+   
+   private MolokoCalendar( Calendar calendar )
+   {
+      impl = calendar;
    }
    
    
@@ -81,9 +89,13 @@ public final class MolokoCalendar
    
    
    @Override
-   public Object clone()
+   public MolokoCalendar clone()
    {
-      return impl.clone();
+      final MolokoCalendar clone = new MolokoCalendar( (Calendar) impl.clone() );
+      clone.setHasDate( hasDate );
+      clone.setHasTime( hasTime );
+      
+      return clone;
    }
    
    

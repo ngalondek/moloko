@@ -27,9 +27,14 @@ import org.antlr.runtime.ANTLRStringStream;
 
 public class ANTLRNoCaseStringStream extends ANTLRStringStream
 {
+   private final String inputString;
+   
+   
+   
    public ANTLRNoCaseStringStream( String string )
    {
       super( string );
+      inputString = string;
    }
    
    
@@ -53,5 +58,28 @@ public class ANTLRNoCaseStringStream extends ANTLRStringStream
       }
       
       return Character.toLowerCase( data[ p + i - 1 ] );
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      int leftStringPos;
+      if ( p < 0 )
+      {
+         leftStringPos = 0;
+      }
+      else if ( p > inputString.length() )
+      {
+         leftStringPos = inputString.length();
+      }
+      else
+      {
+         leftStringPos = p;
+      }
+      
+      return inputString.substring( 0, leftStringPos ) + "^"
+         + inputString.substring( leftStringPos );
    }
 }

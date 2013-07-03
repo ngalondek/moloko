@@ -11,6 +11,7 @@ options
    
    import org.antlr.runtime.RecognitionException;
    import dev.drsoran.moloko.grammar.GrammarException;
+   import dev.drsoran.moloko.util.Strings;
 }
 
 
@@ -187,11 +188,12 @@ options
 
 /** Operators **/
 
+
 OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalList( $s.getText() );
+                     error = !evaluator.evalList( Strings.unquotify( $s.getText() ) );
                   }
                };
 
@@ -199,7 +201,7 @@ OP_PRIORITY :  'priority:' ( p=PRIO_HIGH | p=PRIO_MED | p=PRIO_LOW | p=PRIO_NONE
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalPriority( $p.getText() );
+                     error = !evaluator.evalPriority( $p.getText() );
                   }
                };
 
@@ -209,7 +211,7 @@ OP_STATUS   :  'status:'
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalStatus( true );
+                        error = !evaluator.evalStatus( true );
                      }
                      
                      hasStatusCompletedOp = true;
@@ -219,7 +221,7 @@ OP_STATUS   :  'status:'
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalStatus( false );
+                        error = !evaluator.evalStatus( false );
                      }
                   }
                );
@@ -228,7 +230,7 @@ OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
               {                     
                  if (evaluator != null)
                  {
-                    error = evaluator.evalTag( $s.getText() );
+                    error = !evaluator.evalTag( Strings.unquotify( $s.getText() ) );
                  }                   
               };
 
@@ -236,7 +238,7 @@ OP_TAG_CONTAINS : 'tagcontains:' ( s=STRING | s=Q_STRING )
                   {
                     if (evaluator != null)
                     {
-                       error = evaluator.evalTagContains( $s.getText() );
+                       error = !evaluator.evalTagContains( Strings.unquotify( $s.getText() ) );
                     }
                   };
 
@@ -246,7 +248,7 @@ OP_IS_TAGGED    : 'istagged:'
                      {
                         if (evaluator != null)
                         {
-                           error = evaluator.evalIsTagged( true );
+                           error = !evaluator.evalIsTagged( true );
                         }
                      }
                      |
@@ -254,7 +256,7 @@ OP_IS_TAGGED    : 'istagged:'
                      {
                         if (evaluator != null)
                         {
-                           error = evaluator.evalIsTagged( false );
+                           error = !evaluator.evalIsTagged( false );
                         }
                      }
                   );
@@ -263,7 +265,7 @@ OP_LOCATION : 'location:' ( s=STRING | s=Q_STRING )
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalLocation( $s.getText() );
+                     error = !evaluator.evalLocation( Strings.unquotify( $s.getText() ) );
                   }
                };
 
@@ -275,7 +277,7 @@ OP_ISLOCATED : 'islocated:'
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalIsLocated( true );
+                        error = !evaluator.evalIsLocated( true );
                      }
                   }
                   |
@@ -283,7 +285,7 @@ OP_ISLOCATED : 'islocated:'
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalIsLocated( false );
+                        error = !evaluator.evalIsLocated( false );
                      }
                   }
                );
@@ -294,7 +296,7 @@ OP_IS_REPEATING : 'isrepeating:'
                      {
                         if (evaluator != null)
                         {
-                           error = evaluator.evalIsRepeating( true );
+                           error = !evaluator.evalIsRepeating( true );
                         }
                      }
                      |
@@ -302,7 +304,7 @@ OP_IS_REPEATING : 'isrepeating:'
                      {
                         if (evaluator != null)
                         {
-                           error = evaluator.evalIsRepeating( false );
+                           error = !evaluator.evalIsRepeating( false );
                         }
                      }
                   );
@@ -311,7 +313,7 @@ OP_NAME      : 'name:' ( s=STRING | s=Q_STRING )
                {          
                   if (evaluator != null)
                   {
-                     error = evaluator.evalTaskName( $s.getText() );
+                     error = !evaluator.evalTaskName( Strings.unquotify( $s.getText() ) );
                   }
                };
 
@@ -319,7 +321,7 @@ OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
                    {    
                       if (evaluator != null)
                       {
-                         error = evaluator.evalNoteContains( $s.getText() );
+                         error = !evaluator.evalNoteContains( Strings.unquotify( $s.getText() ) );
                       }
                    };
 
@@ -329,7 +331,7 @@ OP_HAS_NOTES : 'hasnotes:'
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalHasNotes( true );
+                        error = !evaluator.evalHasNotes( true );
                      }
                   }
                   |
@@ -337,7 +339,7 @@ OP_HAS_NOTES : 'hasnotes:'
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalHasNotes( false );
+                        error = !evaluator.evalHasNotes( false );
                      }
                   }
                );
@@ -346,7 +348,7 @@ OP_DUE      :  'due:' ( s=STRING | s=Q_STRING )
                {     
                   if (evaluator != null)
                   {
-                     error = evaluator.evalDue( $s.getText() );
+                     error = !evaluator.evalDue( Strings.unquotify( $s.getText() ) );
                   }
                };
 
@@ -354,7 +356,7 @@ OP_DUE_AFTER : 'dueafter:' ( s=STRING | s=Q_STRING )
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalDueAfter( $s.getText() );
+                     error = !evaluator.evalDueAfter( Strings.unquotify( $s.getText() ) );
                   }
                };
 
@@ -362,7 +364,7 @@ OP_DUE_BEFORE : 'duebefore:' ( s=STRING | s=Q_STRING )
                 {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalDueBefore( $s.getText() );
+                     error = !evaluator.evalDueBefore( Strings.unquotify( $s.getText() ) );
                   }
                 };
 
@@ -370,7 +372,7 @@ OP_DUE_WITHIN : 'duewithin:' s=Q_STRING
                 {
                    if (evaluator != null)
                    {
-                      error = evaluator.evalDueWithIn( $s.getText() );
+                      error = !evaluator.evalDueWithIn( Strings.unquotify($s.getText()) );
                    }
                 };
 
@@ -378,7 +380,7 @@ OP_COMPLETED : 'completed:' ( s=STRING | s=Q_STRING )
                {  
                   if (evaluator != null)
                   {
-                     error = evaluator.evalCompleted( $s.getText() );
+                     error = !evaluator.evalCompleted( Strings.unquotify( $s.getText() ) );
                   }
                            
                   hasStatusCompletedOp = true;
@@ -388,7 +390,7 @@ OP_COMPLETED_AFTER : 'completedafter:' ( s=STRING | s=Q_STRING )
                      {
                         if (evaluator != null)
                         {
-                           error = evaluator.evalCompletedAfter( $s.getText() );
+                           error = !evaluator.evalCompletedAfter( Strings.unquotify( $s.getText() ) );
                         }
                         
                         hasStatusCompletedOp = true;
@@ -398,7 +400,7 @@ OP_COMPLETED_BEFORE : 'completedbefore:' ( s=STRING | s=Q_STRING )
                       {
                           if (evaluator != null)
                           {
-                             error = evaluator.evalCompletedBefore( $s.getText() );
+                             error = !evaluator.evalCompletedBefore( Strings.unquotify( $s.getText() ) );
                           }
                           
                           hasStatusCompletedOp = true;
@@ -408,7 +410,7 @@ OP_COMPLETED_WITHIN : 'completedwithin:' s=Q_STRING
                       {
                          if (evaluator != null)
                          {
-                            error = evaluator.evalCompletedWithIn( $s.getText() );
+                            error = !evaluator.evalCompletedWithIn( Strings.unquotify($s.getText()) );
                          }
                           
                          hasStatusCompletedOp = true;
@@ -418,7 +420,7 @@ OP_ADDED     : 'added:' ( s=STRING | s=Q_STRING )
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalAdded( $s.getText() );
+                     error = !evaluator.evalAdded( Strings.unquotify( $s.getText() ) );
                   }
                };
 
@@ -426,7 +428,7 @@ OP_ADDED_AFTER : 'addedafter:' ( s=STRING | s=Q_STRING )
                  {
                     if (evaluator != null)
                     {
-                       error = evaluator.evalAddedAfter( $s.getText() );
+                       error = !evaluator.evalAddedAfter( Strings.unquotify( $s.getText() ) );
                     }
                  };
 
@@ -434,31 +436,42 @@ OP_ADDED_BEFORE : 'addedbefore:' ( s=STRING | s=Q_STRING )
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalAddedBefore( $s.getText() );
+                        error = !evaluator.evalAddedBefore( Strings.unquotify( $s.getText() ) );
                      }
                   };
-
+                  
 OP_ADDED_WITHIN : 'addedwithin:' s=Q_STRING
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalAddedWithIn( $s.getText() );
+                        error = !evaluator.evalAddedWithIn( Strings.unquotify($s.getText()) );
                      }
-                  };
+                  };                  
 
-OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
+OP_TIME_ESTIMATE : 'timeestimate:' (    QUOTE r=RELATION s=STRING QUOTE
+                                      | r=RELATION s=STRING
+                                   )
                    {    
                       if (evaluator != null)
                       {
-                         error = evaluator.evalTimeEstimate( $s.getText() );
+                         final String relation = Strings.emptyIfNull( $r.text );
+                         final String estimation = $s.text;
+
+                         error = !evaluator.evalTimeEstimate( relation, estimation );
                       }
                    };
 
-OP_POSTPONED : 'postponed:' s=STRING | s=Q_STRING
+OP_POSTPONED : 'postponed:' (      QUOTE r=RELATION n=NUMBER+ QUOTE 
+                               | r=RELATION n=NUMBER+
+                               | n=NUMBER+
+                            )
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalPostponed( $s.getText() );
+                  	final String relation = Strings.emptyIfNull( $r.text );
+                  	final int count = $n.int;
+                  
+                     error = !evaluator.evalPostponed( relation, count );
                   }
                };
 
@@ -468,7 +481,7 @@ OP_IS_SHARED : 'isshared:'
                   {       
                      if (evaluator != null)
                      {
-                        error = evaluator.evalIsShared( true );
+                        error = !evaluator.evalIsShared( true );
                      }              
                   }
                   |
@@ -476,7 +489,7 @@ OP_IS_SHARED : 'isshared:'
                   {
                      if (evaluator != null)
                      {
-                        error = evaluator.evalIsShared( false );
+                        error = !evaluator.evalIsShared( false );
                      }
                   }
                );
@@ -485,7 +498,7 @@ OP_SHARED_WITH : 'sharedwith:' ( s=STRING | s=Q_STRING )
                  {
                     if (evaluator != null)
                     {
-                       error = evaluator.evalSharedWith( $s.getText() );
+                       error = !evaluator.evalSharedWith( Strings.unquotify( $s.getText() ) );
                     }
                  };
 
@@ -520,7 +533,7 @@ L_PARENTH   : '('
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalLeftParenthesis();
+                     error = !evaluator.evalLeftParenthesis();
                   }
                };
 
@@ -528,7 +541,7 @@ R_PARENTH   : ')'
                {
                   if (evaluator != null)
                   {
-                     error = evaluator.evalRightParenthesis();
+                     error = !evaluator.evalRightParenthesis();
                   }
                };
 
@@ -536,7 +549,7 @@ AND         : 'and'
               {
                  if (evaluator != null)
                  {
-                    error = evaluator.evalAnd();
+                    error = !evaluator.evalAnd();
                  }
               };
 
@@ -544,7 +557,7 @@ OR          : 'or'
               {
                  if (evaluator != null)
                  {
-                    error = evaluator.evalOr();
+                    error = !evaluator.evalOr();
                  }
               };
 
@@ -552,18 +565,21 @@ NOT         : 'not'
               {          
                  if (evaluator != null)
                  {
-                    error = evaluator.evalNot();
+                    error = !evaluator.evalNot();
                  }
               };
-
-WS          :   ( ' '
-                 | '\t'
-                 | '\r'
-                 | '\n'
-                 ) { skip(); };
+                 
+fragment
+QUOTE       : ('"' | '\'');
 
 fragment
-Q_STRING    : '"' ~('"')* '"';
+Q_STRING    :	QUOTE (options { greedy=false; } : .)*  QUOTE;
 
 fragment
-STRING      : ~('"' | ' ' | '(' | ')')+;
+STRING      : ~(' ' | '(' | ')' | QUOTE)+;
+
+fragment
+NUMBER      : '0'..'9';
+
+fragment                 
+RELATION    : '<' | '>' | '=';

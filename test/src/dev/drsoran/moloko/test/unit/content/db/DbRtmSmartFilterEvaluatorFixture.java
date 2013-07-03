@@ -23,7 +23,8 @@
 package dev.drsoran.moloko.test.unit.content.db;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -80,7 +81,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testGetResult()
    {
-      assertThat( evaluator.getResult(), is( (String) null ) );
+      assertThat( evaluator.getResult(), nullValue() );
    }
    
    
@@ -89,13 +90,13 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    public void testReset()
    {
       evaluator.reset();
-      assertThat( evaluator.getResult(), is( (String) null ) );
+      assertThat( evaluator.getResult(), nullValue() );
       
       assertTrue( evaluator.evalAnd() );
-      assertThat( evaluator.getResult(), not( is( (String) null ) ) );
+      assertThat( evaluator.getResult(), notNullValue() );
       
       evaluator.reset();
-      assertThat( evaluator.getResult(), is( (String) null ) );
+      assertThat( evaluator.getResult(), nullValue() );
    }
    
    
@@ -124,17 +125,9 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       assertQueryAndReset( RtmTasksListColumns.LIST_NAME
          + " LIKE 'List with Space'" );
       
-      assertTrue( evaluator.evalList( "\"List with Space\"" ) );
-      assertQueryAndReset( RtmTasksListColumns.LIST_NAME
-         + " LIKE 'List with Space'" );
-      
-      testEnsureOperator( "evalList",
-                          "listName",
-                          RtmTasksListColumns.LIST_NAME + " LIKE 'listName'",
-                          "\"List with Space\"",
-                          RtmTasksListColumns.LIST_NAME
-                             + " LIKE 'List with Space'",
-                          String.class );
+      testEnsureOperator( "evalList", "listName", RtmTasksListColumns.LIST_NAME
+         + " LIKE 'listName'", "List with Space", RtmTasksListColumns.LIST_NAME
+         + " LIKE 'List with Space'", String.class );
    }
    
    
@@ -199,7 +192,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       assertQueryAndReset( RtmTaskSeriesColumns.TAGS + " LIKE '%tag%'" );
       
       testEnsureOperator( "evalTagContains", "tag", RtmTaskSeriesColumns.TAGS
-         + " LIKE '%tag%'", "\"tag1\"", RtmTaskSeriesColumns.TAGS
+         + " LIKE '%tag%'", "tag1", RtmTaskSeriesColumns.TAGS
          + " LIKE '%tag1%'", String.class );
    }
    
@@ -294,10 +287,6 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
          + " LIKE '%taskName%'" );
       
       assertTrue( evaluator.evalTaskName( "Task with Space" ) );
-      assertQueryAndReset( RtmTaskSeriesColumns.TASKSERIES_NAME
-         + " LIKE '%Task with Space%'" );
-      
-      assertTrue( evaluator.evalTaskName( "\"Task with Space\"" ) );
       assertQueryAndReset( RtmTaskSeriesColumns.TASKSERIES_NAME
          + " LIKE '%Task with Space%'" );
       
@@ -483,24 +472,20 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
       
-      assertTrue( evaluator.evalTimeEstimate( "<now" ) );
+      assertTrue( evaluator.evalTimeEstimate( "<", "now" ) );
       assertQueryAndReset( String.format( lessQuery, TestConstants.NOW ) );
       
-      assertTrue( evaluator.evalTimeEstimate( ">now" ) );
+      assertTrue( evaluator.evalTimeEstimate( ">", "now" ) );
       assertQueryAndReset( String.format( greaterQuery, TestConstants.NOW ) );
       
-      assertTrue( evaluator.evalTimeEstimate( "now" ) );
+      assertTrue( evaluator.evalTimeEstimate( null, "now" ) );
       assertQueryAndReset( String.format( equalQuery, TestConstants.NOW ) );
       
-      assertFalse( evaluator.evalTimeEstimate( "???" ) );
-      assertQueryAndReset( null );
+      assertTrue( evaluator.evalTimeEstimate( "", "now" ) );
+      assertQueryAndReset( String.format( equalQuery, TestConstants.NOW ) );
       
-      testEnsureOperator( "evalTimeEstimate",
-                          "<now",
-                          String.format( lessQuery, TestConstants.NOW ),
-                          "now",
-                          String.format( equalQuery, TestConstants.NOW ),
-                          String.class );
+      assertFalse( evaluator.evalTimeEstimate( ">", "???" ) );
+      assertQueryAndReset( null );
    }
    
    
@@ -508,23 +493,17 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalPostponed() throws Exception
    {
-      assertThat( evaluator.evalPostponed( "" ), is( false ) );
-      assertQueryAndReset( null );
+      assertThat( evaluator.evalPostponed( "", 0 ), is( true ) );
+      assertQueryAndReset( RtmRawTaskColumns.POSTPONED + "=0" );
       
-      assertThat( evaluator.evalPostponed( null ), is( false ) );
-      assertQueryAndReset( null );
-      
-      assertThat( evaluator.evalPostponed( "NAN" ), is( false ) );
-      assertQueryAndReset( null );
-      
-      assertTrue( evaluator.evalPostponed( "1" ) );
+      assertThat( evaluator.evalPostponed( null, 1 ), is( true ) );
       assertQueryAndReset( RtmRawTaskColumns.POSTPONED + "=1" );
       
-      assertTrue( evaluator.evalPostponed( "\">3\"" ) );
-      assertQueryAndReset( RtmRawTaskColumns.POSTPONED + ">3" );
+      assertTrue( evaluator.evalPostponed( "<", 100 ) );
+      assertQueryAndReset( RtmRawTaskColumns.POSTPONED + "<100" );
       
-      testEnsureOperator( "evalPostponed", "1", RtmRawTaskColumns.POSTPONED
-         + "=1", "\"<4\"", RtmRawTaskColumns.POSTPONED + "<4", String.class );
+      assertTrue( evaluator.evalPostponed( ">", 3 ) );
+      assertQueryAndReset( RtmRawTaskColumns.POSTPONED + ">3" );
    }
    
    
@@ -660,6 +639,116 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    
    
    
+   /**
+    * https://code.google.com/p/moloko/issues/detail?id=80
+    * 
+    * @throws GrammarException
+    */
+   @Test
+   public void testSleeperTags() throws GrammarException
+   {
+      final MolokoCalendar now = MolokoCalendar.getInstance();
+      now.setTimeInMillis( TestConstants.NOW );
+      
+      final MolokoCalendar oneDayOfNow = now.clone();
+      oneDayOfNow.add( Calendar.DAY_OF_YEAR, 1 );
+      
+      final MolokoCalendar twoDayOfNow = now.clone();
+      oneDayOfNow.add( Calendar.DAY_OF_YEAR, 2 );
+      
+      final MolokoCalendar oneWeekOfNow = now.clone();
+      oneDayOfNow.add( Calendar.WEEK_OF_YEAR, 1 );
+      
+      final MolokoCalendar twoWeeksOfNow = now.clone();
+      oneDayOfNow.add( Calendar.WEEK_OF_YEAR, 2 );
+      
+      final MolokoCalendar oneMonthOfNow = now.clone();
+      oneDayOfNow.add( Calendar.MONTH, 1 );
+      
+      EasyMock.reset( dateTimeParsing );
+      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "now" ) )
+              .andReturn( now )
+              .anyTimes();
+      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "1 day of now" ) )
+              .andReturn( oneDayOfNow )
+              .anyTimes();
+      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "2 days of now" ) )
+              .andReturn( twoDayOfNow )
+              .anyTimes();
+      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "1 week of now" ) )
+              .andReturn( oneWeekOfNow )
+              .anyTimes();
+      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "2 weeks of now" ) )
+              .andReturn( twoWeeksOfNow )
+              .anyTimes();
+      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "1 month of now" ) )
+              .andReturn( oneMonthOfNow )
+              .anyTimes();
+      EasyMock.replay( dateTimeParsing );
+      
+      // (tag:zzz AND dueAfter:now)
+      assertTrue( evaluator.evalLeftParenthesis() );
+      assertTrue( evaluator.evalTag( "zzz" ) );
+      assertTrue( evaluator.evalAnd() );
+      assertTrue( evaluator.evalDueAfter( "now" ) );
+      assertTrue( evaluator.evalRightParenthesis() );
+      
+      // OR (tag:z1d AND dueAfter:"1 day of now")
+      assertTrue( evaluator.evalOr() );
+      assertTrue( evaluator.evalLeftParenthesis() );
+      assertTrue( evaluator.evalTag( "z1d" ) );
+      assertTrue( evaluator.evalAnd() );
+      assertTrue( evaluator.evalDueAfter( "1 day of now" ) );
+      assertTrue( evaluator.evalRightParenthesis() );
+      
+      // OR (tag:z2d AND dueAfter:"2 days of now")
+      assertTrue( evaluator.evalOr() );
+      assertTrue( evaluator.evalLeftParenthesis() );
+      assertTrue( evaluator.evalTag( "z2d" ) );
+      assertTrue( evaluator.evalAnd() );
+      assertTrue( evaluator.evalDueAfter( "2 days of now" ) );
+      assertTrue( evaluator.evalRightParenthesis() );
+      
+      // OR (tag:z1w AND dueAfter:"1 week of now")
+      assertTrue( evaluator.evalOr() );
+      assertTrue( evaluator.evalLeftParenthesis() );
+      assertTrue( evaluator.evalTag( "z1w" ) );
+      assertTrue( evaluator.evalAnd() );
+      assertTrue( evaluator.evalDueAfter( "1 week of now" ) );
+      assertTrue( evaluator.evalRightParenthesis() );
+      
+      // OR (tag:z1m AND dueAfter:"1 month of now")
+      assertTrue( evaluator.evalOr() );
+      assertTrue( evaluator.evalLeftParenthesis() );
+      assertTrue( evaluator.evalTag( "z1m" ) );
+      assertTrue( evaluator.evalAnd() );
+      assertTrue( evaluator.evalDueAfter( "1 month of now" ) );
+      assertTrue( evaluator.evalRightParenthesis() );
+      
+      // OR (tag:z2w AND dueAfter:"2 weeks of now")
+      assertTrue( evaluator.evalOr() );
+      assertTrue( evaluator.evalLeftParenthesis() );
+      assertTrue( evaluator.evalTag( "z2w" ) );
+      assertTrue( evaluator.evalAnd() );
+      assertTrue( evaluator.evalDueAfter( "2 weeks of now" ) );
+      assertTrue( evaluator.evalRightParenthesis() );
+      
+      assertQueryAndReset( MessageFormat.format( "( (tags = ''zzz'' OR tags LIKE ''zzz,%'' OR tags LIKE ''%,zzz,%'' OR tags LIKE ''%,zzz'') AND (due > {0,number,#}) )"
+                                                    + " OR ( (tags = ''z1d'' OR tags LIKE ''z1d,%'' OR tags LIKE ''%,z1d,%'' OR tags LIKE ''%,z1d'') AND (due > {1,number,#}) )"
+                                                    + " OR ( (tags = ''z2d'' OR tags LIKE ''z2d,%'' OR tags LIKE ''%,z2d,%'' OR tags LIKE ''%,z2d'') AND (due > {2,number,#}) )"
+                                                    + " OR ( (tags = ''z1w'' OR tags LIKE ''z1w,%'' OR tags LIKE ''%,z1w,%'' OR tags LIKE ''%,z1w'') AND (due > {3,number,#}) )"
+                                                    + " OR ( (tags = ''z1m'' OR tags LIKE ''z1m,%'' OR tags LIKE ''%,z1m,%'' OR tags LIKE ''%,z1m'') AND (due > {4,number,#}) )"
+                                                    + " OR ( (tags = ''z2w'' OR tags LIKE ''z2w,%'' OR tags LIKE ''%,z2w,%'' OR tags LIKE ''%,z2w'') AND (due > {5,number,#}) )",
+                                                 now.getTimeInMillis(),
+                                                 oneDayOfNow.getTimeInMillis(),
+                                                 twoDayOfNow.getTimeInMillis(),
+                                                 oneWeekOfNow.getTimeInMillis(),
+                                                 oneMonthOfNow.getTimeInMillis(),
+                                                 twoWeeksOfNow.getTimeInMillis() ) );
+   }
+   
+   
+   
    private void assertQuery( String query )
    {
       String result = evaluator.getResult();
@@ -670,7 +759,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       else
       {
          result = result.replaceAll( "\\s{2,}", " " );
-         assertThat( result, is( "( " + query + " )" ) );
+         assertThat( "( " + query + " )", is( result ) );
       }
    }
    

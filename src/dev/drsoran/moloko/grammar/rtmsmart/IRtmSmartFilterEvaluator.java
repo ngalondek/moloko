@@ -128,11 +128,11 @@ public interface IRtmSmartFilterEvaluator
    
    
    
-   boolean evalTimeEstimate( String estimation );
+   boolean evalTimeEstimate( String relation, String estimation );
    
    
    
-   boolean evalPostponed( String postponed );
+   boolean evalPostponed( String relation, int postponedCount );
    
    
    

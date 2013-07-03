@@ -266,7 +266,7 @@ public class NullRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalTimeEstimate()
    {
-      assertThat( evaluator.evalTimeEstimate( "" ), is( true ) );
+      assertThat( evaluator.evalTimeEstimate( "", "" ), is( true ) );
    }
    
    
@@ -274,7 +274,8 @@ public class NullRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalPostponed()
    {
-      assertThat( evaluator.evalPostponed( "" ), is( true ) );
+      assertThat( evaluator.evalPostponed( null, 0 ), is( true ) );
+      assertThat( evaluator.evalPostponed( "<", 10 ), is( true ) );
    }
    
    

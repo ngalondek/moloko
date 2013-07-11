@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.ui.IChangesTarget;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
@@ -200,9 +201,16 @@ public class DueEditText extends ClearableEditText
       }
       else
       {
-         return getUiContext().getParsingService()
-                              .getDateTimeParsing()
-                              .parseDateTimeSpec( dueStr );
+         try
+         {
+            return getUiContext().getParsingService()
+                                 .getDateTimeParsing()
+                                 .parseDateTimeSpec( dueStr );
+         }
+         catch ( GrammarException e )
+         {
+            return null;
+         }
       }
    }
    

@@ -418,7 +418,7 @@ public class RecurrencePatternParser extends Parser
                         {
                            
                            sb.append( " " );
-                           lang.add( sb, "on_the" );
+                           lang.append( sb, "on_the" );
                            sb.append( " " );
                            
                            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\RecurrencePattern.g:202:17:
@@ -485,7 +485,7 @@ public class RecurrencePatternParser extends Parser
                               }
                               
                               sb.append( " " );
-                              lang.add( sb, "in" );
+                              lang.append( sb, "in" );
                               sb.append( " " );
                               
                               match( input,
@@ -553,7 +553,7 @@ public class RecurrencePatternParser extends Parser
                         {
                            
                            sb.append( " " );
-                           lang.add( sb, "on_the" );
+                           lang.append( sb, "on_the" );
                            sb.append( " " );
                            
                            // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\RecurrencePattern.g:218:17:
@@ -760,7 +760,7 @@ public class RecurrencePatternParser extends Parser
                         {
                            
                            sb.append( " " );
-                           lang.add( sb, "on_the" );
+                           lang.append( sb, "on_the" );
                            sb.append( " " );
                            
                            match( input,
@@ -878,7 +878,7 @@ public class RecurrencePatternParser extends Parser
                   if ( formatedDate != null )
                   {
                      sb.append( " " );
-                     lang.add( sb, "until" );
+                     lang.append( sb, "until" );
                      sb.append( " " );
                      sb.append( formatedDate );
                   }
@@ -898,11 +898,11 @@ public class RecurrencePatternParser extends Parser
                                          FOLLOW_INT_in_parseRecurrencePattern900 );
                   
                   sb.append( " " );
-                  lang.add( sb, "for" );
+                  lang.append( sb, "for" );
                   sb.append( " " );
                   sb.append( ( count != null ? count.getText() : null ) );
                   sb.append( " " );
-                  lang.add( sb, "times" );
+                  lang.append( sb, "times" );
                   
                }
                   break;
@@ -1318,10 +1318,10 @@ public class RecurrencePatternParser extends Parser
                                       FOLLOW_INT_in_parse_PatternInterval1401 );
             
             if ( isEvery )
-               lang.addEvery( sb, unit, ( interval != null ? interval.getText()
+               lang.appendEvery( sb, unit, ( interval != null ? interval.getText()
                                                           : null ) );
             else
-               lang.addAfter( sb, unit, ( interval != null ? interval.getText()
+               lang.appendAfter( sb, unit, ( interval != null ? interval.getText()
                                                           : null ) );
             
          }
@@ -1426,14 +1426,14 @@ public class RecurrencePatternParser extends Parser
                {
                   if ( xSt < -1 )
                   {
-                     lang.addStToX( sb, xSt * -1 );
+                     lang.appendStToX( sb, xSt * -1 );
                      sb.append( " " );
                   }
                   
-                  lang.add( sb, "last" );
+                  lang.append( sb, "last" );
                }
                else
-                  lang.addStToX( sb, xSt );
+                  lang.appendStToX( sb, xSt );
             }
             
          }
@@ -1540,7 +1540,7 @@ public class RecurrencePatternParser extends Parser
                      throw mse;
                   }
                   
-                  lang.add( sb, ( wd != null ? wd.getText() : null ) );
+                  lang.append( sb, ( wd != null ? wd.getText() : null ) );
                   
                }
                
@@ -1755,7 +1755,7 @@ public class RecurrencePatternParser extends Parser
          {
             m = (Token) match( input, INT, FOLLOW_INT_in_parse_PatternMonth2084 );
             
-            lang.add( sb, "m" + ( m != null ? m.getText() : null ) );
+            lang.append( sb, "m" + ( m != null ? m.getText() : null ) );
             
          }
          

@@ -118,15 +118,13 @@ public abstract class AbstractANTLRTimeParser extends Parser
    
    
    
-   protected ParseTimeReturn finishedParsingTime( MolokoCalendar cal )
+   protected ParseReturn finishedParsingTime( MolokoCalendar cal )
    {
       cal.setHasTime( success );
       
       final CommonToken lastToken = (CommonToken) input.LT( -1 );
-      return new ParseTimeReturn( lastToken != null
-                                                   ? lastToken.getStopIndex() + 1
-                                                   : 0,
-                                  input.LA( 1 ) == Token.EOF );
+      return new ParseReturn( lastToken != null ? lastToken.getStopIndex() + 1
+                                               : 0, input.LA( 1 ) == Token.EOF );
    }
    
    
@@ -138,13 +136,12 @@ public abstract class AbstractANTLRTimeParser extends Parser
    
    
    
-   public abstract ParseTimeReturn parseTime( MolokoCalendar cal,
+   public abstract ParseReturn parseTime( MolokoCalendar cal, boolean adjustDay ) throws RecognitionException;
+   
+   
+   
+   public abstract ParseReturn parseTimeSpec( MolokoCalendar cal,
                                               boolean adjustDay ) throws RecognitionException;
-   
-   
-   
-   public abstract ParseTimeReturn parseTimeSpec( MolokoCalendar cal,
-                                                  boolean adjustDay ) throws RecognitionException;
    
    
    

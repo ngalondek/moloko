@@ -305,7 +305,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
                                        list.getName(),
                                        String.class ) == SyncResultDirection.SERVER )
       {
-         operation.add( timeline.lists_setName( list.getId(), list.getName() ),
+         operation.append( timeline.lists_setName( list.getId(), list.getName() ),
                         properties.getModification( Lists.LIST_NAME ) );
       }
       

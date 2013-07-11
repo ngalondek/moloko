@@ -47,10 +47,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
-import dev.drsoran.rtm.Task;
 
 
 public final class UiUtils

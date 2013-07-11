@@ -92,4 +92,16 @@ public class ANTLRNoCaseStringStreamFixture extends MolokoTestCase
       
       assertThat( stream.LA( -1 ), is( (int) 't' ) );
    }
+   
+   
+   
+   @Test
+   public void testToString()
+   {
+      final ANTLRStringStream stream = new ANTLRNoCaseStringStream( "Test" );
+      stream.toString();
+      
+      stream.consume();
+      stream.toString();
+   }
 }

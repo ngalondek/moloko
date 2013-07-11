@@ -22,10 +22,9 @@
 
 package dev.drsoran.moloko.grammar.lang;
 
-import java.text.ParseException;
+import java.text.MessageFormat;
 import java.util.Locale;
 
-import android.content.res.Resources;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceSentenceLanguage;
 
@@ -37,19 +36,22 @@ public class RecurrenceSentenceLanguage extends Language implements
    
    
    
-   public RecurrenceSentenceLanguage( Locale locale, ILog log,
-      Resources resources, int langResId ) throws ParseException
+   public RecurrenceSentenceLanguage( Locale locale, ILog log )
    {
       super( locale );
       
+      if ( log == null )
+      {
+         throw new IllegalArgumentException( "log" );
+      }
+      
       this.log = log;
-      fromResources( resources, langResId );
    }
    
    
    
    @Override
-   public void add( StringBuilder sb, String key )
+   public void append( StringBuilder sb, String key )
    {
       final String res = dictionary.get( key );
       
@@ -59,30 +61,30 @@ public class RecurrenceSentenceLanguage extends Language implements
       }
       else
       {
-         log.e( getClass(), "No dict entry for " + key );
+         log.e( getClass(), MessageFormat.format( "No dict entry for {0}", key ) );
       }
    }
    
    
    
    @Override
-   public void addEvery( StringBuilder sb, String unit, String quantity )
+   public void appendEvery( StringBuilder sb, String unit, String quantity )
    {
-      addPlural( sb, "every", unit, quantity );
+      appendPlural( sb, "every", unit, quantity );
    }
    
    
    
    @Override
-   public void addAfter( StringBuilder sb, String unit, String quantity )
+   public void appendAfter( StringBuilder sb, String unit, String quantity )
    {
-      addPlural( sb, "after", unit, quantity );
+      appendPlural( sb, "after", unit, quantity );
    }
    
    
    
    @Override
-   public void addStToX( StringBuilder sb, int x )
+   public void appendStToX( StringBuilder sb, int x )
    {
       final String xStr = String.valueOf( x );
       
@@ -91,7 +93,9 @@ public class RecurrenceSentenceLanguage extends Language implements
       final String xst = dictionary.get( "xst" );
       
       if ( xst != null )
+      {
          sb.append( xst );
+      }
       else
       {
          if ( x > 3 && x < 20 )
@@ -123,10 +127,10 @@ public class RecurrenceSentenceLanguage extends Language implements
    
    
    
-   private void addPlural( StringBuilder sb,
-                           String prefix,
-                           String unit,
-                           String quantity )
+   private void appendPlural( StringBuilder sb,
+                              String prefix,
+                              String unit,
+                              String quantity )
    {
       final String res = getPluralString( prefix, unit, quantity );
       
@@ -136,7 +140,8 @@ public class RecurrenceSentenceLanguage extends Language implements
       }
       else
       {
-         log.e( getClass(), "No dict entry for " + prefix + "_" + unit );
+         log.e( getClass(),
+                MessageFormat.format( "No dict entry for {0}_{1}", prefix, unit ) );
       }
    }
 }

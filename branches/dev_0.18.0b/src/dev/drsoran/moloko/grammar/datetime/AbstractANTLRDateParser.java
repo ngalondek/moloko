@@ -298,7 +298,7 @@ public abstract class AbstractANTLRDateParser extends Parser
    
    
    
-   protected ParseDateReturn finishedDateParsing( MolokoCalendar cal )
+   protected ParseReturn finishedDateParsing( MolokoCalendar cal )
    {
       if ( input instanceof ANTLRIncrementalTokenStream )
       {
@@ -313,7 +313,7 @@ public abstract class AbstractANTLRDateParser extends Parser
                lastNonEofToken = null;
          }
          
-         return new ParseDateReturn( lastNonEofToken != null
+         return new ParseReturn( lastNonEofToken != null
                                                             ? lastNonEofToken.getStopIndex() + 1
                                                             : 0,
                                      incStream.isEof() );
@@ -321,7 +321,7 @@ public abstract class AbstractANTLRDateParser extends Parser
       else
       {
          final CommonToken lastToken = (CommonToken) input.LT( -1 );
-         return new ParseDateReturn( lastToken != null
+         return new ParseReturn( lastToken != null
                                                       ? lastToken.getStopIndex() + 1
                                                       : 0,
                                      input.LA( 1 ) == Token.EOF );
@@ -344,7 +344,7 @@ public abstract class AbstractANTLRDateParser extends Parser
    
    
    
-   public abstract ParseDateReturn parseDate( MolokoCalendar cal,
+   public abstract ParseReturn parseDate( MolokoCalendar cal,
                                               boolean clearTime ) throws RecognitionException;
    
    

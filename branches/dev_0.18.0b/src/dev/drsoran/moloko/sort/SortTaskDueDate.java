@@ -23,9 +23,9 @@
 package dev.drsoran.moloko.sort;
 
 import java.util.Comparator;
-import java.util.Date;
 
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 public class SortTaskDueDate implements Comparator< Task >
@@ -33,8 +33,8 @@ public class SortTaskDueDate implements Comparator< Task >
    @Override
    public int compare( Task lhs, Task rhs )
    {
-      final Date lhsDue = lhs.getDue();
-      final Date rhsDue = rhs.getDue();
+      final Due lhsDue = lhs.getDue();
+      final Due rhsDue = rhs.getDue();
       
       if ( lhsDue == rhsDue )
       {
@@ -50,7 +50,7 @@ public class SortTaskDueDate implements Comparator< Task >
       }
       else
       {
-         return lhsDue.compareTo( rhsDue );
+         return (int) ( lhsDue.getMillisUtc() - rhsDue.getMillisUtc() );
       }
    }
 }

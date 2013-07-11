@@ -82,7 +82,7 @@ public class TimeParserTestHelper
    {
       try
       {
-         final long diff = timeParser.parseTimeEstimate( timeEstimateString ) / 1000;
+         final long diff = timeParser.parseTimeEstimate( timeEstimateString );
          
          Assert.assertEquals( "Diff is wrong.", h * 3600 + m * 60 + s, diff );
       }

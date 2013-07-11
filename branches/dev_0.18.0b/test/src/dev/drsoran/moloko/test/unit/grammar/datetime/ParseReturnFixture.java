@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of MolokoTest.
  *
@@ -20,30 +20,39 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test;
+package dev.drsoran.moloko.test.unit.grammar.datetime;
 
-import java.util.Locale;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-import org.junit.runners.model.InitializationError;
-import org.robolectric.annotation.Config;
+import org.junit.Test;
+
+import dev.drsoran.moloko.grammar.datetime.ParseReturn;
+import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-@Config( qualifiers = "en" )
-public class MolokoTestRunner_en extends MolokoTestRunner
+public class ParseReturnFixture extends MolokoTestCase
 {
-   
-   public MolokoTestRunner_en( Class< ? > testClass )
-      throws InitializationError
+   @Test
+   public void testParseDateReturn()
    {
-      super( testClass );
-      Locale.setDefault( Locale.US );
+      new ParseReturn( 0, false );
    }
    
    
    
-   @Override
-   public String getValuesResQualifiers()
+   @Test
+   public void testNumParsedChars()
    {
-      return "";
+      assertThat( new ParseReturn( 10, false ).numParsedChars, is( 10 ) );
+   }
+   
+   
+   
+   @Test
+   public void testIsEof()
+   {
+      assertThat( new ParseReturn( 10, true ).isEof, is( true ) );
+      assertThat( new ParseReturn( 10, false ).isEof, is( false ) );
    }
 }

@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.IChangesTarget;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -173,11 +174,16 @@ public class RecurrenceEditText extends ClearableEditText
          }
          else
          {
-            final String sentence = recurrenceParsing.parseRecurrencePatternToSentence( recurrencePattern.first,
-                                                                                        recurrencePattern.second );
-            setText( ( sentence != null
-                                       ? sentence
-                                       : getContext().getString( R.string.task_datetime_err_recurr ) ) );
+            try
+            {
+               final String sentence = recurrenceParsing.parseRecurrencePatternToSentence( recurrencePattern.first,
+                                                                                           recurrencePattern.second );
+               setText( sentence );
+            }
+            catch ( GrammarException e )
+            {
+               setText( getContext().getString( R.string.task_datetime_err_recurr ) );
+            }
          }
       }
    }

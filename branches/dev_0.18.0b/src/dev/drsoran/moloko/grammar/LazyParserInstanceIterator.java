@@ -43,6 +43,19 @@ public final class LazyParserInstanceIterator< T > implements Iterable< T >,
    
    
    
+   /**
+    * Creates a new {@link LazyParserInstanceIterator} instance.
+    * 
+    * The instances list may hold already created instances from a previous iteration. The instance index must match the
+    * factory index from factories. New instances will be appended to the end of the list.
+    * 
+    * @param factories
+    *           the factories to create new instances
+    * @param factoryMethod
+    *           the method to call for new instances on each factory
+    * @param instances
+    *           a list with already created instances
+    */
    public LazyParserInstanceIterator( List< ? > factories,
       Method factoryMethod, List< T > instances )
    {
@@ -51,9 +64,37 @@ public final class LazyParserInstanceIterator< T > implements Iterable< T >,
    
    
    
+   /**
+    * Creates a new {@link LazyParserInstanceIterator} instance.
+    * 
+    * The instances list may hold already created instances from a previous iteration. The instance index must match the
+    * factory index from factories. New instances will be appended to the end of the list.
+    * 
+    * @param factories
+    *           the factories to create new instances
+    * @param factoryMethod
+    *           the method to call for new instances on each factory
+    * @param instances
+    *           a list with already created instances
+    * @param factoryMethodArgs
+    *           Optional arguments for the factoryMethod
+    */
    public LazyParserInstanceIterator( List< ? > factories,
       Method factoryMethod, List< T > instances, Object... factoryMethodArgs )
    {
+      if ( factories == null )
+      {
+         throw new IllegalArgumentException( "factories" );
+      }
+      if ( factoryMethod == null )
+      {
+         throw new IllegalArgumentException( "factoryMethod" );
+      }
+      if ( instances == null )
+      {
+         throw new IllegalArgumentException( "instances" );
+      }
+      
       this.factories = factories;
       this.factoryMethod = factoryMethod;
       this.instances = instances;

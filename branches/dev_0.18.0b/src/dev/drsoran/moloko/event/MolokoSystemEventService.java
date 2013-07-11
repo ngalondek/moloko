@@ -99,7 +99,7 @@ public class MolokoSystemEventService implements ISystemEventService
    {
       if ( listener != null )
       {
-         timeChangedListeners.removeListener( listener );
+         timeChangedListeners.unregisterListener( listener );
       }
    }
    
@@ -121,7 +121,7 @@ public class MolokoSystemEventService implements ISystemEventService
    {
       if ( listener != null )
       {
-         networkStatusListeners.removeListener( listener );
+         networkStatusListeners.unregisterListener( listener );
       }
    }
    
@@ -140,6 +140,10 @@ public class MolokoSystemEventService implements ISystemEventService
       {
          logService.e( getClass(), Strings.EMPTY_STRING, e );
          throw e;
+      }
+      catch ( NoSuchMethodException e )
+      {
+         throw new RuntimeException( e );
       }
    }
    

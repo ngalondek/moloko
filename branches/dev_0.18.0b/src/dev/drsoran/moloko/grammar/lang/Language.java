@@ -22,33 +22,32 @@
 
 package dev.drsoran.moloko.grammar.lang;
 
-import java.io.IOException;
-import java.text.ParseException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
+import dev.drsoran.moloko.util.Strings;
 
 
 public abstract class Language
 {
    private final Locale locale;
    
-   protected final HashMap< String, String > dictionary;
+   protected final HashMap< String, String > dictionary = new HashMap< String, String >();
    
    
    
    protected Language( Locale locale )
    {
+      if ( locale == null )
+      {
+         throw new IllegalArgumentException( "locale" );
+      }
+      
       this.locale = locale;
-      dictionary = new HashMap< String, String >();
    }
    
    
@@ -76,7 +75,7 @@ public abstract class Language
    
    public String getPluralString( String key, String unit, String qty )
    {
-      key = key + "_" + unit + "_";
+      key = MessageFormat.format( "{0}_{1}_", key, unit );
       
       String res = dictionary.get( key + qty );
       
@@ -97,182 +96,28 @@ public abstract class Language
          final String[] values = entry.split( "," );
          return Arrays.asList( values );
       }
-      else
-         return Collections.emptyList();
+      
+      return Collections.emptyList();
    }
    
    
    
-   public List< String > getPluralStrings( String key, String unit, int qty )
+   public void add( String key, String value ) throws IllegalArgumentException
    {
-      return getPluralStrings( key, unit, String.valueOf( qty ) );
-   }
-   
-   
-   
-   public List< String > getPluralStrings( String key, String unit, String qty )
-   {
-      final String entry = getPluralString( key, unit, qty );
-      
-      if ( entry != null )
+      if ( Strings.isNullOrEmpty( key ) )
       {
-         final String[] values = entry.split( "," );
-         return Arrays.asList( values );
-      }
-      else
-         return Collections.emptyList();
-   }
-   
-   
-   
-   public void fromResources( Resources resources, int resId ) throws ParseException
-   {
-      final XmlResourceParser xmlParser = resources.getXml( resId );
-      
-      if ( xmlParser == null )
-         throw new ParseException( "Missing resource for resource ID " + resId,
-                                   -1 );
-      try
-      {
-         int eventType = xmlParser.getEventType();
-         
-         while ( eventType != XmlPullParser.END_DOCUMENT )
-         {
-            switch ( eventType )
-            {
-               case XmlPullParser.START_TAG:
-                  final String name = xmlParser.getName();
-                  
-                  if ( name.equalsIgnoreCase( "entry" ) )
-                     readSimpleEntry( xmlParser );
-                  
-                  else if ( name.equalsIgnoreCase( "entryPl" ) )
-                     readPluralEntry( xmlParser );
-                  
-                  break;
-               
-               default :
-                  break;
-            }
-            
-            eventType = xmlParser.next();
-         }
-      }
-      catch ( XmlPullParserException e )
-      {
-         throw new ParseException( e.getMessage(), e.getLineNumber() );
-      }
-      catch ( IOException e )
-      {
-         throw new ParseException( e.getMessage(), xmlParser.getLineNumber() );
+         throw new IllegalArgumentException( "key" );
       }
       
-      xmlParser.close();
-   }
-   
-   
-   
-   protected void readSimpleEntry( XmlResourceParser xmlParser ) throws ParseException
-   {
-      final int attribCount = xmlParser.getAttributeCount();
-      
-      if ( attribCount < 2 )
-         throw new ParseException( "Unexpected number of attributes in 'entry' tag. "
-                                      + attribCount,
-                                   xmlParser.getLineNumber() );
-      
-      String key = null;
-      String value = null;
-      
-      for ( int i = 0; i < attribCount; ++i )
+      if ( value == null )
       {
-         final String attribName = xmlParser.getAttributeName( i );
-         
-         if ( attribName.equalsIgnoreCase( "key" ) )
-         {
-            key = xmlParser.getAttributeValue( i );
-         }
-         else if ( attribName.equalsIgnoreCase( "value" ) )
-         {
-            value = xmlParser.getAttributeValue( i );
-         }
-         else
-            throw new ParseException( "Unknown attribute " + attribName
-                                         + " @line "
-                                         + xmlParser.getLineNumber(),
-                                      xmlParser.getLineNumber() );
+         throw new IllegalArgumentException( "value" );
       }
-      
-      if ( key != null && value != null )
-         addToDictionary( xmlParser, key, value );
-      else
-         throw new ParseException( "Missing attribute @line "
-            + xmlParser.getLineNumber(), xmlParser.getLineNumber() );
-   }
-   
-   
-   
-   protected void readPluralEntry( XmlResourceParser xmlParser ) throws ParseException,
-                                                                XmlPullParserException,
-                                                                IOException
-   
-   {
-      final int attribCount = xmlParser.getAttributeCount();
-      
-      if ( attribCount < 2 )
-      {
-         throw new ParseException( "Unexpected number of attributes in 'entryPl' tag. "
-                                      + attribCount,
-                                   xmlParser.getLineNumber() );
-      }
-      
-      final HashMap< String, String > attributes = new HashMap< String, String >( attribCount );
-      
-      String key = null;
-      for ( int i = 0; i < attribCount; ++i )
-      {
-         final String attribName = xmlParser.getAttributeName( i );
-         if ( attribName.equalsIgnoreCase( "key" ) )
-         {
-            key = xmlParser.getAttributeValue( i );
-         }
-         else
-         {
-            final String attribValue = xmlParser.getAttributeValue( i );
-            attributes.put( attribName, attribValue );
-         }
-      }
-      
-      if ( key == null )
-      {
-         throw new ParseException( "Expected a 'key' attribute in 'entryPl' tag. ",
-                                   xmlParser.getLineNumber() );
-      }
-      
-      for ( String attributeName : attributes.keySet() )
-      {
-         addToDictionary( xmlParser,
-                          key + "_" + attributeName,
-                          attributes.get( attributeName ) );
-      }
-   }
-   
-   
-   
-   protected void validate( XmlPullParser xmlParser, String key, String value ) throws ParseException
-   {
-   }
-   
-   
-   
-   private void addToDictionary( XmlResourceParser xmlParser,
-                                 String key,
-                                 String value ) throws ParseException
-   {
-      validate( xmlParser, key, value );
       
       if ( dictionary.put( key, value ) != null )
-         throw new ParseException( "Ambigious entry for " + key + " @line "
-            + xmlParser.getLineNumber(), xmlParser.getLineNumber() );
+      {
+         throw new IllegalArgumentException( MessageFormat.format( "Ambigious entry for key {0}",
+                                                                   key ) );
+      }
    }
 }

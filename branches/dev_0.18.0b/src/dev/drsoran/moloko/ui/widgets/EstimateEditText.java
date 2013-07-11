@@ -27,6 +27,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.ui.IChangesTarget;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
@@ -157,9 +159,9 @@ public class EstimateEditText extends ClearableEditText
    
    private void updateEditText()
    {
-      if ( isEstimateValid() )
+      if ( isEstimateSet() )
       {
-         if ( estimateMillis.longValue() == -1 )
+         if ( estimateMillis.longValue() == Constants.NO_TIME )
          {
             setText( null );
          }
@@ -181,9 +183,16 @@ public class EstimateEditText extends ClearableEditText
       }
       else
       {
-         return getUiContext().getParsingService()
-                              .getDateTimeParsing()
-                              .parseEstimated( estimateString );
+         try
+         {
+            return getUiContext().getParsingService()
+                                 .getDateTimeParsing()
+                                 .parseEstimated( estimateString );
+         }
+         catch ( GrammarException e )
+         {
+            return null;
+         }
       }
    }
    
@@ -210,7 +219,7 @@ public class EstimateEditText extends ClearableEditText
    
    
    
-   private boolean isEstimateValid()
+   private boolean isEstimateSet()
    {
       return estimateMillis != null;
    }

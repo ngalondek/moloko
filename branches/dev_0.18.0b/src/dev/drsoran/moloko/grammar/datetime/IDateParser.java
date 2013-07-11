@@ -30,7 +30,7 @@ import dev.drsoran.moloko.grammar.ILocalizedParser;
 
 public interface IDateParser extends ILocalizedParser
 {
-   ParseDateReturn parseDate( String date, MolokoCalendar cal, boolean clearTime ) throws GrammarException;
+   ParseReturn parseDate( String date, MolokoCalendar cal, boolean clearTime ) throws GrammarException;
    
    
    

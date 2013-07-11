@@ -33,6 +33,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.content.res.XmlResourceParser;
 import android.os.Build;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.AppServicesContainer;
@@ -42,6 +43,7 @@ import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.DomainServicesContainer;
 import dev.drsoran.moloko.grammar.lang.RecurrenceSentenceLanguage;
+import dev.drsoran.moloko.grammar.lang.XmlLanguageReader;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceSentenceLanguage;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiServicesContainer;
@@ -423,20 +425,28 @@ public class MolokoApp extends Application implements
    private IRecurrenceSentenceLanguage createRecurrenceSentenceLanguage()
    {
       final ISettingsService settingsService = appServicesContainer.getSettings();
+      final RecurrenceSentenceLanguage sentenceLanguage = new RecurrenceSentenceLanguage( settingsService.getLocale(),
+                                                                                          systemServicesContainer.Log() );
+      final XmlResourceParser xmlParser = getResources().getXml( R.xml.parser_lang_reccur_pattern );
       
-      IRecurrenceSentenceLanguage sentenceLanguage;
+      XmlLanguageReader languageReader = null;
       try
       {
-         sentenceLanguage = new RecurrenceSentenceLanguage( settingsService.getLocale(),
-                                                            systemServicesContainer.Log(),
-                                                            getResources(),
-                                                            R.xml.parser_lang_reccur_pattern );
+         languageReader = new XmlLanguageReader( sentenceLanguage, xmlParser );
+         languageReader.read();
       }
       catch ( ParseException e )
       {
          throw new RuntimeException( "Unable to create recurrence sentence language for locale "
                                         + settingsService.getLocale(),
                                      e );
+      }
+      finally
+      {
+         if ( languageReader != null )
+         {
+            languageReader.close();
+         }
       }
       
       return sentenceLanguage;

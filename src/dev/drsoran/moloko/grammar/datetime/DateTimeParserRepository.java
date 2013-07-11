@@ -52,11 +52,17 @@ public class DateTimeParserRepository implements IDateTimeParserRepository
       FACTORIES.add( new DateTimeParserFactoryEn() );
       FACTORIES.add( new DateTimeParserFactoryDe() );
       
-      FACTORY_METHOD_DATE_PARSER = Reflection.findMethod( IDateTimeParserFactory.class,
-                                                          "createDateParser" );
-      
-      FACTORY_METHOD_TIME_PARSER = Reflection.findMethod( IDateTimeParserFactory.class,
-                                                          "createTimeParser" );
+      try
+      {
+         FACTORY_METHOD_DATE_PARSER = Reflection.findMethod( IDateTimeParserFactory.class,
+                                                             "createDateParser" );
+         FACTORY_METHOD_TIME_PARSER = Reflection.findMethod( IDateTimeParserFactory.class,
+                                                             "createTimeParser" );
+      }
+      catch ( NoSuchMethodException e )
+      {
+         throw new RuntimeException( e );
+      }
    }
    
    

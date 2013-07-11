@@ -276,9 +276,9 @@ public class DateParser extends AbstractANTLRDateParser
    // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\Date.g:168:1:
    // parseDate[MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn result] : ( ( date_numeric[$cal] |
    // date_on[$cal] | date_in_X_YMWD[$cal] | date_end_of_the_MW[$cal] | date_natural[$cal] ) | NOW | NEVER ) ;
-   public final ParseDateReturn parseDate( MolokoCalendar cal, boolean clearTime ) throws RecognitionException
+   public final ParseReturn parseDate( MolokoCalendar cal, boolean clearTime ) throws RecognitionException
    {
-      ParseDateReturn result = null;
+      ParseReturn result = null;
       
       startDateParsing( cal );
       

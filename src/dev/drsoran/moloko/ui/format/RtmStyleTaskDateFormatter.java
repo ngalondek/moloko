@@ -23,15 +23,15 @@
 package dev.drsoran.moloko.ui.format;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.Task;
 
 
 public final class RtmStyleTaskDateFormatter
@@ -54,15 +54,19 @@ public final class RtmStyleTaskDateFormatter
    
    public String getFormattedDueDate( Task task )
    {
-      final Date dateToSet = task.getDue();
+      final Due dateToSet = task.getDue();
       
       if ( dateToSet != null )
       {
-         dueDateCalender.setTime( dateToSet );
+         dueDateCalender.setTimeInMillis( dateToSet.getMillisUtc() );
+         dueDateCalender.setHasDate( true );
+         dueDateCalender.setHasTime( dateToSet.hasDueTime() );
       }
-      
-      dueDateCalender.setHasDate( dateToSet != null );
-      dueDateCalender.setHasTime( task.hasDueTime() );
+      else
+      {
+         dueDateCalender.setHasDate( false );
+         dueDateCalender.setHasTime( false );
+      }
       
       return getFormattedDueDate( dueDateCalender );
    }

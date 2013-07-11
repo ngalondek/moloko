@@ -29,13 +29,13 @@ import dev.drsoran.moloko.grammar.ILocalizedParser;
 
 public interface ITimeParser extends ILocalizedParser
 {
-   ParseTimeReturn parseTime( String time, MolokoCalendar cal, boolean adjustDay ) throws GrammarException;
+   ParseReturn parseTime( String time, MolokoCalendar cal, boolean adjustDay ) throws GrammarException;
    
    
    
-   ParseTimeReturn parseTimeSpec( String timeSpec,
-                                  MolokoCalendar cal,
-                                  boolean adjustDay ) throws GrammarException;
+   ParseReturn parseTimeSpec( String timeSpec,
+                              MolokoCalendar cal,
+                              boolean adjustDay ) throws GrammarException;
    
    
    

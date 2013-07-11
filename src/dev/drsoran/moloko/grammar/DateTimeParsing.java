@@ -32,9 +32,8 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
 import dev.drsoran.moloko.grammar.datetime.IDateTimeParserRepository;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
-import dev.drsoran.moloko.grammar.datetime.ParseDateReturn;
 import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
-import dev.drsoran.moloko.grammar.datetime.ParseTimeReturn;
+import dev.drsoran.moloko.grammar.datetime.ParseReturn;
 
 
 public class DateTimeParsing implements IDateTimeParsing
@@ -128,9 +127,9 @@ public class DateTimeParsing implements IDateTimeParsing
       int endOfDatePos;
       try
       {
-         final ParseDateReturn ret = parseDate( datePart, cal, !cal.hasTime() );
+         final ParseReturn ret = parseDate( datePart, cal, !cal.hasTime() );
          hasMoreToParse = !ret.isEof;
-         endOfDatePos = ret.lastParsedCharPos;
+         endOfDatePos = ret.numParsedChars;
       }
       catch ( GrammarException e )
       {
@@ -212,14 +211,14 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private ParseTimeReturn parseTime( final String time,
-                                      final MolokoCalendar cal,
-                                      final boolean adjustDay ) throws GrammarException
+   private ParseReturn parseTime( final String time,
+                                  final MolokoCalendar cal,
+                                  final boolean adjustDay ) throws GrammarException
    {
-      return detectLanguageAndParseTime( new IParserFunc< ITimeParser, ParseTimeReturn >()
+      return detectLanguageAndParseTime( new IParserFunc< ITimeParser, ParseReturn >()
       {
          @Override
-         public ParseTimeReturn call( ITimeParser timeParser ) throws GrammarException
+         public ParseReturn call( ITimeParser timeParser ) throws GrammarException
          {
             return timeParser.parseTime( time, cal, adjustDay );
          }
@@ -228,14 +227,14 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private ParseTimeReturn parseTimeSpec( final String timeSpec,
-                                          final MolokoCalendar cal,
-                                          final boolean adjustDay ) throws GrammarException
+   private ParseReturn parseTimeSpec( final String timeSpec,
+                                      final MolokoCalendar cal,
+                                      final boolean adjustDay ) throws GrammarException
    {
-      return detectLanguageAndParseTime( new IParserFunc< ITimeParser, ParseTimeReturn >()
+      return detectLanguageAndParseTime( new IParserFunc< ITimeParser, ParseReturn >()
       {
          @Override
-         public ParseTimeReturn call( ITimeParser timeParser ) throws GrammarException
+         public ParseReturn call( ITimeParser timeParser ) throws GrammarException
          {
             return timeParser.parseTimeSpec( timeSpec, cal, adjustDay );
          }
@@ -259,14 +258,14 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private ParseDateReturn parseDate( final String date,
-                                      final MolokoCalendar cal,
-                                      final boolean clearTime ) throws GrammarException
+   private ParseReturn parseDate( final String date,
+                                  final MolokoCalendar cal,
+                                  final boolean clearTime ) throws GrammarException
    {
-      return detectLanguageAndParseDate( new IParserFunc< IDateParser, ParseDateReturn >()
+      return detectLanguageAndParseDate( new IParserFunc< IDateParser, ParseReturn >()
       {
          @Override
-         public ParseDateReturn call( IDateParser dateParser ) throws GrammarException
+         public ParseReturn call( IDateParser dateParser ) throws GrammarException
          {
             return dateParser.parseDate( date, cal, clearTime );
          }

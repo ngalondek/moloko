@@ -24,13 +24,13 @@ package dev.drsoran.moloko.sort;
 
 import java.util.Comparator;
 
-import dev.drsoran.rtm.RtmListWithTaskCount;
+import dev.drsoran.moloko.domain.model.TasksList;
 
 
-public class SortRtmListsPosition implements Comparator< RtmListWithTaskCount >
+public class SortRtmListsPosition implements Comparator< TasksList >
 {
    @Override
-   public int compare( RtmListWithTaskCount lhs, RtmListWithTaskCount rhs )
+   public int compare( TasksList lhs, TasksList rhs )
    {
       final int lhsPosition = lhs.getPosition();
       final int rhsPosition = rhs.getPosition();

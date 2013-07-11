@@ -48,9 +48,15 @@ public class RecurrenceParserRepository implements IRecurrenceParserRepository
    
    static
    {
-      FACTORY_METHOD = Reflection.findMethod( IRecurrenceParserFactory.class,
-                                              "createRecurrenceParser" );
-      
+      try
+      {
+         FACTORY_METHOD = Reflection.findMethod( IRecurrenceParserFactory.class,
+                                                 "createRecurrenceParser" );
+      }
+      catch ( NoSuchMethodException e )
+      {
+         throw new RuntimeException( e );
+      }
    }
    
    

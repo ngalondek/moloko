@@ -54,9 +54,9 @@ public class TimeParserImpl implements ITimeParser
    
    
    @Override
-   public ParseTimeReturn parseTime( String time,
-                                     MolokoCalendar cal,
-                                     boolean adjustDay ) throws GrammarException
+   public ParseReturn parseTime( String time,
+                                 MolokoCalendar cal,
+                                 boolean adjustDay ) throws GrammarException
    {
       prepareLexerAndParser( time );
       
@@ -73,9 +73,9 @@ public class TimeParserImpl implements ITimeParser
    
    
    @Override
-   public ParseTimeReturn parseTimeSpec( String timeSpec,
-                                         MolokoCalendar cal,
-                                         boolean adjustDay ) throws GrammarException
+   public ParseReturn parseTimeSpec( String timeSpec,
+                                     MolokoCalendar cal,
+                                     boolean adjustDay ) throws GrammarException
    {
       prepareLexerAndParser( timeSpec );
       

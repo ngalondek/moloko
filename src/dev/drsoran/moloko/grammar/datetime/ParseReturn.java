@@ -22,17 +22,17 @@
 
 package dev.drsoran.moloko.grammar.datetime;
 
-public final class ParseTimeReturn
+public final class ParseReturn
 {
-   public final int lastParsedCharPos;
+   public final int numParsedChars;
    
    public final boolean isEof;
    
    
    
-   public ParseTimeReturn( int lastParsedCharPos, boolean isEof )
+   public ParseReturn( int numParsedChars, boolean isEof )
    {
-      this.lastParsedCharPos = lastParsedCharPos;
+      this.numParsedChars = numParsedChars;
       this.isEof = isEof;
    }
 }

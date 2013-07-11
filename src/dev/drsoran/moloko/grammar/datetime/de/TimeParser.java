@@ -1,4 +1,4 @@
-// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g 2013-03-22 12:13:27
+// $ANTLR 3.4 C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g 2013-07-09 08:07:42
 
 package dev.drsoran.moloko.grammar.datetime.de;
 
@@ -16,7 +16,7 @@ import org.antlr.runtime.TokenStream;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.LexerException;
 import dev.drsoran.moloko.grammar.datetime.AbstractANTLRTimeParser;
-import dev.drsoran.moloko.grammar.datetime.ParseTimeReturn;
+import dev.drsoran.moloko.grammar.datetime.ParseReturn;
 
 
 @SuppressWarnings(
@@ -111,11 +111,11 @@ public class TimeParser extends AbstractANTLRTimeParser
    
    // $ANTLR start "parseTime"
    // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:61:1:
-   // parseTime[MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result] : ( AT | COMMA )?
+   // parseTime[MolokoCalendar cal, boolean adjustDay] returns [ParseReturn result] : ( AT | COMMA )?
    // time_point_in_time[$cal] ;
-   public final ParseTimeReturn parseTime( MolokoCalendar cal, boolean adjustDay ) throws RecognitionException
+   public final ParseReturn parseTime( MolokoCalendar cal, boolean adjustDay ) throws RecognitionException
    {
-      ParseTimeReturn result = null;
+      ParseReturn result = null;
       
       startParsingTime( cal );
       
@@ -503,13 +503,12 @@ public class TimeParser extends AbstractANTLRTimeParser
    
    // $ANTLR start "parseTimeSpec"
    // C:\\D\\Programmierung\\Projects\\java\\.workspaces\\Moloko_dev\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:149:1:
-   // parseTimeSpec[MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result] : ( AT | COMMA )? ( (
+   // parseTimeSpec[MolokoCalendar cal, boolean adjustDay] returns [ParseReturn result] : ( AT | COMMA )? ( (
    // time_separatorspec[$cal] ) | ( time_naturalspec[$cal] ( time_naturalspec[$cal] ( time_naturalspec[$cal] )? )? ) )
    // ( am_pm[$cal] )? ( COMMA )? ;
-   public final ParseTimeReturn parseTimeSpec( MolokoCalendar cal,
-                                               boolean adjustDay ) throws RecognitionException
+   public final ParseReturn parseTimeSpec( MolokoCalendar cal, boolean adjustDay ) throws RecognitionException
    {
-      ParseTimeReturn result = null;
+      ParseReturn result = null;
       
       startParsingTime( cal );
       

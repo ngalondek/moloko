@@ -63,9 +63,9 @@ public class DateParserImpl implements IDateParser
    
    
    @Override
-   public ParseDateReturn parseDate( String date,
-                                     MolokoCalendar cal,
-                                     boolean clearTime ) throws GrammarException
+   public ParseReturn parseDate( String date,
+                                 MolokoCalendar cal,
+                                 boolean clearTime ) throws GrammarException
    {
       prepareLexerAndParser( date );
       

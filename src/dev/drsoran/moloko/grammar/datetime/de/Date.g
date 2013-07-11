@@ -18,7 +18,7 @@ options
 
    import java.util.Calendar;
    
-   import dev.drsoran.moloko.grammar.datetime.ParseDateReturn;
+   import dev.drsoran.moloko.grammar.datetime.ParseReturn;
    import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractANTLRDateParser;
    import dev.drsoran.moloko.grammar.LexerException;
@@ -163,7 +163,7 @@ options
 /** RULES **/
 
 
-parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn result]
+parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseReturn result]
    @init
    {
       startDateParsing( cal );

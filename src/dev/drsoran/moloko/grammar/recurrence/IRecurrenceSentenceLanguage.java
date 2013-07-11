@@ -31,17 +31,17 @@ public interface IRecurrenceSentenceLanguage
    
    
    
-   void add( StringBuilder sb, String key );
+   void append( StringBuilder sb, String key );
    
    
    
-   void addEvery( StringBuilder sb, String unit, String quantity );
+   void appendEvery( StringBuilder sb, String unit, String quantity );
    
    
    
-   void addAfter( StringBuilder sb, String unit, String quantity );
+   void appendAfter( StringBuilder sb, String unit, String quantity );
    
    
    
-   void addStToX( StringBuilder sb, int x );
+   void appendStToX( StringBuilder sb, int x );
 }

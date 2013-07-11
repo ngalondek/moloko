@@ -295,7 +295,7 @@ public class OutSyncTask extends SyncTaskBase implements
                oldListId = serverElement.taskSeries.getListId();
             }
             
-            operation.add( timeline.tasks_moveTo( oldListId,
+            operation.append( timeline.tasks_moveTo( oldListId,
                                                   taskSeries.getListId(),
                                                   taskSeries.getId(),
                                                   task.getId() ),
@@ -309,7 +309,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                           taskSeries.getName(),
                                           String.class ) == SyncResultDirection.SERVER )
          {
-            operation.add( timeline.tasks_setName( taskSeries.getListId(),
+            operation.append( timeline.tasks_setName( taskSeries.getListId(),
                                                    taskSeries.getId(),
                                                    task.getId(),
                                                    taskSeries.getName() ),
@@ -326,7 +326,7 @@ public class OutSyncTask extends SyncTaskBase implements
             // The RTM API needs the repeat parameter as sentence, not pattern.
             final String repeat = taskSeries.getRecurrenceSentence();
             
-            operation.add( timeline.tasks_setRecurrence( taskSeries.getListId(),
+            operation.append( timeline.tasks_setRecurrence( taskSeries.getListId(),
                                                          taskSeries.getId(),
                                                          task.getId(),
                                                          repeat ),
@@ -340,7 +340,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                           taskSeries.getTagsJoined(),
                                           String.class ) == SyncResultDirection.SERVER )
          {
-            operation.add( timeline.tasks_setTags( taskSeries.getListId(),
+            operation.append( timeline.tasks_setTags( taskSeries.getListId(),
                                                    taskSeries.getId(),
                                                    task.getId(),
                                                    taskSeries.getTags() ),
@@ -354,7 +354,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                           taskSeries.getLocationId(),
                                           String.class ) == SyncResultDirection.SERVER )
          {
-            operation.add( timeline.tasks_setLocation( taskSeries.getListId(),
+            operation.append( timeline.tasks_setLocation( taskSeries.getListId(),
                                                        taskSeries.getId(),
                                                        task.getId(),
                                                        taskSeries.getLocationId() ),
@@ -368,7 +368,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                           taskSeries.getURL(),
                                           String.class ) == SyncResultDirection.SERVER )
          {
-            operation.add( timeline.tasks_setURL( taskSeries.getListId(),
+            operation.append( timeline.tasks_setURL( taskSeries.getListId(),
                                                   taskSeries.getId(),
                                                   task.getId(),
                                                   Strings.emptyIfNull( taskSeries.getURL() ) ),
@@ -392,7 +392,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                           RtmTask.convertPriority( task.getPriority() ),
                                           String.class ) == SyncResultDirection.SERVER )
          {
-            operation.add( timeline.tasks_setPriority( taskSeries.getListId(),
+            operation.append( timeline.tasks_setPriority( taskSeries.getListId(),
                                                        taskSeries.getId(),
                                                        task.getId(),
                                                        task.getPriority() ),
@@ -407,12 +407,12 @@ public class OutSyncTask extends SyncTaskBase implements
                                           Long.class ) == SyncResultDirection.SERVER )
          {
             if ( task.getCompleted() != null )
-               operation.add( timeline.tasks_complete( taskSeries.getListId(),
+               operation.append( timeline.tasks_complete( taskSeries.getListId(),
                                                        taskSeries.getId(),
                                                        task.getId() ),
                               properties.getModification( RawTasks.COMPLETED_DATE ) );
             else
-               operation.add( timeline.tasks_uncomplete( taskSeries.getListId(),
+               operation.append( timeline.tasks_uncomplete( taskSeries.getListId(),
                                                          taskSeries.getId(),
                                                          task.getId() ),
                               properties.getModification( RawTasks.COMPLETED_DATE ) );
@@ -457,7 +457,7 @@ public class OutSyncTask extends SyncTaskBase implements
                                           task.getEstimate(),
                                           String.class ) == SyncResultDirection.SERVER )
          {
-            operation.add( timeline.tasks_setEstimate( taskSeries.getListId(),
+            operation.append( timeline.tasks_setEstimate( taskSeries.getListId(),
                                                        taskSeries.getId(),
                                                        task.getId(),
                                                        Strings.emptyIfNull( task.getEstimate() ) ),
@@ -504,7 +504,7 @@ public class OutSyncTask extends SyncTaskBase implements
                {
                   for ( int i = 0; i < diffPostponed; i++ )
                   {
-                     operation.add( timeline.tasks_postpone( taskSeries.getListId(),
+                     operation.append( timeline.tasks_postpone( taskSeries.getListId(),
                                                              taskSeries.getId(),
                                                              task.getId() ),
                                     // Only the last method invocation clears the modification

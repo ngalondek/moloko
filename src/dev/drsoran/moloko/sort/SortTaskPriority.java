@@ -24,7 +24,7 @@ package dev.drsoran.moloko.sort;
 
 import java.util.Comparator;
 
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 public class SortTaskPriority implements Comparator< Task >

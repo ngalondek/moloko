@@ -16,7 +16,7 @@ options
    
    import dev.drsoran.moloko.MolokoCalendar;
    import dev.drsoran.moloko.grammar.LexerException;
-   import dev.drsoran.moloko.grammar.datetime.ParseTimeReturn;
+   import dev.drsoran.moloko.grammar.datetime.ParseReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractANTLRTimeParser;
 }
 
@@ -59,7 +59,7 @@ options
 // with a date yet. E.g. today@12.
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
-parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
+parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseReturn result]
    @init
    {
       startParsingTime( cal );
@@ -145,7 +145,7 @@ am_pm [MolokoCalendar cal]
 // with a date yet. E.g. today@12.
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
-parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
+parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseReturn result]
    @init
    {
       startParsingTime( cal );
@@ -192,15 +192,21 @@ time_separatorspec [MolokoCalendar cal]
       {
          cal.set( Calendar.HOUR_OF_DAY, $h.value );
       }
-      (COLON m=time_component
+      COLON m=time_component
+      {
+         cal.set( Calendar.MINUTE, $m.value );
+      }
+      (COLON s=time_component
        {
-          cal.set( Calendar.MINUTE, $m.value );
-       }
-       (COLON s=time_component
-        {
            cal.set( Calendar.SECOND, $s.value );
-        })?)?
-      )
+       })?
+     )
+     |
+     (v=INT
+       {
+          setCalendarTime( cal, $v.text );
+       }
+     )  
    ;
    catch[ RecognitionException e ]
    {

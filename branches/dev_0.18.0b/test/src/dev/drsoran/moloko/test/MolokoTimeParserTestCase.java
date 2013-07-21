@@ -52,25 +52,21 @@ public abstract class MolokoTimeParserTestCase extends MolokoTestCase
    public MolokoCalendar testParseTime( String timeToParse ) throws GrammarException
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
-      final ParseReturn ret = timeParser.parseTime( timeToParse, cal, false );
+      final ParseReturn ret = parseTime( cal, timeToParse, false );
       
-      verifyParseResult( timeToParse, cal, ret );
+      verifyParseResult( timeToParse, cal, ret, true );
       
       return cal;
    }
    
    
    
-   public MolokoCalendar testParseTimeSpec( String timeSpecToParse ) throws GrammarException
+   public ParseReturn parseTime( MolokoCalendar cal,
+                                 String timeToParse,
+                                 boolean adjustDay ) throws GrammarException
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
-      final ParseReturn ret = timeParser.parseTimeSpec( timeSpecToParse,
-                                                        cal,
-                                                        false );
-      
-      verifyParseResult( timeSpecToParse, cal, ret );
-      
-      return cal;
+      final ParseReturn ret = timeParser.parseTime( timeToParse, cal, false );
+      return ret;
    }
    
    
@@ -78,19 +74,26 @@ public abstract class MolokoTimeParserTestCase extends MolokoTestCase
    public void testParseTimeEstimate( String estimation, long expectedMillis ) throws GrammarException
    {
       final long diff = timeParser.parseTimeEstimate( estimation );
-      assertThat( "Diff is wrong.", diff, is( expectedMillis ) );
+      assertThat( "Estimation is wrong for <" + estimation + ">",
+                  diff,
+                  is( expectedMillis ) );
    }
    
    
    
-   private void verifyParseResult( String toOarse,
-                                   final MolokoCalendar cal,
-                                   final ParseReturn ret )
+   public void verifyParseResult( String toParse,
+                                  MolokoCalendar cal,
+                                  ParseReturn ret,
+                                  boolean expectHasTime )
    {
-      assertThat( "Calendar has no time.", cal.hasTime(), is( true ) );
+      assertThat( "Calendar has no time for <" + toParse + ">",
+                  cal.hasTime(),
+                  is( expectHasTime ) );
       
-      assertThat( ret.isEof, is( true ) );
-      assertThat( ret.numParsedChars, is( toOarse.length() ) );
+      assertThat( "Not EOF for <" + toParse + ">", ret.isEof, is( true ) );
+      assertThat( "Unexpected char count parsed for <" + toParse + ">",
+                  ret.numParsedChars,
+                  is( toParse.length() ) );
    }
    
    

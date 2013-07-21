@@ -126,7 +126,7 @@ public abstract class AbstractANTLRRecurrenceParser extends Parser
    {
       try
       {
-         final MolokoCalendar untilDate = dateTimeParsing.parseDateTimeSpec( dateTimeString );
+         final MolokoCalendar untilDate = dateTimeParsing.parseDateTime( dateTimeString );
          final SimpleDateFormat sdf = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
          
          res.put( RecurrencePatternParser.OP_UNTIL_LIT,

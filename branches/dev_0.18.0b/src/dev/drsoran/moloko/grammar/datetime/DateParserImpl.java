@@ -57,7 +57,7 @@ public class DateParserImpl implements IDateParser
    @Override
    public void setDateFormatter( IDateFormatter context )
    {
-      parser.setDateFormatContext( context );
+      parser.setDateFormatter( context );
    }
    
    

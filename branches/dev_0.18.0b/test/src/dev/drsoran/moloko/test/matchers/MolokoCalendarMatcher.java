@@ -22,11 +22,12 @@
 
 package dev.drsoran.moloko.test.matchers;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
-import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
 
 import dev.drsoran.moloko.MolokoCalendar;
@@ -34,9 +35,9 @@ import dev.drsoran.moloko.MolokoCalendar;
 
 public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
 {
-   private final int calendarField;
+   private int calendarField;
    
-   private final String fieldName;
+   private String fieldName;
    
    private final int fieldValue;
    
@@ -52,13 +53,18 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    
    
    
+   private MolokoCalendarMatcher( int fieldValue )
+   {
+      this.fieldValue = fieldValue;
+   }
+   
+   
+   
    @Override
    public void describeTo( Description desc )
    {
-      desc.appendText( " the " )
-          .appendText( fieldName )
-          .appendText( " is " )
-          .appendValue( fieldValue );
+      desc.appendText( fieldName );
+      appendFieldValueDescription( desc );
    }
    
    
@@ -71,49 +77,183 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    
    
    
-   @Factory
-   public static Matcher< MolokoCalendar > yearIs( int year )
+   private void appendFieldValueDescription( Description desc )
    {
-      return new MolokoCalendarMatcher( Calendar.YEAR, "year", year );
+      if ( calendarField == Calendar.MONTH )
+      {
+         final Calendar cal = Calendar.getInstance();
+         cal.set( calendarField, fieldValue );
+         
+         desc.appendValue( new SimpleDateFormat( "MMMM", Locale.ENGLISH ).format( cal.getTime() ) );
+      }
+      else
+      {
+         desc.appendValue( fieldValue );
+      }
+   }
+   
+   
+   
+   private MolokoCalendarMatcher asYear()
+   {
+      calendarField = Calendar.YEAR;
+      fieldName = "year";
+      return this;
+   }
+   
+   
+   
+   private MolokoCalendarMatcher asMonth()
+   {
+      calendarField = Calendar.MONTH;
+      fieldName = "month";
+      return this;
+   }
+   
+   
+   
+   private MolokoCalendarMatcher asDay()
+   {
+      calendarField = Calendar.DATE;
+      fieldName = "day";
+      return this;
+   }
+   
+   
+   
+   private MolokoCalendarMatcher asHour()
+   {
+      calendarField = Calendar.HOUR_OF_DAY;
+      fieldName = "hour";
+      return this;
+   }
+   
+   
+   
+   private MolokoCalendarMatcher asMinute()
+   {
+      calendarField = Calendar.MINUTE;
+      fieldName = "minute";
+      return this;
+   }
+   
+   
+   
+   private MolokoCalendarMatcher asSecond()
+   {
+      calendarField = Calendar.SECOND;
+      fieldName = "second";
+      return this;
    }
    
    
    
    @Factory
-   public static Matcher< MolokoCalendar > monthIs( int month )
+   public static MolokoCalendarMatcher next( MolokoCalendar cal,
+                                             MolokoCalendarMatcher matcher )
    {
-      return new MolokoCalendarMatcher( Calendar.MONTH, "month", month );
+      final MolokoCalendar nextCal = cal.clone();
+      nextCal.add( matcher.calendarField, 1 );
+      
+      final MolokoCalendarMatcher nextMatcher = new MolokoCalendarMatcher( matcher.calendarField,
+                                                                           matcher.fieldName,
+                                                                           nextCal.get( matcher.calendarField ) );
+      return nextMatcher;
    }
    
    
    
    @Factory
-   public static Matcher< MolokoCalendar > dayIs( int day )
+   public static MolokoCalendarMatcher year()
    {
-      return new MolokoCalendarMatcher( Calendar.DATE, "day", day );
+      return year( MolokoCalendar.getInstance().get( Calendar.YEAR ) );
    }
    
    
    
    @Factory
-   public static Matcher< MolokoCalendar > hourIs( int hour )
+   public static MolokoCalendarMatcher year( int year )
    {
-      return new MolokoCalendarMatcher( Calendar.HOUR_OF_DAY, "hour", hour );
+      return new MolokoCalendarMatcher( year ).asYear();
    }
    
    
    
    @Factory
-   public static Matcher< MolokoCalendar > minuteIs( int minute )
+   public static MolokoCalendarMatcher month()
    {
-      return new MolokoCalendarMatcher( Calendar.MINUTE, "minute", minute );
+      return month( MolokoCalendar.getInstance().get( Calendar.MONTH ) );
    }
    
    
    
    @Factory
-   public static Matcher< MolokoCalendar > secondIs( int second )
+   public static MolokoCalendarMatcher month( int month )
    {
-      return new MolokoCalendarMatcher( Calendar.SECOND, "second", second );
+      return new MolokoCalendarMatcher( month ).asMonth();
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher day()
+   {
+      return day( MolokoCalendar.getInstance().get( Calendar.DATE ) );
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher day( int day )
+   {
+      return new MolokoCalendarMatcher( day ).asDay();
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher hour()
+   {
+      return hour( MolokoCalendar.getInstance().get( Calendar.HOUR_OF_DAY ) );
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher hour( int hour )
+   {
+      return new MolokoCalendarMatcher( hour ).asHour();
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher minute()
+   {
+      return minute( MolokoCalendar.getInstance().get( Calendar.MINUTE ) );
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher minute( int minute )
+   {
+      return new MolokoCalendarMatcher( minute ).asMinute();
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher second()
+   {
+      return second( MolokoCalendar.getInstance().get( Calendar.SECOND ) );
+   }
+   
+   
+   
+   @Factory
+   public static MolokoCalendarMatcher second( int second )
+   {
+      return new MolokoCalendarMatcher( second ).asSecond();
    }
 }

@@ -73,26 +73,6 @@ public class TimeParserImpl implements ITimeParser
    
    
    @Override
-   public ParseReturn parseTimeSpec( String timeSpec,
-                                     MolokoCalendar cal,
-                                     boolean adjustDay ) throws GrammarException
-   {
-      prepareLexerAndParser( timeSpec );
-      
-      try
-      {
-         return parser.parseTimeSpec( cal, adjustDay );
-      }
-      catch ( RecognitionException e )
-      {
-         throw new GrammarException( "Failed to parse time spec'" + timeSpec
-            + "'", e );
-      }
-   }
-   
-   
-   
-   @Override
    public long parseTimeEstimate( String timeEstimate ) throws GrammarException
    {
       prepareLexerAndParser( timeEstimate );

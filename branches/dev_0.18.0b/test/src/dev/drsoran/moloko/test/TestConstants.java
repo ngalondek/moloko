@@ -32,11 +32,17 @@ public final class TestConstants
 {
    public final static long NOW = System.currentTimeMillis();
    
-   public final static long YESTERDAY;
-   
    public final static long TODAY;
    
+   public final static MolokoCalendar DATE_TODAY;
+   
    public final static long TOMORROW;
+   
+   public final static MolokoCalendar DATE_TOMORROW;
+   
+   public final static long YESTERDAY;
+   
+   public final static MolokoCalendar DATE_YESTERDAY;
    
    public final static long LATER = NOW + 3600 * 1000;
    
@@ -48,17 +54,19 @@ public final class TestConstants
    
    static
    {
-      MolokoCalendar cal = MolokoCalendar.getInstance();
-      cal.setHasTime( false );
+      DATE_TODAY = MolokoCalendar.getInstance();
+      DATE_TODAY.setHasTime( false );
       
-      TODAY = cal.getTimeInMillis();
+      TODAY = DATE_TODAY.getTimeInMillis();
       
-      cal.add( Calendar.DATE, 1 );
+      DATE_TOMORROW = DATE_TODAY.clone();
+      DATE_TOMORROW.add( Calendar.DATE, 1 );
       
-      TOMORROW = cal.getTimeInMillis();
+      TOMORROW = DATE_TOMORROW.getTimeInMillis();
       
-      cal.add( Calendar.DATE, -2 );
+      DATE_YESTERDAY = DATE_TODAY.clone();
+      DATE_YESTERDAY.add( Calendar.DATE, -1 );
       
-      YESTERDAY = cal.getTimeInMillis();
+      YESTERDAY = DATE_YESTERDAY.getTimeInMillis();
    }
 }

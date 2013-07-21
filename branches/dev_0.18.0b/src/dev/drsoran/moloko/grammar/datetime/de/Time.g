@@ -13,17 +13,17 @@ options
    package dev.drsoran.moloko.grammar.datetime.de;
 
    import java.util.Calendar;
-   
+
    import dev.drsoran.moloko.MolokoCalendar;
+   import dev.drsoran.moloko.grammar.LexerException;
    import dev.drsoran.moloko.grammar.datetime.ParseReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractANTLRTimeParser;
-   import dev.drsoran.moloko.grammar.LexerException;
 }
 
 @lexer::header
 {
    package dev.drsoran.moloko.grammar.datetime.de;
-   
+
    import dev.drsoran.moloko.grammar.LexerException;
 }
 
@@ -49,9 +49,10 @@ options
 
 /*
    This parses time in the format:
-      - @|at|,? [0-9]+ :|. [0-9]+ am|pm?
+      - @|at|,? [0-9]+ :|. [0-9]+ (:|. [0-9]+) am|pm?
       - @|at|,? [0-9]{3,4] am|pm?
       - @|at|,? [0-9]{1,2] am|pm?
+      - @|at|,? [0-9]+ h|m|s ([0-9]+ h|m|s ([0-9]+ h|m|s)?)? am_pm? ,?
 */
 // adjustDay - if this parameter is false, the parser
 // assumes that the given cal has been initialized
@@ -62,19 +63,26 @@ parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseReturn result]
    @init
    {
       startParsingTime( cal );
-   }   
+   }
    @after
    {
       result = finishedParsingTime( cal );
    }
-   : (AT | COMMA)? time_point_in_time[$cal]   
+   : (AT | COMMA)?
+     (
+          literal_time[$cal]
+        | separated_time[$cal]
+        | unseparated_time[$cal]
+        | h_m_s_separated_time[$cal]
+     )
+     am_pm[$cal]?
    {
       if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
+      {
          cal.add( Calendar.DAY_OF_WEEK, 1 );
-      
-      cal.setHasTime( true );
+      }
    }
-   ;   
+   ;
    catch[ RecognitionException e ]
    {
       notifyParsingTimeFailed();
@@ -82,11 +90,11 @@ parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseReturn result]
    }
    catch[ LexerException e ]
    {
-      notifyParsingTimeFailed();   
+      notifyParsingTimeFailed();
       throw new RecognitionException();
    }
 
-time_point_in_time [MolokoCalendar cal]
+literal_time [MolokoCalendar cal]
    : NEVER
    {
       cal.setHasDate( false );
@@ -104,106 +112,57 @@ time_point_in_time [MolokoCalendar cal]
       cal.set( Calendar.MINUTE, 00 );
       cal.set( Calendar.SECOND, 00 );
    }
-   |
-   ( ( v=INT
-       {
-          setCalendarTime( cal, $v.text );
-       }
-     | h=time_component (COLON|DOT) m=time_component
-       {
-          cal.set( Calendar.HOUR_OF_DAY, $h.value );
-          cal.set( Calendar.MINUTE, $m.value );
-          cal.set( Calendar.SECOND, 0 );
-       }
-     )
-     am_pm[$cal]?)
    ;
    catch[ RecognitionException e ]
    {
       throw e;
    }
-   
+
+separated_time [MolokoCalendar cal]
+        : h=INT (COLON|DOT) m=INT ((COLON|DOT) s=INT)?
+       {
+      cal.set( Calendar.HOUR_OF_DAY, $h.int );
+      cal.set( Calendar.MINUTE, $m.int );
+      cal.set( Calendar.SECOND, $s.int );
+       }
+        ;
+        catch[ RecognitionException e ]
+   {
+      throw e;
+   }
+
+h_m_s_separated_time [MolokoCalendar cal]
+        : time_naturalspec[$cal] ( time_naturalspec[$cal] time_naturalspec[$cal]?)?
+   ;
+   catch[ RecognitionException e ]
+   {
+      throw e;
+   }
+
+unseparated_time [MolokoCalendar cal]
+        : v=INT
+   {
+      setCalendarTime(cal, $v.text);
+   }
+        ;
+        catch[ RecognitionException e ]
+   {
+      throw e;
+   }
+
 am_pm [MolokoCalendar cal]
    : AM
+   {
+      cal.set(Calendar.AM_PM, Calendar.AM);
+   }
    | PM
    {
-      cal.add( Calendar.HOUR_OF_DAY, 12 );
-   }
-   ;
-   catch[ RecognitionException e ]
-   {
-      throw e;
+      cal.set(Calendar.AM_PM, Calendar.PM);
    }
 
 
-/*
-   This parses time in the format:
-      - @|at|,? [0-9]+(:[0-9]+(:[0-9]+)?)? am_pm? ,?
-      - @|at|,? [0-9]+ h|m|s ([0-9]+ h|m|s ([0-9]+ h|m|s)?)? am_pm? ,?
-*/
-// adjustDay - if this parameter is false, the parser
-// assumes that the given cal has been initialized
-// with a date yet. E.g. today@12.
-// In case of true the parser can adjust the day
-// of week for times in the past. E.g. @12.
-parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseReturn result]
-   @init
-   {
-      startParsingTime( cal );
-   }
-   @after
-   {
-      result = finishedParsingTime( cal );
-   }
-   : (AT | COMMA)?
-   (
-      (
-         {
-            clearTime( cal );
-         }
-         time_separatorspec[$cal]
-      )
-      | 
-      (
-         {
-            clearTime( cal );
-         } 
-         time_naturalspec[$cal] ( time_naturalspec[$cal] time_naturalspec[$cal]?)?
-      )
-   )
-   am_pm[$cal]? COMMA?
-   {
-      if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
-         cal.add( Calendar.DAY_OF_WEEK, 1 );
-      
-      cal.setHasTime( true );
-   }
-   ;
-   catch[ RecognitionException e ]
-   {
-      notifyParsingTimeFailed();   
-      throw e;
-   }
-   catch[ LexerException e ]
-   {
-      notifyParsingTimeFailed();   
-      throw new RecognitionException();
-   }
 
-time_separatorspec [MolokoCalendar cal]
-   : (h=time_component
-      {
-         cal.set( Calendar.HOUR_OF_DAY, $h.value );
-      }
-      (COLON m=time_component
-       {
-          cal.set( Calendar.MINUTE, $m.value );
-       }
-       (COLON s=time_component
-        {
-           cal.set( Calendar.SECOND, $s.value );
-        })?)?
-      )
+
    ;
    catch[ RecognitionException e ]
    {
@@ -266,7 +225,7 @@ time_naturalspec [MolokoCalendar cal] returns [int seconds]
    }
 
 hour_floatspec returns [int seconds]
-   : h=INT DOT deciHour=INT HOURS
+   : h=INT (DOT|COMMA) deciHour=INT HOURS
    {
       seconds = Integer.parseInt( $h.text ) * 3600;
       seconds += Integer.parseInt( $deciHour.text ) * 360;
@@ -315,22 +274,9 @@ parseTimeEstimate returns [long span]
       throw new RecognitionException();
    }
 
-time_component returns [int value]
-   : c = INT
-   {
-      String comp = $c.text;
 
-      if ( comp.length() > 2 )
-         comp = comp.substring( 0, 2 );
 
-      value = Integer.parseInt( comp );
-   }
-   ;
-   catch[ NumberFormatException nfe ]
-   {
-      throw new RecognitionException();
-   }
-   
+
 // TOKENS
 
 AT        : '@' | 'um' | 'am' | 'an';

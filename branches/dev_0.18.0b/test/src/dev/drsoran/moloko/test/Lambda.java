@@ -26,7 +26,7 @@ public final class Lambda
 {
    public static interface Func< T >
    {
-      T call();
+      void call( T param );
    }
    
    

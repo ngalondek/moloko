@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.test.comp.grammar.datetime;
+package dev.drsoran.moloko.test.comp.grammar.datetime.de;
 
 import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.hour;
 import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.minute;
@@ -17,8 +17,8 @@ import dev.drsoran.moloko.grammar.GrammarException;
 import dev.drsoran.moloko.grammar.datetime.AbstractANTLRTimeParser;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.ParseReturn;
-import dev.drsoran.moloko.grammar.datetime.TimeLexer;
-import dev.drsoran.moloko.grammar.datetime.TimeParser;
+import dev.drsoran.moloko.grammar.datetime.de.TimeLexer;
+import dev.drsoran.moloko.grammar.datetime.de.TimeParser;
 import dev.drsoran.moloko.grammar.datetime.TimeParserImpl;
 import dev.drsoran.moloko.test.Lambda.Func;
 import dev.drsoran.moloko.test.MolokoTimeParserTestCase;
@@ -29,7 +29,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    @Test
    public void test_parseTime_literal() throws GrammarException
    {
-      testParseWithLeadingAt( "midday", new Func< MolokoCalendar >()
+      testParseWithLeadingAt( "mittag", new Func< MolokoCalendar >()
       {
          @Override
          public void call( MolokoCalendar cal )
@@ -40,7 +40,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
          }
       } );
       
-      testParseWithLeadingAt( "noon", new Func< MolokoCalendar >()
+      testParseWithLeadingAt( "mittags", new Func< MolokoCalendar >()
       {
          @Override
          public void call( MolokoCalendar cal )
@@ -51,7 +51,18 @@ public class TimeParserTest extends MolokoTimeParserTestCase
          }
       } );
       
-      testParseWithLeadingAt( "midnight", new Func< MolokoCalendar >()
+      testParseWithLeadingAt( "mitternacht", new Func< MolokoCalendar >()
+      {
+         @Override
+         public void call( MolokoCalendar cal )
+         {
+            assertThat( cal, is( hour( 23 ) ) );
+            assertThat( cal, is( minute( 59 ) ) );
+            assertThat( cal, is( second( 59 ) ) );
+         }
+      } );
+      
+      testParseWithLeadingAt( "mitternachts", new Func< MolokoCalendar >()
       {
          @Override
          public void call( MolokoCalendar cal )
@@ -63,8 +74,8 @@ public class TimeParserTest extends MolokoTimeParserTestCase
       } );
       
       final MolokoCalendar cal = MolokoCalendar.getInstance();
-      final ParseReturn ret = parseTime( cal, "never", false );
-      verifyParseResult( "never", cal, ret, false );
+      final ParseReturn ret = parseTime( cal, "nie", false );
+      verifyParseResult( "nie", cal, ret, false );
       
       assertThat( cal, is( hour( 0 ) ) );
       assertThat( cal, is( minute( 0 ) ) );
@@ -88,7 +99,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
          }
       } );
       
-      testParseWithLeadingAt( "12.13a", new Func< MolokoCalendar >()
+      testParseWithLeadingAt( "12.13vorm", new Func< MolokoCalendar >()
       {
          @Override
          public void call( MolokoCalendar cal )
@@ -110,7 +121,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
          }
       } );
       
-      testParseWithLeadingAt( "12.13.25p", new Func< MolokoCalendar >()
+      testParseWithLeadingAt( "12.13.25nachm.", new Func< MolokoCalendar >()
       {
          @Override
          public void call( MolokoCalendar cal )
@@ -205,7 +216,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
          }
       } );
       
-      testParseWithLeadingAt( "110am", new Func< MolokoCalendar >()
+      testParseWithLeadingAt( "110vormittag", new Func< MolokoCalendar >()
       {
          @Override
          public void call( MolokoCalendar cal )
@@ -227,7 +238,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
          }
       } );
       
-      testParseWithLeadingAt( "1210pm", new Func< MolokoCalendar >()
+      testParseWithLeadingAt( "1210nachmittags", new Func< MolokoCalendar >()
       {
          @Override
          public void call( MolokoCalendar cal )
@@ -256,10 +267,9 @@ public class TimeParserTest extends MolokoTimeParserTestCase
       };
       
       testParseWithLeadingAt( "12h", verifier );
-      testParseWithLeadingAt( "12 hr", verifier );
-      testParseWithLeadingAt( "12 hrs", verifier );
-      testParseWithLeadingAt( "12 hour", verifier );
-      testParseWithLeadingAt( "12 hours", verifier );
+      testParseWithLeadingAt( "12 std", verifier );
+      testParseWithLeadingAt( "12 stunde", verifier );
+      testParseWithLeadingAt( "12 stunden", verifier );
    }
    
    
@@ -280,9 +290,8 @@ public class TimeParserTest extends MolokoTimeParserTestCase
       
       testParseWithLeadingAt( "13m", verifier );
       testParseWithLeadingAt( "13 min", verifier );
-      testParseWithLeadingAt( "13 mins", verifier );
       testParseWithLeadingAt( "13 minute", verifier );
-      testParseWithLeadingAt( "13 minutes", verifier );
+      testParseWithLeadingAt( "13 minuten", verifier );
    }
    
    
@@ -303,9 +312,9 @@ public class TimeParserTest extends MolokoTimeParserTestCase
       
       testParseWithLeadingAt( "25s", verifier );
       testParseWithLeadingAt( "25 sec", verifier );
-      testParseWithLeadingAt( "25 secs", verifier );
-      testParseWithLeadingAt( "25 second", verifier );
-      testParseWithLeadingAt( "25 seconds", verifier );
+      testParseWithLeadingAt( "25 sek", verifier );
+      testParseWithLeadingAt( "25 sekunde", verifier );
+      testParseWithLeadingAt( "25 sekunden", verifier );
    }
    
    
@@ -313,7 +322,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    @Test
    public void test_parseTime_HMS_separated_mixed() throws GrammarException
    {
-      testParseWithLeadingAt( "12 h 13 minutes 25 sec",
+      testParseWithLeadingAt( "12 h 13 minuten 25 sec",
                               new Func< MolokoCalendar >()
                               {
                                  @Override
@@ -325,7 +334,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
                                  }
                               } );
       
-      testParseWithLeadingAt( "13 minutes 12 h 25 sec",
+      testParseWithLeadingAt( "13 minute 12 h 25 sek",
                               new Func< MolokoCalendar >()
                               {
                                  @Override
@@ -337,7 +346,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
                                  }
                               } );
       
-      testParseWithLeadingAt( "12 hours 25 sec 1 h",
+      testParseWithLeadingAt( "12 stunden 25 sekunde 1 h",
                               new Func< MolokoCalendar >()
                               {
                                  @Override
@@ -355,16 +364,29 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    @Test
    public void test_parseTime_HMS_separated_float() throws GrammarException
    {
-      testParseWithLeadingAt( "1.5 hours 25 sec", new Func< MolokoCalendar >()
-      {
-         @Override
-         public void call( MolokoCalendar cal )
-         {
-            assertThat( cal, is( hour( 1 ) ) );
-            assertThat( cal, is( minute( 30 ) ) );
-            assertThat( cal, is( second( 25 ) ) );
-         }
-      } );
+      testParseWithLeadingAt( "1.5 stunden 25 sec",
+                              new Func< MolokoCalendar >()
+                              {
+                                 @Override
+                                 public void call( MolokoCalendar cal )
+                                 {
+                                    assertThat( cal, is( hour( 1 ) ) );
+                                    assertThat( cal, is( minute( 30 ) ) );
+                                    assertThat( cal, is( second( 25 ) ) );
+                                 }
+                              } );
+      
+      testParseWithLeadingAt( "1,5 stunden 25 sec",
+                              new Func< MolokoCalendar >()
+                              {
+                                 @Override
+                                 public void call( MolokoCalendar cal )
+                                 {
+                                    assertThat( cal, is( hour( 1 ) ) );
+                                    assertThat( cal, is( minute( 30 ) ) );
+                                    assertThat( cal, is( second( 25 ) ) );
+                                 }
+                              } );
    }
    
    
@@ -372,7 +394,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    @Test( expected = GrammarException.class )
    public void test_parseTime_HMS_separated_days() throws GrammarException
    {
-      testParseTime( "12 hours 13 minutes 3 days" );
+      testParseTime( "12 stunden 13 minuten 3 tage" );
    }
    
    
@@ -381,8 +403,8 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    public void test_parteTimeEstimate_day() throws GrammarException
    {
       testParseTimeEstimate( "1d", DateUtils.DAY_IN_MILLIS );
-      testParseTimeEstimate( "1 day", DateUtils.DAY_IN_MILLIS );
-      testParseTimeEstimate( "1 days", DateUtils.DAY_IN_MILLIS );
+      testParseTimeEstimate( "1 tag", DateUtils.DAY_IN_MILLIS );
+      testParseTimeEstimate( "1 tage", DateUtils.DAY_IN_MILLIS );
    }
    
    
@@ -390,13 +412,13 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    @Test
    public void test_parteTimeEstimate_day_min() throws GrammarException
    {
-      testParseTimeEstimate( "1 day 15 min", DateUtils.DAY_IN_MILLIS + 15
+      testParseTimeEstimate( "1 tag 15 min", DateUtils.DAY_IN_MILLIS + 15
          * DateUtils.MINUTE_IN_MILLIS );
       
-      testParseTimeEstimate( "1 day and 15 min", DateUtils.DAY_IN_MILLIS + 15
+      testParseTimeEstimate( "1 tag und 15 min", DateUtils.DAY_IN_MILLIS + 15
          * DateUtils.MINUTE_IN_MILLIS );
       
-      testParseTimeEstimate( "1 day,15 min", DateUtils.DAY_IN_MILLIS + 15
+      testParseTimeEstimate( "1 tag,15 min", DateUtils.DAY_IN_MILLIS + 15
          * DateUtils.MINUTE_IN_MILLIS );
    }
    
@@ -405,14 +427,14 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    @Test
    public void test_parteTimeEstimate_min_days_decimal_hour() throws GrammarException
    {
-      testParseTimeEstimate( "1 h 15 min 2 days 1.5 hours ",
+      testParseTimeEstimate( "1 h 15 min 2 tage 1.5 stunden ",
                              DateUtils.HOUR_IN_MILLIS + 15
                                 * DateUtils.MINUTE_IN_MILLIS + 2
                                 * DateUtils.DAY_IN_MILLIS
                                 + DateUtils.HOUR_IN_MILLIS + 30
                                 * DateUtils.MINUTE_IN_MILLIS );
       
-      testParseTimeEstimate( "1 h, 15 min 2 days and 1.5 hours ",
+      testParseTimeEstimate( "1 h, 15 min 2 tage und 1.5 stunden ",
                              DateUtils.HOUR_IN_MILLIS + 15
                                 * DateUtils.MINUTE_IN_MILLIS + 2
                                 * DateUtils.DAY_IN_MILLIS
@@ -425,7 +447,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    @Test
    public void test_parteTimeEstimate_min_sec() throws GrammarException
    {
-      testParseTimeEstimate( "1 min 1 second", DateUtils.MINUTE_IN_MILLIS
+      testParseTimeEstimate( "1 min 1 sekunde", DateUtils.MINUTE_IN_MILLIS
          + DateUtils.SECOND_IN_MILLIS );
    }
    
@@ -436,9 +458,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    {
       final AbstractANTLRTimeParser antlrTimeParser = new TimeParser();
       final Lexer antlrTimeLexer = new TimeLexer();
-      return new TimeParserImpl( Locale.ENGLISH,
-                                 antlrTimeParser,
-                                 antlrTimeLexer );
+      return new TimeParserImpl( Locale.GERMAN, antlrTimeParser, antlrTimeLexer );
    }
    
    
@@ -448,7 +468,9 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    {
       verifier.call( testParseTime( timeString ) );
       verifier.call( testParseTime( "@" + timeString ) );
-      verifier.call( testParseTime( "at " + timeString ) );
+      verifier.call( testParseTime( "um " + timeString ) );
+      verifier.call( testParseTime( "am " + timeString ) );
+      verifier.call( testParseTime( "an " + timeString ) );
       verifier.call( testParseTime( "," + timeString ) );
    }
 }

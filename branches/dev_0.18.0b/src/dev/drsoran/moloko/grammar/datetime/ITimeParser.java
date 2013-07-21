@@ -33,11 +33,5 @@ public interface ITimeParser extends ILocalizedParser
    
    
    
-   ParseReturn parseTimeSpec( String timeSpec,
-                              MolokoCalendar cal,
-                              boolean adjustDay ) throws GrammarException;
-   
-   
-   
    long parseTimeEstimate( String timeEstimate ) throws GrammarException;
 }

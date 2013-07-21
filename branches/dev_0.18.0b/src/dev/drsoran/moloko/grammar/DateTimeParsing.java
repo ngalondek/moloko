@@ -26,7 +26,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.text.TextUtils;
 import android.util.Pair;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
@@ -34,6 +33,7 @@ import dev.drsoran.moloko.grammar.datetime.IDateTimeParserRepository;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.grammar.datetime.ParseReturn;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class DateTimeParsing implements IDateTimeParsing
@@ -56,18 +56,11 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    @Override
-   public MolokoCalendar parseTimeOrTimeSpec( String spec ) throws GrammarException
+   public MolokoCalendar parseTime( String time ) throws GrammarException
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      MolokoCalendar cal = MolokoCalendar.getInstance();
       
-      try
-      {
-         parseTimeSpec( spec, cal, false );
-      }
-      catch ( GrammarException e )
-      {
-         parseTime( spec, cal, false );
-      }
+      parseTime( time, cal, false );
       
       return cal;
    }
@@ -75,29 +68,30 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    @Override
-   public MolokoCalendar parseDateTimeSpec( String spec ) throws GrammarException
+   public MolokoCalendar parseDateTime( String dateTime ) throws GrammarException
    {
-      if ( TextUtils.isEmpty( spec ) )
+      if ( Strings.isNullOrEmpty( dateTime ) )
       {
          throw new GrammarException( "An empty spec is not parsable." );
       }
       
       final MolokoCalendar cal = MolokoCalendar.getInstance();
-      final int specLength = spec.length();
+      final int specLength = dateTime.length();
       
       int startOfDatePos = 0;
       GrammarException lastGrammarException = null;
       
       // first try to parse time spec
+      // TODO: Do we need this RegEx match in first place?
       try
       {
-         final Matcher timePrefixMatcher = TIME_PREFIX_PATTERN.matcher( spec );
+         final Matcher timePrefixMatcher = TIME_PREFIX_PATTERN.matcher( dateTime );
          
          if ( timePrefixMatcher.find() )
          {
             // The parser can adjust the day of week
             // for times in the past.
-            parseTimeSpec( timePrefixMatcher.group(), cal, !cal.hasDate() );
+            parseTime( timePrefixMatcher.group(), cal, !cal.hasDate() );
             startOfDatePos = timePrefixMatcher.end();
          }
       }
@@ -106,7 +100,7 @@ public class DateTimeParsing implements IDateTimeParsing
          lastGrammarException = e;
       }
       
-      final String datePart = spec.substring( startOfDatePos, specLength );
+      final String datePart = dateTime.substring( startOfDatePos, specLength );
       boolean hasMoreToParse = datePart.length() > 0;
       
       // If we only had a time, then check if at least the time parsing succeeded.
@@ -144,8 +138,8 @@ public class DateTimeParsing implements IDateTimeParsing
       {
          lastGrammarException = null;
          
-         final String potentialTimePart = spec.substring( endOfDatePos,
-                                                          specLength );
+         final String potentialTimePart = dateTime.substring( endOfDatePos,
+                                                              specLength );
          hasMoreToParse = potentialTimePart.length() > 0;
          
          if ( hasMoreToParse )
@@ -159,20 +153,6 @@ public class DateTimeParsing implements IDateTimeParsing
             catch ( GrammarException e )
             {
                lastGrammarException = e;
-            }
-            
-            if ( hasMoreToParse && !cal.hasTime() )
-            {
-               lastGrammarException = null;
-               
-               try
-               {
-                  parseTimeSpec( potentialTimePart, cal, !cal.hasDate() );
-               }
-               catch ( GrammarException e )
-               {
-                  lastGrammarException = e;
-               }
             }
          }
       }
@@ -221,22 +201,6 @@ public class DateTimeParsing implements IDateTimeParsing
          public ParseReturn call( ITimeParser timeParser ) throws GrammarException
          {
             return timeParser.parseTime( time, cal, adjustDay );
-         }
-      } );
-   }
-   
-   
-   
-   private ParseReturn parseTimeSpec( final String timeSpec,
-                                      final MolokoCalendar cal,
-                                      final boolean adjustDay ) throws GrammarException
-   {
-      return detectLanguageAndParseTime( new IParserFunc< ITimeParser, ParseReturn >()
-      {
-         @Override
-         public ParseReturn call( ITimeParser timeParser ) throws GrammarException
-         {
-            return timeParser.parseTimeSpec( timeSpec, cal, adjustDay );
          }
       } );
    }

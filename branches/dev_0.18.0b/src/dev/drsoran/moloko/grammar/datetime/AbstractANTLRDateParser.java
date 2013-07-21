@@ -36,11 +36,14 @@ import org.antlr.runtime.TokenStream;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.grammar.IDateParserListener;
 
 
 public abstract class AbstractANTLRDateParser extends Parser
 {
-   protected IDateFormatter dateFormatContext;
+   protected IDateFormatter dateFormatter;
+   
+   private IDateParserListener dateParserListener;
    
    private boolean success;
    
@@ -61,9 +64,16 @@ public abstract class AbstractANTLRDateParser extends Parser
    
    
    
-   public void setDateFormatContext( IDateFormatter context )
+   public void setDateFormatter( IDateFormatter context )
    {
-      dateFormatContext = context;
+      dateFormatter = context;
+   }
+   
+   
+   
+   public void setDateParserListener( IDateParserListener dateParserListener )
+   {
+      this.dateParserListener = dateParserListener;
    }
    
    
@@ -75,16 +85,9 @@ public abstract class AbstractANTLRDateParser extends Parser
    {
       parseNumericDate( cal, part1, part2, part3 );
       
-      // if year is missing and the date is
-      // before now we roll to the next year.
-      if ( part3 == null )
+      if ( dateParserListener != null )
       {
-         final MolokoCalendar now = getCalendar();
-         
-         if ( cal.before( now ) )
-         {
-            cal.add( Calendar.YEAR, 1 );
-         }
+         dateParserListener.onParsedNumericDate( cal, part1, part2, part3 );
       }
    }
    
@@ -94,18 +97,9 @@ public abstract class AbstractANTLRDateParser extends Parser
                                           boolean hasYear,
                                           boolean hasMonth )
    {
-      final MolokoCalendar now = getCalendar();
-      
-      // if we have a year we have a full qualified date.
-      // so we change nothing.
-      if ( !hasYear && cal.before( now ) )
+      if ( dateParserListener != null )
       {
-         // if we have a month, we roll to next year.
-         if ( hasMonth )
-            cal.add( Calendar.YEAR, 1 );
-         // if we only have a day, we roll to next month.
-         else
-            cal.add( Calendar.MONTH, 1 );
+         dateParserListener.onParsedDateOnXstOfMonth( cal, hasYear, hasMonth );
       }
    }
    
@@ -118,22 +112,16 @@ public abstract class AbstractANTLRDateParser extends Parser
       final int parsedWeekDay = getWeekdayNumber( weekday );
       
       if ( parsedWeekDay == -1 )
+      {
          throw new RecognitionException();
-      
-      final int currentWeekDay = cal.get( Calendar.DAY_OF_WEEK );
+      }
       
       cal.set( Calendar.DAY_OF_WEEK, parsedWeekDay );
       
-      // If:
-      // - the weekday is before today or today,
-      // - today is sunday
-      // we adjust to next week.
-      if ( parsedWeekDay <= currentWeekDay || currentWeekDay == Calendar.SUNDAY )
-         cal.add( Calendar.WEEK_OF_YEAR, 1 );
-      
-      // if the next week is explicitly enforced
-      if ( nextWeek )
-         cal.add( Calendar.WEEK_OF_YEAR, 1 );
+      if ( dateParserListener != null )
+      {
+         dateParserListener.onParsedDateOnWeekday( cal, parsedWeekDay, nextWeek );
+      }
    }
    
    
@@ -175,17 +163,19 @@ public abstract class AbstractANTLRDateParser extends Parser
          final boolean withYear = pt3 != null;
          final DateFormat df;
          
-         if ( dateFormatContext != null )
+         if ( dateFormatter != null )
          {
-            df = new SimpleDateFormat( dateFormatContext.getNumericDateFormatPattern( withYear ) );
+            df = new SimpleDateFormat( dateFormatter.getNumericDateFormatPattern( withYear ) );
             
             final String dateInstance;
             if ( withYear )
-               dateInstance = dateFormatContext.formatDateNumeric( pt1,
-                                                                   pt2,
-                                                                   pt3 );
+            {
+               dateInstance = dateFormatter.formatDateNumeric( pt1, pt2, pt3 );
+            }
             else
-               dateInstance = dateFormatContext.formatDateNumeric( pt1, pt2 );
+            {
+               dateInstance = dateFormatter.formatDateNumeric( pt1, pt2 );
+            }
             
             df.parse( dateInstance );
          }
@@ -200,7 +190,9 @@ public abstract class AbstractANTLRDateParser extends Parser
          cal.set( Calendar.MONTH, dfCal.get( Calendar.MONTH ) );
          
          if ( withYear )
+         {
             cal.set( Calendar.YEAR, dfCal.get( Calendar.YEAR ) );
+         }
       }
       catch ( ParseException e )
       {
@@ -215,7 +207,9 @@ public abstract class AbstractANTLRDateParser extends Parser
       final int monthNum = getMonthNumber( month );
       
       if ( monthNum == -1 )
+      {
          throw new RecognitionException();
+      }
       
       cal.set( Calendar.MONTH, monthNum );
    }
@@ -314,17 +308,17 @@ public abstract class AbstractANTLRDateParser extends Parser
          }
          
          return new ParseReturn( lastNonEofToken != null
-                                                            ? lastNonEofToken.getStopIndex() + 1
-                                                            : 0,
-                                     incStream.isEof() );
+                                                        ? lastNonEofToken.getStopIndex() + 1
+                                                        : 0,
+                                 incStream.isEof() );
       }
       else
       {
          final CommonToken lastToken = (CommonToken) input.LT( -1 );
          return new ParseReturn( lastToken != null
-                                                      ? lastToken.getStopIndex() + 1
-                                                      : 0,
-                                     input.LA( 1 ) == Token.EOF );
+                                                  ? lastToken.getStopIndex() + 1
+                                                  : 0,
+                                 input.LA( 1 ) == Token.EOF );
       }
    }
    
@@ -344,8 +338,7 @@ public abstract class AbstractANTLRDateParser extends Parser
    
    
    
-   public abstract ParseReturn parseDate( MolokoCalendar cal,
-                                              boolean clearTime ) throws RecognitionException;
+   public abstract ParseReturn parseDate( MolokoCalendar cal, boolean clearTime ) throws RecognitionException;
    
    
    

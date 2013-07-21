@@ -720,7 +720,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       final MolokoCalendar cal;
       try
       {
-         cal = dateTimeParsing.parseDateTimeSpec( param );
+         cal = dateTimeParsing.parseDateTime( param );
       }
       catch ( GrammarException e )
       {
@@ -764,7 +764,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       MolokoCalendar cal;
       try
       {
-         cal = dateTimeParsing.parseDateTimeSpec( param );
+         cal = dateTimeParsing.parseDateTime( param );
       }
       // If simple time parsing failed, try parse date within
       catch ( GrammarException e )

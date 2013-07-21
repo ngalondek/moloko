@@ -179,7 +179,7 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseReturn result]
          | date_on           [$cal]
          | date_in_X_YMWD    [$cal]
          | date_end_of_the_MW[$cal]
-         | date_natural      [$cal])
+         | date_literal      [$cal])
          // It's important to clear the time fields
          // at last step cause the Calendar methods
          // will set them again.
@@ -187,7 +187,9 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseReturn result]
             cal.setHasDate( isSuccess() );
             
             if ( clearTime )
-               cal.setHasTime( false );      
+            {
+               cal.setHasTime( false );
+            }
          }
       | NOW
       {
@@ -197,12 +199,7 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseReturn result]
          cal.setTimeInMillis( System.currentTimeMillis() );
          cal.setHasTime( true );
       }
-      | NEVER
-      {
-         cal.setHasDate( false );
-         cal.setHasTime( false );
-      }
-   )
+   ) EOF
    ;
 
 parseDateWithin[boolean past] returns [ParseDateWithinReturn res]
@@ -403,10 +400,8 @@ date_end_of_the_MW [MolokoCalendar cal]
          })
    ;
 
-date_natural [MolokoCalendar cal]
+date_literal [MolokoCalendar cal]
    : (TODAY | TONIGHT)
-     {
-     }  
    | TOMORROW
      {
         cal.add( Calendar.DAY_OF_YEAR, 1 );
@@ -414,6 +409,11 @@ date_natural [MolokoCalendar cal]
    | YESTERDAY
      {
         cal.add( Calendar.DAY_OF_YEAR, -1 );
+     }
+   | NEVER
+     {
+        cal.setHasDate( false );
+        cal.setHasTime( false );
      }
    ;
 

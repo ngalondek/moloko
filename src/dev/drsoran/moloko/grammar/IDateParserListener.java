@@ -22,29 +22,23 @@
 
 package dev.drsoran.moloko.grammar;
 
-import java.util.Locale;
-
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
 
 
-public interface IDateTimeParsing
+public interface IDateParserListener
 {
-   MolokoCalendar parseTime( String time ) throws GrammarException;
+   void onParsedNumericDate( MolokoCalendar cal,
+                             String part1,
+                             String part2,
+                             String part3 );
    
    
    
-   MolokoCalendar parseDateTime( String dateAndTime ) throws GrammarException;
+   void onParsedDateOnXstOfMonth( MolokoCalendar cal,
+                                  boolean hasYear,
+                                  boolean hasMonth );
    
    
    
-   long parseEstimated( String estimated ) throws GrammarException;
-   
-   
-   
-   ParseDateWithinReturn parseDateWithin( String range, boolean past ) throws GrammarException;
-   
-   
-   
-   boolean existsParserWithMatchingLocale( Locale locale );
+   void onParsedDateOnWeekday( MolokoCalendar cal, int weekday, boolean nextWeek );
 }

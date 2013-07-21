@@ -64,17 +64,6 @@ public abstract class AbstractANTLRTimeParser extends Parser
    
    
    
-   protected void clearTime( MolokoCalendar cal )
-   {
-      cal.set( Calendar.HOUR, 0 );
-      cal.set( Calendar.HOUR_OF_DAY, 0 );
-      cal.set( Calendar.MINUTE, 0 );
-      cal.set( Calendar.SECOND, 0 );
-      cal.set( Calendar.MILLISECOND, 0 );
-   }
-   
-   
-   
    protected void setCalendarTime( MolokoCalendar cal, String pointInTime ) throws RecognitionException
    {
       final int len = pointInTime.length();
@@ -96,12 +85,16 @@ public abstract class AbstractANTLRTimeParser extends Parser
             sdf = new SimpleDateFormat( "Hmm" );
          }
          
+         sdf.setTimeZone( cal.getTimeZone() );
          sdf.parse( pointInTime );
          
          final Calendar sdfCal = sdf.getCalendar();
          cal.set( Calendar.HOUR_OF_DAY, sdfCal.get( Calendar.HOUR_OF_DAY ) );
          cal.set( Calendar.MINUTE, sdfCal.get( Calendar.MINUTE ) );
          cal.set( Calendar.SECOND, 0 );
+         
+         // This additional get is necessary to have the calendar apply the sdfCal HOUR.
+         cal.get( Calendar.HOUR_OF_DAY );
       }
       catch ( ParseException e )
       {
@@ -113,6 +106,7 @@ public abstract class AbstractANTLRTimeParser extends Parser
    
    protected void startParsingTime( MolokoCalendar cal )
    {
+      clearTime( cal );
       success = true;
    }
    
@@ -136,12 +130,18 @@ public abstract class AbstractANTLRTimeParser extends Parser
    
    
    
+   private void clearTime( MolokoCalendar cal )
+   {
+      cal.set( Calendar.HOUR, 0 );
+      cal.set( Calendar.HOUR_OF_DAY, 0 );
+      cal.set( Calendar.MINUTE, 0 );
+      cal.set( Calendar.SECOND, 0 );
+      cal.set( Calendar.MILLISECOND, 0 );
+   }
+   
+   
+   
    public abstract ParseReturn parseTime( MolokoCalendar cal, boolean adjustDay ) throws RecognitionException;
-   
-   
-   
-   public abstract ParseReturn parseTimeSpec( MolokoCalendar cal,
-                                              boolean adjustDay ) throws RecognitionException;
    
    
    

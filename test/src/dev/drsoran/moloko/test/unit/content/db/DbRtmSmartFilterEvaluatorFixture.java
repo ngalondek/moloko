@@ -666,22 +666,22 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       oneDayOfNow.add( Calendar.MONTH, 1 );
       
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "now" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "now" ) )
               .andReturn( now )
               .anyTimes();
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "1 day of now" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "1 day of now" ) )
               .andReturn( oneDayOfNow )
               .anyTimes();
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "2 days of now" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "2 days of now" ) )
               .andReturn( twoDayOfNow )
               .anyTimes();
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "1 week of now" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "1 week of now" ) )
               .andReturn( oneWeekOfNow )
               .anyTimes();
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "2 weeks of now" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "2 weeks of now" ) )
               .andReturn( twoWeeksOfNow )
               .anyTimes();
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "1 month of now" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "1 month of now" ) )
               .andReturn( oneMonthOfNow )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -780,7 +780,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       
       // No date and time
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "never" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "never" ) )
               .andReturn( MolokoCalendar.getDatelessAndTimelessInstance() )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -798,7 +798,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       calToday.add( Calendar.DAY_OF_YEAR, -1 );
       
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "today" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "today" ) )
               .andReturn( calToday )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -817,7 +817,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       final long todWithTimeMillis = calTodayWithTime.getTimeInMillis();
       
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "today@10" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "today@10" ) )
               .andReturn( calTodayWithTime )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -827,7 +827,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       
       // Parsing failed
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "???" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "???" ) )
               .andStubThrow( new GrammarException() );
       EasyMock.replay( dateTimeParsing );
       
@@ -839,10 +839,10 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       calTom.add( Calendar.DAY_OF_YEAR, 1 );
       
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "never" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "never" ) )
               .andReturn( MolokoCalendar.getDatelessAndTimelessInstance() )
               .anyTimes();
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "tom" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "tom" ) )
               .andReturn( calTom )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -867,7 +867,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       
       // No date and time
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "never" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "never" ) )
               .andReturn( MolokoCalendar.getDatelessAndTimelessInstance() )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -882,7 +882,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       final long todMillis = calToday.getTimeInMillis();
       
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "today" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "today" ) )
               .andReturn( calToday )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -896,7 +896,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       calTom.add( Calendar.DAY_OF_YEAR, 1 );
       
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "???" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "???" ) )
               .andStubThrow( new GrammarException() );
       EasyMock.expect( dateTimeParsing.parseDateWithin( "???", before ) )
               .andReturn( new ParseDateWithinReturn( calToday, calTom ) );
@@ -908,7 +908,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       
       // Parsing failed
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "???" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "???" ) )
               .andStubThrow( new GrammarException() );
       EasyMock.expect( dateTimeParsing.parseDateWithin( "???", before ) )
               .andStubThrow( new GrammarException() );
@@ -919,10 +919,10 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       
       // Ensure operator
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "today" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "today" ) )
               .andReturn( calToday )
               .anyTimes();
-      EasyMock.expect( dateTimeParsing.parseDateTimeSpec( "tom" ) )
+      EasyMock.expect( dateTimeParsing.parseDateTime( "tom" ) )
               .andReturn( calTom )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );

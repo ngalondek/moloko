@@ -38,8 +38,8 @@ import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.TokenStream;
 
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.grammar.GrammarException;
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 
 
 public abstract class AbstractANTLRRecurrenceParser extends Parser

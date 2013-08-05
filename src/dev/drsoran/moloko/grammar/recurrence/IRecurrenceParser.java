@@ -24,7 +24,7 @@ package dev.drsoran.moloko.grammar.recurrence;
 
 import java.util.Map;
 
-import dev.drsoran.moloko.grammar.GrammarException;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.grammar.ILocalizedParser;
 
 

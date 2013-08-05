@@ -32,7 +32,7 @@ import org.antlr.runtime.RecognitionException;
 
 import android.text.TextUtils;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 
 
 public class RecurrencePatternParserImpl implements IRecurrencePatternParser

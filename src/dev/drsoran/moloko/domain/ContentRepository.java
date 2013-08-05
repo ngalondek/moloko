@@ -44,14 +44,14 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
+import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
+import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterParsingReturn;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
-import dev.drsoran.moloko.grammar.GrammarException;
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
-import dev.drsoran.moloko.grammar.IRtmSmartFilterParsing;
-import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterParsingReturn;
 
 
 public class ContentRepository implements IContentRepository

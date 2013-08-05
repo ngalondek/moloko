@@ -22,10 +22,10 @@
 
 package dev.drsoran.moloko.grammar;
 
-import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.v4.runtime.ANTLRInputStream;
 
 
-public class ANTLRNoCaseStringStream extends ANTLRStringStream
+public class ANTLRNoCaseStringStream extends ANTLRInputStream
 {
    private final String inputString;
    

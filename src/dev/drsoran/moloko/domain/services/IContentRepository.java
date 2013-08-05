@@ -30,7 +30,7 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.grammar.GrammarException;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
 
 
 public interface IContentRepository

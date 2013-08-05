@@ -32,10 +32,11 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
-import dev.drsoran.moloko.grammar.GrammarException;
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
-import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
-import dev.drsoran.moloko.grammar.rtmsmart.IRtmSmartFilterEvaluator;
+import dev.drsoran.moloko.domain.model.Priority;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
+import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -107,12 +108,17 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalPriority( String priority )
    {
-      ensureOperatorAndResetLexedOperatorState();
+      final boolean ok = Priority.isValid( priority );
       
-      result.append( RtmRawTaskColumns.PRIORITY );
-      likeStringParam( priority );
+      if ( ok )
+      {
+         ensureOperatorAndResetLexedOperatorState();
+         
+         result.append( RtmRawTaskColumns.PRIORITY );
+         likeStringParam( priority );
+      }
       
-      return true;
+      return ok;
    }
    
    
@@ -545,21 +551,24 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    @Override
    public boolean evalPostponed( String relation, int postponedCount )
    {
-      ensureOperatorAndResetLexedOperatorState();
-      result.append( RtmRawTaskColumns.POSTPONED );
+      boolean ok = postponedCount > -1;
       
-      boolean ok = true;
-      
-      if ( !Strings.isNullOrEmpty( relation ) )
+      if ( ok )
       {
-         result.append( relation );
+         ensureOperatorAndResetLexedOperatorState();
+         result.append( RtmRawTaskColumns.POSTPONED );
+         
+         if ( !Strings.isNullOrEmpty( relation ) )
+         {
+            result.append( relation );
+         }
+         else
+         {
+            result.append( "=" );
+         }
+         
+         result.append( postponedCount );
       }
-      else
-      {
-         result.append( "=" );
-      }
-      
-      result.append( postponedCount );
       
       return ok;
    }
@@ -771,7 +780,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       {
          try
          {
-            cal = dateTimeParsing.parseDateWithin( param, before ).endEpoch;
+            cal = dateTimeParsing.parseDateWithin( param ).endEpoch;
          }
          catch ( GrammarException e1 )
          {
@@ -788,8 +797,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       }
       else
       {
-         result.append( ( before ) ? " < " : " > " )
-               .append( cal.getTimeInMillis() );
+         result.append( before ? " < " : " > " ).append( cal.getTimeInMillis() );
       }
       
       result.append( ")" );
@@ -803,8 +811,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       try
       {
-         final ParseDateWithinReturn range = dateTimeParsing.parseDateWithin( param,
-                                                                              past );
+         final ParseDateWithinReturn range = dateTimeParsing.parseDateWithin( param );
          result.append( "(" )
                .append( column )
                .append( " >= " )

@@ -29,8 +29,8 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.Lexer;
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.grammar.GrammarException;
 
 
 public class RecurrenceParserImpl implements IRecurrenceParser

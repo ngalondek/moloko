@@ -48,13 +48,36 @@ public enum Priority
    
    
    
-   public final static Priority fromString( String priorityString )
+   public static boolean isValid( String priorityString )
+   {
+      final Priority priority = parsePriorityString( priorityString );
+      return priority != null;
+   }
+   
+   
+   
+   public static Priority fromString( String priorityString )
    {
       if ( Strings.isNullOrEmpty( priorityString ) )
       {
          throw new IllegalArgumentException( "priorityString" );
       }
       
+      final Priority priority = parsePriorityString( priorityString );
+      
+      if ( priority == null )
+      {
+         throw new IllegalArgumentException( priorityString + "is no valid "
+            + Priority.class.getName() );
+      }
+      
+      return priority;
+   }
+   
+   
+   
+   private static Priority parsePriorityString( String priorityString )
+   {
       switch ( priorityString.charAt( 0 ) )
       {
          case 'n':
@@ -71,8 +94,7 @@ public enum Priority
             return Priority.High;
             
          default :
-            throw new IllegalArgumentException( priorityString + "is no valid "
-               + Priority.class.getName() );
+            return null;
       }
    }
 }

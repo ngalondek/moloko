@@ -28,7 +28,7 @@ import java.util.Locale;
 
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
-import org.junit.internal.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 import dev.drsoran.moloko.MolokoCalendar;
 

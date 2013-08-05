@@ -43,9 +43,9 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
-import dev.drsoran.moloko.grammar.GrammarException;
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
-import dev.drsoran.moloko.grammar.datetime.ParseDateWithinReturn;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.TestConstants;
 
@@ -137,6 +137,9 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    {
       assertTrue( evaluator.evalPriority( "n" ) );
       assertQueryAndReset( RtmRawTaskColumns.PRIORITY + " LIKE 'n'" );
+      
+      assertFalse( evaluator.evalPriority( "-1" ) );
+      assertFalse( evaluator.evalPriority( "4" ) );
       
       testEnsureOperator( "evalPriority",
                           "1",
@@ -504,6 +507,8 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       
       assertTrue( evaluator.evalPostponed( ">", 3 ) );
       assertQueryAndReset( RtmRawTaskColumns.POSTPONED + ">3" );
+      
+      assertFalse( evaluator.evalPostponed( ">", -1 ) );
    }
    
    
@@ -898,7 +903,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       EasyMock.reset( dateTimeParsing );
       EasyMock.expect( dateTimeParsing.parseDateTime( "???" ) )
               .andStubThrow( new GrammarException() );
-      EasyMock.expect( dateTimeParsing.parseDateWithin( "???", before ) )
+      EasyMock.expect( dateTimeParsing.parseDateWithin( "???" ) )
               .andReturn( new ParseDateWithinReturn( calToday, calTom ) );
       EasyMock.replay( dateTimeParsing );
       
@@ -910,7 +915,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       EasyMock.reset( dateTimeParsing );
       EasyMock.expect( dateTimeParsing.parseDateTime( "???" ) )
               .andStubThrow( new GrammarException() );
-      EasyMock.expect( dateTimeParsing.parseDateWithin( "???", before ) )
+      EasyMock.expect( dateTimeParsing.parseDateWithin( "???" ) )
               .andStubThrow( new GrammarException() );
       EasyMock.replay( dateTimeParsing );
       
@@ -956,8 +961,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
          + ( !past ? calMinus2.getTimeInMillis() : calTod.getTimeInMillis() )
          + ")";
       
-      EasyMock.expect( dateTimeParsing.parseDateWithin( EasyMock.eq( "before 2 days" ),
-                                                        EasyMock.anyBoolean() ) )
+      EasyMock.expect( dateTimeParsing.parseDateWithin( EasyMock.eq( "before 2 days" ) ) )
               .andReturn( new ParseDateWithinReturn( calTod, calMinus2 ) )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
@@ -975,7 +979,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       
       // Parsing failed
       EasyMock.reset( dateTimeParsing );
-      EasyMock.expect( dateTimeParsing.parseDateWithin( "???", past ) )
+      EasyMock.expect( dateTimeParsing.parseDateWithin( "???" ) )
               .andStubThrow( new GrammarException() );
       EasyMock.replay( dateTimeParsing );
       

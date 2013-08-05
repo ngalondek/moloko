@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -317,14 +316,7 @@ public final class MolokoCalendar
    @Override
    public String toString()
    {
-      if ( hasTime )
-      {
-         return impl.getTime().toString();
-      }
-      else
-      {
-         return new SimpleDateFormat( "EEE, dd.MM.yyyy" ).format( getTime() );
-      }
+      return ( impl.getTime().toString() + ", hasTime=" + hasTime );
    }
    
    
@@ -342,11 +334,17 @@ public final class MolokoCalendar
       
       if ( !this.hasDate )
       {
-         impl.clear( Calendar.YEAR );
-         impl.clear( Calendar.MONTH );
-         impl.clear( Calendar.DATE );
-         impl.clear( Calendar.DAY_OF_YEAR );
-         impl.clear( Calendar.WEEK_OF_YEAR );
+         final int h = impl.get( Calendar.HOUR_OF_DAY );
+         final int m = impl.get( Calendar.MINUTE );
+         final int s = impl.get( Calendar.SECOND );
+         final int ms = impl.get( Calendar.MILLISECOND );
+         
+         impl.setTimeInMillis( 0 );
+         
+         impl.set( Calendar.HOUR_OF_DAY, h );
+         impl.set( Calendar.MINUTE, m );
+         impl.set( Calendar.SECOND, s );
+         impl.set( Calendar.MILLISECOND, ms );
       }
    }
    

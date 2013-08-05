@@ -24,7 +24,7 @@ package dev.drsoran.moloko.grammar.recurrence.de;
 
 import java.util.Locale;
 
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.recurrence.AbstractANTLRRecurrenceParser;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParserFactory;

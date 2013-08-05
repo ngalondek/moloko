@@ -41,7 +41,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.IRecurrenceParsing;
+import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;

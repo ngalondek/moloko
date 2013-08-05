@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -99,7 +99,7 @@ public class RtmSmartFilter
       // same meaning as operator name:
       if ( !filter.contains( ":" ) )
       {
-         filter = RtmSmartFilterLexer.OP_NAME_LIT + Strings.quotify( filter );
+         filter = RtmSmartFilterSyntax.OP_NAME + Strings.quotify( filter );
       }
       
       return filter;

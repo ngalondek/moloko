@@ -47,7 +47,7 @@ import dev.drsoran.moloko.content.db.TableColumns.Locations;
 import dev.drsoran.moloko.content.db.TableColumns.Tags;
 import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.domain.model.Priority;
-import dev.drsoran.moloko.grammar.IRecurrenceParsing;
+import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.util.MolokoDateUtils;

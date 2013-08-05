@@ -24,7 +24,7 @@ package dev.drsoran.moloko.grammar.recurrence;
 
 import java.util.Locale;
 
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 
 
 public class RecurrenceParserFactoryEn implements IRecurrenceParserFactory

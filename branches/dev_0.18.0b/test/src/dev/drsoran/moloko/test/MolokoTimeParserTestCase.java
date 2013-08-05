@@ -23,71 +23,95 @@
 package dev.drsoran.moloko.test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
-import org.junit.Before;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.grammar.GrammarException;
-import dev.drsoran.moloko.grammar.datetime.ITimeParser;
-import dev.drsoran.moloko.grammar.datetime.ParseReturn;
+import dev.drsoran.moloko.domain.parsing.datetime.ParseReturn;
+import dev.drsoran.moloko.domain.parsing.datetime.TimeEstimateEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.TimeEvaluator;
+import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
+import dev.drsoran.moloko.grammar.antlr.datetime.TimeParserVisitor;
 
 
 public abstract class MolokoTimeParserTestCase extends MolokoTestCase
 {
-   private ITimeParser timeParser;
-   
-   
-   
-   @Override
-   @Before
-   public void setUp() throws Exception
+   public MolokoCalendar parseTime( String timeToParse, boolean adjustDay )
    {
-      super.setUp();
-      timeParser = createTimeParser();
+      return parseTime( timeToParse, adjustDay, false );
    }
    
    
    
-   public MolokoCalendar testParseTime( String timeToParse ) throws GrammarException
+   public MolokoCalendar parseTime( String timeToParse,
+                                    boolean adjustDay,
+                                    boolean expectHasTime )
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
-      final ParseReturn ret = parseTime( cal, timeToParse, false );
-      
-      verifyParseResult( timeToParse, cal, ret, true );
-      
-      return cal;
+      try
+      {
+         final TimeEvaluator evaluator = new TimeEvaluator();
+         TimeParser timeParser = createTimeParser( timeToParse, evaluator );
+         
+         final ParseTree tree = timeParser.parseTime();
+         evaluator.visit( tree );
+         
+         final Token lastToken = timeParser.getTokenStream().LT( 1 );
+         final boolean isEof = lastToken.getType() == Token.EOF;
+         final int pos = lastToken.getCharPositionInLine();
+         final MolokoCalendar cal = evaluator.getCalendar();
+         
+         final ParseReturn ret = new ParseReturn( pos, isEof, cal );
+         verifyParseResult( timeToParse, ret, expectHasTime );
+         
+         return cal;
+      }
+      catch ( ParseCancellationException e )
+      {
+         fail( "Parsing <" + timeToParse + "> failed" );
+         throw e;
+      }
    }
    
    
    
-   public ParseReturn parseTime( MolokoCalendar cal,
-                                 String timeToParse,
-                                 boolean adjustDay ) throws GrammarException
+   public void parseTimeEstimate( String estimation, long expectedMillis )
    {
-      final ParseReturn ret = timeParser.parseTime( timeToParse, cal, false );
-      return ret;
-   }
-   
-   
-   
-   public void testParseTimeEstimate( String estimation, long expectedMillis ) throws GrammarException
-   {
-      final long diff = timeParser.parseTimeEstimate( estimation );
-      assertThat( "Estimation is wrong for <" + estimation + ">",
-                  diff,
-                  is( expectedMillis ) );
+      try
+      {
+         final TimeEstimateEvaluator evaluator = new TimeEstimateEvaluator();
+         TimeParser timeParser = createTimeParser( estimation, evaluator );
+         
+         final ParseTree tree = timeParser.parseTimeEstimate();
+         evaluator.visit( tree );
+         
+         final long estimateMillis = evaluator.getEstimateMillis();
+         
+         assertThat( "Estimation is wrong for <" + estimation + ">",
+                     estimateMillis,
+                     is( expectedMillis ) );
+      }
+      catch ( ParseCancellationException e )
+      {
+         fail( "Parsing <" + estimation + "> failed" );
+      }
    }
    
    
    
    public void verifyParseResult( String toParse,
-                                  MolokoCalendar cal,
                                   ParseReturn ret,
                                   boolean expectHasTime )
    {
       assertThat( "Calendar has no time for <" + toParse + ">",
-                  cal.hasTime(),
+                  ret.cal.hasTime(),
                   is( expectHasTime ) );
       
       assertThat( "Not EOF for <" + toParse + ">", ret.isEof, is( true ) );
@@ -98,5 +122,21 @@ public abstract class MolokoTimeParserTestCase extends MolokoTestCase
    
    
    
-   protected abstract ITimeParser createTimeParser();
+   protected abstract Lexer createTimeLexer( ANTLRInputStream inputStream );
+   
+   
+   
+   private TimeParser createTimeParser( String timeToParse,
+                                        TimeParserVisitor< Void > evaluator )
+   {
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( timeToParse );
+      final Lexer lexer = createTimeLexer( stream );
+      
+      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
+      final TimeParser parser = new TimeParser( antlrTokens );
+      
+      parser.setErrorHandler( new BailErrorStrategy() );
+      
+      return parser;
+   }
 }

@@ -23,72 +23,120 @@
 package dev.drsoran.moloko.test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
-import org.easymock.Capture;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.junit.Before;
 
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.grammar.GrammarException;
-import dev.drsoran.moloko.grammar.IDateFormatter;
-import dev.drsoran.moloko.grammar.datetime.IDateParser;
-import dev.drsoran.moloko.grammar.datetime.ParseReturn;
+import dev.drsoran.moloko.domain.parsing.IDateFormatter;
+import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
+import dev.drsoran.moloko.domain.parsing.datetime.DateEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
+import dev.drsoran.moloko.domain.parsing.datetime.ParseReturn;
+import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
+import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
 
 
 public abstract class MolokoDateParserTestCase extends MolokoTestCase
 {
-   private IDateParser dateParser;
-   
-   
-   
-   @Override
-   @Before
-   public void setUp() throws Exception
+   public MolokoCalendar testParseDate( String dateToParse )
    {
-      super.setUp();
-      dateParser = createDateParser();
+      return testParseDate( dateToParse, false );
    }
    
    
    
-   public MolokoCalendar testParseDate( String dateToParse ) throws GrammarException
+   public MolokoCalendar testParseDate( String dateToParse,
+                                        boolean expectHasTime )
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
-      
-      final IDateFormatter dateFormatter = createDateFormatter();
-      final ParseReturn ret = testParseDate( cal,
-                                             dateToParse,
-                                             true,
-                                             dateFormatter );
-      
-      verifyParseResult( dateToParse, cal, ret, false );
-      
-      return cal;
+      final ParseReturn ret = testParseDate( dateToParse, true, expectHasTime );
+      return ret.cal;
    }
    
    
    
-   public ParseReturn testParseDate( MolokoCalendar cal,
-                                     String dateToParse,
+   public ParseReturn testParseDate( String dateToParse,
                                      boolean clearTime,
-                                     IDateFormatter dateFormatter ) throws GrammarException
+                                     boolean expectHasTime )
    {
-      dateParser.setDateFormatter( dateFormatter );
-      final ParseReturn ret = dateParser.parseDate( dateToParse, cal, clearTime );
-      return ret;
+      try
+      {
+         final IDateFormatter dateFormatter = createDateFormatter();
+         
+         final DateParser dateParser = createDareParser( dateToParse );
+         final ParseTree tree = dateParser.parseDate();
+         
+         final MolokoCalenderProvider calenderProvider = getCalendarProvider();
+         final DateEvaluator evaluator = new DateEvaluator( getDateLanguage(),
+                                                            dateFormatter,
+                                                            calenderProvider );
+         evaluator.setClearTime( clearTime );
+         evaluator.visit( tree );
+         
+         final Token lastToken = dateParser.getTokenStream().LT( 1 );
+         final boolean isEof = lastToken.getType() == Token.EOF;
+         final int pos = lastToken.getCharPositionInLine();
+         final MolokoCalendar cal = evaluator.getCalendar();
+         final ParseReturn ret = new ParseReturn( pos, isEof, cal );
+         
+         verifyParseResult( dateToParse, ret, expectHasTime );
+         
+         return ret;
+      }
+      catch ( ParseCancellationException e )
+      {
+         fail( "Parsing <" + dateToParse + "> failed" );
+         throw e;
+      }
+   }
+   
+   
+   
+   public ParseDateWithinReturn testParseDateWithin( String dateToParse )
+   {
+      try
+      {
+         final IDateFormatter dateFormatter = createDateFormatter();
+         
+         final DateParser dateParser = createDareParser( dateToParse );
+         final ParseTree tree = dateParser.parseDateWithin();
+         
+         final MolokoCalenderProvider calenderProvider = getCalendarProvider();
+         final DateEvaluator evaluator = new DateEvaluator( getDateLanguage(),
+                                                            dateFormatter,
+                                                            calenderProvider );
+         evaluator.visit( tree );
+         
+         final ParseDateWithinReturn ret = new ParseDateWithinReturn( evaluator.getEpochStart(),
+                                                                      evaluator.getEpochEnd() );
+         
+         return ret;
+      }
+      catch ( ParseCancellationException e )
+      {
+         fail( "Parsing <" + dateToParse + "> failed" );
+         throw e;
+      }
    }
    
    
    
    public void verifyParseResult( String toParse,
-                                  MolokoCalendar cal,
                                   ParseReturn ret,
                                   boolean expectHasTime )
    {
       assertThat( "Unexpected calendar hasTime for <" + toParse + ">",
-                  cal.hasTime(),
+                  ret.cal.hasTime(),
                   is( expectHasTime ) );
       
       assertThat( "Not EOF for <" + toParse + ">", ret.isEof, is( true ) );
@@ -139,5 +187,27 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
    
    
    
-   protected abstract IDateParser createDateParser();
+   protected abstract Lexer createDateLexer( ANTLRInputStream stream );
+   
+   
+   
+   protected abstract ILanguage getDateLanguage();
+   
+   
+   
+   protected abstract MolokoCalenderProvider getCalendarProvider();
+   
+   
+   
+   private DateParser createDareParser( String dateToParse )
+   {
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( dateToParse );
+      final Lexer dateLexer = createDateLexer( stream );
+      
+      final TokenStream tokenStream = new CommonTokenStream( dateLexer );
+      final DateParser dateParser = new DateParser( tokenStream );
+      dateParser.setErrorHandler( new BailErrorStrategy() );
+      
+      return dateParser;
+   }
 }

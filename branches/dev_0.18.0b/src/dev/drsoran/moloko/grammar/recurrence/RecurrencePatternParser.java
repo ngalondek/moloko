@@ -22,7 +22,7 @@ import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 
-import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 
 
 @SuppressWarnings(

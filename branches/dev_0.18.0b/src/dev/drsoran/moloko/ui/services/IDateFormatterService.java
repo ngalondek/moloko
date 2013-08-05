@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.ui.services;
 
 import android.text.format.DateUtils;
-import dev.drsoran.moloko.grammar.IDateFormatter;
+import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 
 
 public interface IDateFormatterService extends IDateFormatter

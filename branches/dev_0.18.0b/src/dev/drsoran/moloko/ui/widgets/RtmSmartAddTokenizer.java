@@ -26,8 +26,8 @@ import java.util.List;
 
 import android.text.TextUtils;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
-import dev.drsoran.moloko.grammar.GrammarException;
-import dev.drsoran.moloko.grammar.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
 
 

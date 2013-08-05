@@ -26,7 +26,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
 
-import org.antlr.runtime.ANTLRStringStream;
 import org.junit.Test;
 
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
@@ -55,7 +54,7 @@ public class ANTLRNoCaseStringStreamFixture extends MolokoTestCase
    public void testLA()
    {
       final String testString = "TestStriNG W1tH     SpaCES";
-      final ANTLRStringStream stream = new ANTLRNoCaseStringStream( testString );
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( testString );
       
       final char[] testStringLowerCharArray = testString.toLowerCase()
                                                         .toCharArray();
@@ -87,7 +86,7 @@ public class ANTLRNoCaseStringStreamFixture extends MolokoTestCase
    @Test
    public void testLA_minus_1()
    {
-      final ANTLRStringStream stream = new ANTLRNoCaseStringStream( "T" );
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( "T" );
       stream.consume();
       
       assertThat( stream.LA( -1 ), is( (int) 't' ) );
@@ -98,7 +97,7 @@ public class ANTLRNoCaseStringStreamFixture extends MolokoTestCase
    @Test
    public void testToString()
    {
-      final ANTLRStringStream stream = new ANTLRNoCaseStringStream( "Test" );
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( "Test" );
       stream.toString();
       
       stream.consume();

@@ -44,9 +44,10 @@ import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
 import dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage;
 import dev.drsoran.moloko.grammar.antlr.datetime.de.DateLexer;
-import dev.drsoran.moloko.test.DateParserTestDataSource;
-import dev.drsoran.moloko.test.IDateParserTestLanguage;
 import dev.drsoran.moloko.test.MolokoDateParserTestCase;
+import dev.drsoran.moloko.test.langs.DateParserTestLanguageDe;
+import dev.drsoran.moloko.test.langs.IDateParserTestLanguage;
+import dev.drsoran.moloko.test.sources.DateParserTestDataSource;
 
 
 @RunWith( Parameterized.class )

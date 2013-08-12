@@ -30,6 +30,7 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -58,7 +59,8 @@ public abstract class MolokoTimeParserTestCase extends MolokoTestCase
       try
       {
          final TimeEvaluator evaluator = new TimeEvaluator();
-         TimeParser timeParser = createTimeParser( timeToParse, evaluator );
+         final TimeParser timeParser = createTimeParser( timeToParse, evaluator );
+         timeParser.getInterpreter().setPredictionMode( PredictionMode.SLL );
          
          final ParseTree tree = timeParser.parseTime();
          evaluator.visit( tree );

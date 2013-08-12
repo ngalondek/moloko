@@ -45,9 +45,10 @@ import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.domain.parsing.lang.DateLanguage;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateLexer;
-import dev.drsoran.moloko.test.DateParserTestDataSource;
-import dev.drsoran.moloko.test.IDateParserTestLanguage;
 import dev.drsoran.moloko.test.MolokoDateParserTestCase;
+import dev.drsoran.moloko.test.langs.DateParserTestLanguageEn;
+import dev.drsoran.moloko.test.langs.IDateParserTestLanguage;
+import dev.drsoran.moloko.test.sources.DateParserTestDataSource;
 
 
 @RunWith( Parameterized.class )

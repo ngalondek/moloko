@@ -25,6 +25,7 @@ package dev.drsoran.moloko.test;
 import static org.junit.Assert.*;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -100,7 +101,15 @@ public final class IterableAsserts
    public static < T > void assertEqualSet( Iterable< T > iterable,
                                             T... elements )
    {
-      assertEqualSet( iterable, new EqualCmp< T >(), elements );
+      assertEqualSet( iterable, Arrays.asList( elements ) );
+   }
+   
+   
+   
+   public static < T > void assertEqualSet( Iterable< T > iterable1,
+                                            Iterable< T > iterable2 )
+   {
+      assertEqualSet( iterable1, iterable2, new EqualCmp< T >() );
    }
    
    
@@ -109,17 +118,29 @@ public final class IterableAsserts
                                             Comparator< T > cmp,
                                             T... elements )
    {
-      for ( T setElement : iterable )
+      assertEqualSet( iterable, Arrays.asList( elements ), cmp );
+   }
+   
+   
+   
+   public static < T > void assertEqualSet( Iterable< T > iterable1,
+                                            Iterable< T > iterable2,
+                                            Comparator< T > cmp )
+   {
+      for ( T setElement1 : iterable1 )
       {
          boolean found = false;
-         for ( int i = 0; i < elements.length && !found; i++ )
+         for ( T setElement2 : iterable2 )
          {
-            final T element = elements[ i ];
-            found = cmp.compare( setElement, element ) == 0;
+            found = cmp.compare( setElement1, setElement2 ) == 0;
+            if ( found )
+            {
+               break;
+            }
          }
          
          assertTrue( MessageFormat.format( "The element ''{0}'' has not been found",
-                                           setElement ),
+                                           setElement1 ),
                      found );
       }
    }

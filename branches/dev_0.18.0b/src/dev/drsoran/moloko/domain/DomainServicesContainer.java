@@ -33,6 +33,9 @@ import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
 import dev.drsoran.moloko.domain.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.domain.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.domain.parsing.datetime.DateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
+import dev.drsoran.moloko.domain.parsing.recurrence.IRecurrenceParserRepository;
+import dev.drsoran.moloko.domain.parsing.recurrence.RecurrenceParserRepository;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.domain.services.IContentRepository;
@@ -40,9 +43,6 @@ import dev.drsoran.moloko.domain.services.IDomainServices;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.grammar.datetime.DateTimeParserRepository;
 import dev.drsoran.moloko.grammar.datetime.IDateTimeParserRepository;
-import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParserRepository;
-import dev.drsoran.moloko.grammar.recurrence.IRecurrenceSentenceLanguage;
-import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserRepository;
 
 
 public class DomainServicesContainer implements IDomainServices

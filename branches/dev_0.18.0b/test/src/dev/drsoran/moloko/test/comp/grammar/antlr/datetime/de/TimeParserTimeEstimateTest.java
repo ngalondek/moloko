@@ -10,10 +10,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import dev.drsoran.moloko.grammar.antlr.datetime.de.TimeLexer;
-import dev.drsoran.moloko.test.ITimeParserTestLanguage;
 import dev.drsoran.moloko.test.MolokoTimeParserTestCase;
-import dev.drsoran.moloko.test.TimeParserTestDataSource;
-import dev.drsoran.moloko.test.TimeParserTestDataSource.ParseTimeEstimateTestData;
+import dev.drsoran.moloko.test.langs.ITimeParserTestLanguage;
+import dev.drsoran.moloko.test.langs.TimeParserTestLanguageDe;
+import dev.drsoran.moloko.test.sources.TimeParserTestDataSource;
+import dev.drsoran.moloko.test.sources.TimeParserTestDataSource.ParseTimeEstimateTestData;
 
 
 @RunWith( Parameterized.class )

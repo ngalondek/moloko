@@ -29,6 +29,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.easymock.EasyMock;
@@ -1291,6 +1292,8 @@ public class RtmSmartFilterParserTest extends MolokoTestCase
       try
       {
          final ParseTree tree = parser.parseFilter();
+         parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
+         
          final RtmSmartFilterVisitor< Void > visitor = new RtmSmartFilterVisitorAdapter( evaluator );
          visitor.visit( tree );
       }

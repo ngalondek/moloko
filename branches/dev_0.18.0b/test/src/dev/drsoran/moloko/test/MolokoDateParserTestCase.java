@@ -23,7 +23,8 @@
 package dev.drsoran.moloko.test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -31,10 +32,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.IDateFormatter;
@@ -71,9 +71,11 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
    {
       try
       {
-         final IDateFormatter dateFormatter = createDateFormatter();
+         final IDateFormatter dateFormatter = TestDateFormatter.get();
          
          final DateParser dateParser = createDareParser( dateToParse );
+         dateParser.getInterpreter().setPredictionMode( PredictionMode.SLL );
+         
          final ParseTree tree = dateParser.parseDate();
          
          final MolokoCalenderProvider calenderProvider = getCalendarProvider();
@@ -106,7 +108,7 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
    {
       try
       {
-         final IDateFormatter dateFormatter = createDateFormatter();
+         final IDateFormatter dateFormatter = TestDateFormatter.get();
          
          final DateParser dateParser = createDareParser( dateToParse );
          final ParseTree tree = dateParser.parseDateWithin();
@@ -143,46 +145,6 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
       assertThat( "Unexpected char count parsed for <" + toParse + ">",
                   ret.numParsedChars,
                   is( toParse.length() ) );
-   }
-   
-   
-   
-   private static IDateFormatter createDateFormatter()
-   {
-      IDateFormatter dateFormatter = EasyMock.createNiceMock( IDateFormatter.class );
-      EasyMock.expect( dateFormatter.getNumericDateFormatPattern( true ) )
-              .andReturn( "dd.MM.yyyy" );
-      EasyMock.expect( dateFormatter.getNumericDateFormatPattern( false ) )
-              .andReturn( "dd.MM." );
-      
-      EasyMock.expect( dateFormatter.formatDateNumeric( EasyMock.anyObject( String.class ),
-                                                        EasyMock.anyObject( String.class ) ) )
-              .andAnswer( new IAnswer< String >()
-              {
-                 @Override
-                 public String answer() throws Throwable
-                 {
-                    final Object[] args = EasyMock.getCurrentArguments();
-                    return args[ 0 ] + "." + args[ 1 ] + ".";
-                 }
-              } );
-      
-      EasyMock.expect( dateFormatter.formatDateNumeric( EasyMock.anyObject( String.class ),
-                                                        EasyMock.anyObject( String.class ),
-                                                        EasyMock.anyObject( String.class ) ) )
-              .andAnswer( new IAnswer< String >()
-              {
-                 @Override
-                 public String answer() throws Throwable
-                 {
-                    final Object[] args = EasyMock.getCurrentArguments();
-                    return args[ 0 ] + "." + args[ 1 ] + "." + args[ 2 ];
-                 }
-              } );
-      
-      EasyMock.replay( dateFormatter );
-      
-      return dateFormatter;
    }
    
    

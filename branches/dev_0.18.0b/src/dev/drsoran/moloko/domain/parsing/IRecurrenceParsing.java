@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.util.Pair;
-import dev.drsoran.moloko.grammar.recurrence.IRecurrenceSentenceLanguage;
+import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
 
 
 public interface IRecurrenceParsing

@@ -22,13 +22,15 @@
 
 package dev.drsoran.moloko.test.unit.util;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -215,6 +217,88 @@ public class StringsFixture extends MolokoTestCase
       assertFalse( Strings.isNullOrEmpty( "test" ) );
       assertTrue( Strings.isNullOrEmpty( null ) );
       assertTrue( Strings.isNullOrEmpty( "" ) );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testJoinNullDelim()
+   {
+      Strings.join( null, Collections.emptyList() );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testJoinNullIterable()
+   {
+      Strings.join( "", (Iterable< String >) null );
+   }
+   
+   
+   
+   @Test
+   public void testJoinEmpty()
+   {
+      assertThat( Strings.join( ",", Collections.emptyList() ), is( "" ) );
+   }
+   
+   
+   
+   @Test
+   public void testJoinOneElement()
+   {
+      assertThat( Strings.join( ",", Arrays.asList( "one" ) ), is( "one" ) );
+   }
+   
+   
+   
+   @Test
+   public void testJoinMultipleElements()
+   {
+      assertThat( Strings.join( ",", Arrays.asList( "one", "two", "three" ) ),
+                  is( "one,two,three" ) );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testJoinArraysNullDelim()
+   {
+      Strings.join( null, new String[] {} );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testJoinNullArray()
+   {
+      Strings.join( "", (Object[]) null );
+   }
+   
+   
+   
+   @Test
+   public void testJoinEmptyArray()
+   {
+      assertThat( Strings.join( ",", new String[] {} ), is( "" ) );
+   }
+   
+   
+   
+   @Test
+   public void testJoinOneElementArray()
+   {
+      assertThat( Strings.join( ",", "one" ), is( "one" ) );
+   }
+   
+   
+   
+   @Test
+   public void testJoinMultipleElementsArrays()
+   {
+      assertThat( Strings.join( ",", "one", "two", "three" ),
+                  is( "one,two,three" ) );
    }
    
    

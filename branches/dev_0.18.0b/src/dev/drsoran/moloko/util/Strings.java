@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.util;
 
 import java.text.MessageFormat;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,6 +141,69 @@ public final class Strings
    public static boolean isNullOrEmpty( CharSequence charSequence )
    {
       return charSequence == null || charSequence.length() == 0;
+   }
+   
+   
+   
+   public static < T > String join( CharSequence delemiter,
+                                    Iterable< T > elements )
+   {
+      if ( delemiter == null )
+      {
+         throw new IllegalArgumentException( "delemiter" );
+      }
+      
+      if ( elements == null )
+      {
+         throw new IllegalArgumentException( "elements" );
+      }
+      
+      final StringBuilder sb = new StringBuilder();
+      boolean isFirst = true;
+      for ( Iterator< T > i = elements.iterator(); i.hasNext(); )
+      {
+         final T element = i.next();
+         if ( !isFirst )
+         {
+            sb.append( delemiter );
+         }
+         
+         isFirst = false;
+         sb.append( element.toString() );
+      }
+      
+      return sb.toString();
+   }
+   
+   
+   
+   public static < T > String join( CharSequence delemiter, T... elements )
+   {
+      if ( delemiter == null )
+      {
+         throw new IllegalArgumentException( "delemiter" );
+      }
+      
+      if ( elements == null )
+      {
+         throw new IllegalArgumentException( "elements" );
+      }
+      
+      final StringBuilder sb = new StringBuilder();
+      boolean isFirst = true;
+      for ( int i = 0; i < elements.length; ++i )
+      {
+         final T element = elements[ i ];
+         if ( !isFirst )
+         {
+            sb.append( delemiter );
+         }
+         
+         isFirst = false;
+         sb.append( element.toString() );
+      }
+      
+      return sb.toString();
    }
    
    

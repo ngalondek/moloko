@@ -38,6 +38,8 @@ import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParserFactory;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
+import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
+import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.domain.parsing.util.ParserLanguageDetector;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
 import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
@@ -55,6 +57,10 @@ public class DateTimeParsing implements IDateTimeParsing
    
    private final IDateFormatter dateFormatter;
    
+   private final IDateLanguageRepository dateLanguageRepository;
+   
+   private final MolokoCalenderProvider calenderProvider;
+   
    private final ParserLanguageDetector< TimeParser > timeParserLanguageDetector;
    
    private final ParserLanguageDetector< DateParser > dateParserLanguageDetector;
@@ -62,10 +68,14 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    public DateTimeParsing( IDateTimeParserFactory parserFactory,
-      IDateFormatter dateFormatter )
+      IDateFormatter dateFormatter,
+      IDateLanguageRepository dateLanguageRepository,
+      MolokoCalenderProvider calenderProvider )
    {
       this.parserFactory = parserFactory;
       this.dateFormatter = dateFormatter;
+      this.dateLanguageRepository = dateLanguageRepository;
+      this.calenderProvider = calenderProvider;
       
       final Iterable< Locale > availableLocales = parserFactory.getAvailableParserLocales();
       this.timeParserLanguageDetector = new ParserLanguageDetector< TimeParser >( availableLocales );
@@ -273,9 +283,9 @@ public class DateTimeParsing implements IDateTimeParsing
             final DateParser dateParser = createDateParser( locale, date );
             final ParseTree tree = dateParser.parseDate();
             
-            final DateEvaluator dateEvaluator = new DateEvaluator( dateLanguage,
-                                                                   dateFormatter,
-                                                                   cal );
+            final DateEvaluator dateEvaluator = new RtmLikeDateEvaluator( dateLanguageRepository.getLanguage( locale ),
+                                                                          dateFormatter,
+                                                                          calenderProvider );
             dateEvaluator.visit( tree );
             
             final MolokoCalendar cal = dateEvaluator.getCalendar();
@@ -297,8 +307,9 @@ public class DateTimeParsing implements IDateTimeParsing
             final DateParser dateParser = createDateParser( locale, range );
             final ParseTree tree = dateParser.parseDateWithin();
             
-            final DateEvaluator dateEvaluator = new DateEvaluator( dateLanguage,
-                                                                   dateFormatter );
+            final DateEvaluator dateEvaluator = new RtmLikeDateEvaluator( dateLanguageRepository.getLanguage( locale ),
+                                                                          dateFormatter,
+                                                                          calenderProvider );
             dateEvaluator.visit( tree );
             
             return new ParseDateWithinReturn( dateEvaluator.getEpochStart(),

@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.parsing.datetime;
+package dev.drsoran.moloko.domain.parsing;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -34,11 +34,13 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.domain.parsing.IDateFormatter;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParserFactory;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
+import dev.drsoran.moloko.domain.parsing.datetime.DateEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.IDateTimeParserFactory;
+import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
+import dev.drsoran.moloko.domain.parsing.datetime.ParseReturn;
+import dev.drsoran.moloko.domain.parsing.datetime.RtmLikeDateEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.TimeEstimateEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.TimeEvaluator;
 import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.domain.parsing.util.ParserLanguageDetector;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;

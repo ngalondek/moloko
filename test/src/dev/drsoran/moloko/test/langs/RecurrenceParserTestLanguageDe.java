@@ -24,14 +24,15 @@ package dev.drsoran.moloko.test.langs;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import dev.drsoran.moloko.util.Strings;
 
 
-public class RecurrenceParserTestLanguageEn implements
+public class RecurrenceParserTestLanguageDe implements
          IRecurrenceParserTestLanguage
 {
-   private final CommonLiteralsEn commonLiterals = new CommonLiteralsEn();
+   private final CommonLiteralsDe commonLiterals = new CommonLiteralsDe();
    
    
    
@@ -62,7 +63,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getEvery()
    {
-      return Arrays.asList( "every", "each" );
+      return Arrays.asList( "jede", "jedes", "alle" );
    }
    
    
@@ -70,7 +71,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getAfter()
    {
-      return Arrays.asList( "after" );
+      return Arrays.asList( "nach" );
    }
    
    
@@ -78,7 +79,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getDaily()
    {
-      return Arrays.asList( "daily" );
+      return Arrays.asList( "täglich", "taeglich", "taglich" );
    }
    
    
@@ -86,7 +87,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getLast()
    {
-      return Arrays.asList( " last " );
+      return Arrays.asList( " letzten ", " letzte ", " letztes " );
    }
    
    
@@ -94,7 +95,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getBiweekly()
    {
-      return Arrays.asList( "fortnight", "biweekly" );
+      return Collections.< String > emptyList();
    }
    
    
@@ -102,7 +103,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getYearLiterals()
    {
-      return Arrays.asList( "years", "year", "yrs", "yr" );
+      return Arrays.asList( "Jahre", "Jahr", "Jahren" );
    }
    
    
@@ -110,7 +111,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getMonthLiterals()
    {
-      return Arrays.asList( "months", "month", "mons" );
+      return Arrays.asList( "Monate", "Monat", "Monaten" );
    }
    
    
@@ -118,7 +119,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getWeekLiterals()
    {
-      return Arrays.asList( "weeks", "week", "wks", "wk" );
+      return Arrays.asList( "Wochen", "Woche" );
    }
    
    
@@ -126,7 +127,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getDayLiterals()
    {
-      return Arrays.asList( "days", "day" );
+      return Arrays.asList( "Tagen", "Tag", "Tage" );
    }
    
    
@@ -134,7 +135,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getBusinessDayLiterals()
    {
-      return Arrays.asList( "weekday", "weekdays" );
+      return Arrays.asList( "Wochentage", "Wochentag", "wochentags" );
    }
    
    
@@ -142,7 +143,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getWeekendLiterals()
    {
-      return Arrays.asList( "weekend", "weekends" );
+      return Arrays.asList( "Wochenende", "Wochenenden" );
    }
    
    
@@ -150,7 +151,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getOnThe()
    {
-      return Arrays.asList( " on the ", " on ", " the ", Strings.EMPTY_STRING );
+      return Arrays.asList( " am ", " an ", " vom ", Strings.EMPTY_STRING );
    }
    
    
@@ -161,19 +162,19 @@ public class RecurrenceParserTestLanguageEn implements
       switch ( i )
       {
          case 1:
-            return Arrays.asList( "1st", "1.", "first" );
+            return Arrays.asList( "1.", "erster", "erste" );
             
          case 2:
-            return Arrays.asList( "2nd", "2.", "second", "other" );
+            return Arrays.asList( "2.", "zweiter", "zweite", "anderer" );
             
          case 3:
-            return Arrays.asList( "3rd", "3.", "third" );
+            return Arrays.asList( "3.", "dritter", "dritte" );
             
          case 4:
-            return Arrays.asList( "4th", "4.", "fourth" );
+            return Arrays.asList( "4.", "vierter", "vierte" );
             
          case 5:
-            return Arrays.asList( "5th", "5.", "fifth" );
+            return Arrays.asList( "5.", "fünfter", "funfte" );
             
          default :
             throw new IllegalArgumentException( "i" );
@@ -185,7 +186,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getSeparators()
    {
-      return Arrays.asList( ",", " and " );
+      return Arrays.asList( ",", " und " );
    }
    
    
@@ -193,7 +194,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getInOfMonth()
    {
-      return Arrays.asList( " in ", " of ", Strings.EMPTY_STRING );
+      return Arrays.asList( " in ", " im ", Strings.EMPTY_STRING );
    }
    
    
@@ -201,7 +202,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getUntil()
    {
-      return Arrays.asList( " until " );
+      return Arrays.asList( " bis " );
    }
    
    
@@ -209,7 +210,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getFor()
    {
-      return Arrays.asList( " for " );
+      return Arrays.asList( " fur ", " für " );
    }
    
    
@@ -217,7 +218,7 @@ public class RecurrenceParserTestLanguageEn implements
    @Override
    public Collection< String > getTimes()
    {
-      return Arrays.asList( " times ", Strings.EMPTY_STRING );
+      return Arrays.asList( " mal ", Strings.EMPTY_STRING );
    }
    
 }

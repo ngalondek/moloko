@@ -1,7 +1,7 @@
 <project name="buildGrammar" basedir="." default="build">
 	<property name="antlrGen" location="${basedir}/lib/antlr-4.1-complete.jar" />
 
-	<property name="grammarSrcPath" location="${basedir}/src/dev/drsoran/moloko/grammar/antlr" />
+	<property name="grammarSrcPath" location="${basedir}/grammar/antlr" />
 	<property name="timeLexerGrammarEn" location="${grammarSrcPath}/TimeLexer.g4" />
 	<property name="timeLexerGrammarDe" location="${grammarSrcPath}/de/TimeLexer.g4" />
 	<property name="timeParserGrammar" location="${grammarSrcPath}/TimeParser.g4" />
@@ -45,24 +45,22 @@
 
 	<target name="build" depends="checkBuildNeeded">
 		<parallel>
-			<parallel>
-				<antcall target="buildTimeLexerEn" />
-				<antcall target="buildTimeLexerDe" />
-			</parallel>
-			<antcall target="buildTimeParser" />
-			<parallel>
-				<antcall target="buildDateLexerEn" />
-				<antcall target="buildDateLexerDe" />
-			</parallel>
-			<antcall target="buildDateParser" />
-			<antcall target="buildRtmSmartFilterParser" />
-			<antcall target="buildRecurrencePatternParser" />
-			<parallel>
-				<antcall target="buildRecurrenceLexerEn" />
-				<antcall target="buildRecurrenceLexerDe" />
-			</parallel>
-			<antcall target="buildRecurrenceParser" />
+			<antcall target="buildTimeLexerEn" />
+			<antcall target="buildTimeLexerDe" />
 		</parallel>
+		<antcall target="buildTimeParser" />
+		<parallel>
+			<antcall target="buildDateLexerEn" />
+			<antcall target="buildDateLexerDe" />
+		</parallel>
+		<antcall target="buildDateParser" />
+		<antcall target="buildRtmSmartFilterParser" />
+		<antcall target="buildRecurrencePatternParser" />
+		<parallel>
+			<antcall target="buildRecurrenceLexerEn" />
+			<antcall target="buildRecurrenceLexerDe" />
+		</parallel>
+		<antcall target="buildRecurrenceParser" />
 	</target>
 
 	<target name="buildTimeLexerEn" unless="timeLexerEn.buildNotRequired">

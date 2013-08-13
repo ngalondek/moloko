@@ -29,7 +29,7 @@ import org.junit.Test;
 import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class DefaultDateTimeParserFactoryFixture extends MolokoTestCase
+public class AntlrDateTimeParserFactoryFixture extends MolokoTestCase
 {
    @Test
    public void testCreateDateParser()

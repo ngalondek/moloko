@@ -33,11 +33,8 @@ import android.text.TextUtils;
 import android.util.Pair;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
-import dev.drsoran.moloko.domain.parsing.recurrence.IRecurrenceParser;
-import dev.drsoran.moloko.domain.parsing.recurrence.IRecurrenceParserRepository;
-import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternParser;
-import dev.drsoran.moloko.domain.parsing.util.IParserFunc;
 import dev.drsoran.moloko.domain.parsing.util.ParserLanguageDetector;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 
 
 public class RecurrenceParsing implements IRecurrenceParsing

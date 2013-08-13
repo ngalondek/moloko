@@ -31,13 +31,12 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 
-import dev.drsoran.moloko.domain.parsing.IDateTimeParserFactory;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
 import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
 
 
-public class DefaultDateTimeParserFactory implements IDateTimeParserFactory
+public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
 {
    private final Iterable< Locale > availableLocales = Arrays.asList( Locale.ENGLISH,
                                                                       Locale.GERMAN );

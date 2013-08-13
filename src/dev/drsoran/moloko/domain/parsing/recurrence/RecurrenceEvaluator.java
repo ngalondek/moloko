@@ -45,6 +45,7 @@ import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSynt
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,20 +62,24 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.BiweeklyContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.BiWeeklyContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.BuisinessDaysContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.CountContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.DailyContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.EveryAfterContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.FreqDailyContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.FreqMonthlyContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.FreqWeeklyContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.FreqYearlyContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.IntervalNumberContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.IntervalTextContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.LastWeekdaysContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.MonthContext;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrDailyContext;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrMonthlyContext;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrMonthlyOnXstContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.MultipleXstWeekdaysContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrOnWeekdaysContext;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrWeeklyContext;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrWeeklyOnWeekdaysContext;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrYearlyContext;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RepeatContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrOnXstContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrOnXstWeekdaysContext;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.RecurrOnXstWeekdaysOfMonthContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.UntilContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.WeekdayContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.WeekendContext;
@@ -140,10 +145,11 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    
    
    @Override
-   public Void visitRecurrDaily( RecurrDailyContext ctx )
+   public Void visitDaily( DailyContext ctx )
    {
       evaluatorState.isEvery = true;
       evaluatorState.recurrence = VAL_DAILY;
+      evaluatorState.interval = 1;
       
       return null;
    }
@@ -151,38 +157,59 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    
    
    @Override
-   public Void visitRecurrWeekly( RecurrWeeklyContext ctx )
+   public Void visitBiWeekly( BiWeeklyContext ctx )
+   {
+      evaluatorState.isEvery = true;
+      evaluatorState.recurrence = VAL_WEEKLY;
+      evaluatorState.interval = 2;
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitFreqDaily( FreqDailyContext ctx )
+   {
+      evaluatorState.recurrence = VAL_DAILY;
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitFreqWeekly( FreqWeeklyContext ctx )
    {
       evaluatorState.recurrence = VAL_WEEKLY;
-      return visitChildren( ctx );
-   }
-   
-   
-   
-   @Override
-   public Void visitRecurrWeeklyOnWeekdays( RecurrWeeklyOnWeekdaysContext ctx )
-   {
-      visitChildren( ctx );
-      evaluatorState.addResolution( OP_BYDAY, evaluatorState.weekdays );
-      
       return null;
    }
    
    
    
    @Override
-   public Void visitRecurrMonthly( RecurrMonthlyContext ctx )
+   public Void visitFreqMonthly( FreqMonthlyContext ctx )
    {
       evaluatorState.recurrence = VAL_MONTHLY;
-      return visitChildren( ctx );
+      return null;
    }
    
    
    
    @Override
-   public Void visitRecurrMonthlyOnXst( RecurrMonthlyOnXstContext ctx )
+   public Void visitFreqYearly( FreqYearlyContext ctx )
+   {
+      evaluatorState.recurrence = VAL_YEARLY;
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitRecurrOnXst( RecurrOnXstContext ctx )
    {
       visitChildren( ctx );
+      
+      evaluatorState.recurrence = VAL_MONTHLY;
       evaluatorState.addResolution( OP_BYMONTHDAY, evaluatorState.xsts );
       
       return null;
@@ -191,9 +218,23 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    
    
    @Override
-   public Void visitRecurrYearly( RecurrYearlyContext ctx )
+   public Void visitRecurrOnWeekdays( RecurrOnWeekdaysContext ctx )
    {
-      evaluatorState.recurrence = VAL_YEARLY;
+      visitChildren( ctx );
+      
+      evaluatorState.recurrence = VAL_WEEKLY;
+      evaluatorState.addResolution( OP_BYDAY, evaluatorState.weekdays );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitRecurrOnXstWeekdays( RecurrOnXstWeekdaysContext ctx )
+   {
+      evaluatorState.recurrence = VAL_MONTHLY;
+      
       visitChildren( ctx );
       
       return null;
@@ -202,7 +243,20 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    
    
    @Override
-   public Void visitRecurrOnWeekdays( RecurrOnWeekdaysContext ctx )
+   public Void visitRecurrOnXstWeekdaysOfMonth( RecurrOnXstWeekdaysOfMonthContext ctx )
+   {
+      evaluatorState.recurrence = VAL_YEARLY;
+      evaluatorState.interval = 1;
+      
+      visitChildren( ctx );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitMultipleXstWeekdays( MultipleXstWeekdaysContext ctx )
    {
       visit( ctx.multipleXst() );
       visit( ctx.weekdays() );
@@ -214,14 +268,18 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
          lastXst = -lastXst;
       }
       
-      final List< String > weekdaysWithXst = new ArrayList< String >( evaluatorState.weekdays.size() );
-      final String lastXstStr = String.valueOf( lastXst );
-      for ( String weekday : evaluatorState.weekdays )
-      {
-         weekdaysWithXst.add( lastXstStr + weekday );
-      }
+      evaluatorState.addResolution( OP_BYDAY, addWeekdaysWithXst( lastXst ) );
       
-      evaluatorState.addResolution( OP_BYDAY, weekdaysWithXst );
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitLastWeekdays( LastWeekdaysContext ctx )
+   {
+      visitChildren( ctx );
+      evaluatorState.addResolution( OP_BYDAY, addWeekdaysWithXst( -1 ) );
       
       return null;
    }
@@ -295,15 +353,6 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    
    
    @Override
-   public Void visitBiweekly( BiweeklyContext ctx )
-   {
-      evaluatorState.interval = 2;
-      return null;
-   }
-   
-   
-   
-   @Override
    public Void visitXst( XstContext ctx ) throws ParcelFormatException
    {
       final Integer xst;
@@ -347,8 +396,9 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    @Override
    public Void visitMonth( MonthContext ctx )
    {
+      // Add 1 because the dateLanguage will return Calendar constants beginning with 0
       evaluatorState.addResolution( OP_BYMONTH,
-                                    dateLanguage.getString( ctx.getText() ) );
+                                    dateLanguage.getInteger( ctx.getText() ) + 1 );
       return null;
    }
    
@@ -357,7 +407,8 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    @Override
    public Void visitIntervalNumber( IntervalNumberContext ctx )
    {
-      evaluatorState.interval = Integer.parseInt( ctx.INT().getText() );
+      evaluatorState.interval = Math.max( Integer.parseInt( ctx.INT().getText() ),
+                                          1 );
       return null;
    }
    
@@ -422,7 +473,7 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
    
    
    @Override
-   public Void visitRepeat( RepeatContext ctx ) throws ParseCancellationException
+   public Void visitCount( CountContext ctx ) throws ParseCancellationException
    {
       int cnt = Integer.parseInt( ctx.c.getText() );
       if ( cnt > 1 )
@@ -447,6 +498,20 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
       catch ( GrammarException e )
       {
       }
+   }
+   
+   
+   
+   private Collection< String > addWeekdaysWithXst( int xst )
+   {
+      final List< String > weekdaysWithXst = new ArrayList< String >( evaluatorState.weekdays.size() );
+      final String lastXstStr = String.valueOf( xst );
+      for ( String weekday : evaluatorState.weekdays )
+      {
+         weekdaysWithXst.add( lastXstStr + weekday );
+      }
+      
+      return weekdaysWithXst;
    }
    
    
@@ -495,9 +560,9 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
       
       
       
-      public void addResolution( String resolution, String resolutionValue )
+      public void addResolution( String resolution, Integer resolutionValue )
       {
-         this.resolution.put( resolution, resolutionValue );
+         this.resolution.put( resolution, String.valueOf( resolutionValue ) );
       }
       
       

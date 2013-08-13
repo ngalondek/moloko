@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.parsing;
+package dev.drsoran.moloko.domain.parsing.datetime;
 
 import java.util.Locale;
 

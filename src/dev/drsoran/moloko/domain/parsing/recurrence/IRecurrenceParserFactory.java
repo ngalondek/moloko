@@ -24,12 +24,21 @@ package dev.drsoran.moloko.domain.parsing.recurrence;
 
 import java.util.Locale;
 
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
+
 
 public interface IRecurrenceParserFactory
 {
-   IRecurrenceParser createRecurrenceParser();
+   RecurrenceParser createRecurrenceParser( Locale locale,
+                                            String recurrenceSentence );
    
    
    
-   Locale getParserLocale();
+   RecurrencePatternParser createRecurrencePatternParser( Locale locale,
+                                                          String recurrencePattern );
+   
+   
+   
+   Iterable< Locale > getAvailableParserLocales();
 }

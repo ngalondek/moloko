@@ -17,9 +17,11 @@ DAYS          : 'tag'('e'|'en')?;
 
 DAILY         : 't'('a'|'ae'|'ä')'glich';
 
-MONTH         : 'januar'    | 'jan'  | 'februar'  | 'feb'     | 'märz'  | 'april'    | 'apr'   |
-                'mai'       | 'juni' | 'jun'      | 'juli'    | 'jul'   | 'august'   | 'aug'   |
-                'september' | 'sept' | 'sep'      | 'oktober' | 'okt'   | 'november' | 'nov'   |
+MONTH         : 'januar'    | 'jan'  | 'februar'  | 'feb' |
+                'm'('a'|'ae'|'ä')'rz'| 'm'('a'|'ae'|'ä')'r' |
+                'april'     | 'apr'  |
+                'mai'       | 'juni' | 'jun' | 'juli'    | 'jul'   | 'august'   | 'aug' |
+                'september' | 'sept' | 'sep' | 'oktober' | 'okt'   | 'november' | 'nov' |
                 'dezember'  | 'dez';
 
 WEEKDAY_LIT   : 'wochentag''s'?;
@@ -48,7 +50,7 @@ THIRD         : 'dritt'('e'|'s'|'r');
 
 FOURTH        : 'viert'('e'|'s'|'r');
 
-FIFTH         : 'fünft'('e'|'s'|'r');
+FIFTH         : 'f'('u'|'ue'|'ü')'nft'('e'|'s'|'r');
 
 LAST          : 'letzt'('e'|'s'|'r'|'en'|'em');
 
@@ -64,7 +66,7 @@ NUM_THREE     : 'drei';
 
 NUM_FOUR      : 'vier';
 
-NUM_FIVE      : 'fünf';
+NUM_FIVE      : 'f'('u'|'ue'|'ü')'nf';
 
 NUM_SIX       : 'sechs';
 
@@ -78,17 +80,17 @@ NUM_TEN       : 'zehn';
 
 AND           : 'und';
 
-IN            : 'in';
+IN            : 'in' | 'im';
 
-ON            : 'a'('m'|'n') | 'i'('n'|'m') | 'de'('s'|'r') | 'vo'('n'|'m');
+ON            : 'a'('m'|'n') | 'de'('s'|'r') | 'vo'('n'|'m');
 
-OF            : 'of';
+OF            : DEACTIVATED;
 
-THE           : 'the';
+THE           : DEACTIVATED;
 
 UNTIL         : 'bis' -> pushMode(MODE_UNTIL);
 
-FOR           : 'für';
+FOR           : 'f'('u'|'ue'|'ü')'r';
 
 TIMES         : 'mal';
 

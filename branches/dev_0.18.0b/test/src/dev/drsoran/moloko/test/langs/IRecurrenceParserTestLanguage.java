@@ -55,14 +55,6 @@ public interface IRecurrenceParserTestLanguage
    
    
    
-   Collection< String > getWeekday();
-   
-   
-   
-   Collection< String > getWeekend();
-   
-   
-   
    Collection< String > getBiweekly();
    
    
@@ -83,7 +75,15 @@ public interface IRecurrenceParserTestLanguage
    
    
    
-   Collection< String > getYearWeekdaysSeparators();
+   Collection< String > getBusinessDayLiterals();
+   
+   
+   
+   Collection< String > getWeekendLiterals();
+   
+   
+   
+   Collection< String > getOnThe();
    
    
    
@@ -96,4 +96,16 @@ public interface IRecurrenceParserTestLanguage
    
    
    Collection< String > getInOfMonth();
+   
+   
+   
+   Collection< String > getUntil();
+   
+   
+   
+   Collection< String > getFor();
+   
+   
+   
+   Collection< String > getTimes();
 }

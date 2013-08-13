@@ -60,7 +60,8 @@ public class TestDateFormatter
                     final Object[] args = EasyMock.getCurrentArguments();
                     return args[ 0 ] + "." + args[ 1 ] + ".";
                  }
-              } );
+              } )
+              .anyTimes();
       
       EasyMock.expect( dateFormatter.formatDateNumeric( EasyMock.anyObject( String.class ),
                                                         EasyMock.anyObject( String.class ),
@@ -73,7 +74,8 @@ public class TestDateFormatter
                     final Object[] args = EasyMock.getCurrentArguments();
                     return args[ 0 ] + "." + args[ 1 ] + "." + args[ 2 ];
                  }
-              } );
+              } )
+              .anyTimes();
       
       EasyMock.expect( dateFormatter.formatDateNumeric( EasyMock.anyLong() ) )
               .andAnswer( new IAnswer< String >()
@@ -84,7 +86,8 @@ public class TestDateFormatter
                     final long millis = (Long) EasyMock.getCurrentArguments()[ 0 ];
                     return new SimpleDateFormat( NUM_DATE_TIME_PATTERN ).format( new Date( millis ) );
                  }
-              } );
+              } )
+              .anyTimes();
       
       EasyMock.replay( dateFormatter );
       

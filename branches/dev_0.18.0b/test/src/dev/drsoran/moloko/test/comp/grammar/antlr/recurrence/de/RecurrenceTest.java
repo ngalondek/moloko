@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.comp.grammar.antlr.recurrence;
+package dev.drsoran.moloko.test.comp.grammar.antlr.recurrence.de;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -46,22 +46,22 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-import dev.drsoran.moloko.domain.parsing.lang.DateLanguage;
+import dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage;
 import dev.drsoran.moloko.domain.parsing.recurrence.RecurrenceEvaluator;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceLexer;
+import dev.drsoran.moloko.grammar.antlr.recurrence.de.RecurrenceLexer;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.TestDateFormatter;
 import dev.drsoran.moloko.test.langs.IRecurrenceParserTestLanguage;
-import dev.drsoran.moloko.test.langs.RecurrenceParserTestLanguageEn;
+import dev.drsoran.moloko.test.langs.RecurrenceParserTestLanguageDe;
 import dev.drsoran.moloko.test.sources.RecurrenceTestDataSource;
 
 
 @RunWith( Parameterized.class )
 public class RecurrenceTest extends MolokoRoboTestCase
 {
-   private final static IRecurrenceParserTestLanguage LANGUAGE = new RecurrenceParserTestLanguageEn();
+   private final static IRecurrenceParserTestLanguage LANGUAGE = new RecurrenceParserTestLanguageDe();
    
    private final RecurrenceTestDataSource.TestData testData;
    

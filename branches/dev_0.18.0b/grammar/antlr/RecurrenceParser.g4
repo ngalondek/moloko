@@ -6,46 +6,59 @@ options
 }
 
 parseRecurrenceSentence
-   : everyAfter? (intervalNumberOrText? (  recurrDaily
-                                         | recurrWeekly
-                                         | recurrMonthly
-                                         | recurrYearly)) (until | repeat)?
+   : everyAfter? intervalNumberOrText?
+        (freqSentence | freqConstant)
+            (until | count)?
    ;
 
-recurrDaily
-    : DAYS | DAILY
+freqSentence
+    : freq
+    | freq? ON? THE? (   recurrOnXst
+                       | recurrOnWeekdays
+                       | recurrOnXstWeekdays
+                       | recurrOnXstWeekdaysOfMonth)
     ;
 
-recurrWeekly
-    : (WEEKS | biweekly) recurrWeeklyOnWeekdays?
-    | recurrWeeklyOnWeekdays
+freqConstant
+    : DAILY    #daily
+    | BIWEEKLY #biWeekly
     ;
 
-recurrWeeklyOnWeekdays
-    : ON? THE? weekdays
+freq
+    : DAYS     #freqDaily
+    | WEEKS    #freqWeekly
+    | MONTHS   #freqMonthly
+    | YEARS    #freqYearly
     ;
 
-recurrMonthly
-    : MONTHS recurrMonthlyOnWeekdays?
-    | recurrMonthlyOnWeekdays
-    | recurrMonthlyOnXst
-    ;
-
-recurrMonthlyOnWeekdays
-    : ON? THE? recurrOnWeekdays
-    ;
-
-recurrMonthlyOnXst
-   : ON? THE? multipleXst
+recurrOnXst
+   : multipleXst
    ;
-
-recurrYearly
-    : YEARS (ON? THE? recurrOnWeekdays (IN | OF)? month)?
-    ;
 
 recurrOnWeekdays
-    : multipleXst LAST? weekdays
+    : weekdays
     ;
+
+recurrOnXstWeekdays
+    : multipleXstWeekdays
+    | lastWeekdays
+    ;
+
+recurrOnXstWeekdaysOfMonth
+    : multipleXstWeekdays (IN | OF)? month
+    ;
+
+multipleXstWeekdays
+    : multipleXst LAST? weekdays   
+    ;
+
+lastWeekdays
+    : LAST weekdays
+    ;
+
+weekdays
+   : weekday (((AND | COMMA) weekday)+)?
+   ;
 
 everyAfter
     : EVERY | AFTER
@@ -55,8 +68,8 @@ until
     : UNTIL s=STRING
     ;
 
-repeat
-    : FOR c=INT
+count
+    : FOR c=INT TIMES?
     ;
 
 multipleXst
@@ -94,14 +107,6 @@ intervalText
    | NUM_TEN
    ;
 
-biweekly
-    : BIWEEKLY
-    ;
-
-weekdays
-   : weekday (((AND | COMMA) weekday)+)?
-   ;
-
 weekday
    : (   MONDAY
        | TUESDAY
@@ -109,7 +114,7 @@ weekday
        | THURSDAY
        | FRIDAY
        | SATURDAY
-       | SUNDAY)   
+       | SUNDAY)
    | buisinessDays
    | weekend
    ;

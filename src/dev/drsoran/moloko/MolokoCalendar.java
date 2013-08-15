@@ -61,14 +61,16 @@ public final class MolokoCalendar
    
    public boolean after( Object calendar )
    {
-      return impl.after( calendar );
+      final Object cal = TryGetCalendarObject( calendar );
+      return impl.after( cal );
    }
    
    
    
    public boolean before( Object calendar )
    {
-      return impl.before( calendar );
+      final Object cal = TryGetCalendarObject( calendar );
+      return impl.before( cal );
    }
    
    
@@ -109,7 +111,8 @@ public final class MolokoCalendar
    @Override
    public boolean equals( Object object )
    {
-      return impl.equals( object );
+      final Object cal = TryGetCalendarObject( object );
+      return impl.equals( cal );
    }
    
    
@@ -416,4 +419,17 @@ public final class MolokoCalendar
    {
       return new MolokoCalendar( TimeZone.getTimeZone( "UTC" ) );
    }
+   
+   
+   
+   private static Object TryGetCalendarObject( Object object )
+   {
+      if ( object instanceof MolokoCalendar )
+      {
+         return ( (MolokoCalendar) object ).impl;
+      }
+      
+      return object;
+   }
+   
 }

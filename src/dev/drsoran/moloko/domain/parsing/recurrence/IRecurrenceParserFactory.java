@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.domain.parsing.recurrence;
 
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
@@ -31,12 +32,11 @@ import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 public interface IRecurrenceParserFactory
 {
    RecurrenceParser createRecurrenceParser( Locale locale,
-                                            String recurrenceSentence );
+                                            String recurrenceSentence ) throws NoSuchElementException;
    
    
    
-   RecurrencePatternParser createRecurrencePatternParser( Locale locale,
-                                                          String recurrencePattern );
+   RecurrencePatternParser createRecurrencePatternParser( String recurrencePattern );
    
    
    

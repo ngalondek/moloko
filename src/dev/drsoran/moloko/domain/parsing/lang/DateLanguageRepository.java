@@ -38,12 +38,17 @@ public class DateLanguageRepository implements IDateLanguageRepository
    @Override
    public ILanguage getLanguage( Locale locale ) throws NoSuchElementException
    {
-      if ( locale == Locale.ENGLISH )
+      if ( locale == null )
+      {
+         throw new IllegalArgumentException( "locale" );
+      }
+      
+      if ( locale.equals( Locale.ENGLISH ) )
       {
          return getDateLanguageEn();
       }
       
-      if ( locale == Locale.GERMAN )
+      if ( locale.equals( Locale.GERMAN ) )
       {
          return getDateLanguageDe();
       }
@@ -58,7 +63,7 @@ public class DateLanguageRepository implements IDateLanguageRepository
    {
       if ( dateLanguageEn == null )
       {
-         dateLanguageEn = new DateLanguage();
+         dateLanguageEn = new dev.drsoran.moloko.domain.parsing.lang.DateLanguage();
       }
       
       return dateLanguageEn;
@@ -70,7 +75,7 @@ public class DateLanguageRepository implements IDateLanguageRepository
    {
       if ( dateLanguageDe == null )
       {
-         dateLanguageDe = new DateLanguage();
+         dateLanguageDe = new dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage();
       }
       
       return dateLanguageDe;

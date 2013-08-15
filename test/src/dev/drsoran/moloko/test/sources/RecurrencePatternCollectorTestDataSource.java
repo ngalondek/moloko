@@ -47,9 +47,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.antlr.v4.runtime.misc.Pair;
-
 import dev.drsoran.moloko.domain.parsing.recurrence.OperandByDayValue;
+import dev.drsoran.moloko.util.Pair;
 
 
 public class RecurrencePatternCollectorTestDataSource
@@ -151,14 +150,14 @@ public class RecurrencePatternCollectorTestDataSource
    {
       for ( Pair< String, Integer > weekday : getWeekDays() )
       {
-         addTestData( new TestData( "FREQ=YEARLY;INTERVAL=1;BYDAY=" + weekday.a
-                                       + ";BYMONTH=1",
+         addTestData( new TestData( "FREQ=YEARLY;INTERVAL=1;BYDAY="
+                                       + weekday.first + ";BYMONTH=1",
                                     new TokensBuilder().add( OP_FREQ,
                                                              VAL_YEARLY )
                                                        .add( OP_INTERVAL, 1 )
                                                        .add( OP_BYDAY,
                                                              new OperandByDayValue( null,
-                                                                                    weekday.b ) )
+                                                                                    weekday.second ) )
                                                        .add( OP_BYMONTH, 1 )
                                                        .build() ),
                       testData );

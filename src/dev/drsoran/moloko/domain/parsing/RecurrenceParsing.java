@@ -29,67 +29,107 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import android.text.TextUtils;
-import android.util.Pair;
-import dev.drsoran.moloko.ILog;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
+import dev.drsoran.moloko.domain.parsing.recurrence.IRecurrenceParserFactory;
+import dev.drsoran.moloko.domain.parsing.recurrence.RecurrenceEvaluator;
+import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternCollector;
+import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternOperatorComp;
+import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax;
+import dev.drsoran.moloko.domain.parsing.recurrence.RecurrenceSentenceEvaluator;
 import dev.drsoran.moloko.domain.parsing.util.ParserLanguageDetector;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
+import dev.drsoran.moloko.util.Lambda.Func1;
+import dev.drsoran.moloko.util.Pair;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class RecurrenceParsing implements IRecurrenceParsing
 {
-   private final ILog log;
+   private final IRecurrenceParserFactory recurrenceParserFactory;
    
-   private final IRecurrenceParserRepository parserRepository;
+   private final IDateFormatter dateFormatter;
    
-   private IRecurrenceParser recurrenceParser;
+   private final IDateTimeParsing dateTimeParsing;
+   
+   private final IRecurrenceSentenceLanguage recurrenceLanguage;
+   
+   private final IDateLanguageRepository dateLanguageRepository;
+   
+   private final ParserLanguageDetector< RecurrenceParser > recurrenceParserLanguageDetector;
    
    
    
-   public RecurrenceParsing( ILog log,
-      IRecurrenceParserRepository parserRepository )
+   public RecurrenceParsing( IRecurrenceParserFactory recurrenceParserFactory,
+      IRecurrenceSentenceLanguage recurrenceLanguage,
+      IDateFormatter dateFormatter, IDateTimeParsing dateTimeParsing,
+      IDateLanguageRepository dateLanguageRepository )
    {
-      this.log = log;
-      this.parserRepository = parserRepository;
-   }
-   
-   
-   
-   @Override
-   public void setRecurrenceSentenceLanguage( IRecurrenceSentenceLanguage recurrenceSentenceLanguage )
-   {
-      parserRepository.getRecurrencePatternParser()
-                      .setRecurrenceSentenceLanguage( recurrenceSentenceLanguage );
-   }
-   
-   
-   
-   @Override
-   public IRecurrenceSentenceLanguage getRecurrenceSentenceLanguage()
-   {
-      return parserRepository.getRecurrencePatternParser()
-                             .getRecurrenceSentenceLanguage();
+      this.recurrenceParserFactory = recurrenceParserFactory;
+      this.recurrenceLanguage = recurrenceLanguage;
+      this.dateFormatter = dateFormatter;
+      this.dateTimeParsing = dateTimeParsing;
+      this.dateLanguageRepository = dateLanguageRepository;
+      this.recurrenceParserLanguageDetector = new ParserLanguageDetector< RecurrenceParser >( recurrenceParserFactory.getAvailableParserLocales() );
    }
    
    
    
    @Override
    public String parseRecurrencePatternToSentence( String pattern,
-                                                   boolean isEvery )
+                                                   boolean isEvery ) throws GrammarException
+   
    {
-      return parserRepository.getRecurrencePatternParser()
-                             .parseRecurrencePatternToSentence( pattern,
-                                                                isEvery );
+      try
+      {
+         final RecurrencePatternParser patternParser = recurrenceParserFactory.createRecurrencePatternParser( pattern );
+         patternParser.setErrorHandler( new BailErrorStrategy() );
+         
+         final ParseTree tree = patternParser.parseRecurrencePattern();
+         final RecurrenceSentenceEvaluator evaluator = new RecurrenceSentenceEvaluator( dateFormatter,
+                                                                                        recurrenceLanguage,
+                                                                                        isEvery );
+         evaluator.visit( tree );
+         
+         return evaluator.getSentence();
+      }
+      catch ( ParseCancellationException e )
+      {
+         throw new GrammarException( e );
+      }
    }
    
    
    
    @Override
-   public Map< Integer, List< Object >> parseRecurrencePattern( String pattern )
+   public Map< Integer, List< Object >> tokenizeRecurrencePattern( String pattern ) throws GrammarException
    {
-      return parserRepository.getRecurrencePatternParser()
-                             .parseRecurrencePattern( pattern );
+      try
+      {
+         return RecurrencePatternCollector.collectTokens( pattern );
+      }
+      catch ( ParseCancellationException e )
+      {
+         throw new GrammarException( e );
+      }
+   }
+   
+   
+   
+   @Override
+   public Pair< String, Boolean > parseRecurrence( String recurrence ) throws GrammarException
+   {
+      final Map< String, Object > result = detectLanguageAndParseRecurrence( recurrence );
+      final Boolean isEvery = (Boolean) result.remove( RecurrencePatternSyntax.IS_EVERY );
+      
+      final String pattern = buildRecurrencePattern( result );
+      
+      return Pair.create( pattern, isEvery );
    }
    
    
@@ -97,32 +137,10 @@ public class RecurrenceParsing implements IRecurrenceParsing
    @Override
    public String ensureRecurrencePatternOrder( String recurrencePattern )
    {
-      final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
-      Arrays.sort( operators, RecurrencePatternParser.CMP_OPERATORS );
+      final String[] operators = recurrencePattern.split( RecurrencePatternSyntax.OPERATOR_SEP );
+      Arrays.sort( operators, new RecurrencePatternOperatorComp() );
       
-      return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
-   }
-   
-   
-   
-   @Override
-   public Pair< String, Boolean > parseRecurrence( final String recurrence )
-   {
-      final Pair< String, Boolean > result = detectLanguageAndParseRecurrence( new IParserFunc< IRecurrenceParser, Pair< String, Boolean > >()
-      {
-         @Override
-         public Pair< String, Boolean > call( IRecurrenceParser recurrenceParser ) throws GrammarException
-         {
-            return parseRecurrence( recurrenceParser, recurrence );
-         }
-      } );
-      
-      if ( result == null )
-      {
-         log.w( getClass(), "Failed to parse recurrence " + recurrence );
-      }
-      
-      return result;
+      return Strings.join( RecurrencePatternSyntax.OPERATOR_SEP, operators );
    }
    
    
@@ -130,46 +148,71 @@ public class RecurrenceParsing implements IRecurrenceParsing
    @Override
    public boolean existsParserWithMatchingLocale( Locale locale )
    {
-      return parserRepository.existsRecurrenceParser( locale );
-   }
-   
-   
-   
-   private Pair< String, Boolean > parseRecurrence( IRecurrenceParser recurrenceParser,
-                                                    String recurrence ) throws GrammarException
-   {
-      final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence( recurrence );
-      final Boolean isEvery = (Boolean) patternObjects.remove( RecurrencePatternParser.IS_EVERY );
+      for ( Locale availLocale : recurrenceParserFactory.getAvailableParserLocales() )
+      {
+         if ( availLocale.equals( locale ) )
+         {
+            return true;
+         }
+      }
       
-      return Pair.create( joinRecurrencePattern( patternObjects ), isEvery );
+      return false;
    }
    
    
    
-   private < T > T detectLanguageAndParseRecurrence( IParserFunc< IRecurrenceParser, T > parserFunc )
+   private Map< String, Object > detectLanguageAndParseRecurrence( final String recurrenceSentence ) throws GrammarException
    {
-      final Pair< IRecurrenceParser, T > detectResult = ParserLanguageDetector.detectLanguageAndParse( recurrenceParser,
-                                                                                                       parserRepository.getRecurrenceParsers(),
-                                                                                                       parserFunc );
-      recurrenceParser = detectResult.first;
-      return detectResult.second;
+      try
+      {
+         final Map< String, Object > detectResult = recurrenceParserLanguageDetector.detectLanguageAndParse( new Func1< Locale, Map< String, Object > >()
+         {
+            @Override
+            public Map< String, Object > call( Locale locale )
+            {
+               final RecurrenceParser parser = recurrenceParserFactory.createRecurrenceParser( locale,
+                                                                                               recurrenceSentence );
+               parser.setErrorHandler( new BailErrorStrategy() );
+               
+               final ParseTree tree = parser.parseRecurrenceSentence();
+               final RecurrenceEvaluator evaluator = new RecurrenceEvaluator( dateTimeParsing,
+                                                                              dateLanguageRepository.getLanguage( locale ) );
+               evaluator.visit( tree );
+               
+               return evaluator.getRecurrencePattern();
+            }
+         } );
+         
+         if ( detectResult == null )
+         {
+            throw new GrammarException();
+         }
+         
+         return detectResult;
+      }
+      catch ( ParseCancellationException e )
+      {
+         throw new GrammarException( e );
+      }
    }
    
    
    
-   private final static String joinRecurrencePattern( Map< String, Object > parts )
+   private final static String buildRecurrencePattern( Map< String, Object > patternParts )
    {
       final StringBuilder sb = new StringBuilder();
-      final Set< String > keys = parts.keySet();
+      final Set< String > keys = patternParts.keySet();
       
       for ( Iterator< String > i = keys.iterator(); i.hasNext(); )
       {
          final String key = i.next();
-         sb.append( key ).append( "=" ).append( parts.get( key ) );
+         sb.append( key )
+           .append( RecurrencePatternSyntax.OPERATOR_VALUE_SEP )
+           .append( patternParts.get( key ) );
          
          if ( i.hasNext() )
          {
-            sb.append( RecurrencePatternParser.OPERATOR_SEP );
+            sb.append( RecurrencePatternSyntax.OPERATOR_SEP );
          }
       }
       

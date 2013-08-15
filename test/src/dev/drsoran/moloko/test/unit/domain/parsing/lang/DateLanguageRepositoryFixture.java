@@ -25,18 +25,63 @@ package dev.drsoran.moloko.test.unit.domain.parsing.lang;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Locale;
+import java.util.NoSuchElementException;
+
+import org.junit.Before;
 import org.junit.Test;
 
+import dev.drsoran.moloko.domain.parsing.lang.DateLanguageRepository;
+import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.test.MolokoTestCase;
 
 
 public class DateLanguageRepositoryFixture extends MolokoTestCase
 {
+   private IDateLanguageRepository repo;
+   
+   
+   
+   @Override
+   @Before
+   public void setUp() throws Exception
+   {
+      super.setUp();
+      repo = new DateLanguageRepository();
+   }
+   
+   
    
    @Test
-   public void testGetLanguage()
+   public void testGetLanguageGerman()
    {
-      fail( "Not yet implemented" );
+      assertThat( repo.getLanguage( Locale.GERMAN ).getLocale(),
+                  is( Locale.GERMAN ) );
+   }
+   
+   
+   
+   @Test
+   public void testGetLanguageEnglish()
+   {
+      assertThat( repo.getLanguage( Locale.ENGLISH ).getLocale(),
+                  is( Locale.ENGLISH ) );
+   }
+   
+   
+   
+   @Test( expected = NoSuchElementException.class )
+   public void testGetLanguageUnknown()
+   {
+      repo.getLanguage( Locale.JAPANESE );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testGetLanguageNull()
+   {
+      repo.getLanguage( null );
    }
    
 }

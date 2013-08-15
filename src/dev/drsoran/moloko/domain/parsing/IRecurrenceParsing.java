@@ -26,20 +26,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import android.util.Pair;
-import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
+import dev.drsoran.moloko.util.Pair;
 
 
 public interface IRecurrenceParsing
 {
-   void setRecurrenceSentenceLanguage( IRecurrenceSentenceLanguage recurrenceSentenceLanguage );
-   
-   
-   
-   IRecurrenceSentenceLanguage getRecurrenceSentenceLanguage();
-   
-   
-   
    /**
     * @return The human readable pattern sentence, ready to be displayed in the system language.
     */
@@ -50,7 +41,14 @@ public interface IRecurrenceParsing
    /**
     * @return Map< Token type, values >
     */
-   Map< Integer, List< Object >> parseRecurrencePattern( String pattern ) throws GrammarException;
+   Map< Integer, List< Object >> tokenizeRecurrencePattern( String pattern ) throws GrammarException;
+   
+   
+   
+   /**
+    * @return Pair, where the first is the RTM style recurrence pattern and the second indicates 'every' recurrence.
+    */
+   Pair< String, Boolean > parseRecurrence( String sentence ) throws GrammarException;
    
    
    
@@ -58,13 +56,6 @@ public interface IRecurrenceParsing
     * @return The given pattern with the correct operator order.
     */
    String ensureRecurrencePatternOrder( String pattern );
-   
-   
-   
-   /**
-    * @return Pair, where the first is the RTM style recurrence pattern and the second indicates 'every' recurrence.
-    */
-   Pair< String, Boolean > parseRecurrence( String sentence );
    
    
    

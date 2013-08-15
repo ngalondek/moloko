@@ -28,6 +28,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -147,8 +148,9 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
       final Lexer lexer = new RtmSmartFilterLexer( input );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      final RtmSmartFilterParser parser = new RtmSmartFilterParser( antlrTokens );
       
+      final RtmSmartFilterParser parser = new RtmSmartFilterParser( antlrTokens );
+      parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
       parser.setErrorHandler( new BailErrorStrategy() );
       
       return parser;

@@ -22,27 +22,92 @@
 
 package dev.drsoran.moloko.test.unit.domain.parsing.datetime;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.*;
 
+import java.util.Locale;
+import java.util.NoSuchElementException;
+
+import org.junit.Before;
 import org.junit.Test;
 
+import dev.drsoran.moloko.domain.parsing.datetime.AntlrDateTimeParserFactory;
+import dev.drsoran.moloko.domain.parsing.datetime.IDateTimeParserFactory;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
+import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
 import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class AntlrDateTimeParserFactoryFixture extends MolokoTestCase
 {
-   @Test
-   public void testCreateDateParser()
+   private IDateTimeParserFactory fact;
+   
+   
+   
+   @Override
+   @Before
+   public void setUp() throws Exception
    {
-      fail( "Not yet implemented" );
+      super.setUp();
+      fact = new AntlrDateTimeParserFactory();
    }
    
    
    
    @Test
-   public void testCreateTimeParser()
+   public void testCreateDateParserGerman()
    {
-      fail( "Not yet implemented" );
+      final DateParser parser = fact.createDateParser( Locale.GERMAN,
+                                                       Strings.EMPTY_STRING );
+      assertThat( parser, notNullValue() );
+   }
+   
+   
+   
+   @Test
+   public void testCreateDateParserEnglish()
+   {
+      final DateParser parser = fact.createDateParser( Locale.ENGLISH,
+                                                       Strings.EMPTY_STRING );
+      assertThat( parser, notNullValue() );
+   }
+   
+   
+   
+   @Test( expected = NoSuchElementException.class )
+   public void testCreateDateParserUnknown()
+   {
+      fact.createDateParser( Locale.JAPAN, Strings.EMPTY_STRING );
+   }
+   
+   
+   
+   @Test
+   public void testCreateTimeParserGerman()
+   {
+      final TimeParser parser = fact.createTimeParser( Locale.GERMAN,
+                                                       Strings.EMPTY_STRING );
+      assertThat( parser, notNullValue() );
+   }
+   
+   
+   
+   @Test
+   public void testCreateTimeParserEnglish()
+   {
+      final TimeParser parser = fact.createTimeParser( Locale.ENGLISH,
+                                                       Strings.EMPTY_STRING );
+      assertThat( parser, notNullValue() );
+   }
+   
+   
+   
+   @Test( expected = NoSuchElementException.class )
+   public void testCreateTimeParserUnknown()
+   {
+      fact.createTimeParser( Locale.JAPAN, Strings.EMPTY_STRING );
    }
    
    
@@ -50,6 +115,7 @@ public class AntlrDateTimeParserFactoryFixture extends MolokoTestCase
    @Test
    public void testGetAvailableParserLocales()
    {
-      fail( "Not yet implemented" );
+      assertThat( fact.getAvailableParserLocales(),
+                  hasItems( Locale.ENGLISH, Locale.GERMAN ) );
    }
 }

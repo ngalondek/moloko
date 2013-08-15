@@ -29,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import dev.drsoran.moloko.MolokoCalendar;
@@ -49,6 +48,7 @@ import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.ParseDateWithinConte
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.TomorrowContext;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.YesterdayContext;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParserBaseVisitor;
+import dev.drsoran.moloko.util.Pair;
 
 
 public class DateEvaluator extends DateParserBaseVisitor< Void >
@@ -187,7 +187,7 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
          
          epochEnd = calendarProvider.getNow();
          epochEnd.setTimeInMillis( cal.getTimeInMillis() );
-         epochEnd.add( distance.b, distance.a );
+         epochEnd.add( distance.second, distance.first );
       }
       else
       {
@@ -286,7 +286,7 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
                                                                     ctx.m,
                                                                     ctx.w,
                                                                     ctx.d );
-      cal.add( distance.b, distance.a );
+      cal.add( distance.second, distance.first );
       
       return null;
    }

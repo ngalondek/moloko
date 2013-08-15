@@ -285,9 +285,10 @@ public class DateTimeParsing implements IDateTimeParsing
             final DateParser dateParser = createDateParser( locale, date );
             final ParseTree tree = dateParser.parseDate();
             
-            final DateEvaluator dateEvaluator = new RtmLikeDateEvaluator( dateLanguageRepository.getLanguage( locale ),
-                                                                          dateFormatter,
-                                                                          calenderProvider );
+            final RtmLikeDateEvaluator dateEvaluator = new RtmLikeDateEvaluator( new DateEvaluator( dateLanguageRepository.getLanguage( locale ),
+                                                                                                    dateFormatter,
+                                                                                                    calenderProvider ),
+                                                                                 calenderProvider );
             dateEvaluator.visit( tree );
             
             final MolokoCalendar cal = dateEvaluator.getCalendar();
@@ -309,9 +310,10 @@ public class DateTimeParsing implements IDateTimeParsing
             final DateParser dateParser = createDateParser( locale, range );
             final ParseTree tree = dateParser.parseDateWithin();
             
-            final DateEvaluator dateEvaluator = new RtmLikeDateEvaluator( dateLanguageRepository.getLanguage( locale ),
-                                                                          dateFormatter,
-                                                                          calenderProvider );
+            final RtmLikeDateEvaluator dateEvaluator = new RtmLikeDateEvaluator( new DateEvaluator( dateLanguageRepository.getLanguage( locale ),
+                                                                                                    dateFormatter,
+                                                                                                    calenderProvider ),
+                                                                                 calenderProvider );
             dateEvaluator.visit( tree );
             
             return new ParseDateWithinReturn( dateEvaluator.getEpochStart(),

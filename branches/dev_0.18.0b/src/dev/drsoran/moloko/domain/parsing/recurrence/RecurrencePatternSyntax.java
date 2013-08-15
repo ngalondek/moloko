@@ -55,6 +55,8 @@ public final class RecurrencePatternSyntax
    
    public final static String OPERATOR_SEP = ";";
    
+   public final static String OPERATOR_VALUE_SEP = "=";
+   
    public final static String BYDAY_MON = "MO";
    
    public final static String BYDAY_TUE = "TU";

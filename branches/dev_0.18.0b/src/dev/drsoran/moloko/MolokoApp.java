@@ -102,7 +102,6 @@ public class MolokoApp extends Application implements
    {
       unregisterNotificationSettingsListener();
       deleteAppServices();
-      deleteDomainServices();
       
       super.onTerminate();
    }
@@ -322,23 +321,12 @@ public class MolokoApp extends Application implements
    
    
    
-   private void deleteDomainServices()
-   {
-      domainServicesContainer.shutdown();
-      domainServicesContainer = null;
-   }
-   
-   
-   
    private void updateParserLanguages()
    {
       if ( needsParserLanguagesUpdate() )
       {
          final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage();
-         
-         domainServicesContainer.getParsingService()
-                                .getRecurrenceParsing()
-                                .setRecurrenceSentenceLanguage( recurrenceSentenceLanguage );
+         domainServicesContainer.updateParserLanguages( recurrenceSentenceLanguage );
       }
    }
    
@@ -410,18 +398,13 @@ public class MolokoApp extends Application implements
    
    private boolean needsParserLanguagesUpdate()
    {
-      final Locale currentSystemLocale = appServicesContainer.getSettings()
-                                                             .getLocale();
-      final Locale currentParserLocale = domainServicesContainer.getParsingService()
-                                                                .getRecurrenceParsing()
-                                                                .getRecurrenceSentenceLanguage()
-                                                                .getLocale();
-      
-      return !currentSystemLocale.equals( currentParserLocale );
+      return domainServicesContainer.needsParserLanguageUpdate( appServicesContainer.getSettings()
+                                                                                    .getLocale() );
    }
    
    
    
+   // TODO: Is not the DomainServicesContainer responsible to create the language?
    private IRecurrenceSentenceLanguage createRecurrenceSentenceLanguage()
    {
       final ISettingsService settingsService = appServicesContainer.getSettings();

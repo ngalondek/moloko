@@ -23,8 +23,8 @@
 package dev.drsoran.moloko.domain.parsing.recurrence;
 
 import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_BYDAY;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_BYMONTHDAY;
 import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_BYMONTH;
+import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_BYMONTHDAY;
 import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_COUNT;
 import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_FREQ;
 import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_INTERVAL;
@@ -45,20 +45,20 @@ public class RecurrencePatternOperatorComp implements Comparator< String >
    
    private static int operatorToInt( String operator )
    {
-      if ( operator.startsWith( OP_FREQ ) )
+      if ( operator.equalsIgnoreCase( OP_FREQ ) )
          return 1;
-      else if ( operator.startsWith( OP_INTERVAL ) )
+      else if ( operator.equalsIgnoreCase( OP_INTERVAL ) )
          return 2;
-      else if ( operator.startsWith( OP_BYDAY ) )
+      else if ( operator.equalsIgnoreCase( OP_BYDAY ) )
          return 3;
-      else if ( operator.startsWith( OP_BYMONTHDAY ) )
-         return 3;
-      else if ( operator.startsWith( OP_BYMONTH ) )
+      else if ( operator.equalsIgnoreCase( OP_BYMONTHDAY ) )
          return 4;
-      else if ( operator.startsWith( OP_UNTIL ) )
+      else if ( operator.equalsIgnoreCase( OP_BYMONTH ) )
          return 5;
-      else if ( operator.startsWith( OP_COUNT ) )
+      else if ( operator.equalsIgnoreCase( OP_UNTIL ) )
          return 6;
+      else if ( operator.equalsIgnoreCase( OP_COUNT ) )
+         return 7;
       else
          return Integer.MAX_VALUE;
    }

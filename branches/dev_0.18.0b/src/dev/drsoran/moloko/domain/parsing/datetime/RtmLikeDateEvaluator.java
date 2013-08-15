@@ -25,39 +25,43 @@ package dev.drsoran.moloko.domain.parsing.datetime;
 import java.util.Calendar;
 
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.RuleNode;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
-import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateEndOfTheMonthOrWeekContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateIn_X_YMWDContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateIn_X_YMWD_distanceContext;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateNumericContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnContext;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnMonthTheXstContext;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnTheXstOfMonthContext;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnWeekdayContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.NeverContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.NowContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.ParseDateContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.ParseDateWithinContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.TodayContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.TomorrowContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.YesterdayContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateParserVisitor;
 
 
-public class RtmLikeDateEvaluator extends DateEvaluator
+public class RtmLikeDateEvaluator implements DateParserVisitor< Void >
 {
+   private final DateEvaluator decorated;
+   
    private final MolokoCalenderProvider calendarProvider;
    
    
    
-   public RtmLikeDateEvaluator( ILanguage dateLanguage,
-      IDateFormatter dateFormatter, MolokoCalenderProvider calenderProvider )
+   public RtmLikeDateEvaluator( DateEvaluator decorated,
+      MolokoCalenderProvider calenderProvider )
    {
-      this( dateLanguage,
-            dateFormatter,
-            calenderProvider,
-            calenderProvider.getNow() );
-   }
-   
-   
-   
-   public RtmLikeDateEvaluator( ILanguage dateLanguage,
-      IDateFormatter dateFormatter, MolokoCalenderProvider calenderProvider,
-      MolokoCalendar cal )
-   {
-      super( dateLanguage, dateFormatter, calenderProvider, cal );
+      this.decorated = decorated;
       this.calendarProvider = calenderProvider;
    }
    
@@ -66,14 +70,13 @@ public class RtmLikeDateEvaluator extends DateEvaluator
    @Override
    public Void visitDateNumeric( DateNumericContext ctx )
    {
-      super.visitDateNumeric( ctx );
-      
-      final MolokoCalendar cal = getCalendar();
+      decorated.visitDateNumeric( ctx );
       
       // if year is missing and the date is
       // before now we roll to the next year.
       if ( ctx.pt3 == null )
       {
+         final MolokoCalendar cal = decorated.getCalendar();
          final MolokoCalendar now = calendarProvider.getNow();
          
          if ( cal.before( now ) )
@@ -90,7 +93,7 @@ public class RtmLikeDateEvaluator extends DateEvaluator
    @Override
    public Void visitDateOnTheXstOfMonth( DateOnTheXstOfMonthContext ctx )
    {
-      super.visitDateOnTheXstOfMonth( ctx );
+      decorated.visitDateOnTheXstOfMonth( ctx );
       adjustForDatesInPast( ctx.m, ctx.y );
       
       return null;
@@ -101,7 +104,7 @@ public class RtmLikeDateEvaluator extends DateEvaluator
    @Override
    public Void visitDateOnMonthTheXst( DateOnMonthTheXstContext ctx )
    {
-      super.visitDateOnMonthTheXst( ctx );
+      decorated.visitDateOnMonthTheXst( ctx );
       adjustForDatesInPast( ctx.m, ctx.y );
       
       return null;
@@ -112,12 +115,12 @@ public class RtmLikeDateEvaluator extends DateEvaluator
    @Override
    public Void visitDateOnWeekday( DateOnWeekdayContext ctx )
    {
-      super.visitDateOnWeekday( ctx );
+      decorated.visitDateOnWeekday( ctx );
       
       final MolokoCalendar now = calendarProvider.getNow();
       final int currentWeekDay = now.get( Calendar.DAY_OF_WEEK );
       
-      final MolokoCalendar cal = getCalendar();
+      final MolokoCalendar cal = decorated.getCalendar();
       final int weekday = cal.get( Calendar.DAY_OF_WEEK );
       
       // If:
@@ -134,13 +137,168 @@ public class RtmLikeDateEvaluator extends DateEvaluator
    
    
    
+   @Override
+   public Void visitDateIn_X_YMWD( DateIn_X_YMWDContext ctx )
+   {
+      return decorated.visitDateIn_X_YMWD( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitDateOn( DateOnContext ctx )
+   {
+      return decorated.visitDateOn( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitToday( TodayContext ctx )
+   {
+      return decorated.visitToday( ctx );
+   }
+   
+   
+   
+   public MolokoCalendar getCalendar()
+   {
+      return decorated.getCalendar();
+   }
+   
+   
+   
+   public MolokoCalendar getEpochStart()
+   {
+      return decorated.getEpochStart();
+   }
+   
+   
+   
+   public MolokoCalendar getEpochEnd()
+   {
+      return decorated.getEpochEnd();
+   }
+   
+   
+   
+   public boolean isClearTime()
+   {
+      return decorated.isClearTime();
+   }
+   
+   
+   
+   public void setClearTime( boolean clearTime )
+   {
+      decorated.setClearTime( clearTime );
+   }
+   
+   
+   
+   @Override
+   public Void visitParseDate( ParseDateContext ctx )
+   {
+      return decorated.visitParseDate( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitParseDateWithin( ParseDateWithinContext ctx )
+   {
+      return decorated.visitParseDateWithin( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitYesterday( YesterdayContext ctx )
+   {
+      return decorated.visitYesterday( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitNow( NowContext ctx )
+   {
+      return decorated.visitNow( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visit( ParseTree tree )
+   {
+      return decorated.visit( tree );
+   }
+   
+   
+   
+   @Override
+   public Void visitChildren( RuleNode arg0 )
+   {
+      return decorated.visitChildren( arg0 );
+   }
+   
+   
+   
+   @Override
+   public Void visitDateIn_X_YMWD_distance( DateIn_X_YMWD_distanceContext ctx )
+   {
+      return decorated.visitDateIn_X_YMWD_distance( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitDateEndOfTheMonthOrWeek( DateEndOfTheMonthOrWeekContext ctx )
+   {
+      return decorated.visitDateEndOfTheMonthOrWeek( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitErrorNode( ErrorNode node )
+   {
+      return decorated.visitErrorNode( node );
+   }
+   
+   
+   
+   @Override
+   public Void visitTomorrow( TomorrowContext ctx )
+   {
+      return decorated.visitTomorrow( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitNever( NeverContext ctx )
+   {
+      return decorated.visitNever( ctx );
+   }
+   
+   
+   
+   @Override
+   public Void visitTerminal( TerminalNode node )
+   {
+      return decorated.visitTerminal( node );
+   }
+   
+   
+   
    private void adjustForDatesInPast( Token month, Token year )
    {
       // if we have a year we have a full qualified date.
       // so we change nothing.
       if ( year == null )
       {
-         final MolokoCalendar cal = getCalendar();
+         final MolokoCalendar cal = decorated.getCalendar();
          final MolokoCalendar now = calendarProvider.getNow();
          
          if ( cal.before( now ) )

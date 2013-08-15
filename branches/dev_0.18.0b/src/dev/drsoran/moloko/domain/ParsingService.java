@@ -32,9 +32,9 @@ class ParsingService implements IParsingService
 {
    private final IDateTimeParsing dateTimeParsing;
    
-   private final IRecurrenceParsing recurrenceParsing;
-   
    private final IRtmSmartFilterParsing rtmSmartFilterParsing;
+   
+   private IRecurrenceParsing recurrenceParsing;
    
    
    
@@ -61,6 +61,13 @@ class ParsingService implements IParsingService
    public IRecurrenceParsing getRecurrenceParsing()
    {
       return recurrenceParsing;
+   }
+   
+   
+   
+   public void setRecurrenceParsing( IRecurrenceParsing recurrenceParsing )
+   {
+      this.recurrenceParsing = recurrenceParsing;
    }
    
    

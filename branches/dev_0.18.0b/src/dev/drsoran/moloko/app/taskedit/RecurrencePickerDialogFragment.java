@@ -238,7 +238,7 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    
    private void initWheels()
    {
-      final Map< Integer, List< Object >> elements = recurrenceParsing.parseRecurrencePattern( recurrencePattern );
+      final Map< Integer, List< Object >> elements = recurrenceParsing.tokenizeRecurrencePattern( recurrencePattern );
       
       // Every, After wheel
       {

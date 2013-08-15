@@ -20,24 +20,27 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.parsing.datetime;
+package dev.drsoran.moloko.domain.parsing.recurrence;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.atn.PredictionMode;
 
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 
 
-public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
+public class AntlrRecurrenceParserFactory implements IRecurrenceParserFactory
 {
    private final Iterable< Locale > availableLocales = Arrays.asList( Locale.ENGLISH,
                                                                       Locale.GERMAN );
@@ -45,14 +48,15 @@ public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
    
    
    @Override
-   public DateParser createDateParser( Locale locale, String dateToParse ) throws NoSuchElementException
+   public RecurrenceParser createRecurrenceParser( Locale locale,
+                                                   String recurrenceSentence ) throws NoSuchElementException
    {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( dateToParse );
-      final Lexer lexer = createDateLexerForLocale( locale, stream );
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( recurrenceSentence );
+      final Lexer lexer = createRecurrenceLexerForLocale( locale, stream );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       
-      final DateParser parser = new DateParser( antlrTokens );
+      final RecurrenceParser parser = new RecurrenceParser( antlrTokens );
       parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
       
       return parser;
@@ -61,14 +65,14 @@ public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
    
    
    @Override
-   public TimeParser createTimeParser( Locale locale, String timeToParse ) throws NoSuchElementException
+   public RecurrencePatternParser createRecurrencePatternParser( String recurrencePattern )
    {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( timeToParse );
-      final Lexer lexer = createTimeLexerForLocale( locale, stream );
+      final CharStream stream = new ANTLRInputStream( recurrencePattern );
+      final Lexer lexer = new RecurrencePatternLexer( stream );
       
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
+      final TokenStream tokenStream = new CommonTokenStream( lexer );
       
-      final TimeParser parser = new TimeParser( antlrTokens );
+      final RecurrencePatternParser parser = new RecurrencePatternParser( tokenStream );
       parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
       
       return parser;
@@ -84,38 +88,19 @@ public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
    
    
    
-   private Lexer createTimeLexerForLocale( Locale locale, CharStream input ) throws NoSuchElementException
+   private Lexer createRecurrenceLexerForLocale( Locale locale, CharStream input ) throws NoSuchElementException
    {
       if ( locale == Locale.ENGLISH )
       {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.TimeLexer( input );
+         return new dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceLexer( input );
       }
       else if ( locale == Locale.GERMAN )
       {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.de.TimeLexer( input );
+         return new dev.drsoran.moloko.grammar.antlr.recurrence.de.RecurrenceLexer( input );
       }
       else
       {
-         throw new NoSuchElementException( MessageFormat.format( "No time lexer for locale {0}",
-                                                                 locale.toString() ) );
-      }
-   }
-   
-   
-   
-   private Lexer createDateLexerForLocale( Locale locale, CharStream input ) throws NoSuchElementException
-   {
-      if ( locale == Locale.ENGLISH )
-      {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.DateLexer( input );
-      }
-      else if ( locale == Locale.GERMAN )
-      {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.de.DateLexer( input );
-      }
-      else
-      {
-         throw new NoSuchElementException( MessageFormat.format( "No date lexer for locale {0}",
+         throw new NoSuchElementException( MessageFormat.format( "No recurrence lexer for locale {0}",
                                                                  locale.toString() ) );
       }
    }

@@ -58,13 +58,13 @@ MONTH     :   'januar'SUFF_MALE?              | 'jan'
             | 'dezember'SUFF_MALE?            | 'dez'
           ;
 
-WEEKDAY   :    'montag'SUFF_MALE?    | 'mo'
-             | 'dienstag'SUFF_MALE?  | 'di'
-             | 'mittwoch'SUFF_MALE?  | 'mi'
-             | 'donnestag'SUFF_MALE? | 'do'
-             | 'freitag'SUFF_MALE?   | 'fr'
-             | 'samstag'SUFF_MALE?   | 'sa'
-             | 'sonntag'SUFF_MALE?   | 'so'
+WEEKDAY   :    'montag'SUFF_MALE?     | 'mo'
+             | 'dienstag'SUFF_MALE?   | 'di'
+             | 'mittwoch'SUFF_MALE?   | 'mi'
+             | 'donnerstag'SUFF_MALE? | 'do'
+             | 'freitag'SUFF_MALE?    | 'fr'
+             | 'samstag'SUFF_MALE?    | 'sa'
+             | 'sonntag'SUFF_MALE?    | 'so'
           ;
 
 NUM_STR   : 'eins'  | 'zwei'   | 'drei' | 'vier' | 'f'('u'|'ü'|'ue')'nf' |

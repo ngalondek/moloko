@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.test.unit.domain.parsing.util;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -67,11 +67,12 @@ public class ParserLanguageDetectorFixture extends MolokoTestCase
          @Override
          public Integer call( Locale param )
          {
+            assertThat( param, notNullValue() );
             throw new ParseCancellationException();
          }
       } );
       
-      assertThat( result, sameInstance( null ) );
+      assertThat( result, nullValue() );
    }
    
    
@@ -87,6 +88,8 @@ public class ParserLanguageDetectorFixture extends MolokoTestCase
          @Override
          public Integer call( Locale param )
          {
+            assertThat( param, notNullValue() );
+            
             if ( Locale.GERMAN == param )
             {
                return 1;
@@ -112,6 +115,8 @@ public class ParserLanguageDetectorFixture extends MolokoTestCase
          @Override
          public Integer call( Locale param )
          {
+            assertThat( param, notNullValue() );
+            
             if ( Locale.GERMAN == param )
             {
                return 1;
@@ -138,6 +143,8 @@ public class ParserLanguageDetectorFixture extends MolokoTestCase
          @Override
          public Integer call( Locale param )
          {
+            assertThat( param, notNullValue() );
+            
             if ( Locale.GERMAN == param )
             {
                return 1;
@@ -155,6 +162,8 @@ public class ParserLanguageDetectorFixture extends MolokoTestCase
                      @Override
                      public Integer call( Locale param )
                      {
+                        assertThat( param, notNullValue() );
+                        
                         if ( Locale.ENGLISH == param )
                         {
                            return 2;
@@ -179,6 +188,8 @@ public class ParserLanguageDetectorFixture extends MolokoTestCase
          @Override
          public Integer call( Locale param )
          {
+            assertThat( param, notNullValue() );
+            
             if ( Locale.ENGLISH == param )
             {
                return 2;

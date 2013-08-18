@@ -31,7 +31,8 @@ import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class RecurrenceSentenceTestDataSource
+public class RecurrenceSentenceTestDataSource extends
+         TheoriesTestDataSource< RecurrenceSentenceTestDataSource.TestData >
 {
    private final IRecurrenceSentenceLanguage language;
    
@@ -44,7 +45,7 @@ public class RecurrenceSentenceTestDataSource
    
    
    
-   public Collection< Object[] > getRecurrenceSentenceTestData()
+   public Collection< Object[] > getTestData()
    {
       final Collection< Object[] > testData = new LinkedList< Object[] >();
       
@@ -73,6 +74,14 @@ public class RecurrenceSentenceTestDataSource
       addPatternDailyCountUntil( testData );
       
       return testData;
+   }
+   
+   
+   
+   @Override
+   public Class< TestData > getTestDataClass()
+   {
+      return TestData.class;
    }
    
    

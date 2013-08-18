@@ -52,7 +52,8 @@ import dev.drsoran.moloko.test.langs.IRecurrenceParserTestLanguage;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class RecurrenceTestDataSource
+public class RecurrenceTestDataSource extends
+         TheoriesTestDataSource< RecurrenceTestDataSource.TestData >
 {
    public final static MolokoCalendar UNTIL_DATE;
    
@@ -88,6 +89,7 @@ public class RecurrenceTestDataSource
    
    
    
+   @Override
    public Collection< Object[] > getTestData()
    {
       final Collection< Object[] > testData = new LinkedList< Object[] >();
@@ -96,8 +98,8 @@ public class RecurrenceTestDataSource
       addIntervalNeg( testData );
       addXst0( testData );
       addXstNeg( testData );
-      // addCount0( testData );
-      // addCountNeg( testData );
+      addCount0( testData );
+      addCountNeg( testData );
       
       addFreqConstant( testData );
       addWeekdayBusinessDays( testData );
@@ -113,6 +115,14 @@ public class RecurrenceTestDataSource
       addSentenceOnMultipleXstWeekdaysOfMonth( testData );
       
       return testData;
+   }
+   
+   
+   
+   @Override
+   public Class< TestData > getTestDataClass()
+   {
+      return TestData.class;
    }
    
    
@@ -166,6 +176,34 @@ public class RecurrenceTestDataSource
    private void addXstNeg( Collection< Object[] > testData )
    {
       addTestData( new TestData( getOnThe() + " -1 ",
+                                 new ResultBuilder().add( IS_EVERY, false )
+                                                    .add( OP_FREQ, VAL_MONTHLY )
+                                                    .add( OP_INTERVAL, 1 )
+                                                    .add( OP_BYMONTHDAY,
+                                                          String.valueOf( 1 ) )
+                                                    .build() ),
+                   testData );
+   }
+   
+   
+   
+   private void addCountNeg( Collection< Object[] > testData )
+   {
+      addTestData( new TestData( getOnThe() + getXst( 1 ) + getCount() + "-1",
+                                 new ResultBuilder().add( IS_EVERY, false )
+                                                    .add( OP_FREQ, VAL_MONTHLY )
+                                                    .add( OP_INTERVAL, 1 )
+                                                    .add( OP_BYMONTHDAY,
+                                                          String.valueOf( 1 ) )
+                                                    .build() ),
+                   testData );
+   }
+   
+   
+   
+   private void addCount0( Collection< Object[] > testData )
+   {
+      addTestData( new TestData( getOnThe() + getXst( 1 ) + getCount() + "0",
                                  new ResultBuilder().add( IS_EVERY, false )
                                                     .add( OP_FREQ, VAL_MONTHLY )
                                                     .add( OP_INTERVAL, 1 )
@@ -882,6 +920,13 @@ public class RecurrenceTestDataSource
          default :
             throw new IllegalArgumentException( "weekday" );
       }
+   }
+   
+   
+   
+   private String getCount()
+   {
+      return language.getFor().iterator().next();
    }
    
    

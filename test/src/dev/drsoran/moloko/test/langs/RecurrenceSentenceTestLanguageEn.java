@@ -30,8 +30,14 @@ import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.domain.parsing.lang.RecurrenceSentenceLanguage;
 
 
-public class RecurrenceSentenceTestLanguage
+public class RecurrenceSentenceTestLanguageEn
 {
+   private RecurrenceSentenceTestLanguageEn()
+   {
+   }
+   
+   
+   
    // TODO: This should be read from the resource XML
    public static RecurrenceSentenceLanguage get()
    {

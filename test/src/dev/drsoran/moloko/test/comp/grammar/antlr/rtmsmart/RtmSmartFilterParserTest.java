@@ -45,6 +45,7 @@ import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterVisitorAdapter;
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser;
@@ -1273,9 +1274,11 @@ public class RtmSmartFilterParserTest extends MolokoTestCase
    {
       final ANTLRInputStream input = new ANTLRNoCaseStringStream( smartFilter );
       final Lexer lexer = new RtmSmartFilterLexer( input );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       final RtmSmartFilterParser parser = new RtmSmartFilterParser( antlrTokens );
+      parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
       
       parser.setErrorHandler( new BailErrorStrategy() );
       
@@ -1292,9 +1295,8 @@ public class RtmSmartFilterParserTest extends MolokoTestCase
       try
       {
          final ParseTree tree = parser.parseFilter();
-         parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
-         
          final RtmSmartFilterVisitor< Void > visitor = new RtmSmartFilterVisitorAdapter( evaluator );
+         
          visitor.visit( tree );
       }
       catch ( ParseCancellationException e )

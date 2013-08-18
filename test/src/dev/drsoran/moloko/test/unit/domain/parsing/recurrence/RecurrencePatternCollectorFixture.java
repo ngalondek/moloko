@@ -59,7 +59,7 @@ public class RecurrencePatternCollectorFixture
    @Parameters( name = "{0}" )
    public static Collection< Object[] > getRecurrencePatterns()
    {
-      return new RecurrencePatternCollectorTestDataSource().getRecurrenceCollectorTestData();
+      return new RecurrencePatternCollectorTestDataSource().getTestData();
    }
    
    

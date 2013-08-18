@@ -42,6 +42,12 @@ public class TestDateFormatter
    
    
    
+   private TestDateFormatter()
+   {
+   }
+   
+   
+   
    public static IDateFormatter get()
    {
       IDateFormatter dateFormatter = EasyMock.createNiceMock( IDateFormatter.class );

@@ -39,20 +39,20 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage;
 import dev.drsoran.moloko.domain.parsing.recurrence.RecurrenceEvaluator;
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.grammar.antlr.recurrence.de.RecurrenceLexer;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
+import dev.drsoran.moloko.grammar.antlr.recurrence.de.RecurrenceLexer;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.TestDateFormatter;
+import dev.drsoran.moloko.test.TestDateTimeParsing;
 import dev.drsoran.moloko.test.langs.IRecurrenceParserTestLanguage;
 import dev.drsoran.moloko.test.langs.RecurrenceParserTestLanguageDe;
 import dev.drsoran.moloko.test.sources.RecurrenceTestDataSource;
@@ -87,6 +87,7 @@ public class RecurrenceTest extends MolokoRoboTestCase
    {
       final CharStream stream = new ANTLRNoCaseStringStream( testData.sentence );
       final Lexer lexer = new RecurrenceLexer( stream );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final TokenStream tokenStream = new CommonTokenStream( lexer );
       final RecurrenceParser parser = new RecurrenceParser( tokenStream );
@@ -97,13 +98,7 @@ public class RecurrenceTest extends MolokoRoboTestCase
          parser.setErrorHandler( new BailErrorStrategy() );
          final ParseTree tree = parser.parseRecurrenceSentence();
          
-         final IDateTimeParsing dateTimeParsing = EasyMock.createNiceMock( IDateTimeParsing.class );
-         EasyMock.expect( dateTimeParsing.parseDateTime( EasyMock.anyObject( String.class ) ) )
-                 .andReturn( RecurrenceTestDataSource.UNTIL_DATE )
-                 .anyTimes();
-         EasyMock.replay( dateTimeParsing );
-         
-         final RecurrenceEvaluator evaluator = new RecurrenceEvaluator( dateTimeParsing,
+         final RecurrenceEvaluator evaluator = new RecurrenceEvaluator( TestDateTimeParsing.get( RecurrenceTestDataSource.UNTIL_DATE ),
                                                                         new DateLanguage() );
          evaluator.visit( tree );
          
@@ -116,7 +111,7 @@ public class RecurrenceTest extends MolokoRoboTestCase
       }
       catch ( ParseCancellationException e )
       {
-         fail( "Parsing <" + testData.sentence + "> failed" );
+         fail( "Parsing <" + testData.sentence + "> failed: " + e.getMessage() );
       }
    }
    

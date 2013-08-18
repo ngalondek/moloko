@@ -34,6 +34,7 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.atn.PredictionMode;
 
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer;
@@ -53,6 +54,7 @@ public class AntlrRecurrenceParserFactory implements IRecurrenceParserFactory
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( recurrenceSentence );
       final Lexer lexer = createRecurrenceLexerForLocale( locale, stream );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       
@@ -69,6 +71,7 @@ public class AntlrRecurrenceParserFactory implements IRecurrenceParserFactory
    {
       final CharStream stream = new ANTLRInputStream( recurrencePattern );
       final Lexer lexer = new RecurrencePatternLexer( stream );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final TokenStream tokenStream = new CommonTokenStream( lexer );
       

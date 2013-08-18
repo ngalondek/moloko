@@ -32,6 +32,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.atn.PredictionMode;
 
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
 import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
@@ -49,6 +50,7 @@ public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( dateToParse );
       final Lexer lexer = createDateLexerForLocale( locale, stream );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       
@@ -65,6 +67,7 @@ public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( timeToParse );
       final Lexer lexer = createTimeLexerForLocale( locale, stream );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       

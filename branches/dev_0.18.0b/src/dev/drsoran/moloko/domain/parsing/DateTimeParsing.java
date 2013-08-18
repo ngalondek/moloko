@@ -228,6 +228,12 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
+   /**
+    * @param adjustDay
+    *           if this parameter is false, the parser assumes that the given cal has been initialized with a date yet.
+    *           E.g. today@12. In case of true the parser can adjust the day of week for times in the past. E.g. @12.
+    */
+   // TODO: consider adjustDay
    private ParseReturn parseTime( final MolokoCalendar cal,
                                   final String time,
                                   final boolean adjustDay ) throws GrammarException

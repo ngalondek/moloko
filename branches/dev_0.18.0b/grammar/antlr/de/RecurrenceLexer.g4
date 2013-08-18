@@ -17,14 +17,20 @@ DAYS          : 'tag'('e'|'en')?;
 
 DAILY         : 't'('a'|'ae'|'ä')'glich';
 
-MONTH         : 'januar'    | 'jan'  | 'februar'  | 'feb' |
-                'm'('a'|'ae'|'ä')'rz'| 'm'('a'|'ae'|'ä')'r' |
-                'april'     | 'apr'  |
-                'mai'       | 'juni' | 'jun' | 'juli'    | 'jul'   | 'august'   | 'aug' |
-                'september' | 'sept' | 'sep' | 'oktober' | 'okt'   | 'november' | 'nov' |
-                'dezember'  | 'dez';
+MONTH         :   'januar''s'?        | 'jan'
+                | 'februar''s'?       | 'feb'
+                | 'm'('a'|'ae'|'ä')'rz'('s'|'es')? | 'm'('a'|'ae'|'ä')'r'
+                | 'april''s'?         | 'apr'
+                | 'mai''s'?
+                | 'juni''s'?          | 'jun'
+                | 'juli''s'?          | 'jul'
+                | 'august'('s'|'es')? | 'aug'
+                | 'september''s'?     | 'sept' | 'sep'
+                | 'oktober''s'?       | 'okt'
+                | 'november''s'?      | 'nov'
+                | 'dezember''s'?      | 'dez';
 
-WEEKDAY_LIT   : 'wochentag''s'?;
+WEEKDAY_LIT   : 'wochentag'('s'|'e')?;
 
 WEEKEND       : 'wochenende''n'?;
 
@@ -42,23 +48,23 @@ SATURDAY      : 'samstag''s'?    | 'sa';
 
 SUNDAY        : 'sonntag''s'?    | 'so';
 
-FIRST         : 'erst'('e'|'s'|'r');
+FIRST         : 'erst'('e'('s'|'r')?);
 
-SECOND        : 'zweit'('e'|'s'|'r');
+SECOND        : 'zweit'('e'('s'|'r')?);
 
-THIRD         : 'dritt'('e'|'s'|'r');
+THIRD         : 'dritt'('e'('s'|'r')?);
 
-FOURTH        : 'viert'('e'|'s'|'r');
+FOURTH        : 'viert'('e'('s'|'r')?);
 
-FIFTH         : 'f'('u'|'ue'|'ü')'nft'('e'|'s'|'r');
+FIFTH         : 'f'('u'|'ue'|'ü')'nft'('e'('s'|'r')?);
 
-LAST          : 'letzt'('e'|'s'|'r'|'en'|'em');
+LAST          : 'letzt'('e'('n'|'m'|'s'|'r')?);
 
-OTHER         : 'ander'('e'|'es'|'er'|'en');
+OTHER         : 'ander'('e'('s'|'r'|'n')?);
 
 ST_S          : 'st' | 'nd' | 'rd' | 'th';
 
-NUM_ONE       : 'ein'('s'|'e'|'er'|'em'|'en'|'es')?;
+NUM_ONE       : 'ein'('s'|'e'('r'|'m'|'n'|'s')?)?;
 
 NUM_TWO       : 'zwei';
 

@@ -44,11 +44,12 @@ import org.junit.runners.Parameterized.Parameters;
 
 import dev.drsoran.moloko.domain.parsing.lang.RecurrenceSentenceLanguage;
 import dev.drsoran.moloko.domain.parsing.recurrence.RecurrenceSentenceEvaluator;
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.TestDateFormatter;
-import dev.drsoran.moloko.test.langs.RecurrenceSentenceTestLanguage;
+import dev.drsoran.moloko.test.langs.RecurrenceSentenceTestLanguageEn;
 import dev.drsoran.moloko.test.sources.RecurrenceSentenceTestDataSource;
 
 
@@ -57,7 +58,7 @@ public class RecurrenceSentenceTest extends MolokoRoboTestCase
 {
    private final RecurrenceSentenceTestDataSource.TestData testData;
    
-   private static RecurrenceSentenceLanguage language = RecurrenceSentenceTestLanguage.get();
+   private static RecurrenceSentenceLanguage language = RecurrenceSentenceTestLanguageEn.get();
    
    
    
@@ -72,7 +73,7 @@ public class RecurrenceSentenceTest extends MolokoRoboTestCase
    @Parameters( name = "{0}" )
    public static Collection< Object[] > getTestData()
    {
-      return new RecurrenceSentenceTestDataSource( language ).getRecurrenceSentenceTestData();
+      return new RecurrenceSentenceTestDataSource( language ).getTestData();
    }
    
    
@@ -82,6 +83,7 @@ public class RecurrenceSentenceTest extends MolokoRoboTestCase
    {
       final CharStream stream = new ANTLRInputStream( testData.pattern );
       final Lexer lexer = new RecurrencePatternLexer( stream );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final TokenStream tokenStream = new CommonTokenStream( lexer );
       final RecurrencePatternParser parser = new RecurrencePatternParser( tokenStream );

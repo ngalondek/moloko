@@ -45,19 +45,22 @@ public class RecurrencePatternOperatorComp implements Comparator< String >
    
    private static int operatorToInt( String operator )
    {
-      if ( operator.equalsIgnoreCase( OP_FREQ ) )
+      if ( operator.startsWith( OP_FREQ ) )
          return 1;
-      else if ( operator.equalsIgnoreCase( OP_INTERVAL ) )
+      else if ( operator.startsWith( OP_INTERVAL ) )
          return 2;
-      else if ( operator.equalsIgnoreCase( OP_BYDAY ) )
+      else if ( operator.startsWith( OP_BYDAY ) )
          return 3;
-      else if ( operator.equalsIgnoreCase( OP_BYMONTHDAY ) )
+      
+      // Keep this before OP_BYMONTH to ensure correct prefix
+      else if ( operator.startsWith( OP_BYMONTHDAY ) )
          return 4;
-      else if ( operator.equalsIgnoreCase( OP_BYMONTH ) )
+      
+      else if ( operator.startsWith( OP_BYMONTH ) )
          return 5;
-      else if ( operator.equalsIgnoreCase( OP_UNTIL ) )
+      else if ( operator.startsWith( OP_UNTIL ) )
          return 6;
-      else if ( operator.equalsIgnoreCase( OP_COUNT ) )
+      else if ( operator.startsWith( OP_COUNT ) )
          return 7;
       else
          return Integer.MAX_VALUE;

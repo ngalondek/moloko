@@ -51,7 +51,12 @@ public class ParserLanguageDetector< TParser >
    
    public < TResult > TResult detectLanguageAndParse( Func1< Locale, TResult > parserFunc )
    {
-      TResult result = TryParse( parserFunc, lastUsedLocale );
+      TResult result = null;
+      
+      if ( lastUsedLocale != null )
+      {
+         result = TryParse( parserFunc, lastUsedLocale );
+      }
       
       if ( result != null )
       {

@@ -163,37 +163,30 @@ public class RecurrenceParsing implements IRecurrenceParsing
    
    private Map< String, Object > detectLanguageAndParseRecurrence( final String recurrenceSentence ) throws GrammarException
    {
-      try
+      final Map< String, Object > detectResult = recurrenceParserLanguageDetector.detectLanguageAndParse( new Func1< Locale, Map< String, Object > >()
       {
-         final Map< String, Object > detectResult = recurrenceParserLanguageDetector.detectLanguageAndParse( new Func1< Locale, Map< String, Object > >()
+         @Override
+         public Map< String, Object > call( Locale locale )
          {
-            @Override
-            public Map< String, Object > call( Locale locale )
-            {
-               final RecurrenceParser parser = recurrenceParserFactory.createRecurrenceParser( locale,
-                                                                                               recurrenceSentence );
-               parser.setErrorHandler( new BailErrorStrategy() );
-               
-               final ParseTree tree = parser.parseRecurrenceSentence();
-               final RecurrenceEvaluator evaluator = new RecurrenceEvaluator( dateTimeParsing,
-                                                                              dateLanguageRepository.getLanguage( locale ) );
-               evaluator.visit( tree );
-               
-               return evaluator.getRecurrencePattern();
-            }
-         } );
-         
-         if ( detectResult == null )
-         {
-            throw new GrammarException();
+            final RecurrenceParser parser = recurrenceParserFactory.createRecurrenceParser( locale,
+                                                                                            recurrenceSentence );
+            parser.setErrorHandler( new BailErrorStrategy() );
+            
+            final ParseTree tree = parser.parseRecurrenceSentence();
+            final RecurrenceEvaluator evaluator = new RecurrenceEvaluator( dateTimeParsing,
+                                                                           dateLanguageRepository.getLanguage( locale ) );
+            evaluator.visit( tree );
+            
+            return evaluator.getRecurrencePattern();
          }
-         
-         return detectResult;
-      }
-      catch ( ParseCancellationException e )
+      } );
+      
+      if ( detectResult == null )
       {
-         throw new GrammarException( e );
+         throw new GrammarException();
       }
+      
+      return detectResult;
    }
    
    

@@ -43,6 +43,7 @@ import dev.drsoran.moloko.domain.parsing.datetime.DateEvaluator;
 import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.domain.parsing.datetime.ParseReturn;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
 
@@ -97,7 +98,7 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
       }
       catch ( ParseCancellationException e )
       {
-         fail( "Parsing <" + dateToParse + "> failed" );
+         fail( "Parsing <" + dateToParse + "> failed: " + e.getMessage() );
          throw e;
       }
    }
@@ -126,7 +127,7 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
       }
       catch ( ParseCancellationException e )
       {
-         fail( "Parsing <" + dateToParse + "> failed" );
+         fail( "Parsing <" + dateToParse + "> failed: " + e.getMessage() );
          throw e;
       }
    }
@@ -165,6 +166,7 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( dateToParse );
       final Lexer dateLexer = createDateLexer( stream );
+      dateLexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final TokenStream tokenStream = new CommonTokenStream( dateLexer );
       final DateParser dateParser = new DateParser( tokenStream );

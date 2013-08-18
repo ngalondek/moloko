@@ -38,6 +38,7 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.datetime.ParseReturn;
 import dev.drsoran.moloko.domain.parsing.datetime.TimeEstimateEvaluator;
 import dev.drsoran.moloko.domain.parsing.datetime.TimeEvaluator;
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
 import dev.drsoran.moloko.grammar.antlr.datetime.TimeParserVisitor;
@@ -77,7 +78,7 @@ public abstract class MolokoTimeParserTestCase extends MolokoTestCase
       }
       catch ( ParseCancellationException e )
       {
-         fail( "Parsing <" + timeToParse + "> failed" );
+         fail( "Parsing <" + timeToParse + "> failed: " + e.getMessage() );
          throw e;
       }
    }
@@ -102,7 +103,7 @@ public abstract class MolokoTimeParserTestCase extends MolokoTestCase
       }
       catch ( ParseCancellationException e )
       {
-         fail( "Parsing <" + estimation + "> failed" );
+         fail( "Parsing <" + estimation + "> failed: " + e.getMessage() );
       }
    }
    
@@ -133,6 +134,7 @@ public abstract class MolokoTimeParserTestCase extends MolokoTestCase
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( timeToParse );
       final Lexer lexer = createTimeLexer( stream );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       final TimeParser parser = new TimeParser( antlrTokens );

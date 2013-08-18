@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.test.sources;
 
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.*;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.FRIDAY;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.MONDAY;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_BYDAY;
@@ -32,10 +31,15 @@ import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_FREQ;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_INTERVAL;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_UNTIL;
+import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.SATURDAY;
+import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.SUNDAY;
+import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.THURSDAY;
+import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.TUESDAY;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_DAILY;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_MONTHLY;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_WEEKLY;
 import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_YEARLY;
+import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.WEDNESDAY;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -52,6 +56,8 @@ import dev.drsoran.moloko.util.Pair;
 
 
 public class RecurrencePatternCollectorTestDataSource
+         extends
+         TheoriesTestDataSource< RecurrencePatternCollectorTestDataSource.TestData >
 {
    private final static Date UNTIL_DATE;
    
@@ -71,7 +77,8 @@ public class RecurrencePatternCollectorTestDataSource
    
    
    
-   public Collection< Object[] > getRecurrenceCollectorTestData()
+   @Override
+   public Collection< Object[] > getTestData()
    {
       final Collection< Object[] > testData = new LinkedList< Object[] >();
       
@@ -100,6 +107,14 @@ public class RecurrencePatternCollectorTestDataSource
       addPatternDailyCountUntil( testData );
       
       return testData;
+   }
+   
+   
+   
+   @Override
+   public Class< TestData > getTestDataClass()
+   {
+      return TestData.class;
    }
    
    

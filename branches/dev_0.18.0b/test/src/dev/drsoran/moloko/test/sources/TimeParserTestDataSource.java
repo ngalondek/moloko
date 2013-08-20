@@ -25,12 +25,13 @@ package dev.drsoran.moloko.test.sources;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import dev.drsoran.moloko.test.langs.ITimeParserTestLanguage;
-
 import android.text.format.DateUtils;
+import dev.drsoran.moloko.test.langs.ITimeParserTestLanguage;
 
 
 public class TimeParserTestDataSource
+         extends
+         MultiTheoriesTestDataSource< TimeParserTestDataSource.ParseTimeTestData, TimeParserTestDataSource.ParseTimeEstimateTestData >
 {
    private final ITimeParserTestLanguage testLanguage;
    
@@ -43,7 +44,8 @@ public class TimeParserTestDataSource
    
    
    
-   public Collection< Object[] > getParseTimeTestData()
+   @Override
+   public Collection< Object[] > getTestData()
    {
       final Collection< Object[] > testData = new LinkedList< Object[] >();
       
@@ -64,6 +66,14 @@ public class TimeParserTestDataSource
    
    
    
+   @Override
+   public Class< ParseTimeTestData > getTestDataClass()
+   {
+      return ParseTimeTestData.class;
+   }
+   
+   
+   
    public Collection< Object[] > getParseTimeEstimateTestData()
    {
       final Collection< Object[] > testData = new LinkedList< Object[] >();
@@ -71,6 +81,22 @@ public class TimeParserTestDataSource
       addParseTimeEstimate_Mixed( testData );
       
       return testData;
+   }
+   
+   
+   
+   @Override
+   public Collection< Object[] > getSecondTestData()
+   {
+      return getParseTimeEstimateTestData();
+   }
+   
+   
+   
+   @Override
+   public Class< ParseTimeEstimateTestData > getSecondTestDataClass()
+   {
+      return ParseTimeEstimateTestData.class;
    }
    
    

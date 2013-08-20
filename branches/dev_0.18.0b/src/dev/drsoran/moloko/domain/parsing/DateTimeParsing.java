@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.domain.parsing;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
@@ -89,7 +88,7 @@ public class DateTimeParsing implements IDateTimeParsing
    @Override
    public MolokoCalendar parseTime( String time ) throws GrammarException
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final MolokoCalendar cal = calenderProvider.getNow();
       parseTime( cal, time, false );
       
       return cal;
@@ -105,7 +104,7 @@ public class DateTimeParsing implements IDateTimeParsing
          throw new GrammarException( "An empty spec is not parsable." );
       }
       
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final MolokoCalendar cal = calenderProvider.getNow();
       final int specLength = dateTime.length();
       
       int startOfDatePos = 0;
@@ -114,15 +113,8 @@ public class DateTimeParsing implements IDateTimeParsing
       // first try to parse time spec
       try
       {
-         final Matcher timePrefixMatcher = TIME_PREFIX_PATTERN.matcher( dateTime );
-         
-         if ( timePrefixMatcher.find() )
-         {
-            // The parser can adjust the day of week
-            // for times in the past.
-            parseTime( cal, timePrefixMatcher.group(), !cal.hasDate() );
-            startOfDatePos = timePrefixMatcher.end();
-         }
+         parseTime( cal, dateTime, !cal.hasDate() );
+         // startOfDatePos
       }
       catch ( GrammarException e )
       {
@@ -267,7 +259,7 @@ public class DateTimeParsing implements IDateTimeParsing
          {
             final TimeParser timeParser = createTimeParser( locale,
                                                             timeEstimate );
-            final ParseTree tree = timeParser.parseTime();
+            final ParseTree tree = timeParser.parseTimeEstimate();
             
             final TimeEstimateEvaluator timeEstimateEvaluator = new TimeEstimateEvaluator();
             timeEstimateEvaluator.visit( tree );

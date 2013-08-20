@@ -28,24 +28,22 @@ import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.year;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Calendar;
 import java.util.Collection;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Lexer;
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
 import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
-import dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
+import dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage;
 import dev.drsoran.moloko.grammar.antlr.datetime.de.DateLexer;
 import dev.drsoran.moloko.test.MolokoDateParserTestCase;
+import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.langs.DateParserTestLanguageDe;
 import dev.drsoran.moloko.test.langs.IDateParserTestLanguage;
 import dev.drsoran.moloko.test.sources.DateParserTestDataSource;
@@ -57,17 +55,6 @@ public class DateParserDateWithInTest extends MolokoDateParserTestCase
    private final static ILanguage DATE_LANGUAGE = new DateLanguage();
    
    private final static IDateParserTestLanguage TEST_LANGUAGE = new DateParserTestLanguageDe();
-   
-   private final static MolokoCalendar TODAY_CAL;
-   
-   static
-   {
-      TODAY_CAL = MolokoCalendar.getInstance();
-      TODAY_CAL.set( Calendar.YEAR, 2010 );
-      TODAY_CAL.set( Calendar.MONTH, Calendar.JUNE );
-      TODAY_CAL.set( Calendar.DATE, 10 );
-      TODAY_CAL.setHasTime( false );
-   }
    
    private final DateParserTestDataSource.ParseDateWithInTestData testData;
    
@@ -86,7 +73,8 @@ public class DateParserDateWithInTest extends MolokoDateParserTestCase
    {
       final DateParserTestDataSource testDataSource = new DateParserTestDataSource( DATE_LANGUAGE,
                                                                                     TEST_LANGUAGE,
-                                                                                    TODAY_CAL );
+                                                                                    TestCalendarProvider.getDefault()
+                                                                                                        .getToday() );
       
       return testDataSource.getParseWithInDateTestData();
    }
@@ -136,23 +124,6 @@ public class DateParserDateWithInTest extends MolokoDateParserTestCase
    {
       final Lexer dateLexer = new DateLexer( input );
       return dateLexer;
-   }
-   
-   
-   
-   @Override
-   protected MolokoCalenderProvider getCalendarProvider()
-   {
-      final MolokoCalenderProvider calenderProvider = EasyMock.createNiceMock( MolokoCalenderProvider.class );
-      EasyMock.expect( calenderProvider.getNow() )
-              .andReturn( TODAY_CAL.clone() )
-              .anyTimes();
-      EasyMock.expect( calenderProvider.getToday() )
-              .andReturn( TODAY_CAL.clone() )
-              .anyTimes();
-      EasyMock.replay( calenderProvider );
-      
-      return calenderProvider;
    }
    
    

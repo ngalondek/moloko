@@ -79,7 +79,7 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
          
          final ParseTree tree = dateParser.parseDate();
          
-         final MolokoCalenderProvider calenderProvider = getCalendarProvider();
+         final MolokoCalenderProvider calenderProvider = TestCalendarProvider.getDefault();
          final DateEvaluator evaluator = new DateEvaluator( getDateLanguage(),
                                                             dateFormatter,
                                                             calenderProvider );
@@ -114,7 +114,7 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
          final DateParser dateParser = createDareParser( dateToParse );
          final ParseTree tree = dateParser.parseDateWithin();
          
-         final MolokoCalenderProvider calenderProvider = getCalendarProvider();
+         final MolokoCalenderProvider calenderProvider = TestCalendarProvider.getDefault();
          final DateEvaluator evaluator = new DateEvaluator( getDateLanguage(),
                                                             dateFormatter,
                                                             calenderProvider );
@@ -155,10 +155,6 @@ public abstract class MolokoDateParserTestCase extends MolokoTestCase
    
    
    protected abstract ILanguage getDateLanguage();
-   
-   
-   
-   protected abstract MolokoCalenderProvider getCalendarProvider();
    
    
    

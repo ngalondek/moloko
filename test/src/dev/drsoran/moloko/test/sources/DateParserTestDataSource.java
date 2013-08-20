@@ -35,6 +35,8 @@ import dev.drsoran.moloko.util.Strings;
 
 
 public class DateParserTestDataSource
+         extends
+         MultiTheoriesTestDataSource< DateParserTestDataSource.ParseDateTestData, DateParserTestDataSource.ParseDateWithInTestData >
 {
    private final ILanguage dateLanguage;
    
@@ -70,7 +72,8 @@ public class DateParserTestDataSource
    
    
    
-   public Collection< Object[] > getParseDateTestData()
+   @Override
+   public Collection< Object[] > getTestData()
    {
       final Collection< Object[] > testData = new LinkedList< Object[] >();
       
@@ -97,6 +100,14 @@ public class DateParserTestDataSource
    
    
    
+   @Override
+   public Class< ParseDateTestData > getTestDataClass()
+   {
+      return ParseDateTestData.class;
+   }
+   
+   
+   
    public Collection< Object[] > getParseWithInDateTestData()
    {
       final Collection< Object[] > testData = new LinkedList< Object[] >();
@@ -108,6 +119,22 @@ public class DateParserTestDataSource
       addParseDateWithin_AmountYear( testData );
       
       return testData;
+   }
+   
+   
+   
+   @Override
+   public Collection< Object[] > getSecondTestData()
+   {
+      return getParseWithInDateTestData();
+   }
+   
+   
+   
+   @Override
+   public Class< ParseDateWithInTestData > getSecondTestDataClass()
+   {
+      return ParseDateWithInTestData.class;
    }
    
    

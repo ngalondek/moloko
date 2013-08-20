@@ -45,7 +45,7 @@ public class TimeParserTest extends MolokoTimeParserTestCase
    {
       final TimeParserTestDataSource testDataSource = new TimeParserTestDataSource( TEST_LANGUAGE );
       
-      return testDataSource.getParseTimeTestData();
+      return testDataSource.getTestData();
    }
    
    

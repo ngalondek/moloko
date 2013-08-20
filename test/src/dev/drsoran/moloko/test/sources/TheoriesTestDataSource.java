@@ -31,20 +31,9 @@ import java.util.List;
 abstract class TheoriesTestDataSource< T >
 {
    
-   @SuppressWarnings( "unchecked" )
    public T[] getTheoryTestData()
    {
-      final Collection< Object[] > paramTestData = getTestData();
-      final List< T > testData = new ArrayList< T >( paramTestData.size() );
-      
-      for ( Object[] objects : paramTestData )
-      {
-         final T data = (T) objects[ 0 ];
-         testData.add( data );
-      }
-      
-      return testData.toArray( (T[]) Array.newInstance( getTestDataClass(),
-                                                        paramTestData.size() ) );
+      return toTheoryTestData( getTestData(), getTestDataClass() );
    }
    
    
@@ -54,4 +43,22 @@ abstract class TheoriesTestDataSource< T >
    
    
    public abstract Class< T > getTestDataClass();
+   
+   
+   
+   @SuppressWarnings( "unchecked" )
+   public static < S > S[] toTheoryTestData( Collection< Object[] > paramTestData,
+                                             Class< S > testDataClazz )
+   {
+      final List< S > testData = new ArrayList< S >( paramTestData.size() );
+      
+      for ( Object[] objects : paramTestData )
+      {
+         final S data = (S) objects[ 0 ];
+         testData.add( data );
+      }
+      
+      return testData.toArray( (S[]) Array.newInstance( testDataClazz,
+                                                        paramTestData.size() ) );
+   }
 }

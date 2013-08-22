@@ -22,9 +22,11 @@
 
 package dev.drsoran.moloko.test.unit.domain.parsing.datetime;
 
-import static dev.drsoran.moloko.test.TestConstants.DATE_TODAY;
 import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.day;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.hour;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.minute;
 import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.month;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.second;
 import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.year;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -38,20 +40,26 @@ import org.junit.Test;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
-import dev.drsoran.moloko.domain.parsing.datetime.DateEvaluator;
-import dev.drsoran.moloko.domain.parsing.datetime.RtmLikeDateEvaluator;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateNumericContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnMonthTheXstContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnTheXstOfMonthContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnWeekdayContext;
+import dev.drsoran.moloko.domain.parsing.datetime.DateTimeEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.RtmLikeDateTimeEvaluator;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateNumericContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateOnMonthTheXstContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateOnTheXstOfMonthContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateOnWeekdayContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.ParseDateTimeContext;
 import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.moloko.test.TestCalendarProvider;
 
 
-public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
+public class RtmLikeDateTimeEvaluatorFixture extends MolokoTestCase
 {
-   private DateEvaluator dateEvaluator;
+   private DateTimeEvaluator dateEvaluator;
    
-   private RtmLikeDateEvaluator evaluator;
+   private RtmLikeDateTimeEvaluator evaluator;
+   
+   private MolokoCalendar today;
+   
+   private MolokoCalendar now;
    
    
    
@@ -61,19 +69,151 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    {
       super.setUp();
       
-      dateEvaluator = EasyMock.createNiceMock( DateEvaluator.class );
+      dateEvaluator = EasyMock.createNiceMock( DateTimeEvaluator.class );
       
-      final MolokoCalenderProvider calenderProvider = EasyMock.createNiceMock( MolokoCalenderProvider.class );
-      EasyMock.expect( calenderProvider.getToday() )
-              .andReturn( DATE_TODAY )
-              .anyTimes();
-      EasyMock.expect( calenderProvider.getNow() )
-              .andReturn( DATE_TODAY )
-              .anyTimes();
+      MolokoCalenderProvider calenderProvider = TestCalendarProvider.getJune_10_2010_00_00_00();
       
-      EasyMock.replay( calenderProvider );
+      today = calenderProvider.getToday().clone();
+      now = calenderProvider.getNow().clone();
+      now.set( Calendar.HOUR_OF_DAY, 12 );
       
-      evaluator = new RtmLikeDateEvaluator( dateEvaluator, calenderProvider );
+      calenderProvider = TestCalendarProvider.get( now.clone(), today.clone() );
+      
+      evaluator = new RtmLikeDateTimeEvaluator( dateEvaluator, calenderProvider );
+   }
+   
+   
+   
+   @Test
+   public void testVisitParseDateTime_OnlyTime_Before()
+   {
+      final MolokoCalendar cal = now.clone();
+      cal.add( Calendar.HOUR_OF_DAY, -2 );
+      
+      final int hour = cal.get( Calendar.HOUR_OF_DAY );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final ParseDateTimeContext ctx = EasyMock.createNiceMock( ParseDateTimeContext.class );
+      EasyMock.replay( ctx );
+      
+      evaluator.visitTime( null );
+      evaluator.visitParseDateTime( ctx );
+      
+      assertThat( cal, is( day( thisDay() + 1 ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+      assertThat( cal, is( hour( hour ) ) );
+      assertThat( cal, is( minute( thisMinute() ) ) );
+      assertThat( cal, is( second( thisSecond() ) ) );
+   }
+   
+   
+   
+   @Test
+   public void testVisitParseDateTime_OnlyDate_Before()
+   {
+      final MolokoCalendar cal = now.clone();
+      cal.add( Calendar.HOUR_OF_DAY, -2 );
+      
+      final int hour = cal.get( Calendar.HOUR_OF_DAY );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final ParseDateTimeContext ctx = EasyMock.createNiceMock( ParseDateTimeContext.class );
+      EasyMock.replay( ctx );
+      
+      evaluator.visitDate( null );
+      evaluator.visitParseDateTime( ctx );
+      
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+      assertThat( cal, is( hour( hour ) ) );
+      assertThat( cal, is( minute( thisMinute() ) ) );
+      assertThat( cal, is( second( thisSecond() ) ) );
+   }
+   
+   
+   
+   @Test
+   public void testVisitParseDateTime_DateAndTime_Before()
+   {
+      final MolokoCalendar cal = now.clone();
+      cal.add( Calendar.HOUR_OF_DAY, -2 );
+      
+      final int hour = cal.get( Calendar.HOUR_OF_DAY );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final ParseDateTimeContext ctx = EasyMock.createNiceMock( ParseDateTimeContext.class );
+      EasyMock.replay( ctx );
+      
+      evaluator.visitDate( null );
+      evaluator.visitTime( null );
+      evaluator.visitParseDateTime( ctx );
+      
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+      assertThat( cal, is( hour( hour ) ) );
+      assertThat( cal, is( minute( thisMinute() ) ) );
+      assertThat( cal, is( second( thisSecond() ) ) );
+   }
+   
+   
+   
+   @Test
+   public void testVisitParseDateTime_OnlyTime_Now()
+   {
+      final MolokoCalendar cal = now.clone();
+      final int hour = cal.get( Calendar.HOUR_OF_DAY );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final ParseDateTimeContext ctx = EasyMock.createNiceMock( ParseDateTimeContext.class );
+      EasyMock.replay( ctx );
+      
+      evaluator.visitTime( null );
+      evaluator.visitParseDateTime( ctx );
+      
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+      assertThat( cal, is( hour( hour ) ) );
+      assertThat( cal, is( minute( thisMinute() ) ) );
+      assertThat( cal, is( second( thisSecond() ) ) );
+   }
+   
+   
+   
+   @Test
+   public void testVisitParseDateTime_OnlyTime_After()
+   {
+      final MolokoCalendar cal = now.clone();
+      cal.add( Calendar.HOUR_OF_DAY, 2 );
+      
+      final int hour = cal.get( Calendar.HOUR_OF_DAY );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final ParseDateTimeContext ctx = EasyMock.createNiceMock( ParseDateTimeContext.class );
+      EasyMock.replay( ctx );
+      
+      evaluator.visitTime( null );
+      evaluator.visitParseDateTime( ctx );
+      
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+      assertThat( cal, is( hour( hour ) ) );
+      assertThat( cal, is( minute( thisMinute() ) ) );
+      assertThat( cal, is( second( thisSecond() ) ) );
    }
    
    
@@ -81,29 +221,31 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateNumeric_Year()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
-      cal.set( Calendar.YEAR, 2010 );
+      final MolokoCalendar cal = today.clone();
+      cal.set( Calendar.YEAR, 2009 );
       
       EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
       EasyMock.replay( dateEvaluator );
       
       final DateNumericContext ctx = EasyMock.createNiceMock( DateNumericContext.class );
-      ctx.pt3 = new CommonToken( 0, "2010" );
+      ctx.pt1 = new CommonToken( 0, String.valueOf( cal.get( Calendar.DATE ) ) );
+      ctx.pt2 = new CommonToken( 1, String.valueOf( cal.get( Calendar.MONTH ) ) );
+      ctx.pt3 = new CommonToken( 2, "2009" );
       EasyMock.replay( ctx );
       
       evaluator.visitDateNumeric( ctx );
       
-      assertThat( cal, is( day() ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( 2010 ) ) );
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( 2009 ) ) );
    }
    
    
    
    @Test
-   public void testVisitDateNumeric_NoYear_Before()
+   public void testVisitDateNumeric_NoYear_BeforeThisMonth()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, -2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -112,14 +254,42 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       EasyMock.replay( dateEvaluator );
       
       final DateNumericContext ctx = EasyMock.createNiceMock( DateNumericContext.class );
+      ctx.pt1 = new CommonToken( 0, String.valueOf( cal.get( Calendar.DATE ) ) );
+      ctx.pt2 = new CommonToken( 1, String.valueOf( cal.get( Calendar.MONTH ) ) );
       ctx.pt3 = null;
       EasyMock.replay( ctx );
       
       evaluator.visitDateNumeric( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( DATE_TODAY.get( Calendar.YEAR ) + 1 ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+   }
+   
+   
+   
+   @Test
+   public void testVisitDateNumeric_NoYear_BeforeMonth()
+   {
+      final MolokoCalendar cal = today.clone();
+      cal.add( Calendar.MONTH, -1 );
+      
+      final int month = cal.get( Calendar.MONTH );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final DateNumericContext ctx = EasyMock.createNiceMock( DateNumericContext.class );
+      ctx.pt1 = new CommonToken( 0, String.valueOf( cal.get( Calendar.DATE ) ) );
+      ctx.pt2 = new CommonToken( 1, String.valueOf( cal.get( Calendar.MONTH ) ) );
+      ctx.pt3 = null;
+      EasyMock.replay( ctx );
+      
+      evaluator.visitDateNumeric( ctx );
+      
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( month ) ) );
+      assertThat( cal, is( year( thisYear() + 1 ) ) );
    }
    
    
@@ -127,20 +297,22 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateNumeric_NoYear_Today()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       
       EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
       EasyMock.replay( dateEvaluator );
       
       final DateNumericContext ctx = EasyMock.createNiceMock( DateNumericContext.class );
+      ctx.pt1 = new CommonToken( 0, String.valueOf( cal.get( Calendar.DATE ) ) );
+      ctx.pt2 = new CommonToken( 1, String.valueOf( cal.get( Calendar.MONTH ) ) );
       ctx.pt3 = null;
       EasyMock.replay( ctx );
       
       evaluator.visitDateNumeric( ctx );
       
-      assertThat( cal, is( day() ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -148,7 +320,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateNumeric_NoYear_After()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, 2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -157,14 +329,16 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       EasyMock.replay( dateEvaluator );
       
       final DateNumericContext ctx = EasyMock.createNiceMock( DateNumericContext.class );
+      ctx.pt1 = new CommonToken( 0, String.valueOf( cal.get( Calendar.DATE ) ) );
+      ctx.pt2 = new CommonToken( 1, String.valueOf( cal.get( Calendar.MONTH ) ) );
       ctx.pt3 = null;
       EasyMock.replay( ctx );
       
       evaluator.visitDateNumeric( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -172,7 +346,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnTheXstOfMonth_Before_WithYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, -2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -182,14 +356,39 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       
       final DateOnTheXstOfMonthContext ctx = EasyMock.createNiceMock( DateOnTheXstOfMonthContext.class );
       ctx.m = new CommonToken( 0, "1" );
-      ctx.y = new CommonToken( 1, "2010" );
+      ctx.y = new CommonToken( 1, String.valueOf( today.get( Calendar.YEAR ) ) );
       EasyMock.replay( ctx );
       
       evaluator.visitDateOnTheXstOfMonth( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+   }
+   
+   
+   
+   @Test
+   public void testVisitDateOnTheXstOfMonth_Before_NoYear_ThisMonth()
+   {
+      final MolokoCalendar cal = today.clone();
+      cal.add( Calendar.DATE, -2 );
+      
+      final int day = cal.get( Calendar.DATE );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final DateOnTheXstOfMonthContext ctx = EasyMock.createNiceMock( DateOnTheXstOfMonthContext.class );
+      ctx.m = new CommonToken( 0, "1" );
+      ctx.y = null;
+      EasyMock.replay( ctx );
+      
+      evaluator.visitDateOnTheXstOfMonth( ctx );
+      
+      assertThat( cal, is( day( day ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -197,10 +396,10 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnTheXstOfMonth_Before_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
-      cal.add( Calendar.DATE, -2 );
+      final MolokoCalendar cal = today.clone();
+      cal.add( Calendar.MONTH, -1 );
       
-      final int day = cal.get( Calendar.DATE );
+      final int month = cal.get( Calendar.MONTH );
       
       EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
       EasyMock.replay( dateEvaluator );
@@ -212,9 +411,9 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       
       evaluator.visitDateOnTheXstOfMonth( ctx );
       
-      assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( DATE_TODAY.get( Calendar.YEAR ) + 1 ) ) );
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( month ) ) );
+      assertThat( cal, is( year( thisYear() + 1 ) ) );
    }
    
    
@@ -222,7 +421,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnTheXstOfMonth_Today_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       
       EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
       EasyMock.replay( dateEvaluator );
@@ -234,9 +433,9 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       
       evaluator.visitDateOnTheXstOfMonth( ctx );
       
-      assertThat( cal, is( day() ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( DATE_TODAY.get( Calendar.YEAR ) ) ) );
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -244,7 +443,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnTheXstOfMonth_After_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, 2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -260,8 +459,8 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       evaluator.visitDateOnTheXstOfMonth( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( DATE_TODAY.get( Calendar.YEAR ) ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -269,7 +468,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnMonthTheXst_Before_WithYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, -2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -279,14 +478,14 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       
       final DateOnMonthTheXstContext ctx = EasyMock.createNiceMock( DateOnMonthTheXstContext.class );
       ctx.m = null;
-      ctx.y = new CommonToken( 0, "2010" );
+      ctx.y = new CommonToken( 0, String.valueOf( today.get( Calendar.YEAR ) ) );
       EasyMock.replay( ctx );
       
       evaluator.visitDateOnMonthTheXst( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -294,7 +493,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnMonthTheXst_DayBefore_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, -2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -310,8 +509,8 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       evaluator.visitDateOnMonthTheXst( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month( DATE_TODAY.get( Calendar.MONTH ) + 1 ) ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( month( thisMonth() + 1 ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -319,7 +518,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnMonthTheXst_Today_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       
       EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
       EasyMock.replay( dateEvaluator );
@@ -331,9 +530,9 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       
       evaluator.visitDateOnMonthTheXst( ctx );
       
-      assertThat( cal, is( day() ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -341,7 +540,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnMonthTheXst_DayAfter_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, 2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -357,8 +556,8 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       evaluator.visitDateOnMonthTheXst( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -366,24 +565,24 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnMonthTheXst_MonthBefore_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
-      cal.add( Calendar.DATE, -2 );
+      final MolokoCalendar cal = today.clone();
+      cal.add( Calendar.MONTH, -1 );
       
-      final int day = cal.get( Calendar.DATE );
+      final int month = cal.get( Calendar.MONTH );
       
       EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
       EasyMock.replay( dateEvaluator );
       
       final DateOnMonthTheXstContext ctx = EasyMock.createNiceMock( DateOnMonthTheXstContext.class );
-      ctx.m = new CommonToken( 0, "1" );
+      ctx.m = new CommonToken( 0, String.valueOf( month ) );
       ctx.y = null;
       EasyMock.replay( ctx );
       
       evaluator.visitDateOnMonthTheXst( ctx );
       
-      assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( DATE_TODAY.get( Calendar.YEAR ) + 1 ) ) );
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( month ) ) );
+      assertThat( cal, is( year( thisYear() + 1 ) ) );
    }
    
    
@@ -391,7 +590,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnMonthTheXst_MonthToday_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       
       EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
       EasyMock.replay( dateEvaluator );
@@ -403,9 +602,9 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       
       evaluator.visitDateOnMonthTheXst( ctx );
       
-      assertThat( cal, is( day() ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( DATE_TODAY.get( Calendar.YEAR ) ) ) );
+      assertThat( cal, is( day( thisDay() ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -413,7 +612,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnMonthTheXst_MonthAfter_NoYear()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, 2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -429,8 +628,8 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       evaluator.visitDateOnMonthTheXst( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year( DATE_TODAY.get( Calendar.YEAR ) ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -438,7 +637,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnWeekday_Before()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, -2 );
       
       final MolokoCalendar nextWeek = cal.clone();
@@ -462,7 +661,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnWeekday_Today()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       
       final MolokoCalendar nextWeek = cal.clone();
       nextWeek.add( Calendar.WEEK_OF_YEAR, 1 );
@@ -485,7 +684,7 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    @Test
    public void testVisitDateOnWeekday_After()
    {
-      final MolokoCalendar cal = DATE_TODAY.clone();
+      final MolokoCalendar cal = today.clone();
       cal.add( Calendar.DATE, 2 );
       
       final int day = cal.get( Calendar.DATE );
@@ -499,8 +698,35 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       evaluator.visitDateOnWeekday( ctx );
       
       assertThat( cal, is( day( day ) ) );
-      assertThat( cal, is( month() ) );
-      assertThat( cal, is( year() ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
+   }
+   
+   
+   
+   @Test
+   public void testVisitDateOnWeekday_Sunday()
+   {
+      final MolokoCalendar cal = today.clone();
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.SUNDAY );
+      
+      assertThat( "Sunday must be the first day of week",
+                  cal.getActualMinimum( Calendar.DAY_OF_WEEK ),
+                  is( Calendar.SUNDAY ) );
+      
+      final int day = cal.get( Calendar.DATE );
+      
+      EasyMock.expect( dateEvaluator.getCalendar() ).andReturn( cal );
+      EasyMock.replay( dateEvaluator );
+      
+      final DateOnWeekdayContext ctx = EasyMock.createNiceMock( DateOnWeekdayContext.class );
+      EasyMock.replay( ctx );
+      
+      evaluator.visitDateOnWeekday( ctx );
+      
+      assertThat( cal, is( day( day ) ) );
+      assertThat( cal, is( month( thisMonth() ) ) );
+      assertThat( cal, is( year( thisYear() ) ) );
    }
    
    
@@ -584,34 +810,6 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       EasyMock.replay( dateEvaluator );
       
       evaluator.getEpochEnd();
-      
-      EasyMock.verify( dateEvaluator );
-   }
-   
-   
-   
-   @Test
-   public void testIsClearTime()
-   {
-      EasyMock.resetToStrict( dateEvaluator );
-      EasyMock.expect( dateEvaluator.isClearTime() ).andReturn( false );
-      EasyMock.replay( dateEvaluator );
-      
-      evaluator.isClearTime();
-      
-      EasyMock.verify( dateEvaluator );
-   }
-   
-   
-   
-   @Test
-   public void testSetClearTime()
-   {
-      EasyMock.resetToStrict( dateEvaluator );
-      dateEvaluator.setClearTime( true );
-      EasyMock.replay( dateEvaluator );
-      
-      evaluator.setClearTime( true );
       
       EasyMock.verify( dateEvaluator );
    }
@@ -765,10 +963,10 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
    public void testVisitNever()
    {
       EasyMock.resetToStrict( dateEvaluator );
-      EasyMock.expect( dateEvaluator.visitNever( null ) ).andReturn( null );
+      EasyMock.expect( dateEvaluator.visitDateNever( null ) ).andReturn( null );
       EasyMock.replay( dateEvaluator );
       
-      evaluator.visitNever( null );
+      evaluator.visitDateNever( null );
       
       EasyMock.verify( dateEvaluator );
    }
@@ -785,5 +983,40 @@ public class RtmLikeDateEvaluatorFixture extends MolokoTestCase
       evaluator.visitTerminal( null );
       
       EasyMock.verify( dateEvaluator );
+   }
+   
+   
+   
+   private int thisMinute()
+   {
+      return now.get( Calendar.MINUTE );
+   }
+   
+   
+   
+   private int thisSecond()
+   {
+      return now.get( Calendar.SECOND );
+   }
+   
+   
+   
+   private int thisYear()
+   {
+      return today.get( Calendar.YEAR );
+   }
+   
+   
+   
+   private int thisMonth()
+   {
+      return today.get( Calendar.MONTH );
+   }
+   
+   
+   
+   private int thisDay()
+   {
+      return today.get( Calendar.DATE );
    }
 }

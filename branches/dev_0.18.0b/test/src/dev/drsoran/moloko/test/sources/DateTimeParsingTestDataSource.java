@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.test.sources;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
 import dev.drsoran.moloko.test.langs.IDateParserTestLanguage;
@@ -33,7 +36,7 @@ public class DateTimeParsingTestDataSource
    private final static String[] DATE_TIME_SEP = new String[]
    { " ", "," };
    
-   private final ITimeParserTestLanguage timeParserTestLanguage;
+   private final ITimeParserTestLanguage timeLanguage;
    
    private final IDateParserTestLanguage dateParserTestLanguage;
    
@@ -48,53 +51,93 @@ public class DateTimeParsingTestDataSource
       IDateParserTestLanguage dateParserTestLanguage, ILanguage dateLanguage,
       MolokoCalendar today )
    {
-      this.timeParserTestLanguage = timeParserTestLanguage;
+      this.timeLanguage = timeParserTestLanguage;
       this.dateParserTestLanguage = dateParserTestLanguage;
       this.dateLanguage = dateLanguage;
       this.today = today;
+      
    }
    
    
    
    public TestData[] getTestData()
    {
-      final TimeParserTestDataSource.ParseTimeTestData[] timeParserTestData = new TimeParserTestDataSource( timeParserTestLanguage ).getTheoryTestData();
-      final DateParserTestDataSource.ParseDateTestData[] dateParserTestData = new DateParserTestDataSource( dateLanguage,
-                                                                                                            dateParserTestLanguage,
-                                                                                                            today ).getTheoryTestData();
+      final Collection< TestData > testData = new LinkedList< TestData >();
       
-      int testDataSliceCount = Math.min( timeParserTestData.length,
-                                         dateParserTestData.length );
-      testDataSliceCount = Math.min( testDataSliceCount, 500 );
+      addTimeThenDateTests( testData );
+      addDateThenTimeTests( testData );
       
-      final TestData[] testData = new TestData[ testDataSliceCount
-         * DATE_TIME_SEP.length ];
+      return testData.toArray( new TestData[ testData.size() ] );
+   }
+   
+   
+   
+   private void addTimeThenDateTests( Collection< TestData > testData )
+   {
+      final TimeParserTestDataSource timeSource = new TimeParserTestDataSource( timeLanguage,
+                                                                                TimeParserTestDataSource.Config.Minimal );
       
-      int i = 0;
+      final DateParserTestDataSource dateSource = new DateParserTestDataSource( dateLanguage,
+                                                                                dateParserTestLanguage,
+                                                                                today,
+                                                                                DateParserTestDataSource.Config.Minimal );
+      
       for ( String sep : DATE_TIME_SEP )
       {
-         for ( int j = 0; j < testDataSliceCount; ++j )
+         for ( TimeParserTestDataSource.ParseTimeTestData timeData : timeSource.getTheoryTestData() )
          {
-            final TimeParserTestDataSource.ParseTimeTestData parseTimeTestData = timeParserTestData[ j ];
-            final DateParserTestDataSource.ParseDateTestData parseDateTestData = dateParserTestData[ j ];
-            
-            final String dateTime = parseTimeTestData.testString + sep
-               + parseDateTestData.testString;
-            
-            testData[ i++ ] = new TestData( dateTime,
-                                            parseDateTestData.expectedDay,
-                                            parseDateTestData.expectedMonth,
-                                            parseDateTestData.expectedYear,
-                                            parseTimeTestData.expectedHour,
-                                            parseTimeTestData.expectedMinute,
-                                            parseTimeTestData.expectedSecond,
-                                            parseTimeTestData.expectedHasTime
-                                               && parseDateTestData.expectCalHasTime,
-                                            parseDateTestData.expectCalHasDate );
+            for ( DateParserTestDataSource.ParseDateTestData dateData : dateSource.getTheoryTestData() )
+            {
+               final String testString = timeData.testString + sep
+                  + dateData.testString;
+               
+               testData.add( new TestData( testString,
+                                           dateData.expectedDay,
+                                           dateData.expectedMonth,
+                                           dateData.expectedYear,
+                                           timeData.expectedHour,
+                                           timeData.expectedMinute,
+                                           timeData.expectedSecond,
+                                           timeData.expectedHasTime,
+                                           dateData.expectCalHasDate ) );
+            }
          }
       }
+   }
+   
+   
+   
+   private void addDateThenTimeTests( Collection< TestData > testData )
+   {
+      final TimeParserTestDataSource timeSource = new TimeParserTestDataSource( timeLanguage,
+                                                                                TimeParserTestDataSource.Config.Minimal );
       
-      return testData;
+      final DateParserTestDataSource dateSource = new DateParserTestDataSource( dateLanguage,
+                                                                                dateParserTestLanguage,
+                                                                                today,
+                                                                                DateParserTestDataSource.Config.Minimal );
+      
+      for ( String sep : DATE_TIME_SEP )
+      {
+         for ( TimeParserTestDataSource.ParseTimeTestData timeData : timeSource.getTheoryTestData() )
+         {
+            for ( DateParserTestDataSource.ParseDateTestData dateData : dateSource.getTheoryTestData() )
+            {
+               final String testString = dateData.testString + sep
+                  + timeData.testString;
+               
+               testData.add( new TestData( testString,
+                                           dateData.expectedDay,
+                                           dateData.expectedMonth,
+                                           dateData.expectedYear,
+                                           timeData.expectedHour,
+                                           timeData.expectedMinute,
+                                           timeData.expectedSecond,
+                                           timeData.expectedHasTime,
+                                           dateData.expectCalHasDate ) );
+            }
+         }
+      }
    }
    
    

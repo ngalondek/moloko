@@ -9,8 +9,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeLexer;
-import dev.drsoran.moloko.test.MolokoTimeParserTestCase;
+import dev.drsoran.moloko.domain.parsing.lang.DateLanguage;
+import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeLexer;
+import dev.drsoran.moloko.test.MolokoDateTimeParserTestCase;
 import dev.drsoran.moloko.test.langs.ITimeParserTestLanguage;
 import dev.drsoran.moloko.test.langs.TimeParserTestLanguageEn;
 import dev.drsoran.moloko.test.sources.TimeParserTestDataSource;
@@ -18,8 +20,10 @@ import dev.drsoran.moloko.test.sources.TimeParserTestDataSource.ParseTimeEstimat
 
 
 @RunWith( Parameterized.class )
-public class TimeParserTimeEstimateTest extends MolokoTimeParserTestCase
+public class TimeParserTimeEstimateTest extends MolokoDateTimeParserTestCase
 {
+   private final static ILanguage DATE_LANGUAGE = new DateLanguage();
+   
    private final static ITimeParserTestLanguage TEST_LANGUAGE = new TimeParserTestLanguageEn();
    
    private final ParseTimeEstimateTestData testData;
@@ -52,9 +56,17 @@ public class TimeParserTimeEstimateTest extends MolokoTimeParserTestCase
    
    
    @Override
-   protected Lexer createTimeLexer( ANTLRInputStream inputStream )
+   protected ILanguage getDateLanguage()
    {
-      final Lexer lexer = new TimeLexer( inputStream );
+      return DATE_LANGUAGE;
+   }
+   
+   
+   
+   @Override
+   protected Lexer createDateTimeLexer( ANTLRInputStream inputStream )
+   {
+      final Lexer lexer = new DateTimeLexer( inputStream );
       return lexer;
    }
 }

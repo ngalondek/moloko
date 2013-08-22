@@ -23,35 +23,26 @@
 package dev.drsoran.moloko.domain.parsing;
 
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.datetime.DateEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.DateTimeEvaluator;
 import dev.drsoran.moloko.domain.parsing.datetime.IDateTimeParserFactory;
 import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
-import dev.drsoran.moloko.domain.parsing.datetime.ParseReturn;
-import dev.drsoran.moloko.domain.parsing.datetime.RtmLikeDateEvaluator;
+import dev.drsoran.moloko.domain.parsing.datetime.RtmLikeDateTimeEvaluator;
 import dev.drsoran.moloko.domain.parsing.datetime.TimeEstimateEvaluator;
-import dev.drsoran.moloko.domain.parsing.datetime.TimeEvaluator;
 import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.domain.parsing.util.ParserLanguageDetector;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser;
 import dev.drsoran.moloko.util.Lambda.Func1;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class DateTimeParsing implements IDateTimeParsing
 {
-   private final static Pattern TIME_PREFIX_PATTERN = Pattern.compile( "^\\s*\\d+(:\\d){0,2}.*," );
-   
    private final ANTLRErrorStrategy parseErrorHandler = new BailErrorStrategy();
    
    private final IDateTimeParserFactory parserFactory;
@@ -62,9 +53,7 @@ public class DateTimeParsing implements IDateTimeParsing
    
    private final MolokoCalenderProvider calenderProvider;
    
-   private final ParserLanguageDetector< TimeParser > timeParserLanguageDetector;
-   
-   private final ParserLanguageDetector< DateParser > dateParserLanguageDetector;
+   private final ParserLanguageDetector< DateTimeParser > dateTimeParserLanguageDetector;
    
    
    
@@ -79,8 +68,7 @@ public class DateTimeParsing implements IDateTimeParsing
       this.calenderProvider = calenderProvider;
       
       final Iterable< Locale > availableLocales = parserFactory.getAvailableParserLocales();
-      this.timeParserLanguageDetector = new ParserLanguageDetector< TimeParser >( availableLocales );
-      this.dateParserLanguageDetector = new ParserLanguageDetector< DateParser >( availableLocales );
+      this.dateTimeParserLanguageDetector = new ParserLanguageDetector< DateTimeParser >( availableLocales );
    }
    
    
@@ -88,8 +76,8 @@ public class DateTimeParsing implements IDateTimeParsing
    @Override
    public MolokoCalendar parseTime( String time ) throws GrammarException
    {
-      final MolokoCalendar cal = calenderProvider.getNow();
-      parseTime( cal, time, false );
+      MolokoCalendar cal = calenderProvider.getNow();
+      cal = parseTime( cal, time );
       
       return cal;
    }
@@ -99,89 +87,8 @@ public class DateTimeParsing implements IDateTimeParsing
    @Override
    public MolokoCalendar parseDateTime( String dateTime ) throws GrammarException
    {
-      if ( Strings.isNullOrEmpty( dateTime ) )
-      {
-         throw new GrammarException( "An empty spec is not parsable." );
-      }
-      
-      final MolokoCalendar cal = calenderProvider.getNow();
-      final int specLength = dateTime.length();
-      
-      int startOfDatePos = 0;
-      GrammarException lastGrammarException = null;
-      
-      // first try to parse time spec
-      try
-      {
-         parseTime( cal, dateTime, !cal.hasDate() );
-         // startOfDatePos
-      }
-      catch ( GrammarException e )
-      {
-         lastGrammarException = e;
-      }
-      
-      final String datePart = dateTime.substring( startOfDatePos, specLength );
-      boolean hasMoreToParse = datePart.length() > 0;
-      
-      // If we only had a time, then check if at least the time parsing succeeded.
-      if ( !hasMoreToParse )
-      {
-         if ( lastGrammarException != null )
-         {
-            throw lastGrammarException;
-         }
-         else
-         {
-            throw new GrammarException();
-         }
-      }
-      
-      // Try parsing the date part as Date
-      lastGrammarException = null;
-      int endOfDatePos;
-      try
-      {
-         final ParseReturn ret = parseDate( cal, datePart, !cal.hasTime() );
-         hasMoreToParse = !ret.isEof;
-         endOfDatePos = ret.numParsedChars;
-      }
-      catch ( GrammarException e )
-      {
-         lastGrammarException = e;
-         endOfDatePos = 0;
-      }
-      
-      // Check if there is a time trailing or we only have a time.
-      // The parser can NOT adjust the day of week for times in the past if we have already
-      // parsed a date.
-      if ( hasMoreToParse && !cal.hasTime() )
-      {
-         lastGrammarException = null;
-         
-         final String potentialTimePart = dateTime.substring( endOfDatePos,
-                                                              specLength );
-         hasMoreToParse = potentialTimePart.length() > 0;
-         
-         if ( hasMoreToParse )
-         {
-            try
-            {
-               hasMoreToParse = !parseTime( cal,
-                                            potentialTimePart,
-                                            !cal.hasDate() ).isEof;
-            }
-            catch ( GrammarException e )
-            {
-               lastGrammarException = e;
-            }
-         }
-      }
-      
-      if ( lastGrammarException != null )
-      {
-         throw lastGrammarException;
-      }
+      MolokoCalendar cal = calenderProvider.getNow();
+      cal = parseDateTime( cal, dateTime );
       
       return cal;
    }
@@ -220,30 +127,23 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   /**
-    * @param adjustDay
-    *           if this parameter is false, the parser assumes that the given cal has been initialized with a date yet.
-    *           E.g. today@12. In case of true the parser can adjust the day of week for times in the past. E.g. @12.
-    */
-   // TODO: consider adjustDay
-   private ParseReturn parseTime( final MolokoCalendar cal,
-                                  final String time,
-                                  final boolean adjustDay ) throws GrammarException
+   private MolokoCalendar parseTime( final MolokoCalendar cal, final String time ) throws GrammarException
    {
-      return detectLanguageAndParseTime( new Func1< Locale, ParseReturn >()
+      return detectLanguageAndParseDateTime( new Func1< Locale, MolokoCalendar >()
       {
          @Override
-         public ParseReturn call( Locale locale )
+         public MolokoCalendar call( Locale locale )
          {
-            final TimeParser timeParser = createTimeParser( locale, time );
-            final ParseTree tree = timeParser.parseTime();
+            final DateTimeParser dateTimeParser = createDateTimeParser( locale,
+                                                                        time );
+            final ParseTree tree = dateTimeParser.parseTime();
             
-            final TimeEvaluator timeEvaluator = new TimeEvaluator( cal );
-            timeEvaluator.visit( tree );
+            final RtmLikeDateTimeEvaluator evaluator = createDateTimeEvaluator( locale );
+            evaluator.visit( tree );
             
-            final MolokoCalendar cal = timeEvaluator.getCalendar();
+            final MolokoCalendar cal = evaluator.getCalendar();
             
-            return createParserReturnResult( cal, timeParser.getTokenStream() );
+            return cal;
          }
       } );
    }
@@ -252,13 +152,13 @@ public class DateTimeParsing implements IDateTimeParsing
    
    private long parseTimeEstimate( final String timeEstimate ) throws GrammarException
    {
-      return detectLanguageAndParseTime( new Func1< Locale, Long >()
+      return detectLanguageAndParseDateTime( new Func1< Locale, Long >()
       {
          @Override
          public Long call( Locale locale )
          {
-            final TimeParser timeParser = createTimeParser( locale,
-                                                            timeEstimate );
+            final DateTimeParser timeParser = createDateTimeParser( locale,
+                                                                    timeEstimate );
             final ParseTree tree = timeParser.parseTimeEstimate();
             
             final TimeEstimateEvaluator timeEstimateEvaluator = new TimeEstimateEvaluator();
@@ -271,27 +171,24 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private ParseReturn parseDate( final MolokoCalendar cal,
-                                  final String date,
-                                  final boolean clearTime ) throws GrammarException
+   private MolokoCalendar parseDateTime( final MolokoCalendar cal,
+                                         final String dateTimeToParse ) throws GrammarException
    {
-      return detectLanguageAndParseDate( new Func1< Locale, ParseReturn >()
+      return detectLanguageAndParseDateTime( new Func1< Locale, MolokoCalendar >()
       {
          @Override
-         public ParseReturn call( Locale locale )
+         public MolokoCalendar call( Locale locale )
          {
-            final DateParser dateParser = createDateParser( locale, date );
-            final ParseTree tree = dateParser.parseDate();
+            final DateTimeParser dateTimeParser = createDateTimeParser( locale,
+                                                                        dateTimeToParse );
+            final ParseTree tree = dateTimeParser.parseDateTime();
             
-            final RtmLikeDateEvaluator dateEvaluator = new RtmLikeDateEvaluator( new DateEvaluator( dateLanguageRepository.getLanguage( locale ),
-                                                                                                    dateFormatter,
-                                                                                                    calenderProvider ),
-                                                                                 calenderProvider );
+            final RtmLikeDateTimeEvaluator dateEvaluator = createDateTimeEvaluator( locale );
             dateEvaluator.visit( tree );
             
             final MolokoCalendar cal = dateEvaluator.getCalendar();
             
-            return createParserReturnResult( cal, dateParser.getTokenStream() );
+            return cal;
          }
       } );
    }
@@ -300,18 +197,16 @@ public class DateTimeParsing implements IDateTimeParsing
    
    private ParseDateWithinReturn parseDateWithinImpl( final String range ) throws GrammarException
    {
-      return detectLanguageAndParseDate( new Func1< Locale, ParseDateWithinReturn >()
+      return detectLanguageAndParseDateTime( new Func1< Locale, ParseDateWithinReturn >()
       {
          @Override
          public ParseDateWithinReturn call( Locale locale )
          {
-            final DateParser dateParser = createDateParser( locale, range );
-            final ParseTree tree = dateParser.parseDateWithin();
+            final DateTimeParser dateTimeParser = createDateTimeParser( locale,
+                                                                        range );
+            final ParseTree tree = dateTimeParser.parseDateWithin();
             
-            final RtmLikeDateEvaluator dateEvaluator = new RtmLikeDateEvaluator( new DateEvaluator( dateLanguageRepository.getLanguage( locale ),
-                                                                                                    dateFormatter,
-                                                                                                    calenderProvider ),
-                                                                                 calenderProvider );
+            final RtmLikeDateTimeEvaluator dateEvaluator = createDateTimeEvaluator( locale );
             dateEvaluator.visit( tree );
             
             return new ParseDateWithinReturn( dateEvaluator.getEpochStart(),
@@ -322,11 +217,11 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private < T > T detectLanguageAndParseDate( Func1< Locale, T > parserFunc ) throws GrammarException
+   private < T > T detectLanguageAndParseDateTime( Func1< Locale, T > parserFunc ) throws GrammarException
    {
       try
       {
-         final T detectResult = dateParserLanguageDetector.detectLanguageAndParse( parserFunc );
+         final T detectResult = dateTimeParserLanguageDetector.detectLanguageAndParse( parserFunc );
          
          if ( detectResult == null )
          {
@@ -343,31 +238,10 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private < T > T detectLanguageAndParseTime( Func1< Locale, T > parserFunc ) throws GrammarException
+   private DateTimeParser createDateTimeParser( Locale locale, String toParse )
    {
-      try
-      {
-         final T detectResult = timeParserLanguageDetector.detectLanguageAndParse( parserFunc );
-         
-         if ( detectResult == null )
-         {
-            throw new GrammarException();
-         }
-         
-         return detectResult;
-      }
-      catch ( ParseCancellationException e )
-      {
-         throw new GrammarException( e );
-      }
-   }
-   
-   
-   
-   private TimeParser createTimeParser( Locale locale, String timeToParse )
-   {
-      final TimeParser timeParser = parserFactory.createTimeParser( locale,
-                                                                    timeToParse );
+      final DateTimeParser timeParser = parserFactory.createDateTimeParser( locale,
+                                                                            toParse );
       timeParser.setErrorHandler( parseErrorHandler );
       
       return timeParser;
@@ -375,25 +249,12 @@ public class DateTimeParsing implements IDateTimeParsing
    
    
    
-   private DateParser createDateParser( Locale locale, String dateToParse )
+   private RtmLikeDateTimeEvaluator createDateTimeEvaluator( Locale locale )
    {
-      final DateParser dateParser = parserFactory.createDateParser( locale,
-                                                                    dateToParse );
-      dateParser.setErrorHandler( parseErrorHandler );
-      
-      return dateParser;
-   }
-   
-   
-   
-   private ParseReturn createParserReturnResult( MolokoCalendar cal,
-                                                 TokenStream tokenStream )
-   {
-      final Token lastToken = tokenStream.LT( 1 );
-      
-      final boolean isEof = lastToken.getType() == Token.EOF;
-      final int numParsedChars = lastToken.getCharPositionInLine();
-      
-      return new ParseReturn( numParsedChars, isEof, cal );
+      final RtmLikeDateTimeEvaluator dateEvaluator = new RtmLikeDateTimeEvaluator( new DateTimeEvaluator( dateLanguageRepository.getLanguage( locale ),
+                                                                                                          dateFormatter,
+                                                                                                          calenderProvider ),
+                                                                                   calenderProvider );
+      return dateEvaluator;
    }
 }

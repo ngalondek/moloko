@@ -35,11 +35,22 @@ public class TimeParserTestDataSource
 {
    private final ITimeParserTestLanguage testLanguage;
    
+   private final Config config;
+   
    
    
    public TimeParserTestDataSource( ITimeParserTestLanguage testLanguage )
    {
+      this( testLanguage, Config.Full );
+   }
+   
+   
+   
+   public TimeParserTestDataSource( ITimeParserTestLanguage testLanguage,
+      Config config )
+   {
       this.testLanguage = testLanguage;
+      this.config = config;
    }
    
    
@@ -50,16 +61,30 @@ public class TimeParserTestDataSource
       final Collection< Object[] > testData = new LinkedList< Object[] >();
       
       addParseTime_literal( testData );
-      addParseTime_separatedTimeHM( testData );
+      
+      if ( config != Config.Minimal )
+      {
+         addParseTime_separatedTimeHM( testData );
+      }
+      
       addParseTime_separatedTimeHMS( testData );
-      addParseTime_unseparatedH2( testData );
-      addParseTime_unseparatedHM3( testData );
+      
+      if ( config != Config.Minimal )
+      {
+         addParseTime_unseparatedH2( testData );
+         addParseTime_unseparatedHM3( testData );
+      }
+      
       addParseTime_unseparatedHM4( testData );
       addParseTime_hmsSeparated_H( testData );
-      addParseTime_hmsSeparated_M( testData );
-      addParseTime_hmsSeparated_S( testData );
-      addParseTime_hmsSeparated_DecH( testData );
-      addParseTime_hmsSeparated_Mixed( testData );
+      
+      if ( config != Config.Minimal )
+      {
+         addParseTime_hmsSeparated_M( testData );
+         addParseTime_hmsSeparated_S( testData );
+         addParseTime_hmsSeparated_DecH( testData );
+         addParseTime_hmsSeparated_Mixed( testData );
+      }
       
       return testData;
    }
@@ -119,13 +144,16 @@ public class TimeParserTestDataSource
                                                           59 ) );
          }
          
-         for ( String string : testLanguage.getNever() )
+         if ( config != Config.Minimal )
          {
-            addTestData( testData, new ParseTimeTestData( at + string,
-                                                          0,
-                                                          0,
-                                                          0,
-                                                          false ) );
+            for ( String string : testLanguage.getNever() )
+            {
+               addTestData( testData, new ParseTimeTestData( at + string,
+                                                             0,
+                                                             0,
+                                                             0,
+                                                             false ) );
+            }
          }
       }
    }
@@ -140,8 +168,13 @@ public class TimeParserTestDataSource
          {
             String testString = at + "12" + timeSep + "13";
             
-            addTestData( testData,
-                         new ParseTimeTestData( testString, 12, 13, 0 ) );
+            if ( config != Config.DateTimeParserTimeTests )
+            {
+               addTestData( testData, new ParseTimeTestData( testString,
+                                                             12,
+                                                             13,
+                                                             0 ) );
+            }
             
             for ( String am : testLanguage.getAm() )
             {
@@ -178,10 +211,13 @@ public class TimeParserTestDataSource
             {
                String testString = at + "12" + hmSep + "13" + msSep + "25";
                
-               addTestData( testData, new ParseTimeTestData( testString,
-                                                             12,
-                                                             13,
-                                                             25 ) );
+               if ( config != Config.DateTimeParserTimeTests )
+               {
+                  addTestData( testData, new ParseTimeTestData( testString,
+                                                                12,
+                                                                13,
+                                                                25 ) );
+               }
                
                for ( String am : testLanguage.getAm() )
                {
@@ -215,7 +251,10 @@ public class TimeParserTestDataSource
       {
          String testString = at + "13";
          
-         addTestData( testData, new ParseTimeTestData( testString, 13, 0, 0 ) );
+         if ( config != Config.DateTimeParserTimeTests )
+         {
+            addTestData( testData, new ParseTimeTestData( testString, 13, 0, 0 ) );
+         }
          
          for ( String am : testLanguage.getAm() )
          {
@@ -241,7 +280,10 @@ public class TimeParserTestDataSource
       {
          String testString = at + "110";
          
-         addTestData( testData, new ParseTimeTestData( testString, 1, 10, 0 ) );
+         if ( config != Config.DateTimeParserTimeTests )
+         {
+            addTestData( testData, new ParseTimeTestData( testString, 1, 10, 0 ) );
+         }
          
          for ( String am : testLanguage.getAm() )
          {
@@ -268,7 +310,11 @@ public class TimeParserTestDataSource
       {
          String testString = at + "1210";
          
-         addTestData( testData, new ParseTimeTestData( testString, 12, 10, 0 ) );
+         if ( config != Config.DateTimeParserTimeTests )
+         {
+            addTestData( testData,
+                         new ParseTimeTestData( testString, 12, 10, 0 ) );
+         }
          
          for ( String am : testLanguage.getAm() )
          {
@@ -445,6 +491,12 @@ public class TimeParserTestDataSource
       {
          return testString;
       }
+   }
+   
+   
+   public enum Config
+   {
+      Full, DateTimeParserTimeTests, Minimal
    }
    
    

@@ -22,11 +22,18 @@
 
 package dev.drsoran.moloko.test.comp.domain.parsing;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.day;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.hour;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.minute;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.month;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.second;
+import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.year;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static dev.drsoran.moloko.test.matchers.MolokoCalendarMatcher.*;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -39,7 +46,6 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.DateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-
 import dev.drsoran.moloko.domain.parsing.datetime.AntlrDateTimeParserFactory;
 import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.domain.parsing.lang.DateLanguage;
@@ -49,23 +55,43 @@ import dev.drsoran.moloko.test.TaggedDataPoints;
 import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.TestDateFormatter;
 import dev.drsoran.moloko.test.WithTags;
+import dev.drsoran.moloko.test.langs.DateParserTestLanguageDe;
 import dev.drsoran.moloko.test.langs.DateParserTestLanguageEn;
 import dev.drsoran.moloko.test.langs.TimeParserTestLanguageDe;
 import dev.drsoran.moloko.test.langs.TimeParserTestLanguageEn;
 import dev.drsoran.moloko.test.sources.DateParserTestDataSource;
-import dev.drsoran.moloko.test.sources.DateTimeParsingTestDataSource;
 import dev.drsoran.moloko.test.sources.TimeParserTestDataSource;
+import dev.drsoran.moloko.test.sources.TimeParserTestDataSource.Config;
 import dev.drsoran.moloko.util.Strings;
 
 
 @RunWith( Theories.class )
 public class DateTimeParsingTest extends MolokoTestCase
 {
-   @TaggedDataPoints( "parseTimeTestData" )
-   public final static TimeParserTestDataSource.ParseTimeTestData[] parseTimeTestDataEn = new TimeParserTestDataSource( new TimeParserTestLanguageEn() ).getTheoryTestData();
+   private final static MolokoCalendar today = TestCalendarProvider.getJune_10_2010_00_00_00()
+                                                                   .getToday();
+   
+   private final static DateParserTestDataSource dateParserSourceEn = new DateParserTestDataSource( new DateLanguage(),
+                                                                                                    new DateParserTestLanguageEn(),
+                                                                                                    today );
+   
+   private final static DateParserTestDataSource dateParserSourceDe = new DateParserTestDataSource( new dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage(),
+                                                                                                    new DateParserTestLanguageDe(),
+                                                                                                    today );
    
    @TaggedDataPoints( "parseTimeTestData" )
-   public final static TimeParserTestDataSource.ParseTimeTestData[] parseTimeTestDataDe = new TimeParserTestDataSource( new TimeParserTestLanguageDe() ).getTheoryTestData();
+   public final static TimeParserTestDataSource.ParseTimeTestData[] parseTimeTestDataEn = new TimeParserTestDataSource( new TimeParserTestLanguageEn(),
+                                                                                                                        Config.DateTimeParserTimeTests ).getTheoryTestData();
+   
+   @TaggedDataPoints( "parseTimeTestData" )
+   public final static TimeParserTestDataSource.ParseTimeTestData[] parseTimeTestDataDe = new TimeParserTestDataSource( new TimeParserTestLanguageDe(),
+                                                                                                                        Config.DateTimeParserTimeTests ).getTheoryTestData();
+   
+   @TaggedDataPoints( "parseDateTestData" )
+   public final static DateParserTestDataSource.ParseDateTestData[] parseDateTestDataEn = dateParserSourceEn.getTheoryTestData();
+   
+   @TaggedDataPoints( "parseDateTestData" )
+   public final static DateParserTestDataSource.ParseDateTestData[] parseDateTestDataDe = dateParserSourceDe.getTheoryTestData();
    
    @TaggedDataPoints( "parseTimeEstimateTestData" )
    public final static TimeParserTestDataSource.ParseTimeEstimateTestData[] parseTimeEstimateTestDataEn = new TimeParserTestDataSource( new TimeParserTestLanguageEn() ).getSecondTheoryTestData();
@@ -74,23 +100,10 @@ public class DateTimeParsingTest extends MolokoTestCase
    public final static TimeParserTestDataSource.ParseTimeEstimateTestData[] parseTimeEstimateTestDataDe = new TimeParserTestDataSource( new TimeParserTestLanguageDe() ).getSecondTheoryTestData();
    
    @TaggedDataPoints( "parseDateWithinTestData" )
-   public final static DateParserTestDataSource.ParseDateWithInTestData[] parseDateWithInTestDataEn = new DateParserTestDataSource( new DateLanguage(),
-                                                                                                                                    new DateParserTestLanguageEn(),
-                                                                                                                                    TestCalendarProvider.getDefault()
-                                                                                                                                                        .getToday() ).getSecondTheoryTestData();
+   public final static DateParserTestDataSource.ParseDateWithInTestData[] parseDateWithInTestDataEn = dateParserSourceEn.getSecondTheoryTestData();
    
    @TaggedDataPoints( "parseDateWithinTestData" )
-   public final static DateParserTestDataSource.ParseDateWithInTestData[] parseDateWithInTestDataDe = new DateParserTestDataSource( new dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage(),
-                                                                                                                                    new DateParserTestLanguageEn(),
-                                                                                                                                    TestCalendarProvider.getDefault()
-                                                                                                                                                        .getToday() ).getSecondTheoryTestData();
-   
-   @TaggedDataPoints( "parseDateTimeTestData" )
-   public final static DateTimeParsingTestDataSource.TestData[] parseDateTimeTestDataEn = new DateTimeParsingTestDataSource( new TimeParserTestLanguageEn(),
-                                                                                                                             new DateParserTestLanguageEn(),
-                                                                                                                             new dev.drsoran.moloko.domain.parsing.lang.DateLanguage(),
-                                                                                                                             TestCalendarProvider.getDefault()
-                                                                                                                                                 .getToday() ).getTestData();
+   public final static DateParserTestDataSource.ParseDateWithInTestData[] parseDateWithInTestDataDe = dateParserSourceDe.getSecondTheoryTestData();
    
    private IDateTimeParsing dateTimeParsing;
    
@@ -104,7 +117,7 @@ public class DateTimeParsingTest extends MolokoTestCase
       dateTimeParsing = new DateTimeParsing( new AntlrDateTimeParserFactory(),
                                              TestDateFormatter.get(),
                                              new DateLanguageRepository(),
-                                             TestCalendarProvider.getDefault() );
+                                             TestCalendarProvider.getJune_10_2010_00_00_00() );
    }
    
    
@@ -193,42 +206,57 @@ public class DateTimeParsingTest extends MolokoTestCase
    
    
    @Theory
-   public void testParseDateTimeCombined( @WithTags( clazz = DateTimeParsingTest.class,
-                                                     name = "parseDateTimeTestData" ) DateTimeParsingTestDataSource.TestData testData )
+   public void testParseDateTime_Time( @WithTags( clazz = DateTimeParsingTest.class,
+                                                  name = "parseTimeTestData" ) TimeParserTestDataSource.ParseTimeTestData testData )
    {
       try
       {
-         final MolokoCalendar cal = dateTimeParsing.parseDateTime( testData.dateAndTime );
+         final MolokoCalendar cal = dateTimeParsing.parseDateTime( testData.testString );
          
-         assertThat( cal, notNullValue() );
-         assertThat( "Wrong hour for <" + testData.dateAndTime + ">",
-                     cal,
-                     is( year( testData.expectedYear ) ) );
-         assertThat( "Wrong month for <" + testData.dateAndTime + ">",
-                     cal,
-                     is( month( testData.expectedMonth ) ) );
-         assertThat( "Wrong day for <" + testData.dateAndTime + ">",
-                     cal,
-                     is( day( testData.expectedDay ) ) );
-         assertThat( "Wrong hour for <" + testData.dateAndTime + ">",
-                     cal,
-                     is( hour( testData.expectedHour ) ) );
-         assertThat( "Wrong minute for <" + testData.dateAndTime + ">",
-                     cal,
-                     is( minute( testData.expectedMinute ) ) );
-         assertThat( "Wrong second for <" + testData.dateAndTime + ">",
-                     cal,
-                     is( second( testData.expectedSecond ) ) );
-         assertThat( "Wrong hasTime for <" + testData.dateAndTime + ">",
-                     cal.hasTime(),
-                     is( testData.expectCalHasTime ) );
-         assertThat( "Wrong hasDate for <" + testData.dateAndTime + ">",
-                     cal.hasDate(),
-                     is( testData.expectCalHasDate ) );
+         final boolean isNever = !testData.expectedHasTime;
+         
+         verifyParseDateTime( cal,
+                              testData.testString,
+                              isNever ? 1970 : today.get( Calendar.YEAR ),
+                              isNever ? Calendar.JANUARY + 1
+                                     : today.get( Calendar.MONTH ) + 1,
+                              isNever ? 1 : today.get( Calendar.DATE ),
+                              testData.expectedHour,
+                              testData.expectedMinute,
+                              testData.expectedSecond,
+                              testData.expectedHasTime,
+                              false );
       }
       catch ( GrammarException e )
       {
-         fail( "Parsing <" + testData.dateAndTime + "> failed: "
+         fail( "Parsing <" + testData.testString + "> failed: "
+            + e.getMessage() );
+      }
+   }
+   
+   
+   
+   @Theory
+   public void testParseDateTime_Date( @WithTags( clazz = DateTimeParsingTest.class,
+                                                  name = "parseDateTestData" ) DateParserTestDataSource.ParseDateTestData testData )
+   {
+      try
+      {
+         final MolokoCalendar cal = dateTimeParsing.parseDateTime( testData.testString );
+         verifyParseDateTime( cal,
+                              testData.testString,
+                              testData.expectedYear,
+                              testData.expectedMonth,
+                              testData.expectedDay,
+                              0,
+                              0,
+                              0,
+                              testData.expectCalHasTime,
+                              testData.expectCalHasDate );
+      }
+      catch ( GrammarException e )
+      {
+         fail( "Parsing <" + testData.testString + "> failed: "
             + e.getMessage() );
       }
    }
@@ -320,6 +348,41 @@ public class DateTimeParsingTest extends MolokoTestCase
                   is( true ) );
       assertThat( dateTimeParsing.existsParserWithMatchingLocale( Locale.JAPANESE ),
                   is( false ) );
+   }
+   
+   
+   
+   private void verifyParseDateTime( MolokoCalendar cal,
+                                     String testString,
+                                     int y,
+                                     int m,
+                                     int d,
+                                     int h,
+                                     int M,
+                                     int s,
+                                     boolean hasTime,
+                                     boolean hasDate )
+   {
+      assertThat( cal, notNullValue() );
+      
+      assertThat( "Wrong year for <" + testString + ">", cal, is( year( y ) ) );
+      assertThat( "Wrong month for <" + testString + ">",
+                  cal,
+                  is( month( m - 1 ) ) );
+      assertThat( "Wrong day for <" + testString + ">", cal, is( day( d ) ) );
+      assertThat( "Wrong hour for <" + testString + ">", cal, is( hour( h ) ) );
+      assertThat( "Wrong minute for <" + testString + ">",
+                  cal,
+                  is( minute( M ) ) );
+      assertThat( "Wrong second for <" + testString + ">",
+                  cal,
+                  is( second( s ) ) );
+      assertThat( "Wrong hasTime for <" + testString + ">",
+                  cal.hasTime(),
+                  is( hasTime ) );
+      assertThat( "Wrong hasDate for <" + testString + ">",
+                  cal.hasDate(),
+                  is( hasDate ) );
    }
    
 }

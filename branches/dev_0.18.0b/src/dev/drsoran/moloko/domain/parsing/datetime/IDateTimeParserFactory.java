@@ -25,17 +25,12 @@ package dev.drsoran.moloko.domain.parsing.datetime;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser;
 
 
 public interface IDateTimeParserFactory
 {
-   DateParser createDateParser( Locale locale, String dateToParse ) throws NoSuchElementException;
-   
-   
-   
-   TimeParser createTimeParser( Locale locale, String timeToParse ) throws NoSuchElementException;
+   DateTimeParser createDateTimeParser( Locale locale, String dateTimeToParse ) throws NoSuchElementException;
    
    
    

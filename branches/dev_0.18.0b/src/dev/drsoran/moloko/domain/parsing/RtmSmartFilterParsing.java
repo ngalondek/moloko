@@ -28,10 +28,14 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
@@ -40,15 +44,10 @@ import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterParsingReturn;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterVisitorAdapter;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.TokenCollectingEvaluator;
+import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterBaseListener;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.CompletedAfterContext;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.CompletedBeforeContext;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.CompletedContext;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.CompletedWithinContext;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.StatusCompletedContext;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterVisitor;
 
 
@@ -136,7 +135,7 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
                                       smartFilter ),
                 e );
          
-         throw e;
+         throw new GrammarException( e );
       }
    }
    
@@ -146,6 +145,7 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    {
       final ANTLRInputStream input = new ANTLRNoCaseStringStream( smartFilter );
       final Lexer lexer = new RtmSmartFilterLexer( input );
+      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       
@@ -157,8 +157,8 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    }
    
    
-   private final static class HasCompletedOperatorListener extends
-            RtmSmartFilterBaseListener
+   private final static class HasCompletedOperatorListener implements
+            ParseTreeListener
    {
       private boolean hasCompletedOperator;
       
@@ -172,46 +172,42 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
       
       
       @Override
-      public void enterCompletedBefore( @NotNull CompletedBeforeContext ctx )
+      public void enterEveryRule( @NotNull ParserRuleContext arg0 )
       {
-         hasCompletedOperator = true;
-         super.enterCompletedBefore( ctx );
       }
       
       
       
       @Override
-      public void enterCompleted( @NotNull CompletedContext ctx )
+      public void exitEveryRule( @NotNull ParserRuleContext arg0 )
       {
-         hasCompletedOperator = true;
-         super.enterCompleted( ctx );
       }
       
       
       
       @Override
-      public void enterCompletedWithin( @NotNull CompletedWithinContext ctx )
+      public void visitErrorNode( @NotNull ErrorNode arg0 )
       {
-         hasCompletedOperator = true;
-         super.enterCompletedWithin( ctx );
       }
       
       
       
       @Override
-      public void enterStatusCompleted( @NotNull StatusCompletedContext ctx )
+      public void visitTerminal( @NotNull TerminalNode node )
       {
-         hasCompletedOperator = true;
-         super.enterStatusCompleted( ctx );
-      }
-      
-      
-      
-      @Override
-      public void enterCompletedAfter( @NotNull CompletedAfterContext ctx )
-      {
-         hasCompletedOperator = true;
-         super.enterCompletedAfter( ctx );
+         switch ( node.getSymbol().getType() )
+         {
+            case RtmSmartFilterLexer.OP_COMPLETED:
+            case RtmSmartFilterLexer.OP_COMPLETED_AFTER:
+            case RtmSmartFilterLexer.OP_COMPLETED_BEFORE:
+            case RtmSmartFilterLexer.OP_COMPLETED_WITHIN:
+            case RtmSmartFilterLexer.COMPLETED:
+               hasCompletedOperator = true;
+               break;
+            
+            default :
+               break;
+         }
       }
    }
 }

@@ -40,8 +40,8 @@ import org.junit.runners.Parameterized.Parameters;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
 import dev.drsoran.moloko.domain.parsing.lang.de.DateLanguage;
-import dev.drsoran.moloko.grammar.antlr.datetime.de.DateLexer;
-import dev.drsoran.moloko.test.MolokoDateParserTestCase;
+import dev.drsoran.moloko.grammar.antlr.datetime.de.DateTimeLexer;
+import dev.drsoran.moloko.test.MolokoDateTimeParserTestCase;
 import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.langs.DateParserTestLanguageDe;
 import dev.drsoran.moloko.test.langs.IDateParserTestLanguage;
@@ -49,7 +49,7 @@ import dev.drsoran.moloko.test.sources.DateParserTestDataSource;
 
 
 @RunWith( Parameterized.class )
-public class DateParserTest extends MolokoDateParserTestCase
+public class DateParserTest extends MolokoDateTimeParserTestCase
 {
    private final static ILanguage DATE_LANGUAGE = new DateLanguage();
    
@@ -71,7 +71,7 @@ public class DateParserTest extends MolokoDateParserTestCase
    {
       final DateParserTestDataSource testDataSource = new DateParserTestDataSource( DATE_LANGUAGE,
                                                                                     TEST_LANGUAGE,
-                                                                                    TestCalendarProvider.getDefault()
+                                                                                    TestCalendarProvider.getJune_10_2010_00_00_00()
                                                                                                         .getToday() );
       
       return testDataSource.getTestData();
@@ -102,9 +102,9 @@ public class DateParserTest extends MolokoDateParserTestCase
    
    
    @Override
-   protected Lexer createDateLexer( ANTLRInputStream input )
+   protected Lexer createDateTimeLexer( ANTLRInputStream input )
    {
-      final Lexer dateLexer = new DateLexer( input );
+      final Lexer dateLexer = new DateTimeLexer( input );
       return dateLexer;
    }
    

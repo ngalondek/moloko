@@ -54,10 +54,20 @@ public class DateParserTestDataSource
    
    private final Collection< String > xStWithEmptyString;
    
+   private final Config config;
+   
    
    
    public DateParserTestDataSource( ILanguage dateLanguage,
       IDateParserTestLanguage testLanguage, MolokoCalendar today )
+   {
+      this( dateLanguage, testLanguage, today, Config.Full );
+   }
+   
+   
+   
+   public DateParserTestDataSource( ILanguage dateLanguage,
+      IDateParserTestLanguage testLanguage, MolokoCalendar today, Config config )
    {
       this.dateLanguage = dateLanguage;
       this.testLanguage = testLanguage;
@@ -68,6 +78,7 @@ public class DateParserTestDataSource
       this.thisYear = today.get( Calendar.YEAR );
       this.xStWithEmptyString = new ArrayList< String >( testLanguage.getXst() );
       this.xStWithEmptyString.add( Strings.EMPTY_STRING );
+      this.config = config;
    }
    
    
@@ -79,20 +90,35 @@ public class DateParserTestDataSource
       
       addParseDateNumeric( testData );
       addParseDateOnXstOfMonth_Day( testData );
-      addParseDateOnXstOfMonth_DayMonth( testData );
-      addParseDateOnXstOfMonth_DayMonthYear( testData );
-      addParseDateOnMonthTheXst_Month( testData );
-      addParseDateOnMonthTheXst_MonthDay( testData );
+      
+      if ( config == Config.Full )
+      {
+         addParseDateOnXstOfMonth_DayMonth( testData );
+         addParseDateOnXstOfMonth_DayMonthYear( testData );
+         addParseDateOnMonthTheXst_Month( testData );
+         addParseDateOnMonthTheXst_MonthDay( testData );
+      }
+      
       addParseDateOnMonthTheXst_MonthDayYear( testData );
       addParseDateOnWeekday( testData );
-      addParseDateOnNextWeekday( testData );
-      addParseDateInDistance_Year( testData );
-      addParseDateInDistance_Month( testData );
-      addParseDateInDistance_Week( testData );
-      addParseDateInDistance_Day( testData );
+      
+      if ( config == Config.Full )
+      {
+         addParseDateOnNextWeekday( testData );
+         addParseDateInDistance_Year( testData );
+         addParseDateInDistance_Month( testData );
+         addParseDateInDistance_Week( testData );
+         addParseDateInDistance_Day( testData );
+      }
+      
       addParseDateInX_YMWD( testData );
-      addParseDateEndOfThe_Week( testData );
-      addParseDateEndOfThe_Month( testData );
+      
+      if ( config == Config.Full )
+      {
+         addParseDateEndOfThe_Week( testData );
+         addParseDateEndOfThe_Month( testData );
+      }
+      
       addParseDateLiteral( testData );
       
       return testData;
@@ -309,11 +335,12 @@ public class DateParserTestDataSource
    
    private void addParseDateOnWeekday( Collection< Object[] > testData )
    {
+      final MolokoCalendar refCal = todayCal.clone();
+      
       for ( int i = 1; i < 8; ++i )
       {
          for ( String weekday : testLanguage.getWeekdayStrings( i ) )
          {
-            final MolokoCalendar refCal = todayCal.clone();
             refCal.get( Calendar.DAY_OF_WEEK );
             refCal.set( Calendar.DAY_OF_WEEK, dateLanguage.getInteger( weekday ) );
             
@@ -579,26 +606,29 @@ public class DateParserTestDataSource
                                                        thisYear ) );
       }
       
-      for ( String string : testLanguage.getNever() )
+      if ( config != Config.Minimal )
       {
-         final MolokoCalendar refCal = MolokoCalendar.getDatelessAndTimelessInstance();
-         addTestData( testData,
-                      new ParseDateTestData( string,
-                                             refCal.get( Calendar.DATE ),
-                                             refCal.get( Calendar.MONTH ) + 1,
-                                             refCal.get( Calendar.YEAR ),
-                                             false,
-                                             false ) );
-      }
-      
-      for ( String string : testLanguage.getNow() )
-      {
-         addTestData( testData, new ParseDateTestData( string,
-                                                       thisDay,
-                                                       thisMonthNum,
-                                                       thisYear,
-                                                       true,
-                                                       true ) );
+         for ( String string : testLanguage.getNever() )
+         {
+            final MolokoCalendar refCal = MolokoCalendar.getDatelessAndTimelessInstance();
+            addTestData( testData,
+                         new ParseDateTestData( string,
+                                                refCal.get( Calendar.DATE ),
+                                                refCal.get( Calendar.MONTH ) + 1,
+                                                refCal.get( Calendar.YEAR ),
+                                                false,
+                                                false ) );
+         }
+         
+         for ( String string : testLanguage.getNow() )
+         {
+            addTestData( testData, new ParseDateTestData( string,
+                                                          thisDay,
+                                                          thisMonthNum,
+                                                          thisYear,
+                                                          true,
+                                                          true ) );
+         }
       }
    }
    
@@ -823,6 +853,12 @@ public class DateParserTestDataSource
       {
          return testString;
       }
+   }
+   
+   
+   public enum Config
+   {
+      Full, Minimal
    }
    
    

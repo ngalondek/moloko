@@ -36,6 +36,8 @@ public final class TestConstants
    
    public final static MolokoCalendar DATE_TODAY;
    
+   public final static MolokoCalendar DATE_NOW;
+   
    public final static long TOMORROW;
    
    public final static MolokoCalendar DATE_TOMORROW;
@@ -56,6 +58,9 @@ public final class TestConstants
    {
       DATE_TODAY = MolokoCalendar.getInstance();
       DATE_TODAY.setHasTime( false );
+      
+      DATE_NOW = MolokoCalendar.getInstance();
+      DATE_NOW.setTimeInMillis( NOW );
       
       TODAY = DATE_TODAY.getTimeInMillis();
       

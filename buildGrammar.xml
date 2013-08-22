@@ -2,58 +2,39 @@
 	<property name="antlrGen" location="${basedir}/lib/antlr-4.1-complete.jar" />
 
 	<property name="grammarSrcPath" location="${basedir}/grammar/antlr" />
-	<property name="timeLexerGrammarEn" location="${grammarSrcPath}/TimeLexer.g4" />
-	<property name="timeLexerGrammarDe" location="${grammarSrcPath}/de/TimeLexer.g4" />
-	<property name="timeParserGrammar" location="${grammarSrcPath}/TimeParser.g4" />
-	<property name="dateLexerGrammarEn" location="${grammarSrcPath}/DateLexer.g4" />
-	<property name="dateLexerGrammarDe" location="${grammarSrcPath}/de/DateLexer.g4" />
-	<property name="dateParserGrammar" location="${grammarSrcPath}/DateParser.g4" />
 	<property name="rtmSmartFilterParserGrammar" location="${grammarSrcPath}/RtmSmartFilter.g4" />
 	<property name="recurrPatternParserGrammar" location="${grammarSrcPath}/RecurrencePattern.g4" />
 	<property name="recurrLexerGrammarEn" location="${grammarSrcPath}/RecurrenceLexer.g4" />
 	<property name="recurrLexerGrammarDe" location="${grammarSrcPath}/de/RecurrenceLexer.g4" />
 	<property name="recurrParserGrammar" location="${grammarSrcPath}/RecurrenceParser.g4" />
+	<property name="dateTimeLexerEnGrammar" location="${grammarSrcPath}/DateTimeLexer.g4" />
+	<property name="dateTimeLexerDeGrammar" location="${grammarSrcPath}/de/DateTimeLexer.g4" />
+	<property name="dateTimeParserGrammar" location="${grammarSrcPath}/DateTimeParser.g4" />
 
 	<property name="grammarGenPath" location="${basedir}/gen/dev/drsoran/moloko/grammar/antlr" />
 	<property name="grammarGenPackage" value="dev.drsoran.moloko.grammar.antlr" />
-	<property name="timeLexerGenPathEn" location="${grammarGenPath}/datetime" />
-	<property name="timeLexerGenPathDe" location="${grammarGenPath}/datetime/de" />
-	<property name="timeParserGenPath" location="${grammarGenPath}/datetime" />
-	<property name="dateLexerGenPathEn" location="${grammarGenPath}/datetime" />
-	<property name="dateLexerGenPathDe" location="${grammarGenPath}/datetime/de" />
-	<property name="dateParserGenPath" location="${grammarGenPath}/datetime" />
 	<property name="rtmSmartFilterParserGenPath" location="${grammarGenPath}/rtmsmart" />
 	<property name="recurrPatternParserGenPath" location="${grammarGenPath}/recurrence" />
 	<property name="recurrLexerGenPathEn" location="${grammarGenPath}/recurrence" />
 	<property name="recurrLexerGenPathDe" location="${grammarGenPath}/recurrence/de" />
 	<property name="recurrParserGenPath" location="${grammarGenPath}/recurrence" />
+	<property name="dateTimeLexerEnGenPath" location="${grammarGenPath}/datetime" />
+	<property name="dateTimeLexerDeGenPath" location="${grammarGenPath}/datetime/de" />
+	<property name="dateTimeParserGenPath" location="${grammarGenPath}/datetime" />
 
 
 	<target name="checkBuildNeeded">
-		<uptodate property="timeLexerEn.buildNotRequired" srcfile="${timeLexerGrammarEn}" targetfile="${timeLexerGenPathEn}/TimeLexer.java" />
-		<uptodate property="timeLexerDe.buildNotRequired" srcfile="${timeLexerGrammarDe}" targetfile="${timeLexerGenPathDe}/TimeLexer.java" />
-		<uptodate property="timeParser.buildNotRequired" srcfile="${timeParserGrammar}" targetfile="${timeParserGenPath}/TimeParser.java" />
-		<uptodate property="dateLexerEn.buildNotRequired" srcfile="${dateLexerGrammarEn}" targetfile="${dateLexerGenPathEn}/DateLexer.java" />
-		<uptodate property="dateLexerDe.buildNotRequired" srcfile="${dateLexerGrammarDe}" targetfile="${dateLexerGenPathDe}/DateLexer.java" />
-		<uptodate property="dateParser.buildNotRequired" srcfile="${dateParserGrammar}" targetfile="${dateParserGenPath}/DateParser.java" />
 		<uptodate property="rtmSmartFilterParser.buildNotRequired" srcfile="${rtmSmartFilterParserGrammar}" targetfile="${rtmSmartFilterParserGenPath}/RtmSmartFilterParser.java" />
 		<uptodate property="recurrPatternParser.buildNotRequired" srcfile="${recurrPatternParserGrammar}" targetfile="${recurrPatternParserGenPath}/RecurrencePatternParser.java" />
 		<uptodate property="recurrLexerEn.buildNotRequired" srcfile="${recurrLexerGrammarEn}" targetfile="${recurrLexerGenPathEn}/RecurrenceLexer.java" />
 		<uptodate property="recurrLexerDe.buildNotRequired" srcfile="${recurrLexerGrammarDe}" targetfile="${recurrLexerGenPathDe}/RecurrenceLexer.java" />
 		<uptodate property="recurrParser.buildNotRequired" srcfile="${recurrParserGrammar}" targetfile="${recurrParserGenPath}/RecurrenceParser.java" />
+		<uptodate property="dateTimeLexerEn.buildNotRequired" srcfile="${dateTimeLexerEnGrammar}" targetfile="${dateTimeLexerEnGenPath}/DateTimeLexer.java" />
+		<uptodate property="dateTimeLexerDe.buildNotRequired" srcfile="${dateTimeLexerDeGrammar}" targetfile="${dateTimeLexerDeGenPath}/DateTimeLexer.java" />
+		<uptodate property="dateTimeParser.buildNotRequired" srcfile="${dateTimeParserGrammar}" targetfile="${dateTimeParserGenPath}/DateTimeParser.java" />
 	</target>
 
 	<target name="build" depends="checkBuildNeeded">
-		<parallel>
-			<antcall target="buildTimeLexerEn" />
-			<antcall target="buildTimeLexerDe" />
-		</parallel>
-		<antcall target="buildTimeParser" />
-		<parallel>
-			<antcall target="buildDateLexerEn" />
-			<antcall target="buildDateLexerDe" />
-		</parallel>
-		<antcall target="buildDateParser" />
 		<antcall target="buildRtmSmartFilterParser" />
 		<antcall target="buildRecurrencePatternParser" />
 		<parallel>
@@ -61,47 +42,17 @@
 			<antcall target="buildRecurrenceLexerDe" />
 		</parallel>
 		<antcall target="buildRecurrenceParser" />
-	</target>
 
-	<target name="buildTimeLexerEn" unless="timeLexerEn.buildNotRequired">
-		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
-			<arg line="-o ${timeLexerGenPathEn} -no-listener -no-visitor -package ${grammarGenPackage}.datetime ${timeLexerGrammarEn}" />
-		</java>
-	</target>
-
-	<target name="buildTimeLexerDe" unless="timeLexerDe.buildNotRequired">
-		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
-			<arg line="-o ${timeLexerGenPathDe} -no-listener -no-visitor -package ${grammarGenPackage}.datetime.de ${timeLexerGrammarDe}" />
-		</java>
-	</target>
-
-	<target name="buildTimeParser" unless="timeParser.buildNotRequired">
-		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
-			<arg line="-o ${timeParserGenPath} -no-listener -visitor -package ${grammarGenPackage}.datetime ${timeParserGrammar}" />
-		</java>
-	</target>
-
-	<target name="buildDateLexerEn" unless="dateLexerEn.buildNotRequired">
-		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
-			<arg line="-o ${dateLexerGenPathEn} -no-listener -no-visitor -package ${grammarGenPackage}.datetime ${dateLexerGrammarEn}" />
-		</java>
-	</target>
-
-	<target name="buildDateLexerDe" unless="dateLexerDe.buildNotRequired">
-		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
-			<arg line="-o ${dateLexerGenPathDe} -no-listener -no-visitor -package ${grammarGenPackage}.datetime.de ${dateLexerGrammarDe}" />
-		</java>
-	</target>
-
-	<target name="buildDateParser" unless="dateParser.buildNotRequired">
-		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
-			<arg line="-o ${dateParserGenPath} -no-listener -visitor -package ${grammarGenPackage}.datetime ${dateParserGrammar}" />
-		</java>
+		<parallel>
+			<antcall target="buildDateTimeLexerEn" />
+			<antcall target="buildDateTimeLexerDe" />
+		</parallel>
+		<antcall target="buildDateTimeParser" />
 	</target>
 
 	<target name="buildRtmSmartFilterParser" unless="rtmSmartFilterParser.buildNotRequired">
 		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
-			<arg line="-o ${rtmSmartFilterParserGenPath} -listener -visitor -package ${grammarGenPackage}.rtmsmart ${rtmSmartFilterParserGrammar}" />
+			<arg line="-o ${rtmSmartFilterParserGenPath} -no-listener -visitor -package ${grammarGenPackage}.rtmsmart ${rtmSmartFilterParserGrammar}" />
 		</java>
 	</target>
 
@@ -126,6 +77,24 @@
 	<target name="buildRecurrenceParser" unless="recurrParser.buildNotRequired">
 		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
 			<arg line="-o ${recurrParserGenPath} -no-listener -visitor -package ${grammarGenPackage}.recurrence ${recurrParserGrammar}" />
+		</java>
+	</target>
+
+	<target name="buildDateTimeLexerEn" unless="dateTimeLexerEn.buildNotRequired">
+		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
+			<arg line="-o ${dateTimeLexerEnGenPath} -no-listener -no-visitor -package ${grammarGenPackage}.datetime ${dateTimeLexerEnGrammar}" />
+		</java>
+	</target>
+
+	<target name="buildDateTimeLexerDe" unless="dateTimeLexerDe.buildNotRequired">
+		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
+			<arg line="-o ${dateTimeLexerDeGenPath} -no-listener -no-visitor -package ${grammarGenPackage}.datetime.de ${dateTimeLexerDeGrammar}" />
+		</java>
+	</target>
+
+	<target name="buildDateTimeParser" unless="dateTimeParser.buildNotRequired">
+		<java jar="${antlrGen}" classpath="${java.class.path}" fork="true" failonerror="true">
+			<arg line="-o ${dateTimeParserGenPath} -no-listener -visitor -package ${grammarGenPackage}.datetime ${dateTimeParserGrammar}" />
 		</java>
 	</target>
 

@@ -22,15 +22,15 @@
 
 package dev.drsoran.moloko.domain.parsing.datetime;
 
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser.ParseTimeEstimateContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser.TimeNaturalSpecFloatHoursContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser.TimeNaturalSpecUnitHoursContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser.TimeNaturalSpecUnitMinutesContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser.TimeNaturalSpecUnitSecondsContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParserBaseVisitor;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.ParseTimeEstimateContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecFloatHoursContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecUnitHoursContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecUnitMinutesContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecUnitSecondsContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParserBaseVisitor;
 
 
-public class TimeEstimateEvaluator extends TimeParserBaseVisitor< Void >
+public class TimeEstimateEvaluator extends DateTimeParserBaseVisitor< Void >
 {
    private long estimateMillis;
    

@@ -34,7 +34,7 @@ public class TimeParserTestLanguageEn implements ITimeParserTestLanguage
    @Override
    public Collection< String > getAts()
    {
-      return Arrays.asList( Strings.EMPTY_STRING, "@", "at ", "," );
+      return Arrays.asList( Strings.EMPTY_STRING, "@", "at " );
    }
    
    

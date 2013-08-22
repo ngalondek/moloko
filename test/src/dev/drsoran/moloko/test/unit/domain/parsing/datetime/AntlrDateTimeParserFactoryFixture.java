@@ -24,7 +24,7 @@ package dev.drsoran.moloko.test.unit.domain.parsing.datetime;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -34,8 +34,7 @@ import org.junit.Test;
 
 import dev.drsoran.moloko.domain.parsing.datetime.AntlrDateTimeParserFactory;
 import dev.drsoran.moloko.domain.parsing.datetime.IDateTimeParserFactory;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.util.Strings;
 
@@ -59,8 +58,8 @@ public class AntlrDateTimeParserFactoryFixture extends MolokoTestCase
    @Test
    public void testCreateDateParserGerman()
    {
-      final DateParser parser = fact.createDateParser( Locale.GERMAN,
-                                                       Strings.EMPTY_STRING );
+      final DateTimeParser parser = fact.createDateTimeParser( Locale.GERMAN,
+                                                               Strings.EMPTY_STRING );
       assertThat( parser, notNullValue() );
    }
    
@@ -69,8 +68,8 @@ public class AntlrDateTimeParserFactoryFixture extends MolokoTestCase
    @Test
    public void testCreateDateParserEnglish()
    {
-      final DateParser parser = fact.createDateParser( Locale.ENGLISH,
-                                                       Strings.EMPTY_STRING );
+      final DateTimeParser parser = fact.createDateTimeParser( Locale.ENGLISH,
+                                                               Strings.EMPTY_STRING );
       assertThat( parser, notNullValue() );
    }
    
@@ -79,35 +78,7 @@ public class AntlrDateTimeParserFactoryFixture extends MolokoTestCase
    @Test( expected = NoSuchElementException.class )
    public void testCreateDateParserUnknown()
    {
-      fact.createDateParser( Locale.JAPAN, Strings.EMPTY_STRING );
-   }
-   
-   
-   
-   @Test
-   public void testCreateTimeParserGerman()
-   {
-      final TimeParser parser = fact.createTimeParser( Locale.GERMAN,
-                                                       Strings.EMPTY_STRING );
-      assertThat( parser, notNullValue() );
-   }
-   
-   
-   
-   @Test
-   public void testCreateTimeParserEnglish()
-   {
-      final TimeParser parser = fact.createTimeParser( Locale.ENGLISH,
-                                                       Strings.EMPTY_STRING );
-      assertThat( parser, notNullValue() );
-   }
-   
-   
-   
-   @Test( expected = NoSuchElementException.class )
-   public void testCreateTimeParserUnknown()
-   {
-      fact.createTimeParser( Locale.JAPAN, Strings.EMPTY_STRING );
+      fact.createDateTimeParser( Locale.JAPAN, Strings.EMPTY_STRING );
    }
    
    

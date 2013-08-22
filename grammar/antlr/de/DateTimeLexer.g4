@@ -1,14 +1,16 @@
 // de
-lexer grammar DateLexer;
+lexer grammar DateTimeLexer;
 
 /*
    TODO:
     - missing time separators: \u0020\u0068\u0020|\u6642|h
 */
 
+AT        : '@' | 'um' | 'am' | 'an';
+
 A         : 'ein'('e'|'er'|'es'|'em'|'en')?;
 
-ON        :	'am' | 'an';
+ON        : 'am' | 'an';
 
 OF        : 'von' | 'vom' | 'ab' | 'seit' | 'des';	
 
@@ -32,6 +34,12 @@ TOMORROW  : 'morgen' | 'mrg';
 
 YESTERDAY : 'gestern';
 
+MIDNIGHT  : 'mitternacht''s'?;
+
+MIDDAY    : 'mittag''s'?;
+
+NOON      : MIDDAY;
+
 NEXT      : 'n'('a'|'ae'|'ä')'chst'('e'|'er'|'es'|'en'|'em');
 
 STs       : DEACTIVATED;
@@ -42,7 +50,13 @@ MONTHS    : 'monat'SUFF_MALE?;
 
 WEEKS     : 'woche'SUFF_FMALE?;
 
-DAYS      : 'tag'SUFF_MALE?;
+DAYS      : 'tag'SUFF_MALE? | 'd';
+
+HOURS     : 'stunden'  | 'stunde'  | 'std'         | 'h';
+
+MINUTES   : 'minuten'  | 'minute'  | 'min'         | 'm';
+
+SECONDS   : 'sekunden' | 'sekunde' | 'se'('c'|'k') | 's';
 
 MONTH     :   'januar'SUFF_MALE?              | 'jan'
             | 'februar'SUFF_MALE?             | 'feb'
@@ -72,7 +86,13 @@ NUM_STR   : 'eins'  | 'zwei'   | 'drei' | 'vier' | 'f'('u'|'ü'|'ue')'nf' |
 
 DATE_SEP  : '/' | '\u5E74' | '\u6708' | '\u65E5';
 
+AM        : 'vorm'DOT? | 'vormittag'('s')?;
+
+PM        : 'nachm'DOT? | 'nachmittag'('s')?;
+
 DOT       : '.';
+
+COLON     : ':';
 
 MINUS     : '-';
 
@@ -80,19 +100,19 @@ MINUS_A   : DEACTIVATED;
 
 COMMA     : ',';
 
+INT       : '0'..'9'+;
+
+WS        : ( ' '
+          |   '\t'
+          |   '\r'
+          |   '\n' ) ->skip
+          ;          
+
 fragment
 SUFF_MALE  : 'e'|'s'|'es'|'en';
 
 fragment
 SUFF_FMALE : 'n';
 
-INT       : '0'..'9'+;
-
 fragment
 DEACTIVATED : '***?***';
-
-WS        : ( ' '
-          |   '\t'
-          |   '\r'
-          |   '\n' ) ->skip
-          ;

@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
@@ -35,23 +36,36 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateEndOfTheMonthOrWeekContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateIn_X_YMWD_distanceContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateNumericContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnMonthTheXstContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnTheXstOfMonthContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.DateOnWeekdayContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.NeverContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.NowContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.ParseDateContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.ParseDateWithinContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.TomorrowContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser.YesterdayContext;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParserBaseVisitor;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.AMContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateEndOfTheMonthOrWeekContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateIn_X_YMWD_distanceContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateNeverContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateNumericContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateOnMonthTheXstContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateOnTheXstOfMonthContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.DateOnWeekdayContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.MiddayContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.MidnightContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.NowContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.PMContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.ParseDateWithinContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.SeparatedTimeHMContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.SeparatedTimeHMSContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecFloatHoursContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecUnitHoursContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecUnitMinutesContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNaturalSpecUnitSecondsContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TimeNeverContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.TomorrowContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.UnSeparatedTimeContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser.YesterdayContext;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParserBaseVisitor;
 import dev.drsoran.moloko.util.Pair;
 
 
-public class DateEvaluator extends DateParserBaseVisitor< Void >
+public class DateTimeEvaluator extends DateTimeParserBaseVisitor< Void >
 {
    private final MolokoCalendar cal;
    
@@ -67,23 +81,22 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
    
    private MolokoCalendar epochEnd;
    
-   private boolean clearTime;
    
    
-   
-   public DateEvaluator( ILanguage dateLanguage, IDateFormatter dateFormatter,
-      MolokoCalenderProvider calenderProvider )
+   public DateTimeEvaluator( ILanguage dateLanguage,
+      IDateFormatter dateFormatter, MolokoCalenderProvider calenderProvider )
    {
       this( dateLanguage,
             dateFormatter,
             calenderProvider,
-            calenderProvider.getToday() );
+            calenderProvider.getToday().clone() );
    }
    
    
    
-   public DateEvaluator( ILanguage dateLanguage, IDateFormatter dateFormatter,
-      MolokoCalenderProvider calenderProvider, MolokoCalendar cal )
+   public DateTimeEvaluator( ILanguage dateLanguage,
+      IDateFormatter dateFormatter, MolokoCalenderProvider calenderProvider,
+      MolokoCalendar cal )
    {
       if ( dateLanguage == null )
       {
@@ -109,6 +122,11 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
       this.dateFormatter = dateFormatter;
       this.calendarProvider = calenderProvider;
       this.cal = cal;
+      
+      this.cal.setHasDate( false );
+      this.cal.setHasTime( false );
+      
+      setCalendarToToday();
    }
    
    
@@ -134,33 +152,29 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
    
    
    
-   public boolean isClearTime()
-   {
-      return clearTime;
-   }
-   
-   
-   
-   public void setClearTime( boolean clearTime )
-   {
-      this.clearTime = clearTime;
-   }
-   
-   
-   
    @Override
-   public Void visitParseDate( ParseDateContext ctx )
+   public Void visitDate( DateContext ctx )
    {
-      super.visitParseDate( ctx );
+      visitChildren( ctx );
       
       if ( !parsedNowLiteral && !parsedNeverLiteral )
       {
          cal.setHasDate( true );
       }
       
-      if ( !parsedNowLiteral && clearTime )
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitTime( TimeContext ctx )
+   {
+      visitChildren( ctx );
+      
+      if ( !parsedNeverLiteral )
       {
-         cal.setHasTime( false );
+         cal.setHasTime( true );
       }
       
       return null;
@@ -173,11 +187,13 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
    {
       if ( ctx.OF() != null )
       {
-         visit( ctx.parseDate() );
+         visit( ctx.date() );
       }
       
       if ( !parsedNeverLiteral )
       {
+         cal.setHasDate( true );
+         
          final Pair< Integer, Integer > distance = getPointInDistance( ctx.amount,
                                                                        ctx.amountStr,
                                                                        ctx.y,
@@ -329,13 +345,9 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
    
    
    @Override
-   public Void visitNever( NeverContext ctx )
+   public Void visitDateNever( DateNeverContext ctx )
    {
-      cal.setHasDate( false );
-      cal.setHasTime( false );
-      
-      parsedNeverLiteral = true;
-      
+      parsedNever();
       return null;
    }
    
@@ -345,13 +357,200 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
    public Void visitNow( NowContext ctx )
    {
       cal.setHasDate( true );
-      // NOW has always a time.
-      cal.setTimeInMillis( calendarProvider.getNow().getTimeInMillis() );
-      cal.setHasTime( true );
+      
+      if ( !cal.hasTime() )
+      {
+         // NOW has always a time.
+         cal.setTimeInMillis( calendarProvider.getNow().getTimeInMillis() );
+         cal.setHasTime( true );
+      }
       
       parsedNowLiteral = true;
       
       return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitTimeNever( TimeNeverContext ctx )
+   {
+      parsedNever();
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitMidnight( MidnightContext ctx )
+   {
+      cal.set( Calendar.HOUR_OF_DAY, 23 );
+      cal.set( Calendar.MINUTE, 59 );
+      cal.set( Calendar.SECOND, 59 );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitMidday( MiddayContext ctx )
+   {
+      cal.set( Calendar.HOUR_OF_DAY, 12 );
+      cal.set( Calendar.MINUTE, 0 );
+      cal.set( Calendar.SECOND, 0 );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitSeparatedTimeHM( SeparatedTimeHMContext ctx )
+   {
+      cal.set( Calendar.HOUR_OF_DAY, Integer.parseInt( ctx.h.getText() ) );
+      cal.set( Calendar.MINUTE, Integer.parseInt( ctx.m.getText() ) );
+      cal.set( Calendar.SECOND, 0 );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitSeparatedTimeHMS( SeparatedTimeHMSContext ctx )
+   {
+      cal.set( Calendar.HOUR_OF_DAY, Integer.parseInt( ctx.h.getText() ) );
+      cal.set( Calendar.MINUTE, Integer.parseInt( ctx.m.getText() ) );
+      cal.set( Calendar.SECOND, Integer.parseInt( ctx.s.getText() ) );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitUnSeparatedTime( UnSeparatedTimeContext ctx )
+   {
+      final String pointInTime = ctx.INT().getText();
+      
+      final int len = pointInTime.length();
+      
+      SimpleDateFormat sdf = null;
+      
+      try
+      {
+         if ( len < 3 )
+         {
+            sdf = new SimpleDateFormat( "HH" );
+         }
+         else if ( len > 3 )
+         {
+            sdf = new SimpleDateFormat( "HHmm" );
+         }
+         else
+         {
+            sdf = new SimpleDateFormat( "Hmm" );
+         }
+         
+         sdf.setTimeZone( cal.getTimeZone() );
+         sdf.parse( pointInTime );
+         
+         final Calendar sdfCal = sdf.getCalendar();
+         cal.set( Calendar.HOUR_OF_DAY, sdfCal.get( Calendar.HOUR_OF_DAY ) );
+         cal.set( Calendar.MINUTE, sdfCal.get( Calendar.MINUTE ) );
+         cal.set( Calendar.SECOND, 0 );
+         
+         // This additional get is necessary to have the calendar apply the sdfCal HOUR.
+         cal.get( Calendar.HOUR_OF_DAY );
+      }
+      catch ( ParseException e )
+      {
+         throw new RecognitionException( null, null, null );
+      }
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitAM( AMContext ctx )
+   {
+      // This get is needed to prevent stale calendar values
+      cal.get( Calendar.AM_PM );
+      cal.set( Calendar.AM_PM, Calendar.AM );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitPM( PMContext ctx )
+   {
+      // This get is needed to prevent stale calendar values
+      cal.get( Calendar.AM_PM );
+      cal.set( Calendar.AM_PM, Calendar.PM );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitTimeNaturalSpecFloatHours( TimeNaturalSpecFloatHoursContext ctx )
+   {
+      final int hours = Integer.parseInt( ctx.INT( 0 ).getText() );
+      cal.add( Calendar.HOUR, hours );
+      
+      final int deciHours = Integer.parseInt( ctx.INT( 1 ).getText() );
+      cal.add( Calendar.MINUTE, (int) ( 60.0f * ( deciHours / 10.0f ) ) );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitTimeNaturalSpecUnitHours( TimeNaturalSpecUnitHoursContext ctx )
+   {
+      final int hours = Integer.parseInt( ctx.INT().getText() );
+      cal.add( Calendar.HOUR, hours );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitTimeNaturalSpecUnitMinutes( TimeNaturalSpecUnitMinutesContext ctx )
+   {
+      final int minutes = Integer.parseInt( ctx.INT().getText() );
+      cal.add( Calendar.MINUTE, minutes );
+      
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitTimeNaturalSpecUnitSeconds( TimeNaturalSpecUnitSecondsContext ctx )
+   {
+      final int seconds = Integer.parseInt( ctx.INT().getText() );
+      cal.add( Calendar.SECOND, seconds );
+      
+      return null;
+   }
+   
+   
+   
+   private void parsedNever()
+   {
+      cal.setHasDate( false );
+      cal.setHasTime( false );
+      
+      parsedNeverLiteral = true;
    }
    
    
@@ -523,6 +722,17 @@ public class DateEvaluator extends DateParserBaseVisitor< Void >
       
       return new Pair< Integer, Integer >( Integer.valueOf( amountInt ),
                                            Integer.valueOf( calField ) );
+   }
+   
+   
+   
+   private void setCalendarToToday()
+   {
+      final MolokoCalendar today = calendarProvider.getToday();
+      
+      cal.set( Calendar.YEAR, today.get( Calendar.YEAR ) );
+      cal.set( Calendar.MONTH, today.get( Calendar.MONTH ) );
+      cal.set( Calendar.DATE, today.get( Calendar.DATE ) );
    }
    
    

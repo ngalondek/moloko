@@ -37,6 +37,7 @@ public class TestCalendarProvider
    
    static
    {
+      // Thursday, 10.6.2010
       TODAY_CAL = MolokoCalendar.getInstance();
       TODAY_CAL.set( Calendar.YEAR, 2010 );
       TODAY_CAL.set( Calendar.MONTH, Calendar.JUNE );
@@ -63,8 +64,11 @@ public class TestCalendarProvider
    
    
    
-   public static MolokoCalenderProvider getDefault()
+   public static MolokoCalenderProvider getJune_10_2010_00_00_00()
    {
-      return get( TODAY_CAL, TODAY_CAL );
+      final MolokoCalendar nowCal = TODAY_CAL.clone();
+      nowCal.setHasTime( true );
+      
+      return get( nowCal, TODAY_CAL );
    }
 }

@@ -30,12 +30,10 @@ import java.util.NoSuchElementException;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.atn.PredictionMode;
 
 import dev.drsoran.moloko.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.moloko.grammar.ANTLRNoCaseStringStream;
-import dev.drsoran.moloko.grammar.antlr.datetime.DateParser;
-import dev.drsoran.moloko.grammar.antlr.datetime.TimeParser;
+import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser;
 
 
 public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
@@ -46,33 +44,15 @@ public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
    
    
    @Override
-   public DateParser createDateParser( Locale locale, String dateToParse ) throws NoSuchElementException
+   public DateTimeParser createDateTimeParser( Locale locale,
+                                               String dateTimeToParse ) throws NoSuchElementException
    {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( dateToParse );
-      final Lexer lexer = createDateLexerForLocale( locale, stream );
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( dateTimeToParse );
+      final Lexer lexer = createLexerForLocale( locale, stream );
       lexer.addErrorListener( new ANTLRBailOutErrorListener() );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      
-      final DateParser parser = new DateParser( antlrTokens );
-      parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
-      
-      return parser;
-   }
-   
-   
-   
-   @Override
-   public TimeParser createTimeParser( Locale locale, String timeToParse ) throws NoSuchElementException
-   {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( timeToParse );
-      final Lexer lexer = createTimeLexerForLocale( locale, stream );
-      lexer.addErrorListener( new ANTLRBailOutErrorListener() );
-      
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      
-      final TimeParser parser = new TimeParser( antlrTokens );
-      parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
+      final DateTimeParser parser = new DateTimeParser( antlrTokens );
       
       return parser;
    }
@@ -87,34 +67,15 @@ public class AntlrDateTimeParserFactory implements IDateTimeParserFactory
    
    
    
-   private Lexer createTimeLexerForLocale( Locale locale, CharStream input ) throws NoSuchElementException
+   private Lexer createLexerForLocale( Locale locale, CharStream input ) throws NoSuchElementException
    {
       if ( locale == Locale.ENGLISH )
       {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.TimeLexer( input );
+         return new dev.drsoran.moloko.grammar.antlr.datetime.DateTimeLexer( input );
       }
       else if ( locale == Locale.GERMAN )
       {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.de.TimeLexer( input );
-      }
-      else
-      {
-         throw new NoSuchElementException( MessageFormat.format( "No time lexer for locale {0}",
-                                                                 locale.toString() ) );
-      }
-   }
-   
-   
-   
-   private Lexer createDateLexerForLocale( Locale locale, CharStream input ) throws NoSuchElementException
-   {
-      if ( locale == Locale.ENGLISH )
-      {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.DateLexer( input );
-      }
-      else if ( locale == Locale.GERMAN )
-      {
-         return new dev.drsoran.moloko.grammar.antlr.datetime.de.DateLexer( input );
+         return new dev.drsoran.moloko.grammar.antlr.datetime.de.DateTimeLexer( input );
       }
       else
       {

@@ -38,25 +38,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
-import android.net.Uri;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
-import dev.drsoran.moloko.test.MolokoTestRunner_en;
+import dev.drsoran.moloko.util.Strings;
 
 
-@RunWith( MolokoTestRunner_en.class )
-@Config( manifest = Config.NONE )
 public class ModificationFixture extends EqualsHashCodeTestCase
 {
    
    @Test
    public void testGetEntityUri()
    {
-      final Uri testUri = Uri.parse( "http://www.google.de" );
+      final String testUri = "http://www.google.de";
       assertEquals( Modification.newModification( testUri, "col", 1L )
                                 .getEntityUri(), testUri );
    }
@@ -66,8 +61,9 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testGetColName()
    {
-      assertThat( Modification.newModification( Uri.EMPTY, "col", 1L )
-                              .getColName(), is( "col" ) );
+      assertThat( Modification.newModification( Strings.EMPTY_STRING, "col", 1L )
+                              .getColName(),
+                  is( "col" ) );
    }
    
    
@@ -75,10 +71,13 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testGetNewValue()
    {
-      assertEquals( Modification.newModification( Uri.EMPTY, "col", 1L )
-                                .getNewValue(), "1" );
-      assertNull( Modification.newModification( Uri.EMPTY, "col", null )
-                              .getNewValue() );
+      assertEquals( Modification.newModification( Strings.EMPTY_STRING,
+                                                  "col",
+                                                  1L ).getNewValue(),
+                    "1" );
+      assertNull( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                null ).getNewValue() );
    }
    
    
@@ -86,10 +85,12 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testGetNewValueClassOfT()
    {
-      assertThat( Modification.newModification( Uri.EMPTY, "col", 1L )
-                              .getNewValue( Long.class ), is( 1L ) );
-      assertNull( Modification.newModification( Uri.EMPTY, "col", null )
-                              .getNewValue( Long.class ) );
+      assertThat( Modification.newModification( Strings.EMPTY_STRING, "col", 1L )
+                              .getNewValue( Long.class ),
+                  is( 1L ) );
+      assertNull( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                null ).getNewValue( Long.class ) );
    }
    
    
@@ -97,10 +98,15 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testGetSyncedValue()
    {
-      assertEquals( Modification.newModification( Uri.EMPTY, "col", 1L, 2L )
-                                .getSyncedValue(), "2" );
-      assertNull( Modification.newModification( Uri.EMPTY, "col", 1L, null )
-                              .getSyncedValue() );
+      assertEquals( Modification.newModification( Strings.EMPTY_STRING,
+                                                  "col",
+                                                  1L,
+                                                  2L ).getSyncedValue(),
+                    "2" );
+      assertNull( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                null ).getSyncedValue() );
    }
    
    
@@ -108,9 +114,16 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testGetSyncedValueClassOfT()
    {
-      assertThat( Modification.newModification( Uri.EMPTY, "col", 1L, 2L )
-                              .getSyncedValue( Long.class ), is( 2L ) );
-      assertNull( Modification.newModification( Uri.EMPTY, "col", 1L, null )
+      assertThat( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                2L )
+                              .getSyncedValue( Long.class ),
+                  is( 2L ) );
+      assertNull( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                null )
                               .getSyncedValue( Long.class ) );
    }
    
@@ -119,17 +132,28 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testIsSetSyncedValue()
    {
-      assertTrue( Modification.newModification( Uri.EMPTY, "col", 1L, 2L )
-                              .isSetSyncedValue() );
-      assertTrue( Modification.newModification( Uri.EMPTY, "col", 1L, null )
-                              .isSetSyncedValue() );
-      assertFalse( Modification.newModification( Uri.EMPTY, "col", 1L )
-                               .isSetSyncedValue() );
-      assertTrue( Modification.newModification( Uri.EMPTY, "col", 1L, 2L, NOW )
-                              .isPersistent() );
-      assertTrue( Modification.newModification( Uri.EMPTY, "col", 1L, null, NOW )
-                              .isPersistent() );
-      assertFalse( Modification.newNonPersistentModification( Uri.EMPTY,
+      assertTrue( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                2L ).isSetSyncedValue() );
+      assertTrue( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                null ).isSetSyncedValue() );
+      assertFalse( Modification.newModification( Strings.EMPTY_STRING,
+                                                 "col",
+                                                 1L ).isSetSyncedValue() );
+      assertTrue( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                2L,
+                                                NOW ).isPersistent() );
+      assertTrue( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                null,
+                                                NOW ).isPersistent() );
+      assertFalse( Modification.newNonPersistentModification( Strings.EMPTY_STRING,
                                                               "col",
                                                               1L )
                                .isSetSyncedValue() );
@@ -140,13 +164,19 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testIsPersistent()
    {
-      assertTrue( Modification.newModification( Uri.EMPTY, "col", "1" )
-                              .isPersistent() );
-      assertTrue( Modification.newModification( Uri.EMPTY, "col", "1", "2" )
-                              .isPersistent() );
-      assertTrue( Modification.newModification( Uri.EMPTY, "col", "1", "2", NOW )
-                              .isPersistent() );
-      assertFalse( Modification.newNonPersistentModification( Uri.EMPTY,
+      assertTrue( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                "1" ).isPersistent() );
+      assertTrue( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                "1",
+                                                "2" ).isPersistent() );
+      assertTrue( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                "1",
+                                                "2",
+                                                NOW ).isPersistent() );
+      assertFalse( Modification.newNonPersistentModification( Strings.EMPTY_STRING,
                                                               "col",
                                                               "1" )
                                .isPersistent() );
@@ -157,9 +187,11 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testGetTimestamp()
    {
-      assertThat( Modification.newModification( Uri.EMPTY, "col", "1" )
-                              .getTimestamp(), not( is( Constants.NO_TIME ) ) );
-      assertThat( Modification.newModification( Uri.EMPTY,
+      assertThat( Modification.newModification( Strings.EMPTY_STRING,
+                                                "col",
+                                                "1" ).getTimestamp(),
+                  not( is( Constants.NO_TIME ) ) );
+      assertThat( Modification.newModification( Strings.EMPTY_STRING,
                                                 "col",
                                                 "1",
                                                 null,
@@ -172,7 +204,8 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testToString()
    {
-      Modification.newModification( Uri.EMPTY, "col", "1" ).toString();
+      Modification.newModification( Strings.EMPTY_STRING, "col", "1" )
+                  .toString();
    }
    
    
@@ -180,8 +213,8 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testNewModificationUriStringT()
    {
-      Modification.newModification( Uri.EMPTY, "col", 1L );
-      Modification.newModification( Uri.EMPTY, "col", null );
+      Modification.newModification( Strings.EMPTY_STRING, "col", 1L );
+      Modification.newModification( Strings.EMPTY_STRING, "col", null );
    }
    
    
@@ -197,7 +230,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewModificationUriStringTNullColumn()
    {
-      Modification.newModification( Uri.EMPTY, null, 1L );
+      Modification.newModification( Strings.EMPTY_STRING, null, 1L );
    }
    
    
@@ -205,7 +238,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewModificationUriStringTEmptyColumn()
    {
-      Modification.newModification( Uri.EMPTY, "", 1L );
+      Modification.newModification( Strings.EMPTY_STRING, "", 1L );
    }
    
    
@@ -213,10 +246,10 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testNewModificationUriStringTT()
    {
-      Modification.newModification( Uri.EMPTY, "col", 1L, 2L );
-      Modification.newModification( Uri.EMPTY, "col", 1L, null );
-      Modification.newModification( Uri.EMPTY, "col", null, 2L );
-      Modification.newModification( Uri.EMPTY, "col", null, null );
+      Modification.newModification( Strings.EMPTY_STRING, "col", 1L, 2L );
+      Modification.newModification( Strings.EMPTY_STRING, "col", 1L, null );
+      Modification.newModification( Strings.EMPTY_STRING, "col", null, 2L );
+      Modification.newModification( Strings.EMPTY_STRING, "col", null, null );
    }
    
    
@@ -232,7 +265,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewModificationUriStringTTNullColumn()
    {
-      Modification.newModification( Uri.EMPTY, null, 1L, 2L );
+      Modification.newModification( Strings.EMPTY_STRING, null, 1L, 2L );
    }
    
    
@@ -240,7 +273,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewModificationUriStringTTEmptyColumn()
    {
-      Modification.newModification( Uri.EMPTY, "", 1L, 2L );
+      Modification.newModification( Strings.EMPTY_STRING, "", 1L, 2L );
    }
    
    
@@ -248,10 +281,14 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testNewModificationUriStringTTLong()
    {
-      Modification.newModification( Uri.EMPTY, "col", 1L, 2L, NOW );
-      Modification.newModification( Uri.EMPTY, "col", null, 2L, NOW );
-      Modification.newModification( Uri.EMPTY, "col", 1L, null, NOW );
-      Modification.newModification( Uri.EMPTY, "col", null, null, NOW );
+      Modification.newModification( Strings.EMPTY_STRING, "col", 1L, 2L, NOW );
+      Modification.newModification( Strings.EMPTY_STRING, "col", null, 2L, NOW );
+      Modification.newModification( Strings.EMPTY_STRING, "col", 1L, null, NOW );
+      Modification.newModification( Strings.EMPTY_STRING,
+                                    "col",
+                                    null,
+                                    null,
+                                    NOW );
    }
    
    
@@ -267,7 +304,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewModificationUriStringTTLongNullColumn()
    {
-      Modification.newModification( Uri.EMPTY, null, 1L, 2L, NOW );
+      Modification.newModification( Strings.EMPTY_STRING, null, 1L, 2L, NOW );
    }
    
    
@@ -275,7 +312,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewModificationUriStringTTLongEmptyColumn()
    {
-      Modification.newModification( Uri.EMPTY, "", 1L, 2L, NOW );
+      Modification.newModification( Strings.EMPTY_STRING, "", 1L, 2L, NOW );
    }
    
    
@@ -283,7 +320,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewModificationUriStringTTLongNoTime()
    {
-      Modification.newModification( Uri.EMPTY, "col", 1L, 2L, NEVER );
+      Modification.newModification( Strings.EMPTY_STRING, "col", 1L, 2L, NEVER );
    }
    
    
@@ -291,8 +328,12 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test
    public void testNewNonPersistentModification()
    {
-      Modification.newNonPersistentModification( Uri.EMPTY, "col", 1L );
-      Modification.newNonPersistentModification( Uri.EMPTY, "col", null );
+      Modification.newNonPersistentModification( Strings.EMPTY_STRING,
+                                                 "col",
+                                                 1L );
+      Modification.newNonPersistentModification( Strings.EMPTY_STRING,
+                                                 "col",
+                                                 null );
    }
    
    
@@ -308,7 +349,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewNonPersistentModificationNullColumn()
    {
-      Modification.newNonPersistentModification( Uri.EMPTY, null, 1L );
+      Modification.newNonPersistentModification( Strings.EMPTY_STRING, null, 1L );
    }
    
    
@@ -316,7 +357,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNewNonPersistentModificationEmptyColumn()
    {
-      Modification.newNonPersistentModification( Uri.EMPTY, "", 1L );
+      Modification.newNonPersistentModification( Strings.EMPTY_STRING, "", 1L );
    }
    
    
@@ -325,13 +366,25 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    public void testAddIfDifferent()
    {
       final Collection< Modification > modifications = new ArrayList< Modification >();
-      Modification.addIfDifferent( modifications, Uri.EMPTY, "col", 1L, 1L );
+      Modification.addIfDifferent( modifications,
+                                   Strings.EMPTY_STRING,
+                                   "col",
+                                   1L,
+                                   1L );
       assertEmpty( modifications );
       
-      Modification.addIfDifferent( modifications, Uri.EMPTY, "col", null, null );
+      Modification.addIfDifferent( modifications,
+                                   Strings.EMPTY_STRING,
+                                   "col",
+                                   null,
+                                   null );
       assertEmpty( modifications );
       
-      Modification.addIfDifferent( modifications, Uri.EMPTY, "col", 1L, 2L );
+      Modification.addIfDifferent( modifications,
+                                   Strings.EMPTY_STRING,
+                                   "col",
+                                   1L,
+                                   2L );
       assertCount( modifications, 1 );
    }
    
@@ -340,7 +393,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testAddIfDifferentNullCollection()
    {
-      Modification.addIfDifferent( null, Uri.EMPTY, "col", 1L, 2L );
+      Modification.addIfDifferent( null, Strings.EMPTY_STRING, "col", 1L, 2L );
    }
    
    
@@ -361,7 +414,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    public void testAddIfDifferentNullColumn()
    {
       Modification.addIfDifferent( new ArrayList< Modification >(),
-                                   Uri.EMPTY,
+                                   Strings.EMPTY_STRING,
                                    null,
                                    1L,
                                    2L );
@@ -373,7 +426,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    public void testAddIfDifferentEmptyColumn()
    {
       Modification.addIfDifferent( new ArrayList< Modification >(),
-                                   Uri.EMPTY,
+                                   Strings.EMPTY_STRING,
                                    "",
                                    1L,
                                    2L );
@@ -386,21 +439,21 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    {
       final Collection< Modification > modifications = new ArrayList< Modification >();
       Modification.addIfDifferentNonPersistent( modifications,
-                                                Uri.EMPTY,
+                                                Strings.EMPTY_STRING,
                                                 "col",
                                                 1L,
                                                 1L );
       assertEmpty( modifications );
       
       Modification.addIfDifferentNonPersistent( modifications,
-                                                Uri.EMPTY,
+                                                Strings.EMPTY_STRING,
                                                 "col",
                                                 null,
                                                 null );
       assertEmpty( modifications );
       
       Modification.addIfDifferentNonPersistent( modifications,
-                                                Uri.EMPTY,
+                                                Strings.EMPTY_STRING,
                                                 "col",
                                                 1L,
                                                 2L );
@@ -412,7 +465,11 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testAddIfDifferentNonPersistentNullCollection()
    {
-      Modification.addIfDifferentNonPersistent( null, Uri.EMPTY, "col", 1L, 2L );
+      Modification.addIfDifferentNonPersistent( null,
+                                                Strings.EMPTY_STRING,
+                                                "col",
+                                                1L,
+                                                2L );
    }
    
    
@@ -433,7 +490,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    public void testAddIfDifferentNonPersistentNullColumn()
    {
       Modification.addIfDifferentNonPersistent( new ArrayList< Modification >(),
-                                                Uri.EMPTY,
+                                                Strings.EMPTY_STRING,
                                                 null,
                                                 1L,
                                                 2L );
@@ -445,7 +502,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    public void testAddIfDifferentNonPersistentEmptyColumn()
    {
       Modification.addIfDifferentNonPersistent( new ArrayList< Modification >(),
-                                                Uri.EMPTY,
+                                                Strings.EMPTY_STRING,
                                                 "",
                                                 1L,
                                                 2L );
@@ -456,7 +513,7 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Override
    protected Object createEqualEqualsHashTestInstance() throws Exception
    {
-      return Modification.newModification( Uri.EMPTY, "col", 1L );
+      return Modification.newModification( Strings.EMPTY_STRING, "col", 1L );
    }
    
    
@@ -464,6 +521,6 @@ public class ModificationFixture extends EqualsHashCodeTestCase
    @Override
    protected Object createNotEqualEqualsHashTestInstance() throws Exception
    {
-      return Modification.newModification( Uri.EMPTY, "col", 2L );
+      return Modification.newModification( Strings.EMPTY_STRING, "col", 2L );
    }
 }

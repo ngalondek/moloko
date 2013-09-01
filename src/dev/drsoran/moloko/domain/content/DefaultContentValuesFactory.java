@@ -20,13 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.content.ContentValues;
-import android.text.TextUtils;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.ModificationColumns;
@@ -50,11 +50,11 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class DefaultContentValuesFactory implements IContentValuesFactory
 {
-   
    private final Map< Class< ? >, IFactoryMethod< ? > > factoryMethodLookUp = new HashMap< Class< ? >, IFactoryMethod< ? > >();
    
    
@@ -88,8 +88,9 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
       
       if ( responsibleMethod == null )
       {
-         throw new IllegalArgumentException( "The element type '"
-            + modelElement.getClass().getName() + "' is not supported." );
+         throw new IllegalArgumentException( MessageFormat.format( "The element type ''{0}'' is not supported.",
+                                                                   modelElement.getClass()
+                                                                               .getName() ) );
       }
       
       final ContentValues contentValues = responsibleMethod.create( modelElement );
@@ -172,7 +173,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
          values.put( TaskColumns.LIST_ID, task.getListId() );
          values.put( TaskColumns.LIST_NAME, task.getListName() );
          
-         if ( !TextUtils.isEmpty( task.getSource() ) )
+         if ( !Strings.isNullOrEmpty( task.getSource() ) )
          {
             values.put( TaskColumns.SOURCE, task.getSource() );
          }
@@ -181,7 +182,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
             values.putNull( TaskColumns.SOURCE );
          }
          
-         if ( !TextUtils.isEmpty( task.getUrl() ) )
+         if ( !Strings.isNullOrEmpty( task.getUrl() ) )
          {
             values.put( TaskColumns.URL, task.getUrl() );
          }
@@ -215,10 +216,10 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
          }
          
          final Iterable< String > tags = task.getTags();
-         final String tagsJoined = TextUtils.join( TaskColumns.TAGS_SEPARATOR,
-                                                   tags );
+         final String tagsJoined = Strings.join( TaskColumns.TAGS_SEPARATOR,
+                                                 tags );
          
-         if ( !TextUtils.isEmpty( tagsJoined ) )
+         if ( !Strings.isNullOrEmpty( tagsJoined ) )
          {
             values.put( TaskColumns.TAGS, tagsJoined );
          }
@@ -305,7 +306,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
             values.putNull( NoteColumns.NOTE_DELETED_DATE );
          }
          
-         if ( !TextUtils.isEmpty( note.getTitle() ) )
+         if ( !Strings.isNullOrEmpty( note.getTitle() ) )
          {
             values.put( NoteColumns.NOTE_TITLE, note.getTitle() );
          }
@@ -327,11 +328,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
       {
          final ContentValues values = new ContentValues();
          
-         if ( participant.getId() != Constants.NO_ID )
-         {
-            values.put( ParticipantColumns._ID, participant.getId() );
-         }
-         
+         values.put( ParticipantColumns._ID, participant.getId() );
          values.put( ParticipantColumns.CONTACT_ID, participant.getContactId() );
          values.put( ParticipantColumns.FULLNAME, participant.getFullname() );
          values.put( ParticipantColumns.USERNAME, participant.getUsername() );
@@ -349,11 +346,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
       {
          final ContentValues values = new ContentValues();
          
-         if ( contact.getId() != Constants.NO_ID )
-         {
-            values.put( ContactColumns._ID, contact.getId() );
-         }
-         
+         values.put( ContactColumns._ID, contact.getId() );
          values.put( ContactColumns.FULLNAME, contact.getFullname() );
          values.put( ContactColumns.USERNAME, contact.getUsername() );
          
@@ -370,18 +363,14 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
       {
          final ContentValues values = new ContentValues();
          
-         if ( location.getId() != Constants.NO_ID )
-         {
-            values.put( LocationColumns._ID, location.getId() );
-         }
-         
+         values.put( LocationColumns._ID, location.getId() );
          values.put( LocationColumns.LOCATION_NAME, location.getName() );
          values.put( LocationColumns.LONGITUDE, location.getLongitude() );
          values.put( LocationColumns.LATITUDE, location.getLatitude() );
          values.put( LocationColumns.VIEWABLE, location.isViewable() ? 1 : 0 );
          values.put( LocationColumns.ZOOM, location.getZoom() );
          
-         if ( !TextUtils.isEmpty( location.getAddress() ) )
+         if ( !Strings.isNullOrEmpty( location.getAddress() ) )
          {
             values.put( LocationColumns.ADDRESS, location.getAddress() );
          }
@@ -422,15 +411,15 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
          if ( modification.isSetSyncedValue() )
          {
             syncedValue = modification.getSyncedValue();
-         }
-         
-         if ( modification.getSyncedValue() != null )
-         {
-            values.put( ModificationColumns.SYNCED_VALUE, syncedValue );
-         }
-         else
-         {
-            values.putNull( ModificationColumns.SYNCED_VALUE );
+            
+            if ( syncedValue != null )
+            {
+               values.put( ModificationColumns.SYNCED_VALUE, syncedValue );
+            }
+            else
+            {
+               values.putNull( ModificationColumns.SYNCED_VALUE );
+            }
          }
          
          return values;

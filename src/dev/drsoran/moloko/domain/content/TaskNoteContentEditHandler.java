@@ -20,21 +20,21 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import android.content.ContentResolver;
-import android.net.Uri;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 
 
-class TaskNoteContentEditHandler extends AbstractContentEditHandler< Note >
+public class TaskNoteContentEditHandler extends
+         AbstractContentEditHandler< Note >
 {
    public TaskNoteContentEditHandler( ContentResolver contentResolver,
       IContentValuesFactory contentValuesFactory,
@@ -52,9 +52,10 @@ class TaskNoteContentEditHandler extends AbstractContentEditHandler< Note >
    {
       final Collection< Modification > modifications = new ArrayList< Modification >();
       
-      final Uri entityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
-                                                                      rootId,
-                                                                      existingNote.getId() );
+      final String entityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
+                                                                         rootId,
+                                                                         existingNote.getId() )
+                                          .toString();
       
       Modification.addIfDifferentNonPersistent( modifications,
                                                 entityUri,
@@ -68,11 +69,11 @@ class TaskNoteContentEditHandler extends AbstractContentEditHandler< Note >
                                                 existingNote.getModifiedMillisUtc(),
                                                 updateNote.getModifiedMillisUtc() );
       
-      Modification.addIfDifferent( modifications,
-                                   entityUri,
-                                   NoteColumns.NOTE_DELETED_DATE,
-                                   existingNote.getDeletedMillisUtc(),
-                                   updateNote.getDeletedMillisUtc() );
+      Modification.addIfDifferentNonPersistent( modifications,
+                                                entityUri,
+                                                NoteColumns.NOTE_DELETED_DATE,
+                                                existingNote.getDeletedMillisUtc(),
+                                                updateNote.getDeletedMillisUtc() );
       
       Modification.addIfDifferent( modifications,
                                    entityUri,
@@ -95,13 +96,14 @@ class TaskNoteContentEditHandler extends AbstractContentEditHandler< Note >
    protected Collection< Modification > collectAggregatedDeleteModifications( long rootId,
                                                                               long elementId )
    {
-      final Uri entityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
-                                                                      rootId,
-                                                                      elementId );
+      final String entityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
+                                                                         rootId,
+                                                                         elementId )
+                                          .toString();
       
-      final Modification modification = Modification.newModification( entityUri,
-                                                                      NoteColumns.NOTE_DELETED_DATE,
-                                                                      System.currentTimeMillis() );
+      final Modification modification = Modification.newNonPersistentModification( entityUri,
+                                                                                   NoteColumns.NOTE_DELETED_DATE,
+                                                                                   System.currentTimeMillis() );
       
       return Collections.singletonList( modification );
    }

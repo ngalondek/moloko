@@ -20,20 +20,17 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.services;
 
 import java.util.NoSuchElementException;
 
 import android.net.Uri;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.domain.content.AbstractContentEditHandler;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.domain.services.IContentEditService;
-import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
 public class ContentEditService implements IContentEditService

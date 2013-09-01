@@ -20,8 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
@@ -34,7 +35,7 @@ import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.services.ContentException;
 
 
-abstract class AbstractContentEditHandler< T >
+public abstract class AbstractContentEditHandler< T >
 {
    private final ContentResolver contentResolver;
    
@@ -74,14 +75,15 @@ abstract class AbstractContentEditHandler< T >
    public void updateElement( Uri contentUri,
                               T existingElement,
                               T updatedElement,
-                              long elementId ) throws ContentException
+                              long elementId ) throws NoSuchElementException,
+                                              ContentException
    {
-      final Collection< Modification > updateModifications = collectUpdateModifications( existingElement,
-                                                                                         updatedElement );
       performUpdate( ContentUris.bindElementId( contentUri, elementId ),
                      updatedElement );
       
-      applyModification( updateModifications );
+      final Collection< Modification > updateModifications = collectUpdateModifications( existingElement,
+                                                                                         updatedElement );
+      applyPersistentModifications( updateModifications );
    }
    
    
@@ -90,17 +92,18 @@ abstract class AbstractContentEditHandler< T >
                                         T existingElement,
                                         T updatedElement,
                                         long rootId,
-                                        long elementId ) throws ContentException
+                                        long elementId ) throws NoSuchElementException,
+                                                        ContentException
    {
-      final Collection< Modification > updateModifications = collectAggregatedUpdateModifications( rootId,
-                                                                                                   existingElement,
-                                                                                                   updatedElement );
       performUpdate( ContentUris.bindAggregatedElementIdToUri( contentUri,
                                                                rootId,
                                                                elementId ),
                      updatedElement );
       
-      applyModification( updateModifications );
+      final Collection< Modification > updateModifications = collectAggregatedUpdateModifications( rootId,
+                                                                                                   existingElement,
+                                                                                                   updatedElement );
+      applyPersistentModifications( updateModifications );
    }
    
    
@@ -109,17 +112,9 @@ abstract class AbstractContentEditHandler< T >
                                                               ContentException
    {
       final Collection< Modification > deleteModifications = collectDeleteModifications( elementId );
-      
-      // If the delete resulted in no modification, then we can perform a physical delete. Otherwise,
-      // the delete is performed by updating an entity property.
-      if ( deleteModifications.size() == 0 )
-      {
-         performDelete( ContentUris.bindElementId( contentUri, elementId ) );
-      }
-      else
-      {
-         applyModification( deleteModifications );
-      }
+      performDeleteOrDeleteByUpdate( ContentUris.bindElementId( contentUri,
+                                                                elementId ),
+                                     deleteModifications );
    }
    
    
@@ -131,11 +126,10 @@ abstract class AbstractContentEditHandler< T >
    {
       final Collection< Modification > deleteModifications = collectAggregatedDeleteModifications( rootId,
                                                                                                    elementId );
-      
-      performDelete( ContentUris.bindAggregatedElementIdToUri( contentUri,
-                                                               rootId,
-                                                               elementId ) );
-      applyModification( deleteModifications );
+      performDeleteOrDeleteByUpdate( ContentUris.bindAggregatedElementIdToUri( contentUri,
+                                                                               rootId,
+                                                                               elementId ),
+                                     deleteModifications );
    }
    
    
@@ -187,16 +181,46 @@ abstract class AbstractContentEditHandler< T >
    
    
    
-   private void performUpdate( Uri contentUri, T element ) throws ContentException
+   private void performUpdate( Uri contentUri, T element ) throws NoSuchElementException,
+                                                          ContentException
    {
+      final int numUpdated;
       try
       {
          final ContentValues contentValues = contentValuesFactory.createContentValues( element );
-         contentResolver.update( contentUri, contentValues, null, null );
+         numUpdated = contentResolver.update( contentUri,
+                                              contentValues,
+                                              null,
+                                              null );
       }
       catch ( Throwable e )
       {
          throw new ContentException( e );
+      }
+      
+      if ( numUpdated < 1 )
+      {
+         throw new NoSuchElementException( MessageFormat.format( "No element to update with URI ''{0}''.",
+                                                                 contentUri ) );
+      }
+   }
+   
+   
+   
+   /**
+    * If the delete resulted in no modification, then we can perform a physical delete. Otherwise, the delete is
+    * performed by updating an entity property.
+    */
+   private void performDeleteOrDeleteByUpdate( Uri contentUri,
+                                               Collection< Modification > deleteModifications )
+   {
+      if ( deleteModifications.size() == 0 )
+      {
+         performDelete( contentUri );
+      }
+      else
+      {
+         applyPersistentModifications( deleteModifications );
       }
    }
    
@@ -217,15 +241,15 @@ abstract class AbstractContentEditHandler< T >
       
       if ( numDeleted < 1 )
       {
-         throw new NoSuchElementException( "No element to delete with URI '"
-            + contentUri + "'." );
+         throw new NoSuchElementException( MessageFormat.format( "No element to delete with URI ''{0}''.",
+                                                                 contentUri ) );
       }
    }
    
    
    
-   private void applyModification( Collection< Modification > modifications )
+   private void applyPersistentModifications( Collection< Modification > modifications ) throws ContentException
    {
-      modificationsApplier.applyModifications( modifications );
+      modificationsApplier.applyPersistentModifications( modifications );
    }
 }

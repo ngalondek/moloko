@@ -20,15 +20,14 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.database.Cursor;
-import android.net.Uri;
-import android.text.TextUtils;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
@@ -58,6 +57,7 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class DefaultModelElementFactory implements IModelElementFactory
@@ -95,12 +95,12 @@ public class DefaultModelElementFactory implements IModelElementFactory
       
       if ( responsibleMethod == null )
       {
-         throw new IllegalArgumentException( "The element type '"
-            + elementType.getName() + "' is not supported" );
+         throw new IllegalArgumentException( MessageFormat.format( "The element type ''{0}'' is not supported",
+                                                                   elementType.getName() ) );
       }
       
-      final T product = responsibleMethod.create( c );
-      return product;
+      final T element = responsibleMethod.create( c );
+      return element;
    }
    
    
@@ -156,8 +156,10 @@ public class DefaultModelElementFactory implements IModelElementFactory
                            CursorUtils.getOptString( c,
                                                      TaskColumns.LOCATION_NAME_IDX ) );
          task.setModifiedMillisUtc( c.getLong( TaskColumns.TASK_MODIFIED_DATE_IDX ) );
-         task.setSource( CursorUtils.getOptString( c, TaskColumns.SOURCE_IDX ) );
-         task.setUrl( CursorUtils.getOptString( c, TaskColumns.URL_IDX ) );
+         task.setSource( Strings.emptyIfNull( CursorUtils.getOptString( c,
+                                                                        TaskColumns.SOURCE_IDX ) ) );
+         task.setUrl( Strings.emptyIfNull( CursorUtils.getOptString( c,
+                                                                     TaskColumns.URL_IDX ) ) );
          task.setDeletedMillisUtc( CursorUtils.getOptLong( c,
                                                            TaskColumns.DELETED_DATE_IDX,
                                                            Constants.NO_TIME ) );
@@ -165,11 +167,12 @@ public class DefaultModelElementFactory implements IModelElementFactory
                                                              TaskColumns.COMPLETED_DATE_IDX,
                                                              Constants.NO_TIME ) );
          task.setPriority( Priority.fromString( c.getString( TaskColumns.PRIORITY_IDX ) ) );
+         task.setPostponedCount( c.getInt( TaskColumns.POSTPONED_IDX ) );
          
          if ( !c.isNull( TaskColumns.TAGS_IDX ) )
          {
-            final String[] tags = TextUtils.split( c.getString( TaskColumns.TAGS_IDX ),
-                                                   TaskColumns.TAGS_SEPARATOR );
+            final String[] tags = c.getString( TaskColumns.TAGS_IDX )
+                                   .split( TaskColumns.TAGS_SEPARATOR, -1 );
             task.setTags( Arrays.asList( tags ) );
          }
          
@@ -208,7 +211,8 @@ public class DefaultModelElementFactory implements IModelElementFactory
          note.setDeletedMillisUtc( CursorUtils.getOptLong( c,
                                                            NoteColumns.NOTE_DELETED_DATE_IDX,
                                                            Constants.NO_TIME ) );
-         note.setTitle( CursorUtils.getOptString( c, NoteColumns.NOTE_TITLE_IDX ) );
+         note.setTitle( Strings.emptyIfNull( CursorUtils.getOptString( c,
+                                                                       NoteColumns.NOTE_TITLE_IDX ) ) );
          note.setText( c.getString( NoteColumns.NOTE_TEXT_IDX ) );
          
          return note;
@@ -311,7 +315,7 @@ public class DefaultModelElementFactory implements IModelElementFactory
       @Override
       public Modification create( Cursor c )
       {
-         return Modification.newModification( Uri.parse( c.getString( ModificationColumns.ENTITY_URI_IDX ) ),
+         return Modification.newModification( c.getString( ModificationColumns.ENTITY_URI_IDX ),
                                               c.getString( ModificationColumns.COL_NAME_IDX ),
                                               c.getString( ModificationColumns.NEW_VALUE_IDX ),
                                               CursorUtils.getOptString( c,

@@ -28,7 +28,7 @@ import static dev.drsoran.moloko.test.TestConstants.LATER;
 import static dev.drsoran.moloko.test.TestConstants.NEVER;
 import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static dev.drsoran.moloko.test.TestConstants.NO_ID;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -133,6 +133,14 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testGetName()
+   {
+      assertThat( createTask().getName(), is( "task" ) );
+   }
+   
+   
+   
+   @Test
    public void testSetName()
    {
       final Task task = createTask();
@@ -160,11 +168,17 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testGetSource()
+   {
+      assertThat( createTask().getSource(), is( "" ) );
+   }
+   
+   
+   
+   @Test
    public void testSetSource()
    {
       final Task task = createTask();
-      task.setSource( null );
-      assertThat( task.getSource(), is( (String) null ) );
       
       task.setSource( "" );
       assertThat( task.getSource(), is( "" ) );
@@ -175,13 +189,27 @@ public class TaskFixture extends MolokoTestCase
    
    
    
+   @Test( expected = IllegalArgumentException.class )
+   public void testSetSourceNull()
+   {
+      final Task task = createTask();
+      task.setSource( null );
+   }
+   
+   
+   
+   @Test
+   public void testGetUrl()
+   {
+      assertThat( createTask().getUrl(), is( "" ) );
+   }
+   
+   
+   
    @Test
    public void testSetUrl()
    {
       final Task task = createTask();
-      task.setUrl( null );
-      assertThat( task.getUrl(), is( (String) null ) );
-      
       task.setUrl( "" );
       assertThat( task.getUrl(), is( "" ) );
       
@@ -191,11 +219,28 @@ public class TaskFixture extends MolokoTestCase
    
    
    
+   @Test( expected = IllegalArgumentException.class )
+   public void testSetUrlNull()
+   {
+      final Task task = createTask();
+      task.setUrl( null );
+   }
+   
+   
+   
    @Test
    public void testGetAddedMillisUtc()
    {
       assertThat( new Task( 1, NOW, LATER, "task", 1L, "list" ).getAddedMillisUtc(),
                   is( LATER ) );
+   }
+   
+   
+   
+   @Test
+   public void testGetCompletedMillisUtc()
+   {
+      assertThat( createTask().getCompletedMillisUtc(), is( NEVER ) );
    }
    
    
@@ -217,6 +262,8 @@ public class TaskFixture extends MolokoTestCase
    public void testIsComplete()
    {
       final Task task = createTask();
+      assertThat( task.isComplete(), is( false ) );
+      
       task.setCompletedMillisUtc( NOW );
       assertThat( task.isComplete(), is( true ) );
       
@@ -227,11 +274,27 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testGetPriority()
+   {
+      assertThat( createTask().getPriority(), is( Priority.None ) );
+   }
+   
+   
+   
+   @Test
    public void testSetPriority()
    {
       final Task task = createTask();
       task.setPriority( Priority.High );
       assertThat( task.getPriority(), is( Priority.High ) );
+   }
+   
+   
+   
+   @Test
+   public void testGetPostponedCount()
+   {
+      assertThat( createTask().getPostponedCount(), is( 0 ) );
    }
    
    
@@ -272,6 +335,8 @@ public class TaskFixture extends MolokoTestCase
    public void testIsPostponed()
    {
       Task task = createTask();
+      assertThat( task.isPostponed(), is( false ) );
+      
       task.setPostponedCount( 0 );
       assertThat( task.isPostponed(), is( false ) );
       
@@ -281,6 +346,14 @@ public class TaskFixture extends MolokoTestCase
       task = createTask();
       task.setPostponedCount( 1 );
       assertThat( task.isPostponed(), is( true ) );
+   }
+   
+   
+   
+   @Test
+   public void testGetDue()
+   {
+      assertThat( createTask().getDue(), nullValue() );
    }
    
    
@@ -302,6 +375,14 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testGetRecurence()
+   {
+      assertThat( createTask().getRecurrence(), nullValue() );
+   }
+   
+   
+   
+   @Test
    public void testSetRecurrence()
    {
       final Task task = createTask();
@@ -318,6 +399,14 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testGetEstimation()
+   {
+      assertThat( createTask().getEstimation(), nullValue() );
+   }
+   
+   
+   
+   @Test
    public void testSetEstimation()
    {
       final Task task = createTask();
@@ -329,6 +418,14 @@ public class TaskFixture extends MolokoTestCase
       
       task.setEstimation( null );
       assertNull( task.getEstimation() );
+   }
+   
+   
+   
+   @Test
+   public void testGetTags()
+   {
+      assertEmpty( createTask().getTags() );
    }
    
    
@@ -679,7 +776,7 @@ public class TaskFixture extends MolokoTestCase
    public void testGetCreatedMillisUtc()
    {
       final Task task = createTask();
-      assertThat( task.getCompletedMillisUtc(), is( NOW ) );
+      assertThat( task.getCreatedMillisUtc(), is( NOW ) );
    }
    
    

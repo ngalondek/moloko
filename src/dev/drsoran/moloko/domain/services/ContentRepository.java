@@ -20,13 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.services;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import android.content.ContentResolver;
-import android.util.Pair;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
@@ -36,6 +35,8 @@ import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.domain.content.ContentQueryHandler;
+import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
@@ -49,9 +50,7 @@ import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterParsingReturn;
-import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.moloko.domain.services.TaskContentOptions;
+import dev.drsoran.moloko.util.Pair;
 
 
 public class ContentRepository implements IContentRepository

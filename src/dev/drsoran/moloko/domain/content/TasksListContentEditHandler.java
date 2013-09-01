@@ -20,21 +20,20 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import android.content.ContentResolver;
-import android.net.Uri;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.TasksList;
 
 
-class TasksListContentEditHandler extends
+public class TasksListContentEditHandler extends
          AbstractContentEditHandler< TasksList >
 {
    public TasksListContentEditHandler( ContentResolver contentResolver,
@@ -52,8 +51,9 @@ class TasksListContentEditHandler extends
    {
       final Collection< Modification > modifications = new ArrayList< Modification >();
       
-      final Uri entityUri = ContentUris.bindElementId( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
-                                                       existingTasksList.getId() );
+      final String entityUri = ContentUris.bindElementId( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
+                                                          existingTasksList.getId() )
+                                          .toString();
       
       Modification.addIfDifferentNonPersistent( modifications,
                                                 entityUri,
@@ -67,11 +67,11 @@ class TasksListContentEditHandler extends
                                                 existingTasksList.getModifiedMillisUtc(),
                                                 updatedTasksList.getModifiedMillisUtc() );
       
-      Modification.addIfDifferent( modifications,
-                                   entityUri,
-                                   TasksListColumns.LIST_DELETED_DATE,
-                                   existingTasksList.getDeletedMillisUtc(),
-                                   updatedTasksList.getDeletedMillisUtc() );
+      Modification.addIfDifferentNonPersistent( modifications,
+                                                entityUri,
+                                                TasksListColumns.LIST_DELETED_DATE,
+                                                existingTasksList.getDeletedMillisUtc(),
+                                                updatedTasksList.getDeletedMillisUtc() );
       
       Modification.addIfDifferent( modifications,
                                    entityUri,
@@ -142,12 +142,13 @@ class TasksListContentEditHandler extends
    @Override
    protected Collection< Modification > collectDeleteModifications( long elementId )
    {
-      final Uri entityUri = ContentUris.bindElementId( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
-                                                       elementId );
+      final String entityUri = ContentUris.bindElementId( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
+                                                          elementId )
+                                          .toString();
       
-      final Modification modification = Modification.newModification( entityUri,
-                                                                      TasksListColumns.LIST_DELETED_DATE,
-                                                                      System.currentTimeMillis() );
+      final Modification modification = Modification.newNonPersistentModification( entityUri,
+                                                                                   TasksListColumns.LIST_DELETED_DATE,
+                                                                                   System.currentTimeMillis() );
       
       return Collections.singletonList( modification );
    }

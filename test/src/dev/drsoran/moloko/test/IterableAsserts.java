@@ -127,6 +127,16 @@ public final class IterableAsserts
                                             Iterable< T > iterable2,
                                             Comparator< T > cmp )
    {
+      compareSets( iterable1, iterable2, cmp );
+      compareSets( iterable2, iterable1, cmp );
+   }
+   
+   
+   
+   private static < T > void compareSets( Iterable< T > iterable1,
+                                          Iterable< T > iterable2,
+                                          Comparator< T > cmp )
+   {
       for ( T setElement1 : iterable1 )
       {
          boolean found = false;

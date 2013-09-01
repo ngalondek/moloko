@@ -20,8 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,7 +34,7 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.services.ContentException;
 
 
-class ContentQueryHandler< T >
+public class ContentQueryHandler< T >
 {
    private final ContentResolver contentResolver;
    
@@ -66,8 +67,8 @@ class ContentQueryHandler< T >
       
       if ( elements.size() == 0 )
       {
-         throw new NoSuchElementException( "No element with ID '" + elementId
-            + "'" );
+         throw new NoSuchElementException( MessageFormat.format( "No element with ID ''{0}''",
+                                                                 elementId ) );
       }
       
       return elements.get( 0 );
@@ -84,8 +85,9 @@ class ContentQueryHandler< T >
                                                null );
       if ( elements.size() == 0 )
       {
-         throw new NoSuchElementException( "No aggregated element with root ID '"
-            + rootId + "' and element ID '" + elementId + "'" );
+         throw new NoSuchElementException( MessageFormat.format( "No aggregated element with root ID ''{0}'' and element ID ''{1}''",
+                                                                 rootId,
+                                                                 elementId ) );
       }
       
       return elements.get( 0 );

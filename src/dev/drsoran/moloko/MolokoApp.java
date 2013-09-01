@@ -41,10 +41,10 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.DomainServicesContainer;
 import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
 import dev.drsoran.moloko.domain.parsing.lang.RecurrenceSentenceLanguage;
 import dev.drsoran.moloko.domain.parsing.lang.XmlLanguageReader;
+import dev.drsoran.moloko.domain.services.DomainServicesContainer;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiServicesContainer;
 

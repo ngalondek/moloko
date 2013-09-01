@@ -62,7 +62,7 @@ public class ContentUrisFixture extends MolokoRoboTestCase
       assertEqualSet( ids, 129L, 30L );
       
       ids = ContentUris.getIdsFromUri( Uri.parse( "http://www.google.de/129/abc/#/de/10" ) );
-      assertEqualSet( ids, 129L, 10L );
+      assertEqualSet( ids, 129L );
    }
    
    

@@ -20,12 +20,11 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.ContentCompare;
@@ -59,15 +58,13 @@ public class DefaultModificationsApplier implements IModificationsApplier
    
    
    @Override
-   public void applyModifications( Iterable< Modification > modifications ) throws ContentException
+   public void applyPersistentModifications( Iterable< Modification > modifications ) throws ContentException
    {
       Cursor c = null;
       try
       {
          for ( Modification modification : modifications )
          {
-            // Check if the modification should be stored or simply modify
-            // the entity.
             if ( modification.isPersistent() )
             {
                // Check if modification already exists
@@ -103,13 +100,13 @@ public class DefaultModificationsApplier implements IModificationsApplier
    
    
    
-   private Cursor getModification( Uri entityUri, String columnName )
+   private Cursor getModification( String entityUri, String columnName )
    {
       return contentResolver.query( ContentUris.MODIFICATIONS_CONTENT_URI,
                                     ModificationColumns.PROJECTION,
                                     SEL_QUERY_MODIFICATION,
                                     new String[]
-                                    { entityUri.toString(), columnName },
+                                    { entityUri, columnName },
                                     null );
    }
    
@@ -133,7 +130,7 @@ public class DefaultModificationsApplier implements IModificationsApplier
                                        newModification.getNewValue() ) )
       {
          // Update the modification with the new value.
-         contentResolver.update( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI,
+         contentResolver.update( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI_ID,
                                                             existingModification.getLong( Columns.ID_IDX ) ),
                                  createUpdateNewValueContentValues( newModification.getNewValue() ),
                                  null,
@@ -141,7 +138,7 @@ public class DefaultModificationsApplier implements IModificationsApplier
       }
       else
       {
-         contentResolver.delete( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI,
+         contentResolver.delete( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI_ID,
                                                             existingModification.getLong( Columns.ID_IDX ) ),
                                  null,
                                  null );

@@ -48,7 +48,6 @@ public class NoteFixture extends MolokoTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
    public void testNoteNoId()
    {
       new Note( NO_ID, NOW );

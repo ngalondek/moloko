@@ -22,20 +22,19 @@
 
 package dev.drsoran.moloko.test.comp.domain.parsing.lang;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.Locale;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.parsing.lang.DictionaryLanguage;
@@ -44,6 +43,7 @@ import dev.drsoran.moloko.domain.parsing.lang.XmlLanguageReader;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 
 
+@Ignore
 @Config( qualifiers = "en" )
 public class RecurrenceSentenceLanguage_en extends MolokoRoboTestCase
 {

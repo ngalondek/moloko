@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.domain.model;
 
-import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -39,12 +38,6 @@ public class Note extends LifeTimeManaged
    public Note( long id, long createdMillisUtc )
    {
       super( createdMillisUtc );
-      
-      if ( id == Constants.NO_ID )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
       this.id = id;
    }
    

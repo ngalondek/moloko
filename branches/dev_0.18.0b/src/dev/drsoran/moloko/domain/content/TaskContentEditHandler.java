@@ -20,14 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import android.content.ContentResolver;
-import android.net.Uri;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.ContentUris;
@@ -35,7 +34,7 @@ import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Task;
 
 
-class TaskContentEditHandler extends AbstractContentEditHandler< Task >
+public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
 {
    public TaskContentEditHandler( ContentResolver contentResolver,
       IContentValuesFactory contentValuesFactory,
@@ -52,8 +51,9 @@ class TaskContentEditHandler extends AbstractContentEditHandler< Task >
    {
       final Collection< Modification > modifications = new ArrayList< Modification >();
       
-      final Uri entityUri = ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
-                                                       existingTask.getId() );
+      final String entityUri = ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                                          existingTask.getId() )
+                                          .toString();
       
       Modification.addIfDifferent( modifications,
                                    entityUri,
@@ -72,6 +72,12 @@ class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                                 TaskColumns.TASK_MODIFIED_DATE,
                                                 existingTask.getModifiedMillisUtc(),
                                                 updatedTask.getModifiedMillisUtc() );
+      
+      Modification.addIfDifferentNonPersistent( modifications,
+                                                entityUri,
+                                                TaskColumns.DELETED_DATE,
+                                                existingTask.getDeletedMillisUtc(),
+                                                updatedTask.getDeletedMillisUtc() );
       
       Modification.addIfDifferent( modifications,
                                    entityUri,
@@ -106,21 +112,22 @@ class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                    updatedTask.getLocationId() );
       
       String existingTaskRecurrence = null;
-      Boolean existingTaskIsEveryRecurrence = null;
+      int existingTaskIsEveryRecurrence = 0;
       if ( existingTask.getRecurrence() != null )
       {
          existingTaskRecurrence = existingTask.getRecurrence().getPattern();
          existingTaskIsEveryRecurrence = existingTask.getRecurrence()
-                                                     .isEveryRecurrence();
+                                                     .isEveryRecurrence() ? 1
+                                                                         : 0;
       }
       
       String updateTaskRecurrence = null;
-      Boolean updateTaskIsEveryRecurrence = null;
+      int updateTaskIsEveryRecurrence = 0;
       if ( updatedTask.getRecurrence() != null )
       {
          updateTaskRecurrence = updatedTask.getRecurrence().getPattern();
          updateTaskIsEveryRecurrence = updatedTask.getRecurrence()
-                                                  .isEveryRecurrence();
+                                                  .isEveryRecurrence() ? 1 : 0;
       }
       
       Modification.addIfDifferent( modifications,
@@ -160,19 +167,19 @@ class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                    updatedTask.getPostponedCount() );
       
       Long existingTaskDue = null;
-      Boolean existingTaskHasDueTime = null;
+      int existingTaskHasDueTime = 0;
       if ( existingTask.getDue() != null )
       {
          existingTaskDue = existingTask.getDue().getMillisUtc();
-         existingTaskHasDueTime = existingTask.getDue().hasDueTime();
+         existingTaskHasDueTime = existingTask.getDue().hasDueTime() ? 1 : 0;
       }
       
       Long updateTaskDue = null;
-      Boolean updateTaskHasDueTime = null;
+      int updateTaskHasDueTime = 0;
       if ( updatedTask.getDue() != null )
       {
          updateTaskDue = updatedTask.getDue().getMillisUtc();
-         updateTaskHasDueTime = updatedTask.getDue().hasDueTime();
+         updateTaskHasDueTime = updatedTask.getDue().hasDueTime() ? 1 : 0;
       }
       
       Modification.addIfDifferent( modifications,
@@ -188,7 +195,7 @@ class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                    updateTaskHasDueTime );
       
       String existingTaskEstimation = null;
-      Long existingTaskEstimationMillis = null;
+      long existingTaskEstimationMillis = -1L;
       if ( existingTask.getEstimation() != null )
       {
          existingTaskEstimation = existingTask.getEstimation().getSentence();
@@ -197,7 +204,7 @@ class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       }
       
       String updateTaskEstimation = null;
-      Long updateTaskEstimationMillis = null;
+      long updateTaskEstimationMillis = -1L;
       if ( updatedTask.getEstimation() != null )
       {
          updateTaskEstimation = updatedTask.getEstimation().getSentence();
@@ -225,12 +232,13 @@ class TaskContentEditHandler extends AbstractContentEditHandler< Task >
    @Override
    protected Collection< Modification > collectDeleteModifications( long elementId )
    {
-      final Uri entityUri = ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
-                                                       elementId );
+      final String entityUri = ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                                          elementId )
+                                          .toString();
       
-      final Modification modification = Modification.newModification( entityUri,
-                                                                      TaskColumns.DELETED_DATE,
-                                                                      System.currentTimeMillis() );
+      final Modification modification = Modification.newNonPersistentModification( entityUri,
+                                                                                   TaskColumns.DELETED_DATE,
+                                                                                   System.currentTimeMillis() );
       
       return Collections.singletonList( modification );
    }

@@ -20,13 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
-import dev.drsoran.moloko.domain.model.Modification;
-import dev.drsoran.moloko.domain.services.ContentException;
+import android.database.Cursor;
 
 
-public interface IModificationsApplier
+public interface IModelElementFactory
 {
-   void applyModifications( Iterable< Modification > modifications ) throws ContentException;
+   < T > T createElementFromCursor( Cursor c, Class< T > elementType ) throws IllegalArgumentException;
 }

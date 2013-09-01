@@ -96,7 +96,6 @@ public class Task extends LifeTimeManaged
       }
       
       this.id = id;
-      this.completedMillisUtc = createdMillisUtc;
       this.addedMillisUtc = addedMillisUtc;
       this.name = name;
       this.listId = listId;
@@ -140,6 +139,11 @@ public class Task extends LifeTimeManaged
    
    public void setSource( String source )
    {
+      if ( source == null )
+      {
+         throw new IllegalArgumentException( "source" );
+      }
+      
       this.source = source;
    }
    
@@ -154,6 +158,11 @@ public class Task extends LifeTimeManaged
    
    public void setUrl( String url )
    {
+      if ( url == null )
+      {
+         throw new IllegalArgumentException( "url" );
+      }
+      
       this.url = url;
    }
    

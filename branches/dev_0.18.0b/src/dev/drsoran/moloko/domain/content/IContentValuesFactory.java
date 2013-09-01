@@ -20,12 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
-import android.database.Cursor;
+import android.content.ContentValues;
 
 
-public interface IModelElementFactory
+public interface IContentValuesFactory
 {
-   < T > T createElementFromCursor( Cursor c, Class< T > elementType ) throws IllegalArgumentException;
+   public < T > ContentValues createContentValues( T modelElement ) throws IllegalArgumentException;
 }

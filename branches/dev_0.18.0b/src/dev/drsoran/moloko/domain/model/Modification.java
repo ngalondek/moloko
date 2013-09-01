@@ -25,7 +25,6 @@ package dev.drsoran.moloko.domain.model;
 import java.util.Collection;
 import java.util.Date;
 
-import android.net.Uri;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentCompare;
 import dev.drsoran.moloko.util.Strings;
@@ -33,7 +32,7 @@ import dev.drsoran.moloko.util.Strings;
 
 public class Modification
 {
-   private final Uri entityUri;
+   private final String entityUri;
    
    private final String colName;
    
@@ -49,7 +48,7 @@ public class Modification
    
    
    
-   private Modification( Uri entityUri, String colName, String newValue,
+   private Modification( String entityUri, String colName, String newValue,
       String syncedValue, boolean isSetSyncedValue, boolean persistent,
       long timestamp )
    {
@@ -79,7 +78,7 @@ public class Modification
    
    
    
-   public Uri getEntityUri()
+   public String getEntityUri()
    {
       return entityUri;
    }
@@ -199,7 +198,7 @@ public class Modification
    
    
    
-   public static < T > Modification newModification( Uri entityUri,
+   public static < T > Modification newModification( String entityUri,
                                                      String colName,
                                                      T newValue )
    {
@@ -214,7 +213,7 @@ public class Modification
    
    
    
-   public static < T > Modification newModification( Uri entityUri,
+   public static < T > Modification newModification( String entityUri,
                                                      String colName,
                                                      T newValue,
                                                      T synedValue )
@@ -230,7 +229,7 @@ public class Modification
    
    
    
-   public static < T > Modification newModification( Uri entityUri,
+   public static < T > Modification newModification( String entityUri,
                                                      String colName,
                                                      T newValue,
                                                      T synedValue,
@@ -247,7 +246,7 @@ public class Modification
    
    
    
-   public static < T > Modification newNonPersistentModification( Uri entityUri,
+   public static < T > Modification newNonPersistentModification( String entityUri,
                                                                   String colName,
                                                                   T newValue )
    {
@@ -263,7 +262,7 @@ public class Modification
    
    
    public static < V > void addIfDifferent( Collection< Modification > modifications,
-                                            Uri entityUri,
+                                            String entityUri,
                                             String colName,
                                             V existingValue,
                                             V updatedValue )
@@ -285,7 +284,7 @@ public class Modification
    
    
    public static < V > void addIfDifferentNonPersistent( Collection< Modification > modifications,
-                                                         Uri entityUri,
+                                                         String entityUri,
                                                          String colName,
                                                          V existingValue,
                                                          V updatedValue )

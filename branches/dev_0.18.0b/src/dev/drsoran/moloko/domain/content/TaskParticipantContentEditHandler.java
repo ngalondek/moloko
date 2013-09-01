@@ -20,20 +20,19 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import android.content.ContentResolver;
-import android.net.Uri;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Participant;
 
 
-class TaskParticipantContentEditHandler extends
+public class TaskParticipantContentEditHandler extends
          AbstractContentEditHandler< Participant >
 {
    public TaskParticipantContentEditHandler( ContentResolver contentResolver,
@@ -52,9 +51,10 @@ class TaskParticipantContentEditHandler extends
    {
       final Collection< Modification > modifications = new ArrayList< Modification >();
       
-      final Uri entityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID,
-                                                                      rootId,
-                                                                      existingParticipant.getId() );
+      final String entityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID,
+                                                                         rootId,
+                                                                         existingParticipant.getId() )
+                                          .toString();
       
       Modification.addIfDifferentNonPersistent( modifications,
                                                 entityUri,

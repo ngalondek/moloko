@@ -20,12 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.content;
 
-import android.content.ContentValues;
+import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.domain.services.ContentException;
 
 
-public interface IContentValuesFactory
+public interface IModificationsApplier
 {
-   public < T > ContentValues createContentValues( T modelElement ) throws IllegalArgumentException;
+   void applyPersistentModifications( Iterable< Modification > modifications ) throws ContentException;
 }

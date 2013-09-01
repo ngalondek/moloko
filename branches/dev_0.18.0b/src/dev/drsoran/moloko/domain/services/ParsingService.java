@@ -20,12 +20,11 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.services;
 
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
-import dev.drsoran.moloko.domain.services.IParsingService;
 
 
 class ParsingService implements IParsingService

@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain;
+package dev.drsoran.moloko.domain.services;
 
 import java.util.Locale;
 
@@ -28,6 +28,16 @@ import android.content.ContentResolver;
 import android.content.Context;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluator;
+import dev.drsoran.moloko.domain.content.DefaultContentValuesFactory;
+import dev.drsoran.moloko.domain.content.DefaultModelElementFactory;
+import dev.drsoran.moloko.domain.content.DefaultModificationsApplier;
+import dev.drsoran.moloko.domain.content.IContentValuesFactory;
+import dev.drsoran.moloko.domain.content.IModelElementFactory;
+import dev.drsoran.moloko.domain.content.IModificationsApplier;
+import dev.drsoran.moloko.domain.content.TaskContentEditHandler;
+import dev.drsoran.moloko.domain.content.TaskNoteContentEditHandler;
+import dev.drsoran.moloko.domain.content.TaskParticipantContentEditHandler;
+import dev.drsoran.moloko.domain.content.TasksListContentEditHandler;
 import dev.drsoran.moloko.domain.parsing.DateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
@@ -42,10 +52,6 @@ import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
 import dev.drsoran.moloko.domain.parsing.recurrence.AntlrRecurrenceParserFactory;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
-import dev.drsoran.moloko.domain.services.IContentEditService;
-import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.moloko.domain.services.IDomainServices;
-import dev.drsoran.moloko.domain.services.IParsingService;
 
 
 public class DomainServicesContainer implements IDomainServices

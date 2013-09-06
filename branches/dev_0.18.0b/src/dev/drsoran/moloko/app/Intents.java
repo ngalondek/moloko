@@ -38,10 +38,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
-
-import com.mdt.rtm.data.RtmLocation;
-import com.mdt.rtm.data.RtmTaskNote;
-
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
@@ -49,16 +45,16 @@ import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.notification.MolokoNotificationService;
 import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
 import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
-import dev.drsoran.moloko.content.db.TableColumns.Notes;
-import dev.drsoran.moloko.content.db.TableColumns.Tags;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
-import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.db.TableColumns;
+import dev.drsoran.moloko.domain.model.Location;
+import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.util.Bundles;
-import dev.drsoran.rtm.RtmListWithTaskCount;
-import dev.drsoran.rtm.Task;
 
 
 public final class Intents
@@ -111,6 +107,8 @@ public final class Intents
       
       public final static String KEY_TASK = "task";
       
+      public final static String KEY_TASK_ID = "task_id";
+      
       public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
          + "tasks";
       
@@ -121,6 +119,8 @@ public final class Intents
       public final static String KEY_LIST_ID = "list_id";
       
       public final static String KEY_NOTE = "note";
+      
+      public final static String KEY_NOTE_ID = "note_id";
       
       public final static String KEY_NOTE_TITLE = "note_title";
       
@@ -170,13 +170,12 @@ public final class Intents
       
       
       
-      public final static Bundle createEditNoteExtras( Task task,
-                                                       RtmTaskNote note )
+      public final static Bundle createEditNoteExtras( Task task, long noteId )
       {
          final Bundle bundle = new Bundle( 2 );
          
-         bundle.putParcelable( Extras.KEY_TASK, task );
-         bundle.putParcelable( Extras.KEY_NOTE, note );
+         bundle.putSerializable( Extras.KEY_TASK, task );
+         bundle.putLong( Extras.KEY_NOTE_ID, noteId );
          
          return bundle;
       }
@@ -189,7 +188,7 @@ public final class Intents
       {
          final Bundle bundle = new Bundle( 3 );
          
-         bundle.putParcelable( Extras.KEY_TASK, task );
+         bundle.putSerializable( Extras.KEY_TASK, task );
          
          if ( !TextUtils.isEmpty( title ) )
             bundle.putString( Extras.KEY_NOTE_TITLE, title );
@@ -215,7 +214,7 @@ public final class Intents
       
       
       public final static Bundle createOpenListExtras( Context context,
-                                                       ITasksList list,
+                                                       TasksList list,
                                                        String additionalSmartFilter )
       {
          final RtmSmartFilterBuilder smartFilterBuilder = new RtmSmartFilterBuilder();
@@ -539,7 +538,7 @@ public final class Intents
    
    
    public final static Intent createOpenListIntentById( Context context,
-                                                        String id,
+                                                        long id,
                                                         String filter )
    {
       Intent intent = null;
@@ -568,12 +567,12 @@ public final class Intents
    
    
    public final static Intent createOpenListIntent( Context context,
-                                                    RtmListWithTaskCount list,
+                                                    TasksList list,
                                                     String additionalSmartFilter )
    {
-      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenListExtras( context,
-                                                                                                         list,
-                                                                                                         additionalSmartFilter ) );
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenListExtras( context,
+                                                                                                                     list,
+                                                                                                                     additionalSmartFilter ) );
    }
    
    
@@ -582,9 +581,9 @@ public final class Intents
                                                     List< String > tags,
                                                     String logicalOperator )
    {
-      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenTagsExtras( context,
-                                                                                                         tags,
-                                                                                                         logicalOperator ) );
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenTagsExtras( context,
+                                                                                                                     tags,
+                                                                                                                     logicalOperator ) );
    }
    
    
@@ -592,8 +591,8 @@ public final class Intents
    public final static Intent createOpenLocationIntentByName( Context context,
                                                               String name )
    {
-      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenLocationExtras( context,
-                                                                                                             name ) );
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenLocationExtras( context,
+                                                                                                                         name ) );
    }
    
    
@@ -627,21 +626,21 @@ public final class Intents
    
    
    
-   public final static Intent createOpenLocationWithOtherAppChooser( RtmLocation location )
+   public final static Intent createOpenLocationWithOtherAppChooser( Location location )
    {
       // Determine the type of the location. If we have coordinates
       // we use these cause they are more precise than the
       // address.
-      if ( location.longitude != 0.0f || location.latitude != 0.0f )
+      if ( location.getLongitude() != 0.0f || location.getLatitude() != 0.0f )
       {
-         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.longitude,
-                                                                            location.latitude,
-                                                                            location.zoom ),
+         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.getLongitude(),
+                                                                            location.getLatitude(),
+                                                                            location.getZoom() ),
                                       null );
       }
-      else if ( !TextUtils.isEmpty( location.address ) )
+      else if ( !TextUtils.isEmpty( location.getAddress() ) )
       {
-         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.address ),
+         return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.getAddress() ),
                                       null );
       }
       
@@ -657,9 +656,9 @@ public final class Intents
                                                        String fullname,
                                                        String username )
    {
-      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenContactExtras( context,
-                                                                                                            fullname,
-                                                                                                            username ) );
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenContactExtras( context,
+                                                                                                                        fullname,
+                                                                                                                        username ) );
    }
    
    
@@ -677,24 +676,24 @@ public final class Intents
                                                               SqlSelectionFilter filter,
                                                               String title )
    {
-      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createSqlSelectionFilterExtras( context,
-                                                                                                                   filter,
-                                                                                                                   title ) );
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createSqlSelectionFilterExtras( context,
+                                                                                                                               filter,
+                                                                                                                               title ) );
    }
    
    
    
-   public final static Intent createOpenTaskIntent( Context context,
-                                                    String taskId )
+   public final static Intent createOpenTaskIntent( Context context, long taskId )
    {
       return new Intent( Intent.ACTION_VIEW,
-                         DbUtils.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+                         ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                                    taskId ) );
    }
    
    
    
    public final static Intent createOpenTaskIntentFromNotification( Context context,
-                                                                    String taskId )
+                                                                    long taskId )
    {
       return createOpenTaskIntent( context, taskId ).putExtra( Extras.KEY_FROM_NOTIFICATION,
                                                                true );
@@ -705,16 +704,17 @@ public final class Intents
    public final static Intent createEditTaskIntent( Context context, Task task )
    {
       return new Intent( Intent.ACTION_EDIT,
-                         DbUtils.contentUriWithId( Tasks.CONTENT_URI,
-                                                   task.getId() ) ).putExtras( Extras.createEditTaskExtras( task ) );
+                         ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                                    task.getId() ) ).putExtras( Extras.createEditTaskExtras( task ) );
    }
    
    
    
    public final static Intent createEditMultipleTasksIntent( Context context,
-                                                             List< ? extends Task > tasks )
+                                                             Collection< ? extends Task > tasks )
    {
-      final Intent intent = new Intent( Intent.ACTION_EDIT, Tasks.CONTENT_URI );
+      final Intent intent = new Intent( Intent.ACTION_EDIT,
+                                        ContentUris.TASKS_CONTENT_URI );
       intent.putParcelableArrayListExtra( Extras.KEY_TASKS,
                                           new ArrayList< Task >( tasks ) );
       
@@ -726,9 +726,10 @@ public final class Intents
    public final static Intent createAddTaskIntent( Context context,
                                                    Bundle initialValues )
    {
-      final Intent intent = new Intent( Intent.ACTION_INSERT, Tasks.CONTENT_URI ).putExtras( initialValues != null
-                                                                                                                  ? initialValues
-                                                                                                                  : Bundle.EMPTY );
+      final Intent intent = new Intent( Intent.ACTION_INSERT,
+                                        ContentUris.TASKS_CONTENT_URI ).putExtras( initialValues != null
+                                                                                                        ? initialValues
+                                                                                                        : Bundle.EMPTY );
       
       return intent;
    }
@@ -736,14 +737,15 @@ public final class Intents
    
    
    public final static Intent createEditNoteIntent( Context context,
-                                                    Task task,
-                                                    RtmTaskNote note )
+                                                    long taskId,
+                                                    Note note )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT,
-                                        DbUtils.contentUriWithId( Notes.CONTENT_URI,
-                                                                  note.getId() ) );
+                                        ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
+                                                                                  taskId,
+                                                                                  note.getId() ) );
       
-      intent.putExtras( Extras.createEditNoteExtras( task, note ) );
+      intent.putExtras( Extras.createEditNoteExtras( taskId, note ) );
       
       return intent;
    }
@@ -755,7 +757,8 @@ public final class Intents
                                                    String title,
                                                    String text )
    {
-      final Intent intent = new Intent( Intent.ACTION_INSERT, Notes.CONTENT_URI );
+      final Intent intent = new Intent( Intent.ACTION_INSERT,
+                                        ContentUris.TASK_NOTES_CONTENT_URI );
       
       intent.putExtras( Extras.createAddNoteExtras( task, title, text ) );
       
@@ -766,7 +769,8 @@ public final class Intents
    
    public final static Intent createChooseTagsIntent( Collection< String > preselectedTags )
    {
-      final Intent intent = new Intent( Intent.ACTION_PICK, Tags.CONTENT_URI );
+      final Intent intent = new Intent( Intent.ACTION_PICK,
+                                        ContentUris.TAGS_CONTENT_URI );
       
       intent.putExtras( Extras.createChooseTagsExtras( preselectedTags ) );
       
@@ -779,7 +783,8 @@ public final class Intents
                                                        RtmSmartFilter filter,
                                                        String title )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+      final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                        ContentUris.TASKS_CONTENT_URI );
       
       intent.putExtras( Extras.createSmartFilterExtras( context, filter, title ) );
       

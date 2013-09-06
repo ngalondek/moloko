@@ -31,50 +31,50 @@ class NotificationDiffer
 {
    public class Diff
    {
-      private Collection< String > newValues;
+      private Collection< Long > newValues;
       
-      private Collection< String > removedValues;
+      private Collection< Long > removedValues;
       
-      private Collection< String > updatedValues;
+      private Collection< Long > updatedValues;
       
       
       
-      public Collection< String > getNewValues()
+      public Collection< Long > getNewValues()
       {
          return newValues;
       }
       
       
       
-      public void setNewValues( Collection< String > newValues )
+      public void setNewValues( Collection< Long > newValues )
       {
          this.newValues = newValues;
       }
       
       
       
-      public Collection< String > getRemovedValues()
+      public Collection< Long > getRemovedValues()
       {
          return removedValues;
       }
       
       
       
-      public void setRemovedValues( Collection< String > removedValues )
+      public void setRemovedValues( Collection< Long > removedValues )
       {
          this.removedValues = removedValues;
       }
       
       
       
-      public Collection< String > getUpdatedValues()
+      public Collection< Long > getUpdatedValues()
       {
          return updatedValues;
       }
       
       
       
-      public void setUpdatedValues( Collection< String > updatedValues )
+      public void setUpdatedValues( Collection< Long > updatedValues )
       {
          this.updatedValues = updatedValues;
       }
@@ -82,18 +82,18 @@ class NotificationDiffer
    
    
    
-   public Diff diffTaskIdSets( Collection< String > currentSet,
-                               Collection< String > newSet )
+   public Diff diffTaskIdSets( Collection< Long > currentSet,
+                               Collection< Long > newSet )
    {
       final Diff result = new Diff();
       
-      final Set< String > newNotifications = new HashSet< String >( newSet );
+      final Set< Long > newNotifications = new HashSet< Long >( newSet );
       newNotifications.removeAll( currentSet );
       
-      final Set< String > updatedNotifications = new HashSet< String >( currentSet );
+      final Set< Long > updatedNotifications = new HashSet< Long >( currentSet );
       updatedNotifications.retainAll( newSet );
       
-      final Set< String > removedNotifications = new HashSet< String >( currentSet );
+      final Set< Long > removedNotifications = new HashSet< Long >( currentSet );
       removedNotifications.removeAll( newSet );
       
       result.setNewValues( newNotifications );

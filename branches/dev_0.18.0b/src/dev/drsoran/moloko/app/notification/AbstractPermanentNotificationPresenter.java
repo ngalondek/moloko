@@ -41,13 +41,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
-import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 abstract class AbstractPermanentNotificationPresenter implements
@@ -115,8 +113,8 @@ abstract class AbstractPermanentNotificationPresenter implements
       if ( tasksCursor.moveToFirst() )
       {
          return Intents.createOpenTaskIntentFromNotification( getContext(),
-                                                              DbUtils.getOptString( tasksCursor,
-                                                                                    getColumnIndex( Tasks._ID ) ) );
+                                                              DbUtils.getLong( tasksCursor,
+                                                                               getColumnIndex( Tasks._ID ) ) );
       }
       
       return null;

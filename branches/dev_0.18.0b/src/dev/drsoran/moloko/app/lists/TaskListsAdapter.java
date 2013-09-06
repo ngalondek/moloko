@@ -42,9 +42,8 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
-import dev.drsoran.moloko.domain.model.ITasksList;
-import dev.drsoran.moloko.grammar.datetime.DateParser;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
 class TaskListsAdapter extends BaseExpandableListAdapter
@@ -90,7 +89,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    private final LayoutInflater inflater;
    
-   private final List< ITasksList > lists;
+   private final List< TasksList > lists;
    
    private StateListDrawable groupIndicatorDrawable;
    
@@ -99,13 +98,13 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    
    public TaskListsAdapter( AppContext context, int groupId, int childId,
-      List< ITasksList > lists )
+      List< TasksList > lists )
    {
       this.context = context;
       this.groupId = groupId;
       this.childId = childId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-      this.lists = new ArrayList< ITasksList >( lists );
+      this.lists = new ArrayList< TasksList >( lists );
       
       obtainGroupIndicatorDrawable();
    }
@@ -125,17 +124,26 @@ class TaskListsAdapter extends BaseExpandableListAdapter
       switch ( childPosition + 1 )
       {
          case DUE_TODAY_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().dueTodayTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getTasksCount()
+                                         .getDueTodayTaskCount() );
          case DUE_TOMORROW_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().dueTomorrowTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getTasksCount()
+                                         .getDueTomorrowTaskCount() );
          case OVER_DUE_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().overDueTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getTasksCount()
+                                         .getOverDueTaskCount() );
          case COMPLETED_TASK_COUNT:
-            return Integer.valueOf( lists.get( groupPosition ).getTasksCount().completedTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getTasksCount()
+                                         .getCompletedTaskCount() );
          case SUM_ESTIMATE:
             return context.getDateFormatter()
                           .formatEstimated( lists.get( groupPosition )
-                                                 .getTasksCount().sumEstimated );
+                                                 .getTasksCount()
+                                                 .getSumEstimated() );
          default :
             return null;
       }
@@ -145,7 +153,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    public Intent getChildIntent( int groupPosition, int childPosition )
    {
-      final ITasksList list = lists.get( groupPosition );
+      final TasksList list = lists.get( groupPosition );
       Intent intent = null;
       
       switch ( childPosition + 1 )
@@ -153,8 +161,9 @@ class TaskListsAdapter extends BaseExpandableListAdapter
          case DUE_TODAY_TASK_COUNT:
             intent = Intents.createOpenListIntent( context,
                                                    list,
-                                                   RtmSmartFilterLexer.OP_DUE_LIT
-                                                      + DateParser.tokenNames[ DateParser.TODAY ] );
+                                                   new RtmSmartFilterBuilder().due()
+                                                                              .today()
+                                                                              .toString() );
             intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_due_today ) );
             break;
@@ -162,8 +171,9 @@ class TaskListsAdapter extends BaseExpandableListAdapter
          case DUE_TOMORROW_TASK_COUNT:
             intent = Intents.createOpenListIntent( context,
                                                    list,
-                                                   RtmSmartFilterLexer.OP_DUE_LIT
-                                                      + DateParser.tokenNames[ DateParser.TOMORROW ] );
+                                                   new RtmSmartFilterBuilder().due()
+                                                                              .tomorrow()
+                                                                              .toString() );
             intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_due_tomorrow ) );
             break;
@@ -171,8 +181,9 @@ class TaskListsAdapter extends BaseExpandableListAdapter
          case OVER_DUE_TASK_COUNT:
             intent = Intents.createOpenListIntent( context,
                                                    list,
-                                                   RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                      + DateParser.tokenNames[ DateParser.TODAY ] );
+                                                   new RtmSmartFilterBuilder().dueBefore()
+                                                                              .today()
+                                                                              .toString() );
             intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_overdue ) );
             break;
@@ -180,8 +191,8 @@ class TaskListsAdapter extends BaseExpandableListAdapter
          case COMPLETED_TASK_COUNT:
             intent = Intents.createOpenListIntent( context,
                                                    list,
-                                                   RtmSmartFilterLexer.OP_STATUS_LIT
-                                                      + RtmSmartFilterLexer.COMPLETED_LIT );
+                                                   new RtmSmartFilterBuilder().statusCompleted()
+                                                                              .toString() );
             intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
                              context.getString( R.string.taskslist_actionbar_subtitle_completed ) );
             break;
@@ -339,7 +350,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
       final Drawable drawable = groupIndicatorDrawable.getCurrent();
       groupIndicator.setImageDrawable( drawable );
       
-      final ITasksList list = lists.get( groupPosition );
+      final TasksList list = lists.get( groupPosition );
       final String listNameStr = list.getName();
       
       listName.setText( listNameStr );
@@ -406,7 +417,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    
    private static void setListTasksCountView( TextView tasksCountView,
-                                              ITasksList list )
+                                              TasksList list )
    {
       final ExtendedTaskCount tasksCount = list.getTasksCount();
       

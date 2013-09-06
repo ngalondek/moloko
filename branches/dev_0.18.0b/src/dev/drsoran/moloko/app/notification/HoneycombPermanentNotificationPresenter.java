@@ -34,10 +34,8 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.services.IAccountService;
-import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 class HoneycombPermanentNotificationPresenter extends

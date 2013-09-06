@@ -32,7 +32,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
 public class TagCloudActivity extends MolokoFragmentActivity implements
@@ -74,7 +74,7 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    {
       startActivityWithHomeAction( Intents.createOpenTagsIntent( this,
                                                                  Collections.singletonList( tag ),
-                                                                 RtmSmartFilterLexer.AND_LIT ),
+                                                                 RtmSmartFilterSyntax.AND ),
                                    getClass() );
    }
    

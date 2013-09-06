@@ -60,12 +60,9 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.AccountCredentials;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.app.services.ISyncService;
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.content.db.TableColumns.Modifications;
-import dev.drsoran.moloko.content.db.TableColumns.Sync;
 import dev.drsoran.moloko.domain.model.Modification;
-import dev.drsoran.moloko.domain.model.ModificationSet;
+import dev.drsoran.moloko.domain.model.Sync;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 import dev.drsoran.moloko.sync.MolokoSyncResult;
 import dev.drsoran.moloko.sync.RtmContactsSync;
 import dev.drsoran.moloko.sync.RtmListsSync;
@@ -76,7 +73,6 @@ import dev.drsoran.moloko.sync.TimeLineFactory;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.LogUtils;
 
 
 /**

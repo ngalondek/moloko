@@ -28,10 +28,9 @@ import java.util.Collection;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 
 
 public class ContentProviderAction implements IContentProviderActionItem

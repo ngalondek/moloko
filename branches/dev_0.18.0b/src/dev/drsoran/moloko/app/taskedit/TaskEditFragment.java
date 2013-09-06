@@ -319,7 +319,7 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
                {
                   if ( listener != null )
                   {
-                     listener.onBackgroundDeletion( getTaskAssertNotNull() );
+                     listener.onNoteBackgroundDeletion( getTaskAssertNotNull() );
                   }
                }
             } );

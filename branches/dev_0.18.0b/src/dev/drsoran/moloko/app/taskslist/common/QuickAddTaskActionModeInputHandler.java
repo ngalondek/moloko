@@ -35,15 +35,13 @@ import android.util.Pair;
 import android.widget.ListAdapter;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
-import dev.drsoran.moloko.ui.widgets.Token;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 class QuickAddTaskActionModeInputHandler

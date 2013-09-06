@@ -31,8 +31,10 @@ import dev.drsoran.moloko.IHandlerTokenFactory;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.account.AccountService;
+import dev.drsoran.moloko.app.content.AppContentEditService;
 import dev.drsoran.moloko.app.event.AppEventService;
 import dev.drsoran.moloko.app.services.IAccountService;
+import dev.drsoran.moloko.app.services.IAppContentEditService;
 import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.IAppServices;
 import dev.drsoran.moloko.app.services.IConnectionService;
@@ -40,6 +42,7 @@ import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.app.sync.SyncService;
+import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.sync.connection.DefaultRtmConnectionFactory;
 import dev.drsoran.moloko.sync.connection.IRtmConnectionFactory;
 
@@ -56,9 +59,11 @@ public class AppServicesContainer implements IAppServices
    
    private final SyncService syncService;
    
+   private final IAppContentEditService appContentEditService;
    
    
-   public AppServicesContainer( Context context, Handler handler,
+   
+   public AppServicesContainer( DomainContext context, Handler handler,
       IHandlerTokenFactory handlerTokenFactory, ILog log )
    {
       this.appEventService = new AppEventService( context,
@@ -81,6 +86,9 @@ public class AppServicesContainer implements IAppServices
                                           appEventService,
                                           accountService,
                                           log );
+      
+      this.appContentEditService = new AppContentEditService( context.getContentEditService(),
+                                                              accountService );
       
       checkForcedReadableAccess( context );
    }
@@ -132,6 +140,14 @@ public class AppServicesContainer implements IAppServices
    public IAccountService getAccountService()
    {
       return accountService;
+   }
+   
+   
+   
+   @Override
+   public IAppContentEditService getContentEditService()
+   {
+      return appContentEditService;
    }
    
    

@@ -29,11 +29,11 @@ import android.net.Uri;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.model.IContact;
+import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
-public class ContactsLoader extends AbstractLoader< List< IContact > >
+public class ContactsLoader extends AbstractLoader< List< Contact > >
 {
    public final static int ID = R.id.loader_contacts;
    
@@ -55,10 +55,10 @@ public class ContactsLoader extends AbstractLoader< List< IContact > >
    
    
    @Override
-   protected List< IContact > queryResultInBackground( IContentRepository contentRepository )
+   protected List< Contact > queryResultInBackground( IContentRepository contentRepository )
    {
-      final List< IContact > contacts = new ArrayList< IContact >();
-      for ( IContact contact : contentRepository.getAllContacts() )
+      final List< Contact > contacts = new ArrayList< Contact >();
+      for ( Contact contact : contentRepository.getAllContacts() )
       {
          contacts.add( contact );
       }

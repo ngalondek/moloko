@@ -36,13 +36,13 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.Task;
 
 
 class FullDetailedTasksListFragmentAdapter extends
@@ -124,7 +124,7 @@ class FullDetailedTasksListFragmentAdapter extends
          else
             hasNotes.setVisibility( View.GONE );
          
-         if ( task.getPosponed() > 0 )
+         if ( task.isPostponed() )
             postponed.setVisibility( View.VISIBLE );
          else
             postponed.setVisibility( View.GONE );

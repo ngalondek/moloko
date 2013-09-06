@@ -28,9 +28,8 @@ import android.content.Intent;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.content.ActionItemListApplier;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 public class NotificationActionReceiver extends BroadcastReceiver
@@ -38,7 +37,7 @@ public class NotificationActionReceiver extends BroadcastReceiver
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      ApplyContentChangesInfo applyChangesInfo = null;
+      AppContentEditInfo applyChangesInfo = null;
       if ( Intents.Action.TASK_COMPLETED_FROM_NOTIFICATION.equals( intent.getAction() ) )
       {
          applyChangesInfo = TaskEditUtils.setTaskCompletion( context,

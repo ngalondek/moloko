@@ -24,19 +24,18 @@ package dev.drsoran.moloko.app.taskslist.common;
 
 import java.util.List;
 
-import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 abstract class AbstractTasksListLoader< T extends Task > extends
          AbstractLoader< List< T > >
 {
-   protected AbstractTasksListLoader( Context context )
+   protected AbstractTasksListLoader( DomainContext context )
    {
       super( context );
    }
@@ -44,9 +43,9 @@ abstract class AbstractTasksListLoader< T extends Task > extends
    
    
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
-      return Tasks.CONTENT_URI;
+      return ContentUris.TASKS_CONTENT_URI;
    }
    
    

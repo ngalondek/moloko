@@ -50,16 +50,15 @@ import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.app.content.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
-import dev.drsoran.moloko.domain.model.ITasksList;
-import dev.drsoran.moloko.grammar.datetime.DateParser;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          implements ITasksListFragmentListener, OnNavigationListener,
-         OnBackStackChangedListener, LoaderCallbacks< List< ITasksList > >
+         OnBackStackChangedListener, LoaderCallbacks< List< TasksList > >
 {
    protected final static long CUSTOM_NAVIGATION_ITEM_ID = 0L;
    
@@ -81,7 +80,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                    defaultValue = InstanceState.NO_DEFAULT )
    private SparseArray< SelectedNavigationItem > backStackNavigationItems;
    
-   private List< ITasksList > loadedRtmLists;
+   private List< TasksList > loadedRtmLists;
    
    private TasksListNavigationAdapter actionBarNavigationAdapter;
    
@@ -437,9 +436,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       final Context context = getSupportActionBar().getThemedContext();
       
       final List< IItem > actionBarNavigationItems = new ArrayList< IItem >( loadedRtmLists.size() );
-      for ( Iterator< ITasksList > i = loadedRtmLists.iterator(); i.hasNext(); )
+      for ( Iterator< TasksList > i = loadedRtmLists.iterator(); i.hasNext(); )
       {
-         final ITasksList list = i.next();
+         final TasksList list = i.next();
          
          if ( Long.valueOf( list.getId() ) != selectedNavigationItem.id )
          {
@@ -449,7 +448,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          }
          else
          {
-            final ExtendedTaskCount extendedListInfo = list.getExtendedListInfo( this );
+            final ExtendedTaskCount extendedListInfo = list.getTasksCount();
             
             Bundle config = Intents.Extras.createOpenListExtras( context,
                                                                  list,
@@ -460,8 +459,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,
-                                                          RtmSmartFilterLexer.OP_STATUS_LIT
-                                                             + RtmSmartFilterLexer.COMPLETED_LIT );
+                                                          new RtmSmartFilterBuilder().statusCompleted()
+                                                                                     .toString() );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getCompletedSubtitle(),
@@ -470,8 +469,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,
-                                                          RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                             + DateParser.tokenNames[ DateParser.TODAY ] );
+                                                          new RtmSmartFilterBuilder().dueBefore()
+                                                                                     .today()
+                                                                                     .toString() );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_OVERDUE_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getOverdueSubtitle(),
@@ -480,8 +480,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,
-                                                          RtmSmartFilterLexer.OP_DUE_LIT
-                                                             + DateParser.tokenNames[ DateParser.TODAY ] );
+                                                          new RtmSmartFilterBuilder().due()
+                                                                                     .today()
+                                                                                     .toString() );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_TODAY_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getDueTodaySubtitle(),
@@ -490,8 +491,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
             
             config = Intents.Extras.createOpenListExtras( context,
                                                           list,
-                                                          RtmSmartFilterLexer.OP_DUE_LIT
-                                                             + DateParser.tokenNames[ DateParser.TOMORROW ] );
+                                                          new RtmSmartFilterBuilder().due()
+                                                                                     .tomorrow()
+                                                                                     .toString() );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_TOMORROW_TASKS,
                                           new TasksListNavigationAdapter.ExtendedRtmListItem( context,
                                                                                               getDueTomorrowSubtitle(),
@@ -543,20 +545,18 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    @Override
-   public Loader< List< RtmListWithTaskCount >> onCreateLoader( int id,
-                                                                Bundle args )
+   public Loader< List< TasksList >> onCreateLoader( int id, Bundle args )
    {
-      final TasksListsLoader loader = new TasksListsLoader( this );
-      loader.setPreExpandExtendedListInfoAfterLoad( true );
-      
+      final TasksListsLoader loader = new TasksListsLoader( getAppContext().asDomainContext(),
+                                                            true );
       return loader;
    }
    
    
    
    @Override
-   public void onLoadFinished( Loader< List< RtmListWithTaskCount >> loader,
-                               List< RtmListWithTaskCount > data )
+   public void onLoadFinished( Loader< List< TasksList >> loader,
+                               List< TasksList > data )
    {
       loadedRtmLists = data;
       
@@ -595,7 +595,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    @Override
-   public void onLoaderReset( Loader< List< ITasksList >> loader )
+   public void onLoaderReset( Loader< List< TasksList >> loader )
    {
       setStandardNavigationMode();
    }

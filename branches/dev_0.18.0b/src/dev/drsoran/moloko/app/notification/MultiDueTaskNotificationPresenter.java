@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 
 
 class MultiDueTaskNotificationPresenter extends

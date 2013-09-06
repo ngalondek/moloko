@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.app.noteedit;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,21 +29,19 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.domain.model.Note;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
-import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
-import dev.drsoran.rtm.Task;
 
 
 public class NoteEditActivity extends MolokoEditFragmentActivity implements
-         INoteEditFragmentListener
+         INoteEditFragmentListener, INoteAddFragmentListener
 {
-   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -147,39 +144,28 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
    
    
    @Override
-   public void onBackgroundDeletion( RtmTaskNote oldNote )
+   public void onUpdateTasksNote( Task updatedTask, Note updatedNote )
    {
-      new AlertDialogFragment.Builder( R.id.dlg_request_remove_by_bg_sync ).setMessage( getString( R.string.note_dlg_removing_editing_note ) )
-                                                                           .setPositiveButton( R.string.btn_continue )
-                                                                           .setNegativeButton( R.string.btn_discard )
-                                                                           .show( NoteEditActivity.this );
+      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                  getString( R.string.toast_save_note ),
+                                                                  getString( R.string.toast_save_note_ok ),
+                                                                  getString( R.string.toast_save_note_failed ) );
+      
+      getAppContext().getContentEditService()
+                     .updateTask( updatedTask, editInfo );
    }
    
    
    
    @Override
-   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
+   public void onAddTasksNote( Task task, Note addedNote )
    {
-      if ( dialogId == R.id.dlg_request_remove_by_bg_sync )
-      {
-         switch ( which )
-         {
-            case AlertDialog.BUTTON_POSITIVE:
-               replaceNoteEditFragmentWithNoteAddFragment();
-               break;
-            
-            case AlertDialog.BUTTON_NEGATIVE:
-               finish();
-               break;
-            
-            default :
-               break;
-         }
-      }
-      else
-      {
-         super.onAlertDialogFragmentClick( dialogId, tag, which );
-      }
+      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                  getString( R.string.toast_insert_note ),
+                                                                  getString( R.string.toast_insert_note_ok ),
+                                                                  getString( R.string.toast_insert_note_fail ) );
+      
+      getAppContext().getContentEditService().updateTask( task, editInfo );
    }
    
    
@@ -206,29 +192,6 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
                                     .add( R.id.frag_note, fragment )
                                     .commit();
       }
-   }
-   
-   
-   
-   private void replaceNoteEditFragmentWithNoteAddFragment()
-   {
-      final NoteEditFragment noteEditFragment = (NoteEditFragment) findAddedFragmentById( R.id.frag_note );
-      final String currentNoteTitle = noteEditFragment.getNoteTitle();
-      final String currentNoteText = noteEditFragment.getNoteText();
-      
-      final Task task = getIntent().getParcelableExtra( Intents.Extras.KEY_TASK );
-      
-      final Bundle config = new Bundle();
-      config.putParcelable( Intents.Extras.KEY_TASK, task );
-      config.putString( Intents.Extras.KEY_NOTE_TITLE, currentNoteTitle );
-      config.putString( Intents.Extras.KEY_NOTE_TEXT, currentNoteText );
-      
-      final Fragment noteAddFragment = NoteAddFragment.newInstance( config );
-      
-      getSupportFragmentManager().beginTransaction()
-                                 .setTransition( FragmentTransaction.TRANSIT_NONE )
-                                 .replace( R.id.frag_note, noteAddFragment )
-                                 .commit();
    }
    
    

@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,8 +31,10 @@ import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class Task extends LifeTimeManaged
+public class Task extends LifeTimeManaged implements Serializable
 {
+   private static final long serialVersionUID = -5050484160084310934L;
+   
    private final long id;
    
    private final long addedMillisUtc;
@@ -250,6 +253,13 @@ public class Task extends LifeTimeManaged
    
    
    
+   public boolean hasDue()
+   {
+      return due != null;
+   }
+   
+   
+   
    public Recurrence getRecurrence()
    {
       return recurrence;
@@ -260,6 +270,13 @@ public class Task extends LifeTimeManaged
    public void setRecurrence( Recurrence recurrence )
    {
       this.recurrence = recurrence;
+   }
+   
+   
+   
+   public boolean isRecurrent()
+   {
+      return recurrence != null;
    }
    
    
@@ -278,6 +295,13 @@ public class Task extends LifeTimeManaged
    
    
    
+   public boolean hasEstimation()
+   {
+      return estimation != null;
+   }
+   
+   
+   
    public Iterable< String > getTags()
    {
       return tags != null ? tags : Collections.< String > emptyList();
@@ -288,6 +312,13 @@ public class Task extends LifeTimeManaged
    public void setTags( Collection< String > tags )
    {
       this.tags = tags;
+   }
+   
+   
+   
+   public boolean isTagged()
+   {
+      return tags.size() > 0;
    }
    
    
@@ -381,6 +412,13 @@ public class Task extends LifeTimeManaged
    {
       return participants != null ? participants
                                  : Collections.< Participant > emptyList();
+   }
+   
+   
+   
+   public boolean hasParticipants()
+   {
+      return participants.size() > 0;
    }
    
    

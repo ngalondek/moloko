@@ -22,11 +22,15 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
+
 import dev.drsoran.moloko.util.Strings;
 
 
-public class TasksList extends LifeTimeManaged
+public class TasksList extends LifeTimeManaged implements Serializable
 {
+   private static final long serialVersionUID = -1926589032995094153L;
+   
    private final long id;
    
    private final int position;

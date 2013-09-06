@@ -24,7 +24,7 @@ package dev.drsoran.moloko.app.taskedit;
 
 import java.util.List;
 
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 class NullTaskEditFragmentListener implements ITaskEditFragmentListener

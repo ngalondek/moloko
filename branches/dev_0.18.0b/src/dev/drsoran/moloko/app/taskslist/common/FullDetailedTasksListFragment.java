@@ -32,8 +32,8 @@ import android.view.ViewGroup;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
-import dev.drsoran.rtm.Task;
 
 
 public class FullDetailedTasksListFragment extends

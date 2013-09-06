@@ -25,9 +25,9 @@ package dev.drsoran.moloko.app.content;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.os.AsyncTask;
-import dev.drsoran.moloko.content.ContentRepository;
 import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 
 
 class ApplyContentProviderActionItemsTask extends

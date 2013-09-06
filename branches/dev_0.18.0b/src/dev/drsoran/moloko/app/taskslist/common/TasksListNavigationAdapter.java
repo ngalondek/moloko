@@ -36,8 +36,8 @@ import com.actionbarsherlock.internal.widget.CapitalizingTextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
-import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
@@ -68,11 +68,11 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
    {
       private final Context context;
       
-      private final RtmListWithTaskCount list;
+      private final TasksList list;
       
       
       
-      public RtmListItem( Context context, RtmListWithTaskCount list )
+      public RtmListItem( Context context, TasksList list )
       {
          this.context = context;
          this.list = list;
@@ -107,7 +107,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public int getNumberOfTasks()
       {
-         return list.getNumTasksParticipating();
+         return list.getTasksCount().getIncompleteTaskCount();
       }
       
       
@@ -131,7 +131,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       
       
       public ExtendedRtmListItem( Context context, String typeOfTasks,
-         RtmListWithTaskCount list, int numTasks )
+         TasksList list, int numTasks )
       {
          super( context, list );
          this.supplementalText = typeOfTasks;

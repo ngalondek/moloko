@@ -294,7 +294,7 @@ public class MolokoApp extends Application implements
    
    private void createAppServices()
    {
-      appServicesContainer = new AppServicesContainer( this,
+      appServicesContainer = new AppServicesContainer( appContext.asDomainContext(),
                                                        systemServicesContainer.getHandler(),
                                                        systemServicesContainer.getHandlerTokenFactory(),
                                                        systemServicesContainer.Log() );

@@ -31,6 +31,7 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.sort.CompositeComparator;
 import dev.drsoran.moloko.sort.SortTaskDueDate;
 import dev.drsoran.moloko.sort.SortTaskName;
@@ -40,7 +41,6 @@ import dev.drsoran.moloko.ui.format.RtmStyleTaskDateFormatter;
 import dev.drsoran.moloko.ui.format.RtmStyleTaskDescTextViewFormatter;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTasksListFragmentAdapter extends

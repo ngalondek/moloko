@@ -40,7 +40,8 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.util.Strings;
 
@@ -136,14 +137,14 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
       
       if ( sync && rtmSettings != null )
       {
-         String syncedDefList = rtmSettings.getDefaultListId();
-         if ( syncedDefList == null )
+         long syncedDefList = rtmSettings.getDefaultListId();
+         if ( syncedDefList == Constants.NO_ID )
          {
             syncedDefList = NO_DEFAULT_LIST_ID;
          }
          
          storeStringIfChanged( context.getString( R.string.key_def_list_local ),
-                               syncedDefList );
+                               String.valueOf( syncedDefList ) );
       }
    }
    
@@ -174,7 +175,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
          && isInSyncWithRtm( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
       {
          storeStringIfChanged( context.getString( R.string.key_def_list_local ),
-                               rtmSettings.getDefaultListId() );
+                               String.valueOf( rtmSettings.getDefaultListId() ) );
       }
    }
    

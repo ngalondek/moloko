@@ -22,15 +22,15 @@
 
 package dev.drsoran.moloko.app.notification;
 
-import android.content.Context;
 import android.database.Cursor;
 import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
+import dev.drsoran.moloko.domain.DomainContext;
 
 
 abstract class AbstractFilterBasedNotificationTasksLoader extends
          AbstractLoader< Cursor >
 {
-   protected AbstractFilterBasedNotificationTasksLoader( Context context )
+   protected AbstractFilterBasedNotificationTasksLoader( DomainContext context )
    {
       super( context );
    }

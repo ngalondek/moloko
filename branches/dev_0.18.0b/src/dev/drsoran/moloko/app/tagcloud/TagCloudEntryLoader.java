@@ -28,18 +28,18 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
-import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.model.ITask;
-import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.TagTagCloudEntry;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
-class TagCloudEntryLoader extends AbstractLoader< List< PresentableTagCloudEntry > >
+class TagCloudEntryLoader extends
+         AbstractLoader< List< PresentableTagCloudEntry > >
 {
    public final static int ID = R.id.loader_tag_cloud_entry;
    
@@ -53,19 +53,28 @@ class TagCloudEntryLoader extends AbstractLoader< List< PresentableTagCloudEntry
    
    
    @Override
+   public Uri getContentUri()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+   
+   
+   @Override
    protected List< PresentableTagCloudEntry > queryResultInBackground( IContentRepository contentRepository )
    {
       final SortedMap< PresentableTagCloudEntry, PresentableTagCloudEntry > tagCloudEntries = new TreeMap< PresentableTagCloudEntry, PresentableTagCloudEntry >();
       
-      final Iterable< ITask > tasks = contentRepository.getAllTasks( TaskContentOptions.MINIMAL );
-      for ( ITask task : tasks )
+      final Iterable< Task > tasks = contentRepository.getAllTasks( TaskContentOptions.Minimal );
+      for ( Task task : tasks )
       {
          addOrIncrement( tagCloudEntries,
                          new TasksListTagCloudEntry( task.getListId(),
                                                      task.getListName() ) );
          
-         final Location location = task.getLocation();
-         if ( location != null )
+         final long locationId = task.getLocationId();
+         if ( locationId != Constants.NO_ID )
          {
             addOrIncrement( tagCloudEntries,
                             new LocationTagCloudEntry( location ) );
@@ -105,8 +114,7 @@ class TagCloudEntryLoader extends AbstractLoader< List< PresentableTagCloudEntry
    {
       ListOverviewsProviderPart.put( getContext(), observer );
       TagsProviderPart.put( getContext(), observer );
-      LocationOverviewsProviderPart.put( getContext(),
-                                                             observer );
+      LocationOverviewsProviderPart.put( getContext(), observer );
    }
    
    

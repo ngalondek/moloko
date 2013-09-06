@@ -33,10 +33,10 @@ import android.util.Pair;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.Task;
 
 
 public class TaskEditActivity extends AbstractTaskEditActivity implements
@@ -87,7 +87,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    @Override
    public void onEditRecurrenceByPicker()
    {
-      Pair< String, Boolean > recurrencePattern = getTaskEditFragment().getRecurrencePattern();
+      Pair< String, Boolean > recurrencePattern = getTaskEditFragment().getRecurrence();
       
       if ( recurrencePattern == null )
          recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
@@ -122,7 +122,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
          else if ( dialog instanceof RecurrencePickerDialogFragment )
          {
             final RecurrencePickerDialogFragment frag = (RecurrencePickerDialogFragment) dialog;
-            getTaskEditFragment().setRecurrencePattern( frag.getPattern() );
+            getTaskEditFragment().setRecurrencePattern( frag.getRecurrence() );
          }
          else if ( dialog instanceof EstimatePickerDialogFragment )
          {

@@ -23,15 +23,20 @@
 package dev.drsoran.moloko.domain.content;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 
 import android.content.ContentResolver;
 import android.text.TextUtils;
+import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.content.ContentCompare;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
@@ -160,39 +165,46 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                    existingTask.getPriority().toString(),
                                    updatedTask.getPriority().toString() );
       
-      Modification.addIfDifferent( modifications,
-                                   entityUri,
-                                   TaskColumns.POSTPONED,
-                                   existingTask.getPostponedCount(),
-                                   updatedTask.getPostponedCount() );
-      
-      Long existingTaskDue = null;
-      int existingTaskHasDueTime = 0;
-      if ( existingTask.getDue() != null )
+      // If we have a postponed change, this will also change the due date. So
+      // the due date will not be tested on change then.
+      if ( ContentCompare.isDifferent( existingTask.getPostponedCount(),
+                                       updatedTask.getPostponedCount() ) )
       {
-         existingTaskDue = existingTask.getDue().getMillisUtc();
-         existingTaskHasDueTime = existingTask.getDue().hasDueTime() ? 1 : 0;
+         addPostponedChangedModifications( modifications,
+                                           entityUri,
+                                           existingTask,
+                                           updatedTask );
       }
-      
-      Long updateTaskDue = null;
-      int updateTaskHasDueTime = 0;
-      if ( updatedTask.getDue() != null )
+      else
       {
-         updateTaskDue = updatedTask.getDue().getMillisUtc();
-         updateTaskHasDueTime = updatedTask.getDue().hasDueTime() ? 1 : 0;
+         Long existingTaskDue = null;
+         int existingTaskHasDueTime = 0;
+         if ( existingTask.getDue() != null )
+         {
+            existingTaskDue = existingTask.getDue().getMillisUtc();
+            existingTaskHasDueTime = existingTask.getDue().hasDueTime() ? 1 : 0;
+         }
+         
+         Long updateTaskDue = null;
+         int updateTaskHasDueTime = 0;
+         if ( updatedTask.getDue() != null )
+         {
+            updateTaskDue = updatedTask.getDue().getMillisUtc();
+            updateTaskHasDueTime = updatedTask.getDue().hasDueTime() ? 1 : 0;
+         }
+         
+         Modification.addIfDifferent( modifications,
+                                      entityUri,
+                                      TaskColumns.DUE_DATE,
+                                      existingTaskDue,
+                                      updateTaskDue );
+         
+         Modification.addIfDifferent( modifications,
+                                      entityUri,
+                                      TaskColumns.HAS_DUE_TIME,
+                                      existingTaskHasDueTime,
+                                      updateTaskHasDueTime );
       }
-      
-      Modification.addIfDifferent( modifications,
-                                   entityUri,
-                                   TaskColumns.DUE_DATE,
-                                   existingTaskDue,
-                                   updateTaskDue );
-      
-      Modification.addIfDifferent( modifications,
-                                   entityUri,
-                                   TaskColumns.HAS_DUE_TIME,
-                                   existingTaskHasDueTime,
-                                   updateTaskHasDueTime );
       
       String existingTaskEstimation = null;
       long existingTaskEstimationMillis = -1L;
@@ -241,5 +253,57 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                                                                    System.currentTimeMillis() );
       
       return Collections.singletonList( modification );
+   }
+   
+   
+   
+   private void addPostponedChangedModifications( Collection< Modification > modifications,
+                                                  String entityUri,
+                                                  Task existingTask,
+                                                  Task updatedTask )
+   {
+      
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final Due due = updatedTask.getDue();
+      
+      // If the task has no due date...
+      if ( due == null )
+      {
+         cal.setTimeInMillis( System.currentTimeMillis() );
+         cal.setHasTime( false );
+      }
+      // ...or is overdue, its due date is set to today.
+      else if ( MolokoDateUtils.isDaysBefore( due.getMillisUtc(),
+                                              cal.getTimeInMillis() ) )
+      {
+         cal.setTimeInMillis( System.currentTimeMillis() );
+         
+         final MolokoCalendar calDue = MolokoDateUtils.newCalendar( due.getMillisUtc() );
+         
+         // Preserve the original time when setting to today
+         cal.set( Calendar.HOUR_OF_DAY, calDue.get( Calendar.HOUR_OF_DAY ) );
+         cal.set( Calendar.MINUTE, calDue.get( Calendar.MINUTE ) );
+         cal.set( Calendar.SECOND, calDue.get( Calendar.SECOND ) );
+         cal.set( Calendar.MILLISECOND, 0 );
+      }
+      
+      // Otherwise, the task due date is advanced a day.
+      else
+      {
+         cal.setTimeInMillis( due.getMillisUtc() );
+         cal.add( Calendar.DAY_OF_YEAR, 1 );
+         cal.setHasTime( due.hasDueTime() );
+      }
+      
+      modifications.add( Modification.newModification( entityUri,
+                                                       TaskColumns.POSTPONED,
+                                                       updatedTask.getPostponedCount(),
+                                                       existingTask.getPostponedCount() ) );
+      
+      // We add the due date modification non-persistent because the sync to RTM will
+      // set this date again due to the postponing.
+      modifications.add( Modification.newNonPersistentModification( entityUri,
+                                                                    TaskColumns.DUE_DATE,
+                                                                    cal.getTimeInMillis() ) );
    }
 }

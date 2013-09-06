@@ -53,11 +53,11 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.content.db.TableColumns.Tags;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.domain.model.Modification;
-import dev.drsoran.moloko.domain.model.ModificationSet;
+import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -75,7 +75,6 @@ import dev.drsoran.moloko.ui.widgets.RecurrenceEditText;
 import dev.drsoran.moloko.util.Bundles;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTaskEditFragment
@@ -557,7 +556,7 @@ abstract class AbstractTaskEditFragment
       final String joinedTags = TextUtils.join( Tasks.TAGS_SEPARATOR, tags );
       
       if ( SyncUtils.isDifferent( getCurrentValue( Tasks.TAGS, String.class ),
-                                 joinedTags ) )
+                                  joinedTags ) )
       {
          putChange( Tasks.TAGS, joinedTags, String.class );
          initializeTagsSection();
@@ -649,17 +648,16 @@ abstract class AbstractTaskEditFragment
    
    // RECURRENCE EDITING
    
-   public Pair< String, Boolean > getRecurrencePattern()
+   public Recurrence getRecurrence()
    {
-      return recurrEditText.getRecurrencePattern();
+      return recurrEditText.getRecurrence();
    }
    
    
    
-   public void setRecurrencePattern( Pair< String, Boolean > recurrPattern )
+   public void setRecurrencePattern( Recurrence recurrence )
    {
-      recurrEditText.setRecurrence( recurrPattern.first,
-                                    Boolean.valueOf( recurrPattern.second ) );
+      recurrEditText.setRecurrence( recurrence );
       recurrEditText.requestFocus();
    }
    
@@ -681,7 +679,7 @@ abstract class AbstractTaskEditFragment
    
    private void saveRecurrenceChanges()
    {
-      final Pair< String, Boolean > recurrencePattern = recurrEditText.getRecurrencePattern();
+      final Pair< String, Boolean > recurrencePattern = recurrEditText.getRecurrence();
       
       if ( recurrencePattern == null )
          throw new IllegalStateException( String.format( "Expected valid recurrence edit text to parse. Found %s",
@@ -900,7 +898,7 @@ abstract class AbstractTaskEditFragment
    
    
    @Override
-   protected ApplyContentChangesInfo getApplyChangesInfo()
+   protected AppContentEditInfo getApplyChangesInfo()
    {
       saveChanges();
       
@@ -910,7 +908,7 @@ abstract class AbstractTaskEditFragment
       final ModificationSet modificationSet = createModificationSet( editedTasks );
       final Resources resources = getResources();
       
-      final ApplyContentChangesInfo applyChangesInfo = new ApplyContentChangesInfo( modificationSet.toContentProviderActionItemList(),
+      final AppContentEditInfo applyChangesInfo = new AppContentEditInfo( modificationSet.toContentProviderActionItemList(),
                                                                                     resources.getQuantityString( R.plurals.toast_save_task,
                                                                                                                  editedTasksCount,
                                                                                                                  editedTasksCount ),
@@ -972,7 +970,7 @@ abstract class AbstractTaskEditFragment
                                                              String.class );
             
             if ( SyncUtils.isDifferent( RtmTask.convertPriority( task.getPriority() ),
-                                       selectedPriority ) )
+                                        selectedPriority ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
@@ -988,8 +986,8 @@ abstract class AbstractTaskEditFragment
             final String tags = getCurrentValue( Tasks.TAGS, String.class );
             
             if ( SyncUtils.isDifferent( tags,
-                                       TextUtils.join( Tags.TAGS_SEPARATOR,
-                                                       task.getTags() ) ) )
+                                        TextUtils.join( Tags.TAGS_SEPARATOR,
+                                                        task.getTags() ) ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                           task.getTaskSeriesId() ),
@@ -1008,7 +1006,7 @@ abstract class AbstractTaskEditFragment
                newDue = null;
             
             if ( SyncUtils.isDifferent( MolokoDateUtils.getTime( task.getDue() ),
-                                       newDue ) )
+                                        newDue ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
@@ -1055,7 +1053,7 @@ abstract class AbstractTaskEditFragment
                                                                Boolean.class );
             
             if ( SyncUtils.isDifferent( task.isEveryRecurrence(),
-                                       isEveryRecurrence ) )
+                                        isEveryRecurrence ) )
             {
                // The flag RECURRENCE_EVERY will not be synced out. RTM parses only the recurrence sentence.
                modifications.add( Modification.newNonPersistentModification( DbUtils.contentUriWithId( TaskSeries.CONTENT_URI,
@@ -1072,7 +1070,8 @@ abstract class AbstractTaskEditFragment
             final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
                                                          Long.class );
             
-            if ( SyncUtils.isDifferent( task.getEstimateMillis(), estimateMillis ) )
+            if ( SyncUtils.isDifferent( task.getEstimateMillis(),
+                                        estimateMillis ) )
             {
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),

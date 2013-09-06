@@ -40,8 +40,7 @@ import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.app.services.SyncStartResult;
 import dev.drsoran.moloko.content.db.TableColumns;
-import dev.drsoran.moloko.content.db.SyncTable;
-import dev.drsoran.moloko.content.db.TableColumns.Sync;
+import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.sync.Constants;
 
 
@@ -147,7 +146,8 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
    public boolean isReadyToSync( Account account )
    {
       return connectionService.hasInternetConnection()
-         && ContentResolver.getSyncAutomatically( account, TableColumns.AUTHORITY );
+         && ContentResolver.getSyncAutomatically( account,
+                                                  TableColumns.AUTHORITY );
    }
    
    

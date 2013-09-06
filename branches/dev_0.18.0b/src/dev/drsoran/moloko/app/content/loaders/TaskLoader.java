@@ -26,22 +26,24 @@ import android.net.Uri;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.model.ITask;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
-public class TaskLoader extends AbstractLoader< ITask >
+public class TaskLoader extends AbstractLoader< Task >
 {
    public final static int ID = R.id.loader_task;
    
    private final long taskId;
    
-   private final int taskContentOptions;
+   private final TaskContentOptions taskContentOptions;
    
    
    
-   public TaskLoader( DomainContext context, long taskId, int taskContentOptions )
+   public TaskLoader( DomainContext context, long taskId,
+      TaskContentOptions taskContentOptions )
    {
       super( context );
       
@@ -54,13 +56,14 @@ public class TaskLoader extends AbstractLoader< ITask >
    @Override
    public Uri getContentUri()
    {
-      return ContentUris.contentUriWithId( ContentUris.TASKS_CONTENT_URI, taskId );
+      return ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                        taskId );
    }
    
    
    
    @Override
-   protected ITask queryResultInBackground( IContentRepository contentRepository ) throws ContentException
+   protected Task queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
       return contentRepository.getTask( taskId, taskContentOptions );
    }

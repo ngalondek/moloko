@@ -217,8 +217,7 @@ public class StartUpActivity extends MolokoFragmentActivity
             break;
          
          case Settings.STARTUP_VIEW_LISTS:
-            startActivityWithHomeAction( new Intent( Intent.ACTION_VIEW,
-                                                     ListOverviews.CONTENT_URI ),
+            startActivityWithHomeAction( Intents.createOpenListOverviewsIntent(),
                                          HomeAction.HOME );
             break;
          

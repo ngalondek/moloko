@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
-import java.util.List;
+import java.util.Collection;
 
 
 interface IShowTasksWithTagsListener
@@ -34,6 +34,6 @@ interface IShowTasksWithTagsListener
    
    
    
-   public void onShowTasksWithTags( List< String > tags,
+   public void onShowTasksWithTags( Collection< String > tags,
                                     LogicalOperation operation );
 }

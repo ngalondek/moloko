@@ -33,6 +33,7 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
 import dev.drsoran.moloko.domain.parsing.recurrence.IRecurrenceParserFactory;
@@ -45,7 +46,6 @@ import dev.drsoran.moloko.domain.parsing.util.ParserLanguageDetector;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.util.Lambda.Func1;
-import dev.drsoran.moloko.util.Pair;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -122,14 +122,14 @@ public class RecurrenceParsing implements IRecurrenceParsing
    
    
    @Override
-   public Pair< String, Boolean > parseRecurrence( String recurrence ) throws GrammarException
+   public Recurrence parseRecurrence( String recurrence ) throws GrammarException
    {
       final Map< String, Object > result = detectLanguageAndParseRecurrence( recurrence );
       final Boolean isEvery = (Boolean) result.remove( RecurrencePatternSyntax.IS_EVERY );
       
       final String pattern = buildRecurrencePattern( result );
       
-      return Pair.create( pattern, isEvery );
+      return new Recurrence( pattern, isEvery );
    }
    
    

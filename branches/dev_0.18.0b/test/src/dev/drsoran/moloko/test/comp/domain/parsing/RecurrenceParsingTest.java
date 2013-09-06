@@ -41,6 +41,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
+import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.domain.parsing.RecurrenceParsing;
@@ -58,7 +59,6 @@ import dev.drsoran.moloko.test.langs.RecurrenceSentenceTestLanguageEn;
 import dev.drsoran.moloko.test.sources.RecurrencePatternCollectorTestDataSource;
 import dev.drsoran.moloko.test.sources.RecurrenceSentenceTestDataSource;
 import dev.drsoran.moloko.test.sources.RecurrenceTestDataSource;
-import dev.drsoran.moloko.util.Pair;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -195,7 +195,7 @@ public class RecurrenceParsingTest extends MolokoTestCase
    {
       try
       {
-         final Pair< String, Boolean > res = recurrenceParsing.parseRecurrence( testData.sentence );
+         final Recurrence res = recurrenceParsing.parseRecurrence( testData.sentence );
          
          assertThat( "No result for <" + testData.sentence + ">",
                      res,
@@ -205,11 +205,11 @@ public class RecurrenceParsingTest extends MolokoTestCase
          final Boolean expectedIsEvery = (Boolean) expectedPattern.remove( RecurrencePatternSyntax.IS_EVERY );
          
          assertThat( "Wrong isEvery for <" + testData.sentence + ">",
-                     res.second,
+                     res.isEveryRecurrence(),
                      is( expectedIsEvery != null ? expectedIsEvery
                                                 : Boolean.FALSE ) );
          
-         final Map< String, Object > resPattern = splitPattern( res.first );
+         final Map< String, Object > resPattern = splitPattern( res.getPattern() );
          assertSamePattern( resPattern, expectedPattern );
       }
       catch ( GrammarException e )

@@ -37,14 +37,17 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
-import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternParser;
+import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax;
+import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.util.Pair;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -133,24 +136,33 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
       if ( savedInstanceState != null )
+      {
          configure( savedInstanceState );
+      }
       
-      ensureValidRecurrencePattern();
-      
-      final FragmentActivity activity = getSherlockActivity();
-      
-      final LayoutInflater inflater = LayoutInflater.from( activity );
-      container = inflater.inflate( R.layout.recurr_picker_dialog, null );
-      
-      initWheels();
-      
-      final Dialog dialog = createDialogImpl();
-      return dialog;
+      try
+      {
+         ensureValidRecurrencePattern();
+         
+         final FragmentActivity activity = getSherlockActivity();
+         
+         final LayoutInflater inflater = LayoutInflater.from( activity );
+         container = inflater.inflate( R.layout.recurr_picker_dialog, null );
+         
+         initWheels();
+         
+         final Dialog dialog = createDialogImpl();
+         return dialog;
+      }
+      catch ( GrammarException e )
+      {
+         throw new RuntimeException( e );
+      }
    }
    
    
    
-   private void ensureValidRecurrencePattern()
+   private void ensureValidRecurrencePattern() throws GrammarException
    {
       if ( TextUtils.isEmpty( recurrencePattern ) )
       {
@@ -193,13 +205,13 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
       switch ( freqWheel.getCurrentItem() )
       {
          case 0:
-            return RecurrencePatternParser.VAL_YEARLY_LIT;
+            return RecurrencePatternSyntax.VAL_YEARLY;
          case 1:
-            return RecurrencePatternParser.VAL_MONTHLY_LIT;
+            return RecurrencePatternSyntax.VAL_MONTHLY;
          case 2:
-            return RecurrencePatternParser.VAL_WEEKLY_LIT;
+            return RecurrencePatternSyntax.VAL_WEEKLY;
          case 3:
-            return RecurrencePatternParser.VAL_DAILY_LIT;
+            return RecurrencePatternSyntax.VAL_DAILY;
          default :
             return Strings.EMPTY_STRING;
       }
@@ -221,14 +233,14 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public Pair< String, Boolean > getPattern()
+   public Recurrence getRecurrence()
    {
-      return Pair.create( getPatternString(), isEvery() );
+      return new Recurrence( getPatternString(), isEvery() );
    }
    
    
    
-   public String getSentence()
+   public String getSentence() throws GrammarException
    {
       return recurrenceParsing.parseRecurrencePatternToSentence( getPatternString(),
                                                                  isEvery() );
@@ -236,7 +248,7 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   private void initWheels()
+   private void initWheels() throws GrammarException
    {
       final Map< Integer, List< Object >> elements = recurrenceParsing.tokenizeRecurrencePattern( recurrencePattern );
       
@@ -405,12 +417,12 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    {
       final StringBuilder sb = new StringBuilder();
       
-      sb.append( RecurrencePatternParser.OP_FREQ_LIT )
-        .append( "=" )
+      sb.append( RecurrencePatternSyntax.OP_FREQ )
+        .append( RecurrencePatternSyntax.OPERATOR_VALUE_SEP )
         .append( getFreqValueAsString() );
-      sb.append( RecurrencePatternParser.OPERATOR_SEP );
-      sb.append( RecurrencePatternParser.OP_INTERVAL_LIT )
-        .append( "=" )
+      sb.append( RecurrencePatternSyntax.OPERATOR_SEP );
+      sb.append( RecurrencePatternSyntax.OP_INTERVAL )
+        .append( RecurrencePatternSyntax.OPERATOR_VALUE_SEP )
         .append( getInterval() );
       
       recurrencePattern = recurrenceParsing.ensureRecurrencePatternOrder( sb.toString() );

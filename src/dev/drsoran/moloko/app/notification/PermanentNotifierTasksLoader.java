@@ -36,10 +36,8 @@ import android.text.TextUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.grammar.datetime.DateParser;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 
 
 class PermanentNotifierTasksLoader extends

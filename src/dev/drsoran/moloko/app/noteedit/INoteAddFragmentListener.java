@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2013 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,29 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.services;
+package dev.drsoran.moloko.app.noteedit;
 
-public interface IAppServices
+import dev.drsoran.moloko.domain.model.Note;
+import dev.drsoran.moloko.domain.model.Task;
+
+
+interface INoteAddFragmentListener
 {
-   IAppEventService getAppEvents();
-   
-   
-   
-   ISettingsService getSettings();
-   
-   
-   
-   IConnectionService getConnectionService();
-   
-   
-   
-   ISyncService getSyncService();
-   
-   
-   
-   IAccountService getAccountService();
-   
-   
-   
-   IAppContentEditService getContentEditService();
+   void onAddTasksNote( Task task, Note addedNote );
 }

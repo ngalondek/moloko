@@ -23,11 +23,11 @@
 package dev.drsoran.moloko.ui.widgets;
 
 import java.util.Calendar;
+import java.util.Iterator;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
-import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +39,10 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.DelayedRun;
 
@@ -177,23 +180,27 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    @Override
    protected Integer doBackgroundQuery()
    {
-      final MolokoCalendar cal = getCalendar();
-      final String selection = RtmSmartFilter.evaluate( getFilterExpression( cal ),
-                                                        true );
-      
-      final Cursor c = getContext().getContentResolver()
-                                   .query( RawTasks.CONTENT_URI, new String[]
-                                   { RawTasks._ID }, selection, null, null );
-      
-      if ( c != null )
+      try
       {
-         final Integer cnt = Integer.valueOf( c.getCount() );
-         c.close();
+         final Iterable< Task > tasks = getUiContext().asDomainContext()
+                                                      .getContentRepository()
+                                                      .getTasksFromSmartFilter( new RtmSmartFilter( getFilterExpression( getCalendar() ) ),
+                                                                                TaskContentOptions.Minimal );
+         
+         final Iterator< Task > i = tasks.iterator();
+         int cnt = 0;
+         while ( i.hasNext() )
+         {
+            ++cnt;
+            i.next();
+         }
          
          return cnt;
       }
-      
-      return null;
+      catch ( GrammarException e )
+      {
+         return null;
+      }
    }
    
    
@@ -218,11 +225,12 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    private String getFilterExpression( MolokoCalendar cal )
    {
-      return RtmSmartFilterLexer.OP_DUE_LIT
-         + RtmSmartFilterLexer.quotify( getUiContext().getDateFormatter()
-                                                      .formatDate( cal.getTimeInMillis(),
-                                                                   IDateFormatterService.FORMAT_WITH_YEAR
-                                                                      | IDateFormatterService.FORMAT_NUMERIC ) );
+      final String dueDate = getUiContext().getDateFormatter()
+                                           .formatDate( cal.getTimeInMillis(),
+                                                        IDateFormatterService.FORMAT_WITH_YEAR
+                                                           | IDateFormatterService.FORMAT_NUMERIC );
+      
+      return new RtmSmartFilterBuilder().due( dueDate ).toString();
    }
    
    

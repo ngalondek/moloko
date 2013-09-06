@@ -24,12 +24,12 @@ package dev.drsoran.moloko.app.contactslist;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import dev.drsoran.moloko.domain.model.IContact;
+import dev.drsoran.moloko.domain.model.Contact;
 
 
 class LinkedContact
 {
-   private final IContact contact;
+   private final Contact contact;
    
    private final int numTasksParticipating;
    
@@ -41,7 +41,7 @@ class LinkedContact
    
    
    
-   public LinkedContact( IContact contact, int numTasksParticipating )
+   public LinkedContact( Contact contact, int numTasksParticipating )
    {
       this.contact = contact;
       this.numTasksParticipating = numTasksParticipating;

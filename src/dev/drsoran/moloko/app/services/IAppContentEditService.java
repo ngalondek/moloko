@@ -22,27 +22,31 @@
 
 package dev.drsoran.moloko.app.services;
 
-public interface IAppServices
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.TasksList;
+
+
+public interface IAppContentEditService
 {
-   IAppEventService getAppEvents();
+   void insertTask( Task task, AppContentEditInfo editInfo );
    
    
    
-   ISettingsService getSettings();
+   void updateTask( Task task, AppContentEditInfo editInfo );
    
    
    
-   IConnectionService getConnectionService();
+   void deleteTask( Task task, AppContentEditInfo editInfo );
    
    
    
-   ISyncService getSyncService();
+   void insertTasksList( TasksList tasksList, AppContentEditInfo editInfo );
    
    
    
-   IAccountService getAccountService();
+   void updateTasksList( TasksList tasksList, AppContentEditInfo editInfo );
    
    
    
-   IAppContentEditService getContentEditService();
+   void deleteTasksList( TasksList tasksList, AppContentEditInfo editInfo );
 }

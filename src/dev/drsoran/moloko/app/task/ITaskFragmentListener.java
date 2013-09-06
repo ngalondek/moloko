@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.app.task;
 
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 interface ITaskFragmentListener

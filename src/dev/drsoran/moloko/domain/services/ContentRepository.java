@@ -30,6 +30,7 @@ import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
+import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
@@ -42,6 +43,7 @@ import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
+import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -84,6 +86,8 @@ public class ContentRepository implements IContentRepository
    private final ContentQueryHandler< Location > locationsQueryHandler;
    
    private final ContentQueryHandler< String > tagsQueryHandler;
+   
+   private final ContentQueryHandler< RtmSettings > settingsQueryHandler;
    
    static
    {
@@ -152,6 +156,11 @@ public class ContentRepository implements IContentRepository
                                                                  TagColumns.PROJECTION,
                                                                  modelElementFactory,
                                                                  String.class );
+      
+      this.settingsQueryHandler = new ContentQueryHandler< RtmSettings >( contentResolver,
+                                                                          RtmSettingsColumns.PROJECTION,
+                                                                          modelElementFactory,
+                                                                          RtmSettings.class );
    }
    
    
@@ -472,5 +481,21 @@ public class ContentRepository implements IContentRepository
    {
       return locationsQueryHandler.getAll( ContentUris.LOCATIONS_CONTENT_URI,
                                            null );
+   }
+   
+   
+   
+   @Override
+   public RtmSettings getRtmSettings() throws ContentException
+   {
+      Iterator< RtmSettings > settingsIter = settingsQueryHandler.getAll( ContentUris.RTM_SETTINGS_CONTENT_URI,
+                                                                          null )
+                                                                 .iterator();
+      if ( !settingsIter.hasNext() )
+      {
+         throw new ContentException( "No RTM settings" );
+      }
+      
+      return settingsIter.next();
    }
 }

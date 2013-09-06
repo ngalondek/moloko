@@ -27,7 +27,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.rtm.ParcelableDate;
 
 

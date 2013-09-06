@@ -205,6 +205,22 @@ public final class RtmSmartFilterBuilder
    
    
    
+   public RtmSmartFilterBuilder statusCompleted()
+   {
+      smartFilterString.append( OP_STATUS ).append( COMPLETED );
+      return this;
+   }
+   
+   
+   
+   public RtmSmartFilterBuilder statusIncomplete()
+   {
+      smartFilterString.append( OP_STATUS ).append( INCOMPLETE );
+      return this;
+   }
+   
+   
+   
    public RtmSmartFilterBuilder due( String date )
    {
       smartFilterString.append( OP_DUE )

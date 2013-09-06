@@ -36,7 +36,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.TasksList;
 
 
 class StartUpViewPreference extends AutoSummaryListPreference implements
@@ -209,8 +209,8 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
       {
          try
          {
-            ITasksList defaultList = getAppContext().getContentRepository()
-                                                    .getTasksList( defListId );
+            TasksList defaultList = getAppContext().getContentRepository()
+                                                   .getTasksList( defListId );
             defaultListName = defaultList.getName();
          }
          catch ( NoSuchElementException e )

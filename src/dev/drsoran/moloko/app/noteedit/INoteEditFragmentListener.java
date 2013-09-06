@@ -22,10 +22,11 @@
 
 package dev.drsoran.moloko.app.noteedit;
 
-import com.mdt.rtm.data.RtmTaskNote;
+import dev.drsoran.moloko.domain.model.Note;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 interface INoteEditFragmentListener
 {
-   void onBackgroundDeletion( RtmTaskNote oldNote );
+   void onUpdateTasksNote( Task updatedTask, Note updatedNote );
 }

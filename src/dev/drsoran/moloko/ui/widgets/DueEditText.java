@@ -205,7 +205,7 @@ public class DueEditText extends ClearableEditText
          {
             return getUiContext().getParsingService()
                                  .getDateTimeParsing()
-                                 .parseDateTimeSpec( dueStr );
+                                 .parseDateTime( dueStr );
          }
          catch ( GrammarException e )
          {

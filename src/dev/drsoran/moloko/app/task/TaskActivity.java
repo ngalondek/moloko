@@ -42,15 +42,13 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
+import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.app.taskedit.TaskEditActivity;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.adapters.ActionBarViewPagerTabsAdapter;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.rtm.Task;
 
 
 public class TaskActivity extends MolokoEditFragmentActivity implements
@@ -306,9 +304,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onCompleteTask( Task task )
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                              task,
-                                                                              true );
+      final AppContentEditInfo modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                                     task,
+                                                                                     true );
       applyModifications( modifications );
    }
    
@@ -317,9 +315,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onIncompleteTask( Task task )
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                              task,
-                                                                              false );
+      final AppContentEditInfo modifications = TaskEditUtils.setTaskCompletion( this,
+                                                                                     task,
+                                                                                     false );
       applyModifications( modifications );
    }
    
@@ -328,8 +326,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onPostponeTask( Task task )
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.postponeTask( this,
-                                                                         task );
+      final AppContentEditInfo modifications = TaskEditUtils.postponeTask( this,
+                                                                                task );
       applyModifications( modifications );
    }
    
@@ -353,8 +351,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private void deleteTaskImpl()
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.deleteTask( TaskActivity.this,
-                                                                       taskToDelete );
+      final AppContentEditInfo modifications = TaskEditUtils.deleteTask( TaskActivity.this,
+                                                                              taskToDelete );
       if ( applyModifications( modifications ) )
       {
          finish();
@@ -436,8 +434,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private void deleteNotesImpl()
    {
-      final ApplyContentChangesInfo modifications = NoteEditUtils.deleteNotes( this,
-                                                                        notesToDelete );
+      final AppContentEditInfo modifications = NoteEditUtils.deleteNotes( this,
+                                                                               notesToDelete );
       applyModifications( modifications );
    }
    

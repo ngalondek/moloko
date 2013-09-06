@@ -22,8 +22,7 @@
 
 package dev.drsoran.moloko.app.noteedit;
 
-import java.util.Date;
-
+import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.Time;
@@ -31,27 +30,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.content.db.TableColumns.Notes;
-import dev.drsoran.moloko.content.db.RtmNotesTable.NewNoteId;
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.domain.model.Note;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.Task;
 
 
 class NoteAddFragment extends AbstractNoteEditFragment
 {
-   private final static String NEW_NOTE_ID = "new_note_id";
-   
    private final Time created = MolokoDateUtils.newTime();
    
    @InstanceState( key = Intents.Extras.KEY_TASK,
@@ -66,8 +58,7 @@ class NoteAddFragment extends AbstractNoteEditFragment
                    defaultValue = Strings.EMPTY_STRING )
    private String newText;
    
-   @InstanceState( key = NEW_NOTE_ID, defaultValue = Strings.EMPTY_STRING )
-   private String newNoteId;
+   private INoteAddFragmentListener listener;
    
    
    
@@ -85,6 +76,23 @@ class NoteAddFragment extends AbstractNoteEditFragment
    public NoteAddFragment()
    {
       registerAnnotatedConfiguredInstance( this, NoteAddFragment.class );
+   }
+   
+   
+   
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof INoteAddFragmentListener )
+      {
+         listener = (INoteAddFragmentListener) activity;
+      }
+      else
+      {
+         listener = null;
+      }
    }
    
    
@@ -131,26 +139,23 @@ class NoteAddFragment extends AbstractNoteEditFragment
    
    
    
+   @Override
+   public void onDetach()
+   {
+      listener = null;
+      super.onDetach();
+   }
+   
+   
+   
    public Task getTaskAssertNotNull()
    {
       if ( task == null )
+      {
          throw new AssertionError( "Expected task to be not null." );
+      }
       
       return task;
-   }
-   
-   
-   
-   public String getNewNoteId()
-   {
-      return newNoteId;
-   }
-   
-   
-   
-   private void setNewNoteId( String newNoteId )
-   {
-      this.newNoteId = newNoteId;
    }
    
    
@@ -165,32 +170,18 @@ class NoteAddFragment extends AbstractNoteEditFragment
    
    
    @Override
-   protected ApplyContentChangesInfo getChanges()
+   public void onFinishEditing()
    {
-      final NewNoteId newNoteId = createNewNoteId();
-      final RtmTaskNote newNote = new RtmTaskNote( newNoteId.noteId,
-                                                   getTaskAssertNotNull().getTaskSeriesId(),
-                                                   new Date( created.toMillis( true ) ),
-                                                   new Date( created.toMillis( true ) ),
-                                                   null,
-                                                   Strings.nullIfEmpty( UiUtils.getTrimmedText( title ) ),
-                                                   Strings.nullIfEmpty( UiUtils.getTrimmedText( text ) ) );
-      
-      final ApplyContentChangesInfo modifications = NoteEditUtils.insertNote( getSherlockActivity(),
-                                                                              newNote );
-      if ( modifications.getActionItems() != null )
+      if ( listener != null )
       {
-         setNewNoteId( newNote.getId() );
+         final Note newNote = new Note( Constants.NO_ID,
+                                        created.toMillis( true ) );
+         newNote.setTitle( UiUtils.getTrimmedText( title ) );
+         newNote.setText( UiUtils.getTrimmedText( text ) );
+         
+         task.addNote( newNote );
+         
+         listener.onAddTasksNote( task, newNote );
       }
-      
-      return modifications;
-   }
-   
-   
-   
-   private NewNoteId createNewNoteId()
-   {
-      return RtmNotesTable.createNewNoteId( getSherlockActivity().getContentResolver()
-                                                                 .acquireContentProviderClient( Notes.CONTENT_URI ) );
    }
 }

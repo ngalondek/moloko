@@ -24,7 +24,6 @@ package dev.drsoran.moloko.app.event;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Handler;
 import dev.drsoran.moloko.IHandlerToken;
@@ -32,6 +31,7 @@ import dev.drsoran.moloko.IHandlerTokenFactory;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.IAppEventService;
+import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.Reflection;
 import dev.drsoran.moloko.util.Strings;
@@ -39,7 +39,7 @@ import dev.drsoran.moloko.util.Strings;
 
 public class AppEventService implements IAppEventService
 {
-   private final Context context;
+   private final DomainContext context;
    
    private final Handler handler;
    
@@ -61,8 +61,8 @@ public class AppEventService implements IAppEventService
    
    
    
-   public AppEventService( Context context, Handler handler, ILog logService,
-      IHandlerTokenFactory handlerTokenFactory )
+   public AppEventService( DomainContext context, Handler handler,
+      ILog logService, IHandlerTokenFactory handlerTokenFactory )
    {
       this.context = context;
       this.handler = handler;
@@ -108,7 +108,7 @@ public class AppEventService implements IAppEventService
    {
       if ( listener != null )
       {
-         settingsChangedListeners.removeListener( listener );
+         settingsChangedListeners.unregisterListener( listener );
       }
    }
    
@@ -130,7 +130,7 @@ public class AppEventService implements IAppEventService
    {
       if ( listener != null )
       {
-         syncStatusListeners.removeListener( listener );
+         syncStatusListeners.unregisterListener( listener );
       }
    }
    
@@ -152,7 +152,7 @@ public class AppEventService implements IAppEventService
    {
       if ( listener != null )
       {
-         accountUpdatedListeners.removeListener( listener );
+         accountUpdatedListeners.unregisterListener( listener );
       }
    }
    
@@ -173,6 +173,11 @@ public class AppEventService implements IAppEventService
       {
          logService.e( getClass(), Strings.EMPTY_STRING, e );
          throw e;
+      }
+      catch ( NoSuchMethodException e )
+      {
+         logService.e( getClass(), Strings.EMPTY_STRING, e );
+         throw new RuntimeException( e );
       }
    }
    

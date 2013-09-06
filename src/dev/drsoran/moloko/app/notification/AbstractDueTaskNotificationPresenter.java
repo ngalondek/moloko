@@ -24,7 +24,6 @@ package dev.drsoran.moloko.app.notification;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,99 +40,14 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.IAccountService;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.content.db.DbUtils;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractDueTaskNotificationPresenter implements
          IDueTaskNotificationPresenter
 {
-   protected final static class DueTaskNotification
-   {
-      private final String taskId;
-      
-      private final long due;
-      
-      private boolean isVisible = true;
-      
-      
-      
-      public DueTaskNotification( String taskId, long due )
-      {
-         this.taskId = taskId;
-         this.due = due;
-      }
-      
-      
-      
-      public boolean isVisible()
-      {
-         return isVisible;
-      }
-      
-      
-      
-      public void setVisible( boolean isVisible )
-      {
-         this.isVisible = isVisible;
-      }
-      
-      
-      
-      public String getTaskId()
-      {
-         return taskId;
-      }
-      
-      
-      
-      public long getDue()
-      {
-         return due;
-      }
-      
-      
-      
-      @Override
-      public boolean equals( Object o )
-      {
-         if ( o == null )
-            return false;
-         
-         if ( o == this )
-            return true;
-         
-         if ( o.getClass() != getClass() )
-            return false;
-         
-         return taskId.equals( ( (DueTaskNotification) o ).getTaskId() )
-            && due == ( (DueTaskNotification) o ).due;
-      }
-      
-      
-      
-      @Override
-      public int hashCode()
-      {
-         int hashCode = taskId.hashCode();
-         hashCode = 31 * hashCode + (int) due;
-         
-         return hashCode;
-      }
-      
-      
-      
-      @Override
-      public String toString()
-      {
-         return String.format( "%s, %s, %s",
-                               taskId,
-                               new Date( due ).toString(),
-                               String.valueOf( isVisible ) );
-      }
-   }
-   
    private final static long[] VIBRATE_PATTERN =
    { 0, 300 };
    
@@ -167,8 +81,8 @@ abstract class AbstractDueTaskNotificationPresenter implements
    @Override
    public void showNotificationsFor( Cursor tasksCursor, int endIndex )
    {
-      final List< String > taskIdsToNotify = getTaskIds( tasksCursor, endIndex );
-      final Collection< String > taskIdsInNotification = getNotifiedTasksIds();
+      final List< Long > taskIdsToNotify = getTaskIds( tasksCursor, endIndex );
+      final Collection< Long > taskIdsInNotification = getNotifiedTasksIds();
       
       final NotificationDiffer.Diff diff = new NotificationDiffer().diffTaskIdSets( taskIdsInNotification,
                                                                                     taskIdsToNotify );
@@ -295,15 +209,15 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   protected List< String > getTaskIds( Cursor tasksCursor, int endIndex )
+   protected List< Long > getTaskIds( Cursor tasksCursor, int endIndex )
    {
-      final List< String > taskIds = new ArrayList< String >( endIndex );
+      final List< Long > taskIds = new ArrayList< Long >( endIndex );
       
       boolean ok = tasksCursor.moveToFirst();
       for ( int i = 0; i < endIndex && ok; ok = tasksCursor.moveToNext(), ++i )
       {
-         final String taskId = DbUtils.getOptString( tasksCursor,
-                                                     getColumnIndex( Tasks._ID ) );
+         final long taskId = DbUtils.getLong( tasksCursor,
+                                              getColumnIndex( Tasks._ID ) );
          taskIds.add( taskId );
       }
       
@@ -378,9 +292,9 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   protected Collection< String > getNotifiedTasksIds()
+   protected Collection< Long > getNotifiedTasksIds()
    {
-      final List< String > taskIds = new ArrayList< String >( notifications.size() );
+      final List< Long > taskIds = new ArrayList< Long >( notifications.size() );
       
       for ( DueTaskNotification notification : notifications )
       {
@@ -392,18 +306,18 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   protected boolean containsNotifiedTasksId( String taskId )
+   protected boolean containsNotifiedTasksId( long taskId )
    {
       return getNotificationByTaskId( taskId ) != null;
    }
    
    
    
-   protected DueTaskNotification getNotificationByTaskId( String taskId )
+   protected DueTaskNotification getNotificationByTaskId( long taskId )
    {
       for ( DueTaskNotification notification : notifications )
       {
-         if ( notification.getTaskId().equals( taskId ) )
+         if ( notification.getTaskId() == taskId )
          {
             return notification;
          }
@@ -415,10 +329,10 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    private void updateExistingNotifications( Cursor tasksCursor,
-                                             List< String > taskIdsToNotify,
-                                             Collection< String > updatedValues )
+                                             List< Long > taskIdsToNotify,
+                                             Collection< Long > updatedTaskIds )
    {
-      for ( String updatedNotificationTaskId : updatedValues )
+      for ( Long updatedNotificationTaskId : updatedTaskIds )
       {
          final DueTaskNotification notification = getDueTaskNotification( updatedNotificationTaskId );
          if ( notification != null )
@@ -444,10 +358,10 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    private void insertNewNotifications( Cursor tasksCursor,
-                                        List< String > taskIdsToNotify,
-                                        Collection< String > newValues )
+                                        List< Long > taskIdsToNotify,
+                                        Collection< Long > newTaskIds )
    {
-      for ( String newNotificationTaskId : newValues )
+      for ( Long newNotificationTaskId : newTaskIds )
       {
          final int cursorIndexOfNew = taskIdsToNotify.indexOf( newNotificationTaskId );
          tasksCursor.moveToPosition( cursorIndexOfNew );
@@ -462,9 +376,9 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   private void cancelRemovedNotifications( Collection< String > removedValues )
+   private void cancelRemovedNotifications( Collection< Long > removedTaskIds )
    {
-      for ( String removedNotificationTaskId : removedValues )
+      for ( long removedNotificationTaskId : removedTaskIds )
       {
          final DueTaskNotification notification = getDueTaskNotification( removedNotificationTaskId );
          if ( notification != null )
@@ -478,7 +392,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    private DueTaskNotification newDueTaskNotification( Cursor tasksCursor,
-                                                       String newNotificationTaskId )
+                                                       long newNotificationTaskId )
    {
       final DueTaskNotification newNotification = new DueTaskNotification( newNotificationTaskId,
                                                                            tasksCursor.getLong( getColumnIndex( Tasks.DUE_DATE ) ) );
@@ -487,7 +401,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    
-   private DueTaskNotification getDueTaskNotification( String removedNotificationTaskId )
+   private DueTaskNotification getDueTaskNotification( long removedNotificationTaskId )
    {
       DueTaskNotification foundNotification = null;
       
@@ -495,7 +409,7 @@ abstract class AbstractDueTaskNotificationPresenter implements
          && i.hasNext(); )
       {
          final DueTaskNotification notification = i.next();
-         if ( notification.getTaskId().equals( removedNotificationTaskId ) )
+         if ( notification.getTaskId() == removedNotificationTaskId )
          {
             foundNotification = notification;
          }
@@ -562,14 +476,14 @@ abstract class AbstractDueTaskNotificationPresenter implements
    
    
    protected abstract void onNotificationUpdate( Cursor tasksCursor,
-                                                 List< String > taskIdsToNotify,
+                                                 List< Long > taskIdsToNotify,
                                                  DueTaskNotification oldNotification,
                                                  DueTaskNotification newNotification );
    
    
    
    protected abstract void onNewNotification( Cursor tasksCursor,
-                                              List< String > taskIdsToNotify,
+                                              List< Long > taskIdsToNotify,
                                               DueTaskNotification newNotification );
    
    

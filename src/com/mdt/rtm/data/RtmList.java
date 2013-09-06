@@ -26,9 +26,9 @@ import org.w3c.dom.Element;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.ParcelableDate;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class RtmList extends RtmData
@@ -39,13 +39,15 @@ public class RtmList extends RtmData
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
    {
       
+      @Override
       public RtmList createFromParcel( Parcel source )
       {
          return new RtmList( source );
       }
       
-
-
+      
+      
+      @Override
       public RtmList[] newArray( int size )
       {
          return new RtmList[ size ];
@@ -56,6 +58,7 @@ public class RtmList extends RtmData
    
    private static final class LessIdComperator implements Comparator< RtmList >
    {
+      @Override
       public int compare( RtmList object1, RtmList object2 )
       {
          return object1.id.compareTo( object2.id );
@@ -84,7 +87,7 @@ public class RtmList extends RtmData
    private final RtmSmartFilter smartFilter;
    
    
-
+   
    public RtmList( String id, String name, Date created, Date modified,
       Date deleted, int locked, int archived, int position,
       RtmSmartFilter smartFilter )
@@ -100,8 +103,8 @@ public class RtmList extends RtmData
       this.smartFilter = smartFilter;
    }
    
-
-
+   
+   
    public RtmList( Element elt )
    {
       this.id = elt.getAttribute( "id" );
@@ -128,8 +131,8 @@ public class RtmList extends RtmData
       }
    }
    
-
-
+   
+   
    public RtmList( Parcel source )
    {
       this.id = source.readString();
@@ -143,78 +146,80 @@ public class RtmList extends RtmData
       this.smartFilter = source.readParcelable( RtmSmartFilter.class.getClassLoader() );
    }
    
-
-
+   
+   
    public String getId()
    {
       return id;
    }
    
-
-
+   
+   
    public String getName()
    {
       return name;
    }
    
-
-
+   
+   
    public Date getCreatedDate()
    {
       return created != null ? created.getDate() : null;
    }
    
-
-
+   
+   
    public Date getModifiedDate()
    {
       return modified != null ? modified.getDate() : null;
    }
    
-
-
+   
+   
    public Date getDeletedDate()
    {
       return deleted != null ? deleted.getDate() : null;
    }
    
-
-
+   
+   
    public int getLocked()
    {
       return locked;
    }
    
-
-
+   
+   
    public int getArchived()
    {
       return archived;
    }
    
-
-
+   
+   
    public int getPosition()
    {
       return position;
    }
    
-
-
+   
+   
    public RtmSmartFilter getSmartFilter()
    {
       return smartFilter;
    }
    
-
-
+   
+   
+   @Override
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
@@ -228,8 +233,8 @@ public class RtmList extends RtmData
       dest.writeParcelable( smartFilter, flags );
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {

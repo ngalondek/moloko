@@ -42,11 +42,11 @@ import dev.drsoran.moloko.app.content.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.lists.TaskListsAdapter.IOnGroupIndicatorClickedListener;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.ui.fragments.MolokoExpandableListFragment;
 
 
-class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
+class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
          implements IOnGroupIndicatorClickedListener,
          IOnSettingsChangedListener
 {
@@ -150,7 +150,7 @@ class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
       super.onCreateContextMenu( menu, v, menuInfo );
       
       final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
-      final ITasksList list = getList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
+      final TasksList list = getList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
       final String listName = list.getName();
       
       if ( isWritableAccess() && !list.isLocked() )
@@ -247,7 +247,9 @@ class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
                                 long id )
    {
       if ( listener != null )
+      {
          listener.openList( groupPosition );
+      }
       
       return true;
    }
@@ -261,9 +263,13 @@ class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
       final int pos = ExpandableListView.getPackedPositionGroup( listView.getExpandableListPosition( listView.getPositionForView( groupView ) ) );
       
       if ( listView.isGroupExpanded( pos ) )
+      {
          listView.collapseGroup( pos );
+      }
       else
+      {
          listView.expandGroup( pos );
+      }
    }
    
    
@@ -281,7 +287,10 @@ class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
       if ( intent != null )
       {
          if ( listener != null )
+         {
             listener.openChild( intent );
+         }
+         
          return true;
       }
       else
@@ -293,7 +302,7 @@ class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
    
    
    @Override
-   public ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
+   public ExpandableListAdapter createExpandableListAdapterForResult( List< TasksList > result )
    {
       final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( appContext,
                                                                       R.layout.tasklists_fragment_group,
@@ -307,7 +316,7 @@ class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
    
    
    @Override
-   public Loader< List< ITasksList >> newLoaderInstance( int id, Bundle config )
+   public Loader< List< TasksList >> newLoaderInstance( int id, Bundle config )
    {
       return new TasksListsLoader( appContext.asDomainContext(), true );
    }
@@ -338,9 +347,9 @@ class TaskListsFragment extends MolokoExpandableListFragment< ITasksList >
    
    
    
-   public ITasksList getList( int flatPos )
+   public TasksList getList( int flatPos )
    {
-      return (ITasksList) getExpandableListAdapter().getGroup( flatPos );
+      return (TasksList) getExpandableListAdapter().getGroup( flatPos );
    }
    
    

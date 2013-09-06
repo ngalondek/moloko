@@ -33,7 +33,7 @@ import android.util.AttributeSet;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.content.ContentCompare;
 
 
 public class AutoSummaryListPreference extends ListPreference implements
@@ -147,7 +147,7 @@ public class AutoSummaryListPreference extends ListPreference implements
          final String currentValue = getValue();
          final String persistedValue = getPersistedString( currentValue );
          
-         if ( SyncUtils.isDifferent( currentValue, persistedValue ) )
+         if ( ContentCompare.isDifferent( currentValue, persistedValue ) )
          {
             setValue( persistedValue );
             notifyChanged();

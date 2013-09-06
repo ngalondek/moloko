@@ -39,7 +39,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
 
 
 @TargetApi( Build.VERSION_CODES.HONEYCOMB )

@@ -30,7 +30,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.content.ContentCompare;
 
 
 class AutoSummaryEditTextPreference extends EditTextPreference implements
@@ -114,7 +114,7 @@ class AutoSummaryEditTextPreference extends EditTextPreference implements
          final String currentValue = getText();
          final String persistedValue = getPersistedString( currentValue );
          
-         if ( SyncUtils.isDifferent( currentValue, persistedValue ) )
+         if ( ContentCompare.isDifferent( currentValue, persistedValue ) )
          {
             setText( persistedValue );
             notifyChanged();

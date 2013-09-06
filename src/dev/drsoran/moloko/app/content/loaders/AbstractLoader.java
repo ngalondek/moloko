@@ -69,6 +69,16 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    
    
+   public void throwContentExceptionOnError() throws ContentException
+   {
+      if ( contentException != null )
+      {
+         throw contentException;
+      }
+   }
+   
+   
+   
    public void clearContentException()
    {
       contentException = null;

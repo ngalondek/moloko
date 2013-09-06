@@ -153,8 +153,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
          else
          {
             final String date = getAppContext().getDateFormatter()
-                                               .formatDate( settings.getSyncTimeStamp()
-                                                                    .getTime(),
+                                               .formatDate( settings.getSyncTimeStampMillis(),
                                                             IDateFormatterService.FORMAT_NUMERIC
                                                                | IDateFormatterService.FORMAT_WITH_YEAR );
             

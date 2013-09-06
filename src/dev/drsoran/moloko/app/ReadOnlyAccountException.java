@@ -31,7 +31,7 @@ public class ReadOnlyAccountException extends Exception
    
    public ReadOnlyAccountException()
    {
-      super( LogUtils.DB_READ_ONLY_ERROR );
+      super();
    }
    
    

@@ -34,9 +34,9 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 class QuickAddTaskActionModeCallback implements ActionMode.Callback,

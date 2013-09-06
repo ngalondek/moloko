@@ -28,7 +28,7 @@ import java.util.List;
 import android.content.Context;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 
@@ -60,7 +60,7 @@ class TasksListsEntriesAndValuesLoader
       
       final boolean includeSmartLists = ( flags & FLAG_INCLUDE_SMART_LISTS ) != 0;
       
-      final Iterable< ITasksList > tasksLists;
+      final Iterable< TasksList > tasksLists;
       if ( includeSmartLists )
       {
          tasksLists = contentRepository.getAllTasksLists();
@@ -78,13 +78,13 @@ class TasksListsEntriesAndValuesLoader
    
    
    
-   private ListEntriesAndValues createEntriesAndValues( Iterable< ITasksList > tasksLists,
+   private ListEntriesAndValues createEntriesAndValues( Iterable< TasksList > tasksLists,
                                                         boolean includeNoneElement )
    {
       final List< CharSequence > entries = new ArrayList< CharSequence >();
       final List< CharSequence > values = new ArrayList< CharSequence >();
       
-      for ( ITasksList tasksList : tasksLists )
+      for ( TasksList tasksList : tasksLists )
       {
          entries.add( tasksList.getName() );
          values.add( String.valueOf( tasksList.getId() ) );

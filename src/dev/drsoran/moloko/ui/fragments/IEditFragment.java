@@ -22,12 +22,12 @@
 
 package dev.drsoran.moloko.ui.fragments;
 
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
 import dev.drsoran.moloko.ui.ValidationResult;
+
 
 public interface IEditFragment
 {
-   ApplyContentChangesInfo onFinishEditing();
+   void onFinishEditing();
    
    
    

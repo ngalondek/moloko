@@ -51,7 +51,6 @@ import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.sync.connection.IRtmConnection;
 import dev.drsoran.moloko.sync.connection.IRtmConnectionFactory;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.RtmContacts;
 
 
 /**

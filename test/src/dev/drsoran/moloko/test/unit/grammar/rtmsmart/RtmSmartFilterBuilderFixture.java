@@ -204,6 +204,24 @@ public class RtmSmartFilterBuilderFixture extends MolokoTestCase
    
    
    @Test
+   public void testStatusCompleted()
+   {
+      builder.statusCompleted();
+      assertThat( builder.toString().trim(), is( "status:completed" ) );
+   }
+   
+   
+   
+   @Test
+   public void testStatusInccomplete()
+   {
+      builder.statusIncomplete();
+      assertThat( builder.toString().trim(), is( "status:incomplete" ) );
+   }
+   
+   
+   
+   @Test
    public void testDueString()
    {
       builder.due( "today" );

@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.IChangesTarget;
@@ -42,7 +43,7 @@ public class RecurrenceEditText extends ClearableEditText
    
    private final IRecurrenceParsing recurrenceParsing;
    
-   private Pair< String, Boolean > recurrencePattern;
+   private Recurrence recurrence;
    
    private IChangesTarget changes;
    
@@ -116,10 +117,10 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   public Pair< String, Boolean > getRecurrencePattern()
+   public Recurrence getRecurrence()
    {
       commitInput( getTextTrimmed() );
-      return recurrencePattern;
+      return recurrence;
    }
    
    
@@ -133,7 +134,7 @@ public class RecurrenceEditText extends ClearableEditText
       {
          setRecurrenceBySentence( getTextTrimmed() );
          
-         final boolean inputValid = validateRecurrence( recurrencePattern ).isOk();
+         final boolean inputValid = validateRecurrence( recurrence ).isOk();
          stayInEditText = !inputValid;
          
          if ( inputValid )
@@ -158,7 +159,7 @@ public class RecurrenceEditText extends ClearableEditText
       
       if ( TextUtils.isEmpty( text ) )
       {
-         recurrencePattern = handleEmptyInputString();
+         recurrence = handleEmptyInputString();
       }
    }
    
@@ -168,7 +169,7 @@ public class RecurrenceEditText extends ClearableEditText
    {
       if ( isRecurrencePatternValid() )
       {
-         if ( TextUtils.isEmpty( recurrencePattern.first ) )
+         if ( TextUtils.isEmpty( recurrence.first ) )
          {
             setText( null );
          }
@@ -176,8 +177,8 @@ public class RecurrenceEditText extends ClearableEditText
          {
             try
             {
-               final String sentence = recurrenceParsing.parseRecurrencePatternToSentence( recurrencePattern.first,
-                                                                                           recurrencePattern.second );
+               final String sentence = recurrenceParsing.parseRecurrencePatternToSentence( recurrence.first,
+                                                                                           recurrence.second );
                setText( sentence );
             }
             catch ( GrammarException e )
@@ -214,29 +215,28 @@ public class RecurrenceEditText extends ClearableEditText
    private void setRecurrenceByPattern( String recurrencePattern,
                                         boolean isEveryRecurrence )
    {
-      this.recurrencePattern = Pair.create( recurrencePattern,
-                                            isEveryRecurrence );
+      this.recurrence = Pair.create( recurrencePattern, isEveryRecurrence );
    }
    
    
    
    private void setRecurrenceBySentence( String recurrenceSentence )
    {
-      recurrencePattern = parseRecurrenceSentence( recurrenceSentence );
+      recurrence = parseRecurrenceSentence( recurrenceSentence );
    }
    
    
    
    private boolean isRecurrencePatternValid()
    {
-      return recurrencePattern != null;
+      return recurrence != null;
    }
    
    
    
-   private ValidationResult validateRecurrence( Pair< String, Boolean > recurrencePattern )
+   private ValidationResult validateRecurrence( Recurrence recurrence )
    {
-      final boolean valid = recurrencePattern != null;
+      final boolean valid = recurrence != null;
       if ( !valid )
       {
          return new ValidationResult( getContext().getString( R.string.task_edit_validate_recurrence,

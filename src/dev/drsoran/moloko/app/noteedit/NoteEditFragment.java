@@ -23,41 +23,30 @@
 package dev.drsoran.moloko.app.noteedit;
 
 import android.app.Activity;
-import android.database.ContentObserver;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
-import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.content.db.TableColumns.Notes;
+import dev.drsoran.moloko.domain.model.Note;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
-import dev.drsoran.moloko.util.NoteEditUtils;
-import dev.drsoran.moloko.util.Strings;
 
 
-class NoteEditFragment extends AbstractNoteEditFragment implements
-         LoaderCallbacks< RtmTaskNote >
+class NoteEditFragment extends AbstractNoteEditFragment
 {
-   @InstanceState( key = Intents.Extras.KEY_NOTE )
-   private RtmTaskNote note;
+   @InstanceState( key = Intents.Extras.KEY_TASK,
+                   defaultValue = InstanceState.NO_DEFAULT )
+   private Task task;
    
-   private ContentObserver noteChangesObserver;
+   @InstanceState( key = Intents.Extras.KEY_NOTE_ID )
+   private long noteId;
    
    private INoteEditFragmentListener listener;
-   
-   private IHandlerToken handler;
    
    
    
@@ -92,17 +81,6 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
       {
          listener = null;
       }
-      
-      handler = getUiContext().acquireHandlerToken();
-   }
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      registerForNoteDeletedByBackgroundSync();
    }
    
    
@@ -133,22 +111,6 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
    
    
    @Override
-   public void onDestroy()
-   {
-      unregisterForNoteDeletedByBackgroundSync();
-      
-      if ( handler != null )
-      {
-         handler.release();
-         handler = null;
-      }
-      
-      super.onDestroy();
-   }
-   
-   
-   
-   @Override
    public void onDetach()
    {
       listener = null;
@@ -173,12 +135,11 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
    
    
    
-   private void showNote( View content, RtmTaskNote note )
+   private void showNote( View content, Note note )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
       createdDate.setText( getUiContext().getDateFormatter()
-                                         .formatDateTime( note.getCreatedDate()
-                                                              .getTime(),
+                                         .formatDateTime( note.getCreatedMillisUtc(),
                                                           IDateFormatterService.FORMAT_WITH_YEAR ) );
       title.setText( note.getTitle() );
       text.setText( note.getText() );
@@ -186,10 +147,14 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
    
    
    
-   public RtmTaskNote getNoteAssertNotNull()
+   public Note getNoteAssertNotNull()
    {
+      final Note note = task.getNote( noteId );
+      
       if ( note == null )
-         throw new IllegalStateException( "note must not be null" );
+      {
+         throw new AssertionError( "note must not be null" );
+      }
       
       return note;
    }
@@ -199,101 +164,24 @@ class NoteEditFragment extends AbstractNoteEditFragment implements
    @Override
    public boolean hasChanges()
    {
-      final RtmTaskNote note = getNoteAssertNotNull();
+      final Note note = getNoteAssertNotNull();
       
-      return SyncUtils.isDifferent( Strings.nullIfEmpty( note.getTitle() ),
-                                   Strings.nullIfEmpty( UiUtils.getTrimmedText( title ) ) )
-         || SyncUtils.isDifferent( Strings.nullIfEmpty( note.getText() ),
-                                  Strings.nullIfEmpty( UiUtils.getTrimmedText( text ) ) );
+      return !note.getTitle().equals( UiUtils.getTrimmedText( title ) )
+         || !note.getText().equals( UiUtils.getTrimmedText( text ) );
    }
    
    
    
    @Override
-   protected ApplyContentChangesInfo getChanges()
+   public void onFinishEditing()
    {
-      final String title = UiUtils.getTrimmedText( this.title );
-      final String text = UiUtils.getTrimmedText( this.text );
-      
-      final RtmTaskNote note = getNoteAssertNotNull();
-      final ApplyContentChangesInfo modifications = NoteEditUtils.setNoteTitleAndText( getSherlockActivity(),
-                                                                                       note.getId(),
-                                                                                       title,
-                                                                                       text );
-      
-      return modifications;
-   }
-   
-   
-   
-   @Override
-   public Loader< RtmTaskNote > onCreateLoader( int id, Bundle args )
-   {
-      return new RtmTaskNoteLoader( getSherlockActivity(),
-                                    getNoteAssertNotNull().getId() );
-   }
-   
-   
-   
-   @Override
-   public void onLoadFinished( Loader< RtmTaskNote > loader, RtmTaskNote data )
-   {
-      // If the database changed by a background sync and the assigned note
-      // has been deleted, then we ask the user if he wants to keep his changes
-      // or drop the note.
-      if ( data == null )
+      if ( listener != null )
       {
-         handler.post( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               if ( listener != null )
-               {
-                  listener.onBackgroundDeletion( getNoteAssertNotNull() );
-               }
-            }
-         } );
+         final Note note = getNoteAssertNotNull();
+         note.setTitle( UiUtils.getTrimmedText( this.title ) );
+         note.setText( UiUtils.getTrimmedText( this.text ) );
+         
+         listener.onUpdateTasksNote( task, note );
       }
-   }
-   
-   
-   
-   @Override
-   public void onLoaderReset( Loader< RtmTaskNote > loader )
-   {
-   }
-   
-   
-   
-   private void registerForNoteDeletedByBackgroundSync()
-   {
-      noteChangesObserver = new ContentObserver( getUiContext().asSystemContext()
-                                                               .getHandler() )
-      {
-         @Override
-         public void onChange( boolean selfChange )
-         {
-            getSherlockActivity().getSupportLoaderManager()
-                                 .initLoader( RtmTaskNoteLoader.ID,
-                                              Bundle.EMPTY,
-                                              NoteEditFragment.this );
-         }
-      };
-      
-      getSherlockActivity().getContentResolver()
-                           .registerContentObserver( DbUtils.contentUriWithId( Notes.CONTENT_URI,
-                                                                               getNoteAssertNotNull().getId() ),
-                                                     false,
-                                                     noteChangesObserver );
-   }
-   
-   
-   
-   private void unregisterForNoteDeletedByBackgroundSync()
-   {
-      getSherlockActivity().getContentResolver()
-                           .unregisterContentObserver( noteChangesObserver );
-      noteChangesObserver = null;
    }
 }

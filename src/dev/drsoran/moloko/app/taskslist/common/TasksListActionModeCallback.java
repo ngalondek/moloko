@@ -24,15 +24,14 @@ package dev.drsoran.moloko.app.taskslist.common;
 
 import java.util.ArrayList;
 
-import android.util.Pair;
-
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.util.Pair;
 
 
 class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
@@ -200,10 +199,14 @@ class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
       
       for ( Task task : getSelectedItems() )
       {
-         if ( task.getCompleted() != null )
+         if ( task.isComplete() )
+         {
             ++selCompl;
+         }
          else
+         {
             ++selUncompl;
+         }
       }
       
       return Pair.create( Integer.valueOf( selCompl ),

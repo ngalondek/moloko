@@ -25,7 +25,6 @@ package dev.drsoran.moloko.app.notification;
 import java.util.Calendar;
 
 import android.content.ContentProviderClient;
-import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,9 +32,8 @@ import android.os.RemoteException;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
-import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.domain.DomainContext;
 
 
 class HoleDayDueTasksLoader extends AbstractLoader< Cursor >
@@ -56,7 +54,7 @@ class HoleDayDueTasksLoader extends AbstractLoader< Cursor >
    
    
    
-   public HoleDayDueTasksLoader( Context context, long remindBeforeMillis )
+   public HoleDayDueTasksLoader( DomainContext context, long remindBeforeMillis )
    {
       super( context );
       this.remindBeforeMillis = remindBeforeMillis;

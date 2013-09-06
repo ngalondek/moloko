@@ -26,7 +26,6 @@ import java.util.Date;
 
 import android.net.Uri;
 import dev.drsoran.moloko.domain.model.Modification;
-import dev.drsoran.moloko.domain.model.ModificationSet;
 
 
 public class SyncProperties
@@ -40,7 +39,7 @@ public class SyncProperties
    public final ModificationSet modifications;
    
    
-
+   
    private SyncProperties( Date serverModDate, Date localModDate, Uri uri,
       ModificationSet modifications )
    {
@@ -50,15 +49,15 @@ public class SyncProperties
       this.modifications = modifications;
    }
    
-
-
+   
+   
    public Modification getModification( String columnName )
    {
       return modifications.find( uri, columnName );
    }
    
-
-
+   
+   
    public final static SyncProperties newInstance( Date serverModDate,
                                                    Date localModDate,
                                                    Uri uri,
@@ -70,8 +69,8 @@ public class SyncProperties
                                  modifications );
    }
    
-
-
+   
+   
    public final static SyncProperties newLocalOnlyInstance( Date serverModDate,
                                                             Date localModDate,
                                                             Uri uri )

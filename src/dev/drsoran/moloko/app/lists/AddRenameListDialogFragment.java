@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.listsedit;
+package dev.drsoran.moloko.app.lists;
 
 import java.util.Date;
 
@@ -34,30 +34,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmList;
-
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.content.db.RtmTasksListsTable.NewRtmListId;
+import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.MolokoEditDialogFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
-import dev.drsoran.moloko.util.RtmListEditUtils;
 
 
 public class AddRenameListDialogFragment extends MolokoEditDialogFragment
 {
    @InstanceState( key = Intents.Extras.KEY_LIST )
-   private RtmList list;
-   
-   @InstanceState( key = Intents.Extras.KEY_FILTER )
-   private IFilter filter;
+   private TasksList list;
    
    private IMolokoEditDialogFragmentListener listener;
    
@@ -135,7 +128,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       {
          title = getString( R.string.dlg_rename_list_title );
       }
-      else if ( filter != null )
+      else if ( list.isSmartList() )
       {
          title = getString( R.string.dlg_add_smart_list_title );
       }
@@ -210,10 +203,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    private void configureAsNewListDialog()
    {
-      if ( filter instanceof RtmSmartFilter )
-      {
-         filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
-      }
+      filterEdit.setText( list.getSmartFilter().getFilterString() );
    }
    
    
@@ -244,7 +234,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    @Override
-   protected ApplyContentChangesInfo getChanges()
+   protected AppContentEditInfo getChanges()
    {
       if ( list == null )
       {
@@ -318,36 +308,27 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    
-   private ApplyContentChangesInfo createNewList()
+   private AppContentEditInfo createNewList()
    {
-      final NewRtmListId newListId = createNewListId();
       final Date createdDate = new Date();
       
-      final RtmList newList = new RtmList( newListId.rtmListId,
-                                           UiUtils.getTrimmedText( listNameEdit ),
-                                           createdDate,
-                                           createdDate,
-                                           null,
-                                           0,
-                                           0,
-                                           0,
-                                           getEnteredSmartFilter() );
+      final TasksList newList = new TasksList( Constants.NO_ID,
+                                               System.currentTimeMillis(),
+                                               UiUtils.getTrimmedText( listNameEdit ),
+                                               0,
+                                               false,
+                                               false );
+      newList.setSmartFilter( getEnteredSmartFilter() );
       
       return RtmListEditUtils.insertList( getSherlockActivity(), newList );
    }
    
    
    
-   private NewRtmListId createNewListId()
+   private AppContentEditInfo renameList( TasksList list )
    {
-      return RtmTasksListsTable.createNewListId( getSherlockActivity().getContentResolver()
-                                                                 .acquireContentProviderClient( Lists.CONTENT_URI ) );
-   }
-   
-   
-   
-   private ApplyContentChangesInfo renameList( RtmList list )
-   {
+      list.setName( UiUtils.getTrimmedText( listNameEdit ) );
+      
       return RtmListEditUtils.setListName( getSherlockActivity(),
                                            list.getId(),
                                            UiUtils.getTrimmedText( listNameEdit ) );

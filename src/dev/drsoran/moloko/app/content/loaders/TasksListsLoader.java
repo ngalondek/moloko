@@ -30,13 +30,13 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
-import dev.drsoran.moloko.domain.model.ITasksList;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
-public class TasksListsLoader extends AbstractLoader< List< ITasksList > >
+public class TasksListsLoader extends AbstractLoader< List< TasksList > >
 {
    public final static int ID = R.id.tasks_lists_loader;
    
@@ -61,11 +61,11 @@ public class TasksListsLoader extends AbstractLoader< List< ITasksList > >
    
    
    @Override
-   protected List< ITasksList > queryResultInBackground( IContentRepository contentRepository ) throws ContentException
+   protected List< TasksList > queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
-      final ArrayList< ITasksList > list = new ArrayList< ITasksList >();
+      final ArrayList< TasksList > list = new ArrayList< TasksList >();
       
-      for ( ITasksList tasksList : contentRepository.getAllTasksLists() )
+      for ( TasksList tasksList : contentRepository.getAllTasksLists() )
       {
          if ( includeTasksCount )
          {

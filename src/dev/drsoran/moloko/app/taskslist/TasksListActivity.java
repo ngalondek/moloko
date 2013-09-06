@@ -99,7 +99,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    private void prepareToggleDefaultListMenu( MenuItem toggleDefaultListItem )
    {
-      final String listIdOfTasksList = getActiveListId();
+      final long listIdOfTasksList = getActiveListId();
       
       toggleDefaultListItem.setVisible( listIdOfTasksList != null
          && isRealList( listIdOfTasksList ) );
@@ -191,8 +191,8 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    private boolean isDefaultList()
    {
-      return getActiveListId().equals( getAppContext().getSettings()
-                                                      .getDefaultListId() );
+      return getActiveListId() == getAppContext().getSettings()
+                                                 .getDefaultListId();
    }
    
    

@@ -30,13 +30,13 @@ import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.app.services.IAccountService;
+import dev.drsoran.moloko.app.services.IAppContentEditService;
 import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.IAppServices;
 import dev.drsoran.moloko.app.services.IConnectionService;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.event.ISystemEventService;
@@ -180,8 +180,8 @@ public final class AppContext extends ContextWrapper
    
    
    
-   public IContentEditService getContentEditService()
+   public IAppContentEditService getContentEditService()
    {
-      return domainContext.getContentEditService();
+      return appServices.getContentEditService();
    }
 }

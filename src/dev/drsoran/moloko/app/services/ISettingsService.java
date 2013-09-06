@@ -28,7 +28,7 @@ import java.util.Map;
 
 import android.net.Uri;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
-import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.domain.model.RtmSettings;
 
 

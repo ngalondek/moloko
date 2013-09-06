@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.nfc.Tag;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Pair;
@@ -42,16 +43,12 @@ import com.mdt.rtm.data.RtmLocation;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.content.db.TableColumns.Locations;
-import dev.drsoran.moloko.content.db.TableColumns.Tags;
-import dev.drsoran.moloko.domain.model.ITasksList;
 import dev.drsoran.moloko.domain.model.Priority;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.rtm.Tag;
 
 
 class RtmSmartAddAdapter extends BaseAdapter implements Filterable
@@ -264,8 +261,8 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                      lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
                      
                      {
-                        for ( ITasksList tasksList : context.getContentRepository()
-                                                            .getPhysicalTasksLists() )
+                        for ( TasksList tasksList : context.getContentRepository()
+                                                           .getPhysicalTasksLists() )
                         {
                            lists_and_tags.add( Pair.create( tasksList.getName(),
                                                             Pair.create( String.valueOf( tasksList.getId() ),

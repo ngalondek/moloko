@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.ui.fragments.factories;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -69,10 +70,11 @@ abstract class AbstractIntentFragmentFactory
       }
       catch ( Throwable e )
       {
-         context.getLogService().e( AbstractIntentFragmentFactory.class,
-                                    "Unable to instantiate new fragment by Intent "
-                                       + intent,
-                                    e );
+         context.Log()
+                .e( AbstractIntentFragmentFactory.class,
+                    MessageFormat.format( "Unable to instantiate new fragment by Intent {0}",
+                                          intent ),
+                    e );
       }
       
       return fragment;

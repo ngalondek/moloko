@@ -38,16 +38,10 @@ import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
-import dev.drsoran.moloko.content.db.TableColumns.TaskSeries;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.rtm.ParticipantList;
-import dev.drsoran.rtm.Task;
 
 
 class TaskAddFragment extends AbstractTaskEditFragment
@@ -352,13 +346,13 @@ class TaskAddFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected ApplyContentChangesInfo getApplyChangesInfo()
+   protected AppContentEditInfo getApplyChangesInfo()
    {
       saveChanges();
       
       final Task newTask = newTask();
-      final ApplyContentChangesInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
-                                                                       newTask );
+      final AppContentEditInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
+                                                                              newTask );
       return modifications;
    }
    
@@ -375,7 +369,6 @@ class TaskAddFragment extends AbstractTaskEditFragment
    
    private final Task newTask()
    {
-      final NewTaskIds newTaskIds = createNewTaskIds();
       final Date createdDate = new Date( created );
       final long dueDate = getCurrentValue( Tasks.DUE_DATE, Long.class );
       
@@ -411,13 +404,5 @@ class TaskAddFragment extends AbstractTaskEditFragment
                        getCurrentValue( Tasks.TAGS, String.class ),
                        (ParticipantList) null,
                        Strings.EMPTY_STRING );
-   }
-   
-   
-   
-   private NewTaskIds createNewTaskIds()
-   {
-      return TasksProviderPart.createNewTaskIds( getSherlockActivity().getContentResolver()
-                                                                      .acquireContentProviderClient( Tasks.CONTENT_URI ) );
    }
 }

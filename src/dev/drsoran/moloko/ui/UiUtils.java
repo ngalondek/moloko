@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.ui;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -197,7 +196,7 @@ public final class UiUtils
    
    public final static void inflateTags( Context context,
                                          ViewGroup container,
-                                         Collection< String > tags,
+                                         Iterable< String > tags,
                                          Bundle configuration )
    {
       if ( configuration == null )
@@ -213,7 +212,7 @@ public final class UiUtils
       }
       
       // inflate the stub and add tags
-      if ( tags.size() > 0 && !configuration.containsKey( REMOVE_ALL_TAGS ) )
+      if ( !configuration.containsKey( REMOVE_ALL_TAGS ) )
       {
          try
          {
@@ -248,9 +247,13 @@ public final class UiUtils
       }
       
       if ( container.getChildCount() > 0 )
+      {
          container.setVisibility( View.VISIBLE );
+      }
       else
+      {
          container.setVisibility( View.GONE );
+      }
    }
    
    

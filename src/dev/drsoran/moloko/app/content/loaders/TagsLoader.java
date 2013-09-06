@@ -48,7 +48,7 @@ public class TagsLoader extends AbstractLoader< List< String > >
    @Override
    public Uri getContentUri()
    {
-      return ContentUris.TAG_CLOUD_CONTENT_URI;
+      return ContentUris.TAGS_CONTENT_URI;
    }
    
    

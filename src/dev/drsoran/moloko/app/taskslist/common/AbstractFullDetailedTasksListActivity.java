@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import android.app.Dialog;
@@ -37,18 +39,17 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.ApplyContentChangesInfo;
-import dev.drsoran.moloko.app.listsedit.AddRenameListDialogFragment;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
+import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
-import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.rtm.RtmSmartFilter;
-import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractFullDetailedTasksListActivity extends
@@ -136,7 +137,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    @Override
-   public final void onShowTasksWithTags( List< String > tags )
+   public final void onShowTasksWithTags( Collection< String > tags )
    {
       if ( tags.size() == 1 )
       {
@@ -154,7 +155,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
     * Callback from ChooseTagsDialogFragment after choosing tags and a logical operation on them.
     */
    @Override
-   public final void onShowTasksWithTags( List< String > tags,
+   public final void onShowTasksWithTags( Collection< String > tags,
                                           LogicalOperation operation )
    {
       final String logOpString = determineLogicalOperationString( operation );
@@ -337,11 +338,11 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
-   protected void onOpenChoosenTags( List< String > tags,
+   protected void onOpenChoosenTags( Collection< String > tags,
                                      String logicalOperation )
    {
       startActivityPreserveHomeAction( Intents.createOpenTagsIntent( this,
-                                                                     tags,
+                                                                     new ArrayList< String >( tags ),
                                                                      logicalOperation ) );
    }
    
@@ -446,9 +447,9 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                               tasks,
-                                                                               true );
+      final AppContentEditInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                 tasks,
+                                                                                 true );
       applyModifications( modifications );
       clearListChoices();
    }
@@ -457,9 +458,9 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void incompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                               tasks,
-                                                                               false );
+      final AppContentEditInfo modifications = TaskEditUtils.setTasksCompletion( this,
+                                                                                 tasks,
+                                                                                 false );
       applyModifications( modifications );
       clearListChoices();
    }
@@ -468,8 +469,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void postponeSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.postponeTasks( this,
-                                                                          tasks );
+      final AppContentEditInfo modifications = TaskEditUtils.postponeTasks( this,
+                                                                            tasks );
       applyModifications( modifications );
       clearListChoices();
    }
@@ -478,8 +479,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void deleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final ApplyContentChangesInfo modifications = TaskEditUtils.deleteTasks( this,
-                                                                        tasks );
+      final AppContentEditInfo modifications = TaskEditUtils.deleteTasks( this,
+                                                                          tasks );
       applyModifications( modifications );
       clearListChoices();
    }
@@ -533,11 +534,11 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       switch ( operation )
       {
          case AND:
-            logOpString = RtmSmartFilterLexer.AND_LIT;
+            logOpString = RtmSmartFilterSyntax.AND;
             break;
          
          case OR:
-            logOpString = RtmSmartFilterLexer.OR_LIT;
+            logOpString = RtmSmartFilterSyntax.OR;
             break;
          
          default :
@@ -562,7 +563,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    
    
-   private void showChooseTagsDialog( List< String > tags )
+   private void showChooseTagsDialog( Collection< String > tags )
    {
       ChooseTagsDialogFragment.show( this, tags );
    }

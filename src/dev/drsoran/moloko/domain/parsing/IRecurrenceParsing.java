@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import dev.drsoran.moloko.util.Pair;
+import dev.drsoran.moloko.domain.model.Recurrence;
 
 
 public interface IRecurrenceParsing
@@ -45,10 +45,7 @@ public interface IRecurrenceParsing
    
    
    
-   /**
-    * @return Pair, where the first is the RTM style recurrence pattern and the second indicates 'every' recurrence.
-    */
-   Pair< String, Boolean > parseRecurrence( String sentence ) throws GrammarException;
+   Recurrence parseRecurrence( String sentence ) throws GrammarException;
    
    
    

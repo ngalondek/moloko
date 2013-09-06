@@ -218,7 +218,8 @@ public class TaskSearchResultActivity extends
    
    private Bundle putTransformedQueryFromSmartFilter( Bundle config )
    {
-      config.putParcelable( Intents.Extras.KEY_FILTER, evaluateRtmSmartFilter() );
+      config.putSerializable( Intents.Extras.KEY_FILTER,
+                              evaluateRtmSmartFilter() );
       return config;
    }
    

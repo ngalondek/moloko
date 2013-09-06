@@ -29,9 +29,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.app.task.TaskFragment;
-import dev.drsoran.moloko.app.taskedit.TaskAddFragment;
-import dev.drsoran.moloko.app.taskedit.TaskEditFragment;
 
 
 public final class TaskFragmentFactory extends AbstractIntentFragmentFactory

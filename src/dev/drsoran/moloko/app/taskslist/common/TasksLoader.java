@@ -25,11 +25,11 @@ package dev.drsoran.moloko.app.taskslist.common;
 import java.util.Collections;
 import java.util.List;
 
-import android.content.ContentProviderClient;
-import android.content.Context;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
 class TasksLoader extends AbstractTasksListLoader< Task >
@@ -40,11 +40,11 @@ class TasksLoader extends AbstractTasksListLoader< Task >
    
    private final String order;
    
-   private final String taskId;
+   private final Long taskId;
    
    
    
-   public TasksLoader( Context context, String taskId )
+   public TasksLoader( DomainContext context, long taskId )
    {
       super( context );
       this.selection = null;
@@ -54,7 +54,7 @@ class TasksLoader extends AbstractTasksListLoader< Task >
    
    
    
-   public TasksLoader( Context context, String selection, String order )
+   public TasksLoader( DomainContext context, String selection, String order )
    {
       super( context );
       this.selection = selection;
@@ -65,15 +65,20 @@ class TasksLoader extends AbstractTasksListLoader< Task >
    
    
    @Override
-   protected List< Task > queryResultInBackground( ContentProviderClient client )
+   protected List< Task > queryResultInBackground( IContentRepository contentRepository )
    {
       final List< Task > tasks;
       
       if ( taskId != null )
-         tasks = Collections.singletonList( TasksProviderPart.getTask( client,
-                                                                       taskId ) );
+      {
+         tasks = Collections.singletonList( contentRepository.getTask( taskId,
+                                                                       TaskContentOptions.Complete ) );
+      }
       else
-         tasks = TasksProviderPart.getTasks( client, selection, order );
+      {
+         tasks = contentRepository.getTasksFromSmartFilter( smartFilter,
+                                                            TaskContentOptions.Complete );
+      }
       
       return tasks;
    }

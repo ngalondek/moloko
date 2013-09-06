@@ -25,10 +25,10 @@ package dev.drsoran.moloko.app.taskslist.common;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
-import dev.drsoran.rtm.Task;
 
 
 class MinDetailedTasksListFragmentAdapter extends

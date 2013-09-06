@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.task;
 
+import java.util.Iterator;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
@@ -42,7 +44,13 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.content.loaders.TaskLoader;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Participant;
+import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.MenuItemPreparer;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -51,7 +59,6 @@ import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
-import dev.drsoran.rtm.Task;
 
 
 class TaskFragment extends MolokoLoaderFragment< Task > implements
@@ -264,7 +271,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
       final Task task = getLoaderData();
       if ( task != null )
       {
-         final boolean taskIsCompleted = task.getCompleted() != null;
+         final boolean taskIsCompleted = task.isComplete();
          final MenuItemPreparer preparer = new MenuItemPreparer( menu );
          
          preparer.setVisible( R.id.menu_complete_selected_tasks,
@@ -345,16 +352,14 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
       UiUtils.setPriorityColor( activity, priorityBar, task );
       
       addedDate.setText( getUiContext().getDateFormatter()
-                                       .formatDateTime( task.getAdded()
-                                                            .getTime(),
+                                       .formatDateTime( task.getAddedMillisUtc(),
                                                         FULL_DATE_FLAGS ) );
       
-      if ( task.getCompleted() != null )
+      if ( task.isComplete() )
       {
          completedDate.setVisibility( View.VISIBLE );
          completedDate.setText( getUiContext().getDateFormatter()
-                                              .formatDateTime( task.getCompleted()
-                                                                   .getTime(),
+                                              .formatDateTime( task.getCompletedMillisUtc(),
                                                                FULL_DATE_FLAGS ) );
       }
       else
@@ -362,25 +367,31 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
          completedDate.setVisibility( View.GONE );
       }
       
-      if ( task.getPosponed() > 0 )
+      if ( task.isPostponed() )
       {
          postponed.setText( getString( R.string.task_postponed,
-                                       task.getPosponed() ) );
+                                       task.getPostponedCount() ) );
          postponed.setVisibility( View.VISIBLE );
       }
       else
+      {
          postponed.setVisibility( View.GONE );
+      }
       
       if ( !TextUtils.isEmpty( task.getSource() ) )
       {
          String sourceStr = task.getSource();
          if ( sourceStr.equalsIgnoreCase( "js" ) )
+         {
             sourceStr = "web";
+         }
          
          source.setText( getString( R.string.task_source, sourceStr ) );
       }
       else
+      {
          source.setText( "?" );
+      }
       
       RtmStyleTaskDescTextViewFormatter.setTaskDescription( description,
                                                             task,
@@ -413,12 +424,8 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private void setDateTimeSection( View view, Task task )
    {
-      final boolean hasDue = task.getDue() != null;
-      final boolean hasEstimate = !TextUtils.isEmpty( task.getEstimate() );
-      final boolean isRecurrent = !TextUtils.isEmpty( task.getRecurrence() );
-      
       // Check if we need this section
-      if ( !hasEstimate && !hasDue && !isRecurrent )
+      if ( !task.hasEstimation() && !task.hasDue() && !task.isRecurrent() )
       {
          view.setVisibility( View.GONE );
       }
@@ -428,69 +435,18 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
          
          final StringBuilder textBuffer = new StringBuilder();
          
-         if ( hasDue )
-         {
-            if ( task.hasDueTime() )
-            {
-               UiUtils.appendAtNewLine( textBuffer,
-                                        getUiContext().getDateFormatter()
-                                                      .formatDateTime( task.getDue()
-                                                                           .getTime(),
-                                                                       IDateFormatterService.FORMAT_WITH_YEAR
-                                                                          | IDateFormatterService.FORMAT_SHOW_WEEKDAY ) );
-            }
-            else
-            {
-               UiUtils.appendAtNewLine( textBuffer,
-                                        getUiContext().getDateFormatter()
-                                                      .formatDate( task.getDue()
-                                                                       .getTime(),
-                                                                   IDateFormatterService.FORMAT_WITH_YEAR
-                                                                      | IDateFormatterService.FORMAT_SHOW_WEEKDAY ) );
-            }
-         }
+         appendDue( textBuffer, task );
          
-         if ( isRecurrent )
-         {
-            final String sentence = getUiContext().getParsingService()
-                                                  .getRecurrenceParsing()
-                                                  .parseRecurrencePatternToSentence( task.getRecurrence(),
-                                                                                     task.isEveryRecurrence() );
-            
-            // In this case we add the 'repeat' to the beginning of the pattern, otherwise
-            // the 'repeat' will be the header of the section.
-            if ( hasDue || hasEstimate )
-            {
-               UiUtils.appendAtNewLine( textBuffer,
-                                        getString( R.string.task_datetime_recurr_inline,
-                                                   ( sentence != null
-                                                                     ? sentence
-                                                                     : getString( R.string.task_datetime_err_recurr ) ) ) );
-            }
-            else
-            {
-               UiUtils.appendAtNewLine( textBuffer,
-                                        ( sentence != null
-                                                          ? sentence
-                                                          : getString( R.string.task_datetime_err_recurr ) ) );
-            }
-            
-         }
+         appendRecurrence( textBuffer, task );
          
-         if ( hasEstimate )
-         {
-            UiUtils.appendAtNewLine( textBuffer,
-                                     getString( R.string.task_datetime_estimate_inline,
-                                                getUiContext().getDateFormatter()
-                                                              .formatEstimated( task.getEstimateMillis() ) ) );
-         }
+         appendEstimation( textBuffer, task );
          
          // Determine the section title
          int titleId;
          
-         if ( hasDue )
+         if ( task.hasDue() )
             titleId = R.string.task_datetime_title_due;
-         else if ( hasEstimate )
+         else if ( task.hasEstimation() )
             titleId = R.string.task_datetime_title_estimate;
          else
             titleId = R.string.task_datetime_title_recurr;
@@ -503,11 +459,88 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
+   private void appendDue( StringBuilder textBuffer, Task task )
+   {
+      final Due due = task.getDue();
+      
+      if ( due != null )
+      {
+         if ( due.hasDueTime() )
+         {
+            UiUtils.appendAtNewLine( textBuffer,
+                                     getUiContext().getDateFormatter()
+                                                   .formatDateTime( due.getMillisUtc(),
+                                                                    IDateFormatterService.FORMAT_WITH_YEAR
+                                                                       | IDateFormatterService.FORMAT_SHOW_WEEKDAY ) );
+         }
+         else
+         {
+            UiUtils.appendAtNewLine( textBuffer,
+                                     getUiContext().getDateFormatter()
+                                                   .formatDate( due.getMillisUtc(),
+                                                                IDateFormatterService.FORMAT_WITH_YEAR
+                                                                   | IDateFormatterService.FORMAT_SHOW_WEEKDAY ) );
+         }
+      }
+   }
+   
+   
+   
+   private void appendRecurrence( StringBuilder textBuffer, Task task )
+   {
+      final Recurrence recurrence = task.getRecurrence();
+      
+      if ( recurrence != null )
+      {
+         try
+         {
+            final String sentence = getUiContext().getParsingService()
+                                                  .getRecurrenceParsing()
+                                                  .parseRecurrencePatternToSentence( recurrence.getPattern(),
+                                                                                     recurrence.isEveryRecurrence() );
+            // In this case we add the 'repeat' to the beginning of the pattern, otherwise
+            // the 'repeat' will be the header of the section.
+            if ( task.hasDue() || task.hasEstimation() )
+            {
+               UiUtils.appendAtNewLine( textBuffer,
+                                        getString( R.string.task_datetime_recurr_inline,
+                                                   sentence ) );
+            }
+            else
+            {
+               UiUtils.appendAtNewLine( textBuffer, sentence );
+            }
+         }
+         catch ( GrammarException e )
+         {
+            UiUtils.appendAtNewLine( textBuffer,
+                                     getString( R.string.task_datetime_err_recurr ) );
+         }
+      }
+   }
+   
+   
+   
+   private void appendEstimation( StringBuilder textBuffer, Task task )
+   {
+      final Estimation estimation = task.getEstimation();
+      
+      if ( estimation != null )
+      {
+         UiUtils.appendAtNewLine( textBuffer,
+                                  getString( R.string.task_datetime_estimate_inline,
+                                             getUiContext().getDateFormatter()
+                                                           .formatEstimated( estimation.getMillisUtc() ) ) );
+      }
+   }
+   
+   
+   
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
       
-      boolean showSection = !TextUtils.isEmpty( task.getLocationId() );
+      boolean showSection = task.isLocated();
       
       if ( showSection )
       {
@@ -568,14 +601,17 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private void setParticipantsSection( ViewGroup view, Task task )
    {
-      final Iterable< Participant > participants = task.getParticipants();
+      final Iterator< Participant > participantsIter = task.getParticipants()
+                                                           .iterator();
       
-      if ( participants != null && participants.getCount() > 0 )
+      if ( participantsIter.hasNext() )
       {
          view.setVisibility( View.VISIBLE );
          
-         for ( final Participant participant : participants.getParticipants() )
+         while ( participantsIter.hasNext() )
          {
+            final Participant participant = participantsIter.next();
+            
             final TextView textView = new TextView( getSherlockActivity() );
             UiUtils.makeLink( textView,
                               participant.getFullname(),
@@ -591,6 +627,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
             
             view.addView( textView );
          }
+         
       }
       else
       {
@@ -603,8 +640,9 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    @Override
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskLoader( getSherlockActivity(),
-                             args.getString( Config.TASK_ID ) );
+      return new TaskLoader( getUiContext().asDomainContext(),
+                             args.getLong( Config.TASK_ID ),
+                             TaskContentOptions.Complete );
    }
    
    

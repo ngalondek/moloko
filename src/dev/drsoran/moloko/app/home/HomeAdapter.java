@@ -66,8 +66,7 @@ class HomeAdapter extends BaseAdapter
                                                null,
                                                R.string.app_tasklists,
                                                R.drawable.ic_home_list_detailed,
-                                               new Intent( Intent.ACTION_VIEW,
-                                                           ListOverviews.CONTENT_URI ) ) );
+                                               Intents.createOpenListOverviewsIntent() ) );
       
       widgets.add( new SimpleHomeWidgetLayout( context,
                                                null,

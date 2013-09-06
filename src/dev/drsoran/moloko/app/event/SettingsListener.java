@@ -23,19 +23,18 @@
 package dev.drsoran.moloko.app.event;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.db.RtmSettingsTable;
+import dev.drsoran.moloko.domain.DomainContext;
 
 
 class SettingsListener implements OnSharedPreferenceChangeListener
 {
-   private final Context context;
+   private final DomainContext context;
    
    private final Handler handler;
    
@@ -49,7 +48,7 @@ class SettingsListener implements OnSharedPreferenceChangeListener
    
    
    
-   public SettingsListener( Context context, IEventDrain eventDrain,
+   public SettingsListener( DomainContext context, IEventDrain eventDrain,
       Handler handler )
    {
       this.context = context;
@@ -151,8 +150,8 @@ class SettingsListener implements OnSharedPreferenceChangeListener
             onSettingChanged( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED );
          }
       };
-      RtmSettingsTable.put( context,
-                                                       rtmSettingsChangedObserver );
+      
+      RtmSettingsTable.put( context, rtmSettingsChangedObserver );
    }
    
    
@@ -162,7 +161,7 @@ class SettingsListener implements OnSharedPreferenceChangeListener
       if ( rtmSettingsChangedObserver != null )
       {
          RtmSettingsTable.unregisterContentObserver( context,
-                                                            rtmSettingsChangedObserver );
+                                                     rtmSettingsChangedObserver );
          rtmSettingsChangedObserver = null;
       }
    }

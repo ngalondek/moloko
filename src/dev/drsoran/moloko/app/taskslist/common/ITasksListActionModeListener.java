@@ -24,7 +24,7 @@ package dev.drsoran.moloko.app.taskslist.common;
 
 import java.util.List;
 
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.domain.model.Task;
 
 
 interface ITasksListActionModeListener
@@ -53,5 +53,5 @@ interface ITasksListActionModeListener
    
    
    
-   void onShowTasksWithTags( List< String > tags );
+   void onShowTasksWithTags( Iterable< String > tags );
 }

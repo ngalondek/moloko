@@ -28,7 +28,7 @@ import android.text.TextUtils;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 
 
 public class RtmSmartAddTokenizer implements Tokenizer
@@ -248,13 +248,14 @@ public class RtmSmartAddTokenizer implements Tokenizer
                // try to parse as time
                try
                {
-                  dateTimeParsing.parseTimeOrTimeSpec( TextUtils.substring( chars,
-                                                                            i,
-                                                                            nextOpPos ) );
+                  dateTimeParsing.parseTime( TextUtils.substring( chars,
+                                                                  i,
+                                                                  nextOpPos ) );
                   i = nextOpPos;
                }
                catch ( GrammarException e )
                {
+                  // Empty, it is a try parse
                }
             }
             

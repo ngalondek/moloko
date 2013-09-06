@@ -33,11 +33,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.db.TableColumns.TaskSeries;
 import dev.drsoran.moloko.domain.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.ParcelableDate;
-import dev.drsoran.rtm.ParticipantList;
 
 
 /**
@@ -468,7 +466,7 @@ public class RtmTaskSeries extends RtmData
       
       if ( recurrence != null )
          repeat = RecurrenceParsing.parseRecurrencePatternToSentence( recurrence,
-                                                            isEveryRecurrence );
+                                                                      isEveryRecurrence );
       else
          repeat = null;
       

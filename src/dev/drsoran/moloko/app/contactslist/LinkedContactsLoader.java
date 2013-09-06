@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentResolver;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -35,7 +34,7 @@ import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.content.loaders.ContactsLoader;
 import dev.drsoran.moloko.content.ContentProviderUtils;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.model.IContact;
+import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 
 
@@ -70,18 +69,22 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    
    
    @Override
+   public Uri getContentUri()
+   {
+      return contactsLoader.getContentUri();
+   }
+   
+   
+   
+   @Override
    protected List< LinkedContact > queryResultInBackground( IContentRepository contentRepository )
    {
-      final List< IContact > contacts = contactsLoader.loadInBackground();
-      
-      if ( contactsLoader.hasContentException() )
-      {
-         throw contactsLoader.getContentException();
-      }
+      final List< Contact > contacts = contactsLoader.loadInBackground();
+      contactsLoader.throwContentExceptionOnError();
       
       final List< LinkedContact > linkedContacts = new ArrayList< LinkedContact >( contacts.size() );
       
-      for ( IContact contact : contacts )
+      for ( Contact contact : contacts )
       {
          final int numParticipatingTasks = contentRepository.getNumTasksContactIsParticipating( contact.getId() );
          linkedContacts.add( linkRtmContact( contact, numParticipatingTasks ) );
@@ -92,32 +95,14 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    
    
    
-   @Override
-   protected void registerContentObserver( ContentObserver observer )
-   {
-      ContactOverviewsProviderPart.put( getContext(),
-                                                            observer );
-   }
-   
-   
-   
-   @Override
-   protected void unregisterContentObserver( ContentObserver observer )
-   {
-      ContactOverviewsProviderPart.unregisterContentObserver( getContext(),
-                                                              observer );
-   }
-   
-   
-   
-   private LinkedContact linkRtmContact( IContact contact,
+   private LinkedContact linkRtmContact( Contact contact,
                                          int numParticipatingTasks )
    {
       LinkedContact linkedContact = new LinkedContact( contact,
                                                        numParticipatingTasks );
       
       String lookUpKey = null;
-      String photoId = null;
+      long photoId = 0;
       boolean isLinkedByNotes = false;
       
       Cursor c = null;
@@ -135,7 +120,7 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
          // unique.
          if ( c.getCount() == 1 && c.moveToFirst() )
          {
-            photoId = c.getString( 1 );
+            photoId = c.getLong( 1 );
             lookUpKey = c.getString( 2 );
          }
          
@@ -164,7 +149,7 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
             
             if ( c.moveToFirst() )
             {
-               photoId = c.getString( 1 );
+               photoId = c.getLong( 1 );
                lookUpKey = c.getString( 4 );
                isLinkedByNotes = true;
             }
@@ -178,7 +163,7 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
          }
       }
       
-      if ( photoId != null )
+      if ( photoId != 0 )
       {
          setContactPhoto( photoId, linkedContact );
       }
@@ -190,10 +175,10 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    
    
    
-   private void setContactPhoto( String photoId, LinkedContact contact )
+   private void setContactPhoto( long photoId, LinkedContact contact )
    {
-      final Uri photoUri = ContentProviderUtils.contentUriWithId( ContactsContract.Data.CONTENT_URI,
-                                                                  photoId );
+      final Uri photoUri = android.content.ContentUris.withAppendedId( ContactsContract.Data.CONTENT_URI,
+                                                                       photoId );
       
       Cursor c = null;
       try

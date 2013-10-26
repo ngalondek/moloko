@@ -305,8 +305,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    public void onCompleteTask( Task task )
    {
       final AppContentEditInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                     task,
-                                                                                     true );
+                                                                                task,
+                                                                                true );
       applyModifications( modifications );
    }
    
@@ -316,8 +316,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    public void onIncompleteTask( Task task )
    {
       final AppContentEditInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                     task,
-                                                                                     false );
+                                                                                task,
+                                                                                false );
       applyModifications( modifications );
    }
    
@@ -327,7 +327,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    public void onPostponeTask( Task task )
    {
       final AppContentEditInfo modifications = TaskEditUtils.postponeTask( this,
-                                                                                task );
+                                                                           task );
       applyModifications( modifications );
    }
    
@@ -352,7 +352,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private void deleteTaskImpl()
    {
       final AppContentEditInfo modifications = TaskEditUtils.deleteTask( TaskActivity.this,
-                                                                              taskToDelete );
+                                                                         taskToDelete );
       if ( applyModifications( modifications ) )
       {
          finish();
@@ -435,7 +435,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private void deleteNotesImpl()
    {
       final AppContentEditInfo modifications = NoteEditUtils.deleteNotes( this,
-                                                                               notesToDelete );
+                                                                          notesToDelete );
       applyModifications( modifications );
    }
    

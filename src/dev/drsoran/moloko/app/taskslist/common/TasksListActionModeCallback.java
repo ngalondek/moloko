@@ -36,14 +36,13 @@ import dev.drsoran.moloko.util.Pair;
 
 class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
 {
-   private final AbstractTasksListFragment< ? extends Task > fragment;
+   private final AbstractTasksListFragment fragment;
    
    private ITasksListActionModeListener listener;
    
    
    
-   public TasksListActionModeCallback(
-      AbstractTasksListFragment< ? extends Task > fragment )
+   public TasksListActionModeCallback( AbstractTasksListFragment fragment )
    {
       super( fragment.getMolokoListView() );
       this.fragment = fragment;

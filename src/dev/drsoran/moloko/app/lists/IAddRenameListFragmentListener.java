@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,12 +20,18 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.app.lists;
 
-import com.mdt.rtm.data.RtmAuth;
+import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
 
 
-public interface IRtmAccessLevelAware
+interface IAddRenameListFragmentListener extends
+         IMolokoEditDialogFragmentListener
 {
-   void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel );
+   void onInsertNewList( TasksList tasksList );
+   
+   
+   
+   void onRenameList( TasksList tasksList );
 }

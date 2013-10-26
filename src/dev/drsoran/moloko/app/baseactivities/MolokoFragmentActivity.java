@@ -41,7 +41,6 @@ import com.mdt.rtm.data.RtmAuth.Perms;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -61,8 +60,7 @@ import dev.drsoran.moloko.ui.fragments.listeners.IAlertDialogFragmentListener;
 
 public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
          implements IConfigurable, IAlertDialogFragmentListener,
-         ISyncStatusListener, ISyncActionProviderHost, IRtmAccessLevelAware,
-         IAccountUpdatedListener
+         ISyncStatusListener, ISyncActionProviderHost, IAccountUpdatedListener
 {
    public final static class StartActivityRequestCode
    {
@@ -361,14 +359,6 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
-   @Override
-   public void reEvaluateRtmAccessLevel( Perms currentAccessLevel )
-   {
-      invalidateOptionsMenu();
-   }
-   
-   
-   
    public boolean isReadOnlyAccess()
    {
       final IAccountService accountService = appContext.getAccountService();
@@ -633,34 +623,6 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
-   protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
-   {
-      invalidateOptionsMenu();
-      notifyFragmentsAboutRtmAccessLevelChange( currentAccessLevel );
-   }
-   
-   
-   
-   protected void notifyFragmentsAboutRtmAccessLevelChange( RtmAuth.Perms currentAccessLevel )
-   {
-      final int[] fragIds = getFragmentIds();
-      
-      if ( fragIds != null )
-      {
-         for ( int i = 0; i < fragIds.length; i++ )
-         {
-            final int fragId = fragIds[ i ];
-            final Fragment fragment = getSupportFragmentManager().findFragmentById( fragId );
-            
-            if ( ( fragment instanceof IRtmAccessLevelAware )
-               && fragment.isAdded() )
-               ( (IRtmAccessLevelAware) fragment ).reEvaluateRtmAccessLevel( currentAccessLevel );
-         }
-      }
-   }
-   
-   
-   
    protected boolean removeFragmentByTag( String fragmentTag, int transit )
    {
       boolean removed = false;
@@ -802,6 +764,13 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    private void onMenuSearch()
    {
       onSearchRequested();
+   }
+   
+   
+   
+   private void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      invalidateOptionsMenu();
    }
    
    

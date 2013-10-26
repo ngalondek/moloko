@@ -135,7 +135,7 @@ abstract class AbstractTasksListFragmentAdapter extends
       // is removed and we get a changed data set.
       if ( position < getCount() )
       {
-         return Long.parseLong( getItem( position ).getId() );
+         return getItem( position ).getId();
       }
       else
       {
@@ -181,6 +181,6 @@ abstract class AbstractTasksListFragmentAdapter extends
    
    private void setCompleted( ImageView view, Task task )
    {
-      view.setEnabled( task.getCompleted() != null );
+      view.setEnabled( task.isComplete() );
    }
 }

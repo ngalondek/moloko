@@ -29,25 +29,82 @@ import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class RtmSmartAddTokenizer implements Tokenizer
 {
    public static class Token
    {
-      public final int type;
+      private final int type;
       
-      public int start = -1;
+      private int start = -1;
       
-      public int end = -1;
+      private int end = -1;
       
-      public String text;
+      private String text;
       
       
       
       public Token( int type )
       {
          this.type = type;
+      }
+      
+      
+      
+      public int getType()
+      {
+         return type;
+      }
+      
+      
+      
+      public int getStart()
+      {
+         return start;
+      }
+      
+      
+      
+      public void setStart( int start )
+      {
+         this.start = start;
+      }
+      
+      
+      
+      public int getEnd()
+      {
+         return end;
+      }
+      
+      
+      
+      public void setEnd( int end )
+      {
+         this.end = end;
+      }
+      
+      
+      
+      public String getText()
+      {
+         return text;
+      }
+      
+      
+      
+      public boolean textContainsOnlySpaces()
+      {
+         return text.replaceAll( " ", Strings.EMPTY_STRING ).length() == 0;
+      }
+      
+      
+      
+      public void setText( String text )
+      {
+         this.text = text;
       }
       
       
@@ -106,57 +163,57 @@ public class RtmSmartAddTokenizer implements Tokenizer
          {
             case OP_DUE_DATE:
                t = new Token( DUE_DATE_TYPE );
-               t.start = i;
-               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
-               setText( t, input, t.start + 1, t.end );
+               t.setStart( i );
+               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
+               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_PRIORITY:
                t = new Token( PRIORITY_TYPE );
-               t.start = i;
-               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
-               setText( t, input, t.start + 1, t.end );
+               t.setStart( i );
+               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
+               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_LIST_TAGS:
                t = new Token( LIST_TAGS_TYPE );
-               t.start = i;
-               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
-               setText( t, input, t.start + 1, t.end );
+               t.setStart( i );
+               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
+               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_LOCATION:
                t = new Token( LOCATION_TYPE );
-               t.start = i;
-               t.end = getNextOperatorPos( input, i + 1, OP_LOCATION ) - 1;
-               setText( t, input, t.start + 1, t.end );
+               t.setStart( i );
+               t.setEnd( getNextOperatorPos( input, i + 1, OP_LOCATION ) - 1 );
+               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_REPEAT:
                t = new Token( REPEAT_TYPE );
-               t.start = i;
-               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
-               setText( t, input, t.start + 1, t.end );
+               t.setStart( i );
+               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
+               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_ESTIMATE:
                t = new Token( ESTIMATE_TYPE );
-               t.start = i;
-               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
-               setText( t, input, t.start + 1, t.end );
+               t.setStart( i );
+               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
+               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             default :
                t = new Token( TASK_NAME_TYPE );
-               t.start = i;
-               t.end = getNextOperatorPos( input, i, null ) - 1;
-               setText( t, input, t.start, t.end );
+               t.setStart( i );
+               t.setEnd( getNextOperatorPos( input, i, null ) - 1 );
+               setText( t, input, t.getStart(), t.getEnd() );
                break;
          }
          
          tokens.add( t );
          
-         i = t.end;
+         i = t.getEnd();
       }
    }
    

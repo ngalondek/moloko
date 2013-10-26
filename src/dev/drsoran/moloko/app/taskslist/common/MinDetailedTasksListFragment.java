@@ -37,9 +37,8 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 
 
-public class MinDetailedTasksListFragment extends
-         AbstractTasksListFragment< Task > implements
-         IOnSettingsChangedListener
+public class MinDetailedTasksListFragment extends AbstractTasksListFragment
+         implements IOnSettingsChangedListener
 {
    public static MinDetailedTasksListFragment newInstance( Bundle configuration )
    {
@@ -85,7 +84,7 @@ public class MinDetailedTasksListFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
-      final TasksLoader loader = new TasksLoader( getSherlockActivity(),
+      final TasksLoader loader = new TasksLoader( getUiContext().asDomainContext(),
                                                   selection,
                                                   order );
       return loader;

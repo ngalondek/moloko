@@ -37,7 +37,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +49,7 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
+import dev.drsoran.moloko.util.Pair;
 
 
 public final class UiUtils
@@ -156,19 +156,6 @@ public final class UiUtils
                                          InputMethodManager.HIDE_NOT_ALWAYS );
          }
       }
-   }
-   
-   
-   
-   public final static View setDropDownItemIconAndText( View dropDownView,
-                                                        Pair< Integer, String > iconWithText )
-   {
-      return setDropDownItemIconAndText( dropDownView,
-                                         iconWithText.first != null
-                                                                   ? iconWithText.first.intValue()
-                                                                   : -1,
-                                         iconWithText.second );
-      
    }
    
    

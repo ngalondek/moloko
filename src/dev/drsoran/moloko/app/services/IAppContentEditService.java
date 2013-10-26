@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.services;
 
+import java.util.Collection;
+
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 
@@ -36,7 +38,17 @@ public interface IAppContentEditService
    
    
    
+   void updateTasks( Collection< ? extends Task > tasks,
+                     AppContentEditInfo editInfo );
+   
+   
+   
    void deleteTask( Task task, AppContentEditInfo editInfo );
+   
+   
+   
+   void deleteTasks( Collection< ? extends Task > tasks,
+                     AppContentEditInfo editInfo );
    
    
    

@@ -168,8 +168,10 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
       {
          final Fragment frag = findAddedFragmentByTag( tag );
          if ( frag != null )
+         {
             removeFragmentByTag( tag,
                                  FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+         }
          
          return frag != null;
       }

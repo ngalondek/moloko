@@ -49,6 +49,7 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.app.content.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -280,7 +281,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public long getListIdFromIntent()
    {
       final long listId = getIntent().getExtras()
-                                     .getLong( Intents.Extras.KEY_LIST_ID, -1L );
+                                     .getLong( Intents.Extras.KEY_LIST_ID,
+                                               Constants.NO_ID );
       return listId;
    }
    
@@ -392,9 +394,9 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private void setSelectedNavigationItemIdFromIntent()
    {
       final long listIdFromIntent = getListIdFromIntent();
-      selectedNavigationItem.id = listIdFromIntent != -1L
-                                                         ? listIdFromIntent
-                                                         : CUSTOM_NAVIGATION_ITEM_ID;
+      selectedNavigationItem.id = listIdFromIntent != Constants.NO_ID
+                                                                     ? listIdFromIntent
+                                                                     : CUSTOM_NAVIGATION_ITEM_ID;
    }
    
    
@@ -634,14 +636,13 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   protected ITasksListFragment< ? extends Task > getTasksListFragment()
+   protected ITasksListFragment getTasksListFragment()
    {
       final Fragment fragment = findAddedFragmentById( R.id.frag_taskslist );
       
       if ( fragment instanceof ITasksListFragment )
       {
-         @SuppressWarnings( "unchecked" )
-         final ITasksListFragment< ? extends Task > tasksListFragment = (ITasksListFragment< ? extends Task >) fragment;
+         final ITasksListFragment tasksListFragment = (ITasksListFragment) fragment;
          return tasksListFragment;
       }
       else
@@ -710,7 +711,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          
       };
       
-      public long id = -1L;
+      public long id = Constants.NO_ID;
       
       public int position;
       

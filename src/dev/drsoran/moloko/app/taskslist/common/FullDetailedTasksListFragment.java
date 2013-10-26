@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
+import java.util.Collections;
 import java.util.List;
 
 import android.os.Bundle;
@@ -32,12 +33,15 @@ import android.view.ViewGroup;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
+import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 
 
-public class FullDetailedTasksListFragment extends
-         AbstractTasksListFragment< Task >
+public class FullDetailedTasksListFragment extends AbstractTasksListFragment
 {
    public static FullDetailedTasksListFragment newInstance( Bundle configuration )
    {
@@ -83,7 +87,7 @@ public class FullDetailedTasksListFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
-      final TasksLoader loader = new TasksLoader( getSherlockActivity(),
+      final TasksLoader loader = new TasksLoader( getAppContext().asDomainContext(),
                                                   selection,
                                                   order );
       return loader;
@@ -97,7 +101,7 @@ public class FullDetailedTasksListFragment extends
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getAppContext(),
                                                        getMolokoListView(),
-                                                       filter,
+                                                       getFilterTokens( filter ),
                                                        flags );
    }
    
@@ -115,5 +119,26 @@ public class FullDetailedTasksListFragment extends
    protected void notifiyDatasetChanged()
    {
       getListAdapter().notifyDataSetChanged();
+   }
+   
+   
+   
+   private RtmSmartFilterTokenCollection getFilterTokens( IFilter filter )
+   {
+      if ( filter instanceof RtmSmartFilter )
+      {
+         try
+         {
+            return getAppContext().getParsingService()
+                                  .getRtmSmartFilterParsing()
+                                  .getSmartFilterTokens( ( (RtmSmartFilter) filter ).getFilterString() );
+         }
+         catch ( GrammarException e )
+         {
+            Log().e( getClass(), "Unparsable smart filter", e );
+         }
+      }
+      
+      return new RtmSmartFilterTokenCollection( Collections.< RtmSmartFilterToken > emptyList() );
    }
 }

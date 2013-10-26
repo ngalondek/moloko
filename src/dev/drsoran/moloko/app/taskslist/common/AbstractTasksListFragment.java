@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
+import java.util.Collection;
 import java.util.List;
 
 import android.app.Activity;
@@ -58,9 +59,9 @@ import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.util.Strings;
 
 
-abstract class AbstractTasksListFragment< T extends Task > extends
-         MolokoMultiChoiceModalListFragment< T > implements
-         ITasksListFragment< T >, IOnSettingsChangedListener
+abstract class AbstractTasksListFragment extends
+         MolokoMultiChoiceModalListFragment< Task > implements
+         ITasksListFragment, IOnSettingsChangedListener
 {
    private AppContext appContext;
    
@@ -255,7 +256,7 @@ abstract class AbstractTasksListFragment< T extends Task > extends
    
    public void prepareSingleTaskActionMenu( Menu menu, Task selectedTask )
    {
-      final List< String > tags = selectedTask.getTags();
+      final Collection< String > tags = selectedTask.getTags();
       final int tagsCount = tags.size();
       
       final MenuItem openTagsMenuItem = menu.findItem( R.id.menu_open_tags )
@@ -264,7 +265,8 @@ abstract class AbstractTasksListFragment< T extends Task > extends
       {
          openTagsMenuItem.setTitle( getResources().getQuantityString( R.plurals.taskslist_open_tags,
                                                                       tagsCount,
-                                                                      tags.get( 0 ) ) );
+                                                                      tags.iterator()
+                                                                          .next() ) );
       }
       
       final MenuItem tasksAtLocationMenuItem = menu.findItem( R.id.menu_open_tasks_at_loc );
@@ -389,10 +391,9 @@ abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   @SuppressWarnings( "unchecked" )
-   public T getTask( int pos )
+   public Task getTask( int pos )
    {
-      return (T) getListAdapter().getItem( pos );
+      return (Task) getListAdapter().getItem( pos );
    }
    
    
@@ -406,7 +407,7 @@ abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public T getTask( View view )
+   public Task getTask( View view )
    {
       return getTask( getTaskPos( view ) );
    }
@@ -414,18 +415,16 @@ abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public T getTask( String taskId )
+   public Task getTask( long taskId )
    {
-      T task = null;
+      Task task = null;
       
       final ListAdapter adapter = getListAdapter();
       final int itemCount = adapter.getCount();
       for ( int i = 0; i < itemCount && task == null; i++ )
       {
-         @SuppressWarnings(
-         { "unchecked" } )
-         final T temp = (T) adapter.getItem( i );
-         if ( temp.getId().equals( taskId ) )
+         final Task temp = (Task) adapter.getItem( i );
+         if ( temp.getId() == taskId )
          {
             task = temp;
          }
@@ -471,7 +470,7 @@ abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public void onLoadFinished( Loader< List< T >> loader, List< T > data )
+   public void onLoadFinished( Loader< List< Task >> loader, List< Task > data )
    {
       super.onLoadFinished( loader, data );
       
@@ -514,13 +513,14 @@ abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public SwappableArrayAdapter< T > createListAdapter()
+   public SwappableArrayAdapter< Task > createListAdapter()
    {
       return createListAdapter( getFilter() );
    }
    
    
    
+   // TODO: Remove SQLite dependency
    protected static String resolveTaskSortToSqlite( int sortValue )
    {
       switch ( sortValue )
@@ -566,7 +566,7 @@ abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected abstract SwappableArrayAdapter< T > createListAdapter( IFilter filter );
+   protected abstract SwappableArrayAdapter< Task > createListAdapter( IFilter filter );
    
    
    

@@ -89,19 +89,6 @@ public abstract class MolokoLoaderEditFragment< D > extends
    
    
    @Override
-   public final AppContentEditInfo onFinishEditing()
-   {
-      if ( hasChanges() )
-      {
-         return getApplyChangesInfo();
-      }
-      
-      return AppContentEditInfo.EMPTY;
-   }
-   
-   
-   
-   @Override
    public void onCancelEditing()
    {
    }

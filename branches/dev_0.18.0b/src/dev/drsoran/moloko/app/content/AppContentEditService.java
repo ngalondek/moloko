@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.content;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 
 import android.widget.Toast;
@@ -78,6 +80,15 @@ public class AppContentEditService implements IAppContentEditService
    @Override
    public void updateTask( Task task, AppContentEditInfo editInfo )
    {
+      updateTasks( Collections.singletonList( task ), editInfo );
+   }
+   
+   
+   
+   @Override
+   public void updateTasks( Collection< ? extends Task > tasks,
+                            AppContentEditInfo editInfo )
+   {
       if ( !hasWritableAccess() )
       {
          showOnlyReadableDatabaseAccessDialog( editInfo );
@@ -86,7 +97,11 @@ public class AppContentEditService implements IAppContentEditService
       {
          try
          {
-            contentEditService.updateTask( task.getId(), task );
+            for ( Task task : tasks )
+            {
+               contentEditService.updateTask( task.getId(), task );
+            }
+            
             showEditSucceededAsToast( editInfo );
          }
          catch ( NoSuchElementException e )
@@ -98,12 +113,22 @@ public class AppContentEditService implements IAppContentEditService
             showEditFailedAsToast( editInfo );
          }
       }
+      
    }
    
    
    
    @Override
    public void deleteTask( Task task, AppContentEditInfo editInfo )
+   {
+      deleteTasks( Collections.singletonList( task ), editInfo );
+   }
+   
+   
+   
+   @Override
+   public void deleteTasks( Collection< ? extends Task > tasks,
+                            AppContentEditInfo editInfo )
    {
       if ( !hasWritableAccess() )
       {
@@ -113,7 +138,10 @@ public class AppContentEditService implements IAppContentEditService
       {
          try
          {
-            contentEditService.deleteTask( task.getId() );
+            for ( Task task : tasks )
+            {
+               contentEditService.deleteTask( task.getId() );
+            }
             showEditSucceededAsToast( editInfo );
          }
          catch ( NoSuchElementException e )

@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -41,6 +42,8 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
 import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.app.services.IAppContentEditService;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
@@ -447,10 +450,34 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
-      final AppContentEditInfo modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                                 tasks,
-                                                                                 true );
-      applyModifications( modifications );
+      final IAppContentEditService contentEditService = getAppContext().getContentEditService();
+      final Resources res = getResources();
+      final long completedMillisUtc = System.currentTimeMillis();
+      final int tasksCount = tasks.size();
+      
+      if ( tasksCount > 0 )
+      {
+         final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                     res.getQuantityString( R.plurals.toast_save_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount ),
+                                                                     res.getQuantityString( R.plurals.toast_completed_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount,
+                                                                                            tasks.get( 0 )
+                                                                                                 .getName() ),
+                                                                     res.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                            tasksCount,
+                                                                                            tasksCount ) );
+         
+         for ( Task task : tasks )
+         {
+            task.setCompletedMillisUtc( completedMillisUtc );
+         }
+         
+         contentEditService.updateTasks( tasks, editInfo );
+      }
+      
       clearListChoices();
    }
    
@@ -458,10 +485,33 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void incompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final AppContentEditInfo modifications = TaskEditUtils.setTasksCompletion( this,
-                                                                                 tasks,
-                                                                                 false );
-      applyModifications( modifications );
+      final IAppContentEditService contentEditService = getAppContext().getContentEditService();
+      final Resources res = getResources();
+      final int tasksCount = tasks.size();
+      
+      if ( tasksCount > 0 )
+      {
+         final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                     res.getQuantityString( R.plurals.toast_save_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount ),
+                                                                     res.getQuantityString( R.plurals.toast_incompleted_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount,
+                                                                                            tasks.get( 0 )
+                                                                                                 .getName() ),
+                                                                     res.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                            tasksCount,
+                                                                                            tasksCount ) );
+         
+         for ( Task task : tasks )
+         {
+            task.setCompletedMillisUtc( Constants.NO_TIME );
+         }
+         
+         contentEditService.updateTasks( tasks, editInfo );
+      }
+      
       clearListChoices();
    }
    
@@ -469,9 +519,33 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void postponeSelectedTasks( List< ? extends Task > tasks )
    {
-      final AppContentEditInfo modifications = TaskEditUtils.postponeTasks( this,
-                                                                            tasks );
-      applyModifications( modifications );
+      final IAppContentEditService contentEditService = getAppContext().getContentEditService();
+      final Resources res = getResources();
+      final int tasksCount = tasks.size();
+      
+      if ( tasksCount > 0 )
+      {
+         final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                     res.getQuantityString( R.plurals.toast_save_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount ),
+                                                                     res.getQuantityString( R.plurals.toast_postponed_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount,
+                                                                                            tasks.get( 0 )
+                                                                                                 .getName() ),
+                                                                     res.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                            tasksCount,
+                                                                                            tasksCount ) );
+         
+         for ( Task task : tasks )
+         {
+            task.setPostponedCount( task.getPostponedCount() + 1 );
+         }
+         
+         contentEditService.updateTasks( tasks, editInfo );
+      }
+      
       clearListChoices();
    }
    
@@ -479,9 +553,27 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void deleteSelectedTasks( List< ? extends Task > tasks )
    {
-      final AppContentEditInfo modifications = TaskEditUtils.deleteTasks( this,
-                                                                          tasks );
-      applyModifications( modifications );
+      final IAppContentEditService contentEditService = getAppContext().getContentEditService();
+      final Resources res = getResources();
+      final int tasksCount = tasks.size();
+      
+      if ( tasksCount > 0 )
+      {
+         final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                     res.getQuantityString( R.plurals.toast_delete_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount ),
+                                                                     res.getQuantityString( R.plurals.toast_deleted_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount,
+                                                                                            tasks.get( 0 )
+                                                                                                 .getName() ),
+                                                                     res.getQuantityString( R.plurals.toast_delete_task_failed,
+                                                                                            tasksCount,
+                                                                                            tasksCount ) );
+         contentEditService.deleteTasks( tasks, editInfo );
+      }
+      
       clearListChoices();
    }
    

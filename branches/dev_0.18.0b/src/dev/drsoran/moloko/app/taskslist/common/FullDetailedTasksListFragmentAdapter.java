@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.app.taskslist.common;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import android.os.Bundle;
@@ -32,17 +31,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
+import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
-import dev.drsoran.moloko.util.Strings;
 
 
 class FullDetailedTasksListFragmentAdapter extends
@@ -50,7 +47,7 @@ class FullDetailedTasksListFragmentAdapter extends
 {
    public final static int FLAG_SHOW_ALL = 1 << 0;
    
-   private final RtmSmartFilter rtmSmartFilter;
+   private final RtmSmartFilterTokenCollection rtmSmartFilterTokens;
    
    private final String[] tagsToRemove;
    
@@ -59,23 +56,21 @@ class FullDetailedTasksListFragmentAdapter extends
    
    
    public FullDetailedTasksListFragmentAdapter( AppContext context,
-      MolokoListView listView, IFilter filter, int flags )
+      MolokoListView listView,
+      RtmSmartFilterTokenCollection rtmSmartFilterTokens, int flags )
    {
       super( listView,
              R.layout.fulldetailed_taskslist_listitem,
              R.layout.mindetailed_selectable_taskslist_listitem );
       
       this.flags = flags;
-      this.rtmSmartFilter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
-                                                                                   ? filter
-                                                                                   : new RtmSmartFilter( Strings.EMPTY_STRING ) );
+      this.rtmSmartFilterTokens = rtmSmartFilterTokens;
       
       if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL )
       {
-         final Collection< RtmSmartFilterToken > tokens = rtmSmartFilter.getTokens();
          final List< String > tagsToRemove = new ArrayList< String >();
          
-         for ( RtmSmartFilterToken token : tokens )
+         for ( RtmSmartFilterToken token : rtmSmartFilterTokens )
          {
             if ( token.operatorType == RtmSmartFilterLexer.OP_TAG
                && !token.isNegated )
@@ -119,7 +114,7 @@ class FullDetailedTasksListFragmentAdapter extends
          else
             recurrent.setVisibility( View.GONE );
          
-         if ( task.getNumberOfNotes() > 0 )
+         if ( task.hasNotes() )
             hasNotes.setVisibility( View.VISIBLE );
          else
             hasNotes.setVisibility( View.GONE );
@@ -144,9 +139,9 @@ class FullDetailedTasksListFragmentAdapter extends
    private final void setListName( TextView view, Task task )
    {
       if ( ( flags & FLAG_SHOW_ALL ) == FLAG_SHOW_ALL
-         || !rtmSmartFilter.hasOperatorAndValue( RtmSmartFilterLexer.OP_LIST,
-                                                 task.getListName(),
-                                                 false ) )
+         || !rtmSmartFilterTokens.hasUniqueOperatorWithValue( RtmSmartFilterLexer.OP_LIST,
+                                                              task.getListName(),
+                                                              false ) )
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getListName() );
@@ -163,9 +158,9 @@ class FullDetailedTasksListFragmentAdapter extends
    {
       // If the task has no location
       if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL
-         && ( TextUtils.isEmpty( task.getLocationName() ) || rtmSmartFilter.hasOperatorAndValue( RtmSmartFilterLexer.OP_LOCATION,
-                                                                                                 task.getLocationName(),
-                                                                                                 false ) ) )
+         && ( TextUtils.isEmpty( task.getLocationName() ) || rtmSmartFilterTokens.hasUniqueOperatorWithValue( RtmSmartFilterLexer.OP_LOCATION,
+                                                                                                              task.getLocationName(),
+                                                                                                              false ) ) )
       {
          view.setVisibility( View.GONE );
       }
@@ -183,7 +178,9 @@ class FullDetailedTasksListFragmentAdapter extends
       final Bundle tagsConfig = new Bundle();
       
       if ( tagsToRemove != null && tagsToRemove.length > 0 )
+      {
          tagsConfig.putStringArray( UiUtils.REMOVE_TAGS_EQUALS, tagsToRemove );
+      }
       
       UiUtils.inflateTags( getContext(), tagsLayout, task.getTags(), tagsConfig );
    }

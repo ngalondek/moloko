@@ -302,7 +302,7 @@ public class Task extends LifeTimeManaged implements Serializable
    
    
    
-   public Iterable< String > getTags()
+   public Collection< String > getTags()
    {
       return tags != null ? tags : Collections.< String > emptyList();
    }
@@ -348,6 +348,13 @@ public class Task extends LifeTimeManaged implements Serializable
    public boolean hasNote( long noteId )
    {
       return getNote( noteId ) != null;
+   }
+   
+   
+   
+   public boolean hasNotes()
+   {
+      return notes.size() > 0;
    }
    
    

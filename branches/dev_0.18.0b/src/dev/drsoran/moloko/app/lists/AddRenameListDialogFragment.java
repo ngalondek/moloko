@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.app.lists;
 
-import java.util.Date;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -36,7 +34,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -44,7 +41,6 @@ import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.MolokoEditDialogFragment;
-import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
 
 
 public class AddRenameListDialogFragment extends MolokoEditDialogFragment
@@ -52,7 +48,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    @InstanceState( key = Intents.Extras.KEY_LIST )
    private TasksList list;
    
-   private IMolokoEditDialogFragmentListener listener;
+   private IAddRenameListFragmentListener listener;
    
    private TextView listNameEdit;
    
@@ -84,8 +80,8 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    {
       super.onAttach( activity );
       
-      if ( activity instanceof IMolokoEditDialogFragmentListener )
-         listener = (IMolokoEditDialogFragmentListener) activity;
+      if ( activity instanceof IAddRenameListFragmentListener )
+         listener = (IAddRenameListFragmentListener) activity;
       else
          listener = null;
    }
@@ -234,15 +230,19 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    @Override
-   protected AppContentEditInfo getChanges()
+   protected void applyChanges()
    {
-      if ( list == null )
+      if ( listener != null )
       {
-         return createNewList();
-      }
-      else
-      {
-         return renameList( list );
+         if ( list == null )
+         {
+            listener.onInsertNewList( createNewList() );
+         }
+         else
+         {
+            renameList();
+            listener.onRenameList( list );
+         }
       }
    }
    
@@ -308,10 +308,8 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    
-   private AppContentEditInfo createNewList()
+   private TasksList createNewList()
    {
-      final Date createdDate = new Date();
-      
       final TasksList newList = new TasksList( Constants.NO_ID,
                                                System.currentTimeMillis(),
                                                UiUtils.getTrimmedText( listNameEdit ),
@@ -320,18 +318,14 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
                                                false );
       newList.setSmartFilter( getEnteredSmartFilter() );
       
-      return RtmListEditUtils.insertList( getSherlockActivity(), newList );
+      return newList;
    }
    
    
    
-   private AppContentEditInfo renameList( TasksList list )
+   private void renameList()
    {
       list.setName( UiUtils.getTrimmedText( listNameEdit ) );
-      
-      return RtmListEditUtils.setListName( getSherlockActivity(),
-                                           list.getId(),
-                                           UiUtils.getTrimmedText( listNameEdit ) );
    }
    
    

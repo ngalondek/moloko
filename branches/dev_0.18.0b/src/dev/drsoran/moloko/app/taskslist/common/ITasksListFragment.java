@@ -26,10 +26,11 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
-interface ITasksListFragment< T >
+interface ITasksListFragment
 {
    IFilter getFilter();
    
@@ -39,7 +40,7 @@ interface ITasksListFragment< T >
    
    
    
-   T getTask( int pos );
+   Task getTask( int pos );
    
    
    
@@ -47,11 +48,11 @@ interface ITasksListFragment< T >
    
    
    
-   T getTask( View view );
+   Task getTask( View view );
    
    
    
-   T getTask( long taskId );
+   Task getTask( long taskId );
    
    
    

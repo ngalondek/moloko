@@ -32,7 +32,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
-import dev.drsoran.moloko.ui.fragments.impl.MolokoDialogFragmentImpl;
+import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 
 
 public abstract class MolokoDialogFragment extends SherlockDialogFragment
@@ -48,13 +48,13 @@ public abstract class MolokoDialogFragment extends SherlockDialogFragment
       }
    };
    
-   private final MolokoDialogFragmentImpl impl;
+   private final ConfigurableFragmentImpl impl;
    
    
    
    protected MolokoDialogFragment()
    {
-      impl = new MolokoDialogFragmentImpl( this );
+      impl = new ConfigurableFragmentImpl( this );
    }
    
    

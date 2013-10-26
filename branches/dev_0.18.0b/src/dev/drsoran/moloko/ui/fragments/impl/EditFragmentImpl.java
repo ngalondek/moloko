@@ -122,11 +122,4 @@ public class EditFragmentImpl
    {
       this.windowToken = windowToken;
    }
-   
-   
-   
-   public SystemContext getContext()
-   {
-      return context;
-   }
 }

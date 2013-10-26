@@ -25,7 +25,6 @@ package dev.drsoran.moloko.ui.fragments;
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 
@@ -83,16 +82,12 @@ public abstract class MolokoEditDialogFragment extends
    @Override
    public final void onFinishEditing()
    {
-      AppContentEditInfo changes = AppContentEditInfo.EMPTY;
-      
       if ( hasChanges() )
       {
-         changes = getChanges();
+         applyChanges();
       }
       
       getDialog().dismiss();
-      
-      return changes;
    }
    
    
@@ -124,4 +119,8 @@ public abstract class MolokoEditDialogFragment extends
    {
       impl.setWindowToken( dialogView.getWindowToken() );
    }
+   
+   
+   
+   protected abstract void applyChanges();
 }

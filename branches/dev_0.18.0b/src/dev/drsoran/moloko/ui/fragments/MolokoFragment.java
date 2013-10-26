@@ -29,30 +29,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.IRtmAccessLevelAware;
-import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
-import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelAwareFragmentImpl;
 
 
 public abstract class MolokoFragment extends SherlockFragment implements
-         IConfigurable, IRtmAccessLevelAware
+         IConfigurable
 {
    private final ConfigurableFragmentImpl impl;
-   
-   private final RtmAccessLevelAwareFragmentImpl accessLevelAwareImpl;
    
    
    
    protected MolokoFragment()
    {
       impl = new ConfigurableFragmentImpl( this );
-      accessLevelAwareImpl = new RtmAccessLevelAwareFragmentImpl();
    }
    
    
@@ -61,9 +54,7 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      
       impl.onAttach( activity );
-      accessLevelAwareImpl.onAttach( (MolokoFragmentActivity) activity );
    }
    
    
@@ -81,8 +72,6 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public void onDetach()
    {
       impl.onDetach();
-      accessLevelAwareImpl.onDetach();
-      
       super.onDetach();
    }
    
@@ -116,28 +105,6 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public ILog Log()
    {
       return impl.getUiContext().Log();
-   }
-   
-   
-   
-   @Override
-   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
-   {
-      accessLevelAwareImpl.reEvaluateRtmAccessLevel( currentAccessLevel );
-   }
-   
-   
-   
-   public boolean isReadOnlyAccess()
-   {
-      return accessLevelAwareImpl.isReadOnlyAccess();
-   }
-   
-   
-   
-   public boolean isWritableAccess()
-   {
-      return accessLevelAwareImpl.isWritableAccess();
    }
    
    

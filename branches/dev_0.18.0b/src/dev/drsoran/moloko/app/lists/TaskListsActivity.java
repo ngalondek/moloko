@@ -39,11 +39,10 @@ import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
-import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
 
 
 public class TaskListsActivity extends MolokoEditFragmentActivity implements
-         ITaskListsFragmentListener, IMolokoEditDialogFragmentListener
+         ITaskListsFragmentListener, IAddRenameListFragmentListener
 {
    private final static class Config
    {
@@ -148,6 +147,40 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    public void renameList( int pos )
    {
       showRenameListDialog( getList( pos ) );
+   }
+   
+   
+   
+   @Override
+   public void onInsertNewList( TasksList tasksList )
+   {
+      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                  getString( R.string.toast_insert_list,
+                                                                             tasksList.getName() ),
+                                                                  getString( R.string.toast_insert_list_ok,
+                                                                             tasksList.getName() ),
+                                                                  getString( R.string.toast_insert_list_fail,
+                                                                             tasksList.getName() ) );
+      
+      getAppContext().getContentEditService().insertTasksList( tasksList,
+                                                               editInfo );
+   }
+   
+   
+   
+   @Override
+   public void onRenameList( TasksList tasksList )
+   {
+      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
+                                                                  getString( R.string.toast_save_list,
+                                                                             tasksList.getName() ),
+                                                                  getString( R.string.toast_save_list_ok,
+                                                                             tasksList.getName() ),
+                                                                  getString( R.string.toast_save_list_failed,
+                                                                             tasksList.getName() ) );
+      
+      getAppContext().getContentEditService().updateTasksList( tasksList,
+                                                               editInfo );
    }
    
    

@@ -24,7 +24,6 @@ package dev.drsoran.moloko.ui.fragments;
 
 import android.app.Activity;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 
 
@@ -88,14 +87,14 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    
    
    @Override
-   public final AppContentEditInfo onFinishEditing()
+   public final void onFinishEditing()
    {
       if ( hasChanges() )
       {
-         return getChanges();
+         applyChanges();
       }
       
-      return AppContentEditInfo.EMPTY;
+      getDialog().dismiss();
    }
    
    
@@ -107,5 +106,5 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    
    
    
-   protected abstract AppContentEditInfo getChanges();
+   protected abstract void applyChanges();
 }

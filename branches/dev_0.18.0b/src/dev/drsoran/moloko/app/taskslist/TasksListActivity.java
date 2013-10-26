@@ -31,6 +31,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
 
@@ -101,7 +102,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    {
       final long listIdOfTasksList = getActiveListId();
       
-      toggleDefaultListItem.setVisible( listIdOfTasksList != null
+      toggleDefaultListItem.setVisible( listIdOfTasksList != Constants.NO_ID
          && isRealList( listIdOfTasksList ) );
       
       if ( toggleDefaultListItem.isVisible() )
@@ -182,9 +183,9 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    /**
     * Checks if the list ID belongs to a list from the database or is a custom navigation item ID. E.g. a search query.
     */
-   private static boolean isRealList( String listId )
+   private static boolean isRealList( long listId )
    {
-      return !String.valueOf( CUSTOM_NAVIGATION_ITEM_ID ).equals( listId );
+      return CUSTOM_NAVIGATION_ITEM_ID == listId;
    }
    
    

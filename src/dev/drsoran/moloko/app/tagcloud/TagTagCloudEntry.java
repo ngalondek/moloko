@@ -25,19 +25,21 @@ package dev.drsoran.moloko.app.tagcloud;
 import android.view.View;
 import android.widget.Button;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.CloudEntry;
+import dev.drsoran.moloko.domain.model.CloudEntryType;
 
 
 class TagTagCloudEntry extends PresentableTagCloudEntry implements
          View.OnClickListener
 {
-   public TagTagCloudEntry( TagCloudEntry tagCloudEntry )
+   public TagTagCloudEntry( CloudEntry tagCloudEntry )
    {
       super( tagCloudEntry );
       
-      if ( tagCloudEntry.getType() != TagCloudEntryType.Tag )
+      if ( tagCloudEntry.getType() != CloudEntryType.Tag )
       {
          throw new IllegalArgumentException( "Expected tag cloud entry of type "
-            + TagCloudEntryType.Tag );
+            + CloudEntryType.Tag );
       }
    }
    
@@ -60,7 +62,7 @@ class TagTagCloudEntry extends PresentableTagCloudEntry implements
    {
       if ( getTagCloudFragmentListener() != null )
       {
-         getTagCloudFragmentListener().onOpenTag( getTagCloudEntry().getName() );
+         getTagCloudFragmentListener().onOpenTag( getTagCloudEntry().getDisplay() );
       }
    }
 }

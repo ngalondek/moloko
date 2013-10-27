@@ -20,11 +20,11 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.tagcloud;
+package dev.drsoran.moloko.domain.model;
 
-public class TagCloudEntry implements Comparable< TagCloudEntry >
+public class CloudEntry implements Comparable< CloudEntry >
 {
-   private final TagCloudEntryType type;
+   private final CloudEntryType type;
    
    private final String name;
    
@@ -32,23 +32,23 @@ public class TagCloudEntry implements Comparable< TagCloudEntry >
    
    
    
-   public TagCloudEntry( TagCloudEntryType type, String name, int count )
+   public CloudEntry( CloudEntryType type, String display, int count )
    {
       this.type = type;
-      this.name = name;
+      this.name = display;
       this.count = count;
    }
    
    
    
-   public String getName()
+   public String getDisplay()
    {
       return name;
    }
    
    
    
-   public TagCloudEntryType getType()
+   public CloudEntryType getType()
    {
       return type;
    }
@@ -63,7 +63,7 @@ public class TagCloudEntry implements Comparable< TagCloudEntry >
    
    
    @Override
-   public int compareTo( TagCloudEntry other )
+   public int compareTo( CloudEntry other )
    {
       int res = type.compareTo( other.type );
       

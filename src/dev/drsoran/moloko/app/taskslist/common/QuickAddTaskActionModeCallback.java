@@ -33,10 +33,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
+import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizerAdapter;
 
 
 class QuickAddTaskActionModeCallback implements ActionMode.Callback,
@@ -64,17 +65,23 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      final AppContext context = activity.getAppContext();
+      final UiContext context = activity.getAppContext().asUiContext();
       final View quickAddTaskInputView = LayoutInflater.from( context )
                                                        .inflate( R.layout.quick_add_task_actionmode,
                                                                  null );
       mode.setCustomView( quickAddTaskInputView );
       
       quickAddTaskInput = (RtmSmartAddTextView) quickAddTaskInputView.findViewById( R.id.quick_add_task_edit );
+      quickAddTaskInput.setTokenizer( new RtmSmartAddTokenizerAdapter( context.getSmartAddService() ) );
+      quickAddTaskInput.setThreshold( 1 );
+      quickAddTaskInput.setAdapter( new RtmSmartAddAdapter( context ) );
+      
       connectToCommitInput();
       
       quickAddTaskInputHandler = new QuickAddTaskActionModeInputHandler( context,
                                                                          quickAddTaskInput );
+      
+      quickAddTaskInput.requestFocus();
       
       mode.getMenuInflater().inflate( R.menu.quick_add_task_actionmode, menu );
       

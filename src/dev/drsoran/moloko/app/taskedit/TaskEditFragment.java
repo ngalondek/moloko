@@ -148,7 +148,7 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
       
       final Bundle initialValues = new Bundle();
       
-      initialValues.putString( Tasks.TASKSERIES_NAME, task.getName() );
+      initialValues.putString( Tasks.TASKSERIES_NAME, task.getDisplay() );
       initialValues.putString( Tasks.LIST_ID, task.getListId() );
       initialValues.putString( Tasks.PRIORITY,
                                RtmTask.convertPriority( task.getPriority() ) );

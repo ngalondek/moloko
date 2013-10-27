@@ -62,6 +62,8 @@ public final class ContentUris
    
    private static final String TAGS_URI_PATH = "tags";
    
+   private static final String CLOUD_ENTRIES_URI_PATH = "cloud_entries";
+   
    private static final String MODIFICATIONS_URI_PATH = "modifications";
    
    private static final String MODIFICATIONS_ID_URI_PATH = "modifications/#";
@@ -111,6 +113,8 @@ public final class ContentUris
       
       TAGS_CONTENT_URI = buildUri( TAGS_URI_PATH );
       
+      CLOUD_ENTRIES_CONTENT_URI = buildUri( CLOUD_ENTRIES_URI_PATH );
+      
       MODIFICATIONS_CONTENT_URI = buildUri( MODIFICATIONS_URI_PATH );
       
       MODIFICATIONS_CONTENT_URI_ID = buildUri( MODIFICATIONS_ID_URI_PATH );
@@ -154,6 +158,9 @@ public final class ContentUris
                          CONTACTS_ID_URI_PATH,
                          ContentUris.MATCH_CONTACTS_ID );
       uriMatcher.addURI( RTM, TAGS_URI_PATH, ContentUris.MATCH_TAGS );
+      uriMatcher.addURI( RTM,
+                         CLOUD_ENTRIES_URI_PATH,
+                         ContentUris.MATCH_CLOUD_ENTRIES );
       uriMatcher.addURI( RTM,
                          MODIFICATIONS_URI_PATH,
                          ContentUris.MATCH_MODIFICATIONS );
@@ -214,6 +221,8 @@ public final class ContentUris
    
    public final static int MATCH_SYNC_ID = 20;
    
+   public final static int MATCH_CLOUD_ENTRIES = 21;
+   
    public static final Uri TASKS_LISTS_CONTENT_URI;
    
    public static final Uri TASKS_LISTS_CONTENT_URI_ID;
@@ -241,6 +250,8 @@ public final class ContentUris
    public static final Uri CONTACTS_CONTENT_URI_ID;
    
    public static final Uri TAGS_CONTENT_URI;
+   
+   public static final Uri CLOUD_ENTRIES_CONTENT_URI;
    
    public static final Uri MODIFICATIONS_CONTENT_URI;
    

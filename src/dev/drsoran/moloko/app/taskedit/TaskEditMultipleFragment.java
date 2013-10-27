@@ -170,7 +170,7 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
       
       for ( Task task : tasks )
       {
-         inc( attributeCount.get( Tasks.TASKSERIES_NAME ), task.getName() );
+         inc( attributeCount.get( Tasks.TASKSERIES_NAME ), task.getDisplay() );
          inc( attributeCount.get( Tasks.LIST_ID ), task.getListId() );
          inc( attributeCount.get( Tasks.PRIORITY ),
               RtmTask.convertPriority( task.getPriority() ) );
@@ -208,7 +208,7 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
             final Set< String > names = new HashSet< String >( tasks.size() );
             
             for ( Task task : tasks )
-               names.add( task.getName() );
+               names.add( task.getDisplay() );
             
             final List< String > uniqueTaskNames = new ArrayList< String >( names );
             

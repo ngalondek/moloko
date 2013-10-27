@@ -25,4 +25,8 @@ package dev.drsoran.moloko.ui.services;
 public interface IUiServices
 {
    IDateFormatterService getDateFormatter();
+   
+   
+   
+   ISmartAddService getSmartAddService();
 }

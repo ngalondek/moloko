@@ -27,6 +27,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.method.QwertyKeyListener;
 import android.util.AttributeSet;
+import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 
 
 public class RtmSmartAddTextView extends ClearableMultiAutoCompleteTextView
@@ -79,7 +80,7 @@ public class RtmSmartAddTextView extends ClearableMultiAutoCompleteTextView
       // If the original to be replaced starts with an operator, we pass
       // the operator to the tokenizer, otherwise it would get lost.
       if ( original.length() > 0
-         && RtmSmartAddTokenizer.isOperator( original.charAt( 0 ), null ) )
+         && RtmSmartAddToken.isOperator( original.charAt( 0 ) ) )
       {
          text = TextUtils.concat( String.valueOf( original.charAt( 0 ) ), text );
       }

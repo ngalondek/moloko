@@ -46,7 +46,7 @@ import dev.drsoran.moloko.domain.parsing.lang.RecurrenceSentenceLanguage;
 import dev.drsoran.moloko.domain.parsing.lang.XmlLanguageReader;
 import dev.drsoran.moloko.domain.services.DomainServicesContainer;
 import dev.drsoran.moloko.ui.UiContext;
-import dev.drsoran.moloko.ui.UiServicesContainer;
+import dev.drsoran.moloko.ui.services.UiServicesContainer;
 
 
 @ReportsCrashes( formKey = "dEhwNThPMTJJYUhyOWRZWkhmYUkxSmc6MQ",

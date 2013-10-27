@@ -119,7 +119,7 @@ abstract class AbstractTasksListFragment extends
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      if ( isReadOnlyAccess() )
+      if ( !hasWritableAccess() )
       {
          registerForContextMenu( getListView() );
       }
@@ -541,8 +541,8 @@ abstract class AbstractTasksListFragment extends
    @Override
    public int getChoiceMode()
    {
-      return isWritableAccess() ? MolokoListView.CHOICE_MODE_MULTIPLE_MODAL
-                               : MolokoListView.CHOICE_MODE_NONE;
+      return hasWritableAccess() ? MolokoListView.CHOICE_MODE_MULTIPLE_MODAL
+                                : MolokoListView.CHOICE_MODE_NONE;
    }
    
    

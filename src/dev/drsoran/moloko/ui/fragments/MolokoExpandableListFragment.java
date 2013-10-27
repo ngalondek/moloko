@@ -39,9 +39,9 @@ import com.actionbarsherlock.app.SherlockListFragment;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
-import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderExpandableListFragmentImpl;
 
 
@@ -58,7 +58,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    private final LoaderExpandableListFragmentImpl< D > loaderImpl;
    
-   private final EditFragmentImpl editImpl;
+   private AppContext context;
    
    
    
@@ -66,7 +66,6 @@ public abstract class MolokoExpandableListFragment< D > extends
    {
       baseImpl = new ConfigurableFragmentImpl( this );
       loaderImpl = new LoaderExpandableListFragmentImpl< D >( this );
-      editImpl = new EditFragmentImpl( this );
    }
    
    
@@ -86,9 +85,9 @@ public abstract class MolokoExpandableListFragment< D > extends
    {
       super.onAttach( activity );
       
+      context = AppContext.get( activity );
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
-      editImpl.onAttach( activity );
    }
    
    
@@ -98,7 +97,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    {
       baseImpl.onDetach();
       loaderImpl.onDetach();
-      editImpl.onDetach();
+      context = null;
       
       super.onDetach();
    }
@@ -119,12 +118,20 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
+   public boolean hasWritableAccess()
+   {
+      return context.getAccountService()
+                    .isWriteableAccess( context.getAccountService()
+                                               .getRtmAccount() );
+   }
+   
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
-      editImpl.onViewCreated( view, savedInstanceState );
       
       final ExpandableListView expandableListView = getExpandableListView();
       
@@ -132,24 +139,6 @@ public abstract class MolokoExpandableListFragment< D > extends
       expandableListView.setOnChildClickListener( this );
       expandableListView.setOnGroupCollapseListener( this );
       expandableListView.setOnGroupExpandListener( this );
-   }
-   
-   
-   
-   @Override
-   public void onDestroyView()
-   {
-      editImpl.onDestroyView();
-      super.onDestroyView();
-   }
-   
-   
-   
-   @Override
-   public void onDestroy()
-   {
-      editImpl.onDestroy();
-      super.onDestroy();
    }
    
    

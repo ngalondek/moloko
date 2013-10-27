@@ -35,7 +35,7 @@ import android.os.Bundle;
 
 public class ListCursor implements Cursor
 {
-   private final String[] columns;
+   private final String[] projection;
    
    private List< Object[] > list;
    
@@ -43,19 +43,19 @@ public class ListCursor implements Cursor
    
    
    
-   public ListCursor( List< Object[] > list, String[] columns )
+   public ListCursor( List< Object[] > list, String[] projection )
    {
       if ( list == null )
       {
          throw new IllegalArgumentException( "list" );
       }
       
-      if ( columns == null )
+      if ( projection == null )
       {
          throw new IllegalArgumentException( "columns" );
       }
       
-      this.columns = columns;
+      this.projection = projection;
       this.list = list;
    }
    
@@ -200,9 +200,9 @@ public class ListCursor implements Cursor
    @Override
    public int getColumnIndex( String columnName )
    {
-      for ( int i = 0; i < columns.length; i++ )
+      for ( int i = 0; i < projection.length; i++ )
       {
-         if ( columnName.equals( columns[ i ] ) )
+         if ( columnName.equals( projection[ i ] ) )
          {
             return i;
          }
@@ -230,7 +230,7 @@ public class ListCursor implements Cursor
    @Override
    public String getColumnName( int columnIndex )
    {
-      return columns[ columnIndex ];
+      return projection[ columnIndex ];
    }
    
    
@@ -238,7 +238,7 @@ public class ListCursor implements Cursor
    @Override
    public String[] getColumnNames()
    {
-      return columns;
+      return projection;
    }
    
    
@@ -246,7 +246,7 @@ public class ListCursor implements Cursor
    @Override
    public int getColumnCount()
    {
-      return columns.length;
+      return projection.length;
    }
    
    

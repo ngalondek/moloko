@@ -37,10 +37,10 @@ import com.actionbarsherlock.app.SherlockListFragment;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
-import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderListFragmentImpl;
 
 
@@ -52,7 +52,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    private final LoaderListFragmentImpl< D > loaderImpl;
    
-   private final EditFragmentImpl editImpl;
+   private AppContext context;
    
    
    
@@ -60,7 +60,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       baseImpl = new ConfigurableFragmentImpl( this );
       loaderImpl = new LoaderListFragmentImpl< D >( this );
-      editImpl = new EditFragmentImpl( this );
    }
    
    
@@ -70,9 +69,9 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       super.onAttach( activity );
       
+      context = AppContext.get( activity );
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
-      editImpl.onAttach( activity );
    }
    
    
@@ -93,7 +92,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       baseImpl.onDetach();
       loaderImpl.onDetach();
-      editImpl.onDetach();
+      context = null;
       
       super.onDetach();
    }
@@ -114,30 +113,20 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
+   public boolean hasWritableAccess()
+   {
+      return context.getAccountService()
+                    .isWriteableAccess( context.getAccountService()
+                                               .getRtmAccount() );
+   }
+   
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
       loaderImpl.onViewCreated( view, savedInstanceState );
-      editImpl.onViewCreated( view, savedInstanceState );
-   }
-   
-   
-   
-   @Override
-   public void onDestroyView()
-   {
-      editImpl.onDestroyView();
-      super.onDestroyView();
-   }
-   
-   
-   
-   @Override
-   public void onDestroy()
-   {
-      editImpl.onDestroy();
-      super.onDestroy();
    }
    
    

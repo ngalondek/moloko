@@ -109,7 +109,7 @@ public final class Intents
       
       public final static String KEY_TASK_ID = "task_id";
       
-      public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
+      public final static String KEY_TASKS = Bundles.KEY_QUALIFIER_SERIALIZABLE_ARRAY_LIST
          + "tasks";
       
       public final static String KEY_LIST = "list";
@@ -163,7 +163,7 @@ public final class Intents
       {
          final Bundle bundle = new Bundle( 1 );
          
-         bundle.putParcelable( Extras.KEY_TASK, task );
+         bundle.putSerializable( Extras.KEY_TASK, task );
          
          return bundle;
       }
@@ -356,7 +356,7 @@ public final class Intents
                                               ( title != null )
                                                                ? title
                                                                : filter.getFilterString() ) );
-         extras.putParcelable( Extras.KEY_FILTER, filter );
+         extras.putSerializable( Extras.KEY_FILTER, filter );
          
          return extras;
       }
@@ -715,8 +715,7 @@ public final class Intents
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT,
                                         ContentUris.TASKS_CONTENT_URI );
-      intent.putParcelableArrayListExtra( Extras.KEY_TASKS,
-                                          new ArrayList< Task >( tasks ) );
+      intent.putExtra( Extras.KEY_TASKS, new ArrayList< Task >( tasks ) );
       
       return intent;
    }
@@ -737,15 +736,15 @@ public final class Intents
    
    
    public final static Intent createEditNoteIntent( Context context,
-                                                    long taskId,
+                                                    Task task,
                                                     Note note )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT,
                                         ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
-                                                                                  taskId,
+                                                                                  task.getId(),
                                                                                   note.getId() ) );
       
-      intent.putExtras( Extras.createEditNoteExtras( taskId, note ) );
+      intent.putExtras( Extras.createEditNoteExtras( task, note.getId() ) );
       
       return intent;
    }

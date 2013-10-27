@@ -106,5 +106,13 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    
    
    
+   @Override
+   public boolean hasWritableAccess()
+   {
+      return impl.hasWritableAccess();
+   }
+   
+   
+   
    protected abstract void applyChanges();
 }

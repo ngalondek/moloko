@@ -29,6 +29,7 @@ import java.util.Map;
 
 import android.database.Cursor;
 import dev.drsoran.moloko.content.Columns;
+import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.ModificationColumns;
@@ -42,6 +43,8 @@ import dev.drsoran.moloko.content.Columns.TaskCountColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.CursorUtils;
+import dev.drsoran.moloko.domain.model.CloudEntry;
+import dev.drsoran.moloko.domain.model.CloudEntryType;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
@@ -78,6 +81,7 @@ public class DefaultModelElementFactory implements IModelElementFactory
       factoryMethodLookUp.put( ExtendedTaskCount.class,
                                new ExtendedTaskCountFactoryMethod() );
       factoryMethodLookUp.put( String.class, new TagFactoryMethod() );
+      factoryMethodLookUp.put( CloudEntry.class, new CloudEntryFactoryMethod() );
       factoryMethodLookUp.put( RtmSettings.class,
                                new RtmSettingsFactoryMethod() );
       factoryMethodLookUp.put( Modification.class,
@@ -271,6 +275,19 @@ public class DefaultModelElementFactory implements IModelElementFactory
       public String create( Cursor c )
       {
          return c.getString( TagColumns.TAG_IDX );
+      }
+   }
+   
+   
+   private final class CloudEntryFactoryMethod implements
+            IFactoryMethod< CloudEntry >
+   {
+      @Override
+      public CloudEntry create( Cursor c )
+      {
+         return new CloudEntry( CloudEntryType.fromValue( c.getInt( CloudEntryColumns.ENTRY_TYPE_IDX ) ),
+                                c.getString( CloudEntryColumns.DISPLAY_IDX ),
+                                c.getInt( CloudEntryColumns.COUNT_IDX ) );
       }
    }
    

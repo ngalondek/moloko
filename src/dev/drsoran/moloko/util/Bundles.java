@@ -16,6 +16,8 @@ public final class Bundles
    
    public final static String KEY_QUALIFIER_PARCABLE_ARRAY_LIST = "PAL_";
    
+   public final static String KEY_QUALIFIER_SERIALIZABLE_ARRAY_LIST = "SAL_";
+   
    
    
    public final static void put( Bundle bundle,
@@ -65,6 +67,13 @@ public final class Bundles
             @SuppressWarnings( "unchecked" )
             final ArrayList< Parcelable > cast = ArrayList.class.cast( value );
             bundle.putParcelableArrayList( key, cast );
+         }
+         else if ( key.startsWith( KEY_QUALIFIER_SERIALIZABLE_ARRAY_LIST ) )
+         {
+            @SuppressWarnings(
+            { "rawtypes" } )
+            final ArrayList cast = ArrayList.class.cast( value );
+            bundle.putSerializable( key, cast );
          }
          else
          {

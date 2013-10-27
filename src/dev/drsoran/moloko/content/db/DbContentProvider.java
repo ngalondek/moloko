@@ -269,9 +269,11 @@ public class DbContentProvider extends ContentProvider
    {
       final UriLookup< IContentUriHandler > handlerLookup = new UriLookup< IContentUriHandler >( ContentUris.MATCHER );
       
-      IContentUriHandler handler = new ContentUriHandlerTableAdapter( database.getTable( RtmTasksListsTable.TABLE_NAME ) );
-      handlerLookup.put( handler, ContentUris.MATCH_TASKS_LISTS );
-      handlerLookup.put( handler, ContentUris.MATCH_TASKS_LISTS_ID );
+      final IContentUriHandler tasksListContentUriHandler = new ContentUriHandlerTableAdapter( database.getTable( RtmTasksListsTable.TABLE_NAME ) );
+      handlerLookup.put( tasksListContentUriHandler,
+                         ContentUris.MATCH_TASKS_LISTS );
+      handlerLookup.put( tasksListContentUriHandler,
+                         ContentUris.MATCH_TASKS_LISTS_ID );
       
       final TasksContentUriHandler tasksContentUriHandler = new TasksContentUriHandler( database.getWritable(),
                                                                                         database.getTable( RtmTaskSeriesTable.TABLE_NAME ),
@@ -279,7 +281,16 @@ public class DbContentProvider extends ContentProvider
       handlerLookup.put( tasksContentUriHandler, ContentUris.MATCH_TASKS );
       handlerLookup.put( tasksContentUriHandler, ContentUris.MATCH_TASKS_ID );
       
-      handler = new ReadOnlyContentUriHandler( new TaskCountContentUriHandler( tasksContentUriHandler ) );
+      final IContentUriHandler locationsContentUriHandler = new ReadOnlyContentUriHandler( new ContentUriHandlerTableAdapter( database.getTable( RtmLocationsTable.TABLE_NAME ) ) );
+      handlerLookup.put( locationsContentUriHandler,
+                         ContentUris.MATCH_LOCATIONS );
+      handlerLookup.put( locationsContentUriHandler,
+                         ContentUris.MATCH_LOCATIONS_ID );
+      
+      final IContentUriHandler tagsContentUriHandler = new ReadOnlyContentUriHandler( new TagsContentUriHandler( database.getReadable() ) );
+      handlerLookup.put( tagsContentUriHandler, ContentUris.MATCH_TAGS );
+      
+      IContentUriHandler handler = new ReadOnlyContentUriHandler( new TaskCountContentUriHandler( tasksContentUriHandler ) );
       handlerLookup.put( handler, ContentUris.MATCH_TASKS_COUNT );
       
       handler = new TaskNotesContentUriHandler( database.getTable( RtmNotesTable.TABLE_NAME ),
@@ -292,12 +303,10 @@ public class DbContentProvider extends ContentProvider
       handlerLookup.put( handler, ContentUris.MATCH_TASK_PARTICIPANTS );
       handlerLookup.put( handler, ContentUris.MATCH_TASK_PARTICIPANTS_ID );
       
-      handler = new ReadOnlyContentUriHandler( new ContentUriHandlerTableAdapter( database.getTable( RtmLocationsTable.TABLE_NAME ) ) );
-      handlerLookup.put( handler, ContentUris.MATCH_LOCATIONS );
-      handlerLookup.put( handler, ContentUris.MATCH_LOCATIONS_ID );
-      
-      handler = new ReadOnlyContentUriHandler( new TagsContentUriHandler( database.getReadable() ) );
-      handlerLookup.put( handler, ContentUris.MATCH_TAGS );
+      handler = new ReadOnlyContentUriHandler( new CloudEntriesUriHandler( tagsContentUriHandler,
+                                                                           tasksListContentUriHandler,
+                                                                           locationsContentUriHandler ) );
+      handlerLookup.put( handler, ContentUris.MATCH_CLOUD_ENTRIES );
       
       handler = new ReadOnlyContentUriHandler( new ContentUriHandlerTableAdapter( database.getTable( RtmContactsTable.TABLE_NAME ) ) );
       handlerLookup.put( handler, ContentUris.MATCH_CONTACTS );

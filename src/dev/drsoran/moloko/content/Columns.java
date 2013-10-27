@@ -663,6 +663,43 @@ public final class Columns
    }
    
    
+   public static class CloudEntryColumns
+   {
+      /**
+       * The type of the cloud entry
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String ENTRY_TYPE = "entry_type";
+      
+      public final static int ENTRY_TYPE_IDX = 0;
+      
+      /**
+       * The display text of the element
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String DISPLAY = "display";
+      
+      public final static int DISPLAY_IDX = 1;
+      
+      /**
+       * The count how often this element exists
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String COUNT = "count";
+      
+      public final static int COUNT_IDX = 2;
+      
+      public final static String[] PROJECTION =
+      { ENTRY_TYPE, DISPLAY, COUNT };
+   }
+   
+   
    public static class RtmSettingsColumns implements BaseColumns
    {
       /**

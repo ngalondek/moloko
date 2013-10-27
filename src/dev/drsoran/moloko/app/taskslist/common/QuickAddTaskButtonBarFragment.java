@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.ShowButtonTextAsToast;
 import dev.drsoran.moloko.ui.fragments.MolokoFragment;
-import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 
 
 class QuickAddTaskButtonBarFragment extends MolokoFragment implements
@@ -98,27 +98,27 @@ class QuickAddTaskButtonBarFragment extends MolokoFragment implements
       switch ( view.getId() )
       {
          case R.id.quick_add_task_btn_due_date:
-            notifyInsertOperator( RtmSmartAddTokenizer.OP_DUE_DATE );
+            notifyInsertOperator( RtmSmartAddToken.OP_DUE_DATE );
             break;
          
          case R.id.quick_add_task_btn_prio:
-            notifyInsertOperator( RtmSmartAddTokenizer.OP_PRIORITY );
+            notifyInsertOperator( RtmSmartAddToken.OP_PRIORITY );
             break;
          
          case R.id.quick_add_task_btn_list_tags:
-            notifyInsertOperator( RtmSmartAddTokenizer.OP_LIST_TAGS );
+            notifyInsertOperator( RtmSmartAddToken.OP_LIST_TAGS );
             break;
          
          case R.id.quick_add_task_btn_location:
-            notifyInsertOperator( RtmSmartAddTokenizer.OP_LOCATION );
+            notifyInsertOperator( RtmSmartAddToken.OP_LOCATION );
             break;
          
          case R.id.quick_add_task_btn_repeat:
-            notifyInsertOperator( RtmSmartAddTokenizer.OP_REPEAT );
+            notifyInsertOperator( RtmSmartAddToken.OP_REPEAT );
             break;
          
          case R.id.quick_add_task_btn_estimate:
-            notifyInsertOperator( RtmSmartAddTokenizer.OP_ESTIMATE );
+            notifyInsertOperator( RtmSmartAddToken.OP_ESTIMATE );
             break;
          
          default :

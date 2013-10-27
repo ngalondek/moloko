@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.app.taskslist;
 
-import java.util.List;
+import java.util.Collection;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -33,6 +33,7 @@ import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
 
 
@@ -87,10 +88,18 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       
       if ( show )
       {
-         final List< RtmSmartFilterToken > unAmbigiousTokens = getAppContext().getParsingService()
-                                                                              .getRtmSmartFilterParsing()
-                                                                              .removeAmbiguousTokens( filter.getTokens() );
-         show = unAmbigiousTokens.size() > 0;
+         try
+         {
+            final Collection< RtmSmartFilterToken > unAmbigiousTokens = getAppContext().getParsingService()
+                                                                                       .getRtmSmartFilterParsing()
+                                                                                       .getSmartFilterTokens( filter.getFilterString() )
+                                                                                       .getUniqueTokens();
+            show = unAmbigiousTokens.size() > 0;
+         }
+         catch ( GrammarException e )
+         {
+            show = false;
+         }
       }
       
       addSmartListItem.setVisible( show );

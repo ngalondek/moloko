@@ -20,9 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.tagcloud;
+package dev.drsoran.moloko.domain.model;
 
-public enum TagCloudEntryType
+public enum CloudEntryType
 {
    Tag( 0 ), TasksList( 1 ), Location( 2 );
    
@@ -30,7 +30,7 @@ public enum TagCloudEntryType
    
    
    
-   private TagCloudEntryType( int value )
+   private CloudEntryType( int value )
    {
       this.value = value;
    }
@@ -44,7 +44,7 @@ public enum TagCloudEntryType
    
    
    
-   public static TagCloudEntryType fromValue( int value )
+   public static CloudEntryType fromValue( int value )
    {
       switch ( value )
       {

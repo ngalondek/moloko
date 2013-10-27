@@ -22,9 +22,30 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
+import static dev.drsoran.moloko.content.Columns.TaskColumns.DUE_DATE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.ESTIMATE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.ESTIMATE_MILLIS;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.HAS_DUE_TIME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.PRIORITY;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.RECURRENCE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.RECURRENCE_EVERY;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TAGS;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TAGS_SEPARATOR;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.DUE_DATE_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.ESTIMATE_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.LIST_TAGS_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.LOCATION_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.PRIORITY_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.REPEAT_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.TASK_NAME_TYPE;
+
+import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,43 +53,38 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
-import android.util.Pair;
 import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.domain.services.IParsingService;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
+import dev.drsoran.moloko.ui.services.ISmartAddService;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
-import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer;
-import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizer.Token;
 
 
 class QuickAddTaskActionModeInputHandler
 {
-   private final AppContext context;
+   private final UiContext context;
    
    private final IParsingService parsingService;
    
-   private final RtmSmartAddTokenizer smartAddTokenizer;
+   private final ISmartAddService smartAddService;
    
    private final RtmSmartAddTextView addTaskEdit;
    
    
    
-   public QuickAddTaskActionModeInputHandler( AppContext context,
+   public QuickAddTaskActionModeInputHandler( UiContext context,
       RtmSmartAddTextView inputView )
    {
       this.context = context;
       this.parsingService = context.getParsingService();
-      
-      smartAddTokenizer = new RtmSmartAddTokenizer( parsingService.getDateTimeParsing() );
-      
+      this.smartAddService = context.getSmartAddService();
       this.addTaskEdit = inputView;
-      addTaskEdit.setTokenizer( smartAddTokenizer );
-      addTaskEdit.setThreshold( 1 );
-      addTaskEdit.setAdapter( new RtmSmartAddAdapter( context ) );
-      addTaskEdit.requestFocus();
    }
    
    
@@ -105,15 +121,172 @@ class QuickAddTaskActionModeInputHandler
    
    
    
-   private final int preselectByFilter( RtmSmartFilter filter )
+   public final Bundle getNewTaskConfig()
+   {
+      final Collection< RtmSmartAddToken > tokens = tokenizeInput();
+      
+      final Bundle config = new Bundle();
+      
+      if ( tokens.size() > 0 )
+      {
+         final RtmSmartAddAdapter rtmSmartAddAdapter = (RtmSmartAddAdapter) addTaskEdit.getAdapter();
+         Set< String > tags = new TreeSet< String >();
+         
+         for ( RtmSmartAddToken token : tokens )
+         {
+            // Check that the task name is not only a space character sequence
+            if ( token.getType() == TASK_NAME_TYPE
+               && !token.textContainsOnlySpaces() )
+            {
+               config.putString( TASK_NAME, token.getText() );
+            }
+            else
+            {
+               // Check if the token value comes from a taken suggestion
+               final Object suggestionValue = rtmSmartAddAdapter.getSuggestionValue( token.getType(),
+                                                                                     token.getText() );
+               
+               switch ( token.getType() )
+               {
+                  case DUE_DATE_TYPE:
+                     if ( suggestionValue != null )
+                     {
+                        config.putLong( DUE_DATE, (Long) suggestionValue );
+                        config.putBoolean( HAS_DUE_TIME, Boolean.FALSE );
+                     }
+                     else
+                     {
+                        try
+                        {
+                           final MolokoCalendar cal = parsingService.getDateTimeParsing()
+                                                                    .parseDateTime( token.getText() );
+                           config.putLong( DUE_DATE, cal.getTimeInMillis() );
+                           config.putBoolean( HAS_DUE_TIME, cal.hasTime() );
+                        }
+                        catch ( GrammarException e )
+                        {
+                           // Not parsable user input
+                        }
+                     }
+                     break;
+                  
+                  case PRIORITY_TYPE:
+                     config.putString( PRIORITY, token.getText() );
+                     break;
+                  
+                  case LIST_TAGS_TYPE:
+                     if ( suggestionValue != null )
+                     {
+                        config.putLong( LIST_ID, (Long) suggestionValue );
+                     }
+                     else
+                     {
+                        tags.add( token.getText() );
+                     }
+                     break;
+                  
+                  case LOCATION_TYPE:
+                     if ( suggestionValue != null )
+                     {
+                        config.putLong( LOCATION_ID, (Long) suggestionValue );
+                     }
+                     else
+                     {
+                        config.putString( LOCATION_NAME, token.getText() );
+                     }
+                     break;
+                  
+                  case REPEAT_TYPE:
+                     Recurrence recurrence;
+                     
+                     if ( suggestionValue != null )
+                     {
+                        recurrence = (Recurrence) suggestionValue;
+                     }
+                     else
+                     {
+                        try
+                        {
+                           recurrence = parsingService.getRecurrenceParsing()
+                                                      .parseRecurrence( token.getText() );
+                        }
+                        catch ( GrammarException e )
+                        {
+                           recurrence = null;
+                        }
+                     }
+                     
+                     if ( recurrence != null )
+                     {
+                        config.putString( RECURRENCE, recurrence.getPattern() );
+                        config.putBoolean( RECURRENCE_EVERY,
+                                           recurrence.isEveryRecurrence() );
+                     }
+                     
+                     break;
+                  
+                  case ESTIMATE_TYPE:
+                     if ( suggestionValue != null )
+                     {
+                        config.putString( ESTIMATE, token.getText() );
+                        config.putLong( ESTIMATE_MILLIS, (Long) suggestionValue );
+                     }
+                     else
+                     {
+                        try
+                        {
+                           final long estimated = parsingService.getDateTimeParsing()
+                                                                .parseEstimated( token.getText() );
+                           config.putString( ESTIMATE,
+                                             context.getDateFormatter()
+                                                    .formatEstimated( estimated ) );
+                           config.putLong( ESTIMATE_MILLIS,
+                                           Long.valueOf( estimated ) );
+                        }
+                        catch ( GrammarException e )
+                        {
+                           // Not parsable user input
+                        }
+                     }
+                     break;
+                  
+                  default :
+                     break;
+               }
+            }
+         }
+         
+         if ( !tags.isEmpty() )
+         {
+            config.putString( TAGS, TextUtils.join( TAGS_SEPARATOR, tags ) );
+         }
+      }
+      
+      return config;
+   }
+   
+   
+   
+   private int preselectByFilter( RtmSmartFilter filter )
    {
       int numPreselected = 0;
       
-      // Iterate over all tokens and suggest all non-null tokens
-      for ( RtmSmartFilterToken rtmSmartFilterToken : parsingService.getRtmSmartFilterParsing()
-                                                                    .removeAmbiguousTokens( filter.getTokens() ) )
+      Collection< RtmSmartFilterToken > rtmSmartFilterTokens;
+      try
       {
-         final Character operator = RtmSmartAddTokenizer.getOperatorFromRtmSmartFilterTokenType( rtmSmartFilterToken.operatorType );
+         rtmSmartFilterTokens = parsingService.getRtmSmartFilterParsing()
+                                              .getSmartFilterTokens( filter.getFilterString() )
+                                              .getUniqueTokens();
+      }
+      catch ( GrammarException e )
+      {
+         rtmSmartFilterTokens = Collections.emptyList();
+      }
+      
+      // Iterate over all tokens and suggest all non-null tokens
+      for ( RtmSmartFilterToken rtmSmartFilterToken : rtmSmartFilterTokens )
+      {
+         final Character operator = RtmSmartAddToken.getOperatorFromRtmSmartFilterTokenType( rtmSmartFilterToken.operatorType );
          
          // Check if the RtmSmartFilterToken can be used as pre-selection
          if ( operator != null )
@@ -130,7 +303,7 @@ class QuickAddTaskActionModeInputHandler
    
    
    
-   private final Editable insertOperatorAtPosition( char operator, int pos )
+   private Editable insertOperatorAtPosition( char operator, int pos )
    {
       final Editable text = addTaskEdit.getEditableText();
       
@@ -143,9 +316,7 @@ class QuickAddTaskActionModeInputHandler
    
    
    
-   private final Editable insertOperatorAndValue( char operator,
-                                                  String value,
-                                                  int pos )
+   private Editable insertOperatorAndValue( char operator, String value, int pos )
    {
       final Editable text = addTaskEdit.getEditableText();
       
@@ -175,164 +346,19 @@ class QuickAddTaskActionModeInputHandler
    
    
    
-   public final Bundle getNewTaskConfig()
-   {
-      final Collection< Token > tokens = tokenizeInput();
-      
-      final Bundle config = new Bundle();
-      
-      if ( tokens.size() > 0 )
-      {
-         final RtmSmartAddAdapter rtmSmartAddAdapter = (RtmSmartAddAdapter) addTaskEdit.getAdapter();
-         Set< String > tags = null;
-         
-         for ( Token token : tokens )
-         {
-            // Check that the task name is not only a space character sequence
-            if ( token.getType() == RtmSmartAddTokenizer.TASK_NAME_TYPE
-               && !token.textContainsOnlySpaces() )
-            {
-               config.putString( Tasks.TASKSERIES_NAME, token.getText() );
-            }
-            else
-            {
-               // Check if the token value comes from a taken suggestion
-               final Object suggestionValue = rtmSmartAddAdapter.getSuggestionValue( token.getType(),
-                                                                                     token.getText() );
-               
-               switch ( token.getType() )
-               {
-                  case RtmSmartAddTokenizer.DUE_DATE_TYPE:
-                     if ( suggestionValue != null )
-                     {
-                        config.putLong( Tasks.DUE_DATE, (Long) suggestionValue );
-                        config.putBoolean( Tasks.HAS_DUE_TIME, Boolean.FALSE );
-                     }
-                     else
-                     {
-                        final MolokoCalendar cal = context.getParsingService()
-                                                          .getDateTimeParsing()
-                                                          .parseDateTimeSpec( token.getText() );
-                        if ( cal != null )
-                        {
-                           config.putLong( Tasks.DUE_DATE,
-                                           cal.getTimeInMillis() );
-                           config.putBoolean( Tasks.HAS_DUE_TIME, cal.hasTime() );
-                        }
-                     }
-                     break;
-                  
-                  case RtmSmartAddTokenizer.PRIORITY_TYPE:
-                     config.putString( Tasks.PRIORITY, token.getText() );
-                     break;
-                  
-                  case RtmSmartAddTokenizer.LIST_TAGS_TYPE:
-                     boolean isTag = true;
-                     
-                     if ( suggestionValue != null )
-                     {
-                        @SuppressWarnings( "unchecked" )
-                        final Pair< String, Boolean > list_or_tag = (Pair< String, Boolean >) suggestionValue;
-                        if ( list_or_tag.second )
-                        {
-                           config.putString( Tasks.LIST_ID, list_or_tag.first );
-                           isTag = false;
-                        }
-                     }
-                     
-                     if ( isTag )
-                     {
-                        if ( tags == null )
-                        {
-                           tags = new TreeSet< String >();
-                        }
-                        
-                        tags.add( token.getText() );
-                     }
-                     break;
-                  
-                  case RtmSmartAddTokenizer.LOCATION_TYPE:
-                     if ( suggestionValue != null )
-                        config.putString( Tasks.LOCATION_ID,
-                                          (String) suggestionValue );
-                     else
-                        config.putString( Tasks.LOCATION_NAME, token.getText() );
-                     break;
-                  
-                  case RtmSmartAddTokenizer.REPEAT_TYPE:
-                     final Pair< String, Boolean > recurr;
-                     
-                     if ( suggestionValue != null )
-                     {
-                        @SuppressWarnings( "unchecked" )
-                        final Pair< String, Boolean > tempValue = (Pair< String, Boolean >) suggestionValue;
-                        recurr = tempValue;
-                     }
-                     else
-                        recurr = context.getParsingService()
-                                        .getRecurrenceParsing()
-                                        .parseRecurrence( token.getText() );
-                     
-                     if ( recurr != null )
-                     {
-                        config.putString( Tasks.RECURRENCE, recurr.first );
-                        config.putBoolean( Tasks.RECURRENCE_EVERY,
-                                           recurr.second );
-                     }
-                     
-                     break;
-                  
-                  case RtmSmartAddTokenizer.ESTIMATE_TYPE:
-                     if ( suggestionValue != null )
-                     {
-                        config.putString( Tasks.ESTIMATE, token.getText() );
-                        config.putLong( Tasks.ESTIMATE_MILLIS,
-                                        (Long) suggestionValue );
-                     }
-                     else
-                     {
-                        final long estimated = context.getParsingService()
-                                                      .getDateTimeParsing()
-                                                      .getTimeStruct( token.getText() );
-                        if ( estimated != -1 )
-                        {
-                           config.putString( Tasks.ESTIMATE,
-                                             context.getDateFormatter()
-                                                    .formatEstimated( estimated ) );
-                           config.putLong( Tasks.ESTIMATE_MILLIS,
-                                           Long.valueOf( estimated ) );
-                        }
-                     }
-                     break;
-                  
-                  default :
-                     break;
-               }
-            }
-         }
-         
-         if ( tags != null && tags.size() > 0 )
-         {
-            config.putString( Tasks.TAGS,
-                              TextUtils.join( Tasks.TAGS_SEPARATOR, tags ) );
-         }
-      }
-      
-      return config;
-   }
-   
-   
-   
-   private Collection< Token > tokenizeInput()
+   private Collection< RtmSmartAddToken > tokenizeInput()
    {
       final CharSequence input = UiUtils.getTrimmedSequence( addTaskEdit );
       
-      context.Log().d( getClass(), "Creating tokens for '" + input + "'" );
+      context.Log().d( getClass(),
+                       MessageFormat.format( "Creating tokens for ''{0}''",
+                                             input ) );
       
-      final List< Token > tokens = new LinkedList< Token >();
-      smartAddTokenizer.getTokens( input, tokens );
+      final Collection< RtmSmartAddToken > tokens = smartAddService.tokenize( input );
       
-      context.Log().d( getClass(), "Tokens: " + tokens );
+      context.Log()
+             .d( getClass(), MessageFormat.format( "Tokens: {0}", tokens ) );
+      
       return tokens;
    }
 }

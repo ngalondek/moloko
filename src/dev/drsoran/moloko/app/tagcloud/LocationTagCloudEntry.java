@@ -26,6 +26,8 @@ import android.view.View;
 import android.widget.Button;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Location;
+import dev.drsoran.moloko.domain.model.CloudEntry;
+import dev.drsoran.moloko.domain.model.CloudEntryType;
 
 
 class LocationTagCloudEntry extends PresentableTagCloudEntry implements
@@ -35,14 +37,14 @@ class LocationTagCloudEntry extends PresentableTagCloudEntry implements
    
    
    
-   public LocationTagCloudEntry( Location location, TagCloudEntry tagCloudEntry )
+   public LocationTagCloudEntry( Location location, CloudEntry tagCloudEntry )
    {
       super( tagCloudEntry );
       
-      if ( tagCloudEntry.getType() != TagCloudEntryType.Location )
+      if ( tagCloudEntry.getType() != CloudEntryType.Location )
       {
          throw new IllegalArgumentException( "Expected tag cloud entry of type "
-            + TagCloudEntryType.Location );
+            + CloudEntryType.Location );
       }
       
       this.location = location;

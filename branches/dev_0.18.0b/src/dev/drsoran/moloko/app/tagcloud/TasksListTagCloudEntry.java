@@ -25,6 +25,8 @@ package dev.drsoran.moloko.app.tagcloud;
 import android.view.View;
 import android.widget.Button;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.CloudEntry;
+import dev.drsoran.moloko.domain.model.CloudEntryType;
 
 
 class TasksListTagCloudEntry extends PresentableTagCloudEntry implements
@@ -34,14 +36,14 @@ class TasksListTagCloudEntry extends PresentableTagCloudEntry implements
    
    
    
-   public TasksListTagCloudEntry( long listId, TagCloudEntry tagCloudEntry )
+   public TasksListTagCloudEntry( long listId, CloudEntry tagCloudEntry )
    {
       super( tagCloudEntry );
       
-      if ( tagCloudEntry.getType() != TagCloudEntryType.TasksList )
+      if ( tagCloudEntry.getType() != CloudEntryType.TasksList )
       {
          throw new IllegalArgumentException( "Expected tag cloud entry of type "
-            + TagCloudEntryType.TasksList );
+            + CloudEntryType.TasksList );
       }
       
       this.listId = listId;

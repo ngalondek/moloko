@@ -57,6 +57,8 @@ public final class ContentMimeTypes
       
       TAGS_CONTENT_TYPE = "vnd.android.cursor.item/vnd.moloko.content.tag";
       
+      CLOUD_ENTRY_CONTENT_TYPE = "vnd.android.cursor.item/vnd.moloko.content.cloudentry";
+      
       final UriLookup< String > lookup = new UriLookup< String >( ContentUris.MATCHER );
       
       lookup.put( ContentMimeTypes.TASKS_LIST_CONTENT_TYPE,
@@ -83,6 +85,8 @@ public final class ContentMimeTypes
       lookup.put( ContentMimeTypes.CONTACT_CONTENT_ITEM_TYPE,
                   ContentUris.MATCH_CONTACTS_ID );
       lookup.put( ContentMimeTypes.TAGS_CONTENT_TYPE, ContentUris.MATCH_TAGS );
+      lookup.put( ContentMimeTypes.CLOUD_ENTRY_CONTENT_TYPE,
+                  ContentUris.MATCH_CLOUD_ENTRIES );
       
       CONTENT_URI_MIME_TYPE_LOOKUP = lookup;
    }
@@ -153,4 +157,9 @@ public final class ContentMimeTypes
     * The MIME type of a sub-directory of tags.
     */
    public static final String TAGS_CONTENT_TYPE;
+   
+   /**
+    * The MIME type of a sub-directory of cloud entries.
+    */
+   public static final String CLOUD_ENTRY_CONTENT_TYPE;
 }

@@ -28,7 +28,7 @@ import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.ui.UiUtils;
 
 
@@ -40,7 +40,7 @@ public class EditFragmentImpl
    
    private IBinder windowToken;
    
-   private SystemContext context;
+   private AppContext context;
    
    
    
@@ -53,7 +53,7 @@ public class EditFragmentImpl
    
    public void onAttach( Activity activity )
    {
-      this.context = SystemContext.get( activity );
+      this.context = AppContext.get( activity );
       this.handler = context.acquireHandlerToken();
    }
    
@@ -87,6 +87,15 @@ public class EditFragmentImpl
    public void onDetach()
    {
       context = null;
+   }
+   
+   
+   
+   public boolean hasWritableAccess()
+   {
+      return context.getAccountService()
+                    .isWriteableAccess( context.getAccountService()
+                                               .getRtmAccount() );
    }
    
    

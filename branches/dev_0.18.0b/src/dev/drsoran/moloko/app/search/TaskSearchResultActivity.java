@@ -39,6 +39,7 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.state.InstanceState;
 
 
@@ -183,6 +184,27 @@ public class TaskSearchResultActivity extends
    
    
    
+   @Override
+   public Fragment createTasksListFragment( Bundle config )
+   {
+      evaluateAndAddQueryToRecents();
+      
+      if ( getTopQuery().succeeded )
+      {
+         putTransformedQueryFromSmartFilter( config );
+         return super.createTasksListFragment( config );
+      }
+      else
+      {
+         config = new Bundle( 1 );
+         config.putString( SearchManager.QUERY, getQueryFromIntent() );
+         
+         return TaskSearchResultFailedFragment.newInstance( config );
+      }
+   }
+   
+   
+   
    private SearchRecentSuggestions getRecentSuggestions()
    {
       return new SearchRecentSuggestions( this,
@@ -192,7 +214,7 @@ public class TaskSearchResultActivity extends
    
    
    
-   private void evaluateAndStoreQuery()
+   private void evaluateAndAddQueryToRecents()
    {
       if ( getAppContext().getParsingService()
                           .getRtmSmartFilterParsing()
@@ -219,7 +241,7 @@ public class TaskSearchResultActivity extends
    private Bundle putTransformedQueryFromSmartFilter( Bundle config )
    {
       config.putSerializable( Intents.Extras.KEY_FILTER,
-                              evaluateRtmSmartFilter() );
+                              new RtmSmartFilter( getQueryFromIntent() ) );
       return config;
    }
    
@@ -272,27 +294,6 @@ public class TaskSearchResultActivity extends
       pushQuery( new QueryStackItem( queryString, false ) );
       
       invalidateOptionsMenu();
-   }
-   
-   
-   
-   @Override
-   public Fragment createTasksListFragment( Bundle config )
-   {
-      evaluateAndStoreQuery();
-      
-      if ( getTopQuery().succeeded )
-      {
-         putTransformedQueryFromSmartFilter( config );
-         return super.createTasksListFragment( config );
-      }
-      else
-      {
-         config = new Bundle( 1 );
-         config.putString( SearchManager.QUERY, getQueryFromIntent() );
-         
-         return TaskSearchResultFailedFragment.newInstance( config );
-      }
    }
    
    

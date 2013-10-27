@@ -20,37 +20,19 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.ui;
+package dev.drsoran.moloko.ui.rtmsmartadd;
 
-import android.content.Context;
-import dev.drsoran.moloko.ui.services.IDateFormatterService;
-import dev.drsoran.moloko.ui.services.IUiServices;
-
-
-public class UiServicesContainer implements IUiServices
+public class RtmSmartAddSuggestion
 {
-   private final MolokoDateFormatterService dataFormatterService;
+   public final String suggestionText;
+   
+   public final Object payload;
    
    
    
-   public UiServicesContainer( Context context )
+   public RtmSmartAddSuggestion( String suggestion, Object payload )
    {
-      this.dataFormatterService = new MolokoDateFormatterService( context );
+      this.suggestionText = suggestion;
+      this.payload = payload;
    }
-   
-   
-   
-   public void set24hFormat( boolean is24hFormat )
-   {
-      dataFormatterService.setIs24hFormat( is24hFormat );
-   }
-   
-   
-   
-   @Override
-   public IDateFormatterService getDateFormatter()
-   {
-      return dataFormatterService;
-   }
-   
 }

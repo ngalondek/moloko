@@ -101,7 +101,7 @@ class TagsContentUriHandler extends AbstractContentUriHandler
       try
       {
          final String rawQueryString = queryBuilder.buildQuery( new String[]
-         { RtmTaskSeriesColumns.TAGS }, selection, null, null, sortOrder, null );
+         { RtmTaskSeriesColumns.TAGS }, selection, null, null, null, null );
          
          tasksCursor = database.rawQuery( rawQueryString, selectionArgs );
          

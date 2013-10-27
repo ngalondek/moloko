@@ -20,128 +20,32 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.ui.widgets;
+package dev.drsoran.moloko.ui.rtmsmartadd;
 
-import java.util.List;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.DUE_DATE_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.ESTIMATE_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.LIST_TAGS_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.LOCATION_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.OP_DUE_DATE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.OP_ESTIMATE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.OP_LIST_TAGS;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.OP_LOCATION;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.OP_PRIORITY;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.OP_REPEAT;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.PRIORITY_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.REPEAT_TYPE;
+import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.TASK_NAME_TYPE;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import android.text.TextUtils;
-import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
-import dev.drsoran.moloko.util.Strings;
 
 
-public class RtmSmartAddTokenizer implements Tokenizer
+public class RtmSmartAddTokenizer
 {
-   public static class Token
-   {
-      private final int type;
-      
-      private int start = -1;
-      
-      private int end = -1;
-      
-      private String text;
-      
-      
-      
-      public Token( int type )
-      {
-         this.type = type;
-      }
-      
-      
-      
-      public int getType()
-      {
-         return type;
-      }
-      
-      
-      
-      public int getStart()
-      {
-         return start;
-      }
-      
-      
-      
-      public void setStart( int start )
-      {
-         this.start = start;
-      }
-      
-      
-      
-      public int getEnd()
-      {
-         return end;
-      }
-      
-      
-      
-      public void setEnd( int end )
-      {
-         this.end = end;
-      }
-      
-      
-      
-      public String getText()
-      {
-         return text;
-      }
-      
-      
-      
-      public boolean textContainsOnlySpaces()
-      {
-         return text.replaceAll( " ", Strings.EMPTY_STRING ).length() == 0;
-      }
-      
-      
-      
-      public void setText( String text )
-      {
-         this.text = text;
-      }
-      
-      
-      
-      @Override
-      public String toString()
-      {
-         return type + ":" + start + "," + end + "," + text;
-      }
-   }
-   
-   public final static char OP_DUE_DATE = '^';
-   
-   public final static char OP_PRIORITY = '!';
-   
-   public final static char OP_LIST_TAGS = '#';
-   
-   public final static char OP_LOCATION = '@';
-   
-   public final static char OP_REPEAT = '*';
-   
-   public final static char OP_ESTIMATE = '=';
-   
-   public final static int DUE_DATE_TYPE = 0;
-   
-   public final static int PRIORITY_TYPE = 1;
-   
-   public final static int LIST_TAGS_TYPE = 2;
-   
-   public final static int LOCATION_TYPE = 3;
-   
-   public final static int REPEAT_TYPE = 4;
-   
-   public final static int ESTIMATE_TYPE = 5;
-   
-   public final static int TASK_NAME_TYPE = 6;
-   
    private final IDateTimeParsing dateTimeParsing;
    
    
@@ -153,58 +57,60 @@ public class RtmSmartAddTokenizer implements Tokenizer
    
    
    
-   public final void getTokens( CharSequence input, List< Token > tokens )
+   public Collection< RtmSmartAddToken > getTokens( CharSequence input )
    {
+      final Collection< RtmSmartAddToken > tokens = new ArrayList< RtmSmartAddToken >();
+      
       for ( int i = 0, cnt = input.length(); i < cnt; ++i )
       {
-         final Token t;
+         final RtmSmartAddToken t;
          
          switch ( input.charAt( i ) )
          {
             case OP_DUE_DATE:
-               t = new Token( DUE_DATE_TYPE );
+               t = new RtmSmartAddToken( DUE_DATE_TYPE );
                t.setStart( i );
                t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
                setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_PRIORITY:
-               t = new Token( PRIORITY_TYPE );
+               t = new RtmSmartAddToken( PRIORITY_TYPE );
                t.setStart( i );
                t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
                setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_LIST_TAGS:
-               t = new Token( LIST_TAGS_TYPE );
+               t = new RtmSmartAddToken( LIST_TAGS_TYPE );
                t.setStart( i );
                t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
                setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_LOCATION:
-               t = new Token( LOCATION_TYPE );
+               t = new RtmSmartAddToken( LOCATION_TYPE );
                t.setStart( i );
                t.setEnd( getNextOperatorPos( input, i + 1, OP_LOCATION ) - 1 );
                setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_REPEAT:
-               t = new Token( REPEAT_TYPE );
+               t = new RtmSmartAddToken( REPEAT_TYPE );
                t.setStart( i );
                t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
                setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_ESTIMATE:
-               t = new Token( ESTIMATE_TYPE );
+               t = new RtmSmartAddToken( ESTIMATE_TYPE );
                t.setStart( i );
                t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
                setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             default :
-               t = new Token( TASK_NAME_TYPE );
+               t = new RtmSmartAddToken( TASK_NAME_TYPE );
                t.setStart( i );
                t.setEnd( getNextOperatorPos( input, i, null ) - 1 );
                setText( t, input, t.getStart(), t.getEnd() );
@@ -215,72 +121,8 @@ public class RtmSmartAddTokenizer implements Tokenizer
          
          i = t.getEnd();
       }
-   }
-   
-   
-   
-   @Override
-   public int findTokenEnd( CharSequence text, int cursor )
-   {
-      final int end = getNextOperatorPos( text, cursor, null );
-      return revFindFirstNotSpace( text,
-                                   cursor,
-                                   end >= text.length() ? text.length() - 1
-                                                       : end );
-   }
-   
-   
-   
-   @Override
-   public int findTokenStart( CharSequence text, int cursor )
-   {
-      final int start = getPrevOperatorPos( text, cursor - 1, null );
-      return findFirstNotSpace( text, start, cursor );
-   }
-   
-   
-   
-   @Override
-   public CharSequence terminateToken( CharSequence text )
-   {
-      return text + " ";
-   }
-   
-   
-   
-   public static boolean isOperator( char character, Character ownOp )
-   {
-      return ( ownOp == null || character != ownOp.charValue() )
-         && ( character == OP_DUE_DATE || character == OP_PRIORITY
-            || character == OP_LIST_TAGS || character == OP_LOCATION
-            || character == OP_REPEAT || character == OP_ESTIMATE );
-   }
-   
-   
-   
-   public static Character getOperatorFromRtmSmartFilterTokenType( int rtmSmartFilterTokenType )
-   {
-      switch ( rtmSmartFilterTokenType )
-      {
-         case RtmSmartFilterLexer.OP_DUE:
-            return Character.valueOf( OP_DUE_DATE );
-            
-         case RtmSmartFilterLexer.OP_PRIORITY:
-            return Character.valueOf( OP_PRIORITY );
-            
-         case RtmSmartFilterLexer.OP_LIST:
-         case RtmSmartFilterLexer.OP_TAG:
-            return Character.valueOf( OP_LIST_TAGS );
-            
-         case RtmSmartFilterLexer.OP_LOCATION:
-            return Character.valueOf( OP_LOCATION );
-            
-         case RtmSmartFilterLexer.OP_TIME_ESTIMATE:
-            return Character.valueOf( OP_ESTIMATE );
-            
-         default :
-            return null;
-      }
+      
+      return tokens;
    }
    
    
@@ -325,37 +167,20 @@ public class RtmSmartAddTokenizer implements Tokenizer
    
    
    
-   private int getPrevOperatorPos( CharSequence chars,
-                                   int startIdx,
-                                   Character ownOp )
+   private static boolean isOperator( char character, Character ownOp )
    {
-      for ( int i = startIdx; i > -1; --i )
-      {
-         char charI = chars.charAt( i );
-         
-         // SPECIAL CASE @: Some locations my have the
-         // form @Loc, so the text would be @@Loc. We
-         // have to find the very first @ in the sequence.
-         if ( isOperator( charI, ownOp ) )
-         {
-            while ( i > 0 && chars.charAt( i - 1 ) == charI )
-               --i;
-            
-            return i;
-         }
-      }
-      
-      return 0;
+      return ( ownOp == null || character != ownOp.charValue() )
+         && RtmSmartAddToken.isOperator( character );
    }
    
    
    
-   private void setText( Token token,
+   private void setText( RtmSmartAddToken token,
                          CharSequence chars,
                          int startIdx,
                          int endIdx )
    {
-      token.text = getText( chars, startIdx, endIdx );
+      token.setText( getText( chars, startIdx, endIdx ) );
    }
    
    

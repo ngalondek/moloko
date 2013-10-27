@@ -22,6 +22,12 @@
 
 package dev.drsoran.moloko.domain.services;
 
+import static dev.drsoran.moloko.content.ContentSelections.SEL_NO_COMPLETED_AND_DELETED_TASKS;
+import static dev.drsoran.moloko.content.ContentSelections.SEL_NO_DELETED_NOTES;
+import static dev.drsoran.moloko.content.ContentSelections.SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS;
+import static dev.drsoran.moloko.content.ContentSelections.SEL_NO_DELETED_TASKS;
+import static dev.drsoran.moloko.content.ContentSelections.SEL_PHYSICAL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -57,16 +63,6 @@ import dev.drsoran.moloko.util.Pair;
 
 public class ContentRepository implements IContentRepository
 {
-   private final static String SEL_NO_DELETED_TASKS;
-   
-   private final static String SEL_NO_COMPLETED_AND_DELETED_TASKS;
-   
-   private final static String SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS;
-   
-   private final static String SEL_PHYSICAL_TASKS_LISTS;
-   
-   private final static String SEL_NO_DELETED_NOTES;
-   
    private final IRtmSmartFilterParsing smartFilterParsing;
    
    private final IRtmSmartFilterEvaluator smartFilterEvaluator;
@@ -88,23 +84,6 @@ public class ContentRepository implements IContentRepository
    private final ContentQueryHandler< String > tagsQueryHandler;
    
    private final ContentQueryHandler< RtmSettings > settingsQueryHandler;
-   
-   static
-   {
-      SEL_NO_DELETED_TASKS = TaskColumns.DELETED_DATE + " IS NULL";
-      
-      SEL_NO_COMPLETED_AND_DELETED_TASKS = new StringBuilder( TaskColumns.COMPLETED_DATE ).append( " IS NULL AND " )
-                                                                                          .append( SEL_NO_DELETED_TASKS )
-                                                                                          .toString();
-      SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS = TasksListColumns.LIST_DELETED_DATE
-         + " IS NULL AND " + TasksListColumns.ARCHIVED + "=0";
-      
-      SEL_PHYSICAL_TASKS_LISTS = new StringBuilder( SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS ).append( " AND " )
-                                                                                            .append( TasksListColumns.IS_SMART_LIST )
-                                                                                            .append( "=0" )
-                                                                                            .toString();
-      SEL_NO_DELETED_NOTES = NoteColumns.NOTE_DELETED_DATE + " IS NULL";
-   }
    
    
    
@@ -432,7 +411,7 @@ public class ContentRepository implements IContentRepository
    public Iterable< TasksList > getPhysicalTasksLists() throws ContentException
    {
       return tasksListsQueryHandler.getAll( ContentUris.TASKS_LISTS_CONTENT_URI,
-                                            SEL_PHYSICAL_TASKS_LISTS );
+                                            SEL_PHYSICAL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS );
    }
    
    

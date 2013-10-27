@@ -165,7 +165,7 @@ class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEn
          
          final Button cloudEntryButton = new Button( activity );
          cloudEntryButton.setId( i );
-         cloudEntryButton.setText( cloudEntry.getName() );
+         cloudEntryButton.setText( cloudEntry.getDisplay() );
          cloudEntryButton.setTextSize( TypedValue.COMPLEX_UNIT_SP,
                                        18 * getMagnifyFactor( cloudEntry.getCount() ) );
          

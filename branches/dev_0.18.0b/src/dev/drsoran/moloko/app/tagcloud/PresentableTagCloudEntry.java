@@ -22,26 +22,27 @@
 
 package dev.drsoran.moloko.app.tagcloud;
 
+import dev.drsoran.moloko.domain.model.CloudEntry;
 import android.widget.Button;
 
 
 abstract class PresentableTagCloudEntry implements
          Comparable< PresentableTagCloudEntry >
 {
-   private final TagCloudEntry tagCloudEntry;
+   private final CloudEntry tagCloudEntry;
    
    private ITagCloudFragmentListener listener;
    
    
    
-   protected PresentableTagCloudEntry( TagCloudEntry tagCloudEntry )
+   protected PresentableTagCloudEntry( CloudEntry tagCloudEntry )
    {
       this.tagCloudEntry = tagCloudEntry;
    }
    
    
    
-   public TagCloudEntry getTagCloudEntry()
+   public CloudEntry getTagCloudEntry()
    {
       return tagCloudEntry;
    }

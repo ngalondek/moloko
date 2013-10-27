@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,28 +20,19 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.ui.fragments;
+package dev.drsoran.moloko.ui.services;
 
-import dev.drsoran.moloko.ui.ValidationResult;
+import java.util.Collection;
+
+import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddSuggestion;
+import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 
 
-public interface IEditFragment
+public interface ISmartAddService
 {
-   void onFinishEditing();
+   Collection< RtmSmartAddToken > tokenize( CharSequence input );
    
    
    
-   ValidationResult validate();
-   
-   
-   
-   boolean hasChanges();
-   
-   
-   
-   void onCancelEditing();
-   
-   
-   
-   boolean hasWritableAccess();
+   Collection< RtmSmartAddSuggestion > getSuggestions( int rtmSmartAddTokenType ) throws IllegalArgumentException;
 }

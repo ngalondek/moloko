@@ -26,17 +26,14 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.ui.MolokoLinkifier;
 import dev.drsoran.moloko.ui.adapters.MultiChoiceModalArrayAdapter;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
 
-class NotesListFragmentAdapter extends
-         MultiChoiceModalArrayAdapter< RtmTaskNote >
+class NotesListFragmentAdapter extends MultiChoiceModalArrayAdapter< Note >
 {
    public NotesListFragmentAdapter( NotesListFragment fragment )
    {
@@ -50,7 +47,7 @@ class NotesListFragmentAdapter extends
    {
       convertView = super.getView( position, convertView, parent );
       
-      final RtmTaskNote note = getItem( position );
+      final Note note = getItem( position );
       initNoteListItem( note, (ViewGroup) convertView );
       
       return convertView;
@@ -66,7 +63,7 @@ class NotesListFragmentAdapter extends
       // is removed and we get a changed data set.
       if ( position < getCount() )
       {
-         return Long.parseLong( getItem( position ).getId() );
+         return getItem( position ).getId();
       }
       else
       {
@@ -76,12 +73,11 @@ class NotesListFragmentAdapter extends
    
    
    
-   private void initNoteListItem( RtmTaskNote note, ViewGroup listItemView )
+   private void initNoteListItem( Note note, ViewGroup listItemView )
    {
       final TextView createdDateView = (TextView) listItemView.findViewById( R.id.note_created_date );
       createdDateView.setText( getUiContext().getDateFormatter()
-                                             .formatDate( note.getCreatedDate()
-                                                              .getTime(),
+                                             .formatDate( note.getCreatedMillisUtc(),
                                                           IDateFormatterService.FORMAT_ABR_MONTH
                                                              | IDateFormatterService.FORMAT_WITH_YEAR ) );
       

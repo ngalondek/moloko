@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.content.loaders;
+package dev.drsoran.moloko.app.loaders;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

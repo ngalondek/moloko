@@ -95,13 +95,5 @@ public abstract class MolokoLoaderEditFragment< D > extends
    
    
    
-   @Override
-   public boolean hasWritableAccess()
-   {
-      return impl.hasWritableAccess();
-   }
-   
-   
-   
    protected abstract AppContentEditInfo getApplyChangesInfo();
 }

@@ -22,12 +22,12 @@
 
 package dev.drsoran.moloko.app.task;
 
-import com.mdt.rtm.data.RtmTaskNote;
+import dev.drsoran.moloko.domain.model.Note;
 
 
 interface INotesListsFragmentListener extends INotesListActionModeListener
 {
-   void onOpenNote( RtmTaskNote note, int position );
+   void onOpenNote( Note note, int position );
    
    
    

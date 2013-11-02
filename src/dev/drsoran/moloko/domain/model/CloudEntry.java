@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.moloko.content.Constants;
+
+
 public class CloudEntry implements Comparable< CloudEntry >
 {
    private final CloudEntryType type;
@@ -30,13 +33,24 @@ public class CloudEntry implements Comparable< CloudEntry >
    
    private final int count;
    
+   private final long elementId;
+   
    
    
    public CloudEntry( CloudEntryType type, String display, int count )
    {
+      this( type, display, count, Constants.NO_ID );
+   }
+   
+   
+   
+   public CloudEntry( CloudEntryType type, String display, int count,
+      long elementId )
+   {
       this.type = type;
       this.name = display;
       this.count = count;
+      this.elementId = elementId;
    }
    
    
@@ -58,6 +72,13 @@ public class CloudEntry implements Comparable< CloudEntry >
    public int getCount()
    {
       return count;
+   }
+   
+   
+   
+   public long getElementId()
+   {
+      return elementId;
    }
    
    

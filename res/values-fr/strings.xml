@@ -163,17 +163,7 @@
     <!-- Task -->
     <string name="toast_insert_task">Ajout d\'une nouvelle tâche&#8230;</string>
     <string name="toast_insert_task_ok">Nouvelle tâche ajoutée</string>
-    <string name="toast_insert_task_fail">Echec d\'ajout de la nouvelle tâche</string>
-    <!-- Note -->
-    <string name="toast_insert_note">Ajout d\'une nouvelle note&#8230;</string>
-    <string name="toast_insert_note_ok">Nouvelle note ajoutée</string>
-    <string name="toast_insert_note_fail">Echec d\'ajout d\'une nouvelle note</string>
-    <string name="toast_save_note">Enregistement des modifications de la note&#8230;</string>
-    <string name="toast_save_note_ok">Modifications de la note enregistrées</string>
-    <string name="toast_save_note_failed">Echec d\'enregistrement des modifications de la note</string>
-    <string name="toast_delete_note">Suppression de la note&#8230;</string>
-    <string name="toast_delete_note_ok">Note supprimmée</string>
-    <string name="toast_delete_note_failed">Echec de suppression de la note</string>
+    <string name="toast_insert_task_fail">Echec d\'ajout de la nouvelle tâche</string>   
     <!-- List -->
     <string name="toast_insert_list">Ajouter \'%1$s\' nouvelle liste ajoutée&#8230;</string>
     <string name="toast_insert_list_ok">\'%1$s\' ajoute la nouvelle liste</string>

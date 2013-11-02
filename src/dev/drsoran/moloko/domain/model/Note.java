@@ -22,11 +22,15 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
+
 import dev.drsoran.moloko.util.Strings;
 
 
-public class Note extends LifeTimeManaged
+public class Note extends LifeTimeManaged implements Serializable
 {
+   private static final long serialVersionUID = -8219277408687353338L;
+   
    private final long id;
    
    private String title = Strings.EMPTY_STRING;

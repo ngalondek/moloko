@@ -38,7 +38,7 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.loaders.ContactsLoader;
+import dev.drsoran.moloko.app.loaders.ContactsLoader;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoListFragment;

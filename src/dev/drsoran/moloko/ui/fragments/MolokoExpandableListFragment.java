@@ -39,10 +39,10 @@ import com.actionbarsherlock.app.SherlockListFragment;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderExpandableListFragmentImpl;
+import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
 
 
 public abstract class MolokoExpandableListFragment< D > extends
@@ -58,7 +58,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    private final LoaderExpandableListFragmentImpl< D > loaderImpl;
    
-   private AppContext context;
+   private final RtmAccessLevelFragmentImpl accessImpl;
    
    
    
@@ -66,6 +66,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    {
       baseImpl = new ConfigurableFragmentImpl( this );
       loaderImpl = new LoaderExpandableListFragmentImpl< D >( this );
+      accessImpl = new RtmAccessLevelFragmentImpl();
    }
    
    
@@ -74,6 +75,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
       baseImpl.onCreate( savedInstanceState );
       loaderImpl.onCreate( savedInstanceState );
    }
@@ -85,9 +87,9 @@ public abstract class MolokoExpandableListFragment< D > extends
    {
       super.onAttach( activity );
       
-      context = AppContext.get( activity );
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
+      accessImpl.onAttach( activity );
    }
    
    
@@ -95,9 +97,9 @@ public abstract class MolokoExpandableListFragment< D > extends
    @Override
    public void onDetach()
    {
+      accessImpl.onDetach();
       baseImpl.onDetach();
       loaderImpl.onDetach();
-      context = null;
       
       super.onDetach();
    }
@@ -120,9 +122,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    public boolean hasWritableAccess()
    {
-      return context.getAccountService()
-                    .isWriteableAccess( context.getAccountService()
-                                               .getRtmAccount() );
+      return accessImpl.hasWritableAccess();
    }
    
    

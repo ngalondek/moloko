@@ -35,11 +35,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
-import android.content.OperationApplicationException;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentAuthority;
+import dev.drsoran.moloko.content.db.DbContentProvider;
+import dev.drsoran.moloko.content.db.ITable;
 
 
 class ClearDbPreference extends InfoTextPreference
@@ -55,23 +57,24 @@ class ClearDbPreference extends InfoTextPreference
    protected void onClick()
    {
       final ContentProviderClient client = getContext().getContentResolver()
-                                                       .acquireContentProviderClient( TableColumns.AUTHORITY );
+                                                       .acquireContentProviderClient( ContentAuthority.RTM );
       if ( client != null
-         && ( client.getLocalContentProvider() instanceof ContentRepository ) )
+         && ( client.getLocalContentProvider() instanceof DbContentProvider ) )
       {
-         final List< IRtmProviderPart > parts = ( (ContentRepository) client.getLocalContentProvider() ).getMutableParts();
-         final CharSequence[] partNames = new CharSequence[ parts.size() ];
-         final boolean[] checked = new boolean[ parts.size() ];
+         final List< ? extends ITable > tables = ( (DbContentProvider) client.getLocalContentProvider() ).getTables();
+         
+         final CharSequence[] tableNames = new CharSequence[ tables.size() ];
+         final boolean[] checked = new boolean[ tables.size() ];
          Arrays.fill( checked, true );
          
-         for ( int i = 0; i < partNames.length; ++i )
+         for ( int i = 0; i < tables.size(); ++i )
          {
-            partNames[ i ] = parts.get( i ).getTableName();
+            tableNames[ i ] = tables.get( i ).getTableName();
          }
          
          new AlertDialog.Builder( getContext() ).setTitle( R.string.moloko_prefs_clear_db_dlg_title )
                                                 .setIcon( R.drawable.ic_prefs_delete )
-                                                .setMultiChoiceItems( partNames,
+                                                .setMultiChoiceItems( tableNames,
                                                                       checked,
                                                                       new OnMultiChoiceClickListener()
                                                                       {
@@ -90,15 +93,16 @@ class ClearDbPreference extends InfoTextPreference
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
-                                                                          final List< IRtmProviderPart > clearList = new LinkedList< IRtmProviderPart >();
+                                                                          final List< ITable > clearList = new LinkedList< ITable >();
                                                                           
                                                                           for ( int i = 0; i < checked.length; ++i )
                                                                           {
                                                                              if ( checked[ i ] )
                                                                              {
-                                                                                clearList.add( parts.get( i ) );
+                                                                                clearList.add( tables.get( i ) );
                                                                              }
                                                                           }
+                                                                          
                                                                           if ( clearList.size() > 0 )
                                                                           {
                                                                              clear( clearList );
@@ -114,9 +118,9 @@ class ClearDbPreference extends InfoTextPreference
    
    
    
-   private void clear( final List< ? extends IRtmProviderPart > parts )
+   private void clear( final List< ITable > tablesToClear )
    {
-      final AsyncTask< Void, Void, Void > task = new AsyncTask< Void, Void, Void >()
+      final AsyncTask< ITable, Void, Void > task = new AsyncTask< ITable, Void, Void >()
       {
          private Dialog dialog;
          
@@ -137,26 +141,11 @@ class ClearDbPreference extends InfoTextPreference
          
          
          @Override
-         protected Void doInBackground( Void... params )
+         protected Void doInBackground( ITable... params )
          {
-            final ContentProviderClient client = getContext().getContentResolver()
-                                                             .acquireContentProviderClient( TableColumns.AUTHORITY );
-            
-            if ( client != null
-               && ( client.getLocalContentProvider() instanceof ContentRepository ) )
+            for ( ITable table : tablesToClear )
             {
-               final ContentRepository rtmProvider = (ContentRepository) client.getLocalContentProvider();
-               
-               try
-               {
-                  rtmProvider.clear( parts );
-               }
-               catch ( OperationApplicationException e )
-               {
-                  failed.set( true );
-               }
-               
-               client.release();
+               table.clear();
             }
             
             return null;
@@ -183,6 +172,9 @@ class ClearDbPreference extends InfoTextPreference
          
       };
       
-      getAppContext().getExecutorService().execute( task );
+      final ITable[] tablesArray = new ITable[ tablesToClear.size() ];
+      
+      getAppContext().getExecutorService()
+                     .execute( task, tablesToClear.toArray( tablesArray ) );
    }
 }

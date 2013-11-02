@@ -48,9 +48,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.loaders.TasksLoader;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
@@ -68,6 +70,9 @@ abstract class AbstractTasksListFragment extends
    private ITasksListFragmentListener fragmentListener;
    
    private ITasksListActionModeListener actionModeListener;
+   
+   @InstanceState( key = Intents.Extras.KEY_LIST )
+   private TasksList tasksList;
    
    @InstanceState( key = Intents.Extras.KEY_FILTER )
    private IFilter filter;

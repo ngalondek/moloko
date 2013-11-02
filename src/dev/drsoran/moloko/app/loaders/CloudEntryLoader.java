@@ -20,35 +20,28 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.content.loaders;
+package dev.drsoran.moloko.app.loaders;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import android.net.Uri;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
-public class TaskLoader extends AbstractLoader< Task >
+public class CloudEntryLoader extends AbstractLoader< List< CloudEntry > >
 {
-   public final static int ID = R.id.loader_task;
-   
-   private final long taskId;
-   
-   private final TaskContentOptions taskContentOptions;
+   public final static int ID = R.id.loader_cloud_entry;
    
    
    
-   public TaskLoader( DomainContext context, long taskId,
-      TaskContentOptions taskContentOptions )
+   public CloudEntryLoader( DomainContext context )
    {
       super( context );
-      
-      this.taskId = taskId;
-      this.taskContentOptions = taskContentOptions;
    }
    
    
@@ -56,15 +49,22 @@ public class TaskLoader extends AbstractLoader< Task >
    @Override
    public Uri getContentUri()
    {
-      return ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
-                                        taskId );
+      return ContentUris.CLOUD_ENTRIES_CONTENT_URI;
    }
    
    
    
    @Override
-   protected Task queryResultInBackground( IContentRepository contentRepository ) throws ContentException
+   protected List< CloudEntry > queryResultInBackground( IContentRepository contentRepository )
    {
-      return contentRepository.getTask( taskId, taskContentOptions );
+      final Iterable< CloudEntry > entries = contentRepository.getCloudEntries();
+      final List< CloudEntry > cloudEntriesList = new ArrayList< CloudEntry >();
+      
+      for ( CloudEntry cloudEntry : entries )
+      {
+         cloudEntriesList.add( cloudEntry );
+      }
+      
+      return cloudEntriesList;
    }
 }

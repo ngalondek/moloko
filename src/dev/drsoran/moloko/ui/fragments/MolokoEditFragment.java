@@ -91,12 +91,4 @@ public abstract class MolokoEditFragment extends MolokoFragment implements
    public void onCancelEditing()
    {
    }
-   
-   
-   
-   @Override
-   public boolean hasWritableAccess()
-   {
-      return impl.hasWritableAccess();
-   }
 }

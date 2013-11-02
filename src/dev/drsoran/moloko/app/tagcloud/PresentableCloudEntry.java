@@ -22,29 +22,43 @@
 
 package dev.drsoran.moloko.app.tagcloud;
 
-import dev.drsoran.moloko.domain.model.CloudEntry;
 import android.widget.Button;
+import dev.drsoran.moloko.domain.model.CloudEntry;
+import dev.drsoran.moloko.domain.model.CloudEntryType;
 
 
-abstract class PresentableTagCloudEntry implements
-         Comparable< PresentableTagCloudEntry >
+abstract class PresentableCloudEntry
 {
-   private final CloudEntry tagCloudEntry;
+   private final CloudEntry cloudEntry;
    
    private ITagCloudFragmentListener listener;
    
    
    
-   protected PresentableTagCloudEntry( CloudEntry tagCloudEntry )
+   protected PresentableCloudEntry( CloudEntry cloudEntry )
    {
-      this.tagCloudEntry = tagCloudEntry;
+      this.cloudEntry = cloudEntry;
    }
    
    
    
-   public CloudEntry getTagCloudEntry()
+   public String getDisplay()
    {
-      return tagCloudEntry;
+      return cloudEntry.getDisplay();
+   }
+   
+   
+   
+   public CloudEntryType getType()
+   {
+      return cloudEntry.getType();
+   }
+   
+   
+   
+   public int getCount()
+   {
+      return cloudEntry.getCount();
    }
    
    
@@ -64,17 +78,9 @@ abstract class PresentableTagCloudEntry implements
    
    
    @Override
-   public int compareTo( PresentableTagCloudEntry another )
-   {
-      return tagCloudEntry.compareTo( another.tagCloudEntry );
-   }
-   
-   
-   
-   @Override
    public String toString()
    {
-      return tagCloudEntry.toString();
+      return cloudEntry.toString();
    }
    
    

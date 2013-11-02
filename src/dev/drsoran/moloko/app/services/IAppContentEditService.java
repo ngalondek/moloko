@@ -30,35 +30,58 @@ import dev.drsoran.moloko.domain.model.TasksList;
 
 public interface IAppContentEditService
 {
-   void insertTask( Task task, AppContentEditInfo editInfo );
+   void insertTask( Task task );
    
    
    
-   void updateTask( Task task, AppContentEditInfo editInfo );
+   void updateTask( Task task );
    
    
    
-   void updateTasks( Collection< ? extends Task > tasks,
-                     AppContentEditInfo editInfo );
+   void updateTasks( Collection< ? extends Task > tasks );
    
    
    
-   void deleteTask( Task task, AppContentEditInfo editInfo );
+   void deleteTask( Task task );
    
    
    
-   void deleteTasks( Collection< ? extends Task > tasks,
-                     AppContentEditInfo editInfo );
+   void deleteTasks( Collection< ? extends Task > tasks );
    
    
    
-   void insertTasksList( TasksList tasksList, AppContentEditInfo editInfo );
+   void completeTask( Task task, long completedMillisUtc );
    
    
    
-   void updateTasksList( TasksList tasksList, AppContentEditInfo editInfo );
+   void completeTasks( Collection< ? extends Task > tasks,
+                       long completedMillisUtc );
    
    
    
-   void deleteTasksList( TasksList tasksList, AppContentEditInfo editInfo );
+   void incompleteTask( Task task );
+   
+   
+   
+   void incompleteTasks( Collection< ? extends Task > tasks );
+   
+   
+   
+   void postponeTask( Task task );
+   
+   
+   
+   void postponeTasks( Collection< ? extends Task > tasks );
+   
+   
+   
+   void insertTasksList( TasksList tasksList );
+   
+   
+   
+   void updateTasksList( TasksList tasksList );
+   
+   
+   
+   void deleteTasksList( TasksList tasksList );
 }

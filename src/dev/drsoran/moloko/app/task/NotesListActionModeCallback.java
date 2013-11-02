@@ -25,15 +25,14 @@ package dev.drsoran.moloko.app.task;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
-class NotesListActionModeCallback extends
-         BaseMultiChoiceModeListener< RtmTaskNote >
+class NotesListActionModeCallback extends BaseMultiChoiceModeListener< Note >
 {
    INotesListActionModeListener listener;
    

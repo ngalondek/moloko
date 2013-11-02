@@ -34,6 +34,7 @@ import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
+import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
 
 
 public abstract class MolokoFragment extends SherlockFragment implements
@@ -41,11 +42,14 @@ public abstract class MolokoFragment extends SherlockFragment implements
 {
    private final ConfigurableFragmentImpl impl;
    
+   private final RtmAccessLevelFragmentImpl accessImpl;
+   
    
    
    protected MolokoFragment()
    {
       impl = new ConfigurableFragmentImpl( this );
+      accessImpl = new RtmAccessLevelFragmentImpl();
    }
    
    
@@ -54,7 +58,9 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
+      
       impl.onAttach( activity );
+      accessImpl.onAttach( activity );
    }
    
    
@@ -71,7 +77,9 @@ public abstract class MolokoFragment extends SherlockFragment implements
    @Override
    public void onDetach()
    {
+      accessImpl.onDetach();
       impl.onDetach();
+      
       super.onDetach();
    }
    
@@ -152,6 +160,13 @@ public abstract class MolokoFragment extends SherlockFragment implements
    public final ViewGroup getContentView()
    {
       return impl.getContentView();
+   }
+   
+   
+   
+   public boolean hasWritableAccess()
+   {
+      return accessImpl.hasWritableAccess();
    }
    
    

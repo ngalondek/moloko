@@ -42,7 +42,7 @@ import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.content.loaders.TagsLoader;
+import dev.drsoran.moloko.app.loaders.TagsLoader;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.UiUtils.AfterTextChangedWatcher;

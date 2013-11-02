@@ -168,17 +168,7 @@
       <!-- Task -->   
       <string name="toast_insert_task">Füge Aufgabe \'%1$s\' hinzu&#8230;</string>
       <string name="toast_insert_task_ok">Aufgabe \'%1$s\' hinzugefügt</string>
-      <string name="toast_insert_task_fail">Aufgabe \'%1$s\' konnte nicht hinzugefügt werden</string>            
-      <!-- Note -->
-      <string name="toast_insert_note">Füge neue Notiz hinzu&#8230;</string>
-      <string name="toast_insert_note_ok">Neue Notiz hinzugefügt</string>
-      <string name="toast_insert_note_fail">Neue Notiz konnte nicht hinzugefügt werden</string>
-      <string name="toast_save_note">Speiche Änderungen an der Notiz&#8230;</string>
-      <string name="toast_save_note_ok">Änderungen an der Notiz gespeichert</string>
-      <string name="toast_save_note_failed">Änderungen an der Notiz konnten nicht gespeichert werden</string>
-      <string name="toast_delete_note">Lösche Notiz&#8230;</string>
-      <string name="toast_delete_note_ok">Notiz gelöscht</string>
-      <string name="toast_delete_note_failed">Notiz konnte nicht gelöscht werden</string>
+      <string name="toast_insert_task_fail">Aufgabe \'%1$s\' konnte nicht hinzugefügt werden</string>                  
       <!-- List -->
       <string name="toast_insert_list">Füge neue Liste \'%1$s\' hinzu&#8230;</string>
       <string name="toast_insert_list_ok">Neue Liste \'%1$s\' hinzugefügt</string>

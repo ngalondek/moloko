@@ -22,6 +22,11 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -30,7 +35,7 @@ import dev.drsoran.moloko.ILog;
 
 public class RtmDatabase
 {
-   private final static String DATABASE_NAME = "rtm.db";
+   public final static String DATABASE_NAME = "rtm.db";
    
    private final static int DATABASE_VERSION = 1;
    
@@ -75,6 +80,31 @@ public class RtmDatabase
    
    
    
+   public void clearAllTables()
+   {
+      for ( ITable table : getTables() )
+      {
+         table.clear();
+      }
+   }
+   
+   
+   
+   public void clearTable( String tableName ) throws NoSuchElementException
+   {
+      final ITable table = getTable( tableName );
+      if ( table == null )
+      {
+         throw new NoSuchElementException( MessageFormat.format( "No table with name ''{0}'' in database ''{1}''",
+                                                                 tableName,
+                                                                 DATABASE_NAME ) );
+      }
+      
+      table.clear();
+   }
+   
+   
+   
    public void close()
    {
       dbAccess.close();
@@ -85,6 +115,13 @@ public class RtmDatabase
    public ILog Log()
    {
       return log;
+   }
+   
+   
+   
+   public List< ? extends ITable > getAllTables()
+   {
+      return Arrays.asList( getTables() );
    }
    
    

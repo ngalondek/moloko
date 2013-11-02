@@ -29,14 +29,14 @@ import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.CloudEntryType;
 
 
-class TasksListTagCloudEntry extends PresentableTagCloudEntry implements
+class TasksListCloudEntry extends PresentableCloudEntry implements
          View.OnClickListener
 {
    private final long listId;
    
    
    
-   public TasksListTagCloudEntry( long listId, CloudEntry tagCloudEntry )
+   public TasksListCloudEntry( CloudEntry tagCloudEntry )
    {
       super( tagCloudEntry );
       
@@ -46,33 +46,7 @@ class TasksListTagCloudEntry extends PresentableTagCloudEntry implements
             + CloudEntryType.TasksList );
       }
       
-      this.listId = listId;
-   }
-   
-   
-   
-   @Override
-   public int compareTo( PresentableTagCloudEntry other )
-   {
-      int res = super.compareTo( other );
-      
-      // super compare implies type checking
-      if ( res == 0 )
-      {
-         final TasksListTagCloudEntry otherTasksListEntry = (TasksListTagCloudEntry) other;
-         final long otherListId = otherTasksListEntry.listId;
-         
-         if ( otherListId < listId )
-         {
-            res = -1;
-         }
-         else if ( otherListId > listId )
-         {
-            res = 1;
-         }
-      }
-      
-      return res;
+      this.listId = tagCloudEntry.getElementId();
    }
    
    

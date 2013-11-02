@@ -35,11 +35,13 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.loaders.TaskNotesLoader;
+import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
@@ -47,18 +49,9 @@ import dev.drsoran.moloko.ui.fragments.MolokoMultiChoiceModalListFragment;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
-class NotesListFragment extends
-         MolokoMultiChoiceModalListFragment< RtmTaskNote > implements
-         IAbsViewPagerSupport, IOnSettingsChangedListener
+class NotesListFragment extends MolokoMultiChoiceModalListFragment< Note >
+         implements IAbsViewPagerSupport, IOnSettingsChangedListener
 {
-   
-   public static class Config
-   {
-      public final static String TASK_ID = "task_id";
-   }
-   
-   
-   
    public final static NotesListFragment newInstance( Bundle config )
    {
       final NotesListFragment fragment = new NotesListFragment();
@@ -70,8 +63,8 @@ class NotesListFragment extends
    
    private boolean enableAbsViewPagerWorkaround;
    
-   @InstanceState( key = Config.TASK_ID )
-   private String taskId;
+   @InstanceState( key = Intents.Extras.KEY_TASK_ID )
+   private long taskId;
    
    private INotesListsFragmentListener listener;
    
@@ -261,9 +254,9 @@ class NotesListFragment extends
    
    
    @Override
-   public Loader< List< RtmTaskNote >> newLoaderInstance( int id, Bundle config )
+   public Loader< List< Note >> newLoaderInstance( int id, Bundle config )
    {
-      return new RtmTaskNotesLoader( getSherlockActivity(), taskId );
+      return new TaskNotesLoader( getUiContext().asDomainContext(), taskId );
    }
    
    
@@ -279,13 +272,13 @@ class NotesListFragment extends
    @Override
    public int getLoaderId()
    {
-      return RtmTaskNotesLoader.ID;
+      return TaskNotesLoader.ID;
    }
    
    
    
    @Override
-   public SwappableArrayAdapter< RtmTaskNote > createListAdapter()
+   public SwappableArrayAdapter< Note > createListAdapter()
    {
       final NotesListFragmentAdapter adapter = new NotesListFragmentAdapter( this );
       return adapter;
@@ -311,7 +304,7 @@ class NotesListFragment extends
    
    
    @Override
-   public BaseMultiChoiceModeListener< RtmTaskNote > createMultiCoiceModalModeListener()
+   public BaseMultiChoiceModeListener< Note > createMultiCoiceModalModeListener()
    {
       final NotesListActionModeCallback callback = new NotesListActionModeCallback( getMolokoListView() );
       callback.setNotesListActionModeListener( listener );

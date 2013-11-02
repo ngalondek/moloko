@@ -284,7 +284,7 @@
       name="loader_tags" />
    <item
       type="id"
-      name="loader_tag_cloud_entry" />
+      name="loader_cloud_entry" />
    <item
       type="id"
       name="loader_taskedit_data" />

@@ -30,7 +30,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
+import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.ui.fragments.listeners.NullLoaderFragmentListener;

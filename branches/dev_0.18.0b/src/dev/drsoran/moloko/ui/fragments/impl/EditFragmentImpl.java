@@ -91,15 +91,6 @@ public class EditFragmentImpl
    
    
    
-   public boolean hasWritableAccess()
-   {
-      return context.getAccountService()
-                    .isWriteableAccess( context.getAccountService()
-                                               .getRtmAccount() );
-   }
-   
-   
-   
    public void showShoftInput( final View view )
    {
       handler.post( new Runnable()

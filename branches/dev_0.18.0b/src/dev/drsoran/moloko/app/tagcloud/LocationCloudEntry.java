@@ -29,18 +29,24 @@ import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.CloudEntryType;
 
 
-class TagTagCloudEntry extends PresentableTagCloudEntry implements
-         View.OnClickListener
+class LocationCloudEntry extends PresentableCloudEntry implements
+         View.OnClickListener, View.OnLongClickListener
 {
-   public TagTagCloudEntry( CloudEntry tagCloudEntry )
+   private final long locationId;
+   
+   
+   
+   public LocationCloudEntry( CloudEntry cloudEntry )
    {
-      super( tagCloudEntry );
+      super( cloudEntry );
       
-      if ( tagCloudEntry.getType() != CloudEntryType.Tag )
+      if ( cloudEntry.getType() != CloudEntryType.Location )
       {
          throw new IllegalArgumentException( "Expected tag cloud entry of type "
-            + CloudEntryType.Tag );
+            + CloudEntryType.Location );
       }
+      
+      this.locationId = cloudEntry.getElementId();
    }
    
    
@@ -49,6 +55,8 @@ class TagTagCloudEntry extends PresentableTagCloudEntry implements
    public void present( Button button )
    {
       button.setOnClickListener( this );
+      button.setLongClickable( true );
+      button.setOnLongClickListener( this );
       button.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
       button.setTextColor( button.getContext()
                                  .getResources()
@@ -58,11 +66,25 @@ class TagTagCloudEntry extends PresentableTagCloudEntry implements
    
    
    @Override
+   public boolean onLongClick( View v )
+   {
+      if ( getTagCloudFragmentListener() != null )
+      {
+         getTagCloudFragmentListener().onOpenLocationWithOtherApp( locationId );
+         return true;
+      }
+      
+      return false;
+   }
+   
+   
+   
+   @Override
    public void onClick( View v )
    {
       if ( getTagCloudFragmentListener() != null )
       {
-         getTagCloudFragmentListener().onOpenTag( getTagCloudEntry().getDisplay() );
+         getTagCloudFragmentListener().onOpenLocation( locationId );
       }
    }
 }

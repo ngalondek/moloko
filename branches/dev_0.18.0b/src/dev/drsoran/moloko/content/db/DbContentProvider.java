@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.content.db;
 
+import java.text.MessageFormat;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import android.content.ContentProvider;
@@ -78,6 +80,27 @@ public class DbContentProvider extends ContentProvider
       
       contentUriToHandlerLookup = createContentUriToHandlerLookup();
       return true;
+   }
+   
+   
+   
+   public List< ? extends ITable > getTables()
+   {
+      return database.getAllTables();
+   }
+   
+   
+   
+   public void clearAllTables()
+   {
+      database.clearAllTables();
+   }
+   
+   
+   
+   public void clearTable( String tableName ) throws NoSuchElementException
+   {
+      database.clearTable( tableName );
    }
    
    
@@ -303,9 +326,7 @@ public class DbContentProvider extends ContentProvider
       handlerLookup.put( handler, ContentUris.MATCH_TASK_PARTICIPANTS );
       handlerLookup.put( handler, ContentUris.MATCH_TASK_PARTICIPANTS_ID );
       
-      handler = new ReadOnlyContentUriHandler( new CloudEntriesUriHandler( tagsContentUriHandler,
-                                                                           tasksListContentUriHandler,
-                                                                           locationsContentUriHandler ) );
+      handler = new ReadOnlyContentUriHandler( new CloudEntriesUriHandler( tasksContentUriHandler ) );
       handlerLookup.put( handler, ContentUris.MATCH_CLOUD_ENTRIES );
       
       handler = new ReadOnlyContentUriHandler( new ContentUriHandlerTableAdapter( database.getTable( RtmContactsTable.TABLE_NAME ) ) );
@@ -332,7 +353,7 @@ public class DbContentProvider extends ContentProvider
    private void logOperationFailed( String operation, Exception e )
    {
       log.e( DbContentProvider.class,
-             "Operation '" + operation + "' failed.",
+             MessageFormat.format( "Operation ''{0}'' failed.", operation ),
              e );
    }
 }

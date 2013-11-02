@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.app.tagcloud;
 
-import dev.drsoran.moloko.domain.model.Location;
 
 
 interface ITagCloudFragmentListener
@@ -13,9 +12,9 @@ interface ITagCloudFragmentListener
    
    
    
-   void onOpenLocation( Location location );
+   void onOpenLocation( long locationId );
    
    
    
-   void onOpenLocationWithOtherApp( Location location );
+   void onOpenLocationWithOtherApp( long locationId );
 }

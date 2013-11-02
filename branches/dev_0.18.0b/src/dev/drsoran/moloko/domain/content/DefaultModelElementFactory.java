@@ -287,7 +287,10 @@ public class DefaultModelElementFactory implements IModelElementFactory
       {
          return new CloudEntry( CloudEntryType.fromValue( c.getInt( CloudEntryColumns.ENTRY_TYPE_IDX ) ),
                                 c.getString( CloudEntryColumns.DISPLAY_IDX ),
-                                c.getInt( CloudEntryColumns.COUNT_IDX ) );
+                                c.getInt( CloudEntryColumns.COUNT_IDX ),
+                                CursorUtils.getOptLong( c,
+                                                        CloudEntryColumns.ELEMENT_ID_IDX,
+                                                        Constants.NO_ID ) );
       }
    }
    

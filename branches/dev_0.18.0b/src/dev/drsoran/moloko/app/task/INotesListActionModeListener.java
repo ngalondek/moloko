@@ -24,10 +24,10 @@ package dev.drsoran.moloko.app.task;
 
 import java.util.Collection;
 
-import com.mdt.rtm.data.RtmTaskNote;
+import dev.drsoran.moloko.domain.model.Note;
 
 
 interface INotesListActionModeListener
 {
-   void onDeleteNotes( Collection< RtmTaskNote > notes );
+   void onDeleteNotes( Collection< Note > notes );
 }

@@ -116,6 +116,15 @@ abstract class AbstractTable implements ITable
    
    
    
+   public void clear()
+   {
+      getDatabase().getWritable()
+                   .execSQL( MessageFormat.format( "DELETE FROM TABLE {0}",
+                                                   getTableName() ) );
+   }
+   
+   
+   
    @Override
    public Cursor query( String[] projection,
                         String selection,

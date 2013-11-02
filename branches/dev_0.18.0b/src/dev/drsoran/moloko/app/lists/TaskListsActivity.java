@@ -33,7 +33,6 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.state.InstanceState;
@@ -154,16 +153,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onInsertNewList( TasksList tasksList )
    {
-      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
-                                                                  getString( R.string.toast_insert_list,
-                                                                             tasksList.getName() ),
-                                                                  getString( R.string.toast_insert_list_ok,
-                                                                             tasksList.getName() ),
-                                                                  getString( R.string.toast_insert_list_fail,
-                                                                             tasksList.getName() ) );
-      
-      getAppContext().getContentEditService().insertTasksList( tasksList,
-                                                               editInfo );
+      getAppContext().getContentEditService().insertTasksList( tasksList );
    }
    
    
@@ -171,16 +161,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onRenameList( TasksList tasksList )
    {
-      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
-                                                                  getString( R.string.toast_save_list,
-                                                                             tasksList.getName() ),
-                                                                  getString( R.string.toast_save_list_ok,
-                                                                             tasksList.getName() ),
-                                                                  getString( R.string.toast_save_list_failed,
-                                                                             tasksList.getName() ) );
-      
-      getAppContext().getContentEditService().updateTasksList( tasksList,
-                                                               editInfo );
+      getAppContext().getContentEditService().updateTasksList( tasksList );
    }
    
    
@@ -258,16 +239,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    {
       if ( which == Dialog.BUTTON_POSITIVE )
       {
-         final AppContentEditInfo editInfo = new AppContentEditInfo( this,
-                                                                     getString( R.string.toast_delete_list,
-                                                                                listToDelete.getName() ),
-                                                                     getString( R.string.toast_delete_list_ok,
-                                                                                listToDelete.getName() ),
-                                                                     getString( R.string.toast_delete_list_failed,
-                                                                                listToDelete.getName() ) );
-         
-         getAppContext().getContentEditService().deleteTasksList( listToDelete,
-                                                                  editInfo );
+         getAppContext().getContentEditService().deleteTasksList( listToDelete );
       }
       
       setListToDelete( null );

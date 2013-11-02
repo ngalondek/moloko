@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2012 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,24 +20,35 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.loaders;
 
-import java.util.List;
-
-import android.database.ContentObserver;
 import android.net.Uri;
-import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
-abstract class AbstractTasksListLoader< T extends Task > extends
-         AbstractLoader< List< T > >
+public class TaskLoader extends AbstractLoader< Task >
 {
-   protected AbstractTasksListLoader( DomainContext context )
+   public final static int ID = R.id.loader_task;
+   
+   private final long taskId;
+   
+   private final TaskContentOptions taskContentOptions;
+   
+   
+   
+   public TaskLoader( DomainContext context, long taskId,
+      TaskContentOptions taskContentOptions )
    {
       super( context );
+      
+      this.taskId = taskId;
+      this.taskContentOptions = taskContentOptions;
    }
    
    
@@ -45,30 +56,15 @@ abstract class AbstractTasksListLoader< T extends Task > extends
    @Override
    public Uri getContentUri()
    {
-      return ContentUris.TASKS_CONTENT_URI;
+      return ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                        taskId );
    }
    
    
    
    @Override
-   protected void clearResult( List< T > result )
+   protected Task queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
-      result.clear();
-   }
-   
-   
-   
-   @Override
-   protected void registerContentObserver( ContentObserver observer )
-   {
-      TasksProviderPart.put( getContext(), observer );
-   }
-   
-   
-   
-   @Override
-   protected void unregisterContentObserver( ContentObserver observer )
-   {
-      TasksProviderPart.unregisterContentObserver( getContext(), observer );
+      return contentRepository.getTask( taskId, taskContentOptions );
    }
 }

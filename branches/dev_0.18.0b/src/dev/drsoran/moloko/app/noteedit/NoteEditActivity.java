@@ -32,7 +32,6 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
@@ -146,13 +145,7 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onUpdateTasksNote( Task updatedTask, Note updatedNote )
    {
-      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
-                                                                  getString( R.string.toast_save_note ),
-                                                                  getString( R.string.toast_save_note_ok ),
-                                                                  getString( R.string.toast_save_note_failed ) );
-      
-      getAppContext().getContentEditService()
-                     .updateTask( updatedTask, editInfo );
+      getAppContext().getContentEditService().updateTask( updatedTask );
    }
    
    
@@ -160,12 +153,7 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onAddTasksNote( Task task, Note addedNote )
    {
-      final AppContentEditInfo editInfo = new AppContentEditInfo( this,
-                                                                  getString( R.string.toast_insert_note ),
-                                                                  getString( R.string.toast_insert_note_ok ),
-                                                                  getString( R.string.toast_insert_note_fail ) );
-      
-      getAppContext().getContentEditService().updateTask( task, editInfo );
+      getAppContext().getContentEditService().updateTask( task );
    }
    
    

@@ -20,45 +20,36 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.content.db;
+package dev.drsoran.moloko.ui.fragments.impl;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.SQLException;
+import android.app.Activity;
+import dev.drsoran.moloko.app.AppContext;
 
 
-public interface ITable
+public class RtmAccessLevelFragmentImpl
 {
-   String getTableName();
+   private AppContext context;
    
    
    
-   String getDefaultSortOrder();
+   public void onAttach( Activity activity )
+   {
+      this.context = AppContext.get( activity );
+   }
    
    
    
-   String[] getProjection();
+   public void onDetach()
+   {
+      context = null;
+   }
    
    
    
-   Cursor query( String[] projection,
-                 String selection,
-                 String[] selectionArgs,
-                 String sortOrder );
-   
-   
-   
-   long insert( ContentValues initialValues ) throws SQLException;
-   
-   
-   
-   int update( long id, ContentValues values, String where, String[] whereArgs );
-   
-   
-   
-   int delete( long id, String where, String[] whereArgs );
-   
-   
-   
-   void clear();
+   public boolean hasWritableAccess()
+   {
+      return context.getAccountService()
+                    .isWriteableAccess( context.getAccountService()
+                                               .getRtmAccount() );
+   }
 }

@@ -31,7 +31,6 @@ import com.actionbarsherlock.view.Menu;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
-import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
@@ -81,7 +80,7 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onOpenLocation( Location location )
+   public void onOpenLocation( long locationId )
    {
       startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
                                                                            location.getName() ),
@@ -91,7 +90,7 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onOpenLocationWithOtherApp( Location location )
+   public void onOpenLocationWithOtherApp( long locationId )
    {
       startActivity( Intents.createOpenLocationWithOtherAppChooser( location ) );
    }

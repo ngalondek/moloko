@@ -42,8 +42,9 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.app.content.loaders.TaskLoader;
+import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.loaders.TaskLoader;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Participant;
@@ -66,20 +67,14 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
 {
    public final int FULL_DATE_FLAGS = IDateFormatterService.FORMAT_WITH_YEAR;
    
-   
-   public static class Config
-   {
-      public final static String TASK_ID = "task_id";
-   }
-   
    private boolean enableAbsViewPagerWorkaround;
    
    private ITaskFragmentListener listener;
    
    private AppContext appContext;
    
-   @InstanceState( key = Config.TASK_ID )
-   private String taskId;
+   @InstanceState( key = Intents.Extras.KEY_TASK_ID )
+   private long taskId;
    
    private ViewGroup content;
    
@@ -332,13 +327,6 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
          default :
             return false;
       }
-   }
-   
-   
-   
-   public String getTaskId()
-   {
-      return taskId;
    }
    
    
@@ -641,8 +629,8 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
       return new TaskLoader( getUiContext().asDomainContext(),
-                             args.getLong( Config.TASK_ID ),
-                             TaskContentOptions.Complete );
+                             args.getLong( Intents.Extras.KEY_TASK_ID ),
+                             TaskContentOptions.Minimal );
    }
    
    
@@ -671,13 +659,6 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
       {
          getContentView().invalidate();
       }
-   }
-   
-   
-   
-   public Task getTask()
-   {
-      return getLoaderData();
    }
    
    

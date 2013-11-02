@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.app.notification;
 
 import android.database.Cursor;
-import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
+import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.domain.DomainContext;
 
 

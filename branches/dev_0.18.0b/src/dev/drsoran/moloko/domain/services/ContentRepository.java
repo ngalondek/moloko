@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import android.content.ContentResolver;
+import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
@@ -44,6 +45,7 @@ import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.content.ContentQueryHandler;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
+import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
@@ -84,6 +86,8 @@ public class ContentRepository implements IContentRepository
    private final ContentQueryHandler< String > tagsQueryHandler;
    
    private final ContentQueryHandler< RtmSettings > settingsQueryHandler;
+   
+   private final ContentQueryHandler< CloudEntry > cloudEntriesQueryHandler;
    
    
    
@@ -140,6 +144,11 @@ public class ContentRepository implements IContentRepository
                                                                           RtmSettingsColumns.PROJECTION,
                                                                           modelElementFactory,
                                                                           RtmSettings.class );
+      
+      this.cloudEntriesQueryHandler = new ContentQueryHandler< CloudEntry >( contentResolver,
+                                                                             CloudEntryColumns.PROJECTION,
+                                                                             modelElementFactory,
+                                                                             CloudEntry.class );
    }
    
    
@@ -419,7 +428,6 @@ public class ContentRepository implements IContentRepository
    @Override
    public Iterable< String > getAllTags() throws ContentException
    {
-      
       return tagsQueryHandler.getAll( ContentUris.TAGS_CONTENT_URI,
                                       SEL_NO_COMPLETED_AND_DELETED_TASKS );
    }
@@ -467,9 +475,9 @@ public class ContentRepository implements IContentRepository
    @Override
    public RtmSettings getRtmSettings() throws ContentException
    {
-      Iterator< RtmSettings > settingsIter = settingsQueryHandler.getAll( ContentUris.RTM_SETTINGS_CONTENT_URI,
-                                                                          null )
-                                                                 .iterator();
+      final Iterator< RtmSettings > settingsIter = settingsQueryHandler.getAll( ContentUris.RTM_SETTINGS_CONTENT_URI,
+                                                                                null )
+                                                                       .iterator();
       if ( !settingsIter.hasNext() )
       {
          throw new ContentException( "No RTM settings" );
@@ -477,4 +485,14 @@ public class ContentRepository implements IContentRepository
       
       return settingsIter.next();
    }
+   
+   
+   
+   @Override
+   public Iterable< CloudEntry > getCloudEntries() throws ContentException
+   {
+      return cloudEntriesQueryHandler.getAll( ContentUris.CLOUD_ENTRIES_CONTENT_URI,
+                                              SEL_NO_COMPLETED_AND_DELETED_TASKS );
+   }
+   
 }

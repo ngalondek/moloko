@@ -20,66 +20,58 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.loaders;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
+import android.net.Uri;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 
 
-class TasksLoader extends AbstractTasksListLoader< Task >
+public class TaskNotesLoader extends AbstractLoader< List< Note > >
 {
-   public final static int ID = R.id.loader_tasks;
+   public final static int ID = R.id.loader_notes;
    
-   private final String selection;
-   
-   private final String order;
-   
-   private final Long taskId;
+   private final long taskId;
    
    
    
-   public TasksLoader( DomainContext context, long taskId )
+   public TaskNotesLoader( DomainContext context, long taskId )
    {
       super( context );
-      this.selection = null;
-      this.order = null;
       this.taskId = taskId;
    }
    
    
    
-   public TasksLoader( DomainContext context, String selection, String order )
+   @Override
+   public Uri getContentUri()
    {
-      super( context );
-      this.selection = selection;
-      this.order = order;
-      this.taskId = null;
+      return ContentUris.bindAggregationIdToUri( ContentUris.TASKS_CONTENT_URI_ID,
+                                                 taskId );
    }
    
    
    
    @Override
-   protected List< Task > queryResultInBackground( IContentRepository contentRepository )
+   protected List< Note > queryResultInBackground( IContentRepository contentRepository )
    {
-      final List< Task > tasks;
+      final Task task = contentRepository.getTask( taskId,
+                                                   TaskContentOptions.Complete );
       
-      if ( taskId != null )
+      final List< Note > notes = new ArrayList< Note >();
+      for ( Note note : task.getNotes() )
       {
-         tasks = Collections.singletonList( contentRepository.getTask( taskId,
-                                                                       TaskContentOptions.Complete ) );
-      }
-      else
-      {
-         tasks = contentRepository.getTasksFromSmartFilter( smartFilter,
-                                                            TaskContentOptions.Complete );
+         notes.add( note );
       }
       
-      return tasks;
+      return notes;
    }
 }

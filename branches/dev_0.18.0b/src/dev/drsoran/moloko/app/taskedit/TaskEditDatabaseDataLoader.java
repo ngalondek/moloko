@@ -33,7 +33,7 @@ import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
+import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.taskedit.AbstractTaskEditFragment.TaskEditDatabaseData;
 import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.content.db.RtmTasksListsTable;

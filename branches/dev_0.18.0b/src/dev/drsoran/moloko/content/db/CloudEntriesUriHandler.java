@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.ListCursor;
 import dev.drsoran.moloko.domain.model.CloudEntryType;
@@ -95,10 +96,16 @@ public class CloudEntriesUriHandler extends AbstractContentUriHandler
                                 c.getString( TaskColumns.TAGS_IDX ) );
             
             addOrIncrementLists( cloudEntriesSorted,
-                                 c.getString( TaskColumns.LIST_NAME_IDX ) );
+                                 c.getString( TaskColumns.LIST_NAME_IDX ),
+                                 c.getLong( TaskColumns.LIST_ID_IDX ) );
             
-            addOrIncrementLocations( cloudEntriesSorted,
-                                     c.getString( TaskColumns.LOCATION_NAME_IDX ) );
+            final long locationId = c.getLong( TaskColumns.LOCATION_ID_IDX );
+            if ( locationId != Constants.NO_ID )
+            {
+               addOrIncrementLocations( cloudEntriesSorted,
+                                        c.getString( TaskColumns.LOCATION_NAME_IDX ),
+                                        locationId );
+            }
             
          }
          
@@ -110,6 +117,7 @@ public class CloudEntriesUriHandler extends AbstractContentUriHandler
             columns[ CloudEntryColumns.ENTRY_TYPE_IDX ] = entry.type;
             columns[ CloudEntryColumns.DISPLAY_IDX ] = entry.name;
             columns[ CloudEntryColumns.COUNT_IDX ] = cloudEntriesSorted.get( entry );
+            columns[ CloudEntryColumns.ELEMENT_ID_IDX ] = entry.elementId;
             
             cloudEntryColumns.add( columns );
          }
@@ -168,25 +176,34 @@ public class CloudEntriesUriHandler extends AbstractContentUriHandler
       for ( String tag : TextUtils.split( separatedTags,
                                           TaskColumns.TAGS_SEPARATOR ) )
       {
-         addOrIncrement( tags, new Entry( tag, CloudEntryType.Tag.getValue() ) );
+         addOrIncrement( tags, new Entry( tag,
+                                          CloudEntryType.Tag.getValue(),
+                                          Constants.NO_ID ) );
       }
    }
    
    
    
-   private void addOrIncrementLists( Map< Entry, Integer > lists, String name )
+   private void addOrIncrementLists( Map< Entry, Integer > lists,
+                                     String name,
+                                     long listId )
    {
       addOrIncrement( lists,
-                      new Entry( name, CloudEntryType.TasksList.getValue() ) );
+                      new Entry( name,
+                                 CloudEntryType.TasksList.getValue(),
+                                 listId ) );
    }
    
    
    
    private void addOrIncrementLocations( Map< Entry, Integer > locations,
-                                         String name )
+                                         String name,
+                                         long locationId )
    {
       addOrIncrement( locations,
-                      new Entry( name, CloudEntryType.Location.getValue() ) );
+                      new Entry( name,
+                                 CloudEntryType.Location.getValue(),
+                                 locationId ) );
    }
    
    
@@ -213,12 +230,15 @@ public class CloudEntriesUriHandler extends AbstractContentUriHandler
       
       public final int type;
       
+      public final long elementId;
       
       
-      public Entry( String name, int type )
+      
+      public Entry( String name, int type, long elementId )
       {
          this.name = name;
          this.type = type;
+         this.elementId = elementId;
       }
       
       
@@ -230,6 +250,11 @@ public class CloudEntriesUriHandler extends AbstractContentUriHandler
          if ( res == 0 )
          {
             res = type - another.type;
+         }
+         
+         if ( res == 0 )
+         {
+            res = (int) ( elementId - another.elementId );
          }
          
          return res;

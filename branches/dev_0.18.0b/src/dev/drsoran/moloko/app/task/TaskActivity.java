@@ -37,13 +37,12 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.app.taskedit.TaskEditActivity;
+import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.adapters.ActionBarViewPagerTabsAdapter;
@@ -71,7 +70,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private Task taskToDelete;
    
    @InstanceState( key = NOTES_TO_DELETE, defaultValue = InstanceState.NULL )
-   private ArrayList< RtmTaskNote > notesToDelete;
+   private ArrayList< Note > notesToDelete;
    
    private ActionBarViewPagerTabsAdapter tabsAdapter;
    
@@ -304,10 +303,8 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onCompleteTask( Task task )
    {
-      final AppContentEditInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                task,
-                                                                                true );
-      applyModifications( modifications );
+      getAppContext().getContentEditService()
+                     .completeTask( task, System.currentTimeMillis() );
    }
    
    
@@ -315,10 +312,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onIncompleteTask( Task task )
    {
-      final AppContentEditInfo modifications = TaskEditUtils.setTaskCompletion( this,
-                                                                                task,
-                                                                                false );
-      applyModifications( modifications );
+      getAppContext().getContentEditService().incompleteTask( task );
    }
    
    
@@ -326,9 +320,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onPostponeTask( Task task )
    {
-      final AppContentEditInfo modifications = TaskEditUtils.postponeTask( this,
-                                                                           task );
-      applyModifications( modifications );
+      getAppContext().getContentEditService().postponeTask( task );
    }
    
    
@@ -351,12 +343,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private void deleteTaskImpl()
    {
-      final AppContentEditInfo modifications = TaskEditUtils.deleteTask( TaskActivity.this,
-                                                                         taskToDelete );
-      if ( applyModifications( modifications ) )
-      {
-         finish();
-      }
+      getAppContext().getContentEditService().deleteTask( taskToDelete );
    }
    
    
@@ -392,7 +379,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    @Override
-   public void onOpenNote( RtmTaskNote note, int position )
+   public void onOpenNote( Note note, int position )
    {
       if ( isWritableAccess() )
       {
@@ -416,9 +403,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    @Override
-   public void onDeleteNotes( Collection< RtmTaskNote > notes )
+   public void onDeleteNotes( Collection< Note > notes )
    {
-      notesToDelete = new ArrayList< RtmTaskNote >( notes );
+      notesToDelete = new ArrayList< Note >( notes );
       
       final String message = getResources().getQuantityString( R.plurals.notes_delete,
                                                                notes.size(),
@@ -434,9 +421,13 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private void deleteNotesImpl()
    {
-      final AppContentEditInfo modifications = NoteEditUtils.deleteNotes( this,
-                                                                          notesToDelete );
-      applyModifications( modifications );
+      final Task task = taskFragment.getTaskAssertNotNull();
+      for ( Note note : notesToDelete )
+      {
+         task.removeNote( note );
+      }
+      
+      getAppContext().getContentEditService().updateTask( task );
    }
    
    
@@ -474,7 +465,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    {
       final Bundle config = getFragmentConfigurations( R.id.frag_task );
       
-      config.putString( TaskFragment.Config.TASK_ID, taskId );
+      config.putString( Intents.Extras.KEY_TASK_ID, taskId );
       
       return config;
    }
@@ -485,7 +476,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    {
       final Bundle config = new Bundle();
       
-      config.putString( NotesListFragment.Config.TASK_ID, taskId );
+      config.putString( Intents.Extras.KEY_TASK_ID, taskId );
       
       return config;
    }

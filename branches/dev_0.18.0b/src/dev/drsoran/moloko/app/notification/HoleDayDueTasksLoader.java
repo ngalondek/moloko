@@ -31,7 +31,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.content.loaders.AbstractLoader;
+import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.domain.DomainContext;
 

@@ -37,11 +37,11 @@ import com.actionbarsherlock.app.SherlockListFragment;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderListFragmentImpl;
+import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
 
 
 public abstract class MolokoListFragment< D > extends SherlockListFragment
@@ -52,7 +52,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    private final LoaderListFragmentImpl< D > loaderImpl;
    
-   private AppContext context;
+   private final RtmAccessLevelFragmentImpl accessImpl;
    
    
    
@@ -60,6 +60,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       baseImpl = new ConfigurableFragmentImpl( this );
       loaderImpl = new LoaderListFragmentImpl< D >( this );
+      accessImpl = new RtmAccessLevelFragmentImpl();
    }
    
    
@@ -69,9 +70,9 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    {
       super.onAttach( activity );
       
-      context = AppContext.get( activity );
       baseImpl.onAttach( activity );
       loaderImpl.onAttach( activity );
+      accessImpl.onAttach( activity );
    }
    
    
@@ -90,9 +91,9 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    @Override
    public void onDetach()
    {
+      accessImpl.onDetach();
       baseImpl.onDetach();
       loaderImpl.onDetach();
-      context = null;
       
       super.onDetach();
    }
@@ -115,9 +116,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    public boolean hasWritableAccess()
    {
-      return context.getAccountService()
-                    .isWriteableAccess( context.getAccountService()
-                                               .getRtmAccount() );
+      return accessImpl.hasWritableAccess();
    }
    
    

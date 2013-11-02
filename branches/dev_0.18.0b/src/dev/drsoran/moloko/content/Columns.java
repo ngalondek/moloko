@@ -695,8 +695,18 @@ public final class Columns
       
       public final static int COUNT_IDX = 2;
       
+      /**
+       * The optional ID of the element this cloud entry stands for.
+       * <P>
+       * Type: INTEGER (long)
+       * </P>
+       */
+      public final static String ELEMENT_ID = "element_id";
+      
+      public final static int ELEMENT_ID_IDX = 3;
+      
       public final static String[] PROJECTION =
-      { ENTRY_TYPE, DISPLAY, COUNT };
+      { ENTRY_TYPE, DISPLAY, COUNT, ELEMENT_ID };
    }
    
    

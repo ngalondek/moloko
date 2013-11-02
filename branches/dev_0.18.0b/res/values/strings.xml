@@ -183,17 +183,7 @@
       <!-- Task -->
       <string name="toast_insert_task">Adding task \'%1$s\'&#8230;</string>
       <string name="toast_insert_task_ok">Task \'%1$s\' added</string>
-      <string name="toast_insert_task_fail">Failed to add task \'%1$s\'</string>
-      <!-- Note -->
-      <string name="toast_insert_note">Adding new note&#8230;</string>
-      <string name="toast_insert_note_ok">New note added</string>
-      <string name="toast_insert_note_fail">Failed to add new task</string>
-      <string name="toast_save_note">Saving note changes&#8230;</string>
-      <string name="toast_save_note_ok">Changes to the note have been saved</string>
-      <string name="toast_save_note_failed">Failed to save note changes</string>
-      <string name="toast_delete_note">Deleting note&#8230;</string>
-      <string name="toast_delete_note_ok">Note has been deleted</string>
-      <string name="toast_delete_note_failed">Failed to delete the note</string>
+      <string name="toast_insert_task_fail">Failed to add task \'%1$s\'</string>      
       <!-- List -->
       <string name="toast_insert_list">Adding new list \'%1$s\'&#8230;</string>
       <string name="toast_insert_list_ok">New list \'%1$s\' added</string>

@@ -25,6 +25,7 @@ package dev.drsoran.moloko.ui.fragments;
 import android.app.Activity;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
+import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
 
 
 public abstract class MolokoLoaderEditDialogFragment< D > extends
@@ -32,11 +33,14 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
 {
    private final EditFragmentImpl impl;
    
+   private final RtmAccessLevelFragmentImpl accessImpl;
+   
    
    
    public MolokoLoaderEditDialogFragment()
    {
       impl = new EditFragmentImpl( this );
+      accessImpl = new RtmAccessLevelFragmentImpl();
    }
    
    
@@ -63,7 +67,9 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
+      
       impl.onAttach( activity );
+      accessImpl.onAttach( activity );
    }
    
    
@@ -71,7 +77,9 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    @Override
    public void onDestroy()
    {
+      accessImpl.onDetach();
       impl.onDestroy();
+      
       super.onDestroy();
    }
    
@@ -109,7 +117,7 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    @Override
    public boolean hasWritableAccess()
    {
-      return impl.hasWritableAccess();
+      return accessImpl.hasWritableAccess();
    }
    
    

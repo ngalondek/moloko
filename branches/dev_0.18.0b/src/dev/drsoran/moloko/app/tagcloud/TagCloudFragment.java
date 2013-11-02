@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.tagcloud;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -40,11 +41,13 @@ import android.widget.Button;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.loaders.CloudEntryLoader;
+import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 
 
-class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEntry > >
+class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
 {
    /**
     * Relationship between task count and text size.
@@ -114,7 +117,7 @@ class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEn
    @Override
    public void initContentAfterDataLoaded( ViewGroup container )
    {
-      final List< PresentableTagCloudEntry > cloudEntries = getLoaderDataAssertNotNull();
+      final List< CloudEntry > cloudEntries = getLoaderDataAssertNotNull();
       
       if ( cloudEntries.size() > 0 )
       {
@@ -129,9 +132,9 @@ class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEn
    
    
    @Override
-   public Loader< List< PresentableTagCloudEntry > > newLoaderInstance( int id, Bundle args )
+   public Loader< List< CloudEntry > > newLoaderInstance( int id, Bundle args )
    {
-      return new TagCloudEntryLoader( getUiContext().asDomainContext() );
+      return new CloudEntryLoader( getUiContext().asDomainContext() );
    }
    
    
@@ -147,12 +150,12 @@ class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEn
    @Override
    public int getLoaderId()
    {
-      return TagCloudEntryLoader.ID;
+      return CloudEntryLoader.ID;
    }
    
    
    
-   private void showTagCloudEntries( List< PresentableTagCloudEntry > cloudEntries )
+   private void showTagCloudEntries( List< CloudEntry > cloudEntries )
    {
       final Activity activity = getSherlockActivity();
       
@@ -161,7 +164,7 @@ class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEn
       
       for ( int i = 0; i < size; ++i )
       {
-         final PresentableTagCloudEntry cloudEntry = cloudEntries.get( i );
+         final PresentableCloudEntry cloudEntry = toPresentableTagCloudEntry( cloudEntries.get( i ) );
          
          final Button cloudEntryButton = new Button( activity );
          cloudEntryButton.setId( i );
@@ -183,6 +186,27 @@ class TagCloudFragment extends MolokoLoaderFragment< List< PresentableTagCloudEn
       final ViewGroup tagContainer = (ViewGroup) activity.findViewById( R.id.tagcloud_container );
       
       addButtons( buttons, tagContainer );
+   }
+   
+   
+   
+   private PresentableCloudEntry toPresentableTagCloudEntry( CloudEntry cloudEntry )
+   {
+      switch ( cloudEntry.getType() )
+      {
+         case Tag:
+            return new TagCloudEntry( cloudEntry );
+            
+         case TasksList:
+            return new TasksListCloudEntry( cloudEntry );
+            
+         case Location:
+            return new LocationCloudEntry( cloudEntry );
+            
+         default :
+            throw new IllegalArgumentException( MessageFormat.format( "Unsupported Cloud Entry type {0}",
+                                                                      cloudEntry.getType() ) );
+      }
    }
    
    

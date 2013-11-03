@@ -22,12 +22,16 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
+
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.util.Strings;
 
 
-public class Estimation
+public class Estimation implements Serializable
 {
+   private static final long serialVersionUID = 9108803485851940464L;
+   
    private final String sentence;
    
    private final long estimateMillisUtc;

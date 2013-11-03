@@ -24,7 +24,9 @@ package dev.drsoran.moloko.app.taskedit;
 
 import java.util.List;
 
-import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 
 
 interface ITaskEditFragmentListener
@@ -33,17 +35,15 @@ interface ITaskEditFragmentListener
    
    
    
-   void onEditDueByPicker();
+   void onEditDueByPicker( Due due, IValueChangedListener valueChangedListener );
    
    
    
-   void onEditRecurrenceByPicker();
+   void onEditRecurrenceByPicker( Recurrence recurrence,
+                                  IValueChangedListener valueChangedListener );
    
    
    
-   void onEditEstimateByPicker();
-   
-   
-   
-   void onBackgroundDeletion( Task oldTask );
+   void onEditEstimateByPicker( long estimation,
+                                IValueChangedListener valueChangedListener );
 }

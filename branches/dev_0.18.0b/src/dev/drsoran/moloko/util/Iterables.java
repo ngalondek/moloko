@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,47 +20,55 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskedit;
+package dev.drsoran.moloko.util;
 
-import dev.drsoran.moloko.ui.IValueChangedListener;
-import dev.drsoran.moloko.ui.fragments.MolokoDialogFragment;
+import java.util.Iterator;
 
 
-abstract class AbstractPickerDialogFragment extends MolokoDialogFragment
+public class Iterables
 {
-   private IValueChangedListener valueChangedListener;
-   
-   
-   
-   public void setValueChangedListener( IValueChangedListener listener )
+   private Iterables()
    {
-      this.valueChangedListener = listener;
+      throw new AssertionError();
    }
    
    
    
-   public IValueChangedListener getValueChangedListener()
+   public static < T > int size( Iterable< T > iterable )
    {
-      return valueChangedListener;
+      int size = 0;
+      for ( Iterator< T > iterator = iterable.iterator(); iterator.hasNext(); )
+      {
+         ++size;
+      }
+      
+      return size;
    }
    
    
    
-   protected void notifiyDialogClosedOk()
+   public static < T > boolean isEmpty( Iterable< T > iterable )
    {
-      if ( valueChangedListener != null )
-         notifyValueChanged( valueChangedListener );
+      return !iterable.iterator().hasNext();
    }
    
    
    
-   protected void notifiyDialogClosedCancel()
+   public static < T > T first( Iterable< T > iterable )
    {
+      return iterable.iterator().next();
    }
    
    
    
-   protected void notifyValueChanged( IValueChangedListener listener )
+   public static < T > T firstOrDefault( Iterable< T > iterable, T defaultT )
    {
+      final Iterator< T > i = iterable.iterator();
+      if ( i.hasNext() )
+      {
+         return i.next();
+      }
+      
+      return defaultT;
    }
 }

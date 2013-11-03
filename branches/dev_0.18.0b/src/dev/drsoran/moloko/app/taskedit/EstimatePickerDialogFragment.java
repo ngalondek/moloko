@@ -40,9 +40,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.util.TimeStruct;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.TimeStruct;
 
 
 class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
@@ -69,22 +70,25 @@ class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public final static void show( FragmentActivity activity, long estimateMillis )
+   public final static EstimatePickerDialogFragment show( FragmentActivity activity,
+                                                          long estimateMillis )
    {
       final Bundle config = new Bundle( 1 );
       config.putLong( Config.ESTIMATE_MILLIS, estimateMillis );
       
-      show( activity, config );
+      return show( activity, config );
    }
    
    
    
-   public final static void show( FragmentActivity activity, Bundle config )
+   public final static EstimatePickerDialogFragment show( FragmentActivity activity,
+                                                          Bundle config )
    {
       final EstimatePickerDialogFragment frag = newInstance( config );
       UiUtils.showDialogFragment( activity,
                                   frag,
                                   EstimatePickerDialogFragment.class.getName() );
+      return frag;
    }
    
    
@@ -121,6 +125,14 @@ class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       
       final Dialog dialog = createDialogImpl( content );
       return dialog;
+   }
+   
+   
+   
+   @Override
+   protected void notifyValueChanged( IValueChangedListener listener )
+   {
+      listener.onValueChanged( getEstimateMillis(), long.class );
    }
    
    
@@ -270,7 +282,7 @@ class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public long getMillis()
+   public long getEstimateMillis()
    {
       return estimateMillis;
    }

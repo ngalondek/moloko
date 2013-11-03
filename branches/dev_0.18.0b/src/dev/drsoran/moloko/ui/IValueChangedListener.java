@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,19 +22,11 @@
 
 package dev.drsoran.moloko.ui;
 
-public interface IChangesTarget
+public interface IValueChangedListener
 {
-   < V > void putChange( String key, V value, Class< V > type );
+   < T > void onValueChanged( T value, Class< T > type );
    
    
    
-   < V > V getChange( String key, Class< V > type );
-   
-   
-   
-   < V > V getCurrentValue( String key, Class< V > type );
-   
-   
-   
-   boolean hasChange( String key );
+   < T > void onValueChanged( int index, T value, Class< T > type );
 }

@@ -40,7 +40,10 @@ import android.view.View;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.adapters.DateFormatWheelTextAdapter;
 import dev.drsoran.moloko.ui.adapters.DueTimeWheelTextAdapter;
@@ -48,19 +51,12 @@ import dev.drsoran.moloko.ui.adapters.DueTimeWheelTextAdapter;
 
 class DuePickerDialogFragment extends AbstractPickerDialogFragment
 {
-   public final static class Config
-   {
-      public final static String DUE_MILLIS = "due_millis";
-      
-      public final static String HAS_DUE_TIME = "has_due_time";
-   }
-   
    private AppContext appContext;
    
-   @InstanceState( key = Config.DUE_MILLIS )
+   @InstanceState( key = TaskColumns.DUE_DATE )
    private long dueMillis = System.currentTimeMillis();
    
-   @InstanceState( key = Config.HAS_DUE_TIME )
+   @InstanceState( key = TaskColumns.HAS_DUE_TIME )
    private boolean hasDueTime;
    
    private boolean is24hTimeFormat;
@@ -75,25 +71,27 @@ class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public final static void show( FragmentActivity activity,
-                                  long dueMillis,
-                                  boolean hasDueTime )
+   public final static DuePickerDialogFragment show( FragmentActivity activity,
+                                                     Due due )
    {
       final Bundle config = new Bundle( 2 );
-      config.putLong( Config.DUE_MILLIS, dueMillis );
-      config.putBoolean( Config.HAS_DUE_TIME, hasDueTime );
+      config.putLong( TaskColumns.DUE_DATE, due.getMillisUtc() );
+      config.putBoolean( TaskColumns.HAS_DUE_TIME, due.hasDueTime() );
       
-      show( activity, config );
+      return show( activity, config );
    }
    
    
    
-   public final static void show( FragmentActivity activity, Bundle config )
+   public final static DuePickerDialogFragment show( FragmentActivity activity,
+                                                     Bundle config )
    {
       final DuePickerDialogFragment frag = newInstance( config );
       UiUtils.showDialogFragment( activity,
                                   frag,
                                   DuePickerDialogFragment.class.getName() );
+      
+      return frag;
    }
    
    
@@ -137,6 +135,14 @@ class DuePickerDialogFragment extends AbstractPickerDialogFragment
       final Dialog dialog = createDialogImpl( content );
       
       return dialog;
+   }
+   
+   
+   
+   @Override
+   protected void notifyValueChanged( IValueChangedListener listener )
+   {
+      listener.onValueChanged( getDue(), Due.class );
    }
    
    
@@ -251,20 +257,20 @@ class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public MolokoCalendar getCalendar()
+   public Due getDue()
+   {
+      return new Due( dueMillis, hasDueTime );
+   }
+   
+   
+   
+   private MolokoCalendar getCalendar()
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
       cal.setTimeInMillis( dueMillis );
       cal.setHasTime( hasDueTime );
       
       return cal;
-   }
-   
-   
-   
-   public boolean hasTime()
-   {
-      return hasDueTime;
    }
    
    
@@ -332,7 +338,7 @@ class DuePickerDialogFragment extends AbstractPickerDialogFragment
    {
       final MolokoCalendar cal = getCalendar();
       dateDayWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
-                                                                   cal,
+                                                                   cal.getTimeInMillis(),
                                                                    Calendar.DAY_OF_MONTH,
                                                                    "d",
                                                                    DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY,
@@ -346,7 +352,7 @@ class DuePickerDialogFragment extends AbstractPickerDialogFragment
    {
       final MolokoCalendar cal = getCalendar();
       dateMonthWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
-                                                                     cal,
+                                                                     cal.getTimeInMillis(),
                                                                      Calendar.MONTH,
                                                                      "MMM",
                                                                      DateFormatWheelTextAdapter.TYPE_DEFAULT,
@@ -360,7 +366,7 @@ class DuePickerDialogFragment extends AbstractPickerDialogFragment
    {
       final MolokoCalendar cal = getCalendar();
       dateYearWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
-                                                                    cal,
+                                                                    cal.getTimeInMillis(),
                                                                     Calendar.YEAR,
                                                                     "yyyy",
                                                                     DateFormatWheelTextAdapter.TYPE_DEFAULT,

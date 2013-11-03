@@ -71,11 +71,11 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    
    
    
-   public DateFormatWheelTextAdapter( Context context, MolokoCalendar cal,
+   public DateFormatWheelTextAdapter( Context context, long millisUtc,
       int calField, String dateFormat, int type, int flags )
    {
       this.calendar = MolokoCalendar.getInstance();
-      this.calendar.setTimeInMillis( cal.getTimeInMillis() );
+      this.calendar.setTimeInMillis( millisUtc );
       this.calendar.setHasTime( false );
       
       this.calField = calField;

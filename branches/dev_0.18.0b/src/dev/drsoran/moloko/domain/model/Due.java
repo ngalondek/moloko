@@ -22,11 +22,17 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
+
 import dev.drsoran.moloko.content.Constants;
 
 
-public class Due
+public class Due implements Serializable
 {
+   public final static Due EMPTY = new Due( Constants.NO_TIME, false );
+   
+   private final static long serialVersionUID = -3166262865410256320L;
+   
    private final long dueMillisUtc;
    
    private final boolean hasDueTime;
@@ -49,6 +55,13 @@ public class Due
    public long getMillisUtc()
    {
       return dueMillisUtc;
+   }
+   
+   
+   
+   public boolean hasDate()
+   {
+      return dueMillisUtc != Constants.NO_TIME;
    }
    
    

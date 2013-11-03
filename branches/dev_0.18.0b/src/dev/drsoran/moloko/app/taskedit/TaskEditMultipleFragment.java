@@ -31,21 +31,17 @@ import java.util.Map;
 import java.util.Set;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-
-import com.mdt.rtm.data.RtmTask;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.rtm.Task;
 
 
 class TaskEditMultipleFragment extends AbstractTaskEditFragment
@@ -54,19 +50,22 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    private final static String URL_MULTI_VALUE = null;
    
-   public final static String TAGS_MULTI_VALUE = "multi_tag";
+   private final static String TAGS_MULTI_VALUE = "multi_tag";
    
    private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
    
    /**
     * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
     * 
-    * e.g. Map< Tasks.TASKSERIES_NAME, Map< "Task Name", 2 > >
+    * e.g. Map< TaskColumns.TASKSERIES_NAME, Map< "Task Name", 2 > >
     */
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
    
    @InstanceState( key = Intents.Extras.KEY_TASKS )
-   private final ArrayList< Task > tasks = new ArrayList< Task >();
+   private final ArrayList< Task > initialTasks = new ArrayList< Task >();
+   
+   @InstanceState( key = "edited_tasks", defaultValue = InstanceState.NULL )
+   private final ArrayList< Task > editedTasks = new ArrayList< Task >();
    
    
    
@@ -91,58 +90,58 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    @Override
    public Bundle determineInitialValues()
    {
-      final List< Task > tasks = getTasksAssertNotNull();
+      final List< Task > tasks = getInitialTasksAssertNotNull();
       
       joinAttributes( tasks );
       
       final Bundle initialValues = new Bundle();
       
-      initialValues.putString( Tasks.TASKSERIES_NAME,
-                               getInitialValue( Tasks.TASKSERIES_NAME,
+      initialValues.putString( TaskColumns.TASKSERIES_NAME,
+                               getInitialValue( TaskColumns.TASKSERIES_NAME,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.LIST_ID,
-                               getInitialValue( Tasks.LIST_ID,
+      initialValues.putString( TaskColumns.LIST_ID,
+                               getInitialValue( TaskColumns.LIST_ID,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.PRIORITY,
-                               getInitialValue( Tasks.PRIORITY,
+      initialValues.putString( TaskColumns.PRIORITY,
+                               getInitialValue( TaskColumns.PRIORITY,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.TAGS,
-                               getInitialValue( Tasks.TAGS,
+      initialValues.putString( TaskColumns.TAGS,
+                               getInitialValue( TaskColumns.TAGS,
                                                 TAGS_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putLong( Tasks.DUE_DATE,
-                             getInitialValue( Tasks.DUE_DATE,
+      initialValues.putLong( TaskColumns.DUE_DATE,
+                             getInitialValue( TaskColumns.DUE_DATE,
                                               LONG_MULTI_VALUE,
                                               Long.class ) );
-      initialValues.putBoolean( Tasks.HAS_DUE_TIME,
-                                getInitialValue( Tasks.HAS_DUE_TIME,
+      initialValues.putBoolean( TaskColumns.HAS_DUE_TIME,
+                                getInitialValue( TaskColumns.HAS_DUE_TIME,
                                                  Boolean.FALSE,
                                                  Boolean.class ) );
-      initialValues.putString( Tasks.RECURRENCE,
-                               getInitialValue( Tasks.RECURRENCE,
+      initialValues.putString( TaskColumns.RECURRENCE,
+                               getInitialValue( TaskColumns.RECURRENCE,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putBoolean( Tasks.RECURRENCE_EVERY,
-                                getInitialValue( Tasks.RECURRENCE_EVERY,
+      initialValues.putBoolean( TaskColumns.RECURRENCE_EVERY,
+                                getInitialValue( TaskColumns.RECURRENCE_EVERY,
                                                  Boolean.FALSE,
                                                  Boolean.class ) );
-      initialValues.putString( Tasks.ESTIMATE,
-                               getInitialValue( Tasks.ESTIMATE,
+      initialValues.putString( TaskColumns.ESTIMATE,
+                               getInitialValue( TaskColumns.ESTIMATE,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putLong( Tasks.ESTIMATE_MILLIS,
-                             getInitialValue( Tasks.ESTIMATE_MILLIS,
+      initialValues.putLong( TaskColumns.ESTIMATE_MILLIS,
+                             getInitialValue( TaskColumns.ESTIMATE_MILLIS,
                                               LONG_MULTI_VALUE,
                                               Long.class ) );
-      initialValues.putString( Tasks.LOCATION_ID,
-                               getInitialValue( Tasks.LOCATION_ID,
+      initialValues.putString( TaskColumns.LOCATION_ID,
+                               getInitialValue( TaskColumns.LOCATION_ID,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.URL,
-                               getInitialValue( Tasks.URL,
+      initialValues.putString( TaskColumns.URL,
+                               getInitialValue( TaskColumns.URL,
                                                 URL_MULTI_VALUE,
                                                 String.class ) );
       return initialValues;
@@ -152,41 +151,24 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    private void joinAttributes( List< Task > tasks )
    {
-      attributeCount.put( Tasks.TASKSERIES_NAME,
+      attributeCount.put( TaskColumns.TASK_NAME,
                           new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.LIST_ID, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.PRIORITY, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.TAGS, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.DUE_DATE, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.HAS_DUE_TIME, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.RECURRENCE, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.RECURRENCE_EVERY,
+      attributeCount.put( TaskColumns.LIST_ID, new HashMap< Object, Integer >() );
+      attributeCount.put( TaskColumns.PRIORITY,
                           new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.ESTIMATE, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.ESTIMATE_MILLIS,
+      attributeCount.put( TaskColumns.LOCATION_ID,
                           new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.LOCATION_ID, new HashMap< Object, Integer >() );
-      attributeCount.put( Tasks.URL, new HashMap< Object, Integer >() );
+      attributeCount.put( TaskColumns.URL, new HashMap< Object, Integer >() );
       
       for ( Task task : tasks )
       {
-         inc( attributeCount.get( Tasks.TASKSERIES_NAME ), task.getDisplay() );
-         inc( attributeCount.get( Tasks.LIST_ID ), task.getListId() );
-         inc( attributeCount.get( Tasks.PRIORITY ),
-              RtmTask.convertPriority( task.getPriority() ) );
-         inc( attributeCount.get( Tasks.TAGS ),
-              TextUtils.join( Tasks.TAGS_SEPARATOR, task.getTags() ) );
-         inc( attributeCount.get( Tasks.DUE_DATE ),
-              task.getDue() != null ? task.getDue().getTime() : -1 );
-         inc( attributeCount.get( Tasks.HAS_DUE_TIME ), task.hasDueTime() );
-         inc( attributeCount.get( Tasks.RECURRENCE ), task.getRecurrence() );
-         inc( attributeCount.get( Tasks.RECURRENCE_EVERY ),
-              task.isEveryRecurrence() );
-         inc( attributeCount.get( Tasks.ESTIMATE ), task.getEstimate() );
-         inc( attributeCount.get( Tasks.ESTIMATE_MILLIS ),
-              task.getEstimateMillis() );
-         inc( attributeCount.get( Tasks.LOCATION_ID ), task.getLocationId() );
-         inc( attributeCount.get( Tasks.URL ), task.getUrl() );
+         inc( attributeCount.get( TaskColumns.TASK_NAME ), task.getName() );
+         inc( attributeCount.get( TaskColumns.LIST_ID ), task.getListId() );
+         inc( attributeCount.get( TaskColumns.PRIORITY ), task.getPriority()
+                                                              .toString() );
+         inc( attributeCount.get( TaskColumns.LOCATION_ID ),
+              task.getLocationId() );
+         inc( attributeCount.get( TaskColumns.URL ), task.getUrl() );
       }
    }
    
@@ -198,13 +180,13 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
       super.initContentAfterDataLoaded( content );
       
       // Setup tasks name edit
-      if ( !isCommonAttrib( Tasks.TASKSERIES_NAME ) )
+      if ( !isCommonAttrib( TaskColumns.TASKSERIES_NAME ) )
       {
          nameEditText.setHint( R.string.edit_multiple_tasks_different_task_names );
          
          if ( nameEditText instanceof AutoCompleteTextView )
          {
-            final List< Task > tasks = getTasksAssertNotNull();
+            final List< Task > tasks = getInitialTasksAssertNotNull();
             final Set< String > names = new HashSet< String >( tasks.size() );
             
             for ( Task task : tasks )
@@ -220,10 +202,13 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
       }
       
       // Setup URL edit
-      if ( !isCommonAttrib( Tasks.URL ) )
+      if ( !isCommonAttrib( TaskColumns.URL ) )
+      {
          urlEditText.setHint( R.string.edit_multiple_tasks_different_urls );
+      }
       
       // These controls are not visible in multi edit task mode
+      tagsContainer.setVisibility( View.GONE );
       dueContainer.setVisibility( View.GONE );
       estimateContainer.setVisibility( View.GONE );
       recurrContainer.setVisibility( View.GONE );
@@ -234,7 +219,6 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    @Override
    protected void initializeHeadSection()
    {
-      tagsContainer.setVisibility( View.GONE );
       addedDate.setVisibility( View.GONE );
       completedDate.setVisibility( View.GONE );
       postponed.setVisibility( View.GONE );
@@ -246,20 +230,20 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    @Override
    protected void initializeListSpinner()
    {
-      if ( isCommonAttrib( Tasks.LIST_ID ) )
+      if ( isCommonAttrib( TaskColumns.LIST_ID ) )
       {
          super.initializeListSpinner();
       }
       else
       {
-         final TaskEditDatabaseData loaderData = getLoaderData();
+         final TaskEditData loaderData = getLoaderData();
          
          if ( loaderData != null )
          {
             final List< String > listIds = loaderData.getListIds();
             final List< String > listNames = loaderData.getListNames();
             
-            appendQuantifierToEntries( Tasks.LIST_ID, listNames, listIds );
+            appendQuantifierToEntries( TaskColumns.LIST_ID, listNames, listIds );
             
             listIds.add( 0, STRING_MULTI_VALUE );
             listNames.add( 0,
@@ -275,13 +259,13 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    @Override
    protected void initializeLocationSpinner()
    {
-      if ( isCommonAttrib( Tasks.LOCATION_ID ) )
+      if ( isCommonAttrib( TaskColumns.LOCATION_ID ) )
       {
          super.initializeLocationSpinner();
       }
       else
       {
-         final TaskEditDatabaseData loaderData = getLoaderData();
+         final TaskEditData loaderData = getLoaderData();
          
          if ( loaderData != null )
          {
@@ -290,7 +274,7 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
             
             insertNowhereLocationEntry( locationIds, locationNames );
             
-            appendQuantifierToEntries( Tasks.LOCATION_ID,
+            appendQuantifierToEntries( TaskColumns.LOCATION_ID,
                                        locationNames,
                                        locationIds );
             
@@ -308,7 +292,7 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    @Override
    protected void initializePrioritySpinner()
    {
-      if ( isCommonAttrib( Tasks.PRIORITY ) )
+      if ( isCommonAttrib( TaskColumns.PRIORITY ) )
       {
          super.initializePrioritySpinner();
       }
@@ -317,7 +301,7 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
          final List< String > priorityTexts = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ) );
          final List< String > priorityValues = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ) );
          
-         appendQuantifierToEntries( Tasks.PRIORITY,
+         appendQuantifierToEntries( TaskColumns.PRIORITY,
                                     priorityTexts,
                                     priorityValues );
          
@@ -331,20 +315,10 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   public List< Task > getTasksAssertNotNull()
-   {
-      if ( tasks == null )
-         throw new AssertionError( "expected tasks to be not null" );
-      
-      return tasks;
-   }
-   
-   
-   
    @Override
    protected ValidationResult validateName()
    {
-      if ( hasChange( Tasks.TASKSERIES_NAME ) )
+      if ( hasChange( TaskColumns.TASKSERIES_NAME ) )
          return super.validateName();
       else
          return ValidationResult.OK;
@@ -352,10 +326,22 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   @Override
-   protected List< Task > getEditedTasks()
+   public List< Task > getInitialTasksAssertNotNull()
    {
-      return getTasksAssertNotNull();
+      if ( initialTasks == null )
+         throw new AssertionError( "expected initial tasks to be not null" );
+      
+      return initialTasks;
+   }
+   
+   
+   
+   public List< Task > getEditedTasksAssertNotNull()
+   {
+      if ( editedTasks == null )
+         throw new AssertionError( "expected edited tasks to be not null" );
+      
+      return editedTasks;
    }
    
    
@@ -418,7 +404,6 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    private final int getAttribValueCnt( String key, Object value )
    {
       final Integer cnt = attributeCount.get( key ).get( value );
-      
       return cnt == null ? 0 : cnt.intValue();
    }
    

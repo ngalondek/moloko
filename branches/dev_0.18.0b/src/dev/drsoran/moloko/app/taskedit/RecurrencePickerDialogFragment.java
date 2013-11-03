@@ -46,8 +46,8 @@ import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.util.Pair;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -80,25 +80,26 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public final static void show( FragmentActivity activity,
-                                  String pattern,
-                                  boolean isEvery )
+   public final static RecurrencePickerDialogFragment show( FragmentActivity activity,
+                                                            Recurrence recurrence )
    {
       final Bundle config = new Bundle( 2 );
-      config.putString( Config.RECURR_PATTERN, pattern );
-      config.putBoolean( Config.IS_EVERY_RECURR, isEvery );
+      config.putString( Config.RECURR_PATTERN, recurrence.getPattern() );
+      config.putBoolean( Config.IS_EVERY_RECURR, recurrence.isEveryRecurrence() );
       
-      show( activity, config );
+      return show( activity, config );
    }
    
    
    
-   public final static void show( FragmentActivity activity, Bundle config )
+   public final static RecurrencePickerDialogFragment show( FragmentActivity activity,
+                                                            Bundle config )
    {
       final RecurrencePickerDialogFragment frag = newInstance( config );
       UiUtils.showDialogFragment( activity,
                                   frag,
                                   RecurrencePickerDialogFragment.class.getName() );
+      return frag;
    }
    
    
@@ -166,9 +167,9 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    {
       if ( TextUtils.isEmpty( recurrencePattern ) )
       {
-         final Pair< String, Boolean > parseReturn = recurrenceParsing.parseRecurrence( DEFAULT_RECURRENCE );
-         recurrencePattern = parseReturn.first;
-         isEveryRecurrence = parseReturn.second.booleanValue();
+         final Recurrence parseReturn = recurrenceParsing.parseRecurrence( DEFAULT_RECURRENCE );
+         recurrencePattern = parseReturn.getPattern();
+         isEveryRecurrence = parseReturn.isEveryRecurrence();
       }
    }
    
@@ -244,6 +245,14 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
    {
       return recurrenceParsing.parseRecurrencePatternToSentence( getPatternString(),
                                                                  isEvery() );
+   }
+   
+   
+   
+   @Override
+   protected void notifyValueChanged( IValueChangedListener listener )
+   {
+      listener.onValueChanged( getRecurrence(), Recurrence.class );
    }
    
    

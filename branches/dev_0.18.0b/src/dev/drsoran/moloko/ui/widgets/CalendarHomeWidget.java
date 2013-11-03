@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.ui.widgets;
 
 import java.util.Calendar;
-import java.util.Iterator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +44,7 @@ import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.util.Iterables;
 
 
 public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
@@ -186,16 +186,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
                                                       .getContentRepository()
                                                       .getTasksFromSmartFilter( new RtmSmartFilter( getFilterExpression( getCalendar() ) ),
                                                                                 TaskContentOptions.Minimal );
-         
-         final Iterator< Task > i = tasks.iterator();
-         int cnt = 0;
-         while ( i.hasNext() )
-         {
-            ++cnt;
-            i.next();
-         }
-         
-         return cnt;
+         return Iterables.size( tasks );
       }
       catch ( GrammarException e )
       {

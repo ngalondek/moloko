@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.app.loaders;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.net.Uri;
@@ -36,6 +35,7 @@ import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
+import dev.drsoran.moloko.util.Lists;
 
 
 public class TasksLoader extends AbstractLoader< List< Task > >
@@ -98,13 +98,7 @@ public class TasksLoader extends AbstractLoader< List< Task > >
                                                                taskContentOptions );
          }
          
-         final List< Task > tasksList = new ArrayList< Task >();
-         for ( Task task : tasks )
-         {
-            tasksList.add( task );
-         }
-         
-         return tasksList;
+         return Lists.fromIterable( tasks );
       }
       catch ( GrammarException e )
       {

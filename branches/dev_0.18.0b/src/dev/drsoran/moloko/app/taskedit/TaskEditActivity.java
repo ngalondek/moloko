@@ -24,23 +24,20 @@ package dev.drsoran.moloko.app.taskedit;
 
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Pair;
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class TaskEditActivity extends AbstractTaskEditActivity implements
-         ITaskEditFragmentListener, IPickerDialogListener
+         ITaskEditFragmentListener
 {
    public final static int REQ_DEFAULT = 0;
    
@@ -69,101 +66,45 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    
    
    @Override
-   public void onEditDueByPicker()
+   public void onEditDueByPicker( Due due,
+                                  IValueChangedListener valueChangedListener )
    {
-      MolokoCalendar due = getTaskEditFragment().getDue();
-      
-      if ( due == null || !due.hasDate() )
+      if ( due == null )
       {
-         due = MolokoCalendar.getInstance();
-         due.setHasTime( false );
+         due = Due.EMPTY;
       }
       
-      DuePickerDialogFragment.show( this, due.getTimeInMillis(), due.hasTime() );
+      final DuePickerDialogFragment frag = DuePickerDialogFragment.show( this,
+                                                                         due );
+      frag.setValueChangedListener( valueChangedListener );
    }
    
    
    
    @Override
-   public void onEditRecurrenceByPicker()
+   public void onEditRecurrenceByPicker( Recurrence recurrence,
+                                         IValueChangedListener valueChangedListener )
    {
-      Pair< String, Boolean > recurrencePattern = getTaskEditFragment().getRecurrence();
+      if ( recurrence == null )
+      {
+         recurrence = Recurrence.EMPTY;
+      }
       
-      if ( recurrencePattern == null )
-         recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
-      
-      RecurrencePickerDialogFragment.show( this,
-                                           recurrencePattern.first,
-                                           recurrencePattern.second );
+      final RecurrencePickerDialogFragment frag = RecurrencePickerDialogFragment.show( this,
+                                                                                       recurrence );
+      frag.setValueChangedListener( valueChangedListener );
    }
    
    
    
    @Override
-   public void onEditEstimateByPicker()
+   public void onEditEstimateByPicker( long estimation,
+                                       IValueChangedListener valueChangedListener )
    {
       final long estimateMillis = getTaskEditFragment().getEstimateMillis();
-      EstimatePickerDialogFragment.show( this, estimateMillis );
-   }
-   
-   
-   
-   @Override
-   public void onPickerDialogClosed( AbstractPickerDialogFragment dialog,
-                                     CloseReason reason )
-   {
-      if ( reason == CloseReason.OK )
-      {
-         if ( dialog instanceof DuePickerDialogFragment )
-         {
-            final DuePickerDialogFragment frag = (DuePickerDialogFragment) dialog;
-            getTaskEditFragment().setDue( frag.getCalendar() );
-         }
-         else if ( dialog instanceof RecurrencePickerDialogFragment )
-         {
-            final RecurrencePickerDialogFragment frag = (RecurrencePickerDialogFragment) dialog;
-            getTaskEditFragment().setRecurrencePattern( frag.getRecurrence() );
-         }
-         else if ( dialog instanceof EstimatePickerDialogFragment )
-         {
-            final EstimatePickerDialogFragment frag = (EstimatePickerDialogFragment) dialog;
-            getTaskEditFragment().setEstimateMillis( frag.getMillis() );
-         }
-      }
-   }
-   
-   
-   
-   @Override
-   public void onBackgroundDeletion( Task oldTask )
-   {
-      new AlertDialogFragment.Builder( R.id.dlg_request_remove_by_bg_sync ).setMessage( getString( R.string.taskedit_activity_dlg_removing_editing ) )
-                                                                           .setNeutralButton( R.string.btn_discard )
-                                                                           .show( TaskEditActivity.this );
-   }
-   
-   
-   
-   @Override
-   public void onAlertDialogFragmentClick( int dialogId, String tag, int which )
-   {
-      if ( dialogId == R.id.dlg_request_remove_by_bg_sync )
-      {
-         switch ( which )
-         {
-            case AlertDialog.BUTTON_NEUTRAL:
-               setResult( RESULT_DELETED );
-               finish();
-               break;
-            
-            default :
-               break;
-         }
-      }
-      else
-      {
-         super.onAlertDialogFragmentClick( dialogId, tag, which );
-      }
+      final EstimatePickerDialogFragment frag = EstimatePickerDialogFragment.show( this,
+                                                                                   estimateMillis );
+      frag.setValueChangedListener( valueChangedListener );
    }
    
    

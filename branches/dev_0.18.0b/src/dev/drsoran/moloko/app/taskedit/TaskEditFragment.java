@@ -25,42 +25,24 @@ package dev.drsoran.moloko.app.taskedit;
 import java.util.Collections;
 import java.util.List;
 
-import android.database.ContentObserver;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.View.OnClickListener;
-
-import com.mdt.rtm.data.RtmTask;
-
-import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
-import dev.drsoran.moloko.app.loaders.TaskLoader;
-import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.content.db.TableColumns.RawTasks;
-import dev.drsoran.moloko.content.db.TableColumns.Tasks;
+import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
-import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.rtm.Task;
 
 
 class TaskEditFragment extends AbstractTaskEditFragment implements
          IOnSettingsChangedListener
 {
-   private final TaskLoaderHandler taskLoaderHandler = new TaskLoaderHandler();
-   
-   private IHandlerToken handler;
-   
    @InstanceState( key = Intents.Extras.KEY_TASK )
    private Task task;
-   
-   private ContentObserver taskChangesObserver;
    
    
    
@@ -78,17 +60,6 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
    public TaskEditFragment()
    {
       registerAnnotatedConfiguredInstance( this, TaskEditFragment.class );
-   }
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      handler = getUiContext().acquireHandlerToken();
-      registerForTaskDeletedByBackgroundSync();
    }
    
    
@@ -114,22 +85,6 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
    
    
    @Override
-   public void onDestroy()
-   {
-      unregisterForTaskDeletedByBackgroundSync();
-      
-      if ( handler != null )
-      {
-         handler.release();
-         handler = null;
-      }
-      
-      super.onDestroy();
-   }
-   
-   
-   
-   @Override
    public void onSettingsChanged( int which )
    {
       if ( ( which & IOnSettingsChangedListener.DATE_TIME_RELATED ) != 0
@@ -148,24 +103,19 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
       
       final Bundle initialValues = new Bundle();
       
-      initialValues.putString( Tasks.TASKSERIES_NAME, task.getDisplay() );
-      initialValues.putString( Tasks.LIST_ID, task.getListId() );
-      initialValues.putString( Tasks.PRIORITY,
-                               RtmTask.convertPriority( task.getPriority() ) );
-      initialValues.putString( Tasks.TAGS,
-                               TextUtils.join( Tasks.TAGS_SEPARATOR,
+      initialValues.putString( TaskColumns.TASK_NAME, task.getName() );
+      initialValues.putLong( TaskColumns.LIST_ID, task.getListId() );
+      initialValues.putString( TaskColumns.PRIORITY, task.getPriority()
+                                                         .toString() );
+      initialValues.putString( TaskColumns.TAGS,
+                               TextUtils.join( TaskColumns.TAGS_SEPARATOR,
                                                task.getTags() ) );
-      initialValues.putLong( Tasks.DUE_DATE,
-                             MolokoDateUtils.getTime( task.getDue(),
-                                                      Long.valueOf( -1 ) ) );
-      initialValues.putBoolean( Tasks.HAS_DUE_TIME, task.hasDueTime() );
-      initialValues.putString( Tasks.RECURRENCE, task.getRecurrence() );
-      initialValues.putBoolean( Tasks.RECURRENCE_EVERY,
-                                task.isEveryRecurrence() );
-      initialValues.putString( Tasks.ESTIMATE, task.getEstimate() );
-      initialValues.putLong( Tasks.ESTIMATE_MILLIS, task.getEstimateMillis() );
-      initialValues.putString( Tasks.LOCATION_ID, task.getLocationId() );
-      initialValues.putString( Tasks.URL, task.getUrl() );
+      initialValues.putSerializable( TaskColumns.DUE_DATE, task.getDue() );
+      initialValues.putSerializable( TaskColumns.RECURRENCE,
+                                     task.getRecurrence() );
+      initialValues.putSerializable( TaskColumns.ESTIMATE, task.getEstimation() );
+      initialValues.putLong( TaskColumns.LOCATION_ID, task.getLocationId() );
+      initialValues.putString( TaskColumns.URL, task.getUrl() );
       
       return initialValues;
    }
@@ -177,24 +127,6 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
    {
       final Task task = getTaskAssertNotNull();
       initializeHeadSectionImpl( task );
-   }
-   
-   
-   
-   @Override
-   protected void registerInputListeners()
-   {
-      super.registerInputListeners();
-      
-      getContentView().findViewById( R.id.task_edit_tags_btn_change )
-                      .setOnClickListener( new OnClickListener()
-                      {
-                         @Override
-                         public void onClick( View v )
-                         {
-                            listener.onChangeTags( getTags() );
-                         }
-                      } );
    }
    
    
@@ -222,14 +154,12 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
       final UiContext context = getUiContext();
       final IDateFormatterService dateFormatter = context.getDateFormatter();
       
-      addedDate.setText( dateFormatter.formatDateTime( task.getAdded()
-                                                           .getTime(),
+      addedDate.setText( dateFormatter.formatDateTime( task.getAddedMillisUtc(),
                                                        FULL_DATE_FLAGS ) );
       
-      if ( task.getCompleted() != null )
+      if ( task.isComplete() )
       {
-         completedDate.setText( dateFormatter.formatDateTime( task.getCompleted()
-                                                                  .getTime(),
+         completedDate.setText( dateFormatter.formatDateTime( task.getCompletedMillisUtc(),
                                                               FULL_DATE_FLAGS ) );
          completedDate.setVisibility( View.VISIBLE );
       }
@@ -238,10 +168,10 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
          completedDate.setVisibility( View.GONE );
       }
       
-      if ( task.getPosponed() > 0 )
+      if ( task.isPostponed() )
       {
          postponed.setText( getString( R.string.task_postponed,
-                                       task.getPosponed() ) );
+                                       task.getPostponedCount() ) );
          postponed.setVisibility( View.VISIBLE );
       }
       else
@@ -256,81 +186,6 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
       else
       {
          source.setText( "?" );
-      }
-   }
-   
-   
-   
-   private void registerForTaskDeletedByBackgroundSync()
-   {
-      taskChangesObserver = new ContentObserver( getUiContext().asSystemContext()
-                                                               .getHandler() )
-      {
-         @Override
-         public void onChange( boolean selfChange )
-         {
-            getSherlockActivity().getSupportLoaderManager()
-                                 .initLoader( TaskLoader.ID,
-                                              Bundle.EMPTY,
-                                              TaskEditFragment.this.taskLoaderHandler );
-         }
-      };
-      
-      getSherlockActivity().getContentResolver()
-                           .registerContentObserver( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                               getTaskAssertNotNull().getId() ),
-                                                     false,
-                                                     taskChangesObserver );
-   }
-   
-   
-   
-   private void unregisterForTaskDeletedByBackgroundSync()
-   {
-      getSherlockActivity().getContentResolver()
-                           .unregisterContentObserver( taskChangesObserver );
-      taskChangesObserver = null;
-   }
-   
-   
-   private class TaskLoaderHandler implements LoaderCallbacks< Task >
-   {
-      @Override
-      public Loader< Task > onCreateLoader( int id, Bundle args )
-      {
-         return new TaskLoader( getSherlockActivity(),
-                                getTaskAssertNotNull().getId() );
-      }
-      
-      
-      
-      @Override
-      public void onLoadFinished( Loader< Task > loader, Task data )
-      {
-         // If the database changed by a background sync and the assigned note
-         // has been deleted, then we ask the user if he wants to keep his changes
-         // or drop the note.
-         if ( data == null )
-         {
-            handler.post( new Runnable()
-            {
-               @Override
-               public void run()
-               {
-                  if ( listener != null )
-                  {
-                     listener.onNoteBackgroundDeletion( getTaskAssertNotNull() );
-                  }
-               }
-            } );
-         }
-      }
-      
-      
-      
-      @Override
-      public void onLoaderReset( Loader< Task > loader )
-      {
       }
    }
 }

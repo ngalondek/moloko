@@ -29,8 +29,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.rtm.Task;
 
 
 public class TaskEditMultipleActivity extends AbstractTaskEditActivity
@@ -86,7 +86,7 @@ public class TaskEditMultipleActivity extends AbstractTaskEditActivity
    {
       final Bundle config = new Bundle();
       
-      config.putParcelableArrayList( Intents.Extras.KEY_TASKS, tasks );
+      config.putSerializable( Intents.Extras.KEY_TASKS, tasks );
       
       return config;
    }

@@ -94,7 +94,6 @@ class TasksListsEntriesAndValuesLoader
       {
          entries.add( ListEntriesAndValues.NONE_IDX,
                       context.getResources().getString( R.string.phr_none_f ) );
-         
          values.add( ListEntriesAndValues.NONE_IDX,
                      String.valueOf( Settings.NO_DEFAULT_LIST_ID ) );
       }

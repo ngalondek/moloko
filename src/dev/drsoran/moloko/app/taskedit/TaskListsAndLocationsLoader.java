@@ -20,26 +20,28 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.loaders;
+package dev.drsoran.moloko.app.taskedit;
 
 import java.util.List;
 
 import android.net.Uri;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.model.CloudEntry;
+import dev.drsoran.moloko.domain.model.Location;
+import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.util.Lists;
 
 
-public class CloudEntryLoader extends AbstractLoader< List< CloudEntry > >
+class TaskListsAndLocationsLoader extends AbstractLoader< TaskEditData >
 {
-   public final static int ID = R.id.loader_cloud_entry;
+   public final static int ID = R.id.loader_taskedit_data;
    
    
    
-   public CloudEntryLoader( DomainContext context )
+   public TaskListsAndLocationsLoader( DomainContext context )
    {
       super( context );
    }
@@ -49,14 +51,17 @@ public class CloudEntryLoader extends AbstractLoader< List< CloudEntry > >
    @Override
    public Uri getContentUri()
    {
-      return ContentUris.CLOUD_ENTRIES_CONTENT_URI;
+      return Uri.EMPTY;
    }
    
    
    
    @Override
-   protected List< CloudEntry > queryResultInBackground( IContentRepository contentRepository )
+   protected TaskEditData queryResultInBackground( IContentRepository respository ) throws ContentException
    {
-      return Lists.fromIterable( contentRepository.getCloudEntries() );
+      final List< TasksList > lists = Lists.fromIterable( respository.getPhysicalTasksLists() );
+      final List< Location > locations = Lists.fromIterable( respository.getAllLocations() );
+      
+      return new TaskEditData( lists, locations );
    }
 }

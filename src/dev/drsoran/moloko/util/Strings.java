@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.text.Editable;
-
 
 public final class Strings
 {
@@ -85,15 +83,6 @@ public final class Strings
       }
       
       return MessageFormat.format( "\"{0}\"", input );
-   }
-   
-   
-   
-   @Deprecated
-   // TODO: This method does not belongs to Strings class. This is UI scope
-   public final static String getTrimmed( Editable editable )
-   {
-      return editable.toString().trim();
    }
    
    

@@ -23,28 +23,24 @@
 package dev.drsoran.moloko.ui.widgets;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
-import dev.drsoran.moloko.ui.IChangesTarget;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RecurrenceEditText extends ClearableEditText
 {
-   public final static String EDIT_RECURRENCE_TEXT = "edit_recurrence_text";
-   
    private final IRecurrenceParsing recurrenceParsing;
    
    private Recurrence recurrence;
    
-   private IChangesTarget changes;
+   private IValueChangedListener valueChangedListener;
    
    
    
@@ -87,16 +83,9 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   public void putInitialValue( Bundle initialValues )
+   public void setValueChangedListener( IValueChangedListener listener )
    {
-      initialValues.putString( EDIT_RECURRENCE_TEXT, getTextTrimmed() );
-   }
-   
-   
-   
-   public void setChangesTarget( IChangesTarget changes )
-   {
-      this.changes = changes;
+      this.valueChangedListener = listener;
    }
    
    
@@ -163,7 +152,7 @@ public class RecurrenceEditText extends ClearableEditText
    {
       super.onTextChanged( text, start, before, after );
       
-      putTextChange();
+      notifyChange();
       
       if ( TextUtils.isEmpty( text ) )
       {
@@ -215,7 +204,7 @@ public class RecurrenceEditText extends ClearableEditText
    
    private Recurrence handleEmptyInputString()
    {
-      return new Recurrence( Strings.EMPTY_STRING, Boolean.FALSE );
+      return Recurrence.EMPTY;
    }
    
    
@@ -264,13 +253,11 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   private void putTextChange()
+   private void notifyChange()
    {
-      if ( changes != null )
+      if ( valueChangedListener != null )
       {
-         changes.putChange( EDIT_RECURRENCE_TEXT,
-                            getTextTrimmed(),
-                            String.class );
+         valueChangedListener.onValueChanged( recurrence, Recurrence.class );
       }
    }
    

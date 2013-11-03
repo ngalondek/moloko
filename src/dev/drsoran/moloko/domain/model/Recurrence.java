@@ -25,11 +25,17 @@
  */
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
+
 import dev.drsoran.moloko.util.Strings;
 
 
-public class Recurrence
+public class Recurrence implements Serializable
 {
+   private static final long serialVersionUID = -2693479322154192406L;
+   
+   public static Recurrence EMPTY = new Recurrence( Strings.EMPTY_STRING, false );
+   
    private final String pattern;
    
    private final boolean isEveryRecurrence;

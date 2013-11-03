@@ -44,9 +44,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.mdt.rtm.data.RtmList;
-import com.mdt.rtm.data.RtmLists;
-import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.MolokoApp;
@@ -54,14 +51,14 @@ import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.IParsingService;
-import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.ui.IChangesTarget;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderEditFragment;
@@ -72,24 +69,16 @@ import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.DueEditText;
 import dev.drsoran.moloko.ui.widgets.EstimateEditText;
 import dev.drsoran.moloko.ui.widgets.RecurrenceEditText;
-import dev.drsoran.moloko.util.Bundles;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
 
 
-abstract class AbstractTaskEditFragment
-         extends
-         MolokoLoaderEditFragment< AbstractTaskEditFragment.TaskEditDatabaseData >
-         implements IChangesTarget
+abstract class AbstractTaskEditFragment extends
+         MolokoLoaderEditFragment< TaskEditData >
 {
    protected final int FULL_DATE_FLAGS = IDateFormatterService.FORMAT_WITH_YEAR;
    
    private AppContext appContext;
-   
-   @InstanceState( key = "changes", defaultValue = InstanceState.NO_DEFAULT )
-   private Bundle changes;
-   
-   private Bundle initialValues;
    
    protected ITaskEditFragmentListener listener;
    
@@ -234,23 +223,16 @@ abstract class AbstractTaskEditFragment
    
    
    
-   public Bundle getChanges()
-   {
-      return changes == null ? Bundle.EMPTY : changes;
-   }
-   
-   
-   
    @Override
    public void initContentAfterDataLoaded( ViewGroup content )
    {
-      initialValues = determineInitialValues();
+      initialTasks = determineInitialValues();
       
       determineInitialChanges();
       
       initializeHeadSection();
       
-      nameEditText.setText( getCurrentValue( Tasks.TASKSERIES_NAME,
+      nameEditText.setText( getCurrentValue( TaskColumns.TASK_NAME,
                                              String.class ) );
       initializePrioritySpinner();
       initializeListSpinner();
@@ -262,7 +244,7 @@ abstract class AbstractTaskEditFragment
       initRecurrenceEditText();
       initEstimateEditText();
       
-      urlEditText.setText( getCurrentValue( Tasks.URL, String.class ) );
+      urlEditText.setText( getCurrentValue( TaskColumns.URL, String.class ) );
       
       registerInputListeners();
       
@@ -279,25 +261,14 @@ abstract class AbstractTaskEditFragment
    
    
    
-   private void putExtaInitialValues()
-   {
-      dueEditText.putInitialValue( initialValues );
-      recurrEditText.putInitialValue( initialValues );
-      estimateEditText.putInitialValue( initialValues );
-   }
-   
-   
-   
-   protected void registerInputListeners()
+   private void registerInputListeners()
    {
       nameEditText.addTextChangedListener( new UiUtils.AfterTextChangedWatcher()
       {
          @Override
          public void afterTextChanged( Editable s )
          {
-            putChange( Tasks.TASKSERIES_NAME,
-                       Strings.getTrimmed( s ),
-                       String.class );
+            notifyChange( TaskColumns.TASK_NAME, getTrimmed( s ), String.class );
          }
       } );
       
@@ -306,43 +277,9 @@ abstract class AbstractTaskEditFragment
          @Override
          public void afterTextChanged( Editable s )
          {
-            putChange( Tasks.URL,
-                       Strings.nullIfEmpty( Strings.getTrimmed( s ) ),
-                       String.class );
+            notifyChange( TaskColumns.URL, getTrimmed( s ), String.class );
          }
       } );
-      
-      final View contentView = getContentView();
-      
-      contentView.findViewById( R.id.task_edit_due_btn_picker )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onEditDueByPicker();
-                    }
-                 } );
-      
-      contentView.findViewById( R.id.task_edit_recurrence_btn_picker )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onEditRecurrenceByPicker();
-                    }
-                 } );
-      
-      contentView.findViewById( R.id.task_edit_estim_btn_picker )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onEditEstimateByPicker();
-                    }
-                 } );
       
       listsSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
       {
@@ -352,9 +289,10 @@ abstract class AbstractTaskEditFragment
                                      int arg2,
                                      long arg3 )
          {
-            putChange( Tasks.LIST_ID,
-                       listsSpinner.getSelectedValue(),
-                       String.class );
+            notifyChangeWithIndex( TaskColumns.LIST_ID,
+                                   arg2,
+                                   listsSpinner.getSelectedValue(),
+                                   String.class );
          }
          
          
@@ -373,9 +311,10 @@ abstract class AbstractTaskEditFragment
                                      int arg2,
                                      long arg3 )
          {
-            putChange( Tasks.LOCATION_ID,
-                       locationSpinner.getSelectedValue(),
-                       String.class );
+            notifyChangeWithIndex( TaskColumns.LOCATION_ID,
+                                   arg2,
+                                   locationSpinner.getSelectedValue(),
+                                   String.class );
          }
          
          
@@ -394,9 +333,10 @@ abstract class AbstractTaskEditFragment
                                      int arg2,
                                      long arg3 )
          {
-            putChange( Tasks.PRIORITY,
-                       prioritySpinner.getSelectedValue(),
-                       String.class );
+            notifyChangeWithIndex( TaskColumns.PRIORITY,
+                                   arg2,
+                                   prioritySpinner.getSelectedValue(),
+                                   String.class );
          }
          
          
@@ -406,13 +346,98 @@ abstract class AbstractTaskEditFragment
          {
          }
       } );
+      
+      registerButtonListeners();
+   }
+   
+   
+   
+   private void registerButtonListeners()
+   {
+      final View contentView = getContentView();
+      
+      contentView.findViewById( R.id.task_edit_tags_btn_change )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onChangeTags( getTags() );
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_due_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onEditDueByPicker( dueEditText.getDue(),
+                                                   new ValueChangedRelay()
+                                                   {
+                                                      @Override
+                                                      public < T > void onValueChanged( T value,
+                                                                                        Class< T > type )
+                                                      {
+                                                         notifyChange( TaskColumns.DUE_DATE,
+                                                                       value,
+                                                                       type );
+                                                         dueEditText.requestFocus();
+                                                      }
+                                                   } );
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_recurrence_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onEditRecurrenceByPicker( recurrEditText.getRecurrence(),
+                                                          new ValueChangedRelay()
+                                                          {
+                                                             @Override
+                                                             public < T > void onValueChanged( T value,
+                                                                                               Class< T > type )
+                                                             {
+                                                                notifyChange( TaskColumns.RECURRENCE,
+                                                                              value,
+                                                                              type );
+                                                                recurrEditText.requestFocus();
+                                                             }
+                                                          } );
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_estim_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onEditEstimateByPicker( estimateEditText.getEstimateMillis(),
+                                                        new ValueChangedRelay()
+                                                        {
+                                                           @Override
+                                                           public < T > void onValueChanged( T value,
+                                                                                             Class< T > type )
+                                                           {
+                                                              notifyChange( TaskColumns.ESTIMATE,
+                                                                            value,
+                                                                            type );
+                                                              estimateEditText.requestFocus();
+                                                           }
+                                                        } );
+                    }
+                 } );
    }
    
    
    
    protected void initializeListSpinner()
    {
-      final TaskEditDatabaseData loaderData = getLoaderData();
+      final TaskEditData loaderData = getLoaderData();
       
       if ( loaderData != null )
       {
@@ -433,7 +458,7 @@ abstract class AbstractTaskEditFragment
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
       listsSpinner.setAdapter( adapter );
       listsSpinner.setValues( listIds );
-      listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
+      listsSpinner.setSelectionByValue( getCurrentValue( TaskColumns.LIST_ID,
                                                          String.class ),
                                         0 );
    }
@@ -442,7 +467,7 @@ abstract class AbstractTaskEditFragment
    
    protected void initializeLocationSpinner()
    {
-      final TaskEditDatabaseData loaderData = getLoaderData();
+      final TaskEditData loaderData = getLoaderData();
       
       if ( loaderData != null )
       {
@@ -474,7 +499,7 @@ abstract class AbstractTaskEditFragment
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
       locationSpinner.setAdapter( adapter );
       locationSpinner.setValues( new ArrayList< String >( locationIds ) );
-      locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
+      locationSpinner.setSelectionByValue( getCurrentValue( TaskColumns.LOCATION_ID,
                                                             String.class ),
                                            0 );
    }
@@ -508,7 +533,7 @@ abstract class AbstractTaskEditFragment
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
       prioritySpinner.setAdapter( adapter );
       prioritySpinner.setValues( values );
-      prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
+      prioritySpinner.setSelectionByValue( getCurrentValue( TaskColumns.PRIORITY,
                                                             String.class ),
                                            0 );
    }
@@ -517,48 +542,51 @@ abstract class AbstractTaskEditFragment
    
    protected void initDueEditText()
    {
-      final long due = getCurrentValue( Tasks.DUE_DATE, Long.class );
-      final boolean hasDueTime = getCurrentValue( Tasks.HAS_DUE_TIME,
+      final long due = getCurrentValue( TaskColumns.DUE_DATE, Long.class );
+      final boolean hasDueTime = getCurrentValue( TaskColumns.HAS_DUE_TIME,
                                                   Boolean.class );
       
       dueEditText.setDue( due, hasDueTime );
-      dueEditText.setChangesTarget( this );
+      dueEditText.setValueChangedListener( this );
    }
    
    
    
    protected void initRecurrenceEditText()
    {
-      final String recurrence = getCurrentValue( Tasks.RECURRENCE, String.class );
-      final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
+      final String recurrence = getCurrentValue( TaskColumns.RECURRENCE,
+                                                 String.class );
+      final boolean isEveryRecurrence = getCurrentValue( TaskColumns.RECURRENCE_EVERY,
                                                          Boolean.class );
       
       recurrEditText.setRecurrence( Strings.emptyIfNull( recurrence ),
                                     isEveryRecurrence );
-      recurrEditText.setChangesTarget( this );
+      recurrEditText.setValueChangedListener( this );
    }
    
    
    
    protected void initEstimateEditText()
    {
-      final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
+      final long estimateMillis = getCurrentValue( TaskColumns.ESTIMATE_MILLIS,
                                                    Long.class );
       
       estimateEditText.setEstimate( estimateMillis );
-      estimateEditText.setChangesTarget( this );
+      estimateEditText.setValueChangedListener( this );
    }
    
    
    
    public void setTags( List< String > tags )
    {
-      final String joinedTags = TextUtils.join( Tasks.TAGS_SEPARATOR, tags );
+      final String joinedTags = TextUtils.join( TaskColumns.TAGS_SEPARATOR,
+                                                tags );
       
-      if ( SyncUtils.isDifferent( getCurrentValue( Tasks.TAGS, String.class ),
+      if ( SyncUtils.isDifferent( getCurrentValue( TaskColumns.TAGS,
+                                                   String.class ),
                                   joinedTags ) )
       {
-         putChange( Tasks.TAGS, joinedTags, String.class );
+         notifyChange( TaskColumns.TAGS, joinedTags, String.class );
          initializeTagsSection();
       }
    }
@@ -567,16 +595,16 @@ abstract class AbstractTaskEditFragment
    
    public List< String > getTags()
    {
-      return Arrays.asList( TextUtils.split( getCurrentValue( Tasks.TAGS,
+      return Arrays.asList( TextUtils.split( getCurrentValue( TaskColumns.TAGS,
                                                               String.class ),
-                                             Tasks.TAGS_SEPARATOR ) );
+                                             TaskColumns.TAGS_SEPARATOR ) );
    }
    
    
    
    protected ValidationResult validateName()
    {
-      final boolean ok = !TextUtils.isEmpty( getCurrentValue( Tasks.TASKSERIES_NAME,
+      final boolean ok = !TextUtils.isEmpty( getCurrentValue( TaskColumns.TASK_NAME,
                                                               String.class ) );
       if ( !ok )
       {
@@ -594,14 +622,6 @@ abstract class AbstractTaskEditFragment
    public MolokoCalendar getDue()
    {
       return dueEditText.getDueCalendar();
-   }
-   
-   
-   
-   public void setDue( MolokoCalendar due )
-   {
-      dueEditText.setDue( due.getTimeInMillis(), due.hasTime() );
-      dueEditText.requestFocus();
    }
    
    
@@ -630,17 +650,17 @@ abstract class AbstractTaskEditFragment
                                                                     .toString() ) );
       if ( dueCal.hasDate() )
       {
-         putChange( Tasks.DUE_DATE,
-                    Long.valueOf( dueCal.getTimeInMillis() ),
-                    Long.class );
-         putChange( Tasks.HAS_DUE_TIME,
-                    Boolean.valueOf( dueCal.hasTime() ),
-                    Boolean.class );
+         notifyChange( TaskColumns.DUE_DATE,
+                       Long.valueOf( dueCal.getTimeInMillis() ),
+                       Long.class );
+         notifyChange( TaskColumns.HAS_DUE_TIME,
+                       Boolean.valueOf( dueCal.hasTime() ),
+                       Boolean.class );
       }
       else
       {
-         putChange( Tasks.DUE_DATE, Long.valueOf( -1 ), Long.class );
-         putChange( Tasks.HAS_DUE_TIME, Boolean.FALSE, Boolean.class );
+         notifyChange( TaskColumns.DUE_DATE, Long.valueOf( -1 ), Long.class );
+         notifyChange( TaskColumns.HAS_DUE_TIME, Boolean.FALSE, Boolean.class );
       }
    }
    
@@ -651,14 +671,6 @@ abstract class AbstractTaskEditFragment
    public Recurrence getRecurrence()
    {
       return recurrEditText.getRecurrence();
-   }
-   
-   
-   
-   public void setRecurrencePattern( Recurrence recurrence )
-   {
-      recurrEditText.setRecurrence( recurrence );
-      recurrEditText.requestFocus();
    }
    
    
@@ -685,12 +697,12 @@ abstract class AbstractTaskEditFragment
          throw new IllegalStateException( String.format( "Expected valid recurrence edit text to parse. Found %s",
                                                          recurrEditText.getText() ) );
       
-      putChange( Tasks.RECURRENCE,
-                 Strings.nullIfEmpty( recurrencePattern.first ),
-                 String.class );
-      putChange( Tasks.RECURRENCE_EVERY,
-                 recurrencePattern.second,
-                 Boolean.class );
+      notifyChange( TaskColumns.RECURRENCE,
+                    Strings.nullIfEmpty( recurrencePattern.first ),
+                    String.class );
+      notifyChange( TaskColumns.RECURRENCE_EVERY,
+                    recurrencePattern.second,
+                    Boolean.class );
    }
    
    
@@ -705,14 +717,6 @@ abstract class AbstractTaskEditFragment
          millis = Long.valueOf( -1 );
       
       return millis;
-   }
-   
-   
-   
-   public void setEstimateMillis( long estimateMillis )
-   {
-      estimateEditText.setEstimate( estimateMillis );
-      estimateEditText.requestFocus();
    }
    
    
@@ -745,13 +749,15 @@ abstract class AbstractTaskEditFragment
       {
          final String estEditText = getUiContext().getDateFormatter()
                                                   .formatEstimated( estimateMillis.longValue() );
-         putChange( Tasks.ESTIMATE, estEditText, String.class );
-         putChange( Tasks.ESTIMATE_MILLIS, estimateMillis, Long.class );
+         notifyChange( TaskColumns.ESTIMATE, estEditText, String.class );
+         notifyChange( TaskColumns.ESTIMATE_MILLIS, estimateMillis, Long.class );
       }
       else
       {
-         putChange( Tasks.ESTIMATE, (String) null, String.class );
-         putChange( Tasks.ESTIMATE_MILLIS, Long.valueOf( -1 ), Long.class );
+         notifyChange( TaskColumns.ESTIMATE, (String) null, String.class );
+         notifyChange( TaskColumns.ESTIMATE_MILLIS,
+                       Long.valueOf( -1 ),
+                       Long.class );
       }
    }
    
@@ -766,53 +772,6 @@ abstract class AbstractTaskEditFragment
    
    
    
-   @Override
-   public final < V > V getCurrentValue( String key, Class< V > type )
-   {
-      if ( initialValues == null )
-      {
-         throw new IllegalStateException( "Initial values have not yet been initialized!" );
-      }
-      
-      V res = null;
-      
-      if ( hasChange( key ) )
-         res = getChange( key, type );
-      else
-      {
-         final Object o = initialValues.get( key );
-         
-         if ( o == null || o.getClass() == type )
-            res = type.cast( o );
-         else
-            throw new IllegalArgumentException( "Expected type " + o.getClass()
-               + " for " + key );
-      }
-      
-      return res;
-   }
-   
-   
-   
-   @Override
-   public final boolean hasChange( String key )
-   {
-      if ( changes == null )
-         return false;
-      
-      return changes.containsKey( key );
-   }
-   
-   
-   
-   @Override
-   public boolean hasChanges()
-   {
-      return ( changes != null && changes.size() > 0 );
-   }
-   
-   
-   
    public void saveChanges()
    {
       // The initial values are created after the task
@@ -820,7 +779,7 @@ abstract class AbstractTaskEditFragment
       // if an saveInstanceState comes before the task
       // is loaded.
       // See https://code.google.com/p/moloko/issues/detail?id=90
-      if ( initialValues != null )
+      if ( initialTasks != null )
       {
          saveDueChanges();
          saveRecurrenceChanges();
@@ -853,51 +812,6 @@ abstract class AbstractTaskEditFragment
    
    
    @Override
-   public final < V > V getChange( String key, Class< V > type )
-   {
-      if ( changes == null )
-         return null;
-      
-      final Object o = changes.get( key );
-      
-      if ( o == null )
-         return null;
-      
-      if ( o.getClass() == type )
-         return type.cast( o );
-      else
-         throw new IllegalArgumentException( "Expected type " + o.getClass()
-            + " for " + key );
-   }
-   
-   
-   
-   @Override
-   public final < V > void putChange( String key, V value, Class< V > type )
-   {
-      if ( initialValues == null )
-      {
-         throw new IllegalStateException( "Initial values have not yet been initialized!" );
-      }
-      
-      // Check if it has reverted to the initial value
-      if ( SyncUtils.isDifferent( value, initialValues.get( key ) ) )
-      {
-         if ( changes == null )
-            changes = new Bundle();
-         
-         Bundles.put( changes, key, value, type );
-      }
-      else
-      {
-         if ( changes != null )
-            changes.remove( key );
-      }
-   }
-   
-   
-   
-   @Override
    protected AppContentEditInfo getApplyChangesInfo()
    {
       saveChanges();
@@ -909,14 +823,14 @@ abstract class AbstractTaskEditFragment
       final Resources resources = getResources();
       
       final AppContentEditInfo applyChangesInfo = new AppContentEditInfo( modificationSet.toContentProviderActionItemList(),
-                                                                                    resources.getQuantityString( R.plurals.toast_save_task,
-                                                                                                                 editedTasksCount,
-                                                                                                                 editedTasksCount ),
-                                                                                    resources.getQuantityString( R.plurals.toast_save_task_ok,
-                                                                                                                 editedTasksCount,
-                                                                                                                 editedTasksCount ),
-                                                                                    resources.getQuantityString( R.plurals.toast_save_task_failed,
-                                                                                                                 editedTasksCount ) );
+                                                                          resources.getQuantityString( R.plurals.toast_save_task,
+                                                                                                       editedTasksCount,
+                                                                                                       editedTasksCount ),
+                                                                          resources.getQuantityString( R.plurals.toast_save_task_ok,
+                                                                                                       editedTasksCount,
+                                                                                                       editedTasksCount ),
+                                                                          resources.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                                       editedTasksCount ) );
       
       return applyChangesInfo;
    }
@@ -932,9 +846,9 @@ abstract class AbstractTaskEditFragment
          boolean anyChanges = false;
          
          // Task name
-         if ( hasChange( Tasks.TASKSERIES_NAME ) )
+         if ( hasChange( TaskColumns.TASKSERIES_NAME ) )
          {
-            final String taskName = getCurrentValue( Tasks.TASKSERIES_NAME,
+            final String taskName = getCurrentValue( TaskColumns.TASKSERIES_NAME,
                                                      String.class );
             
             if ( SyncUtils.isDifferent( task.getName(), taskName ) )
@@ -948,9 +862,9 @@ abstract class AbstractTaskEditFragment
          }
          
          // List
-         if ( hasChange( Tasks.LIST_ID ) )
+         if ( hasChange( TaskColumns.LIST_ID ) )
          {
-            final String selectedListId = getCurrentValue( Tasks.LIST_ID,
+            final String selectedListId = getCurrentValue( TaskColumns.LIST_ID,
                                                            String.class );
             
             if ( SyncUtils.isDifferent( task.getListId(), selectedListId ) )
@@ -964,26 +878,26 @@ abstract class AbstractTaskEditFragment
          }
          
          // Priority
-         if ( hasChange( Tasks.PRIORITY ) )
+         if ( hasChange( TaskColumns.PRIORITY ) )
          {
-            final String selectedPriority = getCurrentValue( Tasks.PRIORITY,
+            final String selectedPriority = getCurrentValue( TaskColumns.PRIORITY,
                                                              String.class );
             
             if ( SyncUtils.isDifferent( RtmTask.convertPriority( task.getPriority() ),
                                         selectedPriority ) )
             {
-               modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
+               modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTaskColumns.CONTENT_URI,
                                                                                           task.getId() ),
-                                                                RawTasks.PRIORITY,
+                                                                RawTaskColumns.PRIORITY,
                                                                 selectedPriority ) );
                anyChanges = true;
             }
          }
          
          // Tags
-         if ( hasChange( Tasks.TAGS ) )
+         if ( hasChange( TaskColumns.TAGS ) )
          {
-            final String tags = getCurrentValue( Tasks.TAGS, String.class );
+            final String tags = getCurrentValue( TaskColumns.TAGS, String.class );
             
             if ( SyncUtils.isDifferent( tags,
                                         TextUtils.join( Tags.TAGS_SEPARATOR,
@@ -998,9 +912,9 @@ abstract class AbstractTaskEditFragment
          }
          
          // Due
-         if ( hasChange( Tasks.DUE_DATE ) )
+         if ( hasChange( TaskColumns.DUE_DATE ) )
          {
-            Long newDue = getCurrentValue( Tasks.DUE_DATE, Long.class );
+            Long newDue = getCurrentValue( TaskColumns.DUE_DATE, Long.class );
             
             if ( newDue == -1 )
                newDue = null;
@@ -1011,14 +925,14 @@ abstract class AbstractTaskEditFragment
                modifications.add( Modification.newModification( DbUtils.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.DUE_DATE,
-                                                                newDue ) );
+                                                                TaskColumns.newDue ) );
                anyChanges = true;
             }
          }
          
-         if ( hasChange( Tasks.HAS_DUE_TIME ) )
+         if ( hasChange( TaskColumns.HAS_DUE_TIME ) )
          {
-            final boolean newHasDueTime = getCurrentValue( Tasks.HAS_DUE_TIME,
+            final boolean newHasDueTime = getCurrentValue( TaskColumns.HAS_DUE_TIME,
                                                            Boolean.class );
             
             if ( SyncUtils.isDifferent( task.hasDueTime(), newHasDueTime ) )
@@ -1034,10 +948,10 @@ abstract class AbstractTaskEditFragment
          }
          
          // Recurrence
-         if ( hasChange( Tasks.RECURRENCE )
-            || hasChange( Tasks.RECURRENCE_EVERY ) )
+         if ( hasChange( TaskColumns.RECURRENCE )
+            || hasChange( TaskColumns.RECURRENCE_EVERY ) )
          {
-            final String recurrence = getCurrentValue( Tasks.RECURRENCE,
+            final String recurrence = getCurrentValue( TaskColumns.RECURRENCE,
                                                        String.class );
             
             if ( SyncUtils.isDifferent( task.getRecurrence(), recurrence ) )
@@ -1049,7 +963,7 @@ abstract class AbstractTaskEditFragment
                anyChanges = true;
             }
             
-            final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
+            final boolean isEveryRecurrence = getCurrentValue( TaskColumns.RECURRENCE_EVERY,
                                                                Boolean.class );
             
             if ( SyncUtils.isDifferent( task.isEveryRecurrence(),
@@ -1065,9 +979,9 @@ abstract class AbstractTaskEditFragment
          }
          
          // Estimate
-         if ( hasChange( Tasks.ESTIMATE_MILLIS ) )
+         if ( hasChange( TaskColumns.ESTIMATE_MILLIS ) )
          {
-            final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
+            final long estimateMillis = getCurrentValue( TaskColumns.ESTIMATE_MILLIS,
                                                          Long.class );
             
             if ( SyncUtils.isDifferent( task.getEstimateMillis(),
@@ -1088,9 +1002,9 @@ abstract class AbstractTaskEditFragment
          }
          
          // Location
-         if ( hasChange( Tasks.LOCATION_ID ) )
+         if ( hasChange( TaskColumns.LOCATION_ID ) )
          {
-            final String selectedLocation = getCurrentValue( Tasks.LOCATION_ID,
+            final String selectedLocation = getCurrentValue( TaskColumns.LOCATION_ID,
                                                              String.class );
             
             if ( SyncUtils.isDifferent( task.getLocationId(), selectedLocation ) )
@@ -1104,9 +1018,9 @@ abstract class AbstractTaskEditFragment
          }
          
          // URL
-         if ( hasChange( Tasks.URL ) )
+         if ( hasChange( TaskColumns.URL ) )
          {
-            final String newUrl = Strings.nullIfEmpty( getCurrentValue( Tasks.URL,
+            final String newUrl = Strings.nullIfEmpty( getCurrentValue( TaskColumns.URL,
                                                                         String.class ) );
             
             if ( SyncUtils.isDifferent( task.getUrl(), newUrl ) )
@@ -1132,7 +1046,7 @@ abstract class AbstractTaskEditFragment
    @Override
    public String getLoaderDataName()
    {
-      return TaskEditDatabaseData.class.getSimpleName();
+      return TaskEditData.class.getSimpleName();
    }
    
    
@@ -1140,16 +1054,57 @@ abstract class AbstractTaskEditFragment
    @Override
    public int getLoaderId()
    {
-      return TaskEditDatabaseDataLoader.ID;
+      return TaskListsAndLocationsLoader.ID;
    }
    
    
    
    @Override
-   public Loader< TaskEditDatabaseData > newLoaderInstance( int id, Bundle args )
+   public Loader< TaskEditData > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskEditDatabaseDataLoader( getSherlockActivity() );
+      return new TaskListsAndLocationsLoader( getAppContext().asDomainContext() );
    }
+   
+   
+   
+   private < T > void notifyChange( String key, T newValue, Class< T > type )
+   {
+      notifyChangeWithIndex( key, -1, newValue, type );
+   }
+   
+   
+   
+   private < T > void notifyChangeWithIndex( String key,
+                                             int index,
+                                             T newValue,
+                                             Class< T > type )
+   {
+      final IValueChangedListener valueChangedListener = getValueChangedListener( key );
+      if ( valueChangedListener != null )
+      {
+         valueChangedListener.onValueChanged( index, newValue, type );
+      }
+   }
+   
+   
+   
+   private static String getTrimmed( Editable editable )
+   {
+      return editable.toString().trim();
+   }
+   
+   
+   private abstract class ValueChangedRelay implements IValueChangedListener
+   {
+      @Override
+      public < T > void onValueChanged( int index, T value, Class< T > type )
+      {
+      }
+   }
+   
+   
+   
+   protected abstract IValueChangedListener getValueChangedListener( String key );
    
    
    
@@ -1158,101 +1113,6 @@ abstract class AbstractTaskEditFragment
    
    
    protected abstract List< Task > getEditedTasks();
-   
-   
-   public final static class TaskEditDatabaseData
-   {
-      public final RtmLists lists;
-      
-      public final List< RtmLocation > locations;
-      
-      
-      
-      public TaskEditDatabaseData( RtmLists lists, List< RtmLocation > locations )
-      {
-         this.lists = lists;
-         this.locations = locations;
-      }
-      
-      
-      
-      public List< Pair< String, String > > getListIdsToListNames()
-      {
-         final List< Pair< String, String > > listIdToListName = new ArrayList< Pair< String, String > >();
-         
-         if ( lists != null )
-         {
-            final List< Pair< String, RtmList > > listIdToList = lists.getLists();
-            for ( Pair< String, RtmList > list : listIdToList )
-            {
-               listIdToListName.add( Pair.create( list.first,
-                                                  list.second.getName() ) );
-            }
-         }
-         
-         return listIdToListName;
-      }
-      
-      
-      
-      public List< String > getListIds()
-      {
-         return lists.getListIds();
-      }
-      
-      
-      
-      public List< String > getListNames()
-      {
-         return lists.getListNames();
-      }
-      
-      
-      
-      public List< Pair< String, String > > getLocationIdsToLocationNames()
-      {
-         final List< Pair< String, String > > locationIdToLocationName = new ArrayList< Pair< String, String > >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationIdToLocationName.add( Pair.create( location.id,
-                                                          location.name ) );
-         }
-         
-         return locationIdToLocationName;
-      }
-      
-      
-      
-      public List< String > getLocationIds()
-      {
-         final List< String > locationIds = new ArrayList< String >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationIds.add( location.id );
-         }
-         
-         return locationIds;
-      }
-      
-      
-      
-      public List< String > getLocationNames()
-      {
-         final List< String > locationNames = new ArrayList< String >();
-         
-         if ( locations != null )
-         {
-            for ( RtmLocation location : locations )
-               locationNames.add( location.name );
-         }
-         
-         return locationNames;
-      }
-   }
    
    
    

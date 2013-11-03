@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,45 +20,30 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskedit;
+package dev.drsoran.moloko.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import dev.drsoran.moloko.domain.model.Task;
 
-
-class NullTaskEditFragmentListener implements ITaskEditFragmentListener
+public class Lists
 {
-   @Override
-   public void onChangeTags( List< String > tags )
+   private Lists()
    {
+      throw new AssertionError();
    }
    
    
    
-   @Override
-   public void onEditDueByPicker()
+   public static < T > List< T > fromIterable( Iterable< T > iterable )
    {
-   }
-   
-   
-   
-   @Override
-   public void onEditRecurrenceByPicker()
-   {
-   }
-   
-   
-   
-   @Override
-   public void onEditEstimateByPicker()
-   {
-   }
-   
-   
-   
-   @Override
-   public void onBackgroundDeletion( Task oldTask )
-   {
+      final List< T > list = new ArrayList< T >();
+      
+      for ( T t : iterable )
+      {
+         list.add( t );
+      }
+      
+      return list;
    }
 }

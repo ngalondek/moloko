@@ -32,7 +32,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
-import android.view.View.OnClickListener;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
@@ -46,37 +45,6 @@ import dev.drsoran.moloko.util.Strings;
 
 class TaskAddFragment extends AbstractTaskEditFragment
 {
-   private final static class Args
-   {
-      public final static String TASK_NAME = Tasks.TASKSERIES_NAME;
-      
-      public final static String LIST_ID = Tasks.LIST_ID;
-      
-      public final static String LIST_NAME = Tasks.LIST_NAME;
-      
-      public final static String LOCATION_ID = Tasks.LOCATION_ID;
-      
-      public final static String LOCATION_NAME = Tasks.LOCATION_NAME;
-      
-      public final static String PRIORITY = Tasks.PRIORITY;
-      
-      public final static String TAGS = Tasks.TAGS;
-      
-      public final static String DUE_DATE = Tasks.DUE_DATE;
-      
-      public final static String HAS_DUE_TIME = Tasks.HAS_DUE_TIME;
-      
-      public final static String RECURRENCE = Tasks.RECURRENCE;
-      
-      public final static String RECURRENCE_EVERY = Tasks.RECURRENCE_EVERY;
-      
-      public final static String ESTIMATE = Tasks.ESTIMATE;
-      
-      public final static String ESTIMATE_MILLIS = Tasks.ESTIMATE_MILLIS;
-      
-      public final static String URL = Tasks.URL;
-   }
-   
    private final static String CREATED_DATE = "created_date";
    
    @InstanceState( key = CREATED_DATE, defaultValue = "-1" )
@@ -205,24 +173,6 @@ class TaskAddFragment extends AbstractTaskEditFragment
    
    
    
-   @Override
-   protected void registerInputListeners()
-   {
-      super.registerInputListeners();
-      
-      getContentView().findViewById( R.id.task_edit_tags_btn_change )
-                      .setOnClickListener( new OnClickListener()
-                      {
-                         @Override
-                         public void onClick( View v )
-                         {
-                            listener.onChangeTags( getTags() );
-                         }
-                      } );
-   }
-   
-   
-   
    private void checkCreatedDate()
    {
       if ( created == -1 )
@@ -243,7 +193,7 @@ class TaskAddFragment extends AbstractTaskEditFragment
          
          if ( !TextUtils.isEmpty( listName ) )
          {
-            listId = getIdByName( getLoaderDataAssertNotNull().getListIdsToListNames(),
+            listId = getIdByName( getLoaderDataAssertNotNull().getListIdsWithListNames(),
                                   listName );
          }
          
@@ -260,7 +210,7 @@ class TaskAddFragment extends AbstractTaskEditFragment
          
          if ( TextUtils.isEmpty( listId ) )
          {
-            listId = getIdByName( getLoaderDataAssertNotNull().getListIdsToListNames(),
+            listId = getIdByName( getLoaderDataAssertNotNull().getListIdsWithListNames(),
                                   getString( R.string.app_list_name_inbox ) );
          }
       }
@@ -280,7 +230,7 @@ class TaskAddFragment extends AbstractTaskEditFragment
          
          if ( !TextUtils.isEmpty( locationName ) )
          {
-            locationId = getIdByName( getLoaderDataAssertNotNull().getLocationIdsToLocationNames(),
+            locationId = getIdByName( getLoaderDataAssertNotNull().getLocationIdsWithLocationNames(),
                                       locationName );
          }
       }
@@ -307,7 +257,7 @@ class TaskAddFragment extends AbstractTaskEditFragment
       
       if ( tags.size() > 0 )
       {
-         final List< Pair< String, String > > listIdsToName = getLoaderDataAssertNotNull().getListIdsToListNames();
+         final List< Pair< String, String > > listIdsToName = getLoaderDataAssertNotNull().getListIdsWithListNames();
          
          for ( Iterator< String > i = tags.iterator(); i.hasNext(); )
          {
@@ -316,7 +266,9 @@ class TaskAddFragment extends AbstractTaskEditFragment
             listId = getIdByName( listIdsToName, tag );
             
             if ( listId != null )
+            {
                i.remove();
+            }
          }
       }
       
@@ -352,7 +304,7 @@ class TaskAddFragment extends AbstractTaskEditFragment
       
       final Task newTask = newTask();
       final AppContentEditInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
-                                                                              newTask );
+                                                                         newTask );
       return modifications;
    }
    

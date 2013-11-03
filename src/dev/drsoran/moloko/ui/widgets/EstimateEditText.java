@@ -23,24 +23,21 @@
 package dev.drsoran.moloko.ui.widgets;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.ui.IChangesTarget;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 
 
 public class EstimateEditText extends ClearableEditText
 {
-   public final static String EDIT_ESTIMATE_TEXT = "edit_estimate_text";
+   private Long estimatation;
    
-   private Long estimateMillis;
-   
-   private IChangesTarget changes;
+   private IValueChangedListener valueChangedListener;
    
    
    
@@ -80,16 +77,9 @@ public class EstimateEditText extends ClearableEditText
    
    
    
-   public void putInitialValue( Bundle initialValues )
+   public void setValueChangedListener( IValueChangedListener changes )
    {
-      initialValues.putString( EDIT_ESTIMATE_TEXT, getTextTrimmed() );
-   }
-   
-   
-   
-   public void setChangesTarget( IChangesTarget changes )
-   {
-      this.changes = changes;
+      this.valueChangedListener = changes;
    }
    
    
@@ -112,7 +102,7 @@ public class EstimateEditText extends ClearableEditText
    public Long getEstimateMillis()
    {
       commitInput( getTextTrimmed() );
-      return estimateMillis;
+      return estimatation;
    }
    
    
@@ -126,7 +116,7 @@ public class EstimateEditText extends ClearableEditText
       {
          setEstimateByString( getTextTrimmed() );
          
-         final boolean inputValid = validateEstimate( estimateMillis ).isOk();
+         final boolean inputValid = validateEstimate( estimatation ).isOk();
          stayInEditText = !inputValid;
          
          if ( inputValid )
@@ -147,11 +137,11 @@ public class EstimateEditText extends ClearableEditText
    {
       super.onTextChanged( text, start, before, after );
       
-      putTextChange();
+      notifyChange();
       
       if ( TextUtils.isEmpty( text ) )
       {
-         estimateMillis = handleEmptyInputString();
+         estimatation = handleEmptyInputString();
       }
    }
    
@@ -161,14 +151,14 @@ public class EstimateEditText extends ClearableEditText
    {
       if ( isEstimateSet() )
       {
-         if ( estimateMillis.longValue() == Constants.NO_TIME )
+         if ( estimatation.longValue() == Constants.NO_TIME )
          {
             setText( null );
          }
          else
          {
             setText( getUiContext().getDateFormatter()
-                                   .formatEstimated( estimateMillis.longValue() ) );
+                                   .formatEstimated( estimatation.longValue() ) );
          }
       }
    }
@@ -207,21 +197,21 @@ public class EstimateEditText extends ClearableEditText
    
    private void setEstimateByMillis( long estimateMillis )
    {
-      this.estimateMillis = estimateMillis;
+      this.estimatation = estimateMillis;
    }
    
    
    
    private void setEstimateByString( String estimateString )
    {
-      estimateMillis = parseEstimate( estimateString );
+      estimatation = parseEstimate( estimateString );
    }
    
    
    
    private boolean isEstimateSet()
    {
-      return estimateMillis != null;
+      return estimatation != null;
    }
    
    
@@ -241,11 +231,11 @@ public class EstimateEditText extends ClearableEditText
    
    
    
-   private void putTextChange()
+   private void notifyChange()
    {
-      if ( changes != null )
+      if ( valueChangedListener != null )
       {
-         changes.putChange( EDIT_ESTIMATE_TEXT, getTextTrimmed(), String.class );
+         valueChangedListener.onValueChanged( getTextTrimmed(), String.class );
       }
    }
    

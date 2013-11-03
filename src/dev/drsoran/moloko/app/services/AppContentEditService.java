@@ -36,6 +36,7 @@ import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.util.Iterables;
 
 
 public class AppContentEditService implements IAppContentEditService
@@ -104,9 +105,8 @@ public class AppContentEditService implements IAppContentEditService
                                                                      res.getQuantityString( R.plurals.toast_save_task_ok,
                                                                                             tasksCount,
                                                                                             tasksCount,
-                                                                                            tasks.iterator()
-                                                                                                 .next()
-                                                                                                 .getName() ),
+                                                                                            Iterables.first( tasks )
+                                                                                                     .getName() ),
                                                                      res.getQuantityString( R.plurals.toast_save_task_failed,
                                                                                             tasksCount,
                                                                                             tasksCount ) );
@@ -147,9 +147,8 @@ public class AppContentEditService implements IAppContentEditService
                                                                      res.getQuantityString( R.plurals.toast_deleted_task,
                                                                                             tasksCount,
                                                                                             tasksCount,
-                                                                                            tasks.iterator()
-                                                                                                 .next()
-                                                                                                 .getName() ),
+                                                                                            Iterables.first( tasks )
+                                                                                                     .getName() ),
                                                                      res.getQuantityString( R.plurals.toast_delete_task_failed,
                                                                                             tasksCount,
                                                                                             tasksCount ) );
@@ -191,9 +190,8 @@ public class AppContentEditService implements IAppContentEditService
                                                                      res.getQuantityString( R.plurals.toast_completed_task,
                                                                                             tasksCount,
                                                                                             tasksCount,
-                                                                                            tasks.iterator()
-                                                                                                 .next()
-                                                                                                 .getName() ),
+                                                                                            Iterables.first( tasks )
+                                                                                                     .getName() ),
                                                                      res.getQuantityString( R.plurals.toast_save_task_failed,
                                                                                             tasksCount,
                                                                                             tasksCount ) );
@@ -251,9 +249,8 @@ public class AppContentEditService implements IAppContentEditService
                                                                      res.getQuantityString( R.plurals.toast_postponed_task,
                                                                                             tasksCount,
                                                                                             tasksCount,
-                                                                                            tasks.iterator()
-                                                                                                 .next()
-                                                                                                 .getName() ),
+                                                                                            Iterables.first( tasks )
+                                                                                                     .getName() ),
                                                                      res.getQuantityString( R.plurals.toast_save_task_failed,
                                                                                             tasksCount,
                                                                                             tasksCount ) );

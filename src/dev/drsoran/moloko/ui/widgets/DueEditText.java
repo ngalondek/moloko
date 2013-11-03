@@ -23,13 +23,13 @@
 package dev.drsoran.moloko.ui.widgets;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.ui.IChangesTarget;
+import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
@@ -40,11 +40,9 @@ public class DueEditText extends ClearableEditText
    private final static int FORMAT = IDateFormatterService.FORMAT_NUMERIC
       | IDateFormatterService.FORMAT_WITH_YEAR;
    
-   public final static String EDIT_DUE_TEXT = "edit_due_text";
+   private Due due;
    
-   private MolokoCalendar dueCalendar = getDatelessAndTimelessInstance();
-   
-   private IChangesTarget changes;
+   private IValueChangedListener valueChangedListener;
    
    
    
@@ -69,9 +67,9 @@ public class DueEditText extends ClearableEditText
    
    
    
-   public void setDue( long millis, boolean hasDueTime )
+   public void setDue( Due due )
    {
-      setDueCalendarByMillis( millis, hasDueTime );
+      setDueImpl( due );
       updateEditDueText();
    }
    
@@ -84,23 +82,9 @@ public class DueEditText extends ClearableEditText
    
    
    
-   public void putInitialValue( Bundle initialValues )
+   public void setValueChangedListener( IValueChangedListener listener )
    {
-      initialValues.putString( EDIT_DUE_TEXT, getTextTrimmed() );
-   }
-   
-   
-   
-   public void setChangesTarget( IChangesTarget changes )
-   {
-      this.changes = changes;
-   }
-   
-   
-   
-   public boolean hasDate()
-   {
-      return isDueCalendarValid() && dueCalendar.hasDate();
+      this.valueChangedListener = listener;
    }
    
    
@@ -109,8 +93,8 @@ public class DueEditText extends ClearableEditText
    {
       if ( isEnabled() )
       {
-         final MolokoCalendar cal = parseDue( getTextTrimmed() );
-         return validateCalendar( cal );
+         final Due due = parseDue( getTextTrimmed() );
+         return validateDue( due );
       }
       else
       {
@@ -120,10 +104,10 @@ public class DueEditText extends ClearableEditText
    
    
    
-   public MolokoCalendar getDueCalendar()
+   public Due getDue()
    {
       commitInput( getTextTrimmed() );
-      return dueCalendar;
+      return due;
    }
    
    
@@ -135,17 +119,21 @@ public class DueEditText extends ClearableEditText
       
       if ( UiUtils.hasInputCommitted( actionCode ) )
       {
-         setDueCalendarByParseString( getTextTrimmed() );
+         setDueByParseString( getTextTrimmed() );
          
-         final boolean inputValid = validateCalendar( dueCalendar ).isOk();
+         final boolean inputValid = validateDue( due ).isOk();
          stayInEditText = !inputValid;
          
          if ( inputValid )
+         {
             updateEditDueText();
+         }
       }
       
       if ( !stayInEditText )
+      {
          super.onEditorAction( actionCode );
+      }
    }
    
    
@@ -158,7 +146,7 @@ public class DueEditText extends ClearableEditText
    {
       super.onTextChanged( text, start, before, after );
       
-      putTextChange();
+      notifyChange();
       
       if ( TextUtils.isEmpty( text ) )
       {
@@ -170,30 +158,28 @@ public class DueEditText extends ClearableEditText
    
    private void updateEditDueText()
    {
-      if ( isDueCalendarValid() )
+      if ( isDueValid() )
       {
-         if ( !dueCalendar.hasDate() )
+         if ( !due.hasDate() )
          {
             setText( null );
          }
-         else if ( dueCalendar.hasTime() )
+         else if ( due.hasDueTime() )
          {
             setText( getUiContext().getDateFormatter()
-                                   .formatDateTime( dueCalendar.getTimeInMillis(),
-                                                    FORMAT ) );
+                                   .formatDateTime( due.getMillisUtc(), FORMAT ) );
          }
          else
          {
             setText( getUiContext().getDateFormatter()
-                                   .formatDate( dueCalendar.getTimeInMillis(),
-                                                FORMAT ) );
+                                   .formatDate( due.getMillisUtc(), FORMAT ) );
          }
       }
    }
    
    
    
-   private MolokoCalendar parseDue( String dueStr )
+   private Due parseDue( String dueStr )
    {
       if ( TextUtils.isEmpty( dueStr ) )
       {
@@ -203,9 +189,10 @@ public class DueEditText extends ClearableEditText
       {
          try
          {
-            return getUiContext().getParsingService()
-                                 .getDateTimeParsing()
-                                 .parseDateTime( dueStr );
+            final MolokoCalendar cal = getUiContext().getParsingService()
+                                                     .getDateTimeParsing()
+                                                     .parseDateTime( dueStr );
+            return new Due( cal.getTimeInMillis(), cal.hasTime() );
          }
          catch ( GrammarException e )
          {
@@ -216,58 +203,45 @@ public class DueEditText extends ClearableEditText
    
    
    
-   private MolokoCalendar handleEmptyInputString()
+   private Due handleEmptyInputString()
    {
-      final MolokoCalendar cal;
-      
-      if ( isDueCalendarValid() )
-      {
-         cal = dueCalendar;
-         cal.setHasDate( false );
-         cal.setHasTime( false );
-      }
-      else
-      {
-         cal = getDatelessAndTimelessInstance();
-      }
-      
-      return cal;
+      return Due.EMPTY;
    }
    
    
    
-   private void setDueCalendarByMillis( long millis, boolean hasDueTime )
+   private void setDueImpl( Due due )
    {
-      if ( !isDueCalendarValid() )
-         dueCalendar = MolokoCalendar.getInstance();
-      
-      if ( millis != -1 )
+      if ( !isDueValid() && due == null )
       {
-         dueCalendar.setTimeInMillis( millis );
-         dueCalendar.setHasDate( true );
-         dueCalendar.setHasTime( hasDueTime );
+         this.due = Due.EMPTY;
+      }
+      
+      if ( due != null )
+      {
+         this.due = due;
       }
    }
    
    
    
-   private void setDueCalendarByParseString( String dueString )
+   private void setDueByParseString( String dueString )
    {
-      dueCalendar = parseDue( dueString );
+      due = parseDue( dueString );
    }
    
    
    
-   private boolean isDueCalendarValid()
+   private boolean isDueValid()
    {
-      return dueCalendar != null;
+      return due != null;
    }
    
    
    
-   private ValidationResult validateCalendar( MolokoCalendar cal )
+   private ValidationResult validateDue( Due due )
    {
-      final boolean valid = cal != null;
+      final boolean valid = due != null;
       if ( !valid )
       {
          return new ValidationResult( getContext().getString( R.string.task_edit_validate_due,
@@ -280,11 +254,11 @@ public class DueEditText extends ClearableEditText
    
    
    
-   private void putTextChange()
+   private void notifyChange()
    {
-      if ( changes != null )
+      if ( valueChangedListener != null )
       {
-         changes.putChange( EDIT_DUE_TEXT, getTextTrimmed(), String.class );
+         valueChangedListener.onValueChanged( due, Due.class );
       }
    }
    
@@ -294,18 +268,8 @@ public class DueEditText extends ClearableEditText
    {
       if ( isEnabled() )
       {
-         setDueCalendarByParseString( input );
+         setDueByParseString( input );
          updateEditDueText();
       }
-   }
-   
-   
-   
-   private MolokoCalendar getDatelessAndTimelessInstance()
-   {
-      if ( !isInEditMode() )
-         return MolokoCalendar.getDatelessAndTimelessInstance();
-      else
-         return null;
    }
 }

@@ -20,9 +20,17 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.connection;
+package dev.drsoran.moloko.connection;
 
-public interface IRtmConnectionFactory
+import java.io.IOException;
+import java.io.Reader;
+
+
+public interface IRtmConnection
 {
-   IRtmConnection createRtmConnection( String scheme, String hostname, int port );
+   Reader execute( String requestUri ) throws IOException;
+   
+   
+   
+   void close();
 }

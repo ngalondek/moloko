@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.connection;
+package dev.drsoran.moloko.connection;
 
 import android.os.Build;
 import dev.drsoran.moloko.ILog;

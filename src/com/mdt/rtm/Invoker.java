@@ -40,7 +40,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.sync.connection.IRtmConnection;
+import dev.drsoran.moloko.connection.IRtmConnection;
 
 
 /**

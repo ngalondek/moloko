@@ -43,7 +43,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -75,7 +74,7 @@ abstract class AbstractTasksListFragment extends
    private TasksList tasksList;
    
    @InstanceState( key = Intents.Extras.KEY_FILTER )
-   private IFilter filter;
+   private RtmSmartFilter filter;
    
    @InstanceState( key = Intents.Extras.KEY_TASK_SORT_ORDER, defaultValue = "1" /* TASK_SORT_PRIORITY */)
    private int tasksSort;
@@ -363,19 +362,9 @@ abstract class AbstractTasksListFragment extends
    
    
    @Override
-   public IFilter getFilter()
+   public RtmSmartFilter getFilter()
    {
       return filter;
-   }
-   
-   
-   
-   @Override
-   public RtmSmartFilter getRtmSmartFilter()
-   {
-      final IFilter filter = getFilter();
-      return ( filter instanceof RtmSmartFilter ) ? (RtmSmartFilter) filter
-                                                 : null;
    }
    
    
@@ -571,7 +560,7 @@ abstract class AbstractTasksListFragment extends
    
    
    
-   protected abstract SwappableArrayAdapter< Task > createListAdapter( IFilter filter );
+   protected abstract SwappableArrayAdapter< Task > createListAdapter( RtmSmartFilter filter );
    
    
    

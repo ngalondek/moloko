@@ -30,7 +30,6 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.loaders.TasksLoader;
@@ -39,6 +38,7 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterTokenCollection;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 
 
@@ -84,20 +84,19 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
-      final IFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
-      final String selection = filter != null ? filter.getSqlSelection() : null;
+      final RtmSmartFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
       final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
       final TasksLoader loader = new TasksLoader( getAppContext().asDomainContext(),
-                                                  selection,
-                                                  order );
+                                                  filter,
+                                                  TaskContentOptions.Minimal );
       return loader;
    }
    
    
    
    @Override
-   public SwappableArrayAdapter< Task > createListAdapter( IFilter filter )
+   public SwappableArrayAdapter< Task > createListAdapter( RtmSmartFilter filter )
    {
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getAppContext(),
@@ -124,20 +123,17 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
    
    
    
-   private RtmSmartFilterTokenCollection getFilterTokens( IFilter filter )
+   private RtmSmartFilterTokenCollection getFilterTokens( RtmSmartFilter filter )
    {
-      if ( filter instanceof RtmSmartFilter )
+      try
       {
-         try
-         {
-            return getAppContext().getParsingService()
-                                  .getRtmSmartFilterParsing()
-                                  .getSmartFilterTokens( ( (RtmSmartFilter) filter ).getFilterString() );
-         }
-         catch ( GrammarException e )
-         {
-            Log().e( getClass(), "Unparsable smart filter", e );
-         }
+         return getAppContext().getParsingService()
+                               .getRtmSmartFilterParsing()
+                               .getSmartFilterTokens( filter.getFilterString() );
+      }
+      catch ( GrammarException e )
+      {
+         Log().e( getClass(), "Unparsable smart filter", e );
       }
       
       return new RtmSmartFilterTokenCollection( Collections.< RtmSmartFilterToken > emptyList() );

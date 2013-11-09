@@ -29,12 +29,13 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.loaders.TasksLoader;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 
 
@@ -81,20 +82,19 @@ public class MinDetailedTasksListFragment extends AbstractTasksListFragment
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
-      final IFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
-      final String selection = filter != null ? filter.getSqlSelection() : null;
+      final RtmSmartFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
       final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
       
       final TasksLoader loader = new TasksLoader( getUiContext().asDomainContext(),
-                                                  selection,
-                                                  order );
+                                                  filter,
+                                                  TaskContentOptions.Minimal );
       return loader;
    }
    
    
    
    @Override
-   public SwappableArrayAdapter< Task > createListAdapter( IFilter filter )
+   public SwappableArrayAdapter< Task > createListAdapter( RtmSmartFilter filter )
    {
       return new MinDetailedTasksListFragmentAdapter( getMolokoListView() );
    }

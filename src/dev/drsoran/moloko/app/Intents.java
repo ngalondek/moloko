@@ -40,11 +40,9 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.app.home.HomeActivity;
-import dev.drsoran.moloko.app.notification.MolokoNotificationService;
 import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
-import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.domain.model.Location;
@@ -53,7 +51,6 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
-import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.util.Bundles;
 
 
@@ -668,17 +665,6 @@ public final class Intents
       return new Intent( Intent.ACTION_VIEW,
                          Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_LOOKUP_URI,
                                                lookUpKey ) );
-   }
-   
-   
-   
-   public final static Intent createSqlSelectionFilterIntent( Context context,
-                                                              SqlSelectionFilter filter,
-                                                              String title )
-   {
-      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createSqlSelectionFilterExtras( context,
-                                                                                                                               filter,
-                                                                                                                               title ) );
    }
    
    

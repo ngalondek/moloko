@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,10 +22,14 @@
 
 package dev.drsoran.moloko;
 
-import android.os.Parcelable;
+import dev.drsoran.moloko.connection.IRtmConnectionFactory;
 
 
-public interface IFilter extends Parcelable
+public interface IConnectionService
 {
-   public String getSqlSelection();
+   boolean hasInternetConnection();
+   
+   
+   
+   IRtmConnectionFactory getRtmConnectionFactory();
 }

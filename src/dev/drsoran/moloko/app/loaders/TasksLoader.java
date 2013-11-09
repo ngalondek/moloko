@@ -35,7 +35,7 @@ import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
-import dev.drsoran.moloko.util.Lists;
+import dev.drsoran.moloko.util.Iterables;
 
 
 public class TasksLoader extends AbstractLoader< List< Task > >
@@ -98,7 +98,7 @@ public class TasksLoader extends AbstractLoader< List< Task > >
                                                                taskContentOptions );
          }
          
-         return Lists.fromIterable( tasks );
+         return Iterables.asList( tasks );
       }
       catch ( GrammarException e )
       {

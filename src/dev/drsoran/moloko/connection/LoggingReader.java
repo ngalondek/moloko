@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.connection;
+package dev.drsoran.moloko.connection;
 
 import java.io.IOException;
 import java.io.Reader;

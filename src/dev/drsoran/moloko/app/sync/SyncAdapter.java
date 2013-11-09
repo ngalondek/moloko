@@ -63,16 +63,6 @@ import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.services.ContentRepository;
-import dev.drsoran.moloko.sync.MolokoSyncResult;
-import dev.drsoran.moloko.sync.RtmContactsSync;
-import dev.drsoran.moloko.sync.RtmListsSync;
-import dev.drsoran.moloko.sync.RtmLocationsSync;
-import dev.drsoran.moloko.sync.RtmSettingsSync;
-import dev.drsoran.moloko.sync.RtmTasksSync;
-import dev.drsoran.moloko.sync.TimeLineFactory;
-import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
 /**

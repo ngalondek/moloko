@@ -27,7 +27,6 @@ import java.util.Collection;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
@@ -79,7 +78,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    private void prepareAddSmartListMenuVisibility( MenuItem addSmartListItem )
    {
-      final RtmSmartFilter filter = geActiveRtmSmartFilter();
+      final RtmSmartFilter filter = getActiveFilter();
       boolean show = filter != null;
       
       // the active, selected item is an already existing list, then we
@@ -174,19 +173,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    
    
-   private RtmSmartFilter geActiveRtmSmartFilter()
-   {
-      final IFilter activeFilter = getActiveFilter();
-      if ( activeFilter instanceof RtmSmartFilter )
-      {
-         return (RtmSmartFilter) activeFilter;
-      }
-      else
-      {
-         return null;
-      }
-   }
-   
+  
    
    
    /**

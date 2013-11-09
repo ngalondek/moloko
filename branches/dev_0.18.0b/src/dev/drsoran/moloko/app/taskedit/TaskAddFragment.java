@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,7 +39,9 @@ import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.AppContentEditInfo;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.util.Strings;
@@ -46,6 +50,9 @@ import dev.drsoran.moloko.util.Strings;
 class TaskAddFragment extends AbstractTaskEditFragment
 {
    private final static String CREATED_DATE = "created_date";
+   
+   @InstanceState( key = Intents.Extras.KEY_TASK )
+   private Task task;
    
    @InstanceState( key = CREATED_DATE, defaultValue = "-1" )
    private long created;
@@ -74,15 +81,25 @@ class TaskAddFragment extends AbstractTaskEditFragment
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      checkCreatedDate();
+      
+      if ( task == null )
+      {
+         checkCreatedDate();
+         createNewTaskFromArguments();
+      }
    }
    
    
    
-   @Override
-   protected Bundle determineInitialValues()
+   private void createNewTaskFromArguments()
    {
       final Bundle args = getArguments();
+      task = new Task( Constants.NO_ID,
+                       created,
+                       created,
+                       args.getString( TASK_NAME, Strings.EMPTY_STRING ),
+                       listId,
+                       listName );
       
       final Bundle initialValues = new Bundle( 14 );
       initialValues.putString( Args.TASK_NAME, null );

@@ -24,7 +24,6 @@ package dev.drsoran.moloko;
 
 import android.content.Context;
 import android.util.Log;
-import dev.drsoran.moloko.R;
 
 
 class AndroidLogger implements ILog

@@ -24,6 +24,8 @@ package dev.drsoran.moloko;
 
 import android.content.Context;
 import android.os.Handler;
+import dev.drsoran.moloko.connection.DefaultRtmConnectionFactory;
+import dev.drsoran.moloko.connection.IRtmConnectionFactory;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.event.MolokoSystemEventService;
 
@@ -34,6 +36,8 @@ class SystemServicesContainer implements ISystemServices
    
    private final IExecutorService executorService = new MolokoExecutorService();
    
+   private final IConnectionService connectionService;
+   
    private final ILog log;
    
    private final MolokoSystemEventService eventService;
@@ -43,6 +47,12 @@ class SystemServicesContainer implements ISystemServices
    public SystemServicesContainer( Context context )
    {
       this.log = new AndroidLogger( context );
+      
+      final IRtmConnectionFactory rtmConnectionFactory = new DefaultRtmConnectionFactory( log,
+                                                                                          getHttpUserAgent() );
+      this.connectionService = new ConnectionService( context,
+                                                      rtmConnectionFactory );
+      
       this.eventService = new MolokoSystemEventService( context, log, Handler );
    }
    
@@ -89,6 +99,14 @@ class SystemServicesContainer implements ISystemServices
    
    
    @Override
+   public IConnectionService getConnectionService()
+   {
+      return connectionService;
+   }
+   
+   
+   
+   @Override
    public ISystemEventService getSystemEvents()
    {
       return eventService;
@@ -100,5 +118,13 @@ class SystemServicesContainer implements ISystemServices
    public IHandlerToken acquireHandlerToken()
    {
       return Handler.acquireToken();
+   }
+   
+   
+   
+   private String getHttpUserAgent()
+   {
+      // TODO: Make HTTP user agent a resource
+      return "Mozilla/5.0 (Linux; U; Android 1.6; de-ch; HTC Magic Build/DRC92) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1";
    }
 }

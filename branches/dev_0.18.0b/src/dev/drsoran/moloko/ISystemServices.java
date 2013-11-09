@@ -44,6 +44,10 @@ public interface ISystemServices
    
    
    
+   IConnectionService getConnectionService();
+   
+   
+   
    ISystemEventService getSystemEvents();
    
    

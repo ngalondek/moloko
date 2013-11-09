@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2013 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,16 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.services;
+package dev.drsoran.moloko.connection;
 
-import dev.drsoran.moloko.sync.connection.IRtmConnectionFactory;
-
-
-public interface IConnectionService
+public interface IRtmConnectionFactory
 {
-   boolean hasInternetConnection();
-   
-   
-   
-   IRtmConnectionFactory getRtmConnectionFactory();
+   IRtmConnection createRtmConnection( String scheme, String hostname, int port );
 }

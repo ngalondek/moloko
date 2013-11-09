@@ -30,7 +30,7 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.moloko.util.Lists;
+import dev.drsoran.moloko.util.Iterables;
 
 
 public class CloudEntryLoader extends AbstractLoader< List< CloudEntry > >
@@ -57,6 +57,6 @@ public class CloudEntryLoader extends AbstractLoader< List< CloudEntry > >
    @Override
    protected List< CloudEntry > queryResultInBackground( IContentRepository contentRepository )
    {
-      return Lists.fromIterable( contentRepository.getCloudEntries() );
+      return Iterables.asList( contentRepository.getCloudEntries() );
    }
 }

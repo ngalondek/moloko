@@ -44,7 +44,6 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
 import dev.drsoran.moloko.app.event.ISyncStatusListener;
 import dev.drsoran.moloko.domain.model.RtmSettings;
-import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
 

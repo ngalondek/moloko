@@ -22,7 +22,9 @@
 
 package dev.drsoran.moloko.util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class Iterables
@@ -30,6 +32,20 @@ public class Iterables
    private Iterables()
    {
       throw new AssertionError();
+   }
+   
+   
+   
+   public static < T > List< T > asList( Iterable< T > iterable )
+   {
+      final List< T > list = new ArrayList< T >();
+      
+      for ( T t : iterable )
+      {
+         list.add( t );
+      }
+      
+      return list;
    }
    
    

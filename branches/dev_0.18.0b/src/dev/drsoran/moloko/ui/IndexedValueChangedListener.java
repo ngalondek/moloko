@@ -20,30 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class Lists
+public abstract class IndexedValueChangedListener implements
+         IValueChangedListener
 {
-   private Lists()
+   @Override
+   public < T > void onValueChanged( T value, Class< T > type )
    {
-      throw new AssertionError();
-   }
-   
-   
-   
-   public static < T > List< T > fromIterable( Iterable< T > iterable )
-   {
-      final List< T > list = new ArrayList< T >();
-      
-      for ( T t : iterable )
-      {
-         list.add( t );
-      }
-      
-      return list;
    }
 }

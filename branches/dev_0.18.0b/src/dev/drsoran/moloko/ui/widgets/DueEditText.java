@@ -127,6 +127,7 @@ public class DueEditText extends ClearableEditText
          if ( inputValid )
          {
             updateEditDueText();
+            notifyChange();
          }
       }
       
@@ -146,11 +147,9 @@ public class DueEditText extends ClearableEditText
    {
       super.onTextChanged( text, start, before, after );
       
-      notifyChange();
-      
       if ( TextUtils.isEmpty( text ) )
       {
-         handleEmptyInputString();
+         due = handleEmptyInputString();
       }
    }
    

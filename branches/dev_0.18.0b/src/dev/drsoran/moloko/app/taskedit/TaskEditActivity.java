@@ -98,10 +98,9 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    
    
    @Override
-   public void onEditEstimateByPicker( long estimation,
+   public void onEditEstimateByPicker( long estimateMillis,
                                        IValueChangedListener valueChangedListener )
    {
-      final long estimateMillis = getTaskEditFragment().getEstimateMillis();
       final EstimatePickerDialogFragment frag = EstimatePickerDialogFragment.show( this,
                                                                                    estimateMillis );
       frag.setValueChangedListener( valueChangedListener );

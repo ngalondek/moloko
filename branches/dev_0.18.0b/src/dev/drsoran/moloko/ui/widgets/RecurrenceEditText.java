@@ -67,10 +67,9 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   public void setRecurrence( String recurrencePattern,
-                              boolean isEveryRecurrence )
+   public void setRecurrence( Recurrence recurrence )
    {
-      setRecurrenceByPattern( recurrencePattern, isEveryRecurrence );
+      setRecurrenceImpl( recurrence );
       updateEditText();
    }
    
@@ -135,11 +134,16 @@ public class RecurrenceEditText extends ClearableEditText
          stayInEditText = !inputValid;
          
          if ( inputValid )
+         {
             updateEditText();
+            notifyChange();
+         }
       }
       
       if ( !stayInEditText )
+      {
          super.onEditorAction( actionCode );
+      }
    }
    
    
@@ -151,8 +155,6 @@ public class RecurrenceEditText extends ClearableEditText
                                  int after )
    {
       super.onTextChanged( text, start, before, after );
-      
-      notifyChange();
       
       if ( TextUtils.isEmpty( text ) )
       {
@@ -209,10 +211,9 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   private void setRecurrenceByPattern( String recurrencePattern,
-                                        boolean isEveryRecurrence )
+   private void setRecurrenceImpl( Recurrence recurrence )
    {
-      this.recurrence = new Recurrence( recurrencePattern, isEveryRecurrence );
+      this.recurrence = recurrence;
    }
    
    

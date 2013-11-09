@@ -52,7 +52,6 @@ import dev.drsoran.moloko.app.services.SyncStartResult;
 import dev.drsoran.moloko.app.sync.ISyncActionProviderHost;
 import dev.drsoran.moloko.state.AnnotatedConfigurationSupport;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.actionmodes.ActionModeWrapper;
 import dev.drsoran.moloko.ui.fragments.listeners.IAlertDialogFragmentListener;

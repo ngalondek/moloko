@@ -43,7 +43,6 @@ import android.util.SparseArray;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
@@ -51,6 +50,7 @@ import dev.drsoran.moloko.app.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
@@ -255,7 +255,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   public IFilter getActiveFilter()
+   public RtmSmartFilter getActiveFilter()
    {
       return getTasksListFragment().getFilter();
    }

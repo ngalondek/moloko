@@ -47,9 +47,9 @@ import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.connection.IRtmConnection;
+import dev.drsoran.moloko.connection.IRtmConnectionFactory;
 import dev.drsoran.moloko.domain.model.RtmSettings;
-import dev.drsoran.moloko.sync.connection.IRtmConnection;
-import dev.drsoran.moloko.sync.connection.IRtmConnectionFactory;
 import dev.drsoran.moloko.util.Strings;
 
 

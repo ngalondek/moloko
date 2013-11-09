@@ -20,13 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app;
+package dev.drsoran.moloko;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import dev.drsoran.moloko.app.services.IConnectionService;
-import dev.drsoran.moloko.sync.connection.IRtmConnectionFactory;
+import dev.drsoran.moloko.connection.IRtmConnectionFactory;
 
 
 class ConnectionService implements IConnectionService

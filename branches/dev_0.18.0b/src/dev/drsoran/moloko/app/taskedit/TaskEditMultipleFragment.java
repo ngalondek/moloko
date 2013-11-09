@@ -22,8 +22,13 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.PRIORITY;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.URL;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,10 +42,16 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.IValueChangedListener;
+import dev.drsoran.moloko.ui.IndexedValueChangedListener;
 import dev.drsoran.moloko.ui.ValidationResult;
+import dev.drsoran.moloko.ui.ValueChangedListener;
+import dev.drsoran.moloko.util.Iterables;
+import dev.drsoran.moloko.util.Lambda.Func1;
+import dev.drsoran.moloko.util.Lambda.Func2;
 import dev.drsoran.moloko.util.Strings;
 
 
@@ -88,88 +99,10 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    @Override
-   public Bundle determineInitialValues()
+   public void onStart()
    {
-      final List< Task > tasks = getInitialTasksAssertNotNull();
-      
-      joinAttributes( tasks );
-      
-      final Bundle initialValues = new Bundle();
-      
-      initialValues.putString( TaskColumns.TASKSERIES_NAME,
-                               getInitialValue( TaskColumns.TASKSERIES_NAME,
-                                                STRING_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putString( TaskColumns.LIST_ID,
-                               getInitialValue( TaskColumns.LIST_ID,
-                                                STRING_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putString( TaskColumns.PRIORITY,
-                               getInitialValue( TaskColumns.PRIORITY,
-                                                STRING_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putString( TaskColumns.TAGS,
-                               getInitialValue( TaskColumns.TAGS,
-                                                TAGS_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putLong( TaskColumns.DUE_DATE,
-                             getInitialValue( TaskColumns.DUE_DATE,
-                                              LONG_MULTI_VALUE,
-                                              Long.class ) );
-      initialValues.putBoolean( TaskColumns.HAS_DUE_TIME,
-                                getInitialValue( TaskColumns.HAS_DUE_TIME,
-                                                 Boolean.FALSE,
-                                                 Boolean.class ) );
-      initialValues.putString( TaskColumns.RECURRENCE,
-                               getInitialValue( TaskColumns.RECURRENCE,
-                                                STRING_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putBoolean( TaskColumns.RECURRENCE_EVERY,
-                                getInitialValue( TaskColumns.RECURRENCE_EVERY,
-                                                 Boolean.FALSE,
-                                                 Boolean.class ) );
-      initialValues.putString( TaskColumns.ESTIMATE,
-                               getInitialValue( TaskColumns.ESTIMATE,
-                                                STRING_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putLong( TaskColumns.ESTIMATE_MILLIS,
-                             getInitialValue( TaskColumns.ESTIMATE_MILLIS,
-                                              LONG_MULTI_VALUE,
-                                              Long.class ) );
-      initialValues.putString( TaskColumns.LOCATION_ID,
-                               getInitialValue( TaskColumns.LOCATION_ID,
-                                                STRING_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putString( TaskColumns.URL,
-                               getInitialValue( TaskColumns.URL,
-                                                URL_MULTI_VALUE,
-                                                String.class ) );
-      return initialValues;
-   }
-   
-   
-   
-   private void joinAttributes( List< Task > tasks )
-   {
-      attributeCount.put( TaskColumns.TASK_NAME,
-                          new HashMap< Object, Integer >() );
-      attributeCount.put( TaskColumns.LIST_ID, new HashMap< Object, Integer >() );
-      attributeCount.put( TaskColumns.PRIORITY,
-                          new HashMap< Object, Integer >() );
-      attributeCount.put( TaskColumns.LOCATION_ID,
-                          new HashMap< Object, Integer >() );
-      attributeCount.put( TaskColumns.URL, new HashMap< Object, Integer >() );
-      
-      for ( Task task : tasks )
-      {
-         inc( attributeCount.get( TaskColumns.TASK_NAME ), task.getName() );
-         inc( attributeCount.get( TaskColumns.LIST_ID ), task.getListId() );
-         inc( attributeCount.get( TaskColumns.PRIORITY ), task.getPriority()
-                                                              .toString() );
-         inc( attributeCount.get( TaskColumns.LOCATION_ID ),
-              task.getLocationId() );
-         inc( attributeCount.get( TaskColumns.URL ), task.getUrl() );
-      }
+      super.onStart();
+      joinInitialTaskAttributes();
    }
    
    
@@ -177,20 +110,365 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    @Override
    public void initContentAfterDataLoaded( ViewGroup content )
    {
-      super.initContentAfterDataLoaded( content );
+      hideUnsupportedControls();
       
-      // Setup tasks name edit
-      if ( !isCommonAttrib( TaskColumns.TASKSERIES_NAME ) )
+      initializeNameEdit();
+      initializeUrlEdit();
+      initializePrioritySpinner();
+      initializeListSpinner();
+      initializeLocationSpinner();
+   }
+   
+   
+   
+   @Override
+   protected IValueChangedListener getValueChangedListener( String key )
+   {
+      if ( TASK_NAME.equals( key ) )
       {
+         return new ValueChangedListener()
+         {
+            @Override
+            public < T > void onValueChanged( T value, Class< T > type )
+            {
+               final String newName = Strings.convertFrom( value );
+               if ( Strings.isNullOrEmpty( newName ) )
+               {
+                  revertNames();
+               }
+               else
+               {
+                  setNames( newName );
+               }
+            }
+         };
+      }
+      else if ( URL.equals( key ) )
+      {
+         return new ValueChangedListener()
+         {
+            @Override
+            public < T > void onValueChanged( T value, Class< T > type )
+            {
+               final String newUrl = Strings.convertFrom( value );
+               if ( Strings.isNullOrEmpty( newUrl ) )
+               {
+                  revertUrls();
+               }
+               else
+               {
+                  setUrl( newUrl );
+               }
+            }
+         };
+      }
+      else if ( PRIORITY.equals( key ) )
+      {
+         return new IndexedValueChangedListener()
+         {
+            
+            @Override
+            public < T > void onValueChanged( int index,
+                                              T value,
+                                              Class< T > type )
+            {
+               if ( index == 0 )
+               {
+                  revertPriorites();
+               }
+               else
+               {
+                  final String newPriority = Strings.convertFrom( value );
+                  setPriority( Priority.fromString( newPriority ) );
+               }
+            }
+         };
+      }
+      else if ( LIST_ID.equals( key ) )
+      {
+         return new IndexedValueChangedListener()
+         {
+            @Override
+            public < T > void onValueChanged( int index,
+                                              T value,
+                                              Class< T > type )
+            {
+               if ( index == 0 )
+               {
+                  revertListIds();
+               }
+               else
+               {
+                  final String newListId = Strings.convertFrom( value );
+                  setListId( newListId );
+               }
+            }
+         };
+      }
+      else if ( LOCATION_ID.equals( key ) )
+      {
+         return new IndexedValueChangedListener()
+         {
+            @Override
+            public < T > void onValueChanged( int index,
+                                              T value,
+                                              Class< T > type )
+            {
+               if ( index == 0 )
+               {
+                  revertLocationIds();
+               }
+               else
+               {
+                  final String newLocationId = Strings.convertFrom( value );
+                  setLocationId( newLocationId );
+               }
+            }
+         };
+      }
+      
+      return null;
+   }
+   
+   
+   
+   private void setLocationId( final String newLocationId )
+   {
+      foreachEditTaskDo( new Func1< Task, Void >()
+      {
+         @Override
+         public Void call( Task editedTask )
+         {
+            editedTask.setLocation( Long.valueOf( newLocationId ),
+                                    getLocationNameById( newLocationId ) );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void revertLocationIds()
+   {
+      foreachTaskPairDo( new Func2< Task, Task, Void >()
+      {
+         @Override
+         public Void call( Task initialTask, Task editedTask )
+         {
+            editedTask.setLocation( initialTask.getLocationId(),
+                                    initialTask.getLocationName() );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void setListId( final String newListId )
+   {
+      foreachEditTaskDo( new Func1< Task, Void >()
+      {
+         @Override
+         public Void call( Task editedTask )
+         {
+            editedTask.setList( Long.valueOf( newListId ),
+                                getListNameById( newListId ) );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void revertListIds()
+   {
+      foreachTaskPairDo( new Func2< Task, Task, Void >()
+      {
+         @Override
+         public Void call( Task initialTask, Task editedTask )
+         {
+            editedTask.setList( initialTask.getListId(),
+                                initialTask.getListName() );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void setPriority( final Priority priority )
+   {
+      foreachEditTaskDo( new Func1< Task, Void >()
+      {
+         @Override
+         public Void call( Task editedTask )
+         {
+            editedTask.setPriority( priority );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void revertPriorites()
+   {
+      foreachTaskPairDo( new Func2< Task, Task, Void >()
+      {
+         @Override
+         public Void call( Task initialTask, Task editedTask )
+         {
+            editedTask.setPriority( initialTask.getPriority() );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void setUrl( final String newUrl )
+   {
+      foreachEditTaskDo( new Func1< Task, Void >()
+      {
+         @Override
+         public Void call( Task editedTask )
+         {
+            editedTask.setUrl( Strings.emptyIfNull( newUrl ) );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void revertUrls()
+   {
+      foreachTaskPairDo( new Func2< Task, Task, Void >()
+      {
+         @Override
+         public Void call( Task initialTask, Task editedTask )
+         {
+            editedTask.setUrl( initialTask.getUrl() );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void setNames( final String newName )
+   {
+      foreachEditTaskDo( new Func1< Task, Void >()
+      {
+         @Override
+         public Void call( Task editedTask )
+         {
+            editedTask.setName( newName );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void revertNames()
+   {
+      foreachTaskPairDo( new Func2< Task, Task, Void >()
+      {
+         @Override
+         public Void call( Task initialTask, Task editedTask )
+         {
+            editedTask.setName( initialTask.getName() );
+            return null;
+         }
+      } );
+   }
+   
+   
+   
+   private void foreachEditTaskDo( Func1< Task, Void > action )
+   {
+      final List< Task > editedTasks = getEditedTasksAssertNotNull();
+      
+      for ( int i = 0; i < editedTasks.size(); i++ )
+      {
+         final Task editedTask = editedTasks.get( i );
+         action.call( editedTask );
+      }
+   }
+   
+   
+   
+   private void foreachTaskPairDo( Func2< Task, Task, Void > action )
+   {
+      final List< Task > initialTasks = getInitialTasksAssertNotNull();
+      final List< Task > editedTasks = getEditedTasksAssertNotNull();
+      
+      for ( int i = 0; i < initialTasks.size(); i++ )
+      {
+         final Task initialTask = initialTasks.get( i );
+         final Task editedTask = editedTasks.get( i );
+         action.call( initialTask, editedTask );
+      }
+   }
+   
+   
+   
+   private String getListNameById( String listId )
+   {
+      final TaskEditData taskEditData = getLoaderDataAssertNotNull();
+      return taskEditData.getListIdsWithListNames().get( listId );
+   }
+   
+   
+   
+   private String getLocationNameById( String locationId )
+   {
+      final TaskEditData taskEditData = getLoaderDataAssertNotNull();
+      return taskEditData.getLocationIdsWithLocationNames().get( locationId );
+   }
+   
+   
+   
+   private void joinInitialTaskAttributes()
+   {
+      final List< Task > tasks = getInitialTasksAssertNotNull();
+      
+      attributeCount.put( TASK_NAME, new HashMap< Object, Integer >() );
+      attributeCount.put( LIST_ID, new HashMap< Object, Integer >() );
+      attributeCount.put( PRIORITY, new HashMap< Object, Integer >() );
+      attributeCount.put( LOCATION_ID, new HashMap< Object, Integer >() );
+      attributeCount.put( URL, new HashMap< Object, Integer >() );
+      
+      for ( Task task : tasks )
+      {
+         inc( attributeCount.get( TASK_NAME ), task.getName() );
+         inc( attributeCount.get( LIST_ID ), task.getListId() );
+         inc( attributeCount.get( PRIORITY ), task.getPriority().toString() );
+         inc( attributeCount.get( LOCATION_ID ), task.getLocationId() );
+         inc( attributeCount.get( URL ), task.getUrl() );
+      }
+   }
+   
+   
+   
+   private void initializeNameEdit()
+   {
+      final List< Task > tasks = getInitialTasksAssertNotNull();
+      
+      if ( !isCommonAttrib( TASK_NAME ) )
+      {
+         nameEditText.setText( Strings.EMPTY_STRING );
          nameEditText.setHint( R.string.edit_multiple_tasks_different_task_names );
          
          if ( nameEditText instanceof AutoCompleteTextView )
          {
-            final List< Task > tasks = getInitialTasksAssertNotNull();
             final Set< String > names = new HashSet< String >( tasks.size() );
             
             for ( Task task : tasks )
-               names.add( task.getDisplay() );
+            {
+               names.add( task.getName() );
+            }
             
             final List< String > uniqueTaskNames = new ArrayList< String >( names );
             
@@ -200,14 +478,96 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
                                                                                             uniqueTaskNames ) );
          }
       }
-      
-      // Setup URL edit
-      if ( !isCommonAttrib( TaskColumns.URL ) )
+      else if ( tasks.size() > 0 )
       {
+         nameEditText.setText( Iterables.first( tasks ).getName() );
+      }
+   }
+   
+   
+   
+   private void initializeUrlEdit()
+   {
+      if ( !isCommonAttrib( URL ) )
+      {
+         urlEditText.setText( Strings.EMPTY_STRING );
          urlEditText.setHint( R.string.edit_multiple_tasks_different_urls );
       }
-      
-      // These controls are not visible in multi edit task mode
+      else if ( getNumberOfTasks() > 0 )
+      {
+         urlEditText.setText( Strings.emptyIfNull( Iterables.first( getInitialTasksAssertNotNull() )
+                                                            .getUrl() ) );
+      }
+   }
+   
+   
+   
+   private void initializeListSpinner()
+   {
+      if ( isCommonAttrib( LIST_ID ) )
+      {
+         super.defaultInitializeListSpinner( getCommonStringAttrib( LIST_ID ) );
+      }
+      else
+      {
+         final ArrayAdapter< String > adapter = defaultInitializeListSpinner( null );
+         
+         if ( adapter != null )
+         {
+            adapter.insert( getString( R.string.edit_multiple_tasks_different_lists ),
+                            0 );
+         }
+      }
+   }
+   
+   
+   
+   private void initializeLocationSpinner()
+   {
+      if ( isCommonAttrib( LOCATION_ID ) )
+      {
+         super.defaultInitializeLocationSpinner( getCommonStringAttrib( LOCATION_ID ) );
+      }
+      else
+      {
+         final ArrayAdapter< String > adapter = defaultInitializeLocationSpinner( null );
+         
+         if ( adapter != null )
+         {
+            adapter.insert( getString( R.string.edit_multiple_tasks_different_locations ),
+                            0 );
+         }
+      }
+   }
+   
+   
+   
+   private void initializePrioritySpinner()
+   {
+      if ( isCommonAttrib( PRIORITY ) )
+      {
+         super.defaultInitializePrioritySpinner( getCommonStringAttrib( PRIORITY ) );
+      }
+      else
+      {
+         final ArrayAdapter< String > adapter = defaultInitializePrioritySpinner( null );
+         
+         if ( adapter != null )
+         {
+            adapter.insert( getString( R.string.edit_multiple_tasks_different_priorities ),
+                            0 );
+         }
+      }
+   }
+   
+   
+   
+   private void hideUnsupportedControls()
+   {
+      addedDate.setVisibility( View.GONE );
+      completedDate.setVisibility( View.GONE );
+      postponed.setVisibility( View.GONE );
+      source.setVisibility( View.GONE );
       tagsContainer.setVisibility( View.GONE );
       dueContainer.setVisibility( View.GONE );
       estimateContainer.setVisibility( View.GONE );
@@ -217,108 +577,9 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected void initializeHeadSection()
-   {
-      addedDate.setVisibility( View.GONE );
-      completedDate.setVisibility( View.GONE );
-      postponed.setVisibility( View.GONE );
-      source.setVisibility( View.GONE );
-   }
-   
-   
-   
-   @Override
-   protected void initializeListSpinner()
-   {
-      if ( isCommonAttrib( TaskColumns.LIST_ID ) )
-      {
-         super.initializeListSpinner();
-      }
-      else
-      {
-         final TaskEditData loaderData = getLoaderData();
-         
-         if ( loaderData != null )
-         {
-            final List< String > listIds = loaderData.getListIds();
-            final List< String > listNames = loaderData.getListNames();
-            
-            appendQuantifierToEntries( TaskColumns.LIST_ID, listNames, listIds );
-            
-            listIds.add( 0, STRING_MULTI_VALUE );
-            listNames.add( 0,
-                           getString( R.string.edit_multiple_tasks_different_lists ) );
-            
-            createListSpinnerAdapterForValues( listIds, listNames );
-         }
-      }
-   }
-   
-   
-   
-   @Override
-   protected void initializeLocationSpinner()
-   {
-      if ( isCommonAttrib( TaskColumns.LOCATION_ID ) )
-      {
-         super.initializeLocationSpinner();
-      }
-      else
-      {
-         final TaskEditData loaderData = getLoaderData();
-         
-         if ( loaderData != null )
-         {
-            final List< String > locationIds = loaderData.getLocationIds();
-            final List< String > locationNames = loaderData.getLocationNames();
-            
-            insertNowhereLocationEntry( locationIds, locationNames );
-            
-            appendQuantifierToEntries( TaskColumns.LOCATION_ID,
-                                       locationNames,
-                                       locationIds );
-            
-            locationIds.add( 0, STRING_MULTI_VALUE );
-            locationNames.add( 0,
-                               getString( R.string.edit_multiple_tasks_different_locations ) );
-            
-            createLocationSpinnerAdapterForValues( locationIds, locationNames );
-         }
-      }
-   }
-   
-   
-   
-   @Override
-   protected void initializePrioritySpinner()
-   {
-      if ( isCommonAttrib( TaskColumns.PRIORITY ) )
-      {
-         super.initializePrioritySpinner();
-      }
-      else
-      {
-         final List< String > priorityTexts = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ) );
-         final List< String > priorityValues = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ) );
-         
-         appendQuantifierToEntries( TaskColumns.PRIORITY,
-                                    priorityTexts,
-                                    priorityValues );
-         
-         priorityTexts.add( 0,
-                            getString( R.string.edit_multiple_tasks_different_priorities ) );
-         priorityValues.add( 0, STRING_MULTI_VALUE );
-         
-         createPrioritySpinnerAdapterForValues( priorityTexts, priorityValues );
-      }
-   }
-   
-   
-   
-   @Override
    protected ValidationResult validateName()
    {
-      if ( hasChange( TaskColumns.TASKSERIES_NAME ) )
+      if ( hasChange( TASK_NAME ) )
          return super.validateName();
       else
          return ValidationResult.OK;
@@ -326,7 +587,7 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   public List< Task > getInitialTasksAssertNotNull()
+   private List< Task > getInitialTasksAssertNotNull()
    {
       if ( initialTasks == null )
          throw new AssertionError( "expected initial tasks to be not null" );
@@ -336,7 +597,14 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   public List< Task > getEditedTasksAssertNotNull()
+   private int getNumberOfTasks()
+   {
+      return getInitialTasksAssertNotNull().size();
+   }
+   
+   
+   
+   private List< Task > getEditedTasksAssertNotNull()
    {
       if ( editedTasks == null )
          throw new AssertionError( "expected edited tasks to be not null" );
@@ -358,59 +626,15 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   private final < V > V getInitialValue( String key,
-                                          V multiVal,
-                                          Class< V > type )
-   {
-      final Map< Object, Integer > values = attributeCount.get( key );
-      
-      if ( values.size() == 1 )
-         return type.cast( values.keySet().iterator().next() );
-      else
-         return multiVal;
-   }
-   
-   
-   
-   private final void appendQuantifierToEntries( String attributeKey,
-                                                 List< String > entries,
-                                                 List< String > values )
-   {
-      if ( entries.size() != values.size() )
-         throw new AssertionError( "expected entries and values have the same size" );
-      
-      for ( int i = 0, cnt = entries.size(); i < cnt; i++ )
-      {
-         entries.set( i,
-                      getEntryWithCountString( attributeKey,
-                                               values.get( i ),
-                                               entries.get( i ) ) );
-      }
-   }
-   
-   
-   
-   private final String getEntryWithCountString( String key,
-                                                 Object value,
-                                                 String entry )
-   {
-      return getResources().getString( R.string.edit_multiple_tasks_entry_with_count,
-                                       entry,
-                                       getAttribValueCnt( key, value ) );
-   }
-   
-   
-   
-   private final int getAttribValueCnt( String key, Object value )
-   {
-      final Integer cnt = attributeCount.get( key ).get( value );
-      return cnt == null ? 0 : cnt.intValue();
-   }
-   
-   
-   
    private final boolean isCommonAttrib( String key )
    {
       return attributeCount.get( key ).size() == 1;
+   }
+   
+   
+   
+   private final String getCommonStringAttrib( String key )
+   {
+      return attributeCount.get( key ).toString();
    }
 }

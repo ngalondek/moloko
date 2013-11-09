@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,17 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.connection;
+package dev.drsoran.moloko.ui;
 
-import java.io.IOException;
-import java.io.Reader;
-
-
-public interface IRtmConnection
+public abstract class ValueChangedListener implements IValueChangedListener
 {
-   Reader execute( String requestUri ) throws IOException;
-   
-   
-   
-   void close();
+   @Override
+   public < T > void onValueChanged( int index, T value, Class< T > type )
+   {
+   }
 }

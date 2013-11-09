@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app;
+package dev.drsoran.moloko.app.services;
 
 import android.content.Context;
 import android.os.Handler;
@@ -32,19 +32,8 @@ import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.account.AccountService;
 import dev.drsoran.moloko.app.event.AppEventService;
-import dev.drsoran.moloko.app.services.AppContentEditService;
-import dev.drsoran.moloko.app.services.IAccountService;
-import dev.drsoran.moloko.app.services.IAppContentEditService;
-import dev.drsoran.moloko.app.services.IAppEventService;
-import dev.drsoran.moloko.app.services.IAppServices;
-import dev.drsoran.moloko.app.services.IConnectionService;
-import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.app.services.ISyncService;
 import dev.drsoran.moloko.app.settings.Settings;
-import dev.drsoran.moloko.app.sync.SyncService;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.sync.connection.DefaultRtmConnectionFactory;
-import dev.drsoran.moloko.sync.connection.IRtmConnectionFactory;
 
 
 public class AppServicesContainer implements IAppServices
@@ -52,8 +41,6 @@ public class AppServicesContainer implements IAppServices
    private final AppEventService appEventService;
    
    private final Settings settingsService;
-   
-   private final IConnectionService connectionService;
    
    private final IAccountService accountService;
    
@@ -72,11 +59,6 @@ public class AppServicesContainer implements IAppServices
                                                   handlerTokenFactory );
       
       this.settingsService = new Settings( context, appEventService );
-      
-      final IRtmConnectionFactory rtmConnectionFactory = new DefaultRtmConnectionFactory( log,
-                                                                                          getHttpUserAgent() );
-      this.connectionService = new ConnectionService( context,
-                                                      rtmConnectionFactory );
       
       this.accountService = new AccountService( context );
       
@@ -121,14 +103,6 @@ public class AppServicesContainer implements IAppServices
    
    
    @Override
-   public IConnectionService getConnectionService()
-   {
-      return connectionService;
-   }
-   
-   
-   
-   @Override
    public ISyncService getSyncService()
    {
       return syncService;
@@ -159,13 +133,5 @@ public class AppServicesContainer implements IAppServices
       {
          accountService.setForcedAccessLevel( Perms.read );
       }
-   }
-   
-   
-   
-   private String getHttpUserAgent()
-   {
-      // TODO: Make HTTP user agent a resource
-      return "Mozilla/5.0 (Linux; U; Android 1.6; de-ch; HTC Magic Build/DRC92) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1";
    }
 }

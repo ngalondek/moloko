@@ -36,11 +36,9 @@ import android.view.View;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
-import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
 import dev.drsoran.moloko.state.InstanceState;
@@ -485,14 +483,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
          throw new IllegalStateException( "ActionMode already started." );
       }
       
-      IFilter filter = getActiveFilter();
-      if ( !( filter instanceof RtmSmartFilter ) )
-      {
-         filter = null;
-      }
-      
       startActionMode( new QuickAddTaskActionModeCallback( this,
-                                                           (RtmSmartFilter) filter ) );
+                                                           getActiveFilter() ) );
       quickAddTaskActionModeActive = true;
    }
    
@@ -544,7 +536,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    protected void showAddListDialog()
    {
       final Bundle config = new Bundle();
-      config.putParcelable( Intents.Extras.KEY_FILTER, getActiveFilter() );
+      config.putSerializable( Intents.Extras.KEY_FILTER, getActiveFilter() );
       
       final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
       UiUtils.showDialogFragment( this,

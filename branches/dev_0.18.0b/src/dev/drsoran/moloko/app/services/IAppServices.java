@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.services;
 
+import dev.drsoran.moloko.IConnectionService;
+
 public interface IAppServices
 {
    IAppEventService getAppEvents();

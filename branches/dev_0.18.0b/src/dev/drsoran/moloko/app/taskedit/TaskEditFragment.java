@@ -22,29 +22,14 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
-import java.util.Collections;
-import java.util.List;
-
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
-import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.moloko.ui.UiContext;
-import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
 
 class TaskEditFragment extends AbstractTaskEditFragment implements
          IOnSettingsChangedListener
 {
-   @InstanceState( key = Intents.Extras.KEY_TASK )
-   private Task task;
-   
-   
    
    public final static TaskEditFragment newInstance( Bundle config )
    {
@@ -97,95 +82,22 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
    
    
    @Override
-   public Bundle determineInitialValues()
+   public Task getInitialTaskAssertNotNull()
    {
-      final Task task = getTaskAssertNotNull();
-      
-      final Bundle initialValues = new Bundle();
-      
-      initialValues.putString( TaskColumns.TASK_NAME, task.getName() );
-      initialValues.putLong( TaskColumns.LIST_ID, task.getListId() );
-      initialValues.putString( TaskColumns.PRIORITY, task.getPriority()
-                                                         .toString() );
-      initialValues.putString( TaskColumns.TAGS,
-                               TextUtils.join( TaskColumns.TAGS_SEPARATOR,
-                                               task.getTags() ) );
-      initialValues.putSerializable( TaskColumns.DUE_DATE, task.getDue() );
-      initialValues.putSerializable( TaskColumns.RECURRENCE,
-                                     task.getRecurrence() );
-      initialValues.putSerializable( TaskColumns.ESTIMATE, task.getEstimation() );
-      initialValues.putLong( TaskColumns.LOCATION_ID, task.getLocationId() );
-      initialValues.putString( TaskColumns.URL, task.getUrl() );
-      
-      return initialValues;
-   }
-   
-   
-   
-   @Override
-   protected void initializeHeadSection()
-   {
-      final Task task = getTaskAssertNotNull();
-      initializeHeadSectionImpl( task );
-   }
-   
-   
-   
-   public Task getTaskAssertNotNull()
-   {
-      if ( task == null )
+      if ( initialTask == null )
          throw new AssertionError( "expected task to be not null" );
       
-      return task;
+      return initialTask;
    }
    
    
    
    @Override
-   protected List< Task > getEditedTasks()
+   public Task getEditedTaskAssertNotNull()
    {
-      return Collections.singletonList( getTaskAssertNotNull() );
-   }
-   
-   
-   
-   private void initializeHeadSectionImpl( Task task )
-   {
-      final UiContext context = getUiContext();
-      final IDateFormatterService dateFormatter = context.getDateFormatter();
+      if ( editedTask == null )
+         throw new AssertionError( "expected task to be not null" );
       
-      addedDate.setText( dateFormatter.formatDateTime( task.getAddedMillisUtc(),
-                                                       FULL_DATE_FLAGS ) );
-      
-      if ( task.isComplete() )
-      {
-         completedDate.setText( dateFormatter.formatDateTime( task.getCompletedMillisUtc(),
-                                                              FULL_DATE_FLAGS ) );
-         completedDate.setVisibility( View.VISIBLE );
-      }
-      else
-      {
-         completedDate.setVisibility( View.GONE );
-      }
-      
-      if ( task.isPostponed() )
-      {
-         postponed.setText( getString( R.string.task_postponed,
-                                       task.getPostponedCount() ) );
-         postponed.setVisibility( View.VISIBLE );
-      }
-      else
-      {
-         postponed.setVisibility( View.GONE );
-      }
-      
-      if ( !TextUtils.isEmpty( task.getSource() ) )
-      {
-         source.setText( getString( R.string.task_source, task.getSource() ) );
-      }
-      else
-      {
-         source.setText( "?" );
-      }
+      return editedTask;
    }
 }

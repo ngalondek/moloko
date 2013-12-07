@@ -36,11 +36,11 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 class ChooseRtmPermissionFragment extends AuthFragment implements
@@ -157,12 +157,12 @@ class ChooseRtmPermissionFragment extends AuthFragment implements
       {
          case 0:
             permissionFeatures.setText( Html.fromHtml( getString( R.string.auth_perm_feature_read ) ) );
-            permission = RtmAuth.Perms.read.toString();
+            permission = RtmServicePermission.read.toString();
             break;
          
          case 1:
             permissionFeatures.setText( Html.fromHtml( getString( R.string.auth_perm_feature_read_write ) ) );
-            permission = RtmAuth.Perms.delete.toString();
+            permission = RtmServicePermission.delete.toString();
             break;
          
          default :
@@ -185,7 +185,7 @@ class ChooseRtmPermissionFragment extends AuthFragment implements
    {
       if ( listener != null )
       {
-         listener.onStartAuthentication( RtmAuth.Perms.valueOf( permission ) );
+         listener.onStartAuthentication( RtmServicePermission.valueOf( permission ) );
       }
    }
    

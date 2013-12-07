@@ -518,7 +518,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
          UiUtils.appendAtNewLine( textBuffer,
                                   getString( R.string.task_datetime_estimate_inline,
                                              getUiContext().getDateFormatter()
-                                                           .formatEstimated( estimation.getMillisUtc() ) ) );
+                                                           .formatEstimated( estimation.getMillis() ) ) );
       }
    }
    

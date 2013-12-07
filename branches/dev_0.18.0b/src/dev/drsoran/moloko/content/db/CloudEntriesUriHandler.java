@@ -33,8 +33,10 @@ import android.net.Uri;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.IContentUriHandler;
 import dev.drsoran.moloko.content.ListCursor;
 import dev.drsoran.moloko.domain.model.CloudEntryType;
 

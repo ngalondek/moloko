@@ -31,18 +31,17 @@ import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.app.services.AccountCredentials;
 import dev.drsoran.moloko.app.services.IAccountService;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 public class AccountService implements IAccountService
 {
    private final Context context;
    
-   private RtmAuth.Perms forcedAccessLevel;
+   private RtmServicePermission forcedAccessLevel;
    
    
    
@@ -123,9 +122,9 @@ public class AccountService implements IAccountService
    
    
    @Override
-   public Perms getAccessLevel( Account account )
+   public RtmServicePermission getAccessLevel( Account account )
    {
-      RtmAuth.Perms permission;
+      RtmServicePermission permission;
       
       if ( forcedAccessLevel != null )
       {
@@ -144,7 +143,7 @@ public class AccountService implements IAccountService
    @Override
    public boolean isReadOnlyAccess( Account account )
    {
-      final Perms level = getAccessLevel( account );
+      final RtmServicePermission level = getAccessLevel( account );
       return isReadOnlyAccess( level );
    }
    
@@ -159,7 +158,7 @@ public class AccountService implements IAccountService
    
    
    @Override
-   public void setForcedAccessLevel( Perms forcedAccessLevel )
+   public void setForcedAccessLevel( RtmServicePermission forcedAccessLevel )
    {
       this.forcedAccessLevel = forcedAccessLevel;
    }
@@ -194,9 +193,9 @@ public class AccountService implements IAccountService
    
    
    
-   private RtmAuth.Perms getAccessLevelFromAccount( Account account )
+   private RtmServicePermission getAccessLevelFromAccount( Account account )
    {
-      RtmAuth.Perms permission = Perms.nothing;
+      RtmServicePermission permission = RtmServicePermission.nothing;
       
       if ( account != null )
       {
@@ -205,7 +204,7 @@ public class AccountService implements IAccountService
                                                             Constants.FEAT_PERMISSION );
          if ( !TextUtils.isEmpty( permStr ) )
          {
-            permission = RtmAuth.Perms.valueOf( permStr );
+            permission = RtmServicePermission.valueOf( permStr );
          }
       }
       
@@ -214,8 +213,8 @@ public class AccountService implements IAccountService
    
    
    
-   private final static boolean isReadOnlyAccess( RtmAuth.Perms level )
+   private final static boolean isReadOnlyAccess( RtmServicePermission level )
    {
-      return level == Perms.nothing || level == Perms.read;
+      return level == RtmServicePermission.nothing || level == RtmServicePermission.read;
    }
 }

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.ContentValues;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.ModificationColumns;
@@ -41,16 +42,15 @@ import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.moloko.sync.model.SyncTime;
 
 
 public class DefaultContentValuesFactory implements IContentValuesFactory
@@ -75,7 +75,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
                                new ModificationContentValuesFactoryMethod() );
       factoryMethodLookUp.put( RtmSettings.class,
                                new RtmSettingsContentValuesFactoryMethod() );
-      factoryMethodLookUp.put( Sync.class, new SyncContentValuesFactoryMethod() );
+      factoryMethodLookUp.put( SyncTime.class, new SyncContentValuesFactoryMethod() );
    }
    
    
@@ -266,7 +266,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
          if ( estimation != null )
          {
             values.put( TaskColumns.ESTIMATE, estimation.getSentence() );
-            values.put( TaskColumns.ESTIMATE_MILLIS, estimation.getMillisUtc() );
+            values.put( TaskColumns.ESTIMATE_MILLIS, estimation.getMillis() );
          }
          else
          {
@@ -459,29 +459,29 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
    
    
    private final class SyncContentValuesFactoryMethod implements
-            IFactoryMethod< Sync >
+            IFactoryMethod< SyncTime >
    {
       @Override
-      public ContentValues create( Sync sync )
+      public ContentValues create( SyncTime sync )
       {
          final ContentValues values = new ContentValues();
          
          if ( sync.getLastSyncInMillis() != Constants.NO_TIME )
          {
-            values.put( SyncColumns.LAST_IN, sync.getLastSyncInMillis() );
+            values.put( TimesColumns.LAST_IN, sync.getLastSyncInMillis() );
          }
          else
          {
-            values.putNull( SyncColumns.LAST_IN );
+            values.putNull( TimesColumns.LAST_IN );
          }
          
          if ( sync.getLastSyncOutMillis() != Constants.NO_TIME )
          {
-            values.put( SyncColumns.LAST_OUT, sync.getLastSyncOutMillis() );
+            values.put( TimesColumns.LAST_OUT, sync.getLastSyncOutMillis() );
          }
          else
          {
-            values.putNull( SyncColumns.LAST_OUT );
+            values.putNull( TimesColumns.LAST_OUT );
          }
          
          return values;

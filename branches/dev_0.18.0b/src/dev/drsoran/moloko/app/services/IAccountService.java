@@ -28,7 +28,7 @@ import android.accounts.Account;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 
-import com.mdt.rtm.data.RtmAuth;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 public interface IAccountService
@@ -51,7 +51,7 @@ public interface IAccountService
    
    
    
-   RtmAuth.Perms getAccessLevel( Account account );
+   RtmServicePermission getAccessLevel( Account account );
    
    
    
@@ -63,7 +63,7 @@ public interface IAccountService
    
    
    
-   void setForcedAccessLevel( RtmAuth.Perms forcedAccessLevel );
+   void setForcedAccessLevel( RtmServicePermission forcedAccessLevel );
    
    
    

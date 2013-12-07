@@ -26,6 +26,7 @@ import java.util.Calendar;
 
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.rtm.model.RtmConstants;
 
 
 public final class TestConstants
@@ -53,6 +54,8 @@ public final class TestConstants
    public final static long NEVER = Constants.NO_TIME;
    
    public final static long NO_ID = Constants.NO_ID;
+   
+   public final static String RTM_NO_ID = RtmConstants.NO_ID;
    
    static
    {

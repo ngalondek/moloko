@@ -30,7 +30,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.res.XmlResourceParser;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.Strings;
 
 
 public class XmlLanguageReader

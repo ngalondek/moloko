@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import java.util.Calendar;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
@@ -32,12 +33,11 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator

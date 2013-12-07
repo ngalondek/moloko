@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.content;
 
+import dev.drsoran.rtm.model.RtmConstants;
+
+
 public final class Constants
 {
    private Constants()
@@ -31,5 +34,5 @@ public final class Constants
    
    public final static long NO_ID = -1L;
    
-   public final static long NO_TIME = -1L;
+   public final static long NO_TIME = RtmConstants.NO_TIME;
 }

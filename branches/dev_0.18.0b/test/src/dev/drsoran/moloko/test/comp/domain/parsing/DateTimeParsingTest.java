@@ -42,6 +42,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.DateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
@@ -62,7 +63,6 @@ import dev.drsoran.moloko.test.langs.TimeParserTestLanguageEn;
 import dev.drsoran.moloko.test.sources.DateParserTestDataSource;
 import dev.drsoran.moloko.test.sources.TimeParserTestDataSource;
 import dev.drsoran.moloko.test.sources.TimeParserTestDataSource.Config;
-import dev.drsoran.moloko.util.Strings;
 
 
 @RunWith( Theories.class )

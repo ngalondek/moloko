@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTable;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
@@ -33,7 +35,7 @@ class RtmNotesTable extends AbstractTable
    
    
    
-   public RtmNotesTable( RtmDatabase database )
+   public RtmNotesTable( SQLiteDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -72,7 +74,7 @@ class RtmNotesTable extends AbstractTable
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( " ) );" );
       
-      getDatabase().getWritable().execSQL( builder.toString() );
+      getDatabase().execSQL( builder.toString() );
    }
    
    
@@ -92,7 +94,7 @@ class RtmNotesTable extends AbstractTable
       builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( ");" );
       
-      getDatabase().getWritable().execSQL( builder.toString() );
+      getDatabase().execSQL( builder.toString() );
    }
    
    
@@ -108,7 +110,7 @@ class RtmNotesTable extends AbstractTable
       builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( ";" );
       
-      getDatabase().getWritable().execSQL( builder.toString() );
+      getDatabase().execSQL( builder.toString() );
    }
    
    

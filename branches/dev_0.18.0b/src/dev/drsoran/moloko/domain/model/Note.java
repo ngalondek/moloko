@@ -24,7 +24,7 @@ package dev.drsoran.moloko.domain.model;
 
 import java.io.Serializable;
 
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.Strings;
 
 
 public class Note extends LifeTimeManaged implements Serializable

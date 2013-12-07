@@ -22,210 +22,58 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import dev.drsoran.moloko.ILog;
+import dev.drsoran.db.AbstractDatabase;
+import dev.drsoran.db.AbstractTable;
+import dev.drsoran.db.AbstractTrigger;
+import dev.drsoran.moloko.sync.db.CreationsTable;
+import dev.drsoran.moloko.sync.db.DeleteModificationsTrigger;
+import dev.drsoran.moloko.sync.db.ModificationsTable;
+import dev.drsoran.moloko.sync.db.TimesTable;
 
 
-public class RtmDatabase
+public class RtmDatabase extends AbstractDatabase
 {
    public final static String DATABASE_NAME = "rtm.db";
    
    private final static int DATABASE_VERSION = 1;
    
-   private final ILog log;
-   
-   private final DatabaseOpenHelper dbAccess;
-   
-   private AbstractTable[] tables;
-   
-   private AbstractTrigger[] triggers;
    
    
-   
-   public RtmDatabase( Context context, ILog log )
+   public RtmDatabase( Context context )
    {
-      this( context, log, DATABASE_NAME );
+      super( context, DATABASE_NAME, DATABASE_VERSION );
    }
    
    
    
-   public RtmDatabase( Context context, ILog log, String databaseName )
+   @Override
+   protected AbstractTable[] createTables( SQLiteDatabase database )
    {
-      this.log = log;
-      this.dbAccess = new DatabaseOpenHelper( context,
-                                              databaseName,
-                                              RtmDatabase.DATABASE_VERSION );
+      return new AbstractTable[]
+      { new RtmTasksListsTable( database ), new CreationsTable( database ),
+       new ModificationsTable( database ), new RtmRawTasksTable( database ),
+       new RtmTaskSeriesTable( database ), new RtmNotesTable( database ),
+       new RtmContactsTable( database ), new RtmParticipantsTable( database ),
+       new RtmLocationsTable( database ), new RtmSettingsTable( database ),
+       new TimesTable( database ) };
    }
    
    
    
-   public SQLiteDatabase getWritable()
+   @Override
+   protected AbstractTrigger[] createTriggers( SQLiteDatabase database )
    {
-      return dbAccess.getWritableDatabase();
-   }
-   
-   
-   
-   public SQLiteDatabase getReadable()
-   {
-      return dbAccess.getReadableDatabase();
-   }
-   
-   
-   
-   public void clearAllTables()
-   {
-      for ( ITable table : getTables() )
+      return new AbstractTrigger[]
       {
-         table.clear();
-      }
-   }
-   
-   
-   
-   public void clearTable( String tableName ) throws NoSuchElementException
-   {
-      final ITable table = getTable( tableName );
-      if ( table == null )
-      {
-         throw new NoSuchElementException( MessageFormat.format( "No table with name ''{0}'' in database ''{1}''",
-                                                                 tableName,
-                                                                 DATABASE_NAME ) );
-      }
-      
-      table.clear();
-   }
-   
-   
-   
-   public void close()
-   {
-      dbAccess.close();
-   }
-   
-   
-   
-   public ILog Log()
-   {
-      return log;
-   }
-   
-   
-   
-   public List< ? extends ITable > getAllTables()
-   {
-      return Arrays.asList( getTables() );
-   }
-   
-   
-   
-   public ITable getTable( String tableName )
-   {
-      for ( ITable table : getTables() )
-      {
-         if ( table.getTableName().equals( tableName ) )
-         {
-            return table;
-         }
-      }
-      
-      return null;
-   }
-   
-   
-   
-   private AbstractTable[] getTables()
-   {
-      if ( tables == null )
-      {
-         tables = new AbstractTable[]
-         { new RtmTasksListsTable( this ), new CreationsTable( this ),
-          new ModificationsTable( this ), new RtmRawTasksTable( this ),
-          new RtmTaskSeriesTable( this ), new RtmNotesTable( this ),
-          new RtmContactsTable( this ), new RtmParticipantsTable( this ),
-          new RtmLocationsTable( this ), new RtmSettingsTable( this ),
-          new SyncTable( this ) };
-      }
-      
-      return tables;
-   }
-   
-   
-   
-   private AbstractTrigger[] getTriggers()
-   {
-      if ( triggers == null )
-      {
-         triggers = new AbstractTrigger[]
-         {
-          new DefaultListSettingConsistencyTrigger( this ),
-          new DeleteRawTaskTrigger( this ),
-          new DeleteTaskSeriesTrigger( this ),
-          new DeleteContactTrigger( this ),
-          new DeleteModificationsTrigger( this, RtmTasksListsTable.TABLE_NAME ),
-          new DeleteModificationsTrigger( this, RtmRawTasksTable.TABLE_NAME ),
-          new DeleteModificationsTrigger( this, RtmTaskSeriesTable.TABLE_NAME ),
-          new DeleteModificationsTrigger( this, RtmNotesTable.TABLE_NAME ) };
-      }
-      
-      return triggers;
-   }
-   
-   
-   private class DatabaseOpenHelper extends SQLiteOpenHelper
-   {
-      public DatabaseOpenHelper( Context context, String databaseName,
-         int version )
-      {
-         super( context, databaseName, null, version );
-      }
-      
-      
-      
-      @Override
-      public void onCreate( SQLiteDatabase db )
-      {
-         createTables();
-         createTriggers();
-      }
-      
-      
-      
-      @Override
-      public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
-      {
-         for ( AbstractTable table : getTables() )
-         {
-            table.upgrade( oldVersion, newVersion );
-         }
-      }
-      
-      
-      
-      private void createTables()
-      {
-         for ( AbstractTable table : getTables() )
-         {
-            table.create();
-            table.createIndices();
-         }
-      }
-      
-      
-      
-      private void createTriggers()
-      {
-         for ( AbstractTrigger trigger : getTriggers() )
-         {
-            trigger.create();
-         }
-      }
+       new DefaultListSettingConsistencyTrigger( database ),
+       new DeleteRawTaskTrigger( database ),
+       new DeleteTaskSeriesTrigger( database ),
+       new DeleteContactTrigger( database ),
+       new DeleteModificationsTrigger( database, RtmTasksListsTable.TABLE_NAME ),
+       new DeleteModificationsTrigger( database, RtmRawTasksTable.TABLE_NAME ),
+       new DeleteModificationsTrigger( database, RtmTaskSeriesTable.TABLE_NAME ),
+       new DeleteModificationsTrigger( database, RtmNotesTable.TABLE_NAME ) };
    }
 }

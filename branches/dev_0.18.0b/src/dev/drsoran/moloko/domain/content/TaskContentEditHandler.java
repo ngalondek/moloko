@@ -34,8 +34,8 @@ import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.ContentCompare;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Due;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
@@ -212,7 +212,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       {
          existingTaskEstimation = existingTask.getEstimation().getSentence();
          existingTaskEstimationMillis = existingTask.getEstimation()
-                                                    .getMillisUtc();
+                                                    .getMillis();
       }
       
       String updateTaskEstimation = null;
@@ -221,7 +221,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       {
          updateTaskEstimation = updatedTask.getEstimation().getSentence();
          updateTaskEstimationMillis = updatedTask.getEstimation()
-                                                 .getMillisUtc();
+                                                 .getMillis();
       }
       
       Modification.addIfDifferent( modifications,

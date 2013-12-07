@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTable;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
@@ -35,7 +37,7 @@ class RtmParticipantsTable extends AbstractTable
    
    
    
-   public RtmParticipantsTable( RtmDatabase database )
+   public RtmParticipantsTable( SQLiteDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -76,7 +78,7 @@ class RtmParticipantsTable extends AbstractTable
       builder.append( "\") " );
       builder.append( " );" );
       
-      getDatabase().getWritable().execSQL( builder.toString() );
+      getDatabase().execSQL( builder.toString() );
    }
    
    

@@ -39,7 +39,6 @@ import android.text.format.DateUtils;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
@@ -47,6 +46,7 @@ import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class RtmSmartAddSuggestor

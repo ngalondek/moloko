@@ -27,14 +27,14 @@ package dev.drsoran.moloko.domain.model;
 
 import java.io.Serializable;
 
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.Strings;
 
 
 public class Recurrence implements Serializable
 {
    private static final long serialVersionUID = -2693479322154192406L;
    
-   public static Recurrence EMPTY = new Recurrence( Strings.EMPTY_STRING, false );
+   public static Recurrence EMPTY = new Recurrence( null, false );
    
    private final String pattern;
    
@@ -44,11 +44,6 @@ public class Recurrence implements Serializable
    
    public Recurrence( String pattern, boolean isEveryRecurrence )
    {
-      if ( Strings.isNullOrEmpty( pattern ) )
-      {
-         throw new IllegalArgumentException( "pattern" );
-      }
-      
       this.pattern = pattern;
       this.isEveryRecurrence = isEveryRecurrence;
    }

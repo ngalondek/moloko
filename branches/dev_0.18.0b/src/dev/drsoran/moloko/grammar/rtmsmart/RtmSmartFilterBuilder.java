@@ -59,9 +59,9 @@ import static dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax.OP_TIME_E
 import static dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax.OR;
 import static dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax.R_PARENTH;
 import static dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax.TRUE;
-import dev.drsoran.moloko.domain.model.Priority;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.model.Priority;
 
 
 public final class RtmSmartFilterBuilder

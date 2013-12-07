@@ -25,9 +25,9 @@ package dev.drsoran.moloko.ui.services;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.format.DateFormat;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TimeStruct;
 
 

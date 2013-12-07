@@ -2,6 +2,8 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
+import dev.drsoran.Strings;
+
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;

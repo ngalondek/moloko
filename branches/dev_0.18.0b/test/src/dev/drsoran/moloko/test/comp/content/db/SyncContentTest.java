@@ -132,7 +132,7 @@ public class SyncContentTest extends MolokoReadWriteDbContentTestCase
    @Override
    protected String[] getProjection()
    {
-      return SyncColumns.PROJECTION;
+      return TimesColumns.PROJECTION;
    }
    
    

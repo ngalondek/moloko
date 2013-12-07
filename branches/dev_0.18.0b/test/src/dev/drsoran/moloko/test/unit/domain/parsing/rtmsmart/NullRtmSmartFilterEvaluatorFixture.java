@@ -28,10 +28,10 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.NullRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class NullRtmSmartFilterEvaluatorFixture extends MolokoTestCase

@@ -26,6 +26,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.IntentFilter;
 import android.os.Handler;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.IHandlerTokenFactory;
 import dev.drsoran.moloko.ILog;
@@ -34,7 +35,6 @@ import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.Reflection;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class AppEventService implements IAppEventService

@@ -28,10 +28,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
 import dev.drsoran.moloko.test.langs.IDateParserTestLanguage;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class DateParserTestDataSource

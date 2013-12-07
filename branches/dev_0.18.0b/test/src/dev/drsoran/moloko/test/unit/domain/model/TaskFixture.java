@@ -28,7 +28,8 @@ import static dev.drsoran.moloko.test.TestConstants.LATER;
 import static dev.drsoran.moloko.test.TestConstants.NEVER;
 import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static dev.drsoran.moloko.test.TestConstants.NO_ID;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -44,10 +45,10 @@ import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class TaskFixture extends MolokoTestCase
@@ -414,7 +415,7 @@ public class TaskFixture extends MolokoTestCase
       
       final Estimation estimation = task.getEstimation();
       assertThat( estimation.getSentence(), is( "sentence" ) );
-      assertThat( estimation.getMillisUtc(), is( NOW ) );
+      assertThat( estimation.getMillis(), is( NOW ) );
       
       task.setEstimation( null );
       assertNull( task.getEstimation() );

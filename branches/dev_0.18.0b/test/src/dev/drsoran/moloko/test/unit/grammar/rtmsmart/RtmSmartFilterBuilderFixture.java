@@ -28,10 +28,10 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class RtmSmartFilterBuilderFixture extends MolokoTestCase

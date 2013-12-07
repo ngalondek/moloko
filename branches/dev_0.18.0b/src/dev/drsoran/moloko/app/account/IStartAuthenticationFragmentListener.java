@@ -22,10 +22,10 @@
 
 package dev.drsoran.moloko.app.account;
 
-import com.mdt.rtm.data.RtmAuth;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 interface IStartAuthenticationFragmentListener
 {
-   void onStartAuthentication( RtmAuth.Perms permission );
+   void onStartAuthentication( RtmServicePermission permission );
 }

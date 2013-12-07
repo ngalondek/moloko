@@ -35,8 +35,6 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IHandlerToken;
@@ -55,6 +53,7 @@ import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.actionmodes.ActionModeWrapper;
 import dev.drsoran.moloko.ui.fragments.listeners.IAlertDialogFragmentListener;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
@@ -544,7 +543,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    public void onAccountUpdated( int what, Account account )
    {
       final IAccountService accountService = appContext.getAccountService();
-      final Perms accessLevel = accountService.getAccessLevel( accountService.getRtmAccount() );
+      final RtmServicePermission accessLevel = accountService.getAccessLevel( accountService.getRtmAccount() );
       
       onReEvaluateRtmAccessLevel( accessLevel );
    }
@@ -767,7 +766,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    
    
-   private void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   private void onReEvaluateRtmAccessLevel( RtmServicePermission currentAccessLevel )
    {
       invalidateOptionsMenu();
    }

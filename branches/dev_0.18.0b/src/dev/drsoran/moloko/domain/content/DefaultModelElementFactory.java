@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.Cursor;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
@@ -50,17 +51,16 @@ import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.moloko.sync.model.SyncTime;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class DefaultModelElementFactory implements IModelElementFactory
@@ -86,7 +86,7 @@ public class DefaultModelElementFactory implements IModelElementFactory
                                new RtmSettingsFactoryMethod() );
       factoryMethodLookUp.put( Modification.class,
                                new ModificationFactoryMethod() );
-      factoryMethodLookUp.put( Sync.class, new SyncFactoryMethod() );
+      factoryMethodLookUp.put( SyncTime.class, new SyncFactoryMethod() );
    }
    
    
@@ -345,16 +345,16 @@ public class DefaultModelElementFactory implements IModelElementFactory
    }
    
    
-   private final class SyncFactoryMethod implements IFactoryMethod< Sync >
+   private final class SyncFactoryMethod implements IFactoryMethod< SyncTime >
    {
       @Override
-      public Sync create( Cursor c )
+      public SyncTime create( Cursor c )
       {
-         return new Sync( CursorUtils.getOptLong( c,
-                                                  SyncColumns.LAST_IN_IDX,
+         return new SyncTime( CursorUtils.getOptLong( c,
+                                                  TimesColumns.LAST_IN_IDX,
                                                   Constants.NO_TIME ),
                           CursorUtils.getOptLong( c,
-                                                  SyncColumns.LAST_OUT_IDX,
+                                                  TimesColumns.LAST_OUT_IDX,
                                                   Constants.NO_TIME ) );
       }
    }

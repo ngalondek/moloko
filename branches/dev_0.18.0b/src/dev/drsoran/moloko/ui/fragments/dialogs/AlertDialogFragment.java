@@ -29,11 +29,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoDialogFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.IAlertDialogFragmentListener;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class AlertDialogFragment extends MolokoDialogFragment

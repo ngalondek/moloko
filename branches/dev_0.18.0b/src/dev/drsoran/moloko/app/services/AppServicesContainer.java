@@ -25,7 +25,6 @@ package dev.drsoran.moloko.app.services;
 import android.content.Context;
 import android.os.Handler;
 
-import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.IHandlerTokenFactory;
 import dev.drsoran.moloko.ILog;
@@ -34,6 +33,7 @@ import dev.drsoran.moloko.app.account.AccountService;
 import dev.drsoran.moloko.app.event.AppEventService;
 import dev.drsoran.moloko.app.settings.Settings;
 import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 public class AppServicesContainer implements IAppServices
@@ -131,7 +131,7 @@ public class AppServicesContainer implements IAppServices
       if ( context.getResources()
                   .getBoolean( R.bool.env_force_readable_rtm_access ) )
       {
-         accountService.setForcedAccessLevel( Perms.read );
+         accountService.setForcedAccessLevel( RtmServicePermission.read );
       }
    }
 }

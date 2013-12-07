@@ -25,6 +25,7 @@ package dev.drsoran.moloko.domain.parsing.rtmsmart;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterBaseVisitor;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.AddedAfterContext;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.AddedBeforeContext;
@@ -60,7 +61,6 @@ import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.TagContain
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.TagContext;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterParser.TimeEstimateContext;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RtmSmartFilterVisitorAdapter extends

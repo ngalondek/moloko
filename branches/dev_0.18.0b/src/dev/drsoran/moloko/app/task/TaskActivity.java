@@ -38,6 +38,7 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
@@ -47,7 +48,6 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.adapters.ActionBarViewPagerTabsAdapter;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class TaskActivity extends MolokoEditFragmentActivity implements

@@ -33,12 +33,12 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.ui.widgets.MolokoListView.IMolokoMultiChoiceModeListener;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class BaseMultiChoiceModeListener< T > implements

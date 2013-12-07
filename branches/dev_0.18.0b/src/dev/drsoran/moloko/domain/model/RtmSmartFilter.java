@@ -24,8 +24,8 @@ package dev.drsoran.moloko.domain.model;
 
 import java.io.Serializable;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RtmSmartFilter implements Serializable

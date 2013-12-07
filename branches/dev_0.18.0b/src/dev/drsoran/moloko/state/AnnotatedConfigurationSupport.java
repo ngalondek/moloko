@@ -29,9 +29,9 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.util.Pair;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.util.Bundles;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class AnnotatedConfigurationSupport

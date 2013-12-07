@@ -32,8 +32,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Participant;
+import dev.drsoran.moloko.sync.model.Modification;
 
 
 public class TaskParticipantEditHandlerTestDataSource extends

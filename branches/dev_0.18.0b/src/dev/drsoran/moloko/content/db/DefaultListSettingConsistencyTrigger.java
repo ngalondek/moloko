@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTrigger;
 import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
@@ -33,7 +35,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 class DefaultListSettingConsistencyTrigger extends AbstractTrigger
 {
    
-   public DefaultListSettingConsistencyTrigger( RtmDatabase database )
+   public DefaultListSettingConsistencyTrigger( SQLiteDatabase database )
    {
       super( database, RtmSettingsTable.TABLE_NAME + "_default_list" );
    }
@@ -59,6 +61,6 @@ class DefaultListSettingConsistencyTrigger extends AbstractTrigger
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( "; END;" );
       
-      getDatabase().getWritable().execSQL( builder.toString() );
+      getDatabase().execSQL( builder.toString() );
    }
 }

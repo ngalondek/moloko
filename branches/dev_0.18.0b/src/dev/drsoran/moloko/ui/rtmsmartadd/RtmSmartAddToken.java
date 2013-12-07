@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.ui.rtmsmartadd;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RtmSmartAddToken

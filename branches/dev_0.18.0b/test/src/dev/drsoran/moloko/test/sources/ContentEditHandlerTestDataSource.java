@@ -25,7 +25,7 @@ package dev.drsoran.moloko.test.sources;
 import java.util.Collection;
 import java.util.Collections;
 
-import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.sync.model.Modification;
 
 
 abstract public class ContentEditHandlerTestDataSource< T >

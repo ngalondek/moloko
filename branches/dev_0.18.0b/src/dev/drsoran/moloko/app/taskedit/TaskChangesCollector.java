@@ -26,14 +26,14 @@ import java.util.List;
 
 import android.text.TextUtils;
 
-import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.Strings;
+import dev.drsoran.db.DbUtils;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
-import dev.drsoran.moloko.content.db.DbUtils;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.model.old.RtmTask;
 
 
 class TaskChangesCollector

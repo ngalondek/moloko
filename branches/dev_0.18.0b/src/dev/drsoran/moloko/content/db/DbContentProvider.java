@@ -22,29 +22,21 @@
 
 package dev.drsoran.moloko.content.db;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import android.content.ContentProvider;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.SystemContext;
-import dev.drsoran.moloko.content.ContentMimeTypes;
+import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.IContentUriHandler;
+import dev.drsoran.moloko.content.MolokoContentProvider;
+import dev.drsoran.moloko.content.ReadOnlyContentUriHandler;
 import dev.drsoran.moloko.content.UriLookup;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.sync.db.ModificationsTable;
+import dev.drsoran.moloko.sync.db.TimesTable;
 
 
-public class DbContentProvider extends ContentProvider
+public class DbContentProvider extends MolokoContentProvider
 {
-   private ILog log;
-   
-   private UriLookup< IContentUriHandler > contentUriToHandlerLookup;
-   
    private RtmDatabase database;
    
    
@@ -55,10 +47,9 @@ public class DbContentProvider extends ContentProvider
    
    
    
-   public DbContentProvider( RtmDatabase database, ILog log )
+   public DbContentProvider( RtmDatabase database )
    {
       this.database = database;
-      this.log = log;
    }
    
    
@@ -66,20 +57,13 @@ public class DbContentProvider extends ContentProvider
    @Override
    public boolean onCreate()
    {
-      final Context context = getContext();
-      
-      if ( log == null )
+      boolean ok = super.onCreate();
+      if ( ok && database == null )
       {
-         log = SystemContext.get( context ).Log();
+         database = new RtmDatabase( getContext() );
       }
       
-      if ( database == null )
-      {
-         database = new RtmDatabase( context, log );
-      }
-      
-      contentUriToHandlerLookup = createContentUriToHandlerLookup();
-      return true;
+      return ok;
    }
    
    
@@ -115,180 +99,7 @@ public class DbContentProvider extends ContentProvider
    
    
    @Override
-   public Cursor query( Uri uri,
-                        String[] projection,
-                        String selection,
-                        String[] selectionArgs,
-                        String sortOrder )
-   {
-      if ( uri == null )
-      {
-         throw new IllegalArgumentException( "uri" );
-      }
-      
-      if ( projection == null )
-      {
-         throw new IllegalArgumentException( "projection" );
-      }
-      
-      final IContentUriHandler handlerToQuery;
-      try
-      {
-         handlerToQuery = contentUriToHandlerLookup.get( uri );
-         return handlerToQuery.query( uri,
-                                      projection,
-                                      selection,
-                                      selectionArgs,
-                                      sortOrder );
-      }
-      catch ( NoSuchElementException e )
-      {
-         logOperationFailed( "Query", e );
-         return null;
-      }
-   }
-   
-   
-   
-   @Override
-   public Uri insert( Uri uri, ContentValues values )
-   {
-      if ( uri == null )
-      {
-         throw new IllegalArgumentException( "uri" );
-      }
-      
-      if ( values == null )
-      {
-         throw new IllegalArgumentException( "values" );
-      }
-      
-      long insertedElementId;
-      final IContentUriHandler handlerToInsertInto;
-      try
-      {
-         handlerToInsertInto = contentUriToHandlerLookup.get( uri );
-         insertedElementId = handlerToInsertInto.insert( uri, values );
-         
-         getContext().getContentResolver().notifyChange( uri, null );
-         
-         return android.content.ContentUris.withAppendedId( uri,
-                                                            insertedElementId );
-      }
-      catch ( NoSuchElementException e )
-      {
-         logOperationFailed( "Insert", e );
-         return null;
-      }
-   }
-   
-   
-   
-   @Override
-   public int delete( Uri uri, String selection, String[] selectionArgs )
-   {
-      if ( uri == null )
-      {
-         throw new IllegalArgumentException( "uri" );
-      }
-      
-      int numDeleted;
-      final IContentUriHandler handlerToDeleteFrom;
-      try
-      {
-         handlerToDeleteFrom = contentUriToHandlerLookup.get( uri );
-         numDeleted = handlerToDeleteFrom.delete( uri, selection, selectionArgs );
-      }
-      catch ( NoSuchElementException e )
-      {
-         logOperationFailed( "Delete", e );
-         numDeleted = 0;
-      }
-      
-      if ( numDeleted > 0 )
-      {
-         getContext().getContentResolver().notifyChange( uri, null );
-      }
-      
-      return numDeleted;
-   }
-   
-   
-   
-   @Override
-   public int update( Uri uri,
-                      ContentValues values,
-                      String selection,
-                      String[] selectionArgs )
-   {
-      if ( uri == null )
-      {
-         throw new IllegalArgumentException( "uri" );
-      }
-      
-      if ( values == null )
-      {
-         throw new IllegalArgumentException( "values" );
-      }
-      
-      if ( !Strings.isNullOrEmpty( selection ) )
-      {
-         throw new IllegalArgumentException( "An update with a 'where clause' is not supported" );
-      }
-      
-      int numUpdated;
-      final IContentUriHandler handlerToUpdate;
-      try
-      {
-         handlerToUpdate = contentUriToHandlerLookup.get( uri );
-         numUpdated = handlerToUpdate.update( uri,
-                                              values,
-                                              selection,
-                                              selectionArgs );
-      }
-      catch ( NoSuchElementException e )
-      {
-         logOperationFailed( "Update", e );
-         numUpdated = 0;
-      }
-      
-      if ( numUpdated > 0 )
-      {
-         getContext().getContentResolver().notifyChange( uri, null );
-      }
-      
-      return numUpdated;
-   }
-   
-   
-   
-   @Override
-   public String getType( Uri uri )
-   {
-      if ( uri == null )
-      {
-         throw new IllegalArgumentException( "uri" );
-      }
-      
-      String mimeType;
-      
-      try
-      {
-         mimeType = ContentMimeTypes.CONTENT_URI_MIME_TYPE_LOOKUP.get( uri );
-      }
-      catch ( NoSuchElementException e )
-      {
-         // If no MIME type could be determined for the URI, the ContentProvider
-         // interface contract requires us to return null.
-         mimeType = null;
-      }
-      
-      return mimeType;
-   }
-   
-   
-   
-   private UriLookup< IContentUriHandler > createContentUriToHandlerLookup()
+   protected UriLookup< IContentUriHandler > createContentUriToHandlerLookup()
    {
       final UriLookup< IContentUriHandler > handlerLookup = new UriLookup< IContentUriHandler >( ContentUris.MATCHER );
       
@@ -341,19 +152,10 @@ public class DbContentProvider extends ContentProvider
       handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS );
       handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( database.getTable( SyncTable.TABLE_NAME ) );
+      handler = new ContentUriHandlerTableAdapter( database.getTable( TimesTable.TABLE_NAME ) );
       handlerLookup.put( handler, ContentUris.MATCH_SYNC );
       handlerLookup.put( handler, ContentUris.MATCH_SYNC_ID );
       
       return handlerLookup;
-   }
-   
-   
-   
-   private void logOperationFailed( String operation, Exception e )
-   {
-      log.e( DbContentProvider.class,
-             MessageFormat.format( "Operation ''{0}'' failed.", operation ),
-             e );
    }
 }

@@ -30,8 +30,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class BaseFragmentPagerAdapter extends FragmentPagerAdapter

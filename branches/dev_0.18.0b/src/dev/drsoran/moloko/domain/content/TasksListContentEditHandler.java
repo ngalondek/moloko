@@ -29,8 +29,8 @@ import java.util.Collections;
 import android.content.ContentResolver;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.model.Modification;
 
 
 public class TasksListContentEditHandler extends

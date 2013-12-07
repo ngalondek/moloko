@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTrigger;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
@@ -33,7 +34,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
  */
 class DeleteRawTaskTrigger extends AbstractTrigger
 {
-   public DeleteRawTaskTrigger( RtmDatabase database )
+   public DeleteRawTaskTrigger( SQLiteDatabase database )
    {
       super( database, RtmRawTasksTable.TABLE_NAME + "_delete_rawtask" );
    }
@@ -43,7 +44,7 @@ class DeleteRawTaskTrigger extends AbstractTrigger
    @Override
    public void create() throws SQLException
    {
-      final SQLiteDatabase db = getDatabase().getWritable();
+      final SQLiteDatabase db = getDatabase();
       final String rawTasks = RtmRawTasksTable.TABLE_NAME;
       final String taskSeries = RtmTaskSeriesTable.TABLE_NAME;
       

@@ -35,16 +35,16 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
 
-import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.model.old.RtmTask;
+import dev.drsoran.rtm.model.old.RtmTask.Priority;
 
 
 class TaskAddFragment extends AbstractTaskEditFragment

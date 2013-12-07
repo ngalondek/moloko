@@ -26,18 +26,18 @@ import java.lang.ref.WeakReference;
 
 import android.os.AsyncTask;
 
-import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.IExecutorService;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.rtm.RtmClientInfo;
+import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 class AsyncRtmAuthenticator
@@ -104,7 +104,7 @@ class AsyncRtmAuthenticator
    
    
    public void beginAuthentication( IAuthSequenceListener authSequenceListener,
-                                    Perms permission )
+                                    RtmServicePermission permission )
    {
       if ( runningTask != null && !( runningTask instanceof BeginAuthTask ) )
       {
@@ -154,9 +154,9 @@ class AsyncRtmAuthenticator
    
    public static String getExceptionCause( final Exception e )
    {
-      if ( e instanceof ServiceException )
+      if ( e instanceof RtmServiceException )
       {
-         return ( (ServiceException) e ).getResponseMessage();
+         return ( (RtmServiceException) e ).getResponseMessage();
       }
       else
       {
@@ -168,7 +168,7 @@ class AsyncRtmAuthenticator
    
    private Service createService( AuthenticatorActivity activity ) throws ServiceInternalException
    {
-      final ApplicationInfo applicationInfo = new ApplicationInfo( MolokoApp.getRtmApiKey( activity ),
+      final RtmClientInfo applicationInfo = new RtmClientInfo( MolokoApp.getRtmApiKey( activity ),
                                                                    MolokoApp.getRtmSharedSecret( activity ),
                                                                    activity.getString( R.string.app_name ),
                                                                    null );
@@ -176,7 +176,7 @@ class AsyncRtmAuthenticator
       final AppContext appContext = AppContext.get( activity );
       
       return ServiceImpl.getInstance( appContext.getConnectionService()
-                                                .getRtmConnectionFactory(),
+                                                .getConnectionFactory(),
                                       appContext.Log(),
                                       appContext.getSettings().isUsingHttps(),
                                       applicationInfo );
@@ -206,7 +206,7 @@ class AsyncRtmAuthenticator
       
       protected WeakReference< IAuthSequenceListener > authSequenceRef;
       
-      protected volatile ServiceException exception;
+      protected volatile RtmServiceException exception;
       
       
       
@@ -323,7 +323,7 @@ class AsyncRtmAuthenticator
    }
    
    
-   private final class BeginAuthTask extends RtmAsyncAuthTask< Perms, String >
+   private final class BeginAuthTask extends RtmAsyncAuthTask< RtmServicePermission, String >
    {
       public BeginAuthTask( Service service )
       {
@@ -341,7 +341,7 @@ class AsyncRtmAuthenticator
       
       
       @Override
-      protected String doInBackground( Perms... params )
+      protected String doInBackground( RtmServicePermission... params )
       {
          String result = null;
          
@@ -351,7 +351,7 @@ class AsyncRtmAuthenticator
             {
                result = service.beginAuthorization( params[ 0 ] );
             }
-            catch ( ServiceException e )
+            catch ( RtmServiceException e )
             {
                exception = e;
             }
@@ -389,7 +389,7 @@ class AsyncRtmAuthenticator
          {
             result = service.completeAuthorization();
          }
-         catch ( ServiceException e )
+         catch ( RtmServiceException e )
          {
             exception = e;
          }
@@ -429,7 +429,7 @@ class AsyncRtmAuthenticator
             {
                result = service.auth_checkToken( params[ 0 ] );
             }
-            catch ( ServiceException e )
+            catch ( RtmServiceException e )
             {
                exception = e;
             }

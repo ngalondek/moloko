@@ -24,34 +24,33 @@ package dev.drsoran.moloko.domain.model;
 
 import java.io.Serializable;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class Estimation implements Serializable
 {
+   public static final Estimation EMPTY = new Estimation( null,
+                                                          Constants.NO_TIME );
+   
    private static final long serialVersionUID = 9108803485851940464L;
    
    private final String sentence;
    
-   private final long estimateMillisUtc;
+   private final long estimateMillis;
    
    
    
-   public Estimation( String sentence, long estimateMillisUtc )
+   public Estimation( String sentence, long estimateMillis )
    {
-      if ( Strings.isNullOrEmpty( sentence ) )
+      if ( Strings.isNullOrEmpty( sentence )
+         && estimateMillis != Constants.NO_TIME )
       {
-         throw new IllegalArgumentException( "sentence" );
-      }
-      
-      if ( estimateMillisUtc == Constants.NO_TIME )
-      {
-         throw new IllegalArgumentException( "estimateMillisUtc" );
+         throw new IllegalArgumentException();
       }
       
       this.sentence = sentence;
-      this.estimateMillisUtc = estimateMillisUtc;
+      this.estimateMillis = estimateMillis;
    }
    
    
@@ -63,9 +62,9 @@ public class Estimation implements Serializable
    
    
    
-   public long getMillisUtc()
+   public long getMillis()
    {
-      return estimateMillisUtc;
+      return estimateMillis;
    }
    
    
@@ -89,7 +88,7 @@ public class Estimation implements Serializable
       final Estimation other = (Estimation) o;
       
       return sentence.equals( other.sentence )
-         && estimateMillisUtc == other.estimateMillisUtc;
+         && estimateMillis == other.estimateMillis;
    }
    
    
@@ -100,7 +99,7 @@ public class Estimation implements Serializable
       int result = 17;
       
       result = 31 * result + sentence.hashCode();
-      result = 31 * result + (int) estimateMillisUtc;
+      result = 31 * result + (int) estimateMillis;
       
       return result;
    }
@@ -110,8 +109,8 @@ public class Estimation implements Serializable
    @Override
    public String toString()
    {
-      return String.format( "Estimation [sentence=%s, estimateMillisUtc=%s]",
+      return String.format( "Estimation [sentence=%s, millis=%s]",
                             sentence,
-                            estimateMillisUtc );
+                            estimateMillis );
    }
 }

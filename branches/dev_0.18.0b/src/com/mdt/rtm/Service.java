@@ -22,19 +22,21 @@ package com.mdt.rtm;
 import java.util.Date;
 import java.util.List;
 
-import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmFrob;
-import com.mdt.rtm.data.RtmList;
-import com.mdt.rtm.data.RtmLists;
-import com.mdt.rtm.data.RtmLocation;
-import com.mdt.rtm.data.RtmTask.Priority;
-import com.mdt.rtm.data.RtmTaskList;
-import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmTaskSeries;
-import com.mdt.rtm.data.RtmTasks;
-import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.model.old.RtmList;
+import dev.drsoran.rtm.model.old.RtmLists;
+import dev.drsoran.rtm.model.old.RtmLocation;
+import dev.drsoran.rtm.model.old.RtmTaskList;
+import dev.drsoran.rtm.model.old.RtmTaskNote;
+import dev.drsoran.rtm.model.old.RtmTaskSeries;
+import dev.drsoran.rtm.model.old.RtmTasks;
+import dev.drsoran.rtm.model.old.RtmTimeline;
+import dev.drsoran.rtm.model.old.RtmTask.Priority;
+import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmFrob;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 /**
@@ -56,10 +58,10 @@ public interface Service
     * whether or not that user has authorized the service wrapper to communicate with RTM.
     * 
     * @return true if the service API has permission to interact with full permissions (including delete) with RTM
-    * @throws ServiceException
+    * @throws RtmServiceException
     *            if there is a problem checking for authorization
     */
-   boolean isServiceAuthorized() throws ServiceException;
+   boolean isServiceAuthorized() throws RtmServiceException;
    
    
    
@@ -68,20 +70,20 @@ public interface Service
     * particular user.
     * 
     * @return the URL that the user should be prompted to log in to to complete authorization
-    * @throws ServiceException
+    * @throws RtmServiceException
     *            if the authorization process cannot be started
     */
-   String beginAuthorization( RtmAuth.Perms permissions ) throws ServiceException;
+   String beginAuthorization( RtmServicePermission permissions ) throws RtmServiceException;
    
    
    
    /**
-    * The same method as the previous {@link #beginAuthorization(com.mdt.rtm.data.RtmAuth.Perms)}, except that you need
+    * The same method as the previous {@link #beginAuthorization(dev.drsoran.rtm.model.RtmAuth.RtmServicePermission)}, except that you need
     * to invoke yourself the {@link #auth_getFrob()} beforehand.
     * 
     * This has been introduced, in order to provide better control over the API.
     */
-   String beginAuthorization( RtmFrob frob, RtmAuth.Perms permissions ) throws ServiceException;
+   String beginAuthorization( RtmFrob frob, RtmServicePermission permissions ) throws RtmServiceException;
    
    
    
@@ -94,10 +96,10 @@ public interface Service
     * this process would need to be started again.
     * 
     * @return the newly created authentication token
-    * @throws ServiceException
+    * @throws RtmServiceException
     *            if the authorization process cannot be completed
     */
-   String completeAuthorization() throws ServiceException;
+   String completeAuthorization() throws RtmServiceException;
    
    
    
@@ -105,53 +107,53 @@ public interface Service
     * Same as the previous {@link #completeAuthorization()} method, except that the frob taken is implicitly given. Very
     * useful when you need to handle multiple authentication tokens.
     */
-   String completeAuthorization( RtmFrob frob ) throws ServiceException;
+   String completeAuthorization( RtmFrob frob ) throws RtmServiceException;
    
    
    
-   RtmAuth auth_checkToken( String authToken ) throws ServiceException;
+   RtmAuth auth_checkToken( String authToken ) throws RtmServiceException;
    
    
    
-   RtmFrob auth_getFrob() throws ServiceException;
+   RtmFrob auth_getFrob() throws RtmServiceException;
    
    
    
-   String auth_getToken( String frob ) throws ServiceException;
+   String auth_getToken( String frob ) throws RtmServiceException;
    
    
    
    // ////// CONTACTS /////////////////////////////
    
-   void contacts_add() throws ServiceException;
+   void contacts_add() throws RtmServiceException;
    
    
    
-   void contacts_delete() throws ServiceException;
+   void contacts_delete() throws RtmServiceException;
    
    
    
-   RtmContacts contacts_getList() throws ServiceException;
+   RtmContacts contacts_getList() throws RtmServiceException;
    
    
    
-   void groups_add() throws ServiceException;
+   void groups_add() throws RtmServiceException;
    
    
    
-   void groups_addContact() throws ServiceException;
+   void groups_addContact() throws RtmServiceException;
    
    
    
-   void groups_delete() throws ServiceException;
+   void groups_delete() throws RtmServiceException;
    
    
    
-   void groups_getList() throws ServiceException;
+   void groups_getList() throws RtmServiceException;
    
    
    
-   void groups_removeContact() throws ServiceException;
+   void groups_removeContact() throws RtmServiceException;
    
    
    
@@ -159,53 +161,53 @@ public interface Service
    
    TimeLineResult< RtmList > lists_add( String timelineId,
                                         String listName,
-                                        String smartFilter ) throws ServiceException;
+                                        String smartFilter ) throws RtmServiceException;
    
    
    
-   void lists_archive() throws ServiceException;
+   void lists_archive() throws RtmServiceException;
    
    
    
-   TimeLineResult< RtmList > lists_delete( String timelineId, String listId ) throws ServiceException;
+   TimeLineResult< RtmList > lists_delete( String timelineId, String listId ) throws RtmServiceException;
    
    
    
-   RtmLists lists_getList() throws ServiceException;
+   RtmLists lists_getList() throws RtmServiceException;
    
    
    
-   RtmList lists_getList( String listName ) throws ServiceException;
+   RtmList lists_getList( String listName ) throws RtmServiceException;
    
    
    
-   void lists_setDefaultList() throws ServiceException;
+   void lists_setDefaultList() throws RtmServiceException;
    
    
    
    TimeLineResult< RtmList > lists_setName( String timelineId,
                                             String listId,
-                                            String newName ) throws ServiceException;
+                                            String newName ) throws RtmServiceException;
    
    
    
-   void lists_unarchive() throws ServiceException;
+   void lists_unarchive() throws RtmServiceException;
    
    
    
    // ////// REFLECTION /////////////////////////////
    
-   void reflection_getMethodInfo() throws ServiceException;
+   void reflection_getMethodInfo() throws RtmServiceException;
    
    
    
-   void reflection_getMethods() throws ServiceException;
+   void reflection_getMethods() throws RtmServiceException;
    
    
    
    // ////// SETTINGS /////////////////////////////
    
-   RtmSettings settings_getList() throws ServiceException;
+   RtmSettings settings_getList() throws RtmServiceException;
    
    
    
@@ -213,49 +215,49 @@ public interface Service
    
    TimeLineResult< RtmTaskList > tasks_add( String timelineId,
                                             String listId,
-                                            String name ) throws ServiceException;
+                                            String name ) throws RtmServiceException;
    
    
    
-   void tasks_addTags() throws ServiceException;
+   void tasks_addTags() throws RtmServiceException;
    
    
    
    TimeLineResult< RtmTaskList > tasks_complete( String timelineId,
                                                  String listId,
                                                  String taskSeriesId,
-                                                 String taskId ) throws ServiceException;
+                                                 String taskId ) throws RtmServiceException;
    
    
    
    TimeLineResult< RtmTaskList > tasks_uncomplete( String timelineId,
                                                    String listId,
                                                    String taskSeriesId,
-                                                   String taskId ) throws ServiceException;
+                                                   String taskId ) throws RtmServiceException;
    
    
    
    TimeLineResult< RtmTaskList > tasks_delete( String timelineId,
                                                String listId,
                                                String taskSeriesId,
-                                               String taskId ) throws ServiceException;
+                                               String taskId ) throws RtmServiceException;
    
    
    
-   RtmTasks tasks_getList( String listId, String filter, Date lastSync ) throws ServiceException;
+   RtmTasks tasks_getList( String listId, String filter, Date lastSync ) throws RtmServiceException;
    
    
    
    RtmTaskSeries tasks_getTask( String taskSeriesId,
                                 String taskName,
-                                String listId ) throws ServiceException;
+                                String listId ) throws RtmServiceException;
    
    
    
    /**
     * @return Warning: the very first task with the given name is returned!
     */
-   RtmTaskSeries tasks_getTask( String taskName ) throws ServiceException;
+   RtmTaskSeries tasks_getTask( String taskName ) throws RtmServiceException;
    
    
    
@@ -263,7 +265,7 @@ public interface Service
                                                      String listId,
                                                      String taskSeriesId,
                                                      String taskId,
-                                                     boolean up ) throws ServiceException;
+                                                     boolean up ) throws RtmServiceException;
    
    
    
@@ -271,18 +273,18 @@ public interface Service
                                                String fromListId,
                                                String toListId,
                                                String taskSeriesId,
-                                               String taskId ) throws ServiceException;
+                                               String taskId ) throws RtmServiceException;
    
    
    
    TimeLineResult< RtmTaskList > tasks_postpone( String timelineId,
                                                  String listId,
                                                  String taskSeriesId,
-                                                 String taskId ) throws ServiceException;
+                                                 String taskId ) throws RtmServiceException;
    
    
    
-   void tasks_removeTags() throws ServiceException;
+   void tasks_removeTags() throws RtmServiceException;
    
    
    
@@ -291,7 +293,7 @@ public interface Service
                                                    String taskSeriesId,
                                                    String taskId,
                                                    Date due,
-                                                   boolean hasTime ) throws ServiceException;
+                                                   boolean hasTime ) throws RtmServiceException;
    
    
    
@@ -299,7 +301,7 @@ public interface Service
                                                     String listId,
                                                     String taskSeriesId,
                                                     String taskId,
-                                                    String estimate ) throws ServiceException;
+                                                    String estimate ) throws RtmServiceException;
    
    
    
@@ -307,7 +309,7 @@ public interface Service
                                                 String listId,
                                                 String taskSeriesId,
                                                 String taskId,
-                                                String newName ) throws ServiceException;
+                                                String newName ) throws RtmServiceException;
    
    
    
@@ -315,7 +317,7 @@ public interface Service
                                                     String listId,
                                                     String taskSeriesId,
                                                     String taskId,
-                                                    Priority priority ) throws ServiceException;
+                                                    Priority priority ) throws RtmServiceException;
    
    
    
@@ -323,7 +325,7 @@ public interface Service
                                                       String listId,
                                                       String taskSeriesId,
                                                       String taskId,
-                                                      String repeat ) throws ServiceException;
+                                                      String repeat ) throws RtmServiceException;
    
    
    
@@ -331,7 +333,7 @@ public interface Service
                                                 String listId,
                                                 String taskSeriesId,
                                                 String taskId,
-                                                List< String > tags ) throws ServiceException;
+                                                List< String > tags ) throws RtmServiceException;
    
    
    
@@ -339,7 +341,7 @@ public interface Service
                                                     String listId,
                                                     String taskSeriesId,
                                                     String taskId,
-                                                    String locationId ) throws ServiceException;
+                                                    String locationId ) throws RtmServiceException;
    
    
    
@@ -347,7 +349,7 @@ public interface Service
                                                String listId,
                                                String taskSeriesId,
                                                String taskId,
-                                               String url ) throws ServiceException;
+                                               String url ) throws RtmServiceException;
    
    
    
@@ -358,13 +360,13 @@ public interface Service
                                                   String taskSeriesId,
                                                   String taskId,
                                                   String title,
-                                                  String text ) throws ServiceException;
+                                                  String text ) throws RtmServiceException;
    
    
    
    TimeLineResult< RtmTaskNote > tasks_notes_delete( String timelineId,
                                                      String taskSeriesId,
-                                                     String noteId ) throws ServiceException;
+                                                     String noteId ) throws RtmServiceException;
    
    
    
@@ -372,41 +374,41 @@ public interface Service
                                                    String taskSeriesId,
                                                    String noteId,
                                                    String title,
-                                                   String text ) throws ServiceException;
+                                                   String text ) throws RtmServiceException;
    
    
    
    // ////// OTHER STUFF /////////////////////////////
    
-   void test_echo() throws ServiceException;
+   void test_echo() throws RtmServiceException;
    
    
    
-   void test_login() throws ServiceException;
+   void test_login() throws RtmServiceException;
    
    
    
-   void time_convert() throws ServiceException;
+   void time_convert() throws RtmServiceException;
    
    
    
-   void time_parse() throws ServiceException;
+   void time_parse() throws RtmServiceException;
    
    
    
-   RtmTimeline timelines_create() throws ServiceException;
+   RtmTimeline timelines_create() throws RtmServiceException;
    
    
    
-   void timezones_getList() throws ServiceException;
+   void timezones_getList() throws RtmServiceException;
    
    
    
-   void transactions_undo( String timeline, String transactionId ) throws ServiceException;
+   void transactions_undo( String timeline, String transactionId ) throws RtmServiceException;
    
    
    
    // ////// LOCATIONS /////////////////////////////
    
-   List< RtmLocation > locations_getList() throws ServiceException;
+   List< RtmLocation > locations_getList() throws RtmServiceException;
 }

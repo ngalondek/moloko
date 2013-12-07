@@ -25,22 +25,22 @@ package dev.drsoran.moloko;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import dev.drsoran.moloko.connection.IRtmConnectionFactory;
+import dev.drsoran.rtm.IConnectionFactory;
 
 
 class ConnectionService implements IConnectionService
 {
    private final Context context;
    
-   private final IRtmConnectionFactory rtmConnectionFactory;
+   private final IConnectionFactory connectionFactory;
    
    
    
    public ConnectionService( Context context,
-      IRtmConnectionFactory rtmConnectionFactory )
+      IConnectionFactory rtmConnectionFactory )
    {
       this.context = context;
-      this.rtmConnectionFactory = rtmConnectionFactory;
+      this.connectionFactory = rtmConnectionFactory;
    }
    
    
@@ -69,8 +69,8 @@ class ConnectionService implements IConnectionService
    
    
    @Override
-   public IRtmConnectionFactory getRtmConnectionFactory()
+   public IConnectionFactory getConnectionFactory()
    {
-      return rtmConnectionFactory;
+      return connectionFactory;
    }
 }

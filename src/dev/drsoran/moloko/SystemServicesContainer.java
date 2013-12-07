@@ -24,10 +24,10 @@ package dev.drsoran.moloko;
 
 import android.content.Context;
 import android.os.Handler;
-import dev.drsoran.moloko.connection.DefaultRtmConnectionFactory;
-import dev.drsoran.moloko.connection.IRtmConnectionFactory;
+import dev.drsoran.moloko.connection.DefaultConnectionFactory;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.event.MolokoSystemEventService;
+import dev.drsoran.rtm.IConnectionFactory;
 
 
 class SystemServicesContainer implements ISystemServices
@@ -48,7 +48,7 @@ class SystemServicesContainer implements ISystemServices
    {
       this.log = new AndroidLogger( context );
       
-      final IRtmConnectionFactory rtmConnectionFactory = new DefaultRtmConnectionFactory( log,
+      final IConnectionFactory rtmConnectionFactory = new DefaultConnectionFactory( log,
                                                                                           getHttpUserAgent() );
       this.connectionService = new ConnectionService( context,
                                                       rtmConnectionFactory );

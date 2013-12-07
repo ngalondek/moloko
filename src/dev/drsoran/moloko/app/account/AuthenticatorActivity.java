@@ -32,13 +32,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.view.Window;
-import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.content.ContentAuthority;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
@@ -104,7 +105,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
    
    
    @Override
-   public void onStartAuthentication( RtmAuth.Perms permission )
+   public void onStartAuthentication( RtmServicePermission permission )
    {
       if ( getAppContext().getConnectionService().hasInternetConnection() )
       {
@@ -161,7 +162,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                                         MolokoApp.getRtmSharedSecret( this ) );
             accountManager.setUserData( account,
                                         Constants.FEAT_PERMISSION,
-                                        rtmAuth.getPerms().toString() );
+                                        rtmAuth.getPermissions().toString() );
             accountManager.setUserData( account,
                                         Constants.ACCOUNT_USER_ID,
                                         rtmAuth.getUser().getId() );

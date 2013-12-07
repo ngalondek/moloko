@@ -43,6 +43,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -57,7 +58,6 @@ import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoMultiChoiceModalListFragment;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
-import dev.drsoran.moloko.util.Strings;
 
 
 abstract class AbstractTasksListFragment extends

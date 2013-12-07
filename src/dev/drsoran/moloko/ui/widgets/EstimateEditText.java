@@ -65,7 +65,7 @@ public class EstimateEditText extends ClearableEditText
    
    public void setEstimate( Estimation estimation )
    {
-      setEstimateByMillis( estimation != null ? estimation.getMillisUtc()
+      setEstimateByMillis( estimation != null ? estimation.getMillis()
                                              : Constants.NO_TIME );
       updateEditText();
    }

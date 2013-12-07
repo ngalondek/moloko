@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.Strings;
 
 
 public class RecurrenceParserTestLanguageDe implements

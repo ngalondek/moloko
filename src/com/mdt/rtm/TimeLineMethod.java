@@ -24,9 +24,11 @@ package com.mdt.rtm;
 
 import java.util.concurrent.Callable;
 
+import dev.drsoran.rtm.RtmServiceException;
+
 
 public abstract class TimeLineMethod< V > implements
          Callable< TimeLineResult< V > >
 {
-   public abstract TimeLineResult< V > call() throws ServiceException;
+   public abstract TimeLineResult< V > call() throws RtmServiceException;
 }

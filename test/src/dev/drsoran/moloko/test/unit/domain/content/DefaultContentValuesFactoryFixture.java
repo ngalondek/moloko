@@ -35,13 +35,13 @@ import dev.drsoran.moloko.domain.content.DefaultContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.RtmSettings;
-import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.sources.ContentValuesFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ContentValuesFactoryTestDataSource.TestData;
@@ -197,7 +197,7 @@ public class DefaultContentValuesFactoryFixture extends MolokoRoboTestCase
    @Test
    public void testCreateContentValues_Sync()
    {
-      for ( TestData< Sync > testData : testDataSource.getSyncTestData() )
+      for ( TestData< SyncTime > testData : testDataSource.getSyncTestData() )
       {
          final ContentValues contentValues = fact.createContentValues( testData.modelElement );
          

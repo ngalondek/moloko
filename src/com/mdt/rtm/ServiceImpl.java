@@ -32,25 +32,29 @@ import org.w3c.dom.NodeList;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmData;
-import com.mdt.rtm.data.RtmFrob;
-import com.mdt.rtm.data.RtmList;
-import com.mdt.rtm.data.RtmLists;
-import com.mdt.rtm.data.RtmLocation;
-import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
-import com.mdt.rtm.data.RtmTaskList;
-import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmTaskSeries;
-import com.mdt.rtm.data.RtmTasks;
-import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.connection.IRtmConnection;
-import dev.drsoran.moloko.connection.IRtmConnectionFactory;
 import dev.drsoran.moloko.domain.model.RtmSettings;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.IConnection;
+import dev.drsoran.rtm.IConnectionFactory;
+import dev.drsoran.rtm.Param;
+import dev.drsoran.rtm.RtmClientInfo;
+import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.model.RtmData;
+import dev.drsoran.rtm.model.old.RtmList;
+import dev.drsoran.rtm.model.old.RtmLists;
+import dev.drsoran.rtm.model.old.RtmLocation;
+import dev.drsoran.rtm.model.old.RtmTask;
+import dev.drsoran.rtm.model.old.RtmTaskList;
+import dev.drsoran.rtm.model.old.RtmTaskNote;
+import dev.drsoran.rtm.model.old.RtmTaskSeries;
+import dev.drsoran.rtm.model.old.RtmTasks;
+import dev.drsoran.rtm.model.old.RtmTimeline;
+import dev.drsoran.rtm.model.old.RtmTask.Priority;
+import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmFrob;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 /**
@@ -69,7 +73,7 @@ public class ServiceImpl implements Service
    
    public final static String REST_SERVICE_URL_POSTFIX = "/services/rest/";
    
-   private final ApplicationInfo applicationInfo;
+   private final RtmClientInfo applicationInfo;
    
    private final Invoker invoker;
    
@@ -81,10 +85,10 @@ public class ServiceImpl implements Service
    
    
    
-   public static ServiceImpl getInstance( IRtmConnectionFactory connectionFactory,
+   public static ServiceImpl getInstance( IConnectionFactory connectionFactory,
                                           ILog log,
                                           boolean useHttps,
-                                          ApplicationInfo applicationInfo ) throws ServiceInternalException
+                                          RtmClientInfo applicationInfo ) throws ServiceInternalException
    {
       final ServiceImpl serviceImpl = new ServiceImpl( connectionFactory,
                                                        log,
@@ -96,15 +100,15 @@ public class ServiceImpl implements Service
    
    
    
-   protected ServiceImpl( IRtmConnectionFactory connectionFactory, ILog log,
-      ApplicationInfo applicationInfo, boolean useHttp )
+   protected ServiceImpl( IConnectionFactory connectionFactory, ILog log,
+      RtmClientInfo applicationInfo, boolean useHttp )
       throws ServiceInternalException
    {
       final String scheme = useHttp ? "http" : "https";
       final int port = useHttp ? SERVER_PORT_NUMBER_HTTP
                               : SERVER_PORT_NUMBER_HTTPS;
       
-      final IRtmConnection connection = connectionFactory.createRtmConnection( scheme,
+      final IConnection connection = connectionFactory.createConnection( scheme,
                                                                                SERVER_HOST_NAME,
                                                                                port );
       
@@ -138,7 +142,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public boolean isServiceAuthorized() throws ServiceException
+   public boolean isServiceAuthorized() throws RtmServiceException
    {
       if ( currentAuthToken == null )
          return false;
@@ -148,7 +152,7 @@ public class ServiceImpl implements Service
          /* RtmAuth auth = */auth_checkToken( currentAuthToken );
          return true;
       }
-      catch ( ServiceException e )
+      catch ( RtmServiceException e )
       {
          if ( e.getResponseCode() != 98 )
          {
@@ -166,7 +170,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public String beginAuthorization( RtmAuth.Perms permissions ) throws ServiceException
+   public String beginAuthorization( RtmServicePermission permissions ) throws RtmServiceException
    {
       // Instructions from the "User authentication for desktop applications"
       // section at
@@ -178,7 +182,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public String beginAuthorization( RtmFrob frob, RtmAuth.Perms permissions ) throws ServiceException
+   public String beginAuthorization( RtmFrob frob, RtmServicePermission permissions ) throws RtmServiceException
    {
       String authBaseUrl = "http://" + SERVER_HOST_NAME + "/services/auth/";
       Param[] params = new Param[]
@@ -203,7 +207,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public String completeAuthorization() throws ServiceException
+   public String completeAuthorization() throws RtmServiceException
    {
       return completeAuthorization( tempFrob );
    }
@@ -211,7 +215,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public String completeAuthorization( RtmFrob frob ) throws ServiceException
+   public String completeAuthorization( RtmFrob frob ) throws RtmServiceException
    {
       currentAuthToken = auth_getToken( frob.getValue() );
       prefs.setAuthToken( currentAuthToken );
@@ -221,7 +225,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmAuth auth_checkToken( String authToken ) throws ServiceException
+   public RtmAuth auth_checkToken( String authToken ) throws RtmServiceException
    {
       Element response = invoker.invoke( new Param( "method",
                                                     "rtm.auth.checkToken" ),
@@ -234,7 +238,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmFrob auth_getFrob() throws ServiceException
+   public RtmFrob auth_getFrob() throws RtmServiceException
    {
       return new RtmFrob( invoker.invoke( new Param( "method",
                                                      "rtm.auth.getFrob" ),
@@ -245,7 +249,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public String auth_getToken( String frob ) throws ServiceException
+   public String auth_getToken( String frob ) throws RtmServiceException
    {
       Element response = invoker.invoke( new Param( "method",
                                                     "rtm.auth.getToken" ),
@@ -274,7 +278,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmContacts contacts_getList() throws ServiceException
+   public RtmContacts contacts_getList() throws RtmServiceException
    {
       final Element response = invoker.invoke( new Param( "method",
                                                           "rtm.contacts.getList" ),
@@ -330,7 +334,7 @@ public class ServiceImpl implements Service
    @Override
    public TimeLineResult< RtmList > lists_add( String timelineId,
                                                String listName,
-                                               String smartFilter ) throws ServiceException
+                                               String smartFilter ) throws RtmServiceException
    {
       final Element elt;
       
@@ -365,7 +369,7 @@ public class ServiceImpl implements Service
    
    @Override
    public TimeLineResult< RtmList > lists_delete( String timelineId,
-                                                  String listId ) throws ServiceException
+                                                  String listId ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.lists.delete" ),
@@ -381,7 +385,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmLists lists_getList() throws ServiceException
+   public RtmLists lists_getList() throws RtmServiceException
    {
       Element response = invoker.invoke( new Param( "method",
                                                     "rtm.lists.getList" ),
@@ -395,7 +399,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmList lists_getList( String listName ) throws ServiceException
+   public RtmList lists_getList( String listName ) throws RtmServiceException
    {
       RtmLists fullList = lists_getList();
       for ( Pair< String, RtmList > entry : fullList.getLists() )
@@ -421,7 +425,7 @@ public class ServiceImpl implements Service
    @Override
    public TimeLineResult< RtmList > lists_setName( String timelineId,
                                                    String listId,
-                                                   String newName ) throws ServiceException
+                                                   String newName ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.lists.setName" ),
@@ -462,7 +466,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmSettings settings_getList() throws ServiceException
+   public RtmSettings settings_getList() throws RtmServiceException
    {
       Element response = invoker.invoke( new Param( "method",
                                                     "rtm.settings.getList" ),
@@ -478,7 +482,7 @@ public class ServiceImpl implements Service
    @Override
    public TimeLineResult< RtmTaskList > tasks_add( String timelineId,
                                                    String listId,
-                                                   String name ) throws ServiceException
+                                                   String name ) throws RtmServiceException
    {
       final Element elt;
       
@@ -515,7 +519,7 @@ public class ServiceImpl implements Service
    public TimeLineResult< RtmTaskList > tasks_complete( String timelineId,
                                                         String listId,
                                                         String taskSeriesId,
-                                                        String taskId ) throws ServiceException
+                                                        String taskId ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.complete" ),
@@ -538,7 +542,7 @@ public class ServiceImpl implements Service
    public TimeLineResult< RtmTaskList > tasks_uncomplete( String timelineId,
                                                           String listId,
                                                           String taskSeriesId,
-                                                          String taskId ) throws ServiceException
+                                                          String taskId ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.uncomplete" ),
@@ -560,7 +564,7 @@ public class ServiceImpl implements Service
    public TimeLineResult< RtmTaskList > tasks_delete( String timelineId,
                                                       String listId,
                                                       String taskSeriesId,
-                                                      String taskId ) throws ServiceException
+                                                      String taskId ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.delete" ),
@@ -579,7 +583,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmTasks tasks_getList( String listId, String filter, Date lastSync ) throws ServiceException
+   public RtmTasks tasks_getList( String listId, String filter, Date lastSync ) throws RtmServiceException
    {
       Set< Param > params = new HashSet< Param >();
       params.add( new Param( "method", "rtm.tasks.getList" ) );
@@ -605,7 +609,7 @@ public class ServiceImpl implements Service
    @Override
    public RtmTaskSeries tasks_getTask( String taskSeriesId,
                                        String taskName,
-                                       String listId ) throws ServiceException
+                                       String listId ) throws RtmServiceException
    {
       final Set< Param > params = new HashSet< Param >();
       params.add( new Param( "method", "rtm.tasks.getList" ) );
@@ -626,7 +630,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmTaskSeries tasks_getTask( String taskName ) throws ServiceException
+   public RtmTaskSeries tasks_getTask( String taskName ) throws RtmServiceException
    {
       return tasks_getTask( null, taskName, null );
    }
@@ -638,7 +642,7 @@ public class ServiceImpl implements Service
                                                             String listId,
                                                             String taskSeriesId,
                                                             String taskId,
-                                                            boolean up ) throws ServiceException
+                                                            boolean up ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.movePriority" ),
@@ -663,7 +667,7 @@ public class ServiceImpl implements Service
                                                       String fromListId,
                                                       String toListId,
                                                       String taskSeriesId,
-                                                      String taskId ) throws ServiceException
+                                                      String taskId ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.moveTo" ),
@@ -686,7 +690,7 @@ public class ServiceImpl implements Service
    public TimeLineResult< RtmTaskList > tasks_postpone( String timelineId,
                                                         String listId,
                                                         String taskSeriesId,
-                                                        String taskId ) throws ServiceException
+                                                        String taskId ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.postpone" ),
@@ -718,7 +722,7 @@ public class ServiceImpl implements Service
                                                           String taskSeriesId,
                                                           String taskId,
                                                           Date due,
-                                                          boolean hasTime ) throws ServiceException
+                                                          boolean hasTime ) throws RtmServiceException
    {
       final boolean setDueDate = ( due != null );
       final Element elt;
@@ -758,7 +762,7 @@ public class ServiceImpl implements Service
                                                            String listId,
                                                            String taskSeriesId,
                                                            String taskId,
-                                                           String estimate ) throws ServiceException
+                                                           String estimate ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.setEstimate" ),
@@ -782,7 +786,7 @@ public class ServiceImpl implements Service
                                                        String listId,
                                                        String taskSeriesId,
                                                        String taskId,
-                                                       String newName ) throws ServiceException
+                                                       String newName ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.setName" ),
@@ -806,7 +810,7 @@ public class ServiceImpl implements Service
                                                            String listId,
                                                            String taskSeriesId,
                                                            String taskId,
-                                                           Priority priority ) throws ServiceException
+                                                           Priority priority ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.setPriority" ),
@@ -831,7 +835,7 @@ public class ServiceImpl implements Service
                                                              String listId,
                                                              String taskSeriesId,
                                                              String taskId,
-                                                             String repeat ) throws ServiceException
+                                                             String repeat ) throws RtmServiceException
    {
       final Element elt;
       
@@ -865,7 +869,7 @@ public class ServiceImpl implements Service
                                                        String listId,
                                                        String taskSeriesId,
                                                        String taskId,
-                                                       List< String > tags ) throws ServiceException
+                                                       List< String > tags ) throws RtmServiceException
    {
       final String joinedTags = TextUtils.join( ",", tags );
       
@@ -891,7 +895,7 @@ public class ServiceImpl implements Service
                                                            String listId,
                                                            String taskSeriesId,
                                                            String taskId,
-                                                           String locationId ) throws ServiceException
+                                                           String locationId ) throws RtmServiceException
    {
       
       final Element elt;
@@ -926,7 +930,7 @@ public class ServiceImpl implements Service
                                                       String listId,
                                                       String taskSeriesId,
                                                       String taskId,
-                                                      String url ) throws ServiceException
+                                                      String url ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.setURL" ),
@@ -951,7 +955,7 @@ public class ServiceImpl implements Service
                                                          String taskSeriesId,
                                                          String taskId,
                                                          String title,
-                                                         String text ) throws ServiceException
+                                                         String text ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.notes.add" ),
@@ -976,7 +980,7 @@ public class ServiceImpl implements Service
    @Override
    public TimeLineResult< RtmTaskNote > tasks_notes_delete( String timelineId,
                                                             String taskSeriesId,
-                                                            String noteId ) throws ServiceException
+                                                            String noteId ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.notes.delete" ),
@@ -996,7 +1000,7 @@ public class ServiceImpl implements Service
                                                           String taskSeriesId,
                                                           String noteId,
                                                           String title,
-                                                          String text ) throws ServiceException
+                                                          String text ) throws RtmServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.notes.edit" ),
@@ -1046,7 +1050,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public RtmTimeline timelines_create() throws ServiceException
+   public RtmTimeline timelines_create() throws RtmServiceException
    {
       return new RtmTimeline( invoker.invoke( new Param( "method",
                                                          "rtm.timelines.create" ),
@@ -1068,7 +1072,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public void transactions_undo( String timeline, String transactionId ) throws ServiceException
+   public void transactions_undo( String timeline, String transactionId ) throws RtmServiceException
    {
       invoker.invoke( new Param( "method", "rtm.transactions.undo" ),
                       new Param( "auth_token", currentAuthToken ),
@@ -1080,7 +1084,7 @@ public class ServiceImpl implements Service
    
    
    @Override
-   public List< RtmLocation > locations_getList() throws ServiceException
+   public List< RtmLocation > locations_getList() throws RtmServiceException
    {
       Element result = invoker.invoke( new Param( "method",
                                                   "rtm.locations.getList" ),
@@ -1100,7 +1104,7 @@ public class ServiceImpl implements Service
    
    
    private final static TimeLineResult< RtmTaskList > newTaskResult( String timelineId,
-                                                                     Element elt ) throws ServiceException
+                                                                     Element elt ) throws RtmServiceException
    {
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
@@ -1155,7 +1159,7 @@ public class ServiceImpl implements Service
    private final static TimeLineResult< RtmTaskNote > newNoteResult( String timelineId,
                                                                      Element elt,
                                                                      String noteId,
-                                                                     String taskSeriesId ) throws ServiceException
+                                                                     String taskSeriesId ) throws RtmServiceException
    {
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
@@ -1210,7 +1214,7 @@ public class ServiceImpl implements Service
    
    
    private final static TimeLineResult< RtmList > newListResult( String timelineId,
-                                                                 Element elt ) throws ServiceException
+                                                                 Element elt ) throws RtmServiceException
    {
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       

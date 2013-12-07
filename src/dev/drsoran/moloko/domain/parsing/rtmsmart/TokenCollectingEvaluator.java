@@ -25,9 +25,9 @@ package dev.drsoran.moloko.domain.parsing.rtmsmart;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class TokenCollectingEvaluator implements IRtmSmartFilterEvaluator

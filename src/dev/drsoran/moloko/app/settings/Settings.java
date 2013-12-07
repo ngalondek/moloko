@@ -35,6 +35,7 @@ import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
@@ -43,7 +44,6 @@ import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSettings;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class Settings implements ISettingsService, IOnSettingsChangedListener

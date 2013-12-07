@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTrigger;
 import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 
@@ -33,7 +34,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
  */
 class DeleteContactTrigger extends AbstractTrigger
 {
-   public DeleteContactTrigger( RtmDatabase database )
+   public DeleteContactTrigger( SQLiteDatabase database )
    {
       super( database, RtmContactsTable.TABLE_NAME + "_delete_contact" );
    }
@@ -43,7 +44,7 @@ class DeleteContactTrigger extends AbstractTrigger
    @Override
    public void create() throws SQLException
    {
-      final SQLiteDatabase db = getDatabase().getWritable();
+      final SQLiteDatabase db = getDatabase();
       
       final StringBuilder builder = new StringBuilder();
       

@@ -25,7 +25,7 @@ package dev.drsoran.moloko.test.langs;
 import java.util.Arrays;
 import java.util.Collection;
 
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.Strings;
 
 
 public class TimeParserTestLanguageDe implements ITimeParserTestLanguage

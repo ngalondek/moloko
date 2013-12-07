@@ -40,9 +40,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.IValueChangedListener;
@@ -52,7 +52,7 @@ import dev.drsoran.moloko.ui.ValueChangedListener;
 import dev.drsoran.moloko.util.Iterables;
 import dev.drsoran.moloko.util.Lambda.Func1;
 import dev.drsoran.moloko.util.Lambda.Func2;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.model.Priority;
 
 
 class TaskEditMultipleFragment extends AbstractTaskEditFragment

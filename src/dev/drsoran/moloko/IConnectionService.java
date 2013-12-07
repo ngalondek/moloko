@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko;
 
-import dev.drsoran.moloko.connection.IRtmConnectionFactory;
+import dev.drsoran.rtm.IConnectionFactory;
 
 
 public interface IConnectionService
@@ -31,5 +31,5 @@ public interface IConnectionService
    
    
    
-   IRtmConnectionFactory getRtmConnectionFactory();
+   IConnectionFactory getConnectionFactory();
 }

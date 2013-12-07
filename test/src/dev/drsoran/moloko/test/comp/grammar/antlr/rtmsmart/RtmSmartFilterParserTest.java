@@ -41,7 +41,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterVisitorAdapter;
@@ -53,6 +52,7 @@ import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterVisitor;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.util.Lambda;
 import dev.drsoran.moloko.util.Lambda.Func1;
+import dev.drsoran.rtm.model.Priority;
 
 
 @RunWith( Theories.class )

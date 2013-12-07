@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.app.account;
 
-import com.mdt.rtm.data.RtmAuth;
+import dev.drsoran.rtm.service.RtmAuth;
 
 
 interface IRtmWebLoginFragmentListener

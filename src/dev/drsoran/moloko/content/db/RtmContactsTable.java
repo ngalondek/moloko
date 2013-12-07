@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTable;
 import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 
 
@@ -32,7 +34,7 @@ class RtmContactsTable extends AbstractTable
    
    
    
-   public RtmContactsTable( RtmDatabase database )
+   public RtmContactsTable( SQLiteDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -57,7 +59,7 @@ class RtmContactsTable extends AbstractTable
       builder.append( " TEXT NOT NULL " );
       builder.append( " );" );
       
-      getDatabase().getWritable().execSQL( builder.toString() );
+      getDatabase().execSQL( builder.toString() );
    }
    
    

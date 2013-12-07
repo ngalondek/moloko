@@ -33,9 +33,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class NoteFixture extends MolokoTestCase

@@ -45,11 +45,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.IDateFormatter;
 import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternOperatorComp;
 import dev.drsoran.moloko.test.langs.IRecurrenceParserTestLanguage;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RecurrenceTestDataSource extends

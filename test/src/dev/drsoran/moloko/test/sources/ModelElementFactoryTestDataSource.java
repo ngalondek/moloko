@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Contact;
@@ -40,18 +41,17 @@ import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.moloko.util.Pair;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class ModelElementFactoryTestDataSource
@@ -159,9 +159,9 @@ public class ModelElementFactoryTestDataSource
    
    
    
-   public Collection< TestData< Sync >> getSyncTestData()
+   public Collection< TestData< SyncTime >> getSyncTestData()
    {
-      final Collection< TestData< Sync >> testData = new LinkedList< TestData< Sync > >();
+      final Collection< TestData< SyncTime >> testData = new LinkedList< TestData< SyncTime > >();
       
       addSyncNever( testData );
       addSyncFull( testData );
@@ -888,16 +888,16 @@ public class ModelElementFactoryTestDataSource
    
    
    
-   private void addSyncNever( Collection< TestData< Sync >> testData )
+   private void addSyncNever( Collection< TestData< SyncTime >> testData )
    {
-      final Sync modelElement = new Sync( NEVER, NEVER );
+      final SyncTime modelElement = new SyncTime( NEVER, NEVER );
       
       final List< Pair< Class< ? >, Object > > values = new ArrayList< Pair< Class< ? >, Object > >();
       add( values, Long.class, 1L );
       add( values, Long.class, null );
       add( values, Long.class, null );
       
-      testData.add( new TestData< Sync >( Sync.class,
+      testData.add( new TestData< SyncTime >( SyncTime.class,
                                           modelElement,
                                           values,
                                           "Never" ) );
@@ -905,16 +905,16 @@ public class ModelElementFactoryTestDataSource
    
    
    
-   private void addSyncFull( Collection< TestData< Sync >> testData )
+   private void addSyncFull( Collection< TestData< SyncTime >> testData )
    {
-      final Sync modelElement = new Sync( NOW, LATER );
+      final SyncTime modelElement = new SyncTime( NOW, LATER );
       
       final List< Pair< Class< ? >, Object > > values = new ArrayList< Pair< Class< ? >, Object > >();
       add( values, Long.class, 1L );
       add( values, Long.class, NOW );
       add( values, Long.class, LATER );
       
-      testData.add( new TestData< Sync >( Sync.class,
+      testData.add( new TestData< SyncTime >( SyncTime.class,
                                           modelElement,
                                           values,
                                           "Full" ) );

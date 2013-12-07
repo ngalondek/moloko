@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.domain.parsing.rtmsmart;
 
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.Strings;
 
 
 public class NullRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator

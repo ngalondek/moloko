@@ -30,9 +30,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
+import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
+import dev.drsoran.moloko.content.IContentUriHandler;
 import dev.drsoran.moloko.content.ListCursor;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 

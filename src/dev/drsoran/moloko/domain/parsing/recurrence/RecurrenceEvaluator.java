@@ -58,6 +58,7 @@ import java.util.TreeSet;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import android.os.ParcelFormatException;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
@@ -85,7 +86,6 @@ import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.WeekdayConte
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.WeekendContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser.XstContext;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParserBaseVisitor;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >

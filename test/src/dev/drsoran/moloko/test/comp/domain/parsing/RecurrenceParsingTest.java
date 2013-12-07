@@ -41,6 +41,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
@@ -59,7 +60,6 @@ import dev.drsoran.moloko.test.langs.RecurrenceSentenceTestLanguageEn;
 import dev.drsoran.moloko.test.sources.RecurrencePatternCollectorTestDataSource;
 import dev.drsoran.moloko.test.sources.RecurrenceSentenceTestDataSource;
 import dev.drsoran.moloko.test.sources.RecurrenceTestDataSource;
-import dev.drsoran.moloko.util.Strings;
 
 
 @RunWith( Theories.class )

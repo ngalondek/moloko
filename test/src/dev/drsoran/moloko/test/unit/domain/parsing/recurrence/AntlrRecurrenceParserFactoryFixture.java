@@ -31,11 +31,11 @@ import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.parsing.recurrence.AntlrRecurrenceParserFactory;
 import dev.drsoran.moloko.domain.parsing.recurrence.IRecurrenceParserFactory;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class AntlrRecurrenceParserFactoryFixture extends MolokoTestCase

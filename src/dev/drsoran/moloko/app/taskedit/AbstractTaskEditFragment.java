@@ -48,7 +48,6 @@ import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.IParsingService;
@@ -66,6 +65,7 @@ import dev.drsoran.moloko.ui.widgets.DueEditText;
 import dev.drsoran.moloko.ui.widgets.EstimateEditText;
 import dev.drsoran.moloko.ui.widgets.RecurrenceEditText;
 import dev.drsoran.moloko.util.Iterables;
+import dev.drsoran.rtm.model.Priority;
 
 
 abstract class AbstractTaskEditFragment extends

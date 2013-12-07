@@ -81,7 +81,7 @@ public class EstimationFixture extends EqualsHashCodeTestCase
    @Test
    public void testGetMillisUtc()
    {
-      assertThat( new Estimation( "sentence", NOW ).getMillisUtc(), is( NOW ) );
+      assertThat( new Estimation( "sentence", NOW ).getMillis(), is( NOW ) );
    }
    
    

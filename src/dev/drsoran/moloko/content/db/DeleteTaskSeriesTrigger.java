@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTrigger;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
@@ -35,7 +36,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
  */
 class DeleteTaskSeriesTrigger extends AbstractTrigger
 {
-   public DeleteTaskSeriesTrigger( RtmDatabase database )
+   public DeleteTaskSeriesTrigger( SQLiteDatabase database )
    {
       super( database, RtmTaskSeriesTable.TABLE_NAME + "_delete_taskseries" );
    }
@@ -45,7 +46,7 @@ class DeleteTaskSeriesTrigger extends AbstractTrigger
    @Override
    public void create() throws SQLException
    {
-      final SQLiteDatabase db = getDatabase().getWritable();
+      final SQLiteDatabase db = getDatabase();
       
       final StringBuilder builder = new StringBuilder();
       

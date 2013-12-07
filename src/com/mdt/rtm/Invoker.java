@@ -21,14 +21,10 @@ package com.mdt.rtm;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,7 +36,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.connection.IRtmConnection;
+import dev.drsoran.rtm.IConnection;
+import dev.drsoran.rtm.Param;
+import dev.drsoran.rtm.RtmClientInfo;
+import dev.drsoran.rtm.RtmServiceException;
 
 
 /**
@@ -80,20 +79,20 @@ public class Invoker
    
    private long lastInvocation;
    
-   private final ApplicationInfo applicationInfo;
+   private final RtmClientInfo applicationInfo;
    
    private final MessageDigest digest;
    
    private final String serviceRelativeUri;
    
-   private final IRtmConnection rtmConnection;
+   private final IConnection rtmConnection;
    
    private final ILog log;
    
    
    
-   public Invoker( ILog log, IRtmConnection rtmConnection,
-      String serviceRelativeUri, ApplicationInfo applicationInfo )
+   public Invoker( ILog log, IConnection rtmConnection,
+      String serviceRelativeUri, RtmClientInfo applicationInfo )
       throws ServiceInternalException
    {
       this.log = log;
@@ -116,7 +115,7 @@ public class Invoker
    
    
    
-   public Element invoke( Param... params ) throws ServiceException
+   public Element invoke( Param... params ) throws RtmServiceException
    {
       obeyRtmRequestLimit();
       
@@ -160,7 +159,7 @@ public class Invoker
                }
                else
                {
-                  throw new ServiceException( Integer.parseInt( ( (Element) errElt ).getAttribute( "code" ) ),
+                  throw new RtmServiceException( Integer.parseInt( ( (Element) errElt ).getAttribute( "code" ) ),
                                               ( (Element) errElt ).getAttribute( "msg" ) );
                }
             }
@@ -294,49 +293,4 @@ public class Invoker
       }
    }
    
-   
-   
-   final String calcApiSig( Param... params ) throws ServiceInternalException
-   {
-      try
-      {
-         digest.reset();
-         digest.update( applicationInfo.getSharedSecret().getBytes( ENCODING ) );
-         List< Param > sorted = Arrays.asList( params );
-         Collections.sort( sorted );
-         for ( Param param : sorted )
-         {
-            digest.update( param.getName().getBytes( ENCODING ) );
-            digest.update( param.getValue().getBytes( ENCODING ) );
-         }
-         return convertToHex( digest.digest() );
-      }
-      catch ( UnsupportedEncodingException e )
-      {
-         throw new ServiceInternalException( "cannot hahdle properly the encoding",
-                                             e );
-      }
-   }
-   
-   
-   
-   private static String convertToHex( byte[] data )
-   {
-      StringBuffer buf = new StringBuffer();
-      for ( int i = 0; i < data.length; i++ )
-      {
-         int halfbyte = ( data[ i ] >>> 4 ) & 0x0F;
-         int two_halfs = 0;
-         do
-         {
-            if ( ( 0 <= halfbyte ) && ( halfbyte <= 9 ) )
-               buf.append( (char) ( '0' + halfbyte ) );
-            else
-               buf.append( (char) ( 'a' + ( halfbyte - 10 ) ) );
-            halfbyte = data[ i ] & 0x0F;
-         }
-         while ( two_halfs++ < 1 );
-      }
-      return buf.toString();
-   }
 }

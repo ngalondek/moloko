@@ -30,8 +30,8 @@ import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.ContentCompare;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.sync.model.Modification;
 
 
 public class DefaultModificationsApplier implements IModificationsApplier

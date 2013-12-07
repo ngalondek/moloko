@@ -24,6 +24,7 @@ package dev.drsoran.moloko.ui.format;
 
 import java.util.Calendar;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Due;
@@ -31,7 +32,6 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Strings;
 
 
 public final class RtmStyleTaskDateFormatter

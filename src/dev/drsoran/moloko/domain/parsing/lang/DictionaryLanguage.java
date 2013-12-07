@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.Strings;
 
 
 public abstract class DictionaryLanguage< T > implements ILanguage

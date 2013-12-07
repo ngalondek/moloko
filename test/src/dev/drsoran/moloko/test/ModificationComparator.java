@@ -24,7 +24,7 @@ package dev.drsoran.moloko.test;
 
 import java.util.Comparator;
 
-import dev.drsoran.moloko.domain.model.Modification;
+import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.util.Lambda.Func2;
 
 

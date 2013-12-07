@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.ModificationColumns;
@@ -47,17 +48,16 @@ import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.moloko.sync.model.SyncTime;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class ContentValuesFactoryTestDataSource
@@ -165,9 +165,9 @@ public class ContentValuesFactoryTestDataSource
    
    
    
-   public Collection< TestData< Sync >> getSyncTestData()
+   public Collection< TestData< SyncTime >> getSyncTestData()
    {
-      final Collection< TestData< Sync >> testData = new LinkedList< TestData< Sync > >();
+      final Collection< TestData< SyncTime >> testData = new LinkedList< TestData< SyncTime > >();
       
       addSyncNever( testData );
       addSyncFull( testData );
@@ -850,15 +850,15 @@ public class ContentValuesFactoryTestDataSource
    
    
    
-   private void addSyncNever( Collection< TestData< Sync >> testData )
+   private void addSyncNever( Collection< TestData< SyncTime >> testData )
    {
-      final Sync modelElement = new Sync( NEVER, NEVER );
+      final SyncTime modelElement = new SyncTime( NEVER, NEVER );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
-      values.put( SyncColumns.LAST_IN, null );
-      values.put( SyncColumns.LAST_OUT, null );
+      values.put( TimesColumns.LAST_IN, null );
+      values.put( TimesColumns.LAST_OUT, null );
       
-      testData.add( new TestData< Sync >( Sync.class,
+      testData.add( new TestData< SyncTime >( SyncTime.class,
                                           modelElement,
                                           values,
                                           "Never" ) );
@@ -866,15 +866,15 @@ public class ContentValuesFactoryTestDataSource
    
    
    
-   private void addSyncFull( Collection< TestData< Sync >> testData )
+   private void addSyncFull( Collection< TestData< SyncTime >> testData )
    {
-      final Sync modelElement = new Sync( NOW, LATER );
+      final SyncTime modelElement = new SyncTime( NOW, LATER );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
-      values.put( SyncColumns.LAST_IN, NOW );
-      values.put( SyncColumns.LAST_OUT, LATER );
+      values.put( TimesColumns.LAST_IN, NOW );
+      values.put( TimesColumns.LAST_OUT, LATER );
       
-      testData.add( new TestData< Sync >( Sync.class,
+      testData.add( new TestData< SyncTime >( SyncTime.class,
                                           modelElement,
                                           values,
                                           "Full" ) );

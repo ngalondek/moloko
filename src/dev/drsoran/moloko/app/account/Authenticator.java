@@ -31,15 +31,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.RtmServiceConstants;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.rtm.RtmClientInfo;
+import dev.drsoran.rtm.RtmServiceConstants;
+import dev.drsoran.rtm.RtmServiceException;
 
 
 public class Authenticator extends AbstractAccountAuthenticator
@@ -165,11 +165,11 @@ public class Authenticator extends AbstractAccountAuthenticator
             try
             {
                service = ServiceImpl.getInstance( context.getConnectionService()
-                                                         .getRtmConnectionFactory(),
+                                                         .getConnectionFactory(),
                                                   context.Log(),
                                                   context.getSettings()
                                                          .isUsingHttps(),
-                                                  new ApplicationInfo( apiKey,
+                                                  new RtmClientInfo( apiKey,
                                                                        sharedSecret,
                                                                        null ) );
                service.auth_checkToken( authToken );
@@ -185,9 +185,9 @@ public class Authenticator extends AbstractAccountAuthenticator
             }
             catch ( Throwable e )
             {
-               if ( e instanceof ServiceException )
+               if ( e instanceof RtmServiceException )
                {
-                  final ServiceException se = (ServiceException) e;
+                  final RtmServiceException se = (RtmServiceException) e;
                   
                   if ( se.responseCode == RtmServiceConstants.RtmErrorCodes.INVALID_AUTH_TOKEN )
                   {

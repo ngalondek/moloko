@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.db.AbstractTable;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
@@ -35,7 +36,7 @@ class RtmRawTasksTable extends AbstractTable
    
    
    
-   public RtmRawTasksTable( RtmDatabase database )
+   public RtmRawTasksTable( SQLiteDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -45,7 +46,7 @@ class RtmRawTasksTable extends AbstractTable
    @Override
    public void create() throws SQLException
    {
-      final SQLiteDatabase db = getDatabase().getWritable();
+      final SQLiteDatabase db = getDatabase();
       
       final StringBuilder builder = new StringBuilder();
       

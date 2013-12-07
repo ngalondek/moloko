@@ -25,6 +25,8 @@ package dev.drsoran.moloko.content.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import dev.drsoran.db.ITable;
+import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;

@@ -32,11 +32,11 @@ import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.parsing.datetime.AntlrDateTimeParserFactory;
 import dev.drsoran.moloko.domain.parsing.datetime.IDateTimeParserFactory;
 import dev.drsoran.moloko.grammar.antlr.datetime.DateTimeParser;
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class AntlrDateTimeParserFactoryFixture extends MolokoTestCase

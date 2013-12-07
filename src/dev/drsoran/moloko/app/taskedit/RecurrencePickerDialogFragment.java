@@ -39,6 +39,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
@@ -48,7 +49,6 @@ import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.util.Strings;
 
 
 class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment

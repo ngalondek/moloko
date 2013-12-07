@@ -19,6 +19,8 @@
  */
 package com.mdt.rtm;
 
+import dev.drsoran.rtm.RtmServiceException;
+
 /**
  * Introduced in order to get rid of the {@link RuntimeException}, and have only
  * one time of regular exception to cope
@@ -27,7 +29,7 @@ package com.mdt.rtm;
  * @author Edouard Mercier
  * @since 2008.04.23
  */
-public class ServiceInternalException extends ServiceException
+public class ServiceInternalException extends RtmServiceException
 {
    private static final long serialVersionUID = -423838945284984432L;
    

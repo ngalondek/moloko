@@ -31,6 +31,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
@@ -41,7 +42,6 @@ import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RtmSmartFilterParsingTest extends MolokoTestCase

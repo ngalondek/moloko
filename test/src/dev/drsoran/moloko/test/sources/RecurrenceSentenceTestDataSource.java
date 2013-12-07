@@ -27,8 +27,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RecurrenceSentenceTestDataSource extends

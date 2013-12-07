@@ -50,15 +50,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
-import dev.drsoran.moloko.domain.model.Modification;
-import dev.drsoran.moloko.domain.model.Priority;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class TaskEditHandlerTestDataSource extends

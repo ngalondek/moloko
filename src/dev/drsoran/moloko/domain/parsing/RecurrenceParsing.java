@@ -33,6 +33,7 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
@@ -46,7 +47,6 @@ import dev.drsoran.moloko.domain.parsing.util.ParserLanguageDetector;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrenceParser;
 import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.util.Lambda.Func1;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class RecurrenceParsing implements IRecurrenceParsing

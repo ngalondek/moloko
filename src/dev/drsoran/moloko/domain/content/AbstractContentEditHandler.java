@@ -31,8 +31,8 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.sync.model.Modification;
 
 
 public abstract class AbstractContentEditHandler< T >

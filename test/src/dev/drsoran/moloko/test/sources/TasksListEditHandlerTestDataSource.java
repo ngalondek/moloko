@@ -40,9 +40,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.model.Modification;
 
 
 public class TasksListEditHandlerTestDataSource extends

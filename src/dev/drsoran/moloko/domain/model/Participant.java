@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.util.Strings;
 
 
 public class Participant

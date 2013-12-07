@@ -24,7 +24,9 @@ package com.mdt.rtm;
 
 import org.w3c.dom.Element;
 
-import com.mdt.rtm.data.RtmData;
+
+import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.model.RtmData;
 
 
 public class TimeLineResult< V >
@@ -39,7 +41,7 @@ public class TimeLineResult< V >
       
       
 
-      Transaction( Element elt, String timelineId ) throws ServiceException
+      Transaction( Element elt, String timelineId ) throws RtmServiceException
       {
          this.timelineId = timelineId;
          
@@ -71,7 +73,7 @@ public class TimeLineResult< V >
    
 
    TimeLineResult( Element elt, String timelineId, V element )
-      throws ServiceException
+      throws RtmServiceException
    {
       this.transaction = new Transaction( elt, timelineId );
       this.element = element;
@@ -80,7 +82,7 @@ public class TimeLineResult< V >
 
 
    public final static < V > TimeLineResult< V > newResult( Element elt,
-                                                            String timelineId ) throws ServiceException
+                                                            String timelineId ) throws RtmServiceException
    {
       return newResult( elt, timelineId, null );
    }
@@ -89,7 +91,7 @@ public class TimeLineResult< V >
 
    public final static < V > TimeLineResult< V > newResult( Element elt,
                                                             String timelineId,
-                                                            V element ) throws ServiceException
+                                                            V element ) throws RtmServiceException
    {
       return new TimeLineResult< V >( elt, timelineId, element );
    }

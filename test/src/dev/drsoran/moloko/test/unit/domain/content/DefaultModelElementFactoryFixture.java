@@ -40,13 +40,13 @@ import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.RtmSettings;
-import dev.drsoran.moloko.domain.model.Sync;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource.TestData;
@@ -210,10 +210,10 @@ public class DefaultModelElementFactoryFixture extends MolokoTestCase
    @Test
    public void testCreateElementFromCursor_Sync()
    {
-      for ( TestData< Sync > testData : testDataSource.getSyncTestData() )
+      for ( TestData< SyncTime > testData : testDataSource.getSyncTestData() )
       {
-         final Sync element = fact.createElementFromCursor( getCursor( testData.contentValues ),
-                                                            Sync.class );
+         final SyncTime element = fact.createElementFromCursor( getCursor( testData.contentValues ),
+                                                            SyncTime.class );
          
          assertThat( testData.testName, element, notNullValue() );
          assertThat( testData.testName,

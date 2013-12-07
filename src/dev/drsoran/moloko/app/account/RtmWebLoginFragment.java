@@ -34,14 +34,15 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmAuth;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
@@ -171,7 +172,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
       
       webView.requestFocus();
       authenticator.beginAuthentication( this,
-                                         RtmAuth.Perms.valueOf( permission ) );
+                                         RtmServicePermission.valueOf( permission ) );
    }
    
    
@@ -188,7 +189,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    @Override
    public void onPostBeginAuthentication( String loginUrl,
-                                          ServiceException exception )
+                                          RtmServiceException exception )
    {
       if ( exception != null )
       {
@@ -215,7 +216,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    @Override
    public void onAuthenticationCompleted( String authToken,
-                                          ServiceException exception )
+                                          RtmServiceException exception )
    {
       Log().d( getClass(), "AuthToken: " + authToken );
       
@@ -243,7 +244,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    
    @Override
-   public void onAuthTokenChecked( RtmAuth rtmAuth, ServiceException exception )
+   public void onAuthTokenChecked( RtmAuth rtmAuth, RtmServiceException exception )
    {
       getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
       
@@ -377,7 +378,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    private String getPermissionLocalized()
    {
-      switch ( RtmAuth.Perms.valueOf( permission ) )
+      switch ( RtmServicePermission.valueOf( permission ) )
       {
          case read:
             return getString( R.string.auth_perm_read );

@@ -29,9 +29,9 @@ public class RtmTasksList
 {
    private final String id;
    
-   private final long deletedMillisUtc;
-   
    private final int position;
+   
+   private final boolean deleted;
    
    private final boolean locked;
    
@@ -43,7 +43,7 @@ public class RtmTasksList
    
    
    
-   public RtmTasksList( String id, long deletedMillisUtc, int position,
+   public RtmTasksList( String id, int position, boolean deleted,
       boolean locked, boolean archived, String name, String smartFilter )
    {
       if ( id == RtmConstants.NO_ID )
@@ -57,8 +57,8 @@ public class RtmTasksList
       }
       
       this.id = id;
-      this.deletedMillisUtc = deletedMillisUtc;
       this.position = position;
+      this.deleted = deleted;
       this.locked = locked;
       this.archived = archived;
       this.name = name;
@@ -74,13 +74,6 @@ public class RtmTasksList
    
    
    
-   public long getDeletedMillisUtc()
-   {
-      return deletedMillisUtc;
-   }
-   
-   
-   
    public String getName()
    {
       return name;
@@ -91,6 +84,13 @@ public class RtmTasksList
    public int getPosition()
    {
       return position;
+   }
+   
+   
+   
+   public boolean isDeleted()
+   {
+      return deleted;
    }
    
    

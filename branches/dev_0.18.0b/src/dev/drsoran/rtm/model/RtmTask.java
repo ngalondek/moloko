@@ -110,11 +110,6 @@ public class RtmTask
          throw new IllegalArgumentException( "listId" );
       }
       
-      if ( locationId == RtmConstants.NO_ID )
-      {
-         throw new IllegalArgumentException( "locationId" );
-      }
-      
       if ( Strings.isNullOrEmpty( name ) )
       {
          throw new IllegalArgumentException( "name" );
@@ -282,7 +277,7 @@ public class RtmTask
    
    
    
-   public Iterable< ? extends RtmNote > getNotes()
+   public Collection< ? extends RtmNote > getNotes()
    {
       return notes != null ? notes : Collections.< RtmNote > emptyList();
    }

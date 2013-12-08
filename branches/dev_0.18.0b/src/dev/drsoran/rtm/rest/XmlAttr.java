@@ -30,6 +30,7 @@ import java.util.TimeZone;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import dev.drsoran.Strings;
 import dev.drsoran.rtm.model.RtmConstants;
@@ -41,7 +42,7 @@ public final class XmlAttr
    
    static
    {
-      RTM_DATE_FORMAT.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+      RTM_DATE_FORMAT.setTimeZone( TimeZone.getTimeZone( "GMT+0" ) );
    }
    
    
@@ -63,7 +64,8 @@ public final class XmlAttr
       
       try
       {
-         return RTM_DATE_FORMAT.parse( value ).getTime();
+         final long millisUtc = RTM_DATE_FORMAT.parse( value ).getTime();
+         return millisUtc;
       }
       catch ( ParseException e )
       {
@@ -102,16 +104,33 @@ public final class XmlAttr
    
    
    
-   public static int getInt( Attributes attrs, String attrName )
+   public static int getInt( Attributes attrs, String attrName ) throws SAXException
    {
-      final String value = attrs.getValue( attrName );
-      return Integer.parseInt( value );
+      String value = null;
+      try
+      {
+         value = attrs.getValue( attrName );
+         return Integer.parseInt( value );
+      }
+      catch ( NumberFormatException e )
+      {
+         throw new SAXException( MessageFormat.format( "{0} is not a parsable Integer",
+                                                       value ),
+                                 e );
+      }
    }
    
    
    
-   public static boolean getBoolean( Attributes attrs, String attrName )
+   public static boolean getBoolean( Attributes attrs, String attrName ) throws SAXException
    {
       return getInt( attrs, attrName ) != 0;
+   }
+   
+   
+   
+   public static Attributes copy( Attributes source )
+   {
+      return new AttributesImpl( source );
    }
 }

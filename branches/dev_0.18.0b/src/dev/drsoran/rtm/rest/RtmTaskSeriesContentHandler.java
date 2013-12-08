@@ -70,9 +70,7 @@ public class RtmTaskSeriesContentHandler extends
    
    private CharactersContext charactersContext = CharactersContext.None;
    
-   private Attributes taskSeriesIdAttributes;
-   
-   private String taskSeriesId;
+   private Attributes taskSeriesAttributes;
    
    private String recurrencePattern;
    
@@ -90,12 +88,12 @@ public class RtmTaskSeriesContentHandler extends
    
    public RtmTaskSeriesContentHandler( String listId )
    {
-      this.listId = listId;
+      this( listId, null );
    }
    
    
    
-   protected RtmTaskSeriesContentHandler( String listId,
+   public RtmTaskSeriesContentHandler( String listId,
       IRtmContentHandlerListener< Collection< RtmTask >> listener )
    {
       super( listener );
@@ -133,34 +131,32 @@ public class RtmTaskSeriesContentHandler extends
                              String qName,
                              Attributes attributes ) throws SAXException
    {
-      if ( "taskseries".equalsIgnoreCase( localName ) )
+      if ( "taskseries".equalsIgnoreCase( qName ) )
       {
-         taskSeriesIdAttributes = attributes;
-         taskSeriesId = XmlAttr.getStringNotNull( taskSeriesIdAttributes, "id" );
+         taskSeriesAttributes = XmlAttr.copy( attributes );
       }
-      else if ( "rrule".equalsIgnoreCase( localName ) )
+      else if ( "rrule".equalsIgnoreCase( qName ) )
       {
          isEveryRecurrence = XmlAttr.getBoolean( attributes, "every" );
          charactersContext = CharactersContext.Recurrence;
       }
-      else if ( "tag".equalsIgnoreCase( localName ) )
+      else if ( "tag".equalsIgnoreCase( qName ) )
       {
          charactersContext = CharactersContext.Tag;
       }
-      else if ( "note".equalsIgnoreCase( localName ) )
+      else if ( "note".equalsIgnoreCase( qName ) )
       {
-         pushContentHandler( new RtmNoteContentHandler( taskSeriesId,
-                                                        noteFinishedHandler ) );
+         pushContentHandler( new RtmNoteContentHandler( noteFinishedHandler ) );
          super.startElement( uri, localName, qName, attributes );
       }
-      else if ( "contact".equalsIgnoreCase( localName ) )
+      else if ( "contact".equalsIgnoreCase( qName ) )
       {
          pushContentHandler( new RtmContactContentHandler( participantFinishedHandler ) );
          super.startElement( uri, localName, qName, attributes );
       }
-      else if ( "task".equalsIgnoreCase( localName ) )
+      else if ( "task".equalsIgnoreCase( qName ) )
       {
-         taskAttributes = attributes;
+         taskAttributes = XmlAttr.copy( attributes );
       }
       else
       {
@@ -173,13 +169,15 @@ public class RtmTaskSeriesContentHandler extends
    @Override
    public void endElement( String uri, String localName, String qName ) throws SAXException
    {
-      if ( "task".equalsIgnoreCase( localName ) )
+      if ( "task".equalsIgnoreCase( qName ) )
       {
          addTask();
+         taskAttributes = null;
       }
-      else if ( "taskseries".equalsIgnoreCase( localName ) )
+      else if ( "taskseries".equalsIgnoreCase( qName ) )
       {
          setContentElementAndNotify( tasks );
+         taskSeriesAttributes = null;
       }
       else
       {
@@ -229,25 +227,26 @@ public class RtmTaskSeriesContentHandler extends
    {
       final RtmTask task = new RtmTask( XmlAttr.getStringNotNull( taskAttributes,
                                                                   "id" ),
-                                        taskSeriesId,
-                                        XmlAttr.getOptMillisUtc( taskSeriesIdAttributes,
+                                        XmlAttr.getStringNotNull( taskSeriesAttributes,
+                                                                  "id" ),
+                                        XmlAttr.getOptMillisUtc( taskSeriesAttributes,
                                                                  "created" ),
                                         XmlAttr.getOptMillisUtc( taskAttributes,
                                                                  "added" ),
-                                        XmlAttr.getOptMillisUtc( taskSeriesIdAttributes,
+                                        XmlAttr.getOptMillisUtc( taskSeriesAttributes,
                                                                  "modified" ),
                                         XmlAttr.getOptMillisUtc( taskAttributes,
                                                                  "deleted" ),
                                         listId,
-                                        XmlAttr.getOptString( taskSeriesIdAttributes,
+                                        XmlAttr.getOptString( taskSeriesAttributes,
                                                               "location_id",
                                                               RtmConstants.NO_ID ),
-                                        XmlAttr.getStringNotNull( taskSeriesIdAttributes,
+                                        XmlAttr.getStringNotNull( taskSeriesAttributes,
                                                                   "name" ),
-                                        XmlAttr.getOptString( taskSeriesIdAttributes,
+                                        XmlAttr.getOptString( taskSeriesAttributes,
                                                               "source",
                                                               Strings.EMPTY_STRING ),
-                                        XmlAttr.getOptString( taskSeriesIdAttributes,
+                                        XmlAttr.getOptString( taskSeriesAttributes,
                                                               "url",
                                                               Strings.EMPTY_STRING ),
                                         XmlAttr.getOptMillisUtc( taskAttributes,
@@ -262,9 +261,9 @@ public class RtmTaskSeriesContentHandler extends
                                                             "has_due_time" ),
                                         recurrencePattern,
                                         isEveryRecurrence,
-                                        XmlAttr.getOptString( taskAttributes,
-                                                              "estimation",
-                                                              null ),
+                                        Strings.nullIfEmpty( XmlAttr.getOptString( taskAttributes,
+                                                                                   "estimate",
+                                                                                   null ) ),
                                         tags,
                                         notes,
                                         participants );

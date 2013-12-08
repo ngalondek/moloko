@@ -113,7 +113,10 @@ public class RtmConnection implements IRtmConnection
          
          final Driver saxDriver = new Driver();
          
-         saxDriver.setContentHandler( contentHandler );
+         final RemoveWhiteSpaceXmlFilter xmlreader = new RemoveWhiteSpaceXmlFilter();
+         xmlreader.setParent( saxDriver );
+         xmlreader.setContentHandler( contentHandler );
+         
          saxDriver.parseSubTree( parser );
       }
       catch ( UnsupportedEncodingException e )
@@ -146,6 +149,7 @@ public class RtmConnection implements IRtmConnection
             }
             catch ( IOException e )
             {
+               log.e( getClass(), "Failed to close response reader.", e );
             }
          }
          

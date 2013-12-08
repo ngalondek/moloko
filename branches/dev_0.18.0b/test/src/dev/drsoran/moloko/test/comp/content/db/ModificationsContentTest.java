@@ -22,29 +22,19 @@
 
 package dev.drsoran.moloko.test.comp.content.db;
 
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.COL_NAME;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.COL_NAME_IDX;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.ENTITY_URI;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.ENTITY_URI_IDX;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.NEW_VALUE;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.NEW_VALUE_IDX;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.SYNCED_VALUE;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.SYNCED_VALUE_IDX;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.TIMESTAMP;
-import static dev.drsoran.moloko.content.Columns.ModificationColumns.TIMESTAMP_IDX;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
+import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
 import dev.drsoran.moloko.test.TestConstants;
@@ -52,9 +42,9 @@ import dev.drsoran.moloko.test.TestConstants;
 
 public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @Rule
-   public SQLiteScript sqliteScript = new SQLiteScript( ModificationsContentTest.class,
-                                                        "ModificationsContentTest.sql" );
+   @ClassRule
+   public static SQLiteScript sqliteScript = new SQLiteScript( ModificationsContentTest.class,
+                                                               "ModificationsContentTest.sql" );
    
    
    

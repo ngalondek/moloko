@@ -24,15 +24,23 @@ package dev.drsoran.rtm.rest;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import dev.drsoran.rtm.model.RtmTasksList;
 
 
 public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
 {
-   private Attributes listAttributes;
+   private Attributes listAttributes = new AttributesImpl();
    
    private String smartFilter;
+   
+   
+   
+   public RtmListContentHandler()
+   {
+      this( null );
+   }
    
    
    
@@ -47,11 +55,6 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
    @Override
    public void characters( char[] ch, int start, int length ) throws SAXException
    {
-      if ( smartFilter != null )
-      {
-         throw new SAXException( "Expected smart filter to be not present." );
-      }
-      
       smartFilter = new String( ch, start, length );
    }
    
@@ -63,9 +66,9 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
                              String qName,
                              Attributes attributes ) throws SAXException
    {
-      if ( "list".equalsIgnoreCase( localName ) )
+      if ( "list".equalsIgnoreCase( qName ) )
       {
-         listAttributes = attributes;
+         listAttributes = XmlAttr.copy( attributes );
       }
    }
    
@@ -74,7 +77,7 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
    @Override
    public void endElement( String uri, String localName, String qName ) throws SAXException
    {
-      if ( "list".equalsIgnoreCase( localName ) )
+      if ( "list".equalsIgnoreCase( qName ) )
       {
          readTasksList();
       }
@@ -85,10 +88,10 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
    private void readTasksList() throws SAXException
    {
       setContentElementAndNotify( new RtmTasksList( listAttributes.getValue( "id" ),
-                                                    XmlAttr.getOptMillisUtc( listAttributes,
-                                                                             "deleted" ),
                                                     XmlAttr.getInt( listAttributes,
                                                                     "position" ),
+                                                    XmlAttr.getBoolean( listAttributes,
+                                                                        "deleted" ),
                                                     XmlAttr.getBoolean( listAttributes,
                                                                         "locked" ),
                                                     XmlAttr.getBoolean( listAttributes,

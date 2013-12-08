@@ -31,26 +31,22 @@ import dev.drsoran.rtm.model.RtmNote;
 
 public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
 {
-   private final String taskSeriesId;
-   
    private Attributes noteAttributes;
    
-   private String noteText;
+   private String noteText = Strings.EMPTY_STRING;
    
    
    
-   public RtmNoteContentHandler( String taskSeriesId )
+   public RtmNoteContentHandler()
    {
-      this.taskSeriesId = taskSeriesId;
+      this( null );
    }
    
    
    
-   public RtmNoteContentHandler( String taskSeriesId,
-      IRtmContentHandlerListener< RtmNote > listener )
+   public RtmNoteContentHandler( IRtmContentHandlerListener< RtmNote > listener )
    {
       super( listener );
-      this.taskSeriesId = taskSeriesId;
    }
    
    
@@ -58,11 +54,6 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
    @Override
    public void characters( char[] ch, int start, int length ) throws SAXException
    {
-      if ( noteText != null )
-      {
-         throw new SAXException( "Expected note text to be not present." );
-      }
-      
       noteText = new String( ch, start, length );
    }
    
@@ -74,9 +65,9 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
                              String qName,
                              Attributes attributes ) throws SAXException
    {
-      if ( "note".equalsIgnoreCase( localName ) )
+      if ( "note".equalsIgnoreCase( qName ) )
       {
-         noteAttributes = attributes;
+         noteAttributes = XmlAttr.copy( attributes );
       }
    }
    
@@ -85,7 +76,7 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
    @Override
    public void endElement( String uri, String localName, String qName ) throws SAXException
    {
-      if ( "note".equalsIgnoreCase( localName ) )
+      if ( "note".equalsIgnoreCase( qName ) )
       {
          readNote();
       }
@@ -97,13 +88,10 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
    {
       setContentElementAndNotify( new RtmNote( XmlAttr.getStringNotNull( noteAttributes,
                                                                          "id" ),
-                                               taskSeriesId,
                                                XmlAttr.getOptMillisUtc( noteAttributes,
                                                                         "created" ),
                                                XmlAttr.getOptMillisUtc( noteAttributes,
                                                                         "modified" ),
-                                               XmlAttr.getOptMillisUtc( noteAttributes,
-                                                                        "deleted" ),
                                                Strings.emptyIfNull( noteAttributes.getValue( "title" ) ),
                                                noteText ) );
    }

@@ -30,7 +30,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import android.database.Cursor;
@@ -44,9 +44,9 @@ import dev.drsoran.moloko.test.SQLiteScript;
 
 public class TagsContentTest extends MolokoReadDbContentTestCase
 {
-   @Rule
-   public SQLiteScript sqliteScript = new SQLiteScript( TasksContentTest.class,
-                                                        "TagsContentTest.sql" );
+   @ClassRule
+   public static SQLiteScript sqliteScript = new SQLiteScript( TasksContentTest.class,
+                                                               "TagsContentTest.sql" );
    
    
    

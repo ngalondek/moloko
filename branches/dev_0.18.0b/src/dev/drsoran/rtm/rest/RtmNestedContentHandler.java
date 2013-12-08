@@ -35,13 +35,6 @@ public abstract class RtmNestedContentHandler< T > extends
    
    
    
-   protected RtmNestedContentHandler()
-   {
-      super( null );
-   }
-   
-   
-   
    protected RtmNestedContentHandler( IRtmContentHandlerListener< T > listener )
    {
       super( listener );

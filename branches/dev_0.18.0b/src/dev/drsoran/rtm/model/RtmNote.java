@@ -29,13 +29,9 @@ public class RtmNote
 {
    private final String id;
    
-   private final String taskSeriesId;
-   
    private final long createdMillisUtc;
    
    private final long modifiedMillisUtc;
-   
-   private final long deletedMillisUtc;
    
    private final String title;
    
@@ -43,17 +39,12 @@ public class RtmNote
    
    
    
-   public RtmNote( String id, String taskSeriesId, long createdMillisUtc,
-      long modifiedMillisUtc, long deletedMillisUtc, String title, String text )
+   public RtmNote( String id, long createdMillisUtc, long modifiedMillisUtc,
+      String title, String text )
    {
       if ( Strings.isNullOrEmpty( id ) )
       {
          throw new IllegalArgumentException( "id" );
-      }
-      
-      if ( Strings.isNullOrEmpty( taskSeriesId ) )
-      {
-         throw new IllegalArgumentException( "taskSeriesId" );
       }
       
       if ( createdMillisUtc == RtmConstants.NO_TIME )
@@ -72,10 +63,8 @@ public class RtmNote
       }
       
       this.id = id;
-      this.taskSeriesId = taskSeriesId;
       this.createdMillisUtc = createdMillisUtc;
       this.modifiedMillisUtc = modifiedMillisUtc;
-      this.deletedMillisUtc = deletedMillisUtc;
       this.title = title;
       this.text = text;
    }
@@ -85,13 +74,6 @@ public class RtmNote
    public String getId()
    {
       return id;
-   }
-   
-   
-   
-   public String getTaskSeriesId()
-   {
-      return taskSeriesId;
    }
    
    
@@ -106,13 +88,6 @@ public class RtmNote
    public long getModifiedMillisUtc()
    {
       return modifiedMillisUtc;
-   }
-   
-   
-   
-   public long getDeletedMillisUtc()
-   {
-      return deletedMillisUtc;
    }
    
    

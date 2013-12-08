@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.test;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.Assert.assertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -45,8 +45,6 @@ public abstract class MolokoDbContentTestCase extends MolokoRoboTestCase
 {
    private Context context;
    
-   private ILog log;
-   
    private RtmDatabase database;
    
    private DbContentProvider contentProvider;
@@ -63,11 +61,10 @@ public abstract class MolokoDbContentTestCase extends MolokoRoboTestCase
       
       context = Robolectric.buildActivity( Activity.class ).get();
       
-      log = createLog();
-      database = createDatabase( context, log );
-      contentProvider = createContentProvider( database, log );
+      database = createDatabase( context );
+      contentProvider = createContentProvider( database );
       
-      assumeTrue( contentProvider.onCreate() );
+      assertTrue( contentProvider.onCreate() );
    }
    
    
@@ -125,16 +122,15 @@ public abstract class MolokoDbContentTestCase extends MolokoRoboTestCase
    
    
    
-   protected RtmDatabase createDatabase( Context context, ILog log )
+   protected RtmDatabase createDatabase( Context context )
    {
-      return new RtmDatabase( context, log );
+      return new RtmDatabase( context );
    }
    
    
    
-   protected DbContentProvider createContentProvider( RtmDatabase database,
-                                                      ILog log )
+   protected DbContentProvider createContentProvider( RtmDatabase database )
    {
-      return new DbContentProvider( database, log );
+      return new DbContentProvider( database );
    }
 }

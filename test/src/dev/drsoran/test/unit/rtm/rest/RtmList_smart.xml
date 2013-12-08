@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <list id="100" name="SmartList" deleted="1" locked="0" archived="1" position="1" smart="1">
+   <filter>(priority:1)</filter>
+ </list>

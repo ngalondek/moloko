@@ -22,24 +22,20 @@
 
 package dev.drsoran.moloko.test.comp.content.db;
 
-import static dev.drsoran.moloko.content.Columns.SyncColumns.LAST_IN;
-import static dev.drsoran.moloko.content.Columns.SyncColumns.LAST_IN_IDX;
-import static dev.drsoran.moloko.content.Columns.SyncColumns.LAST_OUT;
-import static dev.drsoran.moloko.content.Columns.SyncColumns.LAST_OUT_IDX;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.Columns.SyncColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
+import dev.drsoran.moloko.sync.db.TableColumns.TimesColumns;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
 import dev.drsoran.moloko.test.TestConstants;
@@ -47,9 +43,9 @@ import dev.drsoran.moloko.test.TestConstants;
 
 public class SyncContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @Rule
-   public SQLiteScript sqliteScript = new SQLiteScript( SyncContentTest.class,
-                                                        "SyncContentTest.sql" );
+   @ClassRule
+   public static SQLiteScript sqliteScript = new SQLiteScript( SyncContentTest.class,
+                                                               "SyncContentTest.sql" );
    
    
    

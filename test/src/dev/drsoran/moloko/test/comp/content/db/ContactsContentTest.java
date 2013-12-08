@@ -28,7 +28,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -41,9 +41,9 @@ import dev.drsoran.moloko.test.SQLiteScript;
 
 public class ContactsContentTest extends MolokoReadDbContentTestCase
 {
-   @Rule
-   public SQLiteScript sqliteScript = new SQLiteScript( ContactsContentTest.class,
-                                                        "ContactsContentTest.sql" );
+   @ClassRule
+   public static SQLiteScript sqliteScript = new SQLiteScript( ContactsContentTest.class,
+                                                               "ContactsContentTest.sql" );
    
    
    

@@ -29,56 +29,48 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.rtm.model.RtmParticipant;
+import dev.drsoran.rtm.model.RtmContact;
 
 
-public class RtmParticipantFixture extends MolokoTestCase
+public class RtmContactFixture extends MolokoTestCase
 {
    
    @Test
-   public void testParticipant()
+   public void testContact()
    {
-      createParticipant();
+      createContact();
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testParticipantNoId()
+   public void testContactNoId()
    {
-      new RtmParticipant( RTM_NO_ID, "2", "name", "user" );
+      new RtmContact( RTM_NO_ID, "name", "user" );
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testParticipantNoContactId()
+   public void testContactNullName()
    {
-      new RtmParticipant( "1", RTM_NO_ID, "name", "user" );
+      new RtmContact( "1", null, "user" );
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testParticipantNullName()
+   public void testContactNullUser()
    {
-      new RtmParticipant( "1", "2", null, "user" );
+      new RtmContact( "1", "name", null );
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testParticipantNullUser()
+   public void testContactEmptyUser()
    {
-      new RtmParticipant( "1", "2", "name", null );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testParticipantEmptyUser()
-   {
-      new RtmParticipant( "1", "2", "name", "" );
+      new RtmContact( "1", "name", "" );
    }
    
    
@@ -86,15 +78,7 @@ public class RtmParticipantFixture extends MolokoTestCase
    @Test
    public void testGetId()
    {
-      assertThat( createParticipant().getId(), is( "1" ) );
-   }
-   
-   
-   
-   @Test
-   public void testGetContactId()
-   {
-      assertThat( createParticipant().getContactId(), is( "2" ) );
+      assertThat( createContact().getId(), is( "1" ) );
    }
    
    
@@ -102,7 +86,7 @@ public class RtmParticipantFixture extends MolokoTestCase
    @Test
    public void testGetFullname()
    {
-      assertThat( createParticipant().getFullname(), is( "name" ) );
+      assertThat( createContact().getFullname(), is( "name" ) );
    }
    
    
@@ -110,7 +94,7 @@ public class RtmParticipantFixture extends MolokoTestCase
    @Test
    public void testGetUsername()
    {
-      assertThat( createParticipant().getUsername(), is( "user" ) );
+      assertThat( createContact().getUsername(), is( "user" ) );
    }
    
    
@@ -118,13 +102,13 @@ public class RtmParticipantFixture extends MolokoTestCase
    @Test
    public void testToString()
    {
-      createParticipant().toString();
+      createContact().toString();
    }
    
    
    
-   private RtmParticipant createParticipant()
+   private RtmContact createContact()
    {
-      return new RtmParticipant( "1", "2", "name", "user" );
+      return new RtmContact( "1", "user", "name" );
    }
 }

@@ -30,7 +30,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.rtm.model.RtmNote;
 
@@ -40,7 +39,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testNote()
    {
-      new RtmNote( "1", "10", NOW );
+      createNote();
    }
    
    
@@ -48,7 +47,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNoteNullId()
    {
-      new RtmNote( null, "10", NOW );
+      new RtmNote( null, NOW, NEVER, "title", "text" );
    }
    
    
@@ -56,23 +55,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNoteEmptyId()
    {
-      new RtmNote( "", "10", NOW );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testNoteNullTaskSeriesId()
-   {
-      new RtmNote( "1", null, NOW );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testNoteEmptyTaskSeriesId()
-   {
-      new RtmNote( "1", "", NOW );
+      new RtmNote( "", NOW, NEVER, "title", "text" );
    }
    
    
@@ -80,7 +63,23 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testNoteNoCreatedMillis()
    {
-      new RtmNote( "1", "10", NEVER );
+      new RtmNote( "1", NEVER, NEVER, "title", "text" );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testNoteNullTitle()
+   {
+      new RtmNote( "1", NEVER, NEVER, null, "text" );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testNoteNullText()
+   {
+      new RtmNote( "1", NEVER, NEVER, "title", null );
    }
    
    
@@ -88,15 +87,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testGetId()
    {
-      assertThat( new RtmNote( "1", "10", NOW ).getId(), is( "1" ) );
-   }
-   
-   
-   
-   @Test
-   public void testGetTaskSeriesId()
-   {
-      assertThat( new RtmNote( "1", "10", NOW ).getTaskSeriesId(), is( "10" ) );
+      assertThat( createNote().getId(), is( "1" ) );
    }
    
    
@@ -104,30 +95,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testGetTitle()
    {
-      assertThat( new RtmNote( "1", "10", NOW ).getTitle(),
-                  is( Strings.EMPTY_STRING ) );
-   }
-   
-   
-   
-   @Test
-   public void testSetTitle()
-   {
-      final RtmNote note = new RtmNote( "1", "10", NOW );
-      note.setTitle( "title" );
-      assertThat( note.getTitle(), is( "title" ) );
-      
-      note.setTitle( "" );
-      assertThat( note.getTitle(), is( "" ) );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testSetTitleNull()
-   {
-      final RtmNote note = new RtmNote( "1", "10", NOW );
-      note.setTitle( null );
+      assertThat( createNote().getTitle(), is( "title" ) );
    }
    
    
@@ -135,29 +103,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testGetText()
    {
-      assertThat( new RtmNote( "1", "10", NOW ).getText(),
-                  is( Strings.EMPTY_STRING ) );
-   }
-   
-   
-   
-   @Test
-   public void testSetText()
-   {
-      final RtmNote note = new RtmNote( "1", "10", NOW );
-      note.setText( "text" );
-      assertThat( note.getText(), is( "text" ) );
-      note.setText( "" );
-      assertThat( note.getText(), is( "" ) );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testSetTextNull()
-   {
-      final RtmNote note = new RtmNote( "1", "10", NOW );
-      note.setText( null );
+      assertThat( createNote().getText(), is( "text" ) );
    }
    
    
@@ -165,7 +111,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testGetCreatedMillisUtc()
    {
-      assertThat( new RtmNote( "1", "10", NOW ).getCreatedMillisUtc(), is( NOW ) );
+      assertThat( createNote().getCreatedMillisUtc(), is( NOW ) );
    }
    
    
@@ -173,37 +119,7 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testGetModifiedMillisUtc()
    {
-      assertThat( new RtmNote( "1", "10", NOW ).getModifiedMillisUtc(),
-                  is( NEVER ) );
-   }
-   
-   
-   
-   @Test
-   public void testSetModifiedMillisUtc()
-   {
-      final RtmNote note = new RtmNote( "1", "10", NOW );
-      note.setModifiedMillisUtc( LATER );
-      assertThat( note.getModifiedMillisUtc(), is( LATER ) );
-   }
-   
-   
-   
-   @Test
-   public void testGetDeletedMillisUtc()
-   {
-      assertThat( new RtmNote( "1", "10", NOW ).getDeletedMillisUtc(),
-                  is( NEVER ) );
-   }
-   
-   
-   
-   @Test
-   public void testSetDeletedMillisUtc()
-   {
-      final RtmNote note = new RtmNote( "1", "10", NOW );
-      note.setDeletedMillisUtc( LATER );
-      assertThat( note.getDeletedMillisUtc(), is( LATER ) );
+      assertThat( createNote().getModifiedMillisUtc(), is( LATER ) );
    }
    
    
@@ -211,6 +127,13 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testToString()
    {
-      new RtmNote( "1", "10", NOW ).toString();
+      createNote().toString();
+   }
+   
+   
+   
+   private RtmNote createNote()
+   {
+      return new RtmNote( "1", NOW, LATER, "title", "text" );
    }
 }

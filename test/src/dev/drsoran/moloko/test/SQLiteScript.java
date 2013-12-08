@@ -23,24 +23,14 @@
 package dev.drsoran.moloko.test;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.rules.ExternalResource;
 
-
-public class SQLiteScript extends ExternalResource
+public class SQLiteScript extends FileResource
 {
    private final static String SQL_STATEMENT_SEPARATOR = ";";
-   
-   private final Class< ? > clazz;
-   
-   private final String filename;
    
    private Collection< String > sqlStatements;
    
@@ -48,18 +38,7 @@ public class SQLiteScript extends ExternalResource
    
    public SQLiteScript( Class< ? > clazz, String filename )
    {
-      if ( clazz == null )
-      {
-         throw new IllegalArgumentException( "clazz" );
-      }
-      
-      if ( filename == null )
-      {
-         throw new IllegalArgumentException( "filename" );
-      }
-      
-      this.clazz = clazz;
-      this.filename = filename;
+      super( clazz, filename );
    }
    
    
@@ -68,15 +47,9 @@ public class SQLiteScript extends ExternalResource
    protected void before() throws Throwable
    {
       super.before();
-      final InputStream scriptStream = clazz.getResourceAsStream( filename );
-      if ( scriptStream == null )
-      {
-         throw new FileNotFoundException( MessageFormat.format( "No file ''{0}''",
-                                                                filename ) );
-      }
       
-      sqlStatements = readScriptFromFile( scriptStream );
-      scriptStream.close();
+      sqlStatements = readScriptFromFile();
+      close();
    }
    
    
@@ -88,9 +61,9 @@ public class SQLiteScript extends ExternalResource
    
    
    
-   private Collection< String > readScriptFromFile( InputStream scriptStream ) throws IOException
+   private Collection< String > readScriptFromFile() throws IOException
    {
-      final BufferedReader reader = new BufferedReader( new InputStreamReader( scriptStream ) );
+      final BufferedReader reader = getReader();
       final StringBuilder stringBuffer = new StringBuilder();
       
       String line;

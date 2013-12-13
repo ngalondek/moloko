@@ -22,51 +22,33 @@
 
 package dev.drsoran.rtm.rest;
 
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 
-public abstract class RtmContentHandler< T > extends DefaultHandler
+public class RemoveWhiteSpaceXmlFilter extends XMLFilterImpl
 {
-   private T contentElement;
-   
-   private IRtmContentHandlerListener< T > listener;
-   
-   
-   
-   protected RtmContentHandler( IRtmContentHandlerListener< T > listener )
+   @Override
+   public void characters( char[] ch, int start, int length ) throws SAXException
    {
-      this.listener = listener;
-   }
-   
-   
-   
-   public void setListener( IRtmContentHandlerListener< T > listener )
-   {
-      this.listener = listener;
-   }
-   
-   
-   
-   public T getContentElement()
-   {
-      return contentElement;
-   }
-   
-   
-   
-   public void setContentElement( T content )
-   {
-      contentElement = content;
-   }
-   
-   
-   
-   public void setContentElementAndNotify( T content )
-   {
-      setContentElement( content );
-      if ( listener != null )
+      int pos = start;
+      int posEnd = start + length;
+      while ( pos < posEnd )
       {
-         listener.onContentHandled( content );
+         if ( !Character.isWhitespace( ch[ pos ] ) )
+         {
+            super.characters( ch, start, length );
+            return;
+         }
+         
+         ++pos;
       }
+   }
+   
+   
+   
+   @Override
+   public void ignorableWhitespace( char[] ch, int start, int length ) throws SAXException
+   {
    }
 }

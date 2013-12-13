@@ -22,64 +22,53 @@
 
 package dev.drsoran.test.unit.rtm.model;
 
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NEVER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmConstants;
+import dev.drsoran.rtm.model.RtmLocation;
 
 
-public class RtmNoteFixture extends MolokoTestCase
+public class RtmLocationFixture extends MolokoTestCase
 {
+   
    @Test
-   public void testNote()
+   public void testRtmLocation()
    {
-      createNote();
+      createLocation();
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testNoteNullId()
+   public void testRtmLocation_NoId()
    {
-      new RtmNote( null, NOW, NEVER, "title", "text" );
+      new RtmLocation( RtmConstants.NO_ID,
+                       "loc",
+                       1.0f,
+                       2.0f,
+                       "Somewhere",
+                       true,
+                       10 );
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testNoteEmptyId()
+   public void testRtmLocation_NullName()
    {
-      new RtmNote( "", NOW, NEVER, "title", "text" );
+      new RtmLocation( "id", null, 1.0f, 2.0f, "Somewhere", true, 10 );
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testNoteNoCreatedMillis()
+   public void testRtmLocation_EmptyName()
    {
-      new RtmNote( "1", NEVER, NEVER, "title", "text" );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testNoteNullTitle()
-   {
-      new RtmNote( "1", NOW, NEVER, null, "text" );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testNoteNullText()
-   {
-      new RtmNote( "1", NOW, NEVER, "title", null );
+      new RtmLocation( "id", "", 1.0f, 2.0f, "Somewhere", true, 10 );
    }
    
    
@@ -87,39 +76,55 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testGetId()
    {
-      assertThat( createNote().getId(), is( "1" ) );
+      assertThat( createLocation().getId(), is( "1" ) );
    }
    
    
    
    @Test
-   public void testGetTitle()
+   public void testGetName()
    {
-      assertThat( createNote().getTitle(), is( "title" ) );
+      assertThat( createLocation().getName(), is( "loc" ) );
    }
    
    
    
    @Test
-   public void testGetText()
+   public void testGetLongitude()
    {
-      assertThat( createNote().getText(), is( "text" ) );
+      assertThat( createLocation().getLongitude(), is( 1.0f ) );
    }
    
    
    
    @Test
-   public void testGetCreatedMillisUtc()
+   public void testGetLatitude()
    {
-      assertThat( createNote().getCreatedMillisUtc(), is( NOW ) );
+      assertThat( createLocation().getLatitude(), is( 2.0f ) );
    }
    
    
    
    @Test
-   public void testGetModifiedMillisUtc()
+   public void testGetAddress()
    {
-      assertThat( createNote().getModifiedMillisUtc(), is( LATER ) );
+      assertThat( createLocation().getAddress(), is( "Somewhere" ) );
+   }
+   
+   
+   
+   @Test
+   public void testIsViewable()
+   {
+      assertThat( createLocation().isViewable(), is( true ) );
+   }
+   
+   
+   
+   @Test
+   public void testGetZoom()
+   {
+      assertThat( createLocation().getZoom(), is( 10 ) );
    }
    
    
@@ -127,13 +132,13 @@ public class RtmNoteFixture extends MolokoTestCase
    @Test
    public void testToString()
    {
-      createNote().toString();
+      createLocation().toString();
    }
    
    
    
-   private RtmNote createNote()
+   private RtmLocation createLocation()
    {
-      return new RtmNote( "1", NOW, LATER, "title", "text" );
+      return new RtmLocation( "1", "loc", 1.0f, 2.0f, "Somewhere", true, 10 );
    }
 }

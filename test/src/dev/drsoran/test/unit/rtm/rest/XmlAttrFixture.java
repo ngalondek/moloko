@@ -127,6 +127,23 @@ public class XmlAttrFixture extends MolokoTestCase
    
    
    @Test
+   public void testGetFloat() throws SAXException
+   {
+      assertThat( XmlAttr.getFloat( getAttrs( "float", "1.0" ), "float" ),
+                  is( 1.0f ) );
+   }
+   
+   
+   
+   @Test( expected = SAXException.class )
+   public void testGetFloatException() throws SAXException
+   {
+      XmlAttr.getInt( getAttrs( "float", "w" ), "float" );
+   }
+   
+   
+   
+   @Test
    public void testGetBoolean() throws SAXException
    {
       assertThat( XmlAttr.getBoolean( getAttrs( "bool", "0" ), "bool" ),

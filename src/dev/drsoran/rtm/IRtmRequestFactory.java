@@ -22,33 +22,7 @@
 
 package dev.drsoran.rtm;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
-
-
-public class RemoveWhiteSpaceXmlFilter extends XMLFilterImpl
+public interface IRtmRequestFactory
 {
-   @Override
-   public void characters( char[] ch, int start, int length ) throws SAXException
-   {
-      int pos = start;
-      int posEnd = start + length;
-      while ( pos < posEnd )
-      {
-         if ( !Character.isWhitespace( ch[ pos ] ) )
-         {
-            super.characters( ch, start, length );
-            return;
-         }
-         
-         ++pos;
-      }
-   }
-   
-   
-   
-   @Override
-   public void ignorableWhitespace( char[] ch, int start, int length ) throws SAXException
-   {
-   }
+   IRtmRequest createRequest( String rtmMethod, Param... params );
 }

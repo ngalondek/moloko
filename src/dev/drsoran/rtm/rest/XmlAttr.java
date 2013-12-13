@@ -122,6 +122,24 @@ public final class XmlAttr
    
    
    
+   public static float getFloat( Attributes attrs, String attrName ) throws SAXException
+   {
+      String value = null;
+      try
+      {
+         value = attrs.getValue( attrName );
+         return Float.parseFloat( value );
+      }
+      catch ( NumberFormatException e )
+      {
+         throw new SAXException( MessageFormat.format( "{0} is not a parsable Float",
+                                                       value ),
+                                 e );
+      }
+   }
+   
+   
+   
    public static boolean getBoolean( Attributes attrs, String attrName ) throws SAXException
    {
       return getInt( attrs, attrName ) != 0;

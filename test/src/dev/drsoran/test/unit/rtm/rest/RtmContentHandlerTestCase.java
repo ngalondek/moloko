@@ -33,8 +33,8 @@ import org.xml.sax.XMLReader;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.XmlFileResource;
-import dev.drsoran.rtm.RemoveWhiteSpaceXmlFilter;
 import dev.drsoran.rtm.rest.IRtmContentHandlerListener;
+import dev.drsoran.rtm.rest.RemoveWhiteSpaceXmlFilter;
 import dev.drsoran.rtm.rest.RtmContentHandler;
 
 

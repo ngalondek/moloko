@@ -22,9 +22,18 @@
 
 package dev.drsoran.rtm;
 
-public interface IRtmConnection
+import java.util.Collection;
+
+
+public interface IRtmRequest
 {
-   < T > T executeMethod( Class< T > returnType,
-                          String rtmMethod,
-                          Param... params ) throws RtmServiceException;
+   String getRtmMethod();
+   
+   
+   
+   Collection< Param > getParameters();
+   
+   
+   
+   String getMethodExecutionUri();
 }

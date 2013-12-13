@@ -22,6 +22,7 @@
 
 package dev.drsoran.rtm.model;
 
+import dev.drsoran.Strings;
 
 
 public class RtmLocation
@@ -50,7 +51,7 @@ public class RtmLocation
          throw new IllegalArgumentException( "id" );
       }
       
-      if ( name == null )
+      if ( Strings.isNullOrEmpty( name ) )
       {
          throw new IllegalArgumentException( "name" );
       }

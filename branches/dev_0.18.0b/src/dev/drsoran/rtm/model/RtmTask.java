@@ -115,11 +115,6 @@ public class RtmTask
          throw new IllegalArgumentException( "name" );
       }
       
-      if ( listId == RtmConstants.NO_ID )
-      {
-         throw new IllegalArgumentException( "listId" );
-      }
-      
       if ( numPostponed < 0 )
       {
          throw new IllegalArgumentException( "numPostponed" );

@@ -57,6 +57,20 @@ public class PriorityFixture extends MolokoTestCase
    
    
    
+   @Test
+   public void testIsValid()
+   {
+      assertThat( Priority.isValid( "1" ), is( true ) );
+      assertThat( Priority.isValid( "2" ), is( true ) );
+      assertThat( Priority.isValid( "3" ), is( true ) );
+      assertThat( Priority.isValid( "n" ), is( true ) );
+      assertThat( Priority.isValid( "N" ), is( true ) );
+      
+      assertThat( Priority.isValid( "4" ), is( false ) );
+   }
+   
+   
+   
    @Test( expected = IllegalArgumentException.class )
    public void testFromStringInvalid()
    {

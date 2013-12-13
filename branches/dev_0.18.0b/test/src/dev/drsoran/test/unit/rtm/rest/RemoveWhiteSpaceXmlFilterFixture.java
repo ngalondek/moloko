@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.test.unit.rtm;
+package dev.drsoran.test.unit.rtm.rest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -37,7 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.XmlFileResource;
-import dev.drsoran.rtm.RemoveWhiteSpaceXmlFilter;
+import dev.drsoran.rtm.rest.RemoveWhiteSpaceXmlFilter;
 
 
 public class RemoveWhiteSpaceXmlFilterFixture extends MolokoTestCase

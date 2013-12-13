@@ -22,9 +22,10 @@
 
 package dev.drsoran.rtm;
 
-public interface IRtmConnection
+import java.io.Reader;
+
+
+public interface IRtmResponseHandler< T >
 {
-   < T > T executeMethod( Class< T > returnType,
-                          String rtmMethod,
-                          Param... params ) throws RtmServiceException;
+   T handleResponse( Reader responseReader ) throws RtmServiceException;
 }

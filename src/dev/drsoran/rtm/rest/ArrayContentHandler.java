@@ -25,13 +25,9 @@ package dev.drsoran.rtm.rest;
 import java.util.Collection;
 
 
-public class ArrayContentHandler< T > extends RtmNestedContentHandler< T[] >
+public class ArrayContentHandler< T > extends RtmContentHandler< T[] >
          implements IRtmContentHandlerListener< Collection< T > >
 {
-   private final CollectionContentHandler< T > impl;
-   
-   
-   
    public ArrayContentHandler( String xmlCollectionTag,
       RtmContentHandler< T > collectionElementHandler )
    {
@@ -45,9 +41,9 @@ public class ArrayContentHandler< T > extends RtmNestedContentHandler< T[] >
       IRtmContentHandlerListener< T[] > listener )
    {
       super( listener );
-      impl = new CollectionContentHandler< T >( xmlCollectionTag,
-                                                collectionElementHandler,
-                                                this );
+      pushNestedContentHandler( new CollectionContentHandler< T >( xmlCollectionTag,
+                                                                   collectionElementHandler,
+                                                                   this ) );
    }
    
    
@@ -57,8 +53,6 @@ public class ArrayContentHandler< T > extends RtmNestedContentHandler< T[] >
    {
       @SuppressWarnings( "unchecked" )
       final T[] content = (T[]) new Object[ contentElement.size() ];
-      
       setContentElementAndNotify( contentElement.toArray( content ) );
-      impl.setContentElement( null );
    }
 }

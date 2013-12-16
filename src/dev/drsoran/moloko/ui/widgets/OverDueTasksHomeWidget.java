@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
@@ -41,7 +42,6 @@ import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.util.DelayedRun;
-import dev.drsoran.moloko.util.Iterables;
 
 
 public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget

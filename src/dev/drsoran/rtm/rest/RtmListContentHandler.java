@@ -53,18 +53,15 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
    
    
    @Override
-   public void characters( char[] ch, int start, int length ) throws SAXException
+   public void characters( String string ) throws SAXException
    {
-      smartFilter = new String( ch, start, length );
+      smartFilter = string;
    }
    
    
    
    @Override
-   public void startElement( String uri,
-                             String localName,
-                             String qName,
-                             Attributes attributes ) throws SAXException
+   public void startElement( String qName, Attributes attributes ) throws SAXException
    {
       if ( "list".equalsIgnoreCase( qName ) )
       {
@@ -75,7 +72,7 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
    
    
    @Override
-   public void endElement( String uri, String localName, String qName ) throws SAXException
+   public void endElement( String qName ) throws SAXException
    {
       if ( "list".equalsIgnoreCase( qName ) )
       {

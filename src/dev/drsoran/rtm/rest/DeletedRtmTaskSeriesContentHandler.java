@@ -38,7 +38,7 @@ import dev.drsoran.rtm.model.RtmTask;
 
 
 public class DeletedRtmTaskSeriesContentHandler extends
-         RtmNestedContentHandler< Collection< RtmTask > >
+         RtmContentHandler< Collection< RtmTask > >
 {
    private final String listId;
    
@@ -65,38 +65,27 @@ public class DeletedRtmTaskSeriesContentHandler extends
    
    
    @Override
-   public void startElement( String uri,
-                             String localName,
-                             String qName,
-                             Attributes attributes ) throws SAXException
+   public void startElement( String name, Attributes attributes ) throws SAXException
    {
-      if ( "taskseries".equalsIgnoreCase( qName ) )
+      if ( "taskseries".equalsIgnoreCase( name ) )
       {
          taskSeriesAttributes = XmlAttr.copy( attributes );
       }
-      else if ( "task".equalsIgnoreCase( qName ) )
+      else if ( "task".equalsIgnoreCase( name ) )
       {
          addTask( attributes );
-      }
-      else
-      {
-         super.startElement( uri, localName, qName, attributes );
       }
    }
    
    
    
    @Override
-   public void endElement( String uri, String localName, String qName ) throws SAXException
+   public void endElement( String qName ) throws SAXException
    {
       if ( "taskseries".equalsIgnoreCase( qName ) )
       {
          setContentElementAndNotify( tasks );
          taskSeriesAttributes = null;
-      }
-      else
-      {
-         super.endElement( uri, localName, qName );
       }
    }
    

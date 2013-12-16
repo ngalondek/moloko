@@ -25,6 +25,7 @@ package dev.drsoran.moloko.app.loaders;
 import java.util.List;
 
 import android.net.Uri;
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
@@ -35,7 +36,6 @@ import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
-import dev.drsoran.moloko.util.Iterables;
 
 
 public class TasksLoader extends AbstractLoader< List< Task > >

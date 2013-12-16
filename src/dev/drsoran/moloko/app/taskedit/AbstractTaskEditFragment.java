@@ -40,6 +40,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
@@ -64,7 +65,6 @@ import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.DueEditText;
 import dev.drsoran.moloko.ui.widgets.EstimateEditText;
 import dev.drsoran.moloko.ui.widgets.RecurrenceEditText;
-import dev.drsoran.moloko.util.Iterables;
 import dev.drsoran.rtm.model.Priority;
 
 

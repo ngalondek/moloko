@@ -25,12 +25,12 @@ package dev.drsoran.moloko.app.loaders;
 import java.util.List;
 
 import android.net.Uri;
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.moloko.util.Iterables;
 
 
 public class CloudEntryLoader extends AbstractLoader< List< CloudEntry > >

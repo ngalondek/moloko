@@ -22,6 +22,9 @@
 
 package dev.drsoran.rtm.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +37,8 @@ import dev.drsoran.rtm.RtmClientInfo;
 
 public class RtmRestRequestFactory implements IRtmRequestFactory
 {
+   private final static String ENCODING = "UTF-8";
+   
    private final RtmClientInfo clientInfo;
    
    
@@ -53,25 +58,92 @@ public class RtmRestRequestFactory implements IRtmRequestFactory
    @Override
    public IRtmRequest createRequest( String rtmMethod, Param... params )
    {
-      List< Param > parametersSorted = new ArrayList< Param >();
-      for ( Param param : params )
+      try
       {
-         parametersSorted.add( param );
+         List< Param > parametersSorted = new ArrayList< Param >();
+         for ( Param param : params )
+         {
+            parametersSorted.add( param );
+         }
+         
+         parametersSorted = signRequestParams( parametersSorted );
+         Collections.sort( parametersSorted );
+         
+         return new RtmRestRequest( rtmMethod, parametersSorted );
       }
-      
-      parametersSorted = signRequestParams( parametersSorted );
-      Collections.sort( parametersSorted );
-      
-      return new RtmRestRequest( clientInfo, rtmMethod, parametersSorted );
+      catch ( NoSuchAlgorithmException e )
+      {
+         throw new RuntimeException( e );
+      }
+      catch ( UnsupportedEncodingException e )
+      {
+         throw new RuntimeException( e );
+      }
    }
    
    
    
-   private List< Param > signRequestParams( List< Param > params )
+   private List< Param > signRequestParams( List< Param > params ) throws NoSuchAlgorithmException,
+                                                                  UnsupportedEncodingException
    {
       params.add( new Param( "auth_token", clientInfo.getAuthToken() ) );
       params.add( new Param( "api_key", clientInfo.getApiKey() ) );
+      params.add( new Param( "api_sig", calcApiSig( params ) ) );
       
       return params;
+   }
+   
+   
+   
+   private String calcApiSig( List< Param > params ) throws NoSuchAlgorithmException,
+                                                    UnsupportedEncodingException
+   {
+      final MessageDigest digest = getDigest();
+      
+      digest.reset();
+      digest.update( clientInfo.getSharedSecret().getBytes( ENCODING ) );
+      
+      for ( Param param : params )
+      {
+         digest.update( param.getName().getBytes( ENCODING ) );
+         digest.update( param.getValue().getBytes( ENCODING ) );
+      }
+      
+      return convertToHex( digest.digest() );
+   }
+   
+   
+   
+   private static String convertToHex( byte[] data )
+   {
+      final StringBuilder buf = new StringBuilder();
+      for ( int i = 0; i < data.length; i++ )
+      {
+         int halfbyte = ( data[ i ] >>> 4 ) & 0x0F;
+         int two_halfs = 0;
+         do
+         {
+            if ( ( 0 <= halfbyte ) && ( halfbyte <= 9 ) )
+            {
+               buf.append( (char) ( '0' + halfbyte ) );
+            }
+            else
+            {
+               buf.append( (char) ( 'a' + ( halfbyte - 10 ) ) );
+            }
+            
+            halfbyte = data[ i ] & 0x0F;
+         }
+         while ( two_halfs++ < 1 );
+      }
+      
+      return buf.toString();
+   }
+   
+   
+   
+   private MessageDigest getDigest() throws NoSuchAlgorithmException
+   {
+      return MessageDigest.getInstance( "md5" );
    }
 }

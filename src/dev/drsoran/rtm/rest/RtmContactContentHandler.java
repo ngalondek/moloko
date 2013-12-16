@@ -46,13 +46,24 @@ public class RtmContactContentHandler extends RtmContentHandler< RtmContact >
    
    
    @Override
-   public void startElement( String uri,
-                             String localName,
-                             String qName,
-                             Attributes attributes ) throws SAXException
+   public void startElement( String qName, Attributes attributes ) throws SAXException
    {
-      setContentElementAndNotify( new RtmContact( attributes.getValue( "id" ),
-                                                  attributes.getValue( "username" ),
-                                                  attributes.getValue( "fullname" ) ) );
+      if ( "contact".equalsIgnoreCase( qName ) )
+      {
+         setContentElement( new RtmContact( attributes.getValue( "id" ),
+                                            attributes.getValue( "username" ),
+                                            attributes.getValue( "fullname" ) ) );
+      }
+   }
+   
+   
+   
+   @Override
+   protected void endElement( String qName ) throws SAXException
+   {
+      if ( "contact".equalsIgnoreCase( qName ) )
+      {
+         setContentElementAndNotify( getContentElement() );
+      }
    }
 }

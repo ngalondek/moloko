@@ -40,14 +40,6 @@ public class RtmClientInfo
    
    
    public RtmClientInfo( String apiKey, String sharedSecret, String name,
-      boolean useHttps )
-   {
-      this( apiKey, sharedSecret, name, null, useHttps );
-   }
-   
-   
-   
-   public RtmClientInfo( String apiKey, String sharedSecret, String name,
       String authToken, boolean useHttps )
    {
       this.apiKey = apiKey;

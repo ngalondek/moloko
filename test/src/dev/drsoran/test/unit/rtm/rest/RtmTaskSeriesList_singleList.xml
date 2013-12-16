@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list id="1000">
+	<taskseries id="987654321" created="2006-05-07T10:19:54Z"
+		modified="2006-05-07T10:19:54Z" name="Get Bananas" source="api"
+		url="http://www.myfavoritecoffeeplace.com/" location_id="123456">
+		<rrule every="1">FREQ=DAILY;INTERVAL=1</rrule>
+		<tags>
+			<tag>A Tag</tag>
+			<tag>Another Tag</tag>
+		</tags>
+		<participants>
+			<contact id="1" fullname="Omar Kilani" username="omar" />
+			<contact id="2" fullname="Hans Meiser" username="hamei" />
+		</participants>
+		<notes>
+			<note id="169624" created="2006-05-07T10:19:54Z" modified="2006-05-07T10:19:54Z"
+				title="Note Title">Note Body1</note>
+			<note id="169625" created="2006-05-07T10:19:54Z" modified="2006-05-07T10:19:54Z"
+				title="">Note Body2</note>
+		</notes>
+		<task id="123456789" due="" has_due_time="0" added="2006-05-07T10:19:54Z"
+			completed="" deleted="" priority="N" postponed="0" estimate="" />
+		<task id="123456790" due="2006-05-07T12:20:00Z" has_due_time="1"
+			added="2006-05-07T13:20:00Z" completed="2006-05-07T14:20:00Z" deleted="2006-05-07T15:20:00Z"
+			priority="1" postponed="2" estimate="5 days" />
+	</taskseries>
+</list>

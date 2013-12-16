@@ -32,7 +32,7 @@ import dev.drsoran.rtm.model.RtmTask;
 
 
 public class RtmTaskSeriesListContentHandler extends
-         RtmNestedContentHandler< Collection< RtmTask > >
+         RtmContentHandler< Collection< RtmTask > >
 {
    private final IRtmContentHandlerListener< Collection< RtmTask > > taskSeriesListener = new IRtmContentHandlerListener< Collection< RtmTask > >()
    {
@@ -40,6 +40,7 @@ public class RtmTaskSeriesListContentHandler extends
       public void onContentHandled( Collection< RtmTask > contentElement )
       {
          addTasks( contentElement );
+         popNestedContentHandler();
       }
    };
    
@@ -67,20 +68,19 @@ public class RtmTaskSeriesListContentHandler extends
    
    
    @Override
-   public void startElement( String uri,
-                             String localName,
-                             String qName,
-                             Attributes attributes ) throws SAXException
+   public void startElement( String qName, Attributes attributes ) throws SAXException
    {
       if ( "taskseries".equalsIgnoreCase( qName ) )
       {
-         pushContentHandler( new RtmTaskSeriesContentHandler( activeListId,
-                                                              taskSeriesListener ) );
+         pushNestedContentHandler( new RtmTaskSeriesContentHandler( activeListId,
+                                                                    taskSeriesListener ) );
+         currentHandler().startElement( qName, attributes );
       }
       else if ( "deleted".equalsIgnoreCase( qName ) )
       {
-         pushContentHandler( new DeletedRtmTaskSeriesContentHandler( activeListId,
-                                                                     taskSeriesListener ) );
+         pushNestedContentHandler( new DeletedRtmTaskSeriesContentHandler( activeListId,
+                                                                           taskSeriesListener ) );
+         currentHandler().startElement( qName, attributes );
       }
       else if ( "list".equalsIgnoreCase( qName ) )
       {
@@ -90,26 +90,14 @@ public class RtmTaskSeriesListContentHandler extends
       {
          expectMultipleLists = true;
       }
-      else
-      {
-         super.startElement( uri, localName, qName, attributes );
-      }
    }
    
    
    
    @Override
-   public void endElement( String uri, String localName, String qName ) throws SAXException
+   public void endElement( String qName ) throws SAXException
    {
-      if ( "taskseries".equalsIgnoreCase( qName ) )
-      {
-         popContentHandler();
-      }
-      else if ( "deleted".equalsIgnoreCase( qName ) )
-      {
-         popContentHandler();
-      }
-      else if ( "list".equalsIgnoreCase( qName ) )
+      if ( "list".equalsIgnoreCase( qName ) )
       {
          activeListId = null;
          
@@ -122,16 +110,12 @@ public class RtmTaskSeriesListContentHandler extends
       {
          setContentElementAndNotify( tasks );
       }
-      else
-      {
-         super.endElement( uri, localName, qName );
-      }
    }
    
    
    
    private void addTasks( Collection< RtmTask > tasks )
    {
-      tasks.addAll( tasks );
+      this.tasks.addAll( tasks );
    }
 }

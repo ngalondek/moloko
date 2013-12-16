@@ -29,6 +29,7 @@ import java.util.NoSuchElementException;
 import android.content.Context;
 import android.content.res.Resources;
 import android.widget.Toast;
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Task;
@@ -36,7 +37,6 @@ import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.util.Iterables;
 
 
 public class AppContentEditService implements IAppContentEditService

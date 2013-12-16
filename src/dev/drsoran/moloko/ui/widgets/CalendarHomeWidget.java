@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
@@ -44,7 +45,6 @@ import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.DelayedRun;
-import dev.drsoran.moloko.util.Iterables;
 
 
 public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget

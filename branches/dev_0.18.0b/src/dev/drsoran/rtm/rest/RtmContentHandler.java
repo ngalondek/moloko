@@ -22,11 +22,17 @@
 
 package dev.drsoran.rtm.rest;
 
+import java.util.Stack;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 
 public abstract class RtmContentHandler< T > extends DefaultHandler
 {
+   private Stack< RtmContentHandler< ? > > contentHandlerStack;
+   
    private T contentElement;
    
    private IRtmContentHandlerListener< T > listener;
@@ -43,6 +49,75 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
    public void setListener( IRtmContentHandlerListener< T > listener )
    {
       this.listener = listener;
+   }
+   
+   
+   
+   @Override
+   public final void startElement( String uri,
+                                   String localName,
+                                   String qName,
+                                   Attributes attributes ) throws SAXException
+   {
+      final RtmContentHandler< ? > handler = currentHandler();
+      if ( handler == this )
+      {
+         handler.startElement( qName, attributes );
+      }
+      else
+      {
+         handler.startElement( uri, localName, qName, attributes );
+      }
+   }
+   
+   
+   
+   protected void startElement( String qName, Attributes attributes ) throws SAXException
+   {
+   }
+   
+   
+   
+   @Override
+   public final void endElement( String uri, String localName, String qName ) throws SAXException
+   {
+      final RtmContentHandler< ? > handler = currentHandler();
+      if ( handler == this )
+      {
+         handler.endElement( qName );
+      }
+      else
+      {
+         handler.endElement( uri, localName, qName );
+      }
+   }
+   
+   
+   
+   protected void endElement( String qName ) throws SAXException
+   {
+   }
+   
+   
+   
+   @Override
+   public final void characters( char[] ch, int start, int length ) throws SAXException
+   {
+      final RtmContentHandler< ? > handler = currentHandler();
+      if ( handler == this )
+      {
+         handler.characters( new String( ch, start, length ) );
+      }
+      else
+      {
+         handler.characters( ch, start, length );
+      }
+   }
+   
+   
+   
+   protected void characters( String string ) throws SAXException
+   {
    }
    
    
@@ -68,5 +143,40 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
       {
          listener.onContentHandled( content );
       }
+   }
+   
+   
+   
+   public RtmContentHandler< ? > pushNestedContentHandler( RtmContentHandler< ? > contentHandler )
+   {
+      if ( contentHandlerStack == null )
+      {
+         contentHandlerStack = new Stack< RtmContentHandler< ? > >();
+      }
+      
+      contentHandlerStack.push( contentHandler );
+      return contentHandler;
+   }
+   
+   
+   
+   public RtmContentHandler< ? > popNestedContentHandler()
+   {
+      RtmContentHandler< ? > nestedHandler = currentHandler();
+      contentHandlerStack.pop();
+      
+      return nestedHandler;
+   }
+   
+   
+   
+   public RtmContentHandler< ? > currentHandler()
+   {
+      if ( contentHandlerStack == null || contentHandlerStack.isEmpty() )
+      {
+         return this;
+      }
+      
+      return contentHandlerStack.peek();
    }
 }

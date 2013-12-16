@@ -30,7 +30,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.sax2.Driver;
 
-import android.util.Xml;
 import dev.drsoran.rtm.IRtmResponseHandler;
 import dev.drsoran.rtm.RtmServiceException;
 
@@ -39,10 +38,24 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
 {
    private final RtmContentHandler< T > contentHandler;
    
+   private final XmlPullParser pullParser;
    
    
-   protected RtmRestResponseHandler( RtmContentHandler< T > contentHandler )
+   
+   public RtmRestResponseHandler( XmlPullParser pullParser,
+      RtmContentHandler< T > contentHandler )
    {
+      if ( pullParser == null )
+      {
+         throw new IllegalArgumentException( "pullParser" );
+      }
+      
+      if ( contentHandler == null )
+      {
+         throw new IllegalArgumentException( "contentHandler" );
+      }
+      
+      this.pullParser = pullParser;
       this.contentHandler = contentHandler;
    }
    
@@ -53,20 +66,19 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
    {
       try
       {
-         final XmlPullParser parser = Xml.newPullParser();
-         parser.setInput( responseReader );
-         parser.nextTag();
+         pullParser.setInput( responseReader );
+         pullParser.nextTag();
          
-         checkResponse( parser );
-         checkResponseStatus( parser );
-         
-         final Driver saxDriver = new Driver();
+         checkResponse( pullParser );
+         checkResponseStatus( pullParser );
          
          final RemoveWhiteSpaceXmlFilter xmlreader = new RemoveWhiteSpaceXmlFilter();
+         
+         final Driver saxDriver = new Driver();
          xmlreader.setParent( saxDriver );
          xmlreader.setContentHandler( contentHandler );
          
-         saxDriver.parseSubTree( parser );
+         saxDriver.parseSubTree( pullParser );
          
          return contentHandler.getContentElement();
       }

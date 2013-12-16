@@ -30,10 +30,12 @@ import org.xml.sax.SAXException;
 
 
 public class CollectionContentHandler< T > extends
-         RtmNestedContentHandler< Collection< T > > implements
+         RtmContentHandler< Collection< T > > implements
          IRtmContentHandlerListener< T >
 {
    private final String xmlCollectionTag;
+   
+   private RtmContentHandler< T > collectionElementHandler;
    
    
    
@@ -51,41 +53,47 @@ public class CollectionContentHandler< T > extends
    {
       super( listener );
       
-      collectionElementHandler.setListener( this );
+      this.collectionElementHandler = collectionElementHandler;
+      this.collectionElementHandler.setListener( this );
       this.xmlCollectionTag = xmlCollectionTag;
    }
    
    
    
    @Override
-   public void startElement( String uri,
-                             String localName,
-                             String qName,
-                             Attributes attributes ) throws SAXException
+   protected void startElement( String name, Attributes attributes ) throws SAXException
    {
-      if ( qName.equalsIgnoreCase( xmlCollectionTag ) )
+      if ( name.equalsIgnoreCase( xmlCollectionTag ) )
       {
          setContentElement( new ArrayList< T >() );
       }
       else
       {
-         super.startElement( uri, localName, qName, attributes );
+         collectionElementHandler.startElement( name, attributes );
       }
    }
    
    
    
    @Override
-   public void endElement( String uri, String localName, String qName ) throws SAXException
+   protected void endElement( String name ) throws SAXException
    {
-      if ( qName.equalsIgnoreCase( xmlCollectionTag ) )
+      if ( name.equalsIgnoreCase( xmlCollectionTag ) )
       {
          setContentElementAndNotify( getContentElement() );
       }
       else
       {
-         super.endElement( uri, localName, qName );
+         collectionElementHandler.endElement( name );
       }
+   }
+   
+   
+   
+   @Override
+   protected void characters( String string ) throws SAXException
+   {
+      collectionElementHandler.characters( string );
    }
    
    

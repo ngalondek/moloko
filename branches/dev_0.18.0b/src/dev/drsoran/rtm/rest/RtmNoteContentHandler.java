@@ -52,18 +52,15 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
    
    
    @Override
-   public void characters( char[] ch, int start, int length ) throws SAXException
+   public void characters( String string ) throws SAXException
    {
-      noteText = new String( ch, start, length );
+      noteText = string;
    }
    
    
    
    @Override
-   public void startElement( String uri,
-                             String localName,
-                             String qName,
-                             Attributes attributes ) throws SAXException
+   public void startElement( String qName, Attributes attributes ) throws SAXException
    {
       if ( "note".equalsIgnoreCase( qName ) )
       {
@@ -74,7 +71,7 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
    
    
    @Override
-   public void endElement( String uri, String localName, String qName ) throws SAXException
+   public void endElement( String qName ) throws SAXException
    {
       if ( "note".equalsIgnoreCase( qName ) )
       {

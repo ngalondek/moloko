@@ -24,6 +24,7 @@ package dev.drsoran.rtm.rest;
 
 import java.text.MessageFormat;
 
+import android.util.Xml;
 import dev.drsoran.rtm.IRtmRequest;
 import dev.drsoran.rtm.IRtmResponseHandler;
 import dev.drsoran.rtm.IRtmResponseHandlerFactory;
@@ -47,17 +48,20 @@ public class RtmRestResponseHandlerFactory implements
       }
       else if ( resultType == RtmTasksList[].class )
       {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmTasksList[] >( new ArrayContentHandler< RtmTasksList >( "lists",
+         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmTasksList[] >( Xml.newPullParser(),
+                                                                                         new ArrayContentHandler< RtmTasksList >( "lists",
                                                                                                                                   new RtmListContentHandler() ) );
       }
       else if ( resultType == RtmContact[].class )
       {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmContact[] >( new ArrayContentHandler< RtmContact >( "contacts",
+         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmContact[] >( Xml.newPullParser(),
+                                                                                       new ArrayContentHandler< RtmContact >( "contacts",
                                                                                                                               new RtmContactContentHandler() ) );
       }
       else if ( resultType == RtmLocation[].class )
       {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmLocation[] >( new ArrayContentHandler< RtmLocation >( "locations",
+         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmLocation[] >( Xml.newPullParser(),
+                                                                                        new ArrayContentHandler< RtmLocation >( "locations",
                                                                                                                                 new RtmLocationContentHandler() ) );
       }
       

@@ -22,6 +22,7 @@
 
 package dev.drsoran.rtm.rest;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -37,7 +38,7 @@ import dev.drsoran.rtm.model.RtmTask;
 
 
 public class RtmTaskSeriesContentHandler extends
-         RtmNestedContentHandler< Collection< RtmTask > >
+         RtmContentHandler< Collection< RtmTask > >
 {
    private enum CharactersContext
    {
@@ -54,7 +55,7 @@ public class RtmTaskSeriesContentHandler extends
       public void onContentHandled( RtmNote contentElement )
       {
          addNote( contentElement );
-         popContentHandler();
+         popNestedContentHandler();
       }
    };
    
@@ -64,7 +65,7 @@ public class RtmTaskSeriesContentHandler extends
       public void onContentHandled( RtmContact contentElement )
       {
          addParticipant( contentElement );
-         popContentHandler();
+         popNestedContentHandler();
       }
    };
    
@@ -103,21 +104,21 @@ public class RtmTaskSeriesContentHandler extends
    
    
    @Override
-   public void characters( char[] ch, int start, int length ) throws SAXException
+   protected void characters( String string ) throws SAXException
    {
       switch ( charactersContext )
       {
          case Recurrence:
-            recurrencePattern = new String( ch, start, length );
+            recurrencePattern = string;
             break;
          
          case Tag:
-            addTag( new String( ch, start, length ) );
+            addTag( string );
             break;
          
          default :
-            super.characters( ch, start, length );
-            break;
+            throw new SAXException( MessageFormat.format( "Unexpected character context {0}",
+                                                          charactersContext ) );
       }
       
       charactersContext = CharactersContext.None;
@@ -126,10 +127,7 @@ public class RtmTaskSeriesContentHandler extends
    
    
    @Override
-   public void startElement( String uri,
-                             String localName,
-                             String qName,
-                             Attributes attributes ) throws SAXException
+   protected void startElement( String qName, Attributes attributes ) throws SAXException
    {
       if ( "taskseries".equalsIgnoreCase( qName ) )
       {
@@ -146,28 +144,24 @@ public class RtmTaskSeriesContentHandler extends
       }
       else if ( "note".equalsIgnoreCase( qName ) )
       {
-         pushContentHandler( new RtmNoteContentHandler( noteFinishedHandler ) );
-         super.startElement( uri, localName, qName, attributes );
+         pushNestedContentHandler( new RtmNoteContentHandler( noteFinishedHandler ) ).startElement( qName,
+                                                                                                    attributes );
       }
       else if ( "contact".equalsIgnoreCase( qName ) )
       {
-         pushContentHandler( new RtmContactContentHandler( participantFinishedHandler ) );
-         super.startElement( uri, localName, qName, attributes );
+         pushNestedContentHandler( new RtmContactContentHandler( participantFinishedHandler ) ).startElement( qName,
+                                                                                                              attributes );
       }
       else if ( "task".equalsIgnoreCase( qName ) )
       {
          taskAttributes = XmlAttr.copy( attributes );
-      }
-      else
-      {
-         super.startElement( uri, localName, qName, attributes );
       }
    }
    
    
    
    @Override
-   public void endElement( String uri, String localName, String qName ) throws SAXException
+   protected void endElement( String qName ) throws SAXException
    {
       if ( "task".equalsIgnoreCase( qName ) )
       {
@@ -178,10 +172,6 @@ public class RtmTaskSeriesContentHandler extends
       {
          setContentElementAndNotify( tasks );
          taskSeriesAttributes = null;
-      }
-      else
-      {
-         super.endElement( uri, localName, qName );
       }
    }
    

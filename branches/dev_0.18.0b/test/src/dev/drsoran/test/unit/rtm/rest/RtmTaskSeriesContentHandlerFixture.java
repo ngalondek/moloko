@@ -37,8 +37,8 @@ import java.util.TimeZone;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.test.XmlFileResource;
-import dev.drsoran.moloko.util.Iterables;
 import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
@@ -100,6 +100,7 @@ public class RtmTaskSeriesContentHandlerFixture extends
          assertThat( task.getModifiedMillisUtc(),
                      is( RTM_CAL.getTimeInMillis() ) );
          assertThat( task.getName(), is( "Get Bananas" ) );
+         assertThat( task.getListId(), is( "1" ) );
          assertThat( task.getSource(), is( "api" ) );
          assertThat( task.getUrl(),
                      is( "http://www.myfavoritecoffeeplace.com/" ) );
@@ -191,6 +192,7 @@ public class RtmTaskSeriesContentHandlerFixture extends
       assertThat( task.getCreatedMillisUtc(), is( RTM_CAL.getTimeInMillis() ) );
       assertThat( task.getModifiedMillisUtc(), is( RTM_CAL.getTimeInMillis() ) );
       assertThat( task.getName(), is( "Get Bananas" ) );
+      assertThat( task.getListId(), is( "1" ) );
       assertThat( task.getSource(), is( "api" ) );
       assertThat( task.getUrl(), is( "" ) );
       assertThat( task.getLocationId(), is( RtmConstants.NO_ID ) );

@@ -24,16 +24,14 @@ package dev.drsoran.test.unit.rtm.rest;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
-import org.robolectric.annotation.Config;
 import org.xmlpull.v1.XmlPullParser;
 
-import dev.drsoran.moloko.test.MolokoRoboTestCase;
+import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.rtm.rest.RtmContentHandler;
 import dev.drsoran.rtm.rest.RtmRestResponseHandler;
 
 
-@Config( manifest = Config.NONE )
-public class RtmRestResponseHandlerFixture extends MolokoRoboTestCase
+public class RtmRestResponseHandlerFixture extends MolokoTestCase
 {
    @SuppressWarnings( "unchecked" )
    @Test

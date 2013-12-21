@@ -32,6 +32,8 @@ import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.model.RtmTasksList;
+import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmFrob;
 
 
 public class RtmRestResponseHandlerFactory implements
@@ -63,6 +65,16 @@ public class RtmRestResponseHandlerFactory implements
          return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmLocation[] >( Xml.newPullParser(),
                                                                                         new ArrayContentHandler< RtmLocation >( "locations",
                                                                                                                                 new RtmLocationContentHandler() ) );
+      }
+      else if ( resultType == RtmFrob.class )
+      {
+         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmFrob >( Xml.newPullParser(),
+                                                                                  new RtmFrobContentHandler( null ) );
+      }
+      else if ( resultType == RtmAuth.class )
+      {
+         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmAuth >( Xml.newPullParser(),
+                                                                                  new RtmAuthContentHandler( null ) );
       }
       
       throw new IllegalArgumentException( MessageFormat.format( "Unknown response data type {0}",

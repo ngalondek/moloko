@@ -38,8 +38,8 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.rtm.RtmClientInfo;
-import dev.drsoran.rtm.RtmServiceConstants;
 import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.service.RtmServiceConstants;
 
 
 public class Authenticator extends AbstractAccountAuthenticator

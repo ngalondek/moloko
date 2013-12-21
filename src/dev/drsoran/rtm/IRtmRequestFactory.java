@@ -24,5 +24,5 @@ package dev.drsoran.rtm;
 
 public interface IRtmRequestFactory
 {
-   IRtmRequest createRequest( String rtmMethod, Param... params );
+   IRtmRequest createRequest( String rtmMethod, RtmRequestUriBuilder urlBuilder );
 }

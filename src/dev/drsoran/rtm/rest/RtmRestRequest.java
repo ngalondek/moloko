@@ -22,31 +22,23 @@
 
 package dev.drsoran.rtm.rest;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-
 import dev.drsoran.rtm.IRtmRequest;
 import dev.drsoran.rtm.Param;
+import dev.drsoran.rtm.RtmRequestUriBuilder;
 
 
 public class RtmRestRequest implements IRtmRequest
 {
-   private final static String REST_SERVICE_URL_POSTFIX = "/services/rest/";
-   
-   private final static String ENCODING = "UTF-8";
-   
    private final String rtmMethod;
    
-   private final Collection< Param > parameters;
+   private final RtmRequestUriBuilder requestBuilder;
    
    
    
-   public RtmRestRequest( String rtmMethod, Collection< Param > parametersSorted )
+   public RtmRestRequest( String rtmMethod, RtmRequestUriBuilder builder )
    {
       this.rtmMethod = rtmMethod;
-      this.parameters = parametersSorted;
+      this.requestBuilder = builder;
    }
    
    
@@ -60,29 +52,18 @@ public class RtmRestRequest implements IRtmRequest
    
    
    @Override
-   public String getMethodExecutionUri()
+   public void addParam( Param param )
    {
-      try
-      {
-         final String requestUri = computeRequestUri();
-         return requestUri;
-      }
-      catch ( NoSuchAlgorithmException e )
-      {
-         throw new RuntimeException( e );
-      }
-      catch ( UnsupportedEncodingException e )
-      {
-         throw new RuntimeException( e );
-      }
+      requestBuilder.addParam( param );
    }
    
    
    
    @Override
-   public Collection< Param > getParameters()
+   public String getMethodExecutionUri()
    {
-      return parameters;
+      final String requestUri = requestBuilder.build();
+      return requestUri;
    }
    
    
@@ -90,30 +71,6 @@ public class RtmRestRequest implements IRtmRequest
    @Override
    public String toString()
    {
-      return "RtmRestRequest [rtmMethod=" + rtmMethod + ", parameters="
-         + parameters + "]";
-   }
-   
-   
-   
-   private String computeRequestUri() throws NoSuchAlgorithmException,
-                                     UnsupportedEncodingException
-   {
-      final StringBuilder requestUri = new StringBuilder( REST_SERVICE_URL_POSTFIX );
-      
-      if ( !parameters.isEmpty() )
-      {
-         requestUri.append( "?" );
-      }
-      
-      for ( Param param : parameters )
-      {
-         requestUri.append( param.getName() )
-                   .append( "=" )
-                   .append( URLEncoder.encode( param.getValue(), ENCODING ) )
-                   .append( "&" );
-      }
-      
-      return requestUri.toString();
+      return "RtmRestRequest [" + requestBuilder.build() + "]";
    }
 }

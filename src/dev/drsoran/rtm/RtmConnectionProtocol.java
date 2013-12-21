@@ -22,11 +22,23 @@
 
 package dev.drsoran.rtm;
 
-public interface IRtmConnectionFactory
+public enum RtmConnectionProtocol
 {
-   RtmRequestUriBuilder createUriBuilder();
+   http( 80 ), https( 443 );
+   
+   private int port;
    
    
    
-   IRtmConnection createRtmConnection();
+   RtmConnectionProtocol( int port )
+   {
+      this.port = port;
+   }
+   
+   
+   
+   public int getPort()
+   {
+      return port;
+   }
 }

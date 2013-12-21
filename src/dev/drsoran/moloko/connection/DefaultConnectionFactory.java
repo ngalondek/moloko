@@ -46,17 +46,15 @@ public class DefaultConnectionFactory implements IConnectionFactory
    
    
    @Override
-   public IConnection createConnection( String scheme,
-                                              String hostname,
-                                              int port )
+   public IConnection createConnection( String scheme, String hostname, int port )
    {
       if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.GINGERBREAD ) )
          return new HttpUrlConnection( log, scheme, hostname, port );
       else
          return new ApacheHttpClientConnection( log,
-                                                   userAgent,
-                                                   scheme,
-                                                   hostname,
-                                                   port );
+                                                userAgent,
+                                                scheme,
+                                                hostname,
+                                                port );
    }
 }

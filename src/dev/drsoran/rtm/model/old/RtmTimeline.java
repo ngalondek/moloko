@@ -26,8 +26,8 @@ import org.w3c.dom.Element;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.TimeLineResult;
 
+import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.model.old.RtmTask.Priority;
 
@@ -78,7 +78,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmList >()
       {
          @Override
-         public TimeLineResult< RtmList > call() throws RtmServiceException
+         public RtmResponse< RtmList > call() throws RtmServiceException
          {
             return service.lists_add( id, listName, smartFilter );
          }
@@ -93,7 +93,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmList >()
       {
          @Override
-         public TimeLineResult< RtmList > call() throws RtmServiceException
+         public RtmResponse< RtmList > call() throws RtmServiceException
          {
             return service.lists_setName( id, listId, newName );
          }
@@ -107,7 +107,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmList >()
       {
          @Override
-         public TimeLineResult< RtmList > call() throws RtmServiceException
+         public RtmResponse< RtmList > call() throws RtmServiceException
          {
             return service.lists_delete( id, listId );
          }
@@ -122,7 +122,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_add( id, listId, name );
          }
@@ -138,7 +138,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_delete( id, listId, taskSeriesId, taskId );
          }
@@ -154,7 +154,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_complete( id, listId, taskSeriesId, taskId );
          }
@@ -170,7 +170,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_uncomplete( id, listId, taskSeriesId, taskId );
          }
@@ -187,7 +187,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setEstimate( id,
                                               listId,
@@ -208,7 +208,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setName( id,
                                           listId,
@@ -229,7 +229,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_movePriority( id,
                                                listId,
@@ -250,7 +250,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setPriority( id,
                                               listId,
@@ -271,7 +271,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setRecurrence( id,
                                                 listId,
@@ -292,7 +292,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setTags( id,
                                           listId,
@@ -313,7 +313,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_moveTo( id,
                                          fromListId,
@@ -333,7 +333,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_postpone( id, listId, taskSeriesId, taskId );
          }
@@ -351,7 +351,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setDueDate( id,
                                              listId,
@@ -373,7 +373,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setLocation( id,
                                               listId,
@@ -394,7 +394,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineResult< RtmTaskList > call() throws RtmServiceException
+         public RtmResponse< RtmTaskList > call() throws RtmServiceException
          {
             return service.tasks_setURL( id, listId, taskSeriesId, taskId, url );
          }
@@ -412,7 +412,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskNote >()
       {
          @Override
-         public TimeLineResult< RtmTaskNote > call() throws RtmServiceException
+         public RtmResponse< RtmTaskNote > call() throws RtmServiceException
          {
             return service.tasks_notes_add( id,
                                             listId,
@@ -434,7 +434,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskNote >()
       {
          @Override
-         public TimeLineResult< RtmTaskNote > call() throws RtmServiceException
+         public RtmResponse< RtmTaskNote > call() throws RtmServiceException
          {
             return service.tasks_notes_edit( id,
                                              taskSeriesId,
@@ -453,7 +453,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskNote >()
       {
          @Override
-         public TimeLineResult< RtmTaskNote > call() throws RtmServiceException
+         public RtmResponse< RtmTaskNote > call() throws RtmServiceException
          {
             return service.tasks_notes_delete( id, taskSeriesId, noteId );
          }

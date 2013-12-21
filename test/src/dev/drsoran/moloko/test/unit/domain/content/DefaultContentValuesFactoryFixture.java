@@ -37,7 +37,7 @@ import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.sync.model.Modification;
@@ -181,7 +181,7 @@ public class DefaultContentValuesFactoryFixture extends MolokoRoboTestCase
    @Test
    public void testCreateContentValues_RtmSettings()
    {
-      for ( TestData< RtmSettings > testData : testDataSource.getRtmSettingsTestData() )
+      for ( TestData< Settings > testData : testDataSource.getRtmSettingsTestData() )
       {
          final ContentValues contentValues = fact.createContentValues( testData.modelElement );
          

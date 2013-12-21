@@ -20,12 +20,14 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm;
+package dev.drsoran.rtm.rest;
 
-import java.io.Reader;
-
-
-public interface IRtmResponseHandler< T >
+public class RtmTransactionContentHandler
 {
-   RtmResponse< T > handleResponse( Reader responseReader ) throws RtmServiceException;
+   
+   public RtmTransactionContentHandler()
+   {
+      // TODO Auto-generated constructor stub
+   }
+   
 }

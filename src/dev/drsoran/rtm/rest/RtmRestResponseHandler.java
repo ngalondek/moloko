@@ -31,7 +31,9 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.sax2.Driver;
 
 import dev.drsoran.rtm.IRtmResponseHandler;
+import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.RtmTransaction;
 
 
 public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
@@ -62,15 +64,17 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
    
    
    @Override
-   public T handleResponse( Reader responseReader ) throws RtmServiceException
+   public RtmResponse< T > handleResponse( Reader responseReader ) throws RtmServiceException
    {
       try
       {
          pullParser.setInput( responseReader );
          pullParser.nextTag();
          
-         checkResponse( pullParser );
-         checkResponseStatus( pullParser );
+         checkResponse();
+         checkResponseStatus();
+         
+         final RtmTransaction transaction = readTransaction();
          
          final RemoveWhiteSpaceXmlFilter xmlreader = new RemoveWhiteSpaceXmlFilter();
          
@@ -80,7 +84,9 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
          
          saxDriver.parseSubTree( pullParser );
          
-         return contentHandler.getContentElement();
+         final RtmResponse< T > response = createResponse( transaction );
+         
+         return response;
       }
       catch ( SAXException e )
       {
@@ -101,35 +107,63 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
    
    
    
-   private void checkResponse( XmlPullParser parser ) throws XmlPullParserException,
-                                                     IOException
+   private RtmTransaction readTransaction() throws XmlPullParserException,
+                                           IOException
    {
-      parser.require( XmlPullParser.START_TAG, null, "rsp" );
+      RtmTransaction transaction = null;
+      
+      if ( pullParser.next() == XmlPullParser.START_TAG
+         && "transaction".equalsIgnoreCase( pullParser.getText() ) )
+      {
+         transaction = new RtmTransaction( pullParser.getAttributeValue( null,
+                                                                         "id" ),
+                                           pullParser.getAttributeValue( null,
+                                                                         "undoable" )
+                                                     .equalsIgnoreCase( "1" ) );
+         pullParser.next();
+      }
+      
+      return transaction;
    }
    
    
    
-   private void checkResponseStatus( XmlPullParser parser ) throws RtmServiceException,
-                                                           XmlPullParserException,
-                                                           IOException
+   private RtmResponse< T > createResponse( RtmTransaction transaction )
    {
-      final String status = parser.getAttributeValue( null, "stat" );
+      return new RtmResponse< T >( transaction,
+                                   contentHandler.getContentElement() );
+   }
+   
+   
+   
+   private void checkResponse() throws XmlPullParserException, IOException
+   {
+      pullParser.require( XmlPullParser.START_TAG, null, "rsp" );
+   }
+   
+   
+   
+   private void checkResponseStatus() throws RtmServiceException,
+                                     XmlPullParserException,
+                                     IOException
+   {
+      final String status = pullParser.getAttributeValue( null, "stat" );
       
       if ( "fail".equals( status ) )
       {
-         int eventType = parser.getEventType();
+         int eventType = pullParser.getEventType();
          while ( eventType != XmlPullParser.START_TAG
-            || !"err".equals( parser.getName() ) )
+            || !"err".equals( pullParser.getName() ) )
          {
-            parser.nextTag();
+            pullParser.nextTag();
          }
          
-         if ( "err".equals( parser.getName() ) )
+         if ( "err".equals( pullParser.getName() ) )
          {
-            int errorCode = getRtmErrorCodeFromResponse( parser );
+            int errorCode = getRtmErrorCodeFromResponse();
             throw new RtmServiceException( errorCode,
-                                           parser.getAttributeValue( null,
-                                                                     "msg" ) );
+                                           pullParser.getAttributeValue( null,
+                                                                         "msg" ) );
          }
          else
          {
@@ -140,11 +174,11 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
    
    
    
-   private int getRtmErrorCodeFromResponse( XmlPullParser parser )
+   private int getRtmErrorCodeFromResponse()
    {
       try
       {
-         return Integer.parseInt( parser.getAttributeValue( null, "code" ) );
+         return Integer.parseInt( pullParser.getAttributeValue( null, "code" ) );
       }
       catch ( NumberFormatException e )
       {

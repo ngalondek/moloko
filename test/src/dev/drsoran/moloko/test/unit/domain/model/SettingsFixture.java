@@ -30,13 +30,13 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.TestConstants;
 
 
 @RunWith( Theories.class )
-public class RtmSettingsFixture extends MolokoTestCase
+public class SettingsFixture extends MolokoTestCase
 {
    @DataPoint
    public final static long ID = 1L;
@@ -75,7 +75,7 @@ public class RtmSettingsFixture extends MolokoTestCase
                                 long listId,
                                 String lang )
    {
-      new RtmSettings( sync, tz, df, tf, listId, lang );
+      new Settings( sync, tz, df, tf, listId, lang );
    }
    
    
@@ -88,7 +88,7 @@ public class RtmSettingsFixture extends MolokoTestCase
                                            long listId,
                                            String lang )
    {
-      assertThat( new RtmSettings( sync, tz, df, tf, listId, lang ).getSyncTimeStampMillis(),
+      assertThat( new Settings( sync, tz, df, tf, listId, lang ).getSyncTimeStampMillis(),
                   is( sync ) );
    }
    
@@ -102,7 +102,7 @@ public class RtmSettingsFixture extends MolokoTestCase
                                 long listId,
                                 String lang )
    {
-      assertThat( new RtmSettings( sync, tz, df, tf, listId, lang ).getTimezone(),
+      assertThat( new Settings( sync, tz, df, tf, listId, lang ).getTimezone(),
                   is( tz ) );
    }
    
@@ -116,7 +116,7 @@ public class RtmSettingsFixture extends MolokoTestCase
                                   long listId,
                                   String lang )
    {
-      assertThat( new RtmSettings( sync, tz, df, tf, listId, lang ).getDateFormat(),
+      assertThat( new Settings( sync, tz, df, tf, listId, lang ).getDateFormat(),
                   is( df ) );
    }
    
@@ -130,7 +130,7 @@ public class RtmSettingsFixture extends MolokoTestCase
                                   long listId,
                                   String lang )
    {
-      assertThat( new RtmSettings( sync, tz, df, tf, listId, lang ).getTimeFormat(),
+      assertThat( new Settings( sync, tz, df, tf, listId, lang ).getTimeFormat(),
                   is( tf ) );
    }
    
@@ -144,7 +144,7 @@ public class RtmSettingsFixture extends MolokoTestCase
                                      long listId,
                                      String lang )
    {
-      assertThat( new RtmSettings( sync, tz, df, tf, listId, lang ).getDefaultListId(),
+      assertThat( new Settings( sync, tz, df, tf, listId, lang ).getDefaultListId(),
                   is( listId ) );
    }
    
@@ -158,7 +158,7 @@ public class RtmSettingsFixture extends MolokoTestCase
                                 long listId,
                                 String lang )
    {
-      assertThat( new RtmSettings( sync, tz, df, tf, listId, lang ).getLanguage(),
+      assertThat( new Settings( sync, tz, df, tf, listId, lang ).getLanguage(),
                   is( lang ) );
    }
    
@@ -172,6 +172,6 @@ public class RtmSettingsFixture extends MolokoTestCase
                              long listId,
                              String lang )
    {
-      new RtmSettings( sync, tz, df, tf, listId, lang ).toString();
+      new Settings( sync, tz, df, tf, listId, lang ).toString();
    }
 }

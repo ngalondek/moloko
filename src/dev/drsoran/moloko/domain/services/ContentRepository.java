@@ -51,7 +51,7 @@ import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -85,7 +85,7 @@ public class ContentRepository implements IContentRepository
    
    private final ContentQueryHandler< String > tagsQueryHandler;
    
-   private final ContentQueryHandler< RtmSettings > settingsQueryHandler;
+   private final ContentQueryHandler< Settings > settingsQueryHandler;
    
    private final ContentQueryHandler< CloudEntry > cloudEntriesQueryHandler;
    
@@ -140,10 +140,10 @@ public class ContentRepository implements IContentRepository
                                                                  modelElementFactory,
                                                                  String.class );
       
-      this.settingsQueryHandler = new ContentQueryHandler< RtmSettings >( contentResolver,
+      this.settingsQueryHandler = new ContentQueryHandler< Settings >( contentResolver,
                                                                           RtmSettingsColumns.PROJECTION,
                                                                           modelElementFactory,
-                                                                          RtmSettings.class );
+                                                                          Settings.class );
       
       this.cloudEntriesQueryHandler = new ContentQueryHandler< CloudEntry >( contentResolver,
                                                                              CloudEntryColumns.PROJECTION,
@@ -473,9 +473,9 @@ public class ContentRepository implements IContentRepository
    
    
    @Override
-   public RtmSettings getRtmSettings() throws ContentException
+   public Settings getRtmSettings() throws ContentException
    {
-      final Iterator< RtmSettings > settingsIter = settingsQueryHandler.getAll( ContentUris.RTM_SETTINGS_CONTENT_URI,
+      final Iterator< Settings > settingsIter = settingsQueryHandler.getAll( ContentUris.RTM_SETTINGS_CONTENT_URI,
                                                                                 null )
                                                                        .iterator();
       if ( !settingsIter.hasNext() )

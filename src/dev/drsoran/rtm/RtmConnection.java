@@ -73,9 +73,9 @@ public class RtmConnection implements IRtmConnection
    
    
    @Override
-   public < T > T executeMethod( Class< T > returnType,
-                                 String rtmMethod,
-                                 Param... params ) throws RtmServiceException
+   public < T > RtmResponse< T > executeMethod( Class< T > returnType,
+                                                String rtmMethod,
+                                                Param... params ) throws RtmServiceException
    {
       final IRtmRequest request = requestFactory.createRequest( rtmMethod,
                                                                 params );

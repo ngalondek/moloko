@@ -22,10 +22,39 @@
 
 package dev.drsoran.rtm;
 
-import java.io.Reader;
-
-
-public interface IRtmResponseHandler< T >
+public class RtmTransaction
 {
-   RtmResponse< T > handleResponse( Reader responseReader ) throws RtmServiceException;
+   private final String id;
+   
+   private final boolean undoable;
+   
+   
+   
+   public RtmTransaction( String id, boolean undoable )
+   {
+      this.id = id;
+      this.undoable = undoable;
+   }
+   
+   
+   
+   public String getId()
+   {
+      return id;
+   }
+   
+   
+   
+   public boolean isUndoable()
+   {
+      return undoable;
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return "RtmTransaction [id=" + id + ", undoable=" + undoable + "]";
+   }
 }

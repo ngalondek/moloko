@@ -43,7 +43,7 @@ import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 
 
 public class Settings implements ISettingsService, IOnSettingsChangedListener
@@ -74,7 +74,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    
    private final IAppEventService eventService;
    
-   private RtmSettings rtmSettings;
+   private Settings rtmSettings;
    
    
    
@@ -203,7 +203,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    
    
    @Override
-   public RtmSettings getRtmSettings()
+   public Settings getRtmSettings()
    {
       return rtmSettings;
    }
@@ -553,7 +553,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
       
       if ( client != null )
       {
-         final RtmSettings settings = RtmSettingsTable.getSettings( client );
+         final Settings settings = RtmSettingsTable.getSettings( client );
          client.release();
          
          if ( settings != null )

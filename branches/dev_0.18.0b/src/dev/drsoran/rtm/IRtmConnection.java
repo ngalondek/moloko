@@ -24,7 +24,7 @@ package dev.drsoran.rtm;
 
 public interface IRtmConnection
 {
-   < T > T executeMethod( Class< T > returnType,
-                          String rtmMethod,
-                          Param... params ) throws RtmServiceException;
+   < T > RtmResponse< T > executeMethod( Class< T > returnType,
+                                         String rtmMethod,
+                                         Param... params ) throws RtmServiceException;
 }

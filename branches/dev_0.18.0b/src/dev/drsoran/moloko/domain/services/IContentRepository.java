@@ -28,7 +28,7 @@ import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -98,7 +98,7 @@ public interface IContentRepository
    
    
    
-   RtmSettings getRtmSettings() throws ContentException;
+   Settings getRtmSettings() throws ContentException;
    
    
    

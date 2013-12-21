@@ -51,7 +51,7 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -153,9 +153,9 @@ public class ContentValuesFactoryTestDataSource
    
    
    
-   public Collection< TestData< RtmSettings >> getRtmSettingsTestData()
+   public Collection< TestData< Settings >> getRtmSettingsTestData()
    {
-      final Collection< TestData< RtmSettings >> testData = new LinkedList< TestData< RtmSettings > >();
+      final Collection< TestData< Settings >> testData = new LinkedList< TestData< Settings > >();
       
       addRtmSettingsNoDefList( testData );
       addRtmSettingsFull( testData );
@@ -800,9 +800,9 @@ public class ContentValuesFactoryTestDataSource
    
    
    
-   private void addRtmSettingsNoDefList( Collection< TestData< RtmSettings >> testData )
+   private void addRtmSettingsNoDefList( Collection< TestData< Settings >> testData )
    {
-      final RtmSettings modelElement = new RtmSettings( NOW,
+      final Settings modelElement = new Settings( NOW,
                                                         "UTC",
                                                         1,
                                                         2,
@@ -817,7 +817,7 @@ public class ContentValuesFactoryTestDataSource
       values.put( RtmSettingsColumns.DEFAULTLIST_ID, null );
       values.put( RtmSettingsColumns.LANGUAGE, "en" );
       
-      testData.add( new TestData< RtmSettings >( RtmSettings.class,
+      testData.add( new TestData< Settings >( Settings.class,
                                                  modelElement,
                                                  values,
                                                  "NoDefList" ) );
@@ -825,9 +825,9 @@ public class ContentValuesFactoryTestDataSource
    
    
    
-   private void addRtmSettingsFull( Collection< TestData< RtmSettings >> testData )
+   private void addRtmSettingsFull( Collection< TestData< Settings >> testData )
    {
-      final RtmSettings modelElement = new RtmSettings( NOW,
+      final Settings modelElement = new Settings( NOW,
                                                         "UTC",
                                                         1,
                                                         2,
@@ -842,7 +842,7 @@ public class ContentValuesFactoryTestDataSource
       values.put( RtmSettingsColumns.DEFAULTLIST_ID, 100L );
       values.put( RtmSettingsColumns.LANGUAGE, "en" );
       
-      testData.add( new TestData< RtmSettings >( RtmSettings.class,
+      testData.add( new TestData< Settings >( Settings.class,
                                                  modelElement,
                                                  values,
                                                  "Full" ) );

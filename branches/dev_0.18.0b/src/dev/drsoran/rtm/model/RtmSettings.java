@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.model;
+package dev.drsoran.rtm.model;
 
 public class RtmSettings
 {
@@ -32,14 +32,14 @@ public class RtmSettings
    
    private final int timeFormat;
    
-   private final long defaultListId;
+   private final String defaultListId;
    
    private final String language;
    
    
    
    public RtmSettings( long syncTimeStampMillis, String timezone,
-      int dateFormat, int timeFormat, long defaultListId, String language )
+      int dateFormat, int timeFormat, String defaultListId, String language )
    {
       this.syncTimeStampMillis = syncTimeStampMillis;
       this.timezone = timezone;
@@ -79,7 +79,7 @@ public class RtmSettings
    
    
    
-   public long getDefaultListId()
+   public String getDefaultListId()
    {
       return defaultListId;
    }

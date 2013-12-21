@@ -20,12 +20,23 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm;
+package dev.drsoran.rtm.model;
 
-import java.io.Reader;
-
-
-public interface IRtmResponseHandler< T >
+public class RtmTimeline
 {
-   RtmResponse< T > handleResponse( Reader responseReader ) throws RtmServiceException;
+   private final String id;
+   
+   
+   
+   public RtmTimeline( String id )
+   {
+      this.id = id;
+   }
+   
+   
+   
+   public String getId()
+   {
+      return id;
+   }
 }

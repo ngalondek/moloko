@@ -42,7 +42,7 @@ import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.sync.model.Modification;
@@ -193,10 +193,10 @@ public class DefaultModelElementFactoryFixture extends MolokoTestCase
    @Test
    public void testCreateElementFromCursor_RtmSettings()
    {
-      for ( TestData< RtmSettings > testData : testDataSource.getRtmSettingsTestData() )
+      for ( TestData< Settings > testData : testDataSource.getRtmSettingsTestData() )
       {
-         final RtmSettings element = fact.createElementFromCursor( getCursor( testData.contentValues ),
-                                                                   RtmSettings.class );
+         final Settings element = fact.createElementFromCursor( getCursor( testData.contentValues ),
+                                                                   Settings.class );
          
          assertThat( testData.testName, element, notNullValue() );
          assertThat( testData.testName,

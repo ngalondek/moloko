@@ -54,7 +54,7 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -82,7 +82,7 @@ public class DefaultModelElementFactory implements IModelElementFactory
                                new ExtendedTaskCountFactoryMethod() );
       factoryMethodLookUp.put( String.class, new TagFactoryMethod() );
       factoryMethodLookUp.put( CloudEntry.class, new CloudEntryFactoryMethod() );
-      factoryMethodLookUp.put( RtmSettings.class,
+      factoryMethodLookUp.put( Settings.class,
                                new RtmSettingsFactoryMethod() );
       factoryMethodLookUp.put( Modification.class,
                                new ModificationFactoryMethod() );
@@ -312,12 +312,12 @@ public class DefaultModelElementFactory implements IModelElementFactory
    
    
    private final class RtmSettingsFactoryMethod implements
-            IFactoryMethod< RtmSettings >
+            IFactoryMethod< Settings >
    {
       @Override
-      public RtmSettings create( Cursor c )
+      public Settings create( Cursor c )
       {
-         return new RtmSettings( c.getLong( RtmSettingsColumns.SYNC_TIMESTAMP_IDX ),
+         return new Settings( c.getLong( RtmSettingsColumns.SYNC_TIMESTAMP_IDX ),
                                  c.getString( RtmSettingsColumns.TIMEZONE_IDX ),
                                  c.getInt( RtmSettingsColumns.DATEFORMAT_IDX ),
                                  c.getInt( RtmSettingsColumns.TIMEFORMAT_IDX ),

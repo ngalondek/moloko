@@ -45,7 +45,7 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.model.RtmSettings;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -73,7 +73,7 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
                                new LocationContentValuesFactoryMethod() );
       factoryMethodLookUp.put( Modification.class,
                                new ModificationContentValuesFactoryMethod() );
-      factoryMethodLookUp.put( RtmSettings.class,
+      factoryMethodLookUp.put( Settings.class,
                                new RtmSettingsContentValuesFactoryMethod() );
       factoryMethodLookUp.put( SyncTime.class, new SyncContentValuesFactoryMethod() );
    }
@@ -428,10 +428,10 @@ public class DefaultContentValuesFactory implements IContentValuesFactory
    
    
    private final class RtmSettingsContentValuesFactoryMethod implements
-            IFactoryMethod< RtmSettings >
+            IFactoryMethod< Settings >
    {
       @Override
-      public ContentValues create( RtmSettings rtmSettings )
+      public ContentValues create( Settings rtmSettings )
       {
          final ContentValues values = new ContentValues();
          

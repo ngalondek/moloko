@@ -27,6 +27,8 @@ import dev.drsoran.moloko.ILog;
 
 public class RtmConnectionFactory implements IRtmConnectionFactory
 {
+   private final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
+   
    private final ILog log;
    
    private final IConnectionFactory connectionFactory;
@@ -37,30 +39,49 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
    
    private final IRtmResponseHandlerFactory responseHandlerFactory;
    
+   private final RtmConnectionProtocol protocol;
+   
+   private final String apiKey;
+   
+   private final String sharedSecret;
+   
    
    
    public RtmConnectionFactory( ILog log, IConnectionFactory connectionFactory,
       IRtmRequestFactory requestFactory,
       IRtmResponseHandlerFactory responseHandlerFactory,
-      IRtmRequestLimiter requestLimiter )
+      IRtmRequestLimiter requestLimiter, RtmConnectionProtocol protocol,
+      String apiKey, String sharedSecret )
    {
       this.log = log;
       this.connectionFactory = connectionFactory;
       this.requestFactory = requestFactory;
       this.responseHandlerFactory = responseHandlerFactory;
       this.requestLimiter = requestLimiter;
+      this.protocol = protocol;
+      this.apiKey = apiKey;
+      this.sharedSecret = sharedSecret;
    }
    
    
    
    @Override
-   public IRtmConnection createRtmConnection( RtmClientInfo clientInfo )
+   public RtmRequestUriBuilder createUriBuilder()
+   {
+      return new RtmRequestUriBuilder( apiKey, sharedSecret ).setHost( protocol,
+                                                                       SERVER_HOST_NAME );
+   }
+   
+   
+   
+   @Override
+   public IRtmConnection createRtmConnection()
    {
       return new RtmConnection( log,
                                 connectionFactory,
                                 requestFactory,
                                 responseHandlerFactory,
                                 requestLimiter,
-                                clientInfo );
+                                createUriBuilder() );
    }
 }

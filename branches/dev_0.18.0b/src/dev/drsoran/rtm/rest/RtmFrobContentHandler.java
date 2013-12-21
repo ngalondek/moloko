@@ -20,13 +20,40 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm;
+package dev.drsoran.rtm.rest;
 
-public interface IRtmConnectionFactory
+import org.xml.sax.SAXException;
+
+import dev.drsoran.rtm.service.RtmFrob;
+
+
+public class RtmFrobContentHandler extends RtmContentHandler< RtmFrob >
 {
-   RtmRequestUriBuilder createUriBuilder();
+   private String frob;
    
    
    
-   IRtmConnection createRtmConnection();
+   public RtmFrobContentHandler( IRtmContentHandlerListener< RtmFrob > listener )
+   {
+      super( listener );
+   }
+   
+   
+   
+   @Override
+   protected void characters( String string ) throws SAXException
+   {
+      frob = string;
+   }
+   
+   
+   
+   @Override
+   protected void endElement( String qName ) throws SAXException
+   {
+      if ( "frob".equalsIgnoreCase( qName ) )
+      {
+         setContentElementAndNotify( new RtmFrob( frob ) );
+      }
+   }
 }

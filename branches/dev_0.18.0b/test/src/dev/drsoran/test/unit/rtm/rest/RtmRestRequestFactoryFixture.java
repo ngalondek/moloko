@@ -22,15 +22,15 @@
 
 package dev.drsoran.test.unit.rtm.rest;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.rtm.IRtmRequest;
 import dev.drsoran.rtm.Param;
-import dev.drsoran.rtm.RtmClientInfo;
+import dev.drsoran.rtm.RtmRequestUriBuilder;
 import dev.drsoran.rtm.rest.RtmRestRequestFactory;
 
 
@@ -39,19 +39,7 @@ public class RtmRestRequestFactoryFixture extends MolokoTestCase
    @Test
    public void testRtmRestRequestFactory()
    {
-      new RtmRestRequestFactory( new RtmClientInfo( null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    true ) );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testRtmRestRequestFactory_nullClient()
-   {
-      new RtmRestRequestFactory( null );
+      new RtmRestRequestFactory();
    }
    
    
@@ -59,19 +47,18 @@ public class RtmRestRequestFactoryFixture extends MolokoTestCase
    @Test
    public void testCreateRequest()
    {
-      RtmRestRequestFactory rtmRestRequestFactory = new RtmRestRequestFactory( new RtmClientInfo( "key",
-                                                                                                  "secret",
-                                                                                                  "user",
-                                                                                                  "auth_token",
-                                                                                                  true ) );
+      RtmRestRequestFactory rtmRestRequestFactory = new RtmRestRequestFactory();
       IRtmRequest request = rtmRestRequestFactory.createRequest( "method",
+                                                                 new RtmRequestUriBuilder( "key",
+                                                                                           "secret" ).addParam(
+                                                                 
                                                                  new Param( "p1",
-                                                                            "v1" ),
-                                                                 new Param( "p2",
-                                                                            "v2" ) );
+                                                                            "v1" ) )
+                                                                                                     .addParam( new Param( "p2",
+                                                                                                                           "v2" ) )
+                                                                                                     .addParam( new Param( "auth_token",
+                                                                                                                           "auth_token" ) ) );
       assertThat( request.getRtmMethod(), is( "method" ) );
-      assertThat( request.getParameters(),
-                  hasItems( new Param( "p1", "v1" ), new Param( "p2", "v2" ) ) );
       assertThat( request.getMethodExecutionUri(),
                   is( "/services/rest/?api_key=key&api_sig=31c022baa99adf36a76e8fa0b42e1b86&auth_token=auth_token&p1=v1&p2=v2&" ) );
    }

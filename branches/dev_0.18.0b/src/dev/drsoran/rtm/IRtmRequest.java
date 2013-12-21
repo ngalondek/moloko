@@ -22,7 +22,6 @@
 
 package dev.drsoran.rtm;
 
-import java.util.Collection;
 
 
 public interface IRtmRequest
@@ -31,7 +30,7 @@ public interface IRtmRequest
    
    
    
-   Collection< Param > getParameters();
+   void addParam( Param param );
    
    
    

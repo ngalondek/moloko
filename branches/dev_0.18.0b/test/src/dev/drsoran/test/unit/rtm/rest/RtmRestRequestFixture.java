@@ -22,18 +22,14 @@
 
 package dev.drsoran.test.unit.rtm.rest;
 
-import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 import org.junit.Test;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.rtm.Param;
+import dev.drsoran.rtm.RtmRequestUriBuilder;
 import dev.drsoran.rtm.rest.RtmRestRequest;
 
 
@@ -42,7 +38,7 @@ public class RtmRestRequestFixture extends MolokoTestCase
    @Test
    public void testRtmRestRequest()
    {
-      new RtmRestRequest( "method", Collections.< Param > emptyList() );
+      createRequest();
    }
    
    
@@ -50,8 +46,7 @@ public class RtmRestRequestFixture extends MolokoTestCase
    @Test
    public void testGetRtmMethod()
    {
-      assertThat( createRequest( Collections.< Param > emptyList() ).getRtmMethod(),
-                  is( "method" ) );
+      assertThat( createRequest().getRtmMethod(), is( "method" ) );
    }
    
    
@@ -59,9 +54,9 @@ public class RtmRestRequestFixture extends MolokoTestCase
    @Test
    public void testGetMethodExecutionUri()
    {
-      assertThat( createRequest( Arrays.asList( new Param( "p1", "v1" ),
-                                                new Param( "p2", "v2" ) ) ).getMethodExecutionUri(),
-                  is( "/services/rest/?p1=v1&p2=v2&" ) );
+      assertThat( createRequest( new Param( "p1", "v1" ),
+                                 new Param( "p2", "v2" ) ).getMethodExecutionUri(),
+                  is( "?api_key=key&api_sig=8d0a9c4490413c8bfc57aaf4857b84d9&p1=v1&p2=v2&" ) );
    }
    
    
@@ -69,18 +64,21 @@ public class RtmRestRequestFixture extends MolokoTestCase
    @Test
    public void testGetMethodExecutionUri_Empty()
    {
-      assertThat( createRequest( Collections.< Param > emptyList() ).getMethodExecutionUri(),
-                  is( "/services/rest/" ) );
+      assertThat( createRequest().getMethodExecutionUri(),
+                  is( "?api_key=key&api_sig=2663dceff40088f756b984592465d482&" ) );
    }
    
    
    
    @Test
-   public void testGetParameters()
+   public void testAddParam()
    {
-      assertThat( createRequest( Arrays.asList( new Param( "p1", "v1" ),
-                                                new Param( "p2", "v2" ) ) ).getParameters(),
-                  hasItems( new Param( "p1", "v1" ), new Param( "p2", "v2" ) ) );
+      RtmRestRequest req = createRequest( new Param( "p1", "v1" ),
+                                          new Param( "p2", "v2" ) );
+      req.addParam( new Param( "p3", "v3" ) );
+      
+      assertThat( req.getMethodExecutionUri(),
+                  is( "?api_key=key&api_sig=22cadd9162eca0fb27b1453b2fe6556e&p1=v1&p2=v2&p3=v3&" ) );
    }
    
    
@@ -88,13 +86,14 @@ public class RtmRestRequestFixture extends MolokoTestCase
    @Test
    public void testToString()
    {
-      createRequest( Collections.< Param > emptyList() ).toString();
+      createRequest().toString();
    }
    
    
    
-   private RtmRestRequest createRequest( Collection< Param > params )
+   private RtmRestRequest createRequest( Param... params )
    {
-      return new RtmRestRequest( "method", params );
+      return new RtmRestRequest( "method",
+                                 new RtmRequestUriBuilder( "key", "secret" ).addAll( params ) );
    }
 }

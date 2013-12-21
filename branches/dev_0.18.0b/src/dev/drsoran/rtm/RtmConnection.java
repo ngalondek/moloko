@@ -37,12 +37,6 @@ import dev.drsoran.moloko.ILog;
  */
 public class RtmConnection implements IRtmConnection
 {
-   private final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
-   
-   private final static int SERVER_PORT_NUMBER_HTTP = 80;
-   
-   private final static int SERVER_PORT_NUMBER_HTTPS = 443;
-   
    private final ILog log;
    
    private final IConnectionFactory connectionFactory;
@@ -53,21 +47,21 @@ public class RtmConnection implements IRtmConnection
    
    private final IRtmResponseHandlerFactory responseHandlerFactory;
    
-   private final RtmClientInfo clientInfo;
+   private final RtmRequestUriBuilder requestUriBuilder;
    
    
    
    public RtmConnection( ILog log, IConnectionFactory connectionFactory,
       IRtmRequestFactory requestFactory,
       IRtmResponseHandlerFactory responseHandlerFactory,
-      IRtmRequestLimiter requestLimiter, RtmClientInfo clientInfo )
+      IRtmRequestLimiter requestLimiter, RtmRequestUriBuilder requestUriBuilder )
    {
       this.log = log;
       this.connectionFactory = connectionFactory;
       this.requestFactory = requestFactory;
       this.responseHandlerFactory = responseHandlerFactory;
       this.requestLimiter = requestLimiter;
-      this.clientInfo = clientInfo;
+      this.requestUriBuilder = requestUriBuilder;
    }
    
    
@@ -78,7 +72,7 @@ public class RtmConnection implements IRtmConnection
                                                 Param... params ) throws RtmServiceException
    {
       final IRtmRequest request = requestFactory.createRequest( rtmMethod,
-                                                                params );
+                                                                requestUriBuilder.addAll( params ) );
       requestLimiter.obeyRtmRequestLimit();
       
       log.d( getClass(), MessageFormat.format( "Request [{0}] send at {1}",
@@ -126,13 +120,9 @@ public class RtmConnection implements IRtmConnection
    
    private IConnection createConnection()
    {
-      final String scheme = clientInfo.isUseHttps() ? "https" : "http";
-      final int port = clientInfo.isUseHttps() ? SERVER_PORT_NUMBER_HTTPS
-                                              : SERVER_PORT_NUMBER_HTTP;
-      
-      final IConnection connection = connectionFactory.createConnection( scheme,
-                                                                         SERVER_HOST_NAME,
-                                                                         port );
+      final IConnection connection = connectionFactory.createConnection( requestUriBuilder.getScheme(),
+                                                                         requestUriBuilder.getHost(),
+                                                                         requestUriBuilder.getPort() );
       return connection;
    }
 }

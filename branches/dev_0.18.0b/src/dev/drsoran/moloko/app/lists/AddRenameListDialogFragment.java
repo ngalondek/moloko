@@ -295,7 +295,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       
       if ( !TextUtils.isEmpty( text )
          && !getUiContext().getParsingService()
-                           .getRtmSmartFilterParsing()
+                           .getSmartFilterParsing()
                            .isParsableSmartFilter( text ) )
       {
          return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_filter,

@@ -40,13 +40,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
+import dev.drsoran.Pair;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddSuggestion;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.services.ISmartAddService;
-import dev.drsoran.moloko.util.Pair;
 
 
 class RtmSmartAddAdapter extends BaseAdapter implements Filterable

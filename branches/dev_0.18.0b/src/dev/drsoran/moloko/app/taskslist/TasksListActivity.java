@@ -33,7 +33,7 @@ import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActi
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
+import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
 
 
 public class TasksListActivity extends AbstractFullDetailedTasksListActivity
@@ -90,7 +90,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
          try
          {
             final Collection< RtmSmartFilterToken > unAmbigiousTokens = getAppContext().getParsingService()
-                                                                                       .getRtmSmartFilterParsing()
+                                                                                       .getSmartFilterParsing()
                                                                                        .getSmartFilterTokens( filter.getFilterString() )
                                                                                        .getUniqueTokens();
             show = unAmbigiousTokens.size() > 0;

@@ -27,39 +27,48 @@ package dev.drsoran.moloko.domain.model;
 
 import java.io.Serializable;
 
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.parsing.recurrence.RtmRecurrence;
 
 
 public class Recurrence implements Serializable
 {
    private static final long serialVersionUID = -2693479322154192406L;
    
-   public static Recurrence EMPTY = new Recurrence( null, false );
+   public final static Recurrence EMPTY = new Recurrence( RtmRecurrence.EMPTY );
    
-   private final String pattern;
+   private final RtmRecurrence rtmRecurrence;
    
-   private final boolean isEveryRecurrence;
+   
+   
+   public Recurrence( RtmRecurrence rtmRecurrence )
+   {
+      if ( rtmRecurrence == null )
+      {
+         throw new IllegalArgumentException( "rtmRecurrence" );
+      }
+      
+      this.rtmRecurrence = rtmRecurrence;
+   }
    
    
    
    public Recurrence( String pattern, boolean isEveryRecurrence )
    {
-      this.pattern = pattern;
-      this.isEveryRecurrence = isEveryRecurrence;
+      rtmRecurrence = new RtmRecurrence( pattern, isEveryRecurrence );
    }
    
    
    
    public String getPattern()
    {
-      return pattern;
+      return rtmRecurrence.getPattern();
    }
    
    
    
    public boolean isEveryRecurrence()
    {
-      return isEveryRecurrence;
+      return rtmRecurrence.isEveryRecurrence();
    }
    
    
@@ -82,8 +91,7 @@ public class Recurrence implements Serializable
       
       final Recurrence other = (Recurrence) o;
       
-      return Strings.equalsNullAware( pattern, other.pattern )
-         && isEveryRecurrence == other.isEveryRecurrence;
+      return rtmRecurrence.equals( other.rtmRecurrence );
    }
    
    
@@ -91,12 +99,7 @@ public class Recurrence implements Serializable
    @Override
    public int hashCode()
    {
-      int result = 17;
-      
-      result = 31 * result + pattern.hashCode();
-      result = 31 * result + ( isEveryRecurrence ? 1 : 0 );
-      
-      return result;
+      return rtmRecurrence.hashCode();
    }
    
    
@@ -105,7 +108,7 @@ public class Recurrence implements Serializable
    public String toString()
    {
       return String.format( "Recurrence [pattern=%s, isEvery=%s]",
-                            pattern,
-                            isEveryRecurrence );
+                            getPattern(),
+                            isEveryRecurrence() );
    }
 }

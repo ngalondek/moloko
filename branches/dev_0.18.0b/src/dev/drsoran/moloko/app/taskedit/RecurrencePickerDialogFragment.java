@@ -44,11 +44,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
-import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax;
-import dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternParser;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternParser;
+import dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax;
 
 
 class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment

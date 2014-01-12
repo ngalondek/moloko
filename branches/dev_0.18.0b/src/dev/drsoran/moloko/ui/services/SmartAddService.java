@@ -25,13 +25,13 @@ package dev.drsoran.moloko.ui.services;
 import java.util.Collection;
 
 import android.content.Context;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddSuggestion;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddSuggestor;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddTokenizer;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 
 
 class SmartAddService implements ISmartAddService
@@ -43,7 +43,8 @@ class SmartAddService implements ISmartAddService
    
    
    public SmartAddService( Context context,
-      IContentRepository contentRepository, IDateTimeParsing dateTimeParsing,
+      IContentRepository contentRepository,
+      IRtmDateTimeParsing dateTimeParsing,
       IRecurrenceParsing recurrenceParsing, IDateFormatterService dateFormatter )
    {
       this.rtmSmartAddTokenizer = new RtmSmartAddTokenizer( dateTimeParsing );

@@ -26,7 +26,7 @@ import java.util.TimeZone;
 
 import android.text.format.DateUtils;
 import android.text.format.Time;
-import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.rtm.RtmCalendar;
 
 
 public class MolokoDateUtils
@@ -44,14 +44,14 @@ public class MolokoDateUtils
    
    
    
-   public final static MolokoCalendar newCalendar( long millis )
+   public final static RtmCalendar newCalendar( long millis )
    {
       if ( millis < 0 )
       {
          throw new IllegalArgumentException( "millis" );
       }
       
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final RtmCalendar cal = RtmCalendar.getInstance();
       cal.setTimeInMillis( millis );
       return cal;
    }

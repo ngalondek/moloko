@@ -31,8 +31,6 @@ import dev.drsoran.moloko.content.IContentUriHandler;
 import dev.drsoran.moloko.content.MolokoContentProvider;
 import dev.drsoran.moloko.content.ReadOnlyContentUriHandler;
 import dev.drsoran.moloko.content.UriLookup;
-import dev.drsoran.moloko.sync.db.ModificationsTable;
-import dev.drsoran.moloko.sync.db.TimesTable;
 
 
 public class DbContentProvider extends MolokoContentProvider

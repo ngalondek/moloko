@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import android.content.ContentResolver;
+import dev.drsoran.Pair;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
@@ -51,16 +52,15 @@ import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterParsingReturn;
-import dev.drsoran.moloko.util.Pair;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
+import dev.drsoran.rtm.parsing.IRtmSmartFilterParsing;
+import dev.drsoran.rtm.parsing.rtmsmart.IRtmSmartFilterEvaluator;
+import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterParsingReturn;
 
 
 public class ContentRepository implements IContentRepository
@@ -93,7 +93,7 @@ public class ContentRepository implements IContentRepository
    
    public ContentRepository( ContentResolver contentResolver,
       IModelElementFactory modelElementFactory,
-      IDateTimeParsing dateTimeParsing,
+      IRtmDateTimeParsing dateTimeParsing,
       IRtmSmartFilterParsing smartFilterParsing,
       IRtmSmartFilterEvaluator smartFilterEvaluator )
    {
@@ -141,9 +141,9 @@ public class ContentRepository implements IContentRepository
                                                                  String.class );
       
       this.settingsQueryHandler = new ContentQueryHandler< Settings >( contentResolver,
-                                                                          RtmSettingsColumns.PROJECTION,
-                                                                          modelElementFactory,
-                                                                          Settings.class );
+                                                                       RtmSettingsColumns.PROJECTION,
+                                                                       modelElementFactory,
+                                                                       Settings.class );
       
       this.cloudEntriesQueryHandler = new ContentQueryHandler< CloudEntry >( contentResolver,
                                                                              CloudEntryColumns.PROJECTION,
@@ -476,8 +476,8 @@ public class ContentRepository implements IContentRepository
    public Settings getRtmSettings() throws ContentException
    {
       final Iterator< Settings > settingsIter = settingsQueryHandler.getAll( ContentUris.RTM_SETTINGS_CONTENT_URI,
-                                                                                null )
-                                                                       .iterator();
+                                                                             null )
+                                                                    .iterator();
       if ( !settingsIter.hasNext() )
       {
          throw new ContentException( "No RTM settings" );

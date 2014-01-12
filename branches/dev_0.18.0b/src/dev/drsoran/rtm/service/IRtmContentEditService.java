@@ -1,7 +1,6 @@
 package dev.drsoran.rtm.service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.Collection;
 
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
@@ -84,7 +83,7 @@ public interface IRtmContentEditService
                                               String listId,
                                               String taskSeriesId,
                                               String taskId,
-                                              Date due,
+                                              long dueMillisUtc,
                                               boolean hasTime ) throws RtmServiceException;
    
    
@@ -125,7 +124,7 @@ public interface IRtmContentEditService
                                            String listId,
                                            String taskSeriesId,
                                            String taskId,
-                                           List< String > tags ) throws RtmServiceException;
+                                           Collection< String > tags ) throws RtmServiceException;
    
    
    

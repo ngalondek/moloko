@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.ui.services;
 
 import android.text.format.DateUtils;
-import dev.drsoran.moloko.domain.parsing.IDateFormatter;
+import dev.drsoran.rtm.parsing.IDateFormatter;
 
 
 public interface IDateFormatterService extends IDateFormatter
@@ -46,6 +46,7 @@ public interface IDateFormatterService extends IDateFormatter
    
    
    
+   @Override
    String getNumericDateFormatPattern( boolean withYear );
    
    
@@ -58,10 +59,12 @@ public interface IDateFormatterService extends IDateFormatter
    
    
    
+   @Override
    String formatDateNumeric( String part1, String part2 );
    
    
    
+   @Override
    String formatDateNumeric( String part1, String part2, String part3 );
    
    

@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.ui.rtmsmartadd;
 
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 
 
 public class RtmSmartAddToken

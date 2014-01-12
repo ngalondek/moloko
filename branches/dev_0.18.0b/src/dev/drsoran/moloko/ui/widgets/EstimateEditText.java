@@ -28,10 +28,10 @@ import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Estimation;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
+import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public class EstimateEditText extends ClearableEditText

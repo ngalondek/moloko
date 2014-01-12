@@ -35,16 +35,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.Iterables;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
 public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
@@ -141,9 +141,9 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    
    
-   private MolokoCalendar getCalendar()
+   private RtmCalendar getCalendar()
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final RtmCalendar cal = RtmCalendar.getInstance();
       
       switch ( type )
       {
@@ -162,7 +162,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    @Override
    public Intent getIntent()
    {
-      final MolokoCalendar cal = getCalendar();
+      final RtmCalendar cal = getCalendar();
       final RtmSmartFilter filter = new RtmSmartFilter( getFilterExpression( cal ) );
       
       final String title = getContext().getString( ( ( type == TODAY )
@@ -214,7 +214,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    
    
-   private String getFilterExpression( MolokoCalendar cal )
+   private String getFilterExpression( RtmCalendar cal )
    {
       final String dueDate = getUiContext().getDateFormatter()
                                            .formatDate( cal.getTimeInMillis(),
@@ -228,7 +228,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    private void setCalendarDayInWidget()
    {
-      final MolokoCalendar cal = getCalendar();
+      final RtmCalendar cal = getCalendar();
       final TextView date = (TextView) findViewById( R.id.home_calendar_date );
       date.setText( String.valueOf( cal.get( Calendar.DAY_OF_MONTH ) ) );
    }

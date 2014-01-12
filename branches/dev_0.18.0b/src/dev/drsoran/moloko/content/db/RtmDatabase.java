@@ -27,10 +27,6 @@ import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.AbstractDatabase;
 import dev.drsoran.db.AbstractTable;
 import dev.drsoran.db.AbstractTrigger;
-import dev.drsoran.moloko.sync.db.CreationsTable;
-import dev.drsoran.moloko.sync.db.DeleteModificationsTrigger;
-import dev.drsoran.moloko.sync.db.ModificationsTable;
-import dev.drsoran.moloko.sync.db.TimesTable;
 
 
 public class RtmDatabase extends AbstractDatabase

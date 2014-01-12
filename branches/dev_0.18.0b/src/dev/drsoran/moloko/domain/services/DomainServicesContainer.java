@@ -38,20 +38,21 @@ import dev.drsoran.moloko.domain.content.TaskContentEditHandler;
 import dev.drsoran.moloko.domain.content.TaskNoteContentEditHandler;
 import dev.drsoran.moloko.domain.content.TaskParticipantContentEditHandler;
 import dev.drsoran.moloko.domain.content.TasksListContentEditHandler;
-import dev.drsoran.moloko.domain.parsing.DateTimeParsing;
-import dev.drsoran.moloko.domain.parsing.IDateFormatter;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
-import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
-import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
 import dev.drsoran.moloko.domain.parsing.RecurrenceParsing;
-import dev.drsoran.moloko.domain.parsing.RtmSmartFilterParsing;
-import dev.drsoran.moloko.domain.parsing.datetime.AntlrDateTimeParserFactory;
-import dev.drsoran.moloko.domain.parsing.lang.DateLanguageRepository;
-import dev.drsoran.moloko.domain.parsing.lang.IDateLanguageRepository;
-import dev.drsoran.moloko.domain.parsing.lang.IRecurrenceSentenceLanguage;
-import dev.drsoran.moloko.domain.parsing.recurrence.AntlrRecurrenceParserFactory;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
+import dev.drsoran.rtm.parsing.DefaultRtmCalenderProvider;
+import dev.drsoran.rtm.parsing.IDateFormatter;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
+import dev.drsoran.rtm.parsing.IRtmSmartFilterParsing;
+import dev.drsoran.rtm.parsing.RtmDateTimeParsing;
+import dev.drsoran.rtm.parsing.RtmRecurrenceParsing;
+import dev.drsoran.rtm.parsing.RtmSmartFilterParsing;
+import dev.drsoran.rtm.parsing.datetime.AntlrDateTimeParserFactory;
+import dev.drsoran.rtm.parsing.lang.DateLanguageRepository;
+import dev.drsoran.rtm.parsing.lang.IDateLanguageRepository;
+import dev.drsoran.rtm.parsing.lang.IRecurrenceSentenceLanguage;
+import dev.drsoran.rtm.parsing.recurrence.AntlrRecurrenceParserFactory;
+import dev.drsoran.rtm.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 
 
 public class DomainServicesContainer implements IDomainServices
@@ -78,10 +79,10 @@ public class DomainServicesContainer implements IDomainServices
       this.dateLanguageRepository = new DateLanguageRepository();
       this.currentRecurrenceSentenceLanguage = recurrenceSentenceLanguage;
       
-      final IDateTimeParsing dateTimeParsing = new DateTimeParsing( new AntlrDateTimeParserFactory(),
-                                                                    dateFormatter,
-                                                                    dateLanguageRepository,
-                                                                    new MolokoCalenderProvider() );
+      final IRtmDateTimeParsing dateTimeParsing = new RtmDateTimeParsing( new AntlrDateTimeParserFactory(),
+                                                                          dateFormatter,
+                                                                          dateLanguageRepository,
+                                                                          new DefaultRtmCalenderProvider() );
       
       final IRecurrenceParsing recurrenceParsing = createRecurrenceParsing( recurrenceSentenceLanguage,
                                                                             dateTimeParsing );
@@ -166,13 +167,13 @@ public class DomainServicesContainer implements IDomainServices
    
    
    private IRecurrenceParsing createRecurrenceParsing( IRecurrenceSentenceLanguage recurrenceSentenceLanguage,
-                                                       IDateTimeParsing dateTimeParsing )
+                                                       IRtmDateTimeParsing dateTimeParsing )
    {
-      final IRecurrenceParsing recurrenceParsing = new RecurrenceParsing( new AntlrRecurrenceParserFactory(),
-                                                                          recurrenceSentenceLanguage,
-                                                                          dateFormatter,
-                                                                          dateTimeParsing,
-                                                                          dateLanguageRepository );
+      final IRecurrenceParsing recurrenceParsing = new RecurrenceParsing( new RtmRecurrenceParsing( new AntlrRecurrenceParserFactory(),
+                                                                                                    recurrenceSentenceLanguage,
+                                                                                                    dateFormatter,
+                                                                                                    dateTimeParsing,
+                                                                                                    dateLanguageRepository ) );
       return recurrenceParsing;
    }
 }

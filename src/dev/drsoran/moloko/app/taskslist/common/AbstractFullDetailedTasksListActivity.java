@@ -40,13 +40,13 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
 public abstract class AbstractFullDetailedTasksListActivity extends

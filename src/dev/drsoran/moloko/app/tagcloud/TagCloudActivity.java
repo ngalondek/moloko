@@ -31,7 +31,7 @@ import com.actionbarsherlock.view.Menu;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterSyntax;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
 public class TagCloudActivity extends MolokoFragmentActivity implements

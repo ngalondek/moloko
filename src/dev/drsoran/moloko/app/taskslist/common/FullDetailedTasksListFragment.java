@@ -36,10 +36,10 @@ import dev.drsoran.moloko.app.loaders.TasksLoader;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
+import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
+import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 
 
 public class FullDetailedTasksListFragment extends AbstractTasksListFragment
@@ -128,7 +128,7 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
       try
       {
          return getAppContext().getParsingService()
-                               .getRtmSmartFilterParsing()
+                               .getSmartFilterParsing()
                                .getSmartFilterTokens( filter.getFilterString() );
       }
       catch ( GrammarException e )

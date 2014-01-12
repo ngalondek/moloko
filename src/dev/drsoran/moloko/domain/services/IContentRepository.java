@@ -28,11 +28,11 @@ import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public interface IContentRepository

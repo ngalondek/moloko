@@ -40,17 +40,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import android.text.TextUtils;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 
 
 public class RtmSmartAddTokenizer
 {
-   private final IDateTimeParsing dateTimeParsing;
+   private final IRtmDateTimeParsing dateTimeParsing;
    
    
    
-   public RtmSmartAddTokenizer( IDateTimeParsing dateTimeParsing )
+   public RtmSmartAddTokenizer( IRtmDateTimeParsing dateTimeParsing )
    {
       this.dateTimeParsing = dateTimeParsing;
    }

@@ -250,7 +250,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    private boolean isSmartFilterValid( RtmSmartFilter smartFilter )
    {
       return getAppContext().getParsingService()
-                            .getRtmSmartFilterParsing()
+                            .getSmartFilterParsing()
                             .isParsableSmartFilter( smartFilter.getFilterString() );
    }
    

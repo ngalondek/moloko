@@ -22,14 +22,14 @@
 
 package dev.drsoran.moloko.domain.services;
 
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
-import dev.drsoran.moloko.domain.parsing.IRtmSmartFilterParsing;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
+import dev.drsoran.rtm.parsing.IRtmSmartFilterParsing;
 
 
 class ParsingService implements IParsingService
 {
-   private final IDateTimeParsing dateTimeParsing;
+   private final IRtmDateTimeParsing dateTimeParsing;
    
    private final IRtmSmartFilterParsing rtmSmartFilterParsing;
    
@@ -37,7 +37,7 @@ class ParsingService implements IParsingService
    
    
    
-   public ParsingService( IDateTimeParsing dateTimeParsing,
+   public ParsingService( IRtmDateTimeParsing dateTimeParsing,
       IRecurrenceParsing recurrenceParsing,
       IRtmSmartFilterParsing rtmSmartFilterParsing )
    {
@@ -49,7 +49,7 @@ class ParsingService implements IParsingService
    
    
    @Override
-   public IDateTimeParsing getDateTimeParsing()
+   public IRtmDateTimeParsing getDateTimeParsing()
    {
       return dateTimeParsing;
    }
@@ -72,7 +72,7 @@ class ParsingService implements IParsingService
    
    
    @Override
-   public IRtmSmartFilterParsing getRtmSmartFilterParsing()
+   public IRtmSmartFilterParsing getSmartFilterParsing()
    {
       return rtmSmartFilterParsing;
    }

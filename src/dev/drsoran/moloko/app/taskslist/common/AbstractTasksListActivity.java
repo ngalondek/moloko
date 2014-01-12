@@ -53,8 +53,8 @@ import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
 abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity

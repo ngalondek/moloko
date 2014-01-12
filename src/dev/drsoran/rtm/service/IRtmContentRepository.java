@@ -20,19 +20,17 @@ public interface IRtmContentRepository
    
    
    
-   Collection< RtmTasksList > lists_getList( String listName ) throws RtmServiceException;
+   Collection< RtmTask > tasks_getList( long lastSyncMillisUtc ) throws RtmServiceException;
    
    
    
-   Collection< RtmTask > tasks_getList( String listId,
-                                        String filter,
-                                        long lastSyncMillisUtc ) throws RtmServiceException;
+   Collection< RtmTask > tasks_getListByFilter( String filter,
+                                                long lastSyncMillisUtc ) throws RtmServiceException;
    
    
    
-   Collection< RtmTask > tasks_getTask( String taskSeriesId,
-                                        String taskName,
-                                        String listId ) throws RtmServiceException;
+   Collection< RtmTask > tasks_getListByListId( String listId,
+                                                long lastSyncMillisUtc ) throws RtmServiceException;
    
    
    

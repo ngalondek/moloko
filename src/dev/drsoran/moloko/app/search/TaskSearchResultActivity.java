@@ -217,7 +217,7 @@ public class TaskSearchResultActivity extends
    private void evaluateAndAddQueryToRecents()
    {
       if ( getAppContext().getParsingService()
-                          .getRtmSmartFilterParsing()
+                          .getSmartFilterParsing()
                           .isParsableSmartFilter( getQueryFromIntent() ) )
       {
          onQuerySucceeded();

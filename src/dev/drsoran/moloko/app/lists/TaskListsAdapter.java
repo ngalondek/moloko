@@ -43,7 +43,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
 class TaskListsAdapter extends BaseExpandableListAdapter

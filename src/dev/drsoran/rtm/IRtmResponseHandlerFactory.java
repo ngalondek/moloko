@@ -22,8 +22,55 @@
 
 package dev.drsoran.rtm;
 
+import java.util.Collection;
+
+import dev.drsoran.rtm.model.RtmContact;
+import dev.drsoran.rtm.model.RtmLocation;
+import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmTask;
+import dev.drsoran.rtm.model.RtmTasksList;
+import dev.drsoran.rtm.model.RtmTimeline;
+import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmFrob;
+
+
 public interface IRtmResponseHandlerFactory
 {
-   < T > IRtmResponseHandler< T > createResponseHandler( IRtmRequest request,
-                                                         Class< T > resultType );
+   IRtmResponseHandler< Collection< RtmTask > > createRtmTasksResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< Collection< RtmTasksList > > createRtmTaskListsResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< RtmTasksList > createRtmTaskListResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< Collection< RtmContact > > createRtmContactsResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< Collection< RtmLocation > > createRtmLocationsResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< RtmNote > createRtmNoteResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< RtmTimeline > createRtmTimelineResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< RtmFrob > createRtmFrobResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< RtmAuth > createRtmAuthResponseHandler( IRtmRequest request );
+   
+   
+   
+   IRtmResponseHandler< Void > createVoidResponseHandler( IRtmRequest request );
 }

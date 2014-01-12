@@ -37,11 +37,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
 public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget

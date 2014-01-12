@@ -34,12 +34,12 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterToken;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.RtmSmartFilterTokenCollection;
-import dev.drsoran.moloko.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
+import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
+import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
+import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 
 
 class FullDetailedTasksListFragmentAdapter extends

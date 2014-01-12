@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public interface IRecurrenceParsing

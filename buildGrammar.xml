@@ -1,7 +1,7 @@
 <project name="buildGrammar" basedir="." default="build">
 	<property name="antlrGen" location="${basedir}/lib/antlr-4.1-complete.jar" />
 
-	<property name="grammarSrcPath" location="${basedir}/grammar/antlr" />
+	<property name="grammarSrcPath" location="${basedir}/src/dev/drsoran/rtm/parsing/grammar/antlr" />
 	<property name="rtmSmartFilterParserGrammar" location="${grammarSrcPath}/RtmSmartFilter.g4" />
 	<property name="recurrPatternParserGrammar" location="${grammarSrcPath}/RecurrencePattern.g4" />
 	<property name="recurrLexerGrammarEn" location="${grammarSrcPath}/RecurrenceLexer.g4" />
@@ -11,8 +11,8 @@
 	<property name="dateTimeLexerDeGrammar" location="${grammarSrcPath}/de/DateTimeLexer.g4" />
 	<property name="dateTimeParserGrammar" location="${grammarSrcPath}/DateTimeParser.g4" />
 
-	<property name="grammarGenPath" location="${basedir}/gen/dev/drsoran/moloko/grammar/antlr" />
-	<property name="grammarGenPackage" value="dev.drsoran.moloko.grammar.antlr" />
+	<property name="grammarGenPath" location="${basedir}/gen/dev/drsoran/rtm/parsing/grammar/antlr" />
+	<property name="grammarGenPackage" value="dev.drsoran.rtm.parsing.grammar.antlr" />
 	<property name="rtmSmartFilterParserGenPath" location="${grammarGenPath}/rtmsmart" />
 	<property name="recurrPatternParserGenPath" location="${grammarGenPath}/recurrence" />
 	<property name="recurrLexerGenPathEn" location="${grammarGenPath}/recurrence" />

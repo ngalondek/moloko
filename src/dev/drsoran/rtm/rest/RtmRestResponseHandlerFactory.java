@@ -22,7 +22,7 @@
 
 package dev.drsoran.rtm.rest;
 
-import java.text.MessageFormat;
+import java.util.Collection;
 
 import android.util.Xml;
 import dev.drsoran.rtm.IRtmRequest;
@@ -30,8 +30,10 @@ import dev.drsoran.rtm.IRtmResponseHandler;
 import dev.drsoran.rtm.IRtmResponseHandlerFactory;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
+import dev.drsoran.rtm.model.RtmNote;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.model.RtmTasksList;
+import dev.drsoran.rtm.model.RtmTimeline;
 import dev.drsoran.rtm.service.RtmAuth;
 import dev.drsoran.rtm.service.RtmFrob;
 
@@ -39,45 +41,94 @@ import dev.drsoran.rtm.service.RtmFrob;
 public class RtmRestResponseHandlerFactory implements
          IRtmResponseHandlerFactory
 {
-   @SuppressWarnings( "unchecked" )
    @Override
-   public < T > IRtmResponseHandler< T > createResponseHandler( IRtmRequest request,
-                                                                Class< T > resultType )
+   public IRtmResponseHandler< Collection< RtmTask >> createRtmTasksResponseHandler( IRtmRequest request )
    {
-      if ( resultType == RtmTask[].class )
-      {
-         return (IRtmResponseHandler< T >) new RtmTaskSeriesListContentHandler();
-      }
-      else if ( resultType == RtmTasksList[].class )
-      {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmTasksList[] >( Xml.newPullParser(),
-                                                                                         new ArrayContentHandler< RtmTasksList >( "lists",
-                                                                                                                                  new RtmListContentHandler() ) );
-      }
-      else if ( resultType == RtmContact[].class )
-      {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmContact[] >( Xml.newPullParser(),
-                                                                                       new ArrayContentHandler< RtmContact >( "contacts",
-                                                                                                                              new RtmContactContentHandler() ) );
-      }
-      else if ( resultType == RtmLocation[].class )
-      {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmLocation[] >( Xml.newPullParser(),
-                                                                                        new ArrayContentHandler< RtmLocation >( "locations",
-                                                                                                                                new RtmLocationContentHandler() ) );
-      }
-      else if ( resultType == RtmFrob.class )
-      {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmFrob >( Xml.newPullParser(),
-                                                                                  new RtmFrobContentHandler( null ) );
-      }
-      else if ( resultType == RtmAuth.class )
-      {
-         return (IRtmResponseHandler< T >) new RtmRestResponseHandler< RtmAuth >( Xml.newPullParser(),
-                                                                                  new RtmAuthContentHandler( null ) );
-      }
+      return new RtmRestResponseHandler< Collection< RtmTask >>( Xml.newPullParser(),
+                                                                 new RtmTaskSeriesListContentHandler() );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< Collection< RtmTasksList >> createRtmTaskListsResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< Collection< RtmTasksList > >( Xml.newPullParser(),
+                                                                       new CollectionContentHandler< RtmTasksList >( "lists",
+                                                                                                                     new RtmListContentHandler() ) );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< RtmTasksList > createRtmTaskListResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< RtmTasksList >( Xml.newPullParser(),
+                                                         new RtmListContentHandler() );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< Collection< RtmContact >> createRtmContactsResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< Collection< RtmContact > >( Xml.newPullParser(),
+                                                                     new CollectionContentHandler< RtmContact >( "contacts",
+                                                                                                                 new RtmContactContentHandler() ) );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< Collection< RtmLocation >> createRtmLocationsResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< Collection< RtmLocation > >( Xml.newPullParser(),
+                                                                      new CollectionContentHandler< RtmLocation >( "locations",
+                                                                                                                   new RtmLocationContentHandler() ) );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< RtmNote > createRtmNoteResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< RtmNote >( Xml.newPullParser(),
+                                                    new RtmNoteContentHandler() );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< RtmTimeline > createRtmTimelineResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< RtmTimeline >( Xml.newPullParser(),
+                                                        new RtmTimelineContentHandler() );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< RtmFrob > createRtmFrobResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< RtmFrob >( Xml.newPullParser(),
+                                                    new RtmFrobContentHandler( null ) );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< RtmAuth > createRtmAuthResponseHandler( IRtmRequest request )
+   {
+      return new RtmRestResponseHandler< RtmAuth >( Xml.newPullParser(),
+                                                    new RtmAuthContentHandler( null ) );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< Void > createVoidResponseHandler( IRtmRequest request )
+   {
+      // TODO Auto-generated method stub
       
-      throw new IllegalArgumentException( MessageFormat.format( "Unknown response data type {0}",
-                                                                resultType.getName() ) );
    }
 }

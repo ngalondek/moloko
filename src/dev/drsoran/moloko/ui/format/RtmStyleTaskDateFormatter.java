@@ -25,18 +25,18 @@ package dev.drsoran.moloko.ui.format;
 import java.util.Calendar;
 
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.RtmCalendar;
 
 
 public final class RtmStyleTaskDateFormatter
 {
-   private final MolokoCalendar dueDateCalender = MolokoCalendar.getInstance();
+   private final RtmCalendar dueDateCalender = RtmCalendar.getInstance();
    
    private final UiContext context;
    
@@ -73,7 +73,7 @@ public final class RtmStyleTaskDateFormatter
    
    
    
-   public String getFormattedDueDate( MolokoCalendar cal )
+   public String getFormattedDueDate( RtmCalendar cal )
    {
       String dueText = Strings.EMPTY_STRING;
       
@@ -102,7 +102,7 @@ public final class RtmStyleTaskDateFormatter
          else
          {
             final long nowMillis = System.currentTimeMillis();
-            MolokoCalendar nowCal = MolokoDateUtils.newCalendar( nowMillis );
+            RtmCalendar nowCal = MolokoDateUtils.newCalendar( nowMillis );
             
             // If it is the same year
             if ( cal.get( Calendar.YEAR ) == nowCal.get( Calendar.YEAR ) )
@@ -129,7 +129,7 @@ public final class RtmStyleTaskDateFormatter
                // Is it in the range [today + 1, today + 6]?
                else
                {
-                  final MolokoCalendar calWeekdayRange = nowCal;
+                  final RtmCalendar calWeekdayRange = nowCal;
                   calWeekdayRange.add( Calendar.DAY_OF_MONTH, 1 );
                   nowCal = null;
                   

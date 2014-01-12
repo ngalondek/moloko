@@ -27,11 +27,11 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
+import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public class RecurrenceEditText extends ClearableEditText

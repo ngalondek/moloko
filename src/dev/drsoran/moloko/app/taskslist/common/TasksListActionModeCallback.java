@@ -28,10 +28,10 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import dev.drsoran.Pair;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
-import dev.drsoran.moloko.util.Pair;
 
 
 class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >

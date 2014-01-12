@@ -50,8 +50,8 @@ import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.grammar.rtmsmart.RtmSmartFilterBuilder;
 import dev.drsoran.moloko.util.Bundles;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
 public final class Intents

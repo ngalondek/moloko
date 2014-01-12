@@ -29,8 +29,8 @@ import java.util.Calendar;
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 import android.content.Context;
 import android.widget.TextView;
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
+import dev.drsoran.rtm.RtmCalendar;
 
 
 public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
@@ -43,7 +43,7 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
    
    public final static int TYPE_AM_PM = Calendar.AM_PM;
    
-   private final MolokoCalendar calendar;
+   private final RtmCalendar calendar;
    
    private final DateFormat dateFormat;
    
@@ -57,11 +57,11 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
    
    
    
-   public DueTimeWheelTextAdapter( Context context, MolokoCalendar cal, int type )
+   public DueTimeWheelTextAdapter( Context context, RtmCalendar cal, int type )
    {
       super( context );
       
-      this.calendar = MolokoCalendar.getInstance();
+      this.calendar = RtmCalendar.getInstance();
       this.calendar.setTimeInMillis( cal.getTimeInMillis() );
       this.type = type;
       

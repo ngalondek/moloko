@@ -29,7 +29,6 @@ import java.util.Collections;
 
 import android.content.ContentResolver;
 import android.text.TextUtils;
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.ContentCompare;
 import dev.drsoran.moloko.content.ContentUris;
@@ -37,6 +36,7 @@ import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.RtmCalendar;
 
 
 public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
@@ -263,7 +263,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                                   Task updatedTask )
    {
       
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final RtmCalendar cal = RtmCalendar.getInstance();
       final Due due = updatedTask.getDue();
       
       // If the task has no due date...
@@ -278,7 +278,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       {
          cal.setTimeInMillis( System.currentTimeMillis() );
          
-         final MolokoCalendar calDue = MolokoDateUtils.newCalendar( due.getMillisUtc() );
+         final RtmCalendar calDue = MolokoDateUtils.newCalendar( due.getMillisUtc() );
          
          // Preserve the original time when setting to today
          cal.set( Calendar.HOUR_OF_DAY, calDue.get( Calendar.HOUR_OF_DAY ) );

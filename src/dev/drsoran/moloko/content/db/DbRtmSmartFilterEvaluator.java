@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content.db;
 import java.util.Calendar;
 
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
@@ -33,11 +32,12 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
-import dev.drsoran.moloko.domain.parsing.rtmsmart.IRtmSmartFilterEvaluator;
+import dev.drsoran.rtm.RtmCalendar;
 import dev.drsoran.rtm.model.Priority;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
+import dev.drsoran.rtm.parsing.datetime.ParseDateWithinReturn;
+import dev.drsoran.rtm.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 
 
 public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
@@ -46,7 +46,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private final StringBuilder result = new StringBuilder();
    
-   private final IDateTimeParsing dateTimeParsing;
+   private final IRtmDateTimeParsing dateTimeParsing;
    
    // We do not insert the default operator for the first, lexed token.
    // So this starts as true.
@@ -54,7 +54,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    
-   public DbRtmSmartFilterEvaluator( IDateTimeParsing dateTimeParsing )
+   public DbRtmSmartFilterEvaluator( IRtmDateTimeParsing dateTimeParsing )
    {
       if ( dateTimeParsing == null )
       {
@@ -726,7 +726,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private boolean equalsTimeParam( String column, String param )
    {
-      final MolokoCalendar cal;
+      final RtmCalendar cal;
       try
       {
          cal = dateTimeParsing.parseDateTime( param );
@@ -770,7 +770,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    private boolean differsTimeParam( String column, String param, boolean before )
    {
-      MolokoCalendar cal;
+      RtmCalendar cal;
       try
       {
          cal = dateTimeParsing.parseDateTime( param );

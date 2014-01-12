@@ -25,14 +25,14 @@ package dev.drsoran.moloko.ui.widgets;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Due;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
+import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public class DueEditText extends ClearableEditText
@@ -188,9 +188,9 @@ public class DueEditText extends ClearableEditText
       {
          try
          {
-            final MolokoCalendar cal = getUiContext().getParsingService()
-                                                     .getDateTimeParsing()
-                                                     .parseDateTime( dueStr );
+            final RtmCalendar cal = getUiContext().getParsingService()
+                                                  .getDateTimeParsing()
+                                                  .parseDateTime( dueStr );
             return new Due( cal.getTimeInMillis(), cal.hasTime() );
          }
          catch ( GrammarException e )

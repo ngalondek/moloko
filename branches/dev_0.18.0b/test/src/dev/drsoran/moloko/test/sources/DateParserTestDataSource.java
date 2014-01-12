@@ -29,9 +29,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.lang.ILanguage;
 import dev.drsoran.moloko.test.langs.IDateParserTestLanguage;
+import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.lang.ILanguage;
 
 
 public class DateParserTestDataSource
@@ -42,7 +42,7 @@ public class DateParserTestDataSource
    
    private final IDateParserTestLanguage testLanguage;
    
-   private final MolokoCalendar todayCal;
+   private final RtmCalendar todayCal;
    
    private final int thisYear;
    
@@ -59,7 +59,7 @@ public class DateParserTestDataSource
    
    
    public DateParserTestDataSource( ILanguage dateLanguage,
-      IDateParserTestLanguage testLanguage, MolokoCalendar today )
+      IDateParserTestLanguage testLanguage, RtmCalendar today )
    {
       this( dateLanguage, testLanguage, today, Config.Full );
    }
@@ -67,7 +67,7 @@ public class DateParserTestDataSource
    
    
    public DateParserTestDataSource( ILanguage dateLanguage,
-      IDateParserTestLanguage testLanguage, MolokoCalendar today, Config config )
+      IDateParserTestLanguage testLanguage, RtmCalendar today, Config config )
    {
       this.dateLanguage = dateLanguage;
       this.testLanguage = testLanguage;
@@ -335,7 +335,7 @@ public class DateParserTestDataSource
    
    private void addParseDateOnWeekday( Collection< Object[] > testData )
    {
-      final MolokoCalendar refCal = todayCal.clone();
+      final RtmCalendar refCal = todayCal.clone();
       
       for ( int i = 1; i < 8; ++i )
       {
@@ -357,7 +357,7 @@ public class DateParserTestDataSource
    
    private void addParseDateOnNextWeekday( Collection< Object[] > testData )
    {
-      final MolokoCalendar refCal = todayCal.clone();
+      final RtmCalendar refCal = todayCal.clone();
       refCal.add( Calendar.WEEK_OF_YEAR, 1 );
       
       for ( int i = 1; i < 8; ++i )
@@ -446,7 +446,7 @@ public class DateParserTestDataSource
          {
             for ( String weekStr : testLanguage.getWeekLiterals() )
             {
-               final MolokoCalendar refCal = todayCal.clone();
+               final RtmCalendar refCal = todayCal.clone();
                refCal.add( Calendar.WEEK_OF_YEAR, i );
                
                for ( String num : new String[]
@@ -475,7 +475,7 @@ public class DateParserTestDataSource
          {
             for ( String dayStr : testLanguage.getDayLiterals() )
             {
-               final MolokoCalendar refCal = todayCal.clone();
+               final RtmCalendar refCal = todayCal.clone();
                refCal.add( Calendar.DATE, i );
                
                for ( String num : new String[]
@@ -498,7 +498,7 @@ public class DateParserTestDataSource
    
    private void addParseDateInX_YMWD( Collection< Object[] > testData )
    {
-      final MolokoCalendar refCal = todayCal.clone();
+      final RtmCalendar refCal = todayCal.clone();
       refCal.add( Calendar.DATE, 5 );
       refCal.add( Calendar.WEEK_OF_YEAR, 2 );
       refCal.add( Calendar.YEAR, 1 );
@@ -535,7 +535,7 @@ public class DateParserTestDataSource
    
    private void addParseDateEndOfThe_Week( Collection< Object[] > testData )
    {
-      final MolokoCalendar refCal = todayCal.clone();
+      final RtmCalendar refCal = todayCal.clone();
       refCal.get( Calendar.DAY_OF_WEEK );
       refCal.set( Calendar.DAY_OF_WEEK,
                   refCal.getActualMaximum( Calendar.DAY_OF_WEEK ) );
@@ -559,7 +559,7 @@ public class DateParserTestDataSource
    
    private void addParseDateEndOfThe_Month( Collection< Object[] > testData )
    {
-      final MolokoCalendar refCal = todayCal.clone();
+      final RtmCalendar refCal = todayCal.clone();
       refCal.set( Calendar.DAY_OF_MONTH,
                   refCal.getActualMaximum( Calendar.DAY_OF_MONTH ) );
       
@@ -610,7 +610,7 @@ public class DateParserTestDataSource
       {
          for ( String string : testLanguage.getNever() )
          {
-            final MolokoCalendar refCal = MolokoCalendar.getDatelessAndTimelessInstance();
+            final RtmCalendar refCal = RtmCalendar.getDatelessAndTimelessInstance();
             addTestData( testData,
                          new ParseDateTestData( string,
                                                 refCal.get( Calendar.DATE ),
@@ -694,7 +694,7 @@ public class DateParserTestDataSource
             for ( String amount : Arrays.asList( String.valueOf( i ), numStr ) )
             {
                // No date
-               MolokoCalendar refCal = todayCal.clone();
+               RtmCalendar refCal = todayCal.clone();
                refCal.add( calUnit, i );
                
                String testString = amount + " " + unit;
@@ -747,7 +747,7 @@ public class DateParserTestDataSource
                testString = amount + " " + unit + " " + of
                   + testLanguage.getNever().iterator().next();
                
-               refCal = MolokoCalendar.getDatelessAndTimelessInstance();
+               refCal = RtmCalendar.getDatelessAndTimelessInstance();
                addTestData( testData,
                             new ParseDateWithInTestData( testString,
                                                          refCal.get( Calendar.DATE ),

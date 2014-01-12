@@ -36,11 +36,9 @@ import java.util.Map;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
-import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
-import dev.drsoran.moloko.content.Columns.SyncColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.Constants;
@@ -51,10 +49,12 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
+import dev.drsoran.moloko.sync.db.TableColumns.TimesColumns;
 import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.rtm.model.Priority;
@@ -803,11 +803,11 @@ public class ContentValuesFactoryTestDataSource
    private void addRtmSettingsNoDefList( Collection< TestData< Settings >> testData )
    {
       final Settings modelElement = new Settings( NOW,
-                                                        "UTC",
-                                                        1,
-                                                        2,
-                                                        Constants.NO_ID,
-                                                        "en" );
+                                                  "UTC",
+                                                  1,
+                                                  2,
+                                                  Constants.NO_ID,
+                                                  "en" );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( RtmSettingsColumns.SYNC_TIMESTAMP, NOW );
@@ -818,21 +818,16 @@ public class ContentValuesFactoryTestDataSource
       values.put( RtmSettingsColumns.LANGUAGE, "en" );
       
       testData.add( new TestData< Settings >( Settings.class,
-                                                 modelElement,
-                                                 values,
-                                                 "NoDefList" ) );
+                                              modelElement,
+                                              values,
+                                              "NoDefList" ) );
    }
    
    
    
    private void addRtmSettingsFull( Collection< TestData< Settings >> testData )
    {
-      final Settings modelElement = new Settings( NOW,
-                                                        "UTC",
-                                                        1,
-                                                        2,
-                                                        100L,
-                                                        "en" );
+      final Settings modelElement = new Settings( NOW, "UTC", 1, 2, 100L, "en" );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( RtmSettingsColumns.SYNC_TIMESTAMP, NOW );
@@ -843,9 +838,9 @@ public class ContentValuesFactoryTestDataSource
       values.put( RtmSettingsColumns.LANGUAGE, "en" );
       
       testData.add( new TestData< Settings >( Settings.class,
-                                                 modelElement,
-                                                 values,
-                                                 "Full" ) );
+                                              modelElement,
+                                              values,
+                                              "Full" ) );
    }
    
    
@@ -859,9 +854,9 @@ public class ContentValuesFactoryTestDataSource
       values.put( TimesColumns.LAST_OUT, null );
       
       testData.add( new TestData< SyncTime >( SyncTime.class,
-                                          modelElement,
-                                          values,
-                                          "Never" ) );
+                                              modelElement,
+                                              values,
+                                              "Never" ) );
    }
    
    
@@ -875,9 +870,9 @@ public class ContentValuesFactoryTestDataSource
       values.put( TimesColumns.LAST_OUT, LATER );
       
       testData.add( new TestData< SyncTime >( SyncTime.class,
-                                          modelElement,
-                                          values,
-                                          "Full" ) );
+                                              modelElement,
+                                              values,
+                                              "Full" ) );
    }
    
    

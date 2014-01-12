@@ -30,10 +30,10 @@ import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.TypeSafeMatcher;
 
-import dev.drsoran.moloko.MolokoCalendar;
+import dev.drsoran.rtm.RtmCalendar;
 
 
-public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
+public class MolokoCalendarMatcher extends TypeSafeMatcher< RtmCalendar >
 {
    private int calendarField;
    
@@ -70,7 +70,7 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    
    
    @Override
-   public boolean matchesSafely( MolokoCalendar cal )
+   public boolean matchesSafely( RtmCalendar cal )
    {
       return cal.get( calendarField ) == fieldValue;
    }
@@ -149,10 +149,10 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    
    
    @Factory
-   public static MolokoCalendarMatcher next( MolokoCalendar cal,
+   public static MolokoCalendarMatcher next( RtmCalendar cal,
                                              MolokoCalendarMatcher matcher )
    {
-      final MolokoCalendar nextCal = cal.clone();
+      final RtmCalendar nextCal = cal.clone();
       nextCal.add( matcher.calendarField, 1 );
       
       final MolokoCalendarMatcher nextMatcher = new MolokoCalendarMatcher( matcher.calendarField,
@@ -166,7 +166,7 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    @Factory
    public static MolokoCalendarMatcher year()
    {
-      return year( MolokoCalendar.getInstance().get( Calendar.YEAR ) );
+      return year( RtmCalendar.getInstance().get( Calendar.YEAR ) );
    }
    
    
@@ -182,7 +182,7 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    @Factory
    public static MolokoCalendarMatcher month()
    {
-      return month( MolokoCalendar.getInstance().get( Calendar.MONTH ) );
+      return month( RtmCalendar.getInstance().get( Calendar.MONTH ) );
    }
    
    
@@ -198,7 +198,7 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    @Factory
    public static MolokoCalendarMatcher day()
    {
-      return day( MolokoCalendar.getInstance().get( Calendar.DATE ) );
+      return day( RtmCalendar.getInstance().get( Calendar.DATE ) );
    }
    
    
@@ -214,7 +214,7 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    @Factory
    public static MolokoCalendarMatcher hour()
    {
-      return hour( MolokoCalendar.getInstance().get( Calendar.HOUR_OF_DAY ) );
+      return hour( RtmCalendar.getInstance().get( Calendar.HOUR_OF_DAY ) );
    }
    
    
@@ -230,7 +230,7 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    @Factory
    public static MolokoCalendarMatcher minute()
    {
-      return minute( MolokoCalendar.getInstance().get( Calendar.MINUTE ) );
+      return minute( RtmCalendar.getInstance().get( Calendar.MINUTE ) );
    }
    
    
@@ -246,7 +246,7 @@ public class MolokoCalendarMatcher extends TypeSafeMatcher< MolokoCalendar >
    @Factory
    public static MolokoCalendarMatcher second()
    {
-      return second( MolokoCalendar.getInstance().get( Calendar.SECOND ) );
+      return second( RtmCalendar.getInstance().get( Calendar.SECOND ) );
    }
    
    

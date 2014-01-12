@@ -22,24 +22,24 @@
 
 package dev.drsoran.moloko.test.sources;
 
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.FRIDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.MONDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_BYDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_BYMONTH;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_BYMONTHDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_COUNT;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_FREQ;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_INTERVAL;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.OP_UNTIL;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.SATURDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.SUNDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.THURSDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.TUESDAY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_DAILY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_MONTHLY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_WEEKLY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_YEARLY;
-import static dev.drsoran.moloko.grammar.antlr.recurrence.RecurrencePatternLexer.WEDNESDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.FRIDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.MONDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.OP_BYDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.OP_BYMONTH;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.OP_BYMONTHDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.OP_COUNT;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.OP_FREQ;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.OP_INTERVAL;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.OP_UNTIL;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.SATURDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.SUNDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.THURSDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.TUESDAY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_DAILY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_MONTHLY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_WEEKLY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.VAL_YEARLY;
+import static dev.drsoran.rtm.parsing.grammar.antlr.recurrence.RecurrencePatternLexer.WEDNESDAY;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -51,8 +51,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import dev.drsoran.moloko.domain.parsing.recurrence.OperandByDayValue;
-import dev.drsoran.moloko.util.Pair;
+import dev.drsoran.Pair;
+import dev.drsoran.rtm.parsing.recurrence.OperandByDayValue;
 
 
 public class RecurrencePatternCollectorTestDataSource

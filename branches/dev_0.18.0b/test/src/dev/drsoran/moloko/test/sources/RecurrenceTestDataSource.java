@@ -22,19 +22,19 @@
 
 package dev.drsoran.moloko.test.sources;
 
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.DATE_PATTERN;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.IS_EVERY;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_BYDAY;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_BYMONTH;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_BYMONTHDAY;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_COUNT;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_FREQ;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_INTERVAL;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.OP_UNTIL;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.VAL_DAILY;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.VAL_MONTHLY;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.VAL_WEEKLY;
-import static dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternSyntax.VAL_YEARLY;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.DATE_PATTERN;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.IS_EVERY;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.OP_BYDAY;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.OP_BYMONTH;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.OP_BYMONTHDAY;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.OP_COUNT;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.OP_FREQ;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.OP_INTERVAL;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.OP_UNTIL;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.VAL_DAILY;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.VAL_MONTHLY;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.VAL_WEEKLY;
+import static dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax.VAL_YEARLY;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,16 +46,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.IDateFormatter;
-import dev.drsoran.moloko.domain.parsing.recurrence.RecurrencePatternOperatorComp;
 import dev.drsoran.moloko.test.langs.IRecurrenceParserTestLanguage;
+import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.IDateFormatter;
+import dev.drsoran.rtm.parsing.recurrence.RecurrencePatternOperatorComp;
 
 
 public class RecurrenceTestDataSource extends
          TheoriesTestDataSource< RecurrenceTestDataSource.TestData >
 {
-   public final static MolokoCalendar UNTIL_DATE;
+   public final static RtmCalendar UNTIL_DATE;
    
    private final static String UNTIL_DATE_PATTERN;
    
@@ -65,7 +65,7 @@ public class RecurrenceTestDataSource extends
    
    static
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final RtmCalendar cal = RtmCalendar.getInstance();
       cal.set( Calendar.YEAR, 2010 );
       cal.set( Calendar.MONTH, Calendar.OCTOBER );
       cal.set( Calendar.DATE, 1 );

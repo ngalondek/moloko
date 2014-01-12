@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import android.database.Cursor;
+import dev.drsoran.Pair;
 import dev.drsoran.moloko.domain.content.DefaultModelElementFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.model.Contact;
@@ -50,7 +51,6 @@ import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource.TestData;
-import dev.drsoran.moloko.util.Pair;
 
 
 public class DefaultModelElementFactoryFixture extends MolokoTestCase

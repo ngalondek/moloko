@@ -24,8 +24,8 @@ package dev.drsoran.moloko.test;
 
 import java.util.Calendar;
 
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.rtm.RtmCalendar;
 import dev.drsoran.rtm.model.RtmConstants;
 
 
@@ -35,17 +35,17 @@ public final class TestConstants
    
    public final static long TODAY;
    
-   public final static MolokoCalendar DATE_TODAY;
+   public final static RtmCalendar DATE_TODAY;
    
-   public final static MolokoCalendar DATE_NOW;
+   public final static RtmCalendar DATE_NOW;
    
    public final static long TOMORROW;
    
-   public final static MolokoCalendar DATE_TOMORROW;
+   public final static RtmCalendar DATE_TOMORROW;
    
    public final static long YESTERDAY;
    
-   public final static MolokoCalendar DATE_YESTERDAY;
+   public final static RtmCalendar DATE_YESTERDAY;
    
    public final static long LATER = NOW + 3600 * 1000;
    
@@ -59,10 +59,10 @@ public final class TestConstants
    
    static
    {
-      DATE_TODAY = MolokoCalendar.getInstance();
+      DATE_TODAY = RtmCalendar.getInstance();
       DATE_TODAY.setHasTime( false );
       
-      DATE_NOW = MolokoCalendar.getInstance();
+      DATE_NOW = RtmCalendar.getInstance();
       DATE_NOW.setTimeInMillis( NOW );
       
       TODAY = DATE_TODAY.getTimeInMillis();

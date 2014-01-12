@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import dev.drsoran.Pair;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
@@ -50,7 +51,6 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.sync.model.SyncTime;
-import dev.drsoran.moloko.util.Pair;
 import dev.drsoran.rtm.model.Priority;
 
 

@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
+import dev.drsoran.rtm.parsing.recurrence.RtmRecurrence;
 
 
 public class RecurrenceFixture extends EqualsHashCodeTestCase
@@ -43,18 +44,21 @@ public class RecurrenceFixture extends EqualsHashCodeTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
-   public void testRecurrenceNullPattern()
+   @Test
+   public void testRecurrenceRtmRecurrence()
    {
-      new Recurrence( null, true );
+      Recurrence recurrence = new Recurrence( new RtmRecurrence( "pattern",
+                                                                 true ) );
+      assertThat( recurrence.getPattern(), is( "pattern" ) );
+      assertThat( recurrence.isEveryRecurrence(), is( true ) );
    }
    
    
    
    @Test( expected = IllegalArgumentException.class )
-   public void testRecurrenceEmptyPattern()
+   public void testRecurrenceNullRtmRecurrence()
    {
-      new Recurrence( "", true );
+      new Recurrence( null );
    }
    
    

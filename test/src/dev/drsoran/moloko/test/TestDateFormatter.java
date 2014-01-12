@@ -28,7 +28,7 @@ import java.util.Date;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 
-import dev.drsoran.moloko.domain.parsing.IDateFormatter;
+import dev.drsoran.rtm.parsing.IDateFormatter;
 
 
 public class TestDateFormatter

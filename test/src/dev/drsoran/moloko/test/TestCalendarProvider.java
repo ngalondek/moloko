@@ -26,19 +26,19 @@ import java.util.Calendar;
 
 import org.easymock.EasyMock;
 
-import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.MolokoCalenderProvider;
+import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class TestCalendarProvider
 {
    
-   private final static MolokoCalendar TODAY_CAL;
+   private final static RtmCalendar TODAY_CAL;
    
    static
    {
       // Thursday, 10.6.2010
-      TODAY_CAL = MolokoCalendar.getInstance();
+      TODAY_CAL = RtmCalendar.getInstance();
       TODAY_CAL.set( Calendar.YEAR, 2010 );
       TODAY_CAL.set( Calendar.MONTH, Calendar.JUNE );
       TODAY_CAL.set( Calendar.DATE, 10 );
@@ -47,10 +47,9 @@ public class TestCalendarProvider
    
    
    
-   public static MolokoCalenderProvider get( MolokoCalendar now,
-                                             MolokoCalendar today )
+   public static IRtmCalendarProvider get( RtmCalendar now, RtmCalendar today )
    {
-      final MolokoCalenderProvider calenderProvider = EasyMock.createNiceMock( MolokoCalenderProvider.class );
+      final IRtmCalendarProvider calenderProvider = EasyMock.createNiceMock( IRtmCalendarProvider.class );
       EasyMock.expect( calenderProvider.getNow() )
               .andReturn( now.clone() )
               .anyTimes();
@@ -64,9 +63,9 @@ public class TestCalendarProvider
    
    
    
-   public static MolokoCalenderProvider getJune_10_2010_00_00_00()
+   public static IRtmCalendarProvider getJune_10_2010_00_00_00()
    {
-      final MolokoCalendar nowCal = TODAY_CAL.clone();
+      final RtmCalendar nowCal = TODAY_CAL.clone();
       nowCal.setHasTime( true );
       
       return get( nowCal, TODAY_CAL );

@@ -37,7 +37,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import dev.drsoran.moloko.MolokoCalendar;
 import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluator;
 import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
@@ -45,9 +44,10 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
-import dev.drsoran.moloko.domain.parsing.datetime.ParseDateWithinReturn;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.datetime.ParseDateWithinReturn;
 
 
 public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
@@ -652,22 +652,22 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testSleeperTags() throws GrammarException
    {
-      final MolokoCalendar now = MolokoCalendar.getInstance();
+      final RtmCalendar now = RtmCalendar.getInstance();
       now.setTimeInMillis( TestConstants.NOW );
       
-      final MolokoCalendar oneDayOfNow = now.clone();
+      final RtmCalendar oneDayOfNow = now.clone();
       oneDayOfNow.add( Calendar.DAY_OF_YEAR, 1 );
       
-      final MolokoCalendar twoDayOfNow = now.clone();
+      final RtmCalendar twoDayOfNow = now.clone();
       oneDayOfNow.add( Calendar.DAY_OF_YEAR, 2 );
       
-      final MolokoCalendar oneWeekOfNow = now.clone();
+      final RtmCalendar oneWeekOfNow = now.clone();
       oneDayOfNow.add( Calendar.WEEK_OF_YEAR, 1 );
       
-      final MolokoCalendar twoWeeksOfNow = now.clone();
+      final RtmCalendar twoWeeksOfNow = now.clone();
       oneDayOfNow.add( Calendar.WEEK_OF_YEAR, 2 );
       
-      final MolokoCalendar oneMonthOfNow = now.clone();
+      final RtmCalendar oneMonthOfNow = now.clone();
       oneDayOfNow.add( Calendar.MONTH, 1 );
       
       EasyMock.reset( dateTimeParsing );
@@ -786,7 +786,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       // No date and time
       EasyMock.reset( dateTimeParsing );
       EasyMock.expect( dateTimeParsing.parseDateTime( "never" ) )
-              .andReturn( MolokoCalendar.getDatelessAndTimelessInstance() )
+              .andReturn( RtmCalendar.getDatelessAndTimelessInstance() )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
       
@@ -794,7 +794,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       assertQueryAndReset( "(" + column + " IS NULL)" );
       
       // Only date
-      final MolokoCalendar calToday = MolokoCalendar.getInstance();
+      final RtmCalendar calToday = RtmCalendar.getInstance();
       calToday.setHasTime( false );
       
       final long todMillis = calToday.getTimeInMillis();
@@ -813,7 +813,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
          + " < " + tomMillis + ")" );
       
       // Only time or date with time
-      final MolokoCalendar calTodayWithTime = MolokoCalendar.getInstance();
+      final RtmCalendar calTodayWithTime = RtmCalendar.getInstance();
       calTodayWithTime.set( Calendar.HOUR, 10 );
       calTodayWithTime.set( Calendar.MINUTE, 0 );
       calTodayWithTime.set( Calendar.SECOND, 0 );
@@ -840,12 +840,12 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       assertQueryAndReset( null );
       
       // Ensure operator
-      final MolokoCalendar calTom = MolokoCalendar.getInstance();
+      final RtmCalendar calTom = RtmCalendar.getInstance();
       calTom.add( Calendar.DAY_OF_YEAR, 1 );
       
       EasyMock.reset( dateTimeParsing );
       EasyMock.expect( dateTimeParsing.parseDateTime( "never" ) )
-              .andReturn( MolokoCalendar.getDatelessAndTimelessInstance() )
+              .andReturn( RtmCalendar.getDatelessAndTimelessInstance() )
               .anyTimes();
       EasyMock.expect( dateTimeParsing.parseDateTime( "tom" ) )
               .andReturn( calTom )
@@ -873,7 +873,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       // No date and time
       EasyMock.reset( dateTimeParsing );
       EasyMock.expect( dateTimeParsing.parseDateTime( "never" ) )
-              .andReturn( MolokoCalendar.getDatelessAndTimelessInstance() )
+              .andReturn( RtmCalendar.getDatelessAndTimelessInstance() )
               .anyTimes();
       EasyMock.replay( dateTimeParsing );
       
@@ -881,7 +881,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       assertQueryAndReset( "(" + column + " IS NULL)" );
       
       // Date
-      final MolokoCalendar calToday = MolokoCalendar.getInstance();
+      final RtmCalendar calToday = RtmCalendar.getInstance();
       calToday.setHasTime( false );
       
       final long todMillis = calToday.getTimeInMillis();
@@ -897,7 +897,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
          + todMillis + ")" );
       
       // Parsing DateTimeSpec failed
-      final MolokoCalendar calTom = MolokoCalendar.getInstance();
+      final RtmCalendar calTom = RtmCalendar.getInstance();
       calTom.add( Calendar.DAY_OF_YEAR, 1 );
       
       EasyMock.reset( dateTimeParsing );
@@ -951,8 +951,8 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       final Method evalMethod = DbRtmSmartFilterEvaluator.class.getMethod( method,
                                                                            String.class );
       
-      final MolokoCalendar calTod = MolokoCalendar.getInstance();
-      final MolokoCalendar calMinus2 = MolokoCalendar.getInstance();
+      final RtmCalendar calTod = RtmCalendar.getInstance();
+      final RtmCalendar calMinus2 = RtmCalendar.getInstance();
       calMinus2.add( Calendar.DAY_OF_YEAR, -2 );
       
       final String query = "(" + column + " >= "

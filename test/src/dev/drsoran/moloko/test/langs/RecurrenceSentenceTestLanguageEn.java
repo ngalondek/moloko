@@ -27,7 +27,7 @@ import java.util.Locale;
 import org.easymock.EasyMock;
 
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.domain.parsing.lang.RecurrenceSentenceLanguage;
+import dev.drsoran.rtm.parsing.lang.RecurrenceSentenceLanguage;
 
 
 public class RecurrenceSentenceTestLanguageEn

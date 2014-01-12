@@ -31,9 +31,9 @@ import org.junit.Test;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.res.XmlResourceParser;
-import dev.drsoran.moloko.domain.parsing.lang.DictionaryLanguage;
 import dev.drsoran.moloko.domain.parsing.lang.XmlLanguageReader;
 import dev.drsoran.moloko.test.MolokoTestCase;
+import dev.drsoran.rtm.parsing.lang.DictionaryLanguage;
 
 
 @SuppressWarnings( "unchecked" )

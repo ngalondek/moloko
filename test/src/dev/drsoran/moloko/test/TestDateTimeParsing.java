@@ -24,9 +24,9 @@ package dev.drsoran.moloko.test;
 
 import org.easymock.EasyMock;
 
-import dev.drsoran.moloko.MolokoCalendar;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
-import dev.drsoran.moloko.domain.parsing.IDateTimeParsing;
+import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 
 
 public class TestDateTimeParsing
@@ -37,9 +37,9 @@ public class TestDateTimeParsing
    
    
    
-   public static IDateTimeParsing get( MolokoCalendar parsedDateTime )
+   public static IRtmDateTimeParsing get( RtmCalendar parsedDateTime )
    {
-      final IDateTimeParsing dateTimeParsing = EasyMock.createNiceMock( IDateTimeParsing.class );
+      final IRtmDateTimeParsing dateTimeParsing = EasyMock.createNiceMock( IRtmDateTimeParsing.class );
       try
       {
          EasyMock.expect( dateTimeParsing.parseDateTime( EasyMock.anyObject( String.class ) ) )

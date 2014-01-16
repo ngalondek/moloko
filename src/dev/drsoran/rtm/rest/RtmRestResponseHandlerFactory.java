@@ -24,13 +24,12 @@ package dev.drsoran.rtm.rest;
 
 import java.util.Collection;
 
-import android.util.Xml;
-import dev.drsoran.rtm.IRtmRequest;
 import dev.drsoran.rtm.IRtmResponseHandler;
 import dev.drsoran.rtm.IRtmResponseHandlerFactory;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
 import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmSettings;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.model.RtmTasksList;
 import dev.drsoran.rtm.model.RtmTimeline;
@@ -42,93 +41,91 @@ public class RtmRestResponseHandlerFactory implements
          IRtmResponseHandlerFactory
 {
    @Override
-   public IRtmResponseHandler< Collection< RtmTask >> createRtmTasksResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< Collection< RtmTask >> createRtmTasksResponseHandler()
    {
-      return new RtmRestResponseHandler< Collection< RtmTask >>( Xml.newPullParser(),
-                                                                 new RtmTaskSeriesListContentHandler() );
+      return new RtmRestResponseHandler< Collection< RtmTask >>( new RtmTaskSeriesListContentHandler() );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< Collection< RtmTasksList >> createRtmTaskListsResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< Collection< RtmTasksList >> createRtmTaskListsResponseHandler()
    {
-      return new RtmRestResponseHandler< Collection< RtmTasksList > >( Xml.newPullParser(),
-                                                                       new CollectionContentHandler< RtmTasksList >( "lists",
+      return new RtmRestResponseHandler< Collection< RtmTasksList > >( new CollectionContentHandler< RtmTasksList >( "lists",
                                                                                                                      new RtmListContentHandler() ) );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< RtmTasksList > createRtmTaskListResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< RtmTasksList > createRtmTaskListResponseHandler()
    {
-      return new RtmRestResponseHandler< RtmTasksList >( Xml.newPullParser(),
-                                                         new RtmListContentHandler() );
+      return new RtmRestResponseHandler< RtmTasksList >( new RtmListContentHandler() );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< Collection< RtmContact >> createRtmContactsResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< Collection< RtmContact >> createRtmContactsResponseHandler()
    {
-      return new RtmRestResponseHandler< Collection< RtmContact > >( Xml.newPullParser(),
-                                                                     new CollectionContentHandler< RtmContact >( "contacts",
+      return new RtmRestResponseHandler< Collection< RtmContact > >( new CollectionContentHandler< RtmContact >( "contacts",
                                                                                                                  new RtmContactContentHandler() ) );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< Collection< RtmLocation >> createRtmLocationsResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< Collection< RtmLocation >> createRtmLocationsResponseHandler()
    {
-      return new RtmRestResponseHandler< Collection< RtmLocation > >( Xml.newPullParser(),
-                                                                      new CollectionContentHandler< RtmLocation >( "locations",
+      return new RtmRestResponseHandler< Collection< RtmLocation > >( new CollectionContentHandler< RtmLocation >( "locations",
                                                                                                                    new RtmLocationContentHandler() ) );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< RtmNote > createRtmNoteResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< RtmNote > createRtmNoteResponseHandler()
    {
-      return new RtmRestResponseHandler< RtmNote >( Xml.newPullParser(),
-                                                    new RtmNoteContentHandler() );
+      return new RtmRestResponseHandler< RtmNote >( new RtmNoteContentHandler() );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< RtmTimeline > createRtmTimelineResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< RtmTimeline > createRtmTimelineResponseHandler()
    {
-      return new RtmRestResponseHandler< RtmTimeline >( Xml.newPullParser(),
-                                                        new RtmTimelineContentHandler() );
+      return new RtmRestResponseHandler< RtmTimeline >( new RtmTimelineContentHandler() );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< RtmFrob > createRtmFrobResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< RtmFrob > createRtmFrobResponseHandler()
    {
-      return new RtmRestResponseHandler< RtmFrob >( Xml.newPullParser(),
-                                                    new RtmFrobContentHandler( null ) );
+      return new RtmRestResponseHandler< RtmFrob >( new RtmFrobContentHandler( null ) );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< RtmAuth > createRtmAuthResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< RtmAuth > createRtmAuthResponseHandler()
    {
-      return new RtmRestResponseHandler< RtmAuth >( Xml.newPullParser(),
-                                                    new RtmAuthContentHandler( null ) );
+      return new RtmRestResponseHandler< RtmAuth >( new RtmAuthContentHandler( null ) );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< Void > createVoidResponseHandler( IRtmRequest request )
+   public IRtmResponseHandler< RtmSettings > createRtmSettingsResponseHandler()
    {
-      // TODO Auto-generated method stub
-      
+      return new RtmRestResponseHandler< RtmSettings >( new RtmSettingsContentHandler() );
+   }
+   
+   
+   
+   @Override
+   public IRtmResponseHandler< Void > createVoidResponseHandler()
+   {
+      return new RtmRestResponseHandler< Void >( new VoidContentHandler( null ) );
    }
 }

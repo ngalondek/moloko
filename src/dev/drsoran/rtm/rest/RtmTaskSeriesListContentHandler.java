@@ -72,15 +72,17 @@ public class RtmTaskSeriesListContentHandler extends
    {
       if ( "taskseries".equalsIgnoreCase( qName ) )
       {
-         pushNestedContentHandler( new RtmTaskSeriesContentHandler( activeListId,
-                                                                    taskSeriesListener ) );
-         currentHandler().startElement( qName, attributes );
+         pushNestedContentHandlerAndStartElement( new RtmTaskSeriesContentHandler( activeListId,
+                                                                                   taskSeriesListener ),
+                                                  qName,
+                                                  attributes );
       }
       else if ( "deleted".equalsIgnoreCase( qName ) )
       {
-         pushNestedContentHandler( new DeletedRtmTaskSeriesContentHandler( activeListId,
-                                                                           taskSeriesListener ) );
-         currentHandler().startElement( qName, attributes );
+         pushNestedContentHandlerAndStartElement( new DeletedRtmTaskSeriesContentHandler( activeListId,
+                                                                                          taskSeriesListener ),
+                                                  qName,
+                                                  attributes );
       }
       else if ( "list".equalsIgnoreCase( qName ) )
       {

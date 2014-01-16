@@ -27,6 +27,7 @@ import java.util.Collection;
 import dev.drsoran.Strings;
 import dev.drsoran.rtm.IRtmConnection;
 import dev.drsoran.rtm.IRtmConnectionFactory;
+import dev.drsoran.rtm.IRtmResponseHandlerFactory;
 import dev.drsoran.rtm.Param;
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
@@ -42,11 +43,15 @@ public class RtmContentEditService implements IRtmContentEditService
 {
    private final IRtmConnectionFactory connectionFactory;
    
+   private final IRtmResponseHandlerFactory responseHandlerFactory;
    
    
-   public RtmContentEditService( IRtmConnectionFactory connectionFactory )
+   
+   public RtmContentEditService( IRtmConnectionFactory connectionFactory,
+      IRtmResponseHandlerFactory responseHandlerFactory )
    {
       this.connectionFactory = connectionFactory;
+      this.responseHandlerFactory = responseHandlerFactory;
    }
    
    
@@ -66,7 +71,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< RtmTasksList > response;
       if ( !Strings.isNullOrEmpty( smartFilter ) )
       {
-         response = rtmConnection.executeMethod( RtmTasksList.class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTaskListResponseHandler(),
                                                  "rtm.lists.add",
                                                  timelineParam,
                                                  nameParam,
@@ -75,7 +80,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( RtmTasksList.class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTaskListResponseHandler(),
                                                  "rtm.lists.add",
                                                  timelineParam,
                                                  nameParam );
@@ -95,7 +100,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTasksList > response = rtmConnection.executeMethod( RtmTasksList.class,
+      final RtmResponse< RtmTasksList > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTaskListResponseHandler(),
                                                                                 "rtm.lists.delete",
                                                                                 timelineParam,
                                                                                 new Param( "list_id",
@@ -116,7 +121,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTasksList > response = rtmConnection.executeMethod( RtmTasksList.class,
+      final RtmResponse< RtmTasksList > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTaskListResponseHandler(),
                                                                                 "rtm.lists.setName",
                                                                                 timelineParam,
                                                                                 new Param( "list_id",
@@ -129,9 +134,9 @@ public class RtmContentEditService implements IRtmContentEditService
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_add( String timelineId,
-                                              String listId,
-                                              String name ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_add( String timelineId,
+                                                          String listId,
+                                                          String name ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( name );
@@ -139,23 +144,23 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.add",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "name",
-                                                                                        name ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.add",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "name",
+                                                                                                    name ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_complete( String timelineId,
-                                                   String listId,
-                                                   String taskSeriesId,
-                                                   String taskId ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_complete( String timelineId,
+                                                               String listId,
+                                                               String taskSeriesId,
+                                                               String taskId ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -164,25 +169,25 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.complete",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.complete",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_uncomplete( String timelineId,
-                                                     String listId,
-                                                     String taskSeriesId,
-                                                     String taskId ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_uncomplete( String timelineId,
+                                                                 String listId,
+                                                                 String taskSeriesId,
+                                                                 String taskId ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -191,25 +196,25 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.uncomplete",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.uncomplete",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_delete( String timelineId,
-                                                 String listId,
-                                                 String taskSeriesId,
-                                                 String taskId ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_delete( String timelineId,
+                                                             String listId,
+                                                             String taskSeriesId,
+                                                             String taskId ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -218,26 +223,26 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.delete",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.delete",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_movePriority( String timelineId,
-                                                       String listId,
-                                                       String taskSeriesId,
-                                                       String taskId,
-                                                       boolean up ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_movePriority( String timelineId,
+                                                                   String listId,
+                                                                   String taskSeriesId,
+                                                                   String taskId,
+                                                                   boolean up ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -246,30 +251,30 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.movePriority",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ),
-                                                                             new Param( "direction",
-                                                                                        up
-                                                                                          ? "up"
-                                                                                          : "down" ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.movePriority",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ),
+                                                                                         new Param( "direction",
+                                                                                                    up
+                                                                                                      ? "up"
+                                                                                                      : "down" ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_moveTo( String timelineId,
-                                                 String fromListId,
-                                                 String toListId,
-                                                 String taskSeriesId,
-                                                 String taskId ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_moveTo( String timelineId,
+                                                             String fromListId,
+                                                             String toListId,
+                                                             String taskSeriesId,
+                                                             String taskId ) throws RtmServiceException
    {
       checkNotNullOrEmpty( fromListId );
       checkNotNullOrEmpty( toListId );
@@ -279,27 +284,27 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.moveTo",
-                                                                             timelineParam,
-                                                                             new Param( "from_list_id",
-                                                                                        fromListId ),
-                                                                             new Param( "to_list_id",
-                                                                                        toListId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.moveTo",
+                                                                                         timelineParam,
+                                                                                         new Param( "from_list_id",
+                                                                                                    fromListId ),
+                                                                                         new Param( "to_list_id",
+                                                                                                    toListId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_postpone( String timelineId,
-                                                   String listId,
-                                                   String taskSeriesId,
-                                                   String taskId ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_postpone( String timelineId,
+                                                               String listId,
+                                                               String taskSeriesId,
+                                                               String taskId ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -308,27 +313,27 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.postpone",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.postpone",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setDueDate( String timelineId,
-                                                     String listId,
-                                                     String taskSeriesId,
-                                                     String taskId,
-                                                     long dueMillisUtc,
-                                                     boolean hasTime ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setDueDate( String timelineId,
+                                                                 String listId,
+                                                                 String taskSeriesId,
+                                                                 String taskId,
+                                                                 long dueMillisUtc,
+                                                                 boolean hasTime ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -338,10 +343,10 @@ public class RtmContentEditService implements IRtmContentEditService
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       
-      final RtmResponse< RtmTask[] > response;
+      final RtmResponse< Collection< RtmTask > > response;
       if ( dueMillisUtc == RtmConstants.NO_TIME )
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setDueDate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -351,7 +356,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setDueDate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -369,11 +374,11 @@ public class RtmContentEditService implements IRtmContentEditService
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setEstimate( String timelineId,
-                                                      String listId,
-                                                      String taskSeriesId,
-                                                      String taskId,
-                                                      String estimate ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setEstimate( String timelineId,
+                                                                  String listId,
+                                                                  String taskSeriesId,
+                                                                  String taskId,
+                                                                  String estimate ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -383,10 +388,10 @@ public class RtmContentEditService implements IRtmContentEditService
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       
-      final RtmResponse< RtmTask[] > response;
+      final RtmResponse< Collection< RtmTask > > response;
       if ( Strings.isNullOrEmpty( estimate ) )
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setEstimate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -396,7 +401,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setEstimate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -413,11 +418,11 @@ public class RtmContentEditService implements IRtmContentEditService
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setName( String timelineId,
-                                                  String listId,
-                                                  String taskSeriesId,
-                                                  String taskId,
-                                                  String newName ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setName( String timelineId,
+                                                              String listId,
+                                                              String taskSeriesId,
+                                                              String taskId,
+                                                              String newName ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -427,28 +432,28 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.setName",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ),
-                                                                             new Param( "name",
-                                                                                        taskId ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.setName",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ),
+                                                                                         new Param( "name",
+                                                                                                    taskId ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setPriority( String timelineId,
-                                                      String listId,
-                                                      String taskSeriesId,
-                                                      String taskId,
-                                                      Priority priority ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setPriority( String timelineId,
+                                                                  String listId,
+                                                                  String taskSeriesId,
+                                                                  String taskId,
+                                                                  Priority priority ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -457,28 +462,28 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.setName",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ),
-                                                                             new Param( "priority",
-                                                                                        priority.toString() ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.setName",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ),
+                                                                                         new Param( "priority",
+                                                                                                    priority.toString() ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setRecurrence( String timelineId,
-                                                        String listId,
-                                                        String taskSeriesId,
-                                                        String taskId,
-                                                        String repeat ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setRecurrence( String timelineId,
+                                                                    String listId,
+                                                                    String taskSeriesId,
+                                                                    String taskId,
+                                                                    String repeat ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -488,10 +493,10 @@ public class RtmContentEditService implements IRtmContentEditService
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       
-      final RtmResponse< RtmTask[] > response;
+      final RtmResponse< Collection< RtmTask > > response;
       if ( Strings.isNullOrEmpty( repeat ) )
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setRecurrence",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -501,7 +506,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setRecurrence",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -517,11 +522,11 @@ public class RtmContentEditService implements IRtmContentEditService
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setTags( String timelineId,
-                                                  String listId,
-                                                  String taskSeriesId,
-                                                  String taskId,
-                                                  Collection< String > tags ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setTags( String timelineId,
+                                                              String listId,
+                                                              String taskSeriesId,
+                                                              String taskId,
+                                                              Collection< String > tags ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -540,28 +545,28 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.tasks.setTags",
-                                                                             timelineParam,
-                                                                             new Param( "list_id",
-                                                                                        listId ),
-                                                                             new Param( "taskseries_id",
-                                                                                        taskSeriesId ),
-                                                                             new Param( "task_id",
-                                                                                        taskId ),
-                                                                             new Param( "tags",
-                                                                                        joinedTags ) );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.tasks.setTags",
+                                                                                         timelineParam,
+                                                                                         new Param( "list_id",
+                                                                                                    listId ),
+                                                                                         new Param( "taskseries_id",
+                                                                                                    taskSeriesId ),
+                                                                                         new Param( "task_id",
+                                                                                                    taskId ),
+                                                                                         new Param( "tags",
+                                                                                                    joinedTags ) );
       return response;
    }
    
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setLocation( String timelineId,
-                                                      String listId,
-                                                      String taskSeriesId,
-                                                      String taskId,
-                                                      String locationId ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setLocation( String timelineId,
+                                                                  String listId,
+                                                                  String taskSeriesId,
+                                                                  String taskId,
+                                                                  String locationId ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -571,10 +576,10 @@ public class RtmContentEditService implements IRtmContentEditService
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       
-      final RtmResponse< RtmTask[] > response;
+      final RtmResponse< Collection< RtmTask > > response;
       if ( Strings.isNullOrEmpty( locationId ) )
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setLocation",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -584,7 +589,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setLocation",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -601,11 +606,11 @@ public class RtmContentEditService implements IRtmContentEditService
    
    
    @Override
-   public RtmResponse< RtmTask[] > tasks_setURL( String timelineId,
-                                                 String listId,
-                                                 String taskSeriesId,
-                                                 String taskId,
-                                                 String url ) throws RtmServiceException
+   public RtmResponse< Collection< RtmTask > > tasks_setURL( String timelineId,
+                                                             String listId,
+                                                             String taskSeriesId,
+                                                             String taskId,
+                                                             String url ) throws RtmServiceException
    {
       checkNotNullOrEmpty( listId );
       checkNotNullOrEmpty( taskSeriesId );
@@ -615,10 +620,10 @@ public class RtmContentEditService implements IRtmContentEditService
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       
-      final RtmResponse< RtmTask[] > response;
+      final RtmResponse< Collection< RtmTask > > response;
       if ( Strings.isNullOrEmpty( url ) )
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setURL",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -628,7 +633,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( RtmTask[].class,
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setURL",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -661,7 +666,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmNote > response = rtmConnection.executeMethod( RtmNote.class,
+      final RtmResponse< RtmNote > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmNoteResponseHandler(),
                                                                            "rtm.tasks.notes.add",
                                                                            timelineParam,
                                                                            new Param( "list_id",
@@ -690,7 +695,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< Void > response = rtmConnection.executeMethod( Void.class,
+      final RtmResponse< Void > response = rtmConnection.executeMethod( responseHandlerFactory.createVoidResponseHandler(),
                                                                         "rtm.tasks.notes.delete",
                                                                         timelineParam,
                                                                         new Param( "taskseries_id",
@@ -718,7 +723,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmNote > response = rtmConnection.executeMethod( RtmNote.class,
+      final RtmResponse< RtmNote > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmNoteResponseHandler(),
                                                                            "rtm.tasks.notes.edit",
                                                                            timelineParam,
                                                                            new Param( "taskseries_id",
@@ -738,7 +743,7 @@ public class RtmContentEditService implements IRtmContentEditService
    public RtmTimeline timelines_create() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTimeline > response = rtmConnection.executeMethod( RtmTimeline.class,
+      final RtmResponse< RtmTimeline > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTimelineResponseHandler(),
                                                                                "rtm.timelines.create" );
       return response.getElement();
    }
@@ -753,7 +758,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      rtmConnection.executeMethod( Void.class,
+      rtmConnection.executeMethod( responseHandlerFactory.createVoidResponseHandler(),
                                    "rtm.transactions.undo",
                                    timelineParam,
                                    new Param( "transaction_id", transactionId ) );

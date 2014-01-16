@@ -22,12 +22,12 @@
 
 package dev.drsoran.rtm.service;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import dev.drsoran.Strings;
 import dev.drsoran.rtm.IRtmConnection;
 import dev.drsoran.rtm.IRtmConnectionFactory;
+import dev.drsoran.rtm.IRtmResponseHandlerFactory;
 import dev.drsoran.rtm.Param;
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
@@ -43,11 +43,15 @@ public class RtmContentRepository implements IRtmContentRepository
 {
    private final IRtmConnectionFactory connectionFactory;
    
+   private final IRtmResponseHandlerFactory responseHandlerFactory;
    
    
-   public RtmContentRepository( IRtmConnectionFactory connectionFactory )
+   
+   public RtmContentRepository( IRtmConnectionFactory connectionFactory,
+      IRtmResponseHandlerFactory responseHandlerFactory )
    {
       this.connectionFactory = connectionFactory;
+      this.responseHandlerFactory = responseHandlerFactory;
    }
    
    
@@ -56,10 +60,10 @@ public class RtmContentRepository implements IRtmContentRepository
    public Collection< RtmContact > contacts_getList() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmContact[] > response = rtmConnection.executeMethod( RtmContact[].class,
-                                                                                "rtm.contacts.getList" );
+      final RtmResponse< Collection< RtmContact > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmContactsResponseHandler(),
+                                                                                            "rtm.contacts.getList" );
       
-      return Arrays.asList( response.getElement() );
+      return response.getElement();
    }
    
    
@@ -68,10 +72,10 @@ public class RtmContentRepository implements IRtmContentRepository
    public Collection< RtmTasksList > lists_getList() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTasksList[] > response = rtmConnection.executeMethod( RtmTasksList[].class,
-                                                                                  "rtm.lists.getList" );
+      final RtmResponse< Collection< RtmTasksList > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTaskListsResponseHandler(),
+                                                                                              "rtm.lists.getList" );
       
-      return Arrays.asList( response.getElement() );
+      return response.getElement();
    }
    
    
@@ -137,10 +141,10 @@ public class RtmContentRepository implements IRtmContentRepository
    public Collection< RtmLocation > locations_getList() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmLocation[] > response = rtmConnection.executeMethod( RtmLocation[].class,
-                                                                                 "rtm.locations.getList" );
+      final RtmResponse< Collection< RtmLocation > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmLocationsResponseHandler(),
+                                                                                             "rtm.locations.getList" );
       
-      return Arrays.asList( response.getElement() );
+      return response.getElement();
    }
    
    
@@ -149,7 +153,7 @@ public class RtmContentRepository implements IRtmContentRepository
    public RtmSettings settings_getList() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmSettings > response = rtmConnection.executeMethod( RtmSettings.class,
+      final RtmResponse< RtmSettings > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmSettingsResponseHandler(),
                                                                                "rtm.settings.getList" );
       
       return response.getElement();
@@ -160,10 +164,10 @@ public class RtmContentRepository implements IRtmContentRepository
    private Collection< RtmTask > getTasks( Param... params ) throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmTask[] > response = rtmConnection.executeMethod( RtmTask[].class,
-                                                                             "rtm.lists.getList",
-                                                                             params );
+      final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
+                                                                                         "rtm.lists.getList",
+                                                                                         params );
       
-      return Arrays.asList( response.getElement() );
+      return response.getElement();
    }
 }

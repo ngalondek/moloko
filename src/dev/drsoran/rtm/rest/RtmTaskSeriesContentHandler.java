@@ -144,13 +144,15 @@ public class RtmTaskSeriesContentHandler extends
       }
       else if ( "note".equalsIgnoreCase( qName ) )
       {
-         pushNestedContentHandler( new RtmNoteContentHandler( noteFinishedHandler ) ).startElement( qName,
-                                                                                                    attributes );
+         pushNestedContentHandlerAndStartElement( new RtmNoteContentHandler( noteFinishedHandler ),
+                                                  qName,
+                                                  attributes );
       }
       else if ( "contact".equalsIgnoreCase( qName ) )
       {
-         pushNestedContentHandler( new RtmContactContentHandler( participantFinishedHandler ) ).startElement( qName,
-                                                                                                              attributes );
+         pushNestedContentHandlerAndStartElement( new RtmContactContentHandler( participantFinishedHandler ),
+                                                  qName,
+                                                  attributes );
       }
       else if ( "task".equalsIgnoreCase( qName ) )
       {

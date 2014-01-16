@@ -83,7 +83,15 @@ public class RtmAuthContentHandler extends RtmContentHandler< RtmAuth >
    @Override
    protected void startElement( String qName, Attributes attributes ) throws SAXException
    {
-      if ( "user".equalsIgnoreCase( qName ) )
+      if ( "token".equalsIgnoreCase( qName ) )
+      {
+         charactersContext = CharactersContext.Token;
+      }
+      else if ( "perms".equalsIgnoreCase( qName ) )
+      {
+         charactersContext = CharactersContext.Perm;
+      }
+      else if ( "user".equalsIgnoreCase( qName ) )
       {
          userAttributes = XmlAttr.copy( attributes );
       }

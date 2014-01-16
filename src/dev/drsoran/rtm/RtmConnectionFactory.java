@@ -37,8 +37,6 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
    
    private final IRtmRequestFactory requestFactory;
    
-   private final IRtmResponseHandlerFactory responseHandlerFactory;
-   
    private final RtmConnectionProtocol protocol;
    
    private final String apiKey;
@@ -48,15 +46,12 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
    
    
    public RtmConnectionFactory( ILog log, IConnectionFactory connectionFactory,
-      IRtmRequestFactory requestFactory,
-      IRtmResponseHandlerFactory responseHandlerFactory,
-      IRtmRequestLimiter requestLimiter, RtmConnectionProtocol protocol,
-      String apiKey, String sharedSecret )
+      IRtmRequestFactory requestFactory, IRtmRequestLimiter requestLimiter,
+      RtmConnectionProtocol protocol, String apiKey, String sharedSecret )
    {
       this.log = log;
       this.connectionFactory = connectionFactory;
       this.requestFactory = requestFactory;
-      this.responseHandlerFactory = responseHandlerFactory;
       this.requestLimiter = requestLimiter;
       this.protocol = protocol;
       this.apiKey = apiKey;
@@ -80,7 +75,6 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
       return new RtmConnection( log,
                                 connectionFactory,
                                 requestFactory,
-                                responseHandlerFactory,
                                 requestLimiter,
                                 createUriBuilder() );
    }

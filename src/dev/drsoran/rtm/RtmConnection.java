@@ -45,21 +45,17 @@ public class RtmConnection implements IRtmConnection
    
    private final IRtmRequestFactory requestFactory;
    
-   private final IRtmResponseHandlerFactory responseHandlerFactory;
-   
    private final RtmRequestUriBuilder requestUriBuilder;
    
    
    
    public RtmConnection( ILog log, IConnectionFactory connectionFactory,
-      IRtmRequestFactory requestFactory,
-      IRtmResponseHandlerFactory responseHandlerFactory,
-      IRtmRequestLimiter requestLimiter, RtmRequestUriBuilder requestUriBuilder )
+      IRtmRequestFactory requestFactory, IRtmRequestLimiter requestLimiter,
+      RtmRequestUriBuilder requestUriBuilder )
    {
       this.log = log;
       this.connectionFactory = connectionFactory;
       this.requestFactory = requestFactory;
-      this.responseHandlerFactory = responseHandlerFactory;
       this.requestLimiter = requestLimiter;
       this.requestUriBuilder = requestUriBuilder;
    }
@@ -67,7 +63,7 @@ public class RtmConnection implements IRtmConnection
    
    
    @Override
-   public < T > RtmResponse< T > executeMethod( Class< T > returnType,
+   public < T > RtmResponse< T > executeMethod( IRtmResponseHandler< T > responseHandler,
                                                 String rtmMethod,
                                                 Param... params ) throws RtmServiceException
    {
@@ -87,8 +83,6 @@ public class RtmConnection implements IRtmConnection
          connection = createConnection();
          responseReader = connection.execute( request.getMethodExecutionUri() );
          
-         final IRtmResponseHandler< T > responseHandler = responseHandlerFactory.createResponseHandler( request,
-                                                                                                        returnType );
          return responseHandler.handleResponse( responseReader );
       }
       catch ( IOException e )

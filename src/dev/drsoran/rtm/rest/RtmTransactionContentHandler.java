@@ -22,26 +22,28 @@
 
 package dev.drsoran.rtm.rest;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import dev.drsoran.rtm.model.RtmTimeline;
+import dev.drsoran.rtm.RtmTransaction;
 
 
-public class RtmTimelineContentHandler extends RtmContentHandler< RtmTimeline >
+public class RtmTransactionContentHandler extends
+         RtmContentHandler< RtmTransaction >
 {
-   private String timelineId;
+   private RtmTransaction transaction;
    
    
    
-   public RtmTimelineContentHandler()
+   public RtmTransactionContentHandler()
    {
       this( null );
    }
    
    
    
-   public RtmTimelineContentHandler(
-      IRtmContentHandlerListener< RtmTimeline > listener )
+   public RtmTransactionContentHandler(
+      IRtmContentHandlerListener< RtmTransaction > listener )
    {
       super( listener );
    }
@@ -49,19 +51,25 @@ public class RtmTimelineContentHandler extends RtmContentHandler< RtmTimeline >
    
    
    @Override
-   protected void endElement( String qName ) throws SAXException
+   protected void startElement( String qName, Attributes attributes ) throws SAXException
    {
-      if ( "timeline".equalsIgnoreCase( qName ) )
+      if ( "transaction".equalsIgnoreCase( qName ) )
       {
-         setContentElementAndNotify( new RtmTimeline( timelineId ) );
+         transaction = new RtmTransaction( XmlAttr.getStringNotNull( attributes,
+                                                                     "id" ),
+                                           XmlAttr.getBoolean( attributes,
+                                                               "undoable" ) );
       }
    }
    
    
    
    @Override
-   protected void characters( String string ) throws SAXException
+   protected void endElement( String qName ) throws SAXException
    {
-      timelineId = string;
+      if ( "transaction".equalsIgnoreCase( qName ) )
+      {
+         setContentElementAndNotify( transaction );
+      }
    }
 }

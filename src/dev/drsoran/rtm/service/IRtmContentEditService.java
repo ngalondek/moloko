@@ -29,118 +29,118 @@ public interface IRtmContentEditService
    
    
    
-   RtmResponse< RtmTask[] > tasks_add( String timelineId,
-                                       String listId,
-                                       String name ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_add( String timelineId,
+                                                   String listId,
+                                                   String name ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_complete( String timelineId,
-                                            String listId,
-                                            String taskSeriesId,
-                                            String taskId ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_complete( String timelineId,
+                                                        String listId,
+                                                        String taskSeriesId,
+                                                        String taskId ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_uncomplete( String timelineId,
-                                              String listId,
-                                              String taskSeriesId,
-                                              String taskId ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_uncomplete( String timelineId,
+                                                          String listId,
+                                                          String taskSeriesId,
+                                                          String taskId ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_delete( String timelineId,
-                                          String listId,
-                                          String taskSeriesId,
-                                          String taskId ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_delete( String timelineId,
+                                                      String listId,
+                                                      String taskSeriesId,
+                                                      String taskId ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_movePriority( String timelineId,
-                                                String listId,
-                                                String taskSeriesId,
-                                                String taskId,
-                                                boolean up ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_movePriority( String timelineId,
+                                                            String listId,
+                                                            String taskSeriesId,
+                                                            String taskId,
+                                                            boolean up ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_moveTo( String timelineId,
-                                          String fromListId,
-                                          String toListId,
-                                          String taskSeriesId,
-                                          String taskId ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_moveTo( String timelineId,
+                                                      String fromListId,
+                                                      String toListId,
+                                                      String taskSeriesId,
+                                                      String taskId ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_postpone( String timelineId,
-                                            String listId,
-                                            String taskSeriesId,
-                                            String taskId ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_postpone( String timelineId,
+                                                        String listId,
+                                                        String taskSeriesId,
+                                                        String taskId ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setDueDate( String timelineId,
-                                              String listId,
-                                              String taskSeriesId,
-                                              String taskId,
-                                              long dueMillisUtc,
-                                              boolean hasTime ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setDueDate( String timelineId,
+                                                          String listId,
+                                                          String taskSeriesId,
+                                                          String taskId,
+                                                          long dueMillisUtc,
+                                                          boolean hasTime ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setEstimate( String timelineId,
-                                               String listId,
-                                               String taskSeriesId,
-                                               String taskId,
-                                               String estimate ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setEstimate( String timelineId,
+                                                           String listId,
+                                                           String taskSeriesId,
+                                                           String taskId,
+                                                           String estimate ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setName( String timelineId,
-                                           String listId,
-                                           String taskSeriesId,
-                                           String taskId,
-                                           String newName ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setName( String timelineId,
+                                                       String listId,
+                                                       String taskSeriesId,
+                                                       String taskId,
+                                                       String newName ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setPriority( String timelineId,
-                                               String listId,
-                                               String taskSeriesId,
-                                               String taskId,
-                                               Priority priority ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setPriority( String timelineId,
+                                                           String listId,
+                                                           String taskSeriesId,
+                                                           String taskId,
+                                                           Priority priority ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setRecurrence( String timelineId,
-                                                 String listId,
-                                                 String taskSeriesId,
-                                                 String taskId,
-                                                 String repeat ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setRecurrence( String timelineId,
+                                                             String listId,
+                                                             String taskSeriesId,
+                                                             String taskId,
+                                                             String repeat ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setTags( String timelineId,
-                                           String listId,
-                                           String taskSeriesId,
-                                           String taskId,
-                                           Collection< String > tags ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setTags( String timelineId,
+                                                       String listId,
+                                                       String taskSeriesId,
+                                                       String taskId,
+                                                       Collection< String > tags ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setLocation( String timelineId,
-                                               String listId,
-                                               String taskSeriesId,
-                                               String taskId,
-                                               String locationId ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setLocation( String timelineId,
+                                                           String listId,
+                                                           String taskSeriesId,
+                                                           String taskId,
+                                                           String locationId ) throws RtmServiceException;
    
    
    
-   RtmResponse< RtmTask[] > tasks_setURL( String timelineId,
-                                          String listId,
-                                          String taskSeriesId,
-                                          String taskId,
-                                          String url ) throws RtmServiceException;
+   RtmResponse< Collection< RtmTask > > tasks_setURL( String timelineId,
+                                                      String listId,
+                                                      String taskSeriesId,
+                                                      String taskId,
+                                                      String url ) throws RtmServiceException;
    
    
    

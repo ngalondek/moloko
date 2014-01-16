@@ -27,6 +27,7 @@ import java.util.Collection;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
 import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmSettings;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.model.RtmTasksList;
 import dev.drsoran.rtm.model.RtmTimeline;
@@ -36,41 +37,45 @@ import dev.drsoran.rtm.service.RtmFrob;
 
 public interface IRtmResponseHandlerFactory
 {
-   IRtmResponseHandler< Collection< RtmTask > > createRtmTasksResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< Collection< RtmTask > > createRtmTasksResponseHandler();
    
    
    
-   IRtmResponseHandler< Collection< RtmTasksList > > createRtmTaskListsResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< Collection< RtmTasksList > > createRtmTaskListsResponseHandler();
    
    
    
-   IRtmResponseHandler< RtmTasksList > createRtmTaskListResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< RtmTasksList > createRtmTaskListResponseHandler();
    
    
    
-   IRtmResponseHandler< Collection< RtmContact > > createRtmContactsResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< Collection< RtmContact > > createRtmContactsResponseHandler();
    
    
    
-   IRtmResponseHandler< Collection< RtmLocation > > createRtmLocationsResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< Collection< RtmLocation > > createRtmLocationsResponseHandler();
    
    
    
-   IRtmResponseHandler< RtmNote > createRtmNoteResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< RtmNote > createRtmNoteResponseHandler();
    
    
    
-   IRtmResponseHandler< RtmTimeline > createRtmTimelineResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< RtmTimeline > createRtmTimelineResponseHandler();
    
    
    
-   IRtmResponseHandler< RtmFrob > createRtmFrobResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< RtmFrob > createRtmFrobResponseHandler();
    
    
    
-   IRtmResponseHandler< RtmAuth > createRtmAuthResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< RtmSettings > createRtmSettingsResponseHandler();
    
    
    
-   IRtmResponseHandler< Void > createVoidResponseHandler( IRtmRequest request );
+   IRtmResponseHandler< RtmAuth > createRtmAuthResponseHandler();
+   
+   
+   
+   IRtmResponseHandler< Void > createVoidResponseHandler();
 }

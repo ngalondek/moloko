@@ -29,7 +29,6 @@ import static org.junit.Assert.assertThat;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.XmlFileResource;
@@ -107,10 +106,7 @@ public abstract class RtmContentHandlerTestCase< T > extends MolokoTestCase
    {
       final RtmContentHandler< T > handler = createHandler();
       
-      final RemoveWhiteSpaceXmlFilter filter = new RemoveWhiteSpaceXmlFilter();
-      final XMLReader reader = file.getXmlReader();
-      
-      filter.setParent( reader );
+      final RemoveWhiteSpaceXmlFilter filter = new RemoveWhiteSpaceXmlFilter( file.getXmlReader() );
       filter.setContentHandler( handler );
       filter.parse( new InputSource( file.getReader() ) );
       

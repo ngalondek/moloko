@@ -24,6 +24,7 @@ package dev.drsoran.rtm.service;
 
 import dev.drsoran.rtm.IRtmConnection;
 import dev.drsoran.rtm.IRtmConnectionFactory;
+import dev.drsoran.rtm.IRtmResponseHandlerFactory;
 import dev.drsoran.rtm.Param;
 import dev.drsoran.rtm.RtmRequestUriBuilder;
 import dev.drsoran.rtm.RtmResponse;
@@ -40,11 +41,15 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    
    private RtmAuth rtmAuth;
    
+   private final IRtmResponseHandlerFactory responseHandlerFactory;
    
    
-   public RtmAuthenticationService( IRtmConnectionFactory connectionFactory )
+   
+   public RtmAuthenticationService( IRtmConnectionFactory connectionFactory,
+      IRtmResponseHandlerFactory responseHandlerFactory )
    {
       this.connectionFactory = connectionFactory;
+      this.responseHandlerFactory = responseHandlerFactory;
    }
    
    
@@ -98,7 +103,7 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    private void auth_getFrob() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmFrob > response = rtmConnection.executeMethod( RtmFrob.class,
+      final RtmResponse< RtmFrob > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmFrobResponseHandler(),
                                                                            "rtm.auth.getFrob" );
       frob = response.getElement();
    }
@@ -108,7 +113,7 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    private void auth_getToken() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< RtmAuth > response = rtmConnection.executeMethod( RtmAuth.class,
+      final RtmResponse< RtmAuth > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmAuthResponseHandler(),
                                                                            "rtm.auth.getToken",
                                                                            new Param( "frob",
                                                                                       frob.getValue() ) );
@@ -120,7 +125,7 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    private void auth_checkToken( String authToken ) throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      rtmConnection.executeMethod( RtmAuth.class,
+      rtmConnection.executeMethod( responseHandlerFactory.createRtmAuthResponseHandler(),
                                    "rtm.auth.checkToken",
                                    new Param( "auth_token", authToken ) );
    }

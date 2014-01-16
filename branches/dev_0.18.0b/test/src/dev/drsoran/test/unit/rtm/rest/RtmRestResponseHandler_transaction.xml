@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+   <transaction id="449135792" undoable="1" />
+   <integer value="10" />
+</rsp>

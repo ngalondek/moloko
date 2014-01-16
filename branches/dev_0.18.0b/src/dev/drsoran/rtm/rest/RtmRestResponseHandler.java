@@ -25,39 +25,68 @@ package dev.drsoran.rtm.rest;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.sax2.Driver;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import dev.drsoran.rtm.IRtmResponseHandler;
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.RtmTransaction;
+import dev.drsoran.rtm.service.RtmError;
 
 
-public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
+public class RtmRestResponseHandler< T > extends RtmContentHandler< T >
+         implements IRtmResponseHandler< T >
 {
+   private final IRtmContentHandlerListener< RtmError > errorListener = new IRtmContentHandlerListener< RtmError >()
+   {
+      @Override
+      public void onContentHandled( RtmError error )
+      {
+         handleResponseError( error );
+         popNestedContentHandler();
+      }
+   };
+   
+   private final IRtmContentHandlerListener< RtmTransaction > transactionListener = new IRtmContentHandlerListener< RtmTransaction >()
+   {
+      @Override
+      public void onContentHandled( RtmTransaction transaction )
+      {
+         RtmRestResponseHandler.this.transaction = transaction;
+         popNestedContentHandler();
+      }
+   };
+   
+   private final IRtmContentHandlerListener< T > contentHandlerListener = new IRtmContentHandlerListener< T >()
+   {
+      @Override
+      public void onContentHandled( T contentElement )
+      {
+         popNestedContentHandler();
+      }
+   };
+   
    private final RtmContentHandler< T > contentHandler;
    
-   private final XmlPullParser pullParser;
+   private RtmTransaction transaction;
+   
+   private RtmServiceException pendingErrorException;
    
    
    
-   public RtmRestResponseHandler( XmlPullParser pullParser,
-      RtmContentHandler< T > contentHandler )
+   public RtmRestResponseHandler( RtmContentHandler< T > contentHandler )
    {
-      if ( pullParser == null )
-      {
-         throw new IllegalArgumentException( "pullParser" );
-      }
+      super( null );
       
       if ( contentHandler == null )
       {
          throw new IllegalArgumentException( "contentHandler" );
       }
       
-      this.pullParser = pullParser;
       this.contentHandler = contentHandler;
    }
    
@@ -68,34 +97,23 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
    {
       try
       {
-         pullParser.setInput( responseReader );
-         pullParser.nextTag();
+         final InputSource inputSource = new InputSource( responseReader );
+         final XMLReader xmlReader = new RemoveWhiteSpaceXmlFilter( XMLReaderFactory.createXMLReader() );
          
-         checkResponse();
-         checkResponseStatus();
+         xmlReader.setContentHandler( this );
+         xmlReader.parse( inputSource );
          
-         final RtmTransaction transaction = readTransaction();
+         if ( pendingErrorException != null )
+         {
+            throw pendingErrorException;
+         }
          
-         final RemoveWhiteSpaceXmlFilter xmlreader = new RemoveWhiteSpaceXmlFilter();
-         
-         final Driver saxDriver = new Driver();
-         xmlreader.setParent( saxDriver );
-         xmlreader.setContentHandler( contentHandler );
-         
-         saxDriver.parseSubTree( pullParser );
-         
-         final RtmResponse< T > response = createResponse( transaction );
-         
+         final RtmResponse< T > response = createResponse();
          return response;
       }
       catch ( SAXException e )
       {
          throw new RtmServiceException( "Failed SAX parsing the response of a request",
-                                        e );
-      }
-      catch ( XmlPullParserException e )
-      {
-         throw new RtmServiceException( "Failed parsing the response of a request",
                                         e );
       }
       catch ( IOException e )
@@ -107,28 +125,34 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
    
    
    
-   private RtmTransaction readTransaction() throws XmlPullParserException,
-                                           IOException
+   @Override
+   protected void startElement( String qName, Attributes attributes ) throws SAXException
    {
-      RtmTransaction transaction = null;
-      
-      if ( pullParser.next() == XmlPullParser.START_TAG
-         && "transaction".equalsIgnoreCase( pullParser.getText() ) )
+      if ( pendingErrorException == null )
       {
-         transaction = new RtmTransaction( pullParser.getAttributeValue( null,
-                                                                         "id" ),
-                                           pullParser.getAttributeValue( null,
-                                                                         "undoable" )
-                                                     .equalsIgnoreCase( "1" ) );
-         pullParser.next();
+         if ( "rsp".equalsIgnoreCase( qName ) )
+         {
+            checkResponseStatus( qName, attributes );
+         }
+         else if ( "transaction".equalsIgnoreCase( qName ) )
+         {
+            pushNestedContentHandlerAndStartElement( new RtmTransactionContentHandler( transactionListener ),
+                                                     qName,
+                                                     attributes );
+         }
+         else
+         {
+            contentHandler.setListener( contentHandlerListener );
+            pushNestedContentHandlerAndStartElement( contentHandler,
+                                                     qName,
+                                                     attributes );
+         }
       }
-      
-      return transaction;
    }
    
    
    
-   private RtmResponse< T > createResponse( RtmTransaction transaction )
+   private RtmResponse< T > createResponse()
    {
       return new RtmResponse< T >( transaction,
                                    contentHandler.getContentElement() );
@@ -136,53 +160,24 @@ public class RtmRestResponseHandler< T > implements IRtmResponseHandler< T >
    
    
    
-   private void checkResponse() throws XmlPullParserException, IOException
+   private void checkResponseStatus( String qName, Attributes attributes ) throws SAXException
    {
-      pullParser.require( XmlPullParser.START_TAG, null, "rsp" );
-   }
-   
-   
-   
-   private void checkResponseStatus() throws RtmServiceException,
-                                     XmlPullParserException,
-                                     IOException
-   {
-      final String status = pullParser.getAttributeValue( null, "stat" );
-      
-      if ( "fail".equals( status ) )
+      if ( "fail".equalsIgnoreCase( XmlAttr.getOptString( attributes,
+                                                          "stat",
+                                                          null ) ) )
       {
-         int eventType = pullParser.getEventType();
-         while ( eventType != XmlPullParser.START_TAG
-            || !"err".equals( pullParser.getName() ) )
-         {
-            pullParser.nextTag();
-         }
-         
-         if ( "err".equals( pullParser.getName() ) )
-         {
-            int errorCode = getRtmErrorCodeFromResponse();
-            throw new RtmServiceException( errorCode,
-                                           pullParser.getAttributeValue( null,
-                                                                         "msg" ) );
-         }
-         else
-         {
-            throw new RtmServiceException( "Unexpected response returned by RTM service" );
-         }
+         pushNestedContentHandlerAndStartElement( new RtmErrorContentHandler( errorListener ),
+                                                  qName,
+                                                  attributes );
       }
    }
    
    
    
-   private int getRtmErrorCodeFromResponse()
+   private void handleResponseError( RtmError error )
    {
-      try
-      {
-         return Integer.parseInt( pullParser.getAttributeValue( null, "code" ) );
-      }
-      catch ( NumberFormatException e )
-      {
-         return -1;
-      }
+      pendingErrorException = new RtmServiceException( error.getCode(),
+                                                       error.getMessage(),
+                                                       null );
    }
 }

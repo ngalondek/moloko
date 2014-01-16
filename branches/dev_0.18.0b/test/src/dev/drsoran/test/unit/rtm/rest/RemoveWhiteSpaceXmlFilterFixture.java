@@ -51,9 +51,7 @@ public class RemoveWhiteSpaceXmlFilterFixture extends MolokoTestCase
    @Test
    public void testFilter() throws SAXException, IOException
    {
-      final RemoveWhiteSpaceXmlFilter filter = new RemoveWhiteSpaceXmlFilter();
-      filter.setParent( xmlFile.getXmlReader() );
-      
+      final RemoveWhiteSpaceXmlFilter filter = new RemoveWhiteSpaceXmlFilter( xmlFile.getXmlReader() );
       final ContentHandler contentHandler = new TestHandler();
       filter.setContentHandler( contentHandler );
       filter.parse( new InputSource( xmlFile.getReader() ) );

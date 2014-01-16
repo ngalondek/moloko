@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2013 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,26 +22,28 @@
 
 package dev.drsoran.rtm.rest;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import dev.drsoran.rtm.model.RtmTimeline;
+import dev.drsoran.Strings;
+import dev.drsoran.rtm.service.RtmError;
 
 
-public class RtmTimelineContentHandler extends RtmContentHandler< RtmTimeline >
+public class RtmErrorContentHandler extends RtmContentHandler< RtmError >
 {
-   private String timelineId;
+   private RtmError error;
    
    
    
-   public RtmTimelineContentHandler()
+   public RtmErrorContentHandler()
    {
       this( null );
    }
    
    
    
-   public RtmTimelineContentHandler(
-      IRtmContentHandlerListener< RtmTimeline > listener )
+   public RtmErrorContentHandler(
+      IRtmContentHandlerListener< RtmError > listener )
    {
       super( listener );
    }
@@ -49,19 +51,25 @@ public class RtmTimelineContentHandler extends RtmContentHandler< RtmTimeline >
    
    
    @Override
-   protected void endElement( String qName ) throws SAXException
+   protected void startElement( String qName, Attributes attributes ) throws SAXException
    {
-      if ( "timeline".equalsIgnoreCase( qName ) )
+      if ( "err".equalsIgnoreCase( qName ) )
       {
-         setContentElementAndNotify( new RtmTimeline( timelineId ) );
+         error = new RtmError( XmlAttr.getInt( attributes, "code" ),
+                               XmlAttr.getOptString( attributes,
+                                                     "msg",
+                                                     Strings.EMPTY_STRING ) );
       }
    }
    
    
    
    @Override
-   protected void characters( String string ) throws SAXException
+   protected void endElement( String qName ) throws SAXException
    {
-      timelineId = string;
+      if ( "err".equalsIgnoreCase( qName ) )
+      {
+         setContentElementAndNotify( error );
+      }
    }
 }

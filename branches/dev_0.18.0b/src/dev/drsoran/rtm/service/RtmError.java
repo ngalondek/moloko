@@ -20,20 +20,41 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.rest;
+package dev.drsoran.rtm.service;
 
-import java.io.Reader;
-
-import dev.drsoran.rtm.IRtmResponseHandler;
-import dev.drsoran.rtm.RtmResponse;
-import dev.drsoran.rtm.RtmServiceException;
-
-
-public class VoidRtmResponseHandler implements IRtmResponseHandler< Void >
+public class RtmError
 {
-   @Override
-   public RtmResponse< Void > handleResponse( Reader responseReader ) throws RtmServiceException
+   private final int code;
+   
+   private final String message;
+   
+   
+   
+   public RtmError( int code, String message )
    {
-      return new RtmResponse< Void >( null );
+      this.code = code;
+      this.message = message;
+   }
+   
+   
+   
+   public int getCode()
+   {
+      return code;
+   }
+   
+   
+   
+   public String getMessage()
+   {
+      return message;
+   }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return "RtmError [code=" + code + ", msg=" + message + "]";
    }
 }

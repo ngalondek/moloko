@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<auth>
+   <token>410c57262293e9d937ee5be75eb7b0128fd61b61</token>
+   <perms>delete</perms>
+   <user id="1" username="bob" fullname="Bob T. Monkey" />
+</auth>

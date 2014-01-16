@@ -160,6 +160,18 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
    
    
    
+   public RtmContentHandler< ? > pushNestedContentHandlerAndStartElement( RtmContentHandler< ? > contentHandler,
+                                                                          String qName,
+                                                                          Attributes attributes ) throws SAXException
+   {
+      final RtmContentHandler< ? > pushedHandler = pushNestedContentHandler( contentHandler );
+      pushedHandler.startElement( qName, attributes );
+      
+      return pushedHandler;
+   }
+   
+   
+   
    public RtmContentHandler< ? > popNestedContentHandler()
    {
       RtmContentHandler< ? > nestedHandler = currentHandler();

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2013 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -24,24 +24,10 @@ package dev.drsoran.rtm.rest;
 
 import org.xml.sax.SAXException;
 
-import dev.drsoran.rtm.model.RtmTimeline;
 
-
-public class RtmTimelineContentHandler extends RtmContentHandler< RtmTimeline >
+public class VoidContentHandler extends RtmContentHandler< Void >
 {
-   private String timelineId;
-   
-   
-   
-   public RtmTimelineContentHandler()
-   {
-      this( null );
-   }
-   
-   
-   
-   public RtmTimelineContentHandler(
-      IRtmContentHandlerListener< RtmTimeline > listener )
+   public VoidContentHandler( IRtmContentHandlerListener< Void > listener )
    {
       super( listener );
    }
@@ -49,19 +35,8 @@ public class RtmTimelineContentHandler extends RtmContentHandler< RtmTimeline >
    
    
    @Override
-   protected void endElement( String qName ) throws SAXException
+   public void endDocument() throws SAXException
    {
-      if ( "timeline".equalsIgnoreCase( qName ) )
-      {
-         setContentElementAndNotify( new RtmTimeline( timelineId ) );
-      }
-   }
-   
-   
-   
-   @Override
-   protected void characters( String string ) throws SAXException
-   {
-      timelineId = string;
+      setContentElementAndNotify( null );
    }
 }

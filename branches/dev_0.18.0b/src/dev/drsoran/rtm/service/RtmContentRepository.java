@@ -50,6 +50,16 @@ public class RtmContentRepository implements IRtmContentRepository
    public RtmContentRepository( IRtmConnectionFactory connectionFactory,
       IRtmResponseHandlerFactory responseHandlerFactory )
    {
+      if ( connectionFactory == null )
+      {
+         throw new IllegalArgumentException( "connectionFactory" );
+      }
+      
+      if ( responseHandlerFactory == null )
+      {
+         throw new IllegalArgumentException( "responseHandlerFactory" );
+      }
+      
       this.connectionFactory = connectionFactory;
       this.responseHandlerFactory = responseHandlerFactory;
    }
@@ -165,7 +175,7 @@ public class RtmContentRepository implements IRtmContentRepository
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
-                                                                                         "rtm.lists.getList",
+                                                                                         "rtm.tasks.getList",
                                                                                          params );
       
       return response.getElement();

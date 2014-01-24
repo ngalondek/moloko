@@ -5,11 +5,11 @@ import dev.drsoran.rtm.RtmServiceException;
 
 public interface IRtmAuthenticationService
 {
-   String beginAuthorization( RtmServicePermission permissions ) throws RtmServiceException;
+   RtmAuthHandle beginAuthorization( RtmServicePermission permissions ) throws RtmServiceException;
    
    
    
-   RtmAuth completeAuthorization() throws RtmServiceException;
+   RtmAuth completeAuthorization( RtmFrob frob ) throws RtmServiceException;
    
    
    

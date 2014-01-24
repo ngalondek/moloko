@@ -50,6 +50,16 @@ public class RtmContentEditService implements IRtmContentEditService
    public RtmContentEditService( IRtmConnectionFactory connectionFactory,
       IRtmResponseHandlerFactory responseHandlerFactory )
    {
+      if ( connectionFactory == null )
+      {
+         throw new IllegalArgumentException( "connectionFactory" );
+      }
+      
+      if ( responseHandlerFactory == null )
+      {
+         throw new IllegalArgumentException( "responseHandlerFactory" );
+      }
+      
       this.connectionFactory = connectionFactory;
       this.responseHandlerFactory = responseHandlerFactory;
    }
@@ -61,7 +71,7 @@ public class RtmContentEditService implements IRtmContentEditService
                                                  String listName,
                                                  String smartFilter ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listName );
+      checkNotNull( listName );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       final Param nameParam = new Param( "name", listName );
@@ -95,7 +105,7 @@ public class RtmContentEditService implements IRtmContentEditService
    public RtmResponse< RtmTasksList > lists_delete( String timelineId,
                                                     String listId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
+      checkNotNull( listId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -115,8 +125,8 @@ public class RtmContentEditService implements IRtmContentEditService
                                                      String listId,
                                                      String newName ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( newName );
+      checkNotNull( listId );
+      checkNotNull( newName );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -138,8 +148,8 @@ public class RtmContentEditService implements IRtmContentEditService
                                                           String listId,
                                                           String name ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( name );
+      checkNotNull( listId );
+      checkNotNull( name );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -162,9 +172,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                String taskSeriesId,
                                                                String taskId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -189,9 +199,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                  String taskSeriesId,
                                                                  String taskId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -216,9 +226,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                              String taskSeriesId,
                                                              String taskId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -244,9 +254,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                    String taskId,
                                                                    boolean up ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -276,10 +286,10 @@ public class RtmContentEditService implements IRtmContentEditService
                                                              String taskSeriesId,
                                                              String taskId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( fromListId );
-      checkNotNullOrEmpty( toListId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( fromListId );
+      checkNotNull( toListId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -306,9 +316,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                String taskSeriesId,
                                                                String taskId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -335,9 +345,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                  long dueMillisUtc,
                                                                  boolean hasTime ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -380,9 +390,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                   String taskId,
                                                                   String estimate ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -424,10 +434,10 @@ public class RtmContentEditService implements IRtmContentEditService
                                                               String taskId,
                                                               String newName ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
-      checkNotNullOrEmpty( newName );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
+      checkNotNull( newName );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -442,7 +452,7 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                                          new Param( "task_id",
                                                                                                     taskId ),
                                                                                          new Param( "name",
-                                                                                                    taskId ) );
+                                                                                                    newName ) );
       return response;
    }
    
@@ -455,15 +465,15 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                   String taskId,
                                                                   Priority priority ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       final RtmResponse< Collection< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
-                                                                                         "rtm.tasks.setName",
+                                                                                         "rtm.tasks.setPriority",
                                                                                          timelineParam,
                                                                                          new Param( "list_id",
                                                                                                     listId ),
@@ -485,9 +495,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                     String taskId,
                                                                     String repeat ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -528,9 +538,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                               String taskId,
                                                               Collection< String > tags ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final String joinedTags;
       if ( tags == null || tags.isEmpty() )
@@ -568,9 +578,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                   String taskId,
                                                                   String locationId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -612,9 +622,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                              String taskId,
                                                              String url ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -656,9 +666,9 @@ public class RtmContentEditService implements IRtmContentEditService
                                                   String title,
                                                   String text ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( listId );
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( taskId );
+      checkNotNull( listId );
+      checkNotNull( taskSeriesId );
+      checkNotNull( taskId );
       
       title = Strings.emptyIfNull( title );
       text = Strings.emptyIfNull( text );
@@ -686,11 +696,9 @@ public class RtmContentEditService implements IRtmContentEditService
    
    @Override
    public RtmResponse< Void > tasks_notes_delete( String timelineId,
-                                                  String taskSeriesId,
                                                   String noteId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( noteId );
+      checkNotNull( noteId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -698,8 +706,6 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< Void > response = rtmConnection.executeMethod( responseHandlerFactory.createVoidResponseHandler(),
                                                                         "rtm.tasks.notes.delete",
                                                                         timelineParam,
-                                                                        new Param( "taskseries_id",
-                                                                                   taskSeriesId ),
                                                                         new Param( "note_id",
                                                                                    noteId ) );
       return response;
@@ -709,13 +715,11 @@ public class RtmContentEditService implements IRtmContentEditService
    
    @Override
    public RtmResponse< RtmNote > tasks_notes_edit( String timelineId,
-                                                   String taskSeriesId,
                                                    String noteId,
                                                    String title,
                                                    String text ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( taskSeriesId );
-      checkNotNullOrEmpty( noteId );
+      checkNotNull( noteId );
       
       title = Strings.emptyIfNull( title );
       text = Strings.emptyIfNull( text );
@@ -726,8 +730,6 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< RtmNote > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmNoteResponseHandler(),
                                                                            "rtm.tasks.notes.edit",
                                                                            timelineParam,
-                                                                           new Param( "taskseries_id",
-                                                                                      taskSeriesId ),
                                                                            new Param( "note_id",
                                                                                       noteId ),
                                                                            new Param( "note_title",
@@ -753,7 +755,7 @@ public class RtmContentEditService implements IRtmContentEditService
    @Override
    public void transactions_undo( String timelineId, String transactionId ) throws RtmServiceException
    {
-      checkNotNullOrEmpty( transactionId );
+      checkNotNull( transactionId );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -768,17 +770,17 @@ public class RtmContentEditService implements IRtmContentEditService
    
    private static Param checkAndCreateTimelineParam( String timelineId )
    {
-      checkNotNullOrEmpty( timelineId );
+      checkNotNull( timelineId );
       return new Param( "timeline", timelineId );
    }
    
    
    
-   private static void checkNotNullOrEmpty( String value )
+   private static void checkNotNull( String value )
    {
-      if ( Strings.isNullOrEmpty( value ) )
+      if ( value == null )
       {
-         throw new IllegalArgumentException( "Expected not null and not empty value" );
+         throw new IllegalArgumentException( "Expected not null value" );
       }
    }
 }

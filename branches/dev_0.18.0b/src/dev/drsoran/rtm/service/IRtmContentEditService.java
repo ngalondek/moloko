@@ -154,13 +154,11 @@ public interface IRtmContentEditService
    
    
    RtmResponse< Void > tasks_notes_delete( String timelineId,
-                                           String taskSeriesId,
                                            String noteId ) throws RtmServiceException;
    
    
    
    RtmResponse< RtmNote > tasks_notes_edit( String timelineId,
-                                            String taskSeriesId,
                                             String noteId,
                                             String title,
                                             String text ) throws RtmServiceException;

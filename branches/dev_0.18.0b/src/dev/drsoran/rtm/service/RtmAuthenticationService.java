@@ -22,6 +22,7 @@
 
 package dev.drsoran.rtm.service;
 
+import dev.drsoran.Strings;
 import dev.drsoran.rtm.IRtmConnection;
 import dev.drsoran.rtm.IRtmConnectionFactory;
 import dev.drsoran.rtm.IRtmResponseHandlerFactory;
@@ -37,10 +38,6 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    
    private final IRtmConnectionFactory connectionFactory;
    
-   private RtmFrob frob;
-   
-   private RtmAuth rtmAuth;
-   
    private final IRtmResponseHandlerFactory responseHandlerFactory;
    
    
@@ -48,6 +45,16 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    public RtmAuthenticationService( IRtmConnectionFactory connectionFactory,
       IRtmResponseHandlerFactory responseHandlerFactory )
    {
+      if ( connectionFactory == null )
+      {
+         throw new IllegalArgumentException( "connectionFactory" );
+      }
+      
+      if ( responseHandlerFactory == null )
+      {
+         throw new IllegalArgumentException( "responseHandlerFactory" );
+      }
+      
       this.connectionFactory = connectionFactory;
       this.responseHandlerFactory = responseHandlerFactory;
    }
@@ -55,9 +62,9 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    
    
    @Override
-   public String beginAuthorization( RtmServicePermission permissions ) throws RtmServiceException
+   public RtmAuthHandle beginAuthorization( RtmServicePermission permissions ) throws RtmServiceException
    {
-      auth_getFrob();
+      final RtmFrob frob = auth_getFrob();
       
       final RtmRequestUriBuilder requestUriBuilder = connectionFactory.createUriBuilder();
       
@@ -65,16 +72,20 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
       requestUriBuilder.addAll( new Param( "perms", permissions.toString() ),
                                 new Param( "frob", frob.getValue() ) );
       
-      return requestUriBuilder.build();
+      return new RtmAuthHandle( requestUriBuilder.build(), frob );
    }
    
    
    
    @Override
-   public RtmAuth completeAuthorization() throws RtmServiceException
+   public RtmAuth completeAuthorization( RtmFrob frob ) throws RtmServiceException
    {
-      auth_getToken();
-      return rtmAuth;
+      if ( frob == null )
+      {
+         throw new IllegalArgumentException( "frob" );
+      }
+      
+      return auth_getToken( frob );
    }
    
    
@@ -82,6 +93,11 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    @Override
    public boolean isServiceAuthorized( String authToken ) throws RtmServiceException
    {
+      if ( Strings.isNullOrEmpty( authToken ) )
+      {
+         throw new IllegalArgumentException( "authToken" );
+      }
+      
       try
       {
          auth_checkToken( authToken );
@@ -89,7 +105,7 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
       }
       catch ( RtmServiceException e )
       {
-         if ( RtmServiceConstants.RtmErrorCodes.isAuthError( e.getResponseCode() ) )
+         if ( RtmErrorCodes.isAuthError( e.getResponseCode() ) )
          {
             return false;
          }
@@ -100,24 +116,24 @@ public class RtmAuthenticationService implements IRtmAuthenticationService
    
    
    
-   private void auth_getFrob() throws RtmServiceException
+   private RtmFrob auth_getFrob() throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       final RtmResponse< RtmFrob > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmFrobResponseHandler(),
                                                                            "rtm.auth.getFrob" );
-      frob = response.getElement();
+      return response.getElement();
    }
    
    
    
-   private void auth_getToken() throws RtmServiceException
+   private RtmAuth auth_getToken( RtmFrob frob ) throws RtmServiceException
    {
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
       final RtmResponse< RtmAuth > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmAuthResponseHandler(),
                                                                            "rtm.auth.getToken",
                                                                            new Param( "frob",
                                                                                       frob.getValue() ) );
-      rtmAuth = response.getElement();
+      return response.getElement();
    }
    
    

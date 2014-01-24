@@ -60,6 +60,6 @@ public class RtmRestRequestFactoryFixture extends MolokoTestCase
                                                                                                                            "auth_token" ) ) );
       assertThat( request.getRtmMethod(), is( "method" ) );
       assertThat( request.getMethodExecutionUri(),
-                  is( "/services/rest/?api_key=key&api_sig=31c022baa99adf36a76e8fa0b42e1b86&auth_token=auth_token&p1=v1&p2=v2&" ) );
+                  is( "/services/rest/?api_key=key&api_sig=31c022baa99adf36a76e8fa0b42e1b86&auth_token=auth_token&p1=v1&p2=v2" ) );
    }
 }

@@ -12,6 +12,15 @@ public class RtmAuth
    
    public RtmAuth( String authToken, RtmServicePermission perms, RtmUser user )
    {
+      if ( authToken == null )
+      {
+         throw new IllegalArgumentException( "authToken" );
+      }
+      if ( user == null )
+      {
+         throw new IllegalArgumentException( "user" );
+      }
+      
       this.authToken = authToken;
       this.perms = perms;
       this.user = user;

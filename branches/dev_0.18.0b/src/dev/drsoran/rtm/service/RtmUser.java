@@ -1,5 +1,8 @@
 package dev.drsoran.rtm.service;
 
+import dev.drsoran.Strings;
+
+
 public class RtmUser
 {
    private final String id;
@@ -12,6 +15,19 @@ public class RtmUser
    
    public RtmUser( String id, String username, String fullname )
    {
+      if ( Strings.isNullOrEmpty( id ) )
+      {
+         throw new IllegalArgumentException( "id" );
+      }
+      if ( username == null )
+      {
+         throw new IllegalArgumentException( "username" );
+      }
+      if ( fullname == null )
+      {
+         throw new IllegalArgumentException( "fullname" );
+      }
+      
       this.id = id;
       this.username = username;
       this.fullname = fullname;

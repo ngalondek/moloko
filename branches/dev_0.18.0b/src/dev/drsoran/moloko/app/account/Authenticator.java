@@ -39,7 +39,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.rtm.RtmClientInfo;
 import dev.drsoran.rtm.RtmServiceException;
-import dev.drsoran.rtm.service.RtmServiceConstants;
+import dev.drsoran.rtm.service.RtmErrorCodes;
 
 
 public class Authenticator extends AbstractAccountAuthenticator
@@ -189,7 +189,7 @@ public class Authenticator extends AbstractAccountAuthenticator
                {
                   final RtmServiceException se = (RtmServiceException) e;
                   
-                  if ( se.responseCode == RtmServiceConstants.RtmErrorCodes.INVALID_AUTH_TOKEN )
+                  if ( se.responseCode == RtmErrorCodes.INVALID_AUTH_TOKEN )
                   {
                      authTokenExpired = true;
                   }

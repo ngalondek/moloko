@@ -23,6 +23,7 @@
 package dev.drsoran.rtm.service;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,6 +52,11 @@ public class RtmDateFormatter
    
    public static Date parseDate( String dateString )
    {
+      if ( dateString == null )
+      {
+         throw new IllegalArgumentException( "dateString" );
+      }
+      
       if ( dateString.length() > 0 )
       {
          try
@@ -70,6 +76,6 @@ public class RtmDateFormatter
    
    public static String formatDate( Date d )
    {
-      return DATE_FORMAT.format( d ) + "Z";
+      return MessageFormat.format( "{0}Z", DATE_FORMAT.format( d ) );
    }
 }

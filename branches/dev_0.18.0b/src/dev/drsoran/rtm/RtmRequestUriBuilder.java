@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import dev.drsoran.Strings;
@@ -193,19 +194,25 @@ public class RtmRequestUriBuilder
          requestUri.append( "?" );
       }
       
-      for ( Param param : parametersSorted )
+      try
       {
-         try
+         for ( Iterator< Param > i = parametersSorted.iterator(); i.hasNext(); )
          {
+            final Param param = i.next();
+            
             requestUri.append( param.getName() )
                       .append( "=" )
-                      .append( URLEncoder.encode( param.getValue(), ENCODING ) )
-                      .append( "&" );
+                      .append( URLEncoder.encode( param.getValue(), ENCODING ) );
+            
+            if ( i.hasNext() )
+            {
+               requestUri.append( "&" );
+            }
          }
-         catch ( UnsupportedEncodingException e )
-         {
-            throw new RuntimeException( e );
-         }
+      }
+      catch ( UnsupportedEncodingException e )
+      {
+         throw new RuntimeException( e );
       }
       
       return requestUri.toString();

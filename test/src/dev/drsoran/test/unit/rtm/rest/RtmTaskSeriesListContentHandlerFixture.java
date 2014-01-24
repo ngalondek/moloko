@@ -23,6 +23,7 @@
 package dev.drsoran.test.unit.rtm.rest;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Calendar;
@@ -36,6 +37,7 @@ import org.junit.Test;
 
 import dev.drsoran.Iterables;
 import dev.drsoran.moloko.test.XmlFileResource;
+import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.rest.IRtmContentHandlerListener;
@@ -82,6 +84,10 @@ public class RtmTaskSeriesListContentHandlerFixture extends
    @ClassRule
    public static final XmlFileResource withDeleted = new XmlFileResource( RtmTaskSeriesListContentHandlerFixture.class,
                                                                           "RtmTaskSeriesList_withDeleted.xml" );
+   
+   @ClassRule
+   public static final XmlFileResource withDeletedAndGenerated = new XmlFileResource( RtmTaskSeriesListContentHandlerFixture.class,
+                                                                                      "RtmTaskSeriesList_withDeletedAndGenerated.xml" );
    
    
    
@@ -144,6 +150,70 @@ public class RtmTaskSeriesListContentHandlerFixture extends
             assertThat( task.getDeletedMillisUtc(), is( RtmConstants.NO_TIME ) );
          }
       }
+   }
+   
+   
+   
+   @Test
+   public void testReadWithDeletedAndGenerated() throws Exception
+   {
+      final List< RtmTask > content = Iterables.asList( readContent( withDeletedAndGenerated ) );
+      assertThat( content.size(), is( 3 ) );
+      
+      RtmTask refTask = null;
+      RtmTask generatedTask = null;
+      
+      for ( RtmTask task : content )
+      {
+         assertThat( task.getListId(), is( "1001" ) );
+         if ( task.getId().equals( "815255" ) )
+         {
+            assertThat( task.getDeletedMillisUtc(),
+                        is( RTM_CAL.getTimeInMillis() ) );
+            refTask = task;
+         }
+         else if ( task.getId().equals( "123456789" ) )
+         {
+            assertThat( task.getTaskSeriesId(), is( "987654321" ) );
+            generatedTask = task;
+         }
+         else
+         {
+            assertThat( task.getDeletedMillisUtc(), is( RtmConstants.NO_TIME ) );
+         }
+      }
+      
+      assertThat( generatedTask.getTaskSeriesId(), is( "987654321" ) );
+      assertThat( generatedTask.getCreatedMillisUtc(),
+                  is( refTask.getCreatedMillisUtc() ) );
+      assertThat( generatedTask.getModifiedMillisUtc(),
+                  is( RTM_CAL_TASK.getTimeInMillis() ) );
+      assertThat( generatedTask.getName(), is( refTask.getName() ) );
+      assertThat( generatedTask.getListId(), is( refTask.getListId() ) );
+      assertThat( generatedTask.getSource(), is( refTask.getSource() ) );
+      assertThat( generatedTask.getUrl(), is( refTask.getSource() ) );
+      assertThat( generatedTask.getLocationId(), is( refTask.getLocationId() ) );
+      assertThat( generatedTask.getTags().size(), is( refTask.getTags().size() ) );
+      assertThat( generatedTask.getRecurrencePattern(),
+                  is( refTask.getRecurrencePattern() ) );
+      assertThat( generatedTask.isEveryRecurrence(),
+                  is( refTask.isEveryRecurrence() ) );
+      assertThat( generatedTask.getParticipants().size(),
+                  is( refTask.getParticipants().size() ) );
+      assertThat( generatedTask.getNotes().size(), is( refTask.getNotes()
+                                                              .size() ) );
+      assertThat( generatedTask.getId(), is( "2445789" ) );
+      assertThat( generatedTask.getDueMillisUtc(), is( RtmConstants.NO_TIME ) );
+      assertThat( generatedTask.hasDueTime(), is( false ) );
+      assertThat( generatedTask.getAddedMillisUtc(),
+                  is( RTM_CAL.getTimeInMillis() ) );
+      assertThat( generatedTask.getCompletedMillisUtc(),
+                  is( RtmConstants.NO_TIME ) );
+      assertThat( generatedTask.getDeletedMillisUtc(),
+                  is( RtmConstants.NO_TIME ) );
+      assertThat( generatedTask.getPriority(), is( Priority.High ) );
+      assertThat( generatedTask.getPostponedCount(), is( 2 ) );
+      assertThat( generatedTask.getEstimationSentence(), is( nullValue() ) );
    }
    
    

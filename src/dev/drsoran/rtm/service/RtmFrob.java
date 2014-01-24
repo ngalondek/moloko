@@ -1,5 +1,8 @@
 package dev.drsoran.rtm.service;
 
+import dev.drsoran.Strings;
+
+
 public class RtmFrob
 {
    private final String value;
@@ -8,6 +11,11 @@ public class RtmFrob
    
    public RtmFrob( String value )
    {
+      if ( Strings.isNullOrEmpty( value ) )
+      {
+         throw new IllegalArgumentException( "value" );
+      }
+      
       this.value = value;
    }
    

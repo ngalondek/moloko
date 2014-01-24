@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import dev.drsoran.Iterables;
 import dev.drsoran.rtm.model.RtmTask;
 
 
@@ -84,6 +85,15 @@ public class RtmTaskSeriesListContentHandler extends
                                                   qName,
                                                   attributes );
       }
+      else if ( "generated".equalsIgnoreCase( qName ) )
+      {
+         final RtmTask referenceTask = getReferenceTask();
+         
+         pushNestedContentHandlerAndStartElement( new GeneratedRtmTaskSeriesContentHandler( referenceTask,
+                                                                                            taskSeriesListener ),
+                                                  qName,
+                                                  attributes );
+      }
       else if ( "list".equalsIgnoreCase( qName ) )
       {
          activeListId = XmlAttr.getStringNotNull( attributes, "id" );
@@ -112,6 +122,18 @@ public class RtmTaskSeriesListContentHandler extends
       {
          setContentElementAndNotify( tasks );
       }
+   }
+   
+   
+   
+   private RtmTask getReferenceTask() throws SAXException
+   {
+      if ( tasks.isEmpty() )
+      {
+         throw new SAXException( "Expected at least one reference task for generated task" );
+      }
+      
+      return Iterables.first( tasks );
    }
    
    

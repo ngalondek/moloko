@@ -56,7 +56,7 @@ public class RtmRestRequestFixture extends MolokoTestCase
    {
       assertThat( createRequest( new Param( "p1", "v1" ),
                                  new Param( "p2", "v2" ) ).getMethodExecutionUri(),
-                  is( "?api_key=key&api_sig=8d0a9c4490413c8bfc57aaf4857b84d9&p1=v1&p2=v2&" ) );
+                  is( "?api_key=key&api_sig=8d0a9c4490413c8bfc57aaf4857b84d9&p1=v1&p2=v2" ) );
    }
    
    
@@ -65,7 +65,7 @@ public class RtmRestRequestFixture extends MolokoTestCase
    public void testGetMethodExecutionUri_Empty()
    {
       assertThat( createRequest().getMethodExecutionUri(),
-                  is( "?api_key=key&api_sig=2663dceff40088f756b984592465d482&" ) );
+                  is( "?api_key=key&api_sig=2663dceff40088f756b984592465d482" ) );
    }
    
    
@@ -78,7 +78,7 @@ public class RtmRestRequestFixture extends MolokoTestCase
       req.addParam( new Param( "p3", "v3" ) );
       
       assertThat( req.getMethodExecutionUri(),
-                  is( "?api_key=key&api_sig=22cadd9162eca0fb27b1453b2fe6556e&p1=v1&p2=v2&p3=v3&" ) );
+                  is( "?api_key=key&api_sig=22cadd9162eca0fb27b1453b2fe6556e&p1=v1&p2=v2&p3=v3" ) );
    }
    
    

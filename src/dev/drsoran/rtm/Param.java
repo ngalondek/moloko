@@ -38,6 +38,11 @@ public class Param implements Comparable< Param >
    
    public Param( String name, String value )
    {
+      if ( name == null )
+      {
+         throw new IllegalArgumentException( "name" );
+      }
+      
       this.name = name;
       this.value = value;
    }
@@ -46,8 +51,7 @@ public class Param implements Comparable< Param >
    
    public Param( String name, long millisUtc )
    {
-      this.name = name;
-      this.value = RtmDateFormatter.formatDate( new Date( millisUtc ) );
+      this( name, RtmDateFormatter.formatDate( new Date( millisUtc ) ) );
    }
    
    
@@ -79,8 +83,8 @@ public class Param implements Comparable< Param >
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ( ( name == null ) ? 0 : name.hashCode() );
-      result = prime * result + ( ( value == null ) ? 0 : value.hashCode() );
+      result = prime * result + name.hashCode();
+      
       return result;
    }
    
@@ -99,25 +103,9 @@ public class Param implements Comparable< Param >
          return false;
       
       Param other = (Param) obj;
-      if ( name == null )
-      {
-         if ( other.name != null )
-            return false;
-      }
-      else if ( !name.equals( other.name ) )
-         return false;
       
-      if ( value == null )
-      {
-         if ( other.value != null )
-         {
-            return false;
-         }
-      }
-      else if ( !value.equals( other.value ) )
-      {
+      if ( !name.equals( other.name ) )
          return false;
-      }
       
       return true;
    }

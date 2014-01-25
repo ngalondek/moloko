@@ -41,6 +41,11 @@ public class BlockingRtmRequestLimiter implements IRtmRequestLimiter
    
    public BlockingRtmRequestLimiter( long invocationIntervalMs )
    {
+      if ( invocationIntervalMs < 0L )
+      {
+         throw new IllegalArgumentException( "invocationIntervalMs" );
+      }
+      
       this.invocationIntervalMs = invocationIntervalMs;
    }
    

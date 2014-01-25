@@ -22,12 +22,13 @@
 
 package dev.drsoran.rtm;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
 
 
 public class RtmConnectionFactory implements IRtmConnectionFactory
 {
-   private final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
+   public final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
    
    private final ILog log;
    
@@ -49,6 +50,31 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
       IRtmRequestFactory requestFactory, IRtmRequestLimiter requestLimiter,
       RtmConnectionProtocol protocol, String apiKey, String sharedSecret )
    {
+      if ( log == null )
+      {
+         throw new IllegalArgumentException( "log" );
+      }
+      if ( connectionFactory == null )
+      {
+         throw new IllegalArgumentException( "connectionFactory" );
+      }
+      if ( requestFactory == null )
+      {
+         throw new IllegalArgumentException( "requestFactory" );
+      }
+      if ( requestLimiter == null )
+      {
+         throw new IllegalArgumentException( "requestLimiter" );
+      }
+      if ( Strings.isNullOrEmpty( apiKey ) )
+      {
+         throw new IllegalArgumentException( "apiKey" );
+      }
+      if ( Strings.isNullOrEmpty( sharedSecret ) )
+      {
+         throw new IllegalArgumentException( "sharedSecret" );
+      }
+      
       this.log = log;
       this.connectionFactory = connectionFactory;
       this.requestFactory = requestFactory;

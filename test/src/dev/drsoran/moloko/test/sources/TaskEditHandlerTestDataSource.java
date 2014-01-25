@@ -57,8 +57,8 @@ import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.rtm.model.Priority;
+import dev.drsoran.rtm.sync.model.Modification;
 
 
 public class TaskEditHandlerTestDataSource extends

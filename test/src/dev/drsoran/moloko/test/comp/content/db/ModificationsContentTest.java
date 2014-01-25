@@ -34,10 +34,10 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
-import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
 import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.sync.db.TableColumns.ModificationColumns;
 
 
 public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase

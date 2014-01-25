@@ -53,11 +53,11 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
-import dev.drsoran.moloko.sync.db.TableColumns.TimesColumns;
-import dev.drsoran.moloko.sync.model.Modification;
-import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.rtm.model.Priority;
+import dev.drsoran.rtm.sync.db.TableColumns.ModificationColumns;
+import dev.drsoran.rtm.sync.db.TableColumns.TimesColumns;
+import dev.drsoran.rtm.sync.model.Modification;
+import dev.drsoran.rtm.sync.model.SyncTime;
 
 
 public class ContentValuesFactoryTestDataSource

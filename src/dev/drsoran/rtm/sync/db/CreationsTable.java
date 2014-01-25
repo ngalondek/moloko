@@ -20,12 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.db;
+package dev.drsoran.rtm.sync.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.AbstractTable;
-import dev.drsoran.moloko.sync.db.TableColumns.CreationsColumns;
+import dev.drsoran.rtm.sync.db.TableColumns.CreationsColumns;
 
 
 class CreationsTable extends AbstractTable

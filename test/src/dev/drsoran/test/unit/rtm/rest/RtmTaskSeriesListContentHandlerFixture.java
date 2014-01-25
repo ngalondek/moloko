@@ -27,7 +27,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
@@ -43,10 +42,11 @@ import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.rest.IRtmContentHandlerListener;
 import dev.drsoran.rtm.rest.RtmContentHandler;
 import dev.drsoran.rtm.rest.RtmTaskSeriesListContentHandler;
+import dev.drsoran.rtm.service.RtmContentSort;
 
 
 public class RtmTaskSeriesListContentHandlerFixture extends
-         RtmContentHandlerTestCase< Collection< RtmTask > >
+         RtmContentHandlerTestCase< List< RtmTask > >
 {
    private final static Calendar RTM_CAL;
    
@@ -219,23 +219,24 @@ public class RtmTaskSeriesListContentHandlerFixture extends
    
    
    @Override
-   protected RtmContentHandler< Collection< RtmTask > > createHandler()
+   protected RtmContentHandler< List< RtmTask > > createHandler()
    {
-      return new RtmTaskSeriesListContentHandler();
+      return new RtmTaskSeriesListContentHandler( RtmContentSort.getRtmTaskIdSort() );
    }
    
    
    
    @Override
-   protected RtmContentHandler< Collection< RtmTask > > createHandlerWithListener( IRtmContentHandlerListener< Collection< RtmTask > > listener )
+   protected RtmContentHandler< List< RtmTask > > createHandlerWithListener( IRtmContentHandlerListener< List< RtmTask > > listener )
    {
-      return new RtmTaskSeriesListContentHandler( listener );
+      return new RtmTaskSeriesListContentHandler( RtmContentSort.getRtmTaskIdSort(),
+                                                  listener );
    }
    
    
    
    @Override
-   protected Collection< RtmTask > createDummyContent()
+   protected List< RtmTask > createDummyContent()
    {
       return Collections.emptyList();
    }

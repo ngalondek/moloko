@@ -33,9 +33,9 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.sync.model.SyncTime;
 
 
 @RunWith( Theories.class )

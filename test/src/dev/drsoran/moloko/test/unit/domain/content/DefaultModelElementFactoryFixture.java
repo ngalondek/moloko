@@ -46,11 +46,11 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.sync.model.Modification;
-import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource.TestData;
+import dev.drsoran.rtm.sync.model.Modification;
+import dev.drsoran.rtm.sync.model.SyncTime;
 
 
 public class DefaultModelElementFactoryFixture extends MolokoTestCase

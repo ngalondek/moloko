@@ -22,7 +22,10 @@
 
 package dev.drsoran.rtm.rest;
 
+import org.xml.sax.SAXException;
+
+
 public interface IRtmContentHandlerListener< T >
 {
-   void onContentHandled( T contentElement );
+   void onContentHandled( T contentElement ) throws SAXException;
 }

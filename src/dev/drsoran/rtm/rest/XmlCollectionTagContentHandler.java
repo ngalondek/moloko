@@ -22,15 +22,15 @@
 
 package dev.drsoran.rtm.rest;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 
-public class CollectionContentHandler< T > extends
-         RtmContentHandler< Collection< T > > implements
+public class XmlCollectionTagContentHandler< T > extends
+         RtmSortedListContentHandler< T > implements
          IRtmContentHandlerListener< T >
 {
    private final String xmlCollectionTag;
@@ -39,19 +39,21 @@ public class CollectionContentHandler< T > extends
    
    
    
-   public CollectionContentHandler( String xmlCollectionTag,
-      RtmContentHandler< T > collectionElementHandler )
+   public XmlCollectionTagContentHandler( String xmlCollectionTag,
+      RtmContentHandler< T > collectionElementHandler,
+      Comparator< T > comparator )
    {
-      this( xmlCollectionTag, collectionElementHandler, null );
+      this( xmlCollectionTag, collectionElementHandler, comparator, null );
    }
    
    
    
-   public CollectionContentHandler( String xmlCollectionTag,
+   public XmlCollectionTagContentHandler( String xmlCollectionTag,
       RtmContentHandler< T > collectionElementHandler,
-      IRtmContentHandlerListener< Collection< T >> listener )
+      Comparator< T > comparator,
+      IRtmContentHandlerListener< List< T >> listener )
    {
-      super( listener );
+      super( comparator, listener );
       
       this.collectionElementHandler = collectionElementHandler;
       this.collectionElementHandler.setListener( this );
@@ -63,11 +65,7 @@ public class CollectionContentHandler< T > extends
    @Override
    protected void startElement( String name, Attributes attributes ) throws SAXException
    {
-      if ( name.equalsIgnoreCase( xmlCollectionTag ) )
-      {
-         setContentElement( new ArrayList< T >() );
-      }
-      else
+      if ( !name.equalsIgnoreCase( xmlCollectionTag ) )
       {
          collectionElementHandler.startElement( name, attributes );
       }
@@ -80,7 +78,7 @@ public class CollectionContentHandler< T > extends
    {
       if ( name.equalsIgnoreCase( xmlCollectionTag ) )
       {
-         setContentElementAndNotify( getContentElement() );
+         notifyContentElementSet();
       }
       else
       {
@@ -99,8 +97,8 @@ public class CollectionContentHandler< T > extends
    
    
    @Override
-   public void onContentHandled( T collectionElement )
+   public void onContentHandled( T collectionElement ) throws SAXException
    {
-      getContentElement().add( collectionElement );
+      addElementSorted( collectionElement );
    }
 }

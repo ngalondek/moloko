@@ -22,7 +22,8 @@
 
 package dev.drsoran.rtm;
 
-import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
@@ -37,11 +38,11 @@ import dev.drsoran.rtm.service.RtmFrob;
 
 public interface IRtmResponseHandlerFactory
 {
-   IRtmResponseHandler< Collection< RtmTask > > createRtmTasksResponseHandler();
+   IRtmResponseHandler< List< RtmTask > > createRtmTasksResponseHandler( Comparator< RtmTask > sortOrder );
    
    
    
-   IRtmResponseHandler< Collection< RtmTasksList > > createRtmTaskListsResponseHandler();
+   IRtmResponseHandler< List< RtmTasksList > > createRtmTaskListsResponseHandler( Comparator< RtmTasksList > sortOrder );
    
    
    
@@ -49,11 +50,11 @@ public interface IRtmResponseHandlerFactory
    
    
    
-   IRtmResponseHandler< Collection< RtmContact > > createRtmContactsResponseHandler();
+   IRtmResponseHandler< List< RtmContact > > createRtmContactsResponseHandler( Comparator< RtmContact > sortOrder );
    
    
    
-   IRtmResponseHandler< Collection< RtmLocation > > createRtmLocationsResponseHandler();
+   IRtmResponseHandler< List< RtmLocation > > createRtmLocationsResponseHandler( Comparator< RtmLocation > sortOrder );
    
    
    

@@ -22,8 +22,8 @@
 
 package dev.drsoran.test.unit.rtm.rest;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 import org.easymock.EasyMock;
@@ -31,31 +31,33 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.rtm.rest.CollectionContentHandler;
 import dev.drsoran.rtm.rest.IRtmContentHandlerListener;
 import dev.drsoran.rtm.rest.RtmContentHandler;
+import dev.drsoran.rtm.rest.XmlCollectionTagContentHandler;
 
 
-public class CollectionContentHandlerFixture extends MolokoTestCase
+public class XmlCollectionTagContentHandlerFixture extends MolokoTestCase
 {
+   
    @Test
    public void testCollection() throws SAXException
    {
-      final CollectionContentHandler< Integer > handler = new CollectionContentHandler< Integer >( "ints",
-                                                                                                   new IntHandler() );
+      final XmlCollectionTagContentHandler< Integer > handler = new XmlCollectionTagContentHandler< Integer >( "ints",
+                                                                                                               new IntHandler(),
+                                                                                                               null );
       
       handler.startElement( null, null, "ints", null );
       handler.startElement( null, null, "int", null );
       handler.characters( new char[]
-      { '1' }, 0, 1 );
+      { '2' }, 0, 1 );
       handler.endElement( null, null, "int" );
       handler.startElement( null, null, "int", null );
       handler.characters( new char[]
-      { '2' }, 0, 1 );
+      { '1' }, 0, 1 );
       handler.endElement( null, null, "int" );
       handler.endElement( null, null, "ints" );
       
-      assertThat( handler.getContentElement(), hasItems( 1, 2 ) );
+      assertThat( handler.getContentElement(), contains( 1, 2 ) );
    }
    
    
@@ -63,8 +65,9 @@ public class CollectionContentHandlerFixture extends MolokoTestCase
    @Test
    public void testCollection_empty() throws SAXException
    {
-      final CollectionContentHandler< Integer > handler = new CollectionContentHandler< Integer >( "ints",
-                                                                                                   new IntHandler() );
+      final XmlCollectionTagContentHandler< Integer > handler = new XmlCollectionTagContentHandler< Integer >( "ints",
+                                                                                                               new IntHandler(),
+                                                                                                               null );
       
       handler.startElement( null, null, "ints", null );
       handler.endElement( null, null, "ints" );
@@ -78,8 +81,9 @@ public class CollectionContentHandlerFixture extends MolokoTestCase
    @Test
    public void testCollectionContentHandler()
    {
-      new CollectionContentHandler< Integer >( "int",
-                                               EasyMock.createNiceMock( RtmContentHandler.class ) );
+      new XmlCollectionTagContentHandler< Integer >( "int",
+                                                     EasyMock.createNiceMock( RtmContentHandler.class ),
+                                                     null );
    }
    
    
@@ -88,8 +92,9 @@ public class CollectionContentHandlerFixture extends MolokoTestCase
    @Test
    public void testCollectionContentHandlerListener()
    {
-      new CollectionContentHandler< Integer >( "int",
-                                               EasyMock.createNiceMock( RtmContentHandler.class ),
-                                               EasyMock.createNiceMock( IRtmContentHandlerListener.class ) );
+      new XmlCollectionTagContentHandler< Integer >( "int",
+                                                     EasyMock.createNiceMock( RtmContentHandler.class ),
+                                                     null,
+                                                     EasyMock.createNiceMock( IRtmContentHandlerListener.class ) );
    }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2013 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,13 +20,16 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.content;
+package dev.drsoran.rtm.sync;
 
-import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.rtm.sync.model.Modification;
+import java.util.List;
 
 
-public interface IModificationsApplier
+public interface IRtmSyncHandler< T >
 {
-   void applyPersistentModifications( Iterable< Modification > modifications ) throws ContentException;
+   void handleIncomingSync( List< T > syncPartnerElements, List< T > rtmElements );
+   
+   
+   
+   void handleOutgoingSync( List< T > syncPartnerElements, List< T > rtmElements );
 }

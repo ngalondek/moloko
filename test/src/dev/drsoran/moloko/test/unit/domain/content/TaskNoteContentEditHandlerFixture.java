@@ -48,11 +48,11 @@ import dev.drsoran.moloko.domain.content.IModificationsApplier;
 import dev.drsoran.moloko.domain.content.TaskNoteContentEditHandler;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.test.ModificationComparator;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.sources.TaskNoteEditHandlerTestDataSource;
 import dev.drsoran.moloko.util.Lambda.Func2;
+import dev.drsoran.rtm.sync.model.Modification;
 
 
 @Config( manifest = Config.NONE )

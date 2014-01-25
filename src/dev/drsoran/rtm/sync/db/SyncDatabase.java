@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.db;
+package dev.drsoran.rtm.sync.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

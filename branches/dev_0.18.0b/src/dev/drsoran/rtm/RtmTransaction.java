@@ -22,6 +22,9 @@
 
 package dev.drsoran.rtm;
 
+import dev.drsoran.Strings;
+
+
 public class RtmTransaction
 {
    private final String id;
@@ -32,6 +35,11 @@ public class RtmTransaction
    
    public RtmTransaction( String id, boolean undoable )
    {
+      if ( Strings.isNullOrEmpty( id ) )
+      {
+         throw new IllegalArgumentException( "id" );
+      }
+      
       this.id = id;
       this.undoable = undoable;
    }

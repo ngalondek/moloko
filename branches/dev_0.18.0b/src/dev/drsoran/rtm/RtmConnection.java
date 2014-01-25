@@ -53,6 +53,27 @@ public class RtmConnection implements IRtmConnection
       IRtmRequestFactory requestFactory, IRtmRequestLimiter requestLimiter,
       RtmRequestUriBuilder requestUriBuilder )
    {
+      if ( log == null )
+      {
+         throw new IllegalArgumentException( "log" );
+      }
+      if ( connectionFactory == null )
+      {
+         throw new IllegalArgumentException( "connectionFactory" );
+      }
+      if ( requestFactory == null )
+      {
+         throw new IllegalArgumentException( "requestFactory" );
+      }
+      if ( requestLimiter == null )
+      {
+         throw new IllegalArgumentException( "requestLimiter" );
+      }
+      if ( requestUriBuilder == null )
+      {
+         throw new IllegalArgumentException( "requestUriBuilder" );
+      }
+      
       this.log = log;
       this.connectionFactory = connectionFactory;
       this.requestFactory = requestFactory;
@@ -69,11 +90,11 @@ public class RtmConnection implements IRtmConnection
    {
       final IRtmRequest request = requestFactory.createRequest( rtmMethod,
                                                                 requestUriBuilder.addAll( params ) );
-      requestLimiter.obeyRtmRequestLimit();
-      
       log.d( getClass(), MessageFormat.format( "Request [{0}] send at {1}",
                                                request,
                                                new Date() ) );
+      
+      requestLimiter.obeyRtmRequestLimit();
       
       Reader responseReader = null;
       IConnection connection = null;

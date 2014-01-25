@@ -27,8 +27,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -82,24 +83,24 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testContacts_getList() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmContact > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmContact > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmContactsResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmContactsResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
       final IRtmConnection rtmConnection = EasyMock.createStrictMock( IRtmConnection.class );
       EasyMock.expect( rtmConnection.executeMethod( EasyMock.same( handler ),
                                                     EasyMock.eq( "rtm.contacts.getList" ) ) )
-              .andReturn( new RtmResponse< Collection< RtmContact > >( Collections.singletonList( new RtmContact( "1",
-                                                                                                                  "userName",
-                                                                                                                  "fullName" ) ) ) );
+              .andReturn( new RtmResponse< List< RtmContact > >( Collections.singletonList( new RtmContact( "1",
+                                                                                                            "userName",
+                                                                                                            "fullName" ) ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -109,7 +110,7 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmContact > respElement = repo.contacts_getList();
+      final List< RtmContact > respElement = repo.contacts_getList();
       
       assertThat( respElement, is( notNullValue() ) );
       assertCount( respElement, 1 );
@@ -122,28 +123,28 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testLists_getList() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmTasksList > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTasksList > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTaskListsResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTaskListsResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
       final IRtmConnection rtmConnection = EasyMock.createStrictMock( IRtmConnection.class );
       EasyMock.expect( rtmConnection.executeMethod( EasyMock.same( handler ),
                                                     EasyMock.eq( "rtm.lists.getList" ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTasksList > >( Collections.singletonList( new RtmTasksList( "1",
-                                                                                                                      0,
-                                                                                                                      false,
-                                                                                                                      false,
-                                                                                                                      false,
-                                                                                                                      "name",
-                                                                                                                      null ) ) ) );
+              .andReturn( new RtmResponse< List< RtmTasksList > >( Collections.singletonList( new RtmTasksList( "1",
+                                                                                                                0,
+                                                                                                                false,
+                                                                                                                false,
+                                                                                                                false,
+                                                                                                                "name",
+                                                                                                                null ) ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -153,7 +154,7 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmTasksList > respElement = repo.lists_getList();
+      final List< RtmTasksList > respElement = repo.lists_getList();
       
       assertThat( respElement, is( notNullValue() ) );
       assertCount( respElement, 1 );
@@ -166,43 +167,43 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testTasks_getList() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
       final IRtmConnection rtmConnection = EasyMock.createStrictMock( IRtmConnection.class );
       EasyMock.expect( rtmConnection.executeMethod( EasyMock.same( handler ),
                                                     EasyMock.eq( "rtm.tasks.getList" ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( Collections.singletonList( new RtmTask( "1",
-                                                                                                            "2",
-                                                                                                            10L,
-                                                                                                            10L,
-                                                                                                            10L,
-                                                                                                            10L,
-                                                                                                            "3",
-                                                                                                            null,
-                                                                                                            "name",
-                                                                                                            "src",
-                                                                                                            null,
-                                                                                                            -1L,
-                                                                                                            Priority.High,
-                                                                                                            0,
-                                                                                                            -1L,
-                                                                                                            false,
-                                                                                                            null,
-                                                                                                            false,
-                                                                                                            null,
-                                                                                                            Collections.< String > emptyList(),
-                                                                                                            Collections.< RtmNote > emptyList(),
-                                                                                                            Collections.< RtmContact > emptyList() ) ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( Collections.singletonList( new RtmTask( "1",
+                                                                                                      "2",
+                                                                                                      10L,
+                                                                                                      10L,
+                                                                                                      10L,
+                                                                                                      10L,
+                                                                                                      "3",
+                                                                                                      null,
+                                                                                                      "name",
+                                                                                                      "src",
+                                                                                                      null,
+                                                                                                      -1L,
+                                                                                                      Priority.High,
+                                                                                                      0,
+                                                                                                      -1L,
+                                                                                                      false,
+                                                                                                      null,
+                                                                                                      false,
+                                                                                                      null,
+                                                                                                      Collections.< String > emptyList(),
+                                                                                                      Collections.< RtmNote > emptyList(),
+                                                                                                      Collections.< RtmContact > emptyList() ) ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -212,7 +213,7 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmTask > respElement = repo.tasks_getList( RtmConstants.NO_TIME );
+      final List< RtmTask > respElement = repo.tasks_getList( RtmConstants.NO_TIME );
       
       assertThat( respElement, is( notNullValue() ) );
       assertCount( respElement, 1 );
@@ -225,15 +226,15 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testTasks_getList_LastSyncTime() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -242,7 +243,7 @@ public class RtmContentRepositoryFixture
                                                     EasyMock.eq( "rtm.tasks.getList" ),
                                                     EasyMock.eq( new Param( "last_sync",
                                                                             TestConstants.NOW ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask >>( Collections.< RtmTask > emptyList() ) );
+              .andReturn( new RtmResponse< List< RtmTask >>( Collections.< RtmTask > emptyList() ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -252,7 +253,7 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmTask > respElement = repo.tasks_getList( TestConstants.NOW );
+      final List< RtmTask > respElement = repo.tasks_getList( TestConstants.NOW );
       
       assertThat( respElement, is( notNullValue() ) );
       
@@ -264,15 +265,15 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testTasks_getListByFilter() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -281,7 +282,7 @@ public class RtmContentRepositoryFixture
                                                     EasyMock.eq( "rtm.tasks.getList" ),
                                                     EasyMock.eq( new Param( "filter",
                                                                             "name:Test" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask >>( Collections.< RtmTask > emptyList() ) );
+              .andReturn( new RtmResponse< List< RtmTask >>( Collections.< RtmTask > emptyList() ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -291,8 +292,8 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmTask > respElement = repo.tasks_getListByFilter( "name:Test",
-                                                                            RtmConstants.NO_TIME );
+      final List< RtmTask > respElement = repo.tasks_getListByFilter( "name:Test",
+                                                                      RtmConstants.NO_TIME );
       
       assertThat( respElement, is( notNullValue() ) );
       
@@ -304,15 +305,15 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testTasks_getListByFilter_LastSyncTime() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -323,7 +324,7 @@ public class RtmContentRepositoryFixture
                                                                             "name:Test" ) ),
                                                     EasyMock.eq( new Param( "last_sync",
                                                                             TestConstants.NOW ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask >>( Collections.< RtmTask > emptyList() ) );
+              .andReturn( new RtmResponse< List< RtmTask >>( Collections.< RtmTask > emptyList() ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -333,8 +334,8 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmTask > respElement = repo.tasks_getListByFilter( "name:Test",
-                                                                            TestConstants.NOW );
+      final List< RtmTask > respElement = repo.tasks_getListByFilter( "name:Test",
+                                                                      TestConstants.NOW );
       assertThat( respElement, is( notNullValue() ) );
       
       EasyMock.verify( handler );
@@ -365,15 +366,15 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testTasks_getListByListId() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -382,7 +383,7 @@ public class RtmContentRepositoryFixture
                                                     EasyMock.eq( "rtm.tasks.getList" ),
                                                     EasyMock.eq( new Param( "list_id",
                                                                             "1" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask >>( Collections.< RtmTask > emptyList() ) );
+              .andReturn( new RtmResponse< List< RtmTask >>( Collections.< RtmTask > emptyList() ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -392,8 +393,8 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmTask > respElement = repo.tasks_getListByListId( "1",
-                                                                            TestConstants.NEVER );
+      final List< RtmTask > respElement = repo.tasks_getListByListId( "1",
+                                                                      TestConstants.NEVER );
       assertThat( respElement, is( notNullValue() ) );
       
       EasyMock.verify( handler );
@@ -404,15 +405,15 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testTasks_getListByListId_LastSyncTime() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -423,7 +424,7 @@ public class RtmContentRepositoryFixture
                                                                             "1" ) ),
                                                     EasyMock.eq( new Param( "last_sync",
                                                                             TestConstants.NOW ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask >>( Collections.< RtmTask > emptyList() ) );
+              .andReturn( new RtmResponse< List< RtmTask >>( Collections.< RtmTask > emptyList() ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -433,8 +434,8 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmTask > respElement = repo.tasks_getListByListId( "1",
-                                                                            TestConstants.NOW );
+      final List< RtmTask > respElement = repo.tasks_getListByListId( "1",
+                                                                      TestConstants.NOW );
       assertThat( respElement, is( notNullValue() ) );
       
       EasyMock.verify( handler );
@@ -465,28 +466,28 @@ public class RtmContentRepositoryFixture
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Test
    public void testLocations_getList() throws RtmServiceException
    {
-      @SuppressWarnings( "unchecked" )
-      final IRtmResponseHandler< Collection< RtmLocation > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmLocation > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmLocationsResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmLocationsResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
       final IRtmConnection rtmConnection = EasyMock.createStrictMock( IRtmConnection.class );
       EasyMock.expect( rtmConnection.executeMethod( EasyMock.same( handler ),
                                                     EasyMock.eq( "rtm.locations.getList" ) ) )
-              .andReturn( new RtmResponse< Collection< RtmLocation > >( Collections.singletonList( new RtmLocation( "1",
-                                                                                                                    "name",
-                                                                                                                    1.0f,
-                                                                                                                    2.0f,
-                                                                                                                    "addr",
-                                                                                                                    true,
-                                                                                                                    10 ) ) ) );
+              .andReturn( new RtmResponse< List< RtmLocation > >( Collections.singletonList( new RtmLocation( "1",
+                                                                                                              "name",
+                                                                                                              1.0f,
+                                                                                                              2.0f,
+                                                                                                              "addr",
+                                                                                                              true,
+                                                                                                              10 ) ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -496,7 +497,7 @@ public class RtmContentRepositoryFixture
       
       final RtmContentRepository repo = new RtmContentRepository( connFact,
                                                                   responseHandlerFactory );
-      final Collection< RtmLocation > respElement = repo.locations_getList();
+      final List< RtmLocation > respElement = repo.locations_getList();
       
       assertThat( respElement, is( notNullValue() ) );
       assertCount( respElement, 1 );

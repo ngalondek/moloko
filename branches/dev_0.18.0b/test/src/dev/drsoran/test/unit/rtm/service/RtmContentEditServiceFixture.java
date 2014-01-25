@@ -27,8 +27,9 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -370,11 +371,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_add() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -387,9 +388,9 @@ public class RtmContentEditServiceFixture
                                                                             "10" ) ),
                                                     EasyMock.eq( new Param( "name",
                                                                             "taskName" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "1000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "1000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -399,9 +400,9 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_add( "1",
-                                                                              "10",
-                                                                              "taskName" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_add( "1",
+                                                                        "10",
+                                                                        "taskName" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -451,11 +452,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_complete() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -470,9 +471,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -482,10 +483,10 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_complete( "1",
-                                                                                   "10",
-                                                                                   "100",
-                                                                                   "1000" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_complete( "1",
+                                                                             "10",
+                                                                             "100",
+                                                                             "1000" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -550,11 +551,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_uncomplete() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -569,9 +570,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -581,10 +582,10 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_uncomplete( "1",
-                                                                                     "10",
-                                                                                     "100",
-                                                                                     "1000" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_uncomplete( "1",
+                                                                               "10",
+                                                                               "100",
+                                                                               "1000" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -649,11 +650,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_delete() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -668,9 +669,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -680,10 +681,10 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_delete( "1",
-                                                                                 "10",
-                                                                                 "100",
-                                                                                 "1000" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_delete( "1",
+                                                                           "10",
+                                                                           "100",
+                                                                           "1000" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -748,11 +749,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_movePriority_up() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -769,9 +770,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "direction",
                                                                             "up" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -781,11 +782,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_movePriority( "1",
-                                                                                       "10",
-                                                                                       "100",
-                                                                                       "1000",
-                                                                                       true );
+      final RtmResponse< List< RtmTask >> response = service.tasks_movePriority( "1",
+                                                                                 "10",
+                                                                                 "100",
+                                                                                 "1000",
+                                                                                 true );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -802,11 +803,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_movePriority_down() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -823,9 +824,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "direction",
                                                                             "down" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -835,11 +836,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_movePriority( "1",
-                                                                                       "10",
-                                                                                       "100",
-                                                                                       "1000",
-                                                                                       false );
+      final RtmResponse< List< RtmTask >> response = service.tasks_movePriority( "1",
+                                                                                 "10",
+                                                                                 "100",
+                                                                                 "1000",
+                                                                                 false );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -908,11 +909,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_moveTo() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -929,9 +930,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -941,11 +942,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_moveTo( "1",
-                                                                                 "10",
-                                                                                 "11",
-                                                                                 "100",
-                                                                                 "1000" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_moveTo( "1",
+                                                                           "10",
+                                                                           "11",
+                                                                           "100",
+                                                                           "1000" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1027,11 +1028,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_postpone() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1046,9 +1047,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1058,10 +1059,10 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_postpone( "1",
-                                                                                   "10",
-                                                                                   "100",
-                                                                                   "1000" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_postpone( "1",
+                                                                             "10",
+                                                                             "100",
+                                                                             "1000" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1126,11 +1127,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setDueDate_Clear() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1145,9 +1146,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1157,12 +1158,12 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setDueDate( "1",
-                                                                                     "10",
-                                                                                     "100",
-                                                                                     "1000",
-                                                                                     RtmConstants.NO_TIME,
-                                                                                     false );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setDueDate( "1",
+                                                                               "10",
+                                                                               "100",
+                                                                               "1000",
+                                                                               RtmConstants.NO_TIME,
+                                                                               false );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1179,11 +1180,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setDueDate_DateOnly() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1202,9 +1203,9 @@ public class RtmContentEditServiceFixture
                                                                             TestConstants.NOW ) ),
                                                     EasyMock.eq( new Param( "has_due_time",
                                                                             "0" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1214,12 +1215,12 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setDueDate( "1",
-                                                                                     "10",
-                                                                                     "100",
-                                                                                     "1000",
-                                                                                     TestConstants.NOW,
-                                                                                     false );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setDueDate( "1",
+                                                                               "10",
+                                                                               "100",
+                                                                               "1000",
+                                                                               TestConstants.NOW,
+                                                                               false );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1236,11 +1237,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setDueDate_DateAndTime() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1259,9 +1260,9 @@ public class RtmContentEditServiceFixture
                                                                             TestConstants.NOW ) ),
                                                     EasyMock.eq( new Param( "has_due_time",
                                                                             "1" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1271,12 +1272,12 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setDueDate( "1",
-                                                                                     "10",
-                                                                                     "100",
-                                                                                     "1000",
-                                                                                     TestConstants.NOW,
-                                                                                     true );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setDueDate( "1",
+                                                                               "10",
+                                                                               "100",
+                                                                               "1000",
+                                                                               TestConstants.NOW,
+                                                                               true );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1349,11 +1350,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setEstimate_Unset() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1368,9 +1369,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1380,11 +1381,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setEstimate( "1",
-                                                                                      "10",
-                                                                                      "100",
-                                                                                      "1000",
-                                                                                      null );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setEstimate( "1",
+                                                                                "10",
+                                                                                "100",
+                                                                                "1000",
+                                                                                null );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1401,11 +1402,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setEstimate_Set() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1422,9 +1423,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "estimate",
                                                                             "5 days" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1434,11 +1435,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setEstimate( "1",
-                                                                                      "10",
-                                                                                      "100",
-                                                                                      "1000",
-                                                                                      "5 days" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setEstimate( "1",
+                                                                                "10",
+                                                                                "100",
+                                                                                "1000",
+                                                                                "5 days" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1507,11 +1508,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setName() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1528,9 +1529,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "name",
                                                                             "taskName" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1540,11 +1541,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setName( "1",
-                                                                                  "10",
-                                                                                  "100",
-                                                                                  "1000",
-                                                                                  "taskName" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setName( "1",
+                                                                            "10",
+                                                                            "100",
+                                                                            "1000",
+                                                                            "taskName" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1626,11 +1627,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setPriority() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1647,9 +1648,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "priority",
                                                                             "1" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1659,11 +1660,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setPriority( "1",
-                                                                                      "10",
-                                                                                      "100",
-                                                                                      "1000",
-                                                                                      Priority.High );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setPriority( "1",
+                                                                                "10",
+                                                                                "100",
+                                                                                "1000",
+                                                                                Priority.High );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1732,11 +1733,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setRecurrence_Unset() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1751,9 +1752,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1763,11 +1764,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setRecurrence( "1",
-                                                                                        "10",
-                                                                                        "100",
-                                                                                        "1000",
-                                                                                        null );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setRecurrence( "1",
+                                                                                  "10",
+                                                                                  "100",
+                                                                                  "1000",
+                                                                                  null );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1784,11 +1785,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setRecurrence_Set() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1805,9 +1806,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "repeat",
                                                                             "after 2 days" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1817,11 +1818,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setRecurrence( "1",
-                                                                                        "10",
-                                                                                        "100",
-                                                                                        "1000",
-                                                                                        "after 2 days" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setRecurrence( "1",
+                                                                                  "10",
+                                                                                  "100",
+                                                                                  "1000",
+                                                                                  "after 2 days" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1890,11 +1891,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setTags_Set() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1911,9 +1912,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "tags",
                                                                             "tag1,tag2" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1923,12 +1924,12 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setTags( "1",
-                                                                                  "10",
-                                                                                  "100",
-                                                                                  "1000",
-                                                                                  Arrays.asList( "tag1",
-                                                                                                 "tag2" ) );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setTags( "1",
+                                                                            "10",
+                                                                            "100",
+                                                                            "1000",
+                                                                            Arrays.asList( "tag1",
+                                                                                           "tag2" ) );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -1945,11 +1946,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setTags_Unset() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -1966,9 +1967,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "tags",
                                                                             "" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -1978,11 +1979,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setTags( "1",
-                                                                                  "10",
-                                                                                  "100",
-                                                                                  "1000",
-                                                                                  null );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setTags( "1",
+                                                                            "10",
+                                                                            "100",
+                                                                            "1000",
+                                                                            null );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -2051,11 +2052,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setLocation_Set() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -2072,9 +2073,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "location_id",
                                                                             "100000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -2084,11 +2085,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setLocation( "1",
-                                                                                      "10",
-                                                                                      "100",
-                                                                                      "1000",
-                                                                                      "100000" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setLocation( "1",
+                                                                                "10",
+                                                                                "100",
+                                                                                "1000",
+                                                                                "100000" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -2105,11 +2106,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setLocation_Unset() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -2124,9 +2125,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -2136,11 +2137,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setLocation( "1",
-                                                                                      "10",
-                                                                                      "100",
-                                                                                      "1000",
-                                                                                      null );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setLocation( "1",
+                                                                                "10",
+                                                                                "100",
+                                                                                "1000",
+                                                                                null );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -2209,11 +2210,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setURL_Set() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -2230,9 +2231,9 @@ public class RtmContentEditServiceFixture
                                                                             "1000" ) ),
                                                     EasyMock.eq( new Param( "url",
                                                                             "http://www.moloko.com" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -2242,11 +2243,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setURL( "1",
-                                                                                 "10",
-                                                                                 "100",
-                                                                                 "1000",
-                                                                                 "http://www.moloko.com" );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setURL( "1",
+                                                                           "10",
+                                                                           "100",
+                                                                           "1000",
+                                                                           "http://www.moloko.com" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -2263,11 +2264,11 @@ public class RtmContentEditServiceFixture
    @Test
    public void testTasks_setURL_Unset() throws RtmServiceException
    {
-      final IRtmResponseHandler< Collection< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
+      final IRtmResponseHandler< List< RtmTask > > handler = EasyMock.createStrictMock( IRtmResponseHandler.class );
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -2282,9 +2283,9 @@ public class RtmContentEditServiceFixture
                                                                             "100" ) ),
                                                     EasyMock.eq( new Param( "task_id",
                                                                             "1000" ) ) ) )
-              .andReturn( new RtmResponse< Collection< RtmTask > >( new RtmTransaction( "10000",
-                                                                                        true ),
-                                                                    EasyMock.createNiceMock( Collection.class ) ) );
+              .andReturn( new RtmResponse< List< RtmTask > >( new RtmTransaction( "10000",
+                                                                                  true ),
+                                                              EasyMock.createNiceMock( List.class ) ) );
       EasyMock.replay( rtmConnection );
       
       final IRtmConnectionFactory connFact = EasyMock.createStrictMock( IRtmConnectionFactory.class );
@@ -2294,11 +2295,11 @@ public class RtmContentEditServiceFixture
       
       final RtmContentEditService service = new RtmContentEditService( connFact,
                                                                        responseHandlerFactory );
-      final RtmResponse< Collection< RtmTask >> response = service.tasks_setURL( "1",
-                                                                                 "10",
-                                                                                 "100",
-                                                                                 "1000",
-                                                                                 null );
+      final RtmResponse< List< RtmTask >> response = service.tasks_setURL( "1",
+                                                                           "10",
+                                                                           "100",
+                                                                           "1000",
+                                                                           null );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );

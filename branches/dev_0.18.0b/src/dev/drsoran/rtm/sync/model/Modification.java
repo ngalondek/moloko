@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.model;
+package dev.drsoran.rtm.sync.model;
 
 import java.util.Collection;
 import java.util.Date;

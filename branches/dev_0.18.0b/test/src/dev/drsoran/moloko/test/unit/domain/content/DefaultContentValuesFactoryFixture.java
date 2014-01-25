@@ -40,11 +40,11 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.sync.model.Modification;
-import dev.drsoran.moloko.sync.model.SyncTime;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.sources.ContentValuesFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ContentValuesFactoryTestDataSource.TestData;
+import dev.drsoran.rtm.sync.model.Modification;
+import dev.drsoran.rtm.sync.model.SyncTime;
 
 
 @Config( manifest = Config.NONE )

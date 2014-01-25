@@ -20,10 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync;
-
-import java.util.Date;
-import java.util.List;
+package dev.drsoran.rtm.sync;
 
 import android.content.ContentProviderClient;
 
@@ -33,46 +30,30 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.RtmServiceConstants;
-import dev.drsoran.moloko.content.db.RtmContactsTable;
-import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.util.SyncDiffer;
+import dev.drsoran.moloko.content.db.RtmSettingsTable;
+import dev.drsoran.moloko.domain.model.RtmSettings;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.rtm.RtmContact;
-import dev.drsoran.rtm.RtmContacts;
 
 
-public final class RtmContactsSync
+public final class RtmSettingsSync
 {
-   private final static Class< RtmContactsSync > TAG = RtmContactsSync.class;
+   private final static Class< RtmSettingsSync > TAG = RtmSettingsSync.class;
    
    
    
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
-                                      Date lastSync,
                                       MolokoSyncResult syncResult )
    {
-      // Get all contacts from local database
-      final List< RtmContact > local_ListOfContacts = RtmContactsTable.getAllContacts( provider,
-                                                                                              null );
-      
-      if ( local_ListOfContacts == null )
-      {
-         syncResult.androidSyncResult.databaseError = true;
-         MolokoApp.Log.e( TAG, "Getting local contacts failed." );
-         return false;
-      }
-      
-      RtmContacts server_ListOfContacts = null;
+      RtmSettings server_Settings = null;
       
       try
       {
-         server_ListOfContacts = service.contacts_getList();
+         server_Settings = service.settings_getList();
       }
       catch ( ServiceException e )
       {
-         MolokoApp.Log.e( TAG, "Getting server contacts failed.", e );
+         MolokoApp.Log.e( TAG, "Getting server settings failed.", e );
          
          switch ( e.responseCode )
          {
@@ -96,15 +77,16 @@ public final class RtmContactsSync
          return false;
       }
       
-      final List< RtmContact > server_Contacts = server_ListOfContacts.getAllContacts();
+      final RtmSettings local_Settings = RtmSettingsTable.getSettings( provider );
       
-      final ContentProviderSyncableList< RtmContact > local_SyncList = new ContentProviderSyncableList< RtmContact >( local_ListOfContacts,
-                                                                                                                      RtmContact.LESS_ID );
-      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_Contacts,
-                                                                                      local_SyncList,
-                                                                                      true /* always full sync */);
-      
-      syncResult.localOps.addAll( syncOperations );
+      if ( local_Settings == null )
+      {
+         syncResult.localOps.add( server_Settings.computeContentProviderInsertOperation() );
+      }
+      else
+      {
+         syncResult.localOps.add( local_Settings.computeContentProviderUpdateOperation( server_Settings ) );
+      }
       
       return true;
    }

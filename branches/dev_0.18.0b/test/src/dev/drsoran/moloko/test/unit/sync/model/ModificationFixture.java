@@ -41,8 +41,8 @@ import org.junit.Test;
 
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
+import dev.drsoran.rtm.sync.model.Modification;
 
 
 public class ModificationFixture extends EqualsHashCodeTestCase

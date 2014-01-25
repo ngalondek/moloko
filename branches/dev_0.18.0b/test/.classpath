@@ -15,7 +15,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/robolectric-2.2-with-dependencies.jar" sourcepath="lib/robolectric-2.2-sources.jar"/>
 	<classpathentry kind="lib" path="/Moloko/libs/antlr-runtime-4.1.jar" sourcepath="C:/D/Programmierung/Tools/antlr4-4.1/runtime/Java/src/"/>
-	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-all-1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

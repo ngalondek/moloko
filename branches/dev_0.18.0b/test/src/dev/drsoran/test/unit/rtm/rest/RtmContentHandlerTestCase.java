@@ -23,12 +23,12 @@
 package dev.drsoran.test.unit.rtm.rest;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.XmlFileResource;
@@ -57,14 +57,6 @@ public abstract class RtmContentHandlerTestCase< T > extends MolokoTestCase
    
    
    @Test
-   public void testGetContentElement()
-   {
-      assertThat( createHandler().getContentElement(), is( nullValue() ) );
-   }
-   
-   
-   
-   @Test
    public void testSetContentElement()
    {
       RtmContentHandler< T > handler = createHandler();
@@ -85,7 +77,7 @@ public abstract class RtmContentHandlerTestCase< T > extends MolokoTestCase
    
    
    @Test
-   public void testSetContentElementAndNotify()
+   public void testSetContentElementAndNotify() throws SAXException
    {
       final T content = createDummyContent();
       

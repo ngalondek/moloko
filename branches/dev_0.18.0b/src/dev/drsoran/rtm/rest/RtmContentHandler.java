@@ -136,12 +136,19 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
    
    
    
-   public void setContentElementAndNotify( T content )
+   public void setContentElementAndNotify( T content ) throws SAXException
    {
       setContentElement( content );
+      notifyContentElementSet();
+   }
+   
+   
+   
+   public void notifyContentElementSet() throws SAXException
+   {
       if ( listener != null )
       {
-         listener.onContentHandled( content );
+         listener.onContentHandled( getContentElement() );
       }
    }
    

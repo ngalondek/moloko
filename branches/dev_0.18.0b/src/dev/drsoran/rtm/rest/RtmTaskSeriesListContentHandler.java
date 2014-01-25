@@ -22,30 +22,28 @@
 
 package dev.drsoran.rtm.rest;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import dev.drsoran.Iterables;
 import dev.drsoran.rtm.model.RtmTask;
 
 
 public class RtmTaskSeriesListContentHandler extends
-         RtmContentHandler< Collection< RtmTask > >
+         RtmSortedListContentHandler< RtmTask >
 {
    private final IRtmContentHandlerListener< Collection< RtmTask > > taskSeriesListener = new IRtmContentHandlerListener< Collection< RtmTask > >()
    {
       @Override
-      public void onContentHandled( Collection< RtmTask > contentElement )
+      public void onContentHandled( Collection< RtmTask > contentElement ) throws SAXException
       {
          addTasks( contentElement );
          popNestedContentHandler();
       }
    };
-   
-   private final Collection< RtmTask > tasks = new ArrayList< RtmTask >();
    
    private String activeListId;
    
@@ -53,17 +51,22 @@ public class RtmTaskSeriesListContentHandler extends
    
    
    
-   public RtmTaskSeriesListContentHandler()
+   public RtmTaskSeriesListContentHandler( Comparator< RtmTask > comparator )
    {
-      this( null );
+      this( comparator, null );
    }
    
    
    
-   public RtmTaskSeriesListContentHandler(
-      IRtmContentHandlerListener< Collection< RtmTask >> listener )
+   public RtmTaskSeriesListContentHandler( Comparator< RtmTask > comparator,
+      IRtmContentHandlerListener< List< RtmTask >> listener )
    {
-      super( listener );
+      super( comparator, listener );
+      
+      if ( comparator == null )
+      {
+         throw new IllegalArgumentException( "comparator" );
+      }
    }
    
    
@@ -115,12 +118,12 @@ public class RtmTaskSeriesListContentHandler extends
          
          if ( !expectMultipleLists )
          {
-            setContentElementAndNotify( tasks );
+            notifyContentElementSet();
          }
       }
       else if ( expectMultipleLists && "tasks".equalsIgnoreCase( qName ) )
       {
-         setContentElementAndNotify( tasks );
+         notifyContentElementSet();
       }
    }
    
@@ -128,18 +131,21 @@ public class RtmTaskSeriesListContentHandler extends
    
    private RtmTask getReferenceTask() throws SAXException
    {
-      if ( tasks.isEmpty() )
+      if ( getContentElement().isEmpty() )
       {
          throw new SAXException( "Expected at least one reference task for generated task" );
       }
       
-      return Iterables.first( tasks );
+      return getContentElement().get( 0 );
    }
    
    
    
-   private void addTasks( Collection< RtmTask > tasks )
+   private void addTasks( Collection< RtmTask > tasks ) throws SAXException
    {
-      this.tasks.addAll( tasks );
+      for ( RtmTask rtmTask : tasks )
+      {
+         addElementSorted( rtmTask );
+      }
    }
 }

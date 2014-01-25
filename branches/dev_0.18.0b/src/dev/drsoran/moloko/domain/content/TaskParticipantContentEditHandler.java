@@ -29,7 +29,7 @@ import android.content.ContentResolver;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.sync.model.Modification;
+import dev.drsoran.rtm.sync.model.Modification;
 
 
 public class TaskParticipantContentEditHandler extends

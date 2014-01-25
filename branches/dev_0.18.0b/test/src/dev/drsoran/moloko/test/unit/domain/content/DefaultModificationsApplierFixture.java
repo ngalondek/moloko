@@ -40,8 +40,8 @@ import dev.drsoran.moloko.domain.content.DefaultModificationsApplier;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.sync.model.Modification;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
+import dev.drsoran.rtm.sync.model.Modification;
 
 
 @Config( manifest = Config.NONE )

@@ -30,9 +30,7 @@ import java.util.List;
 import android.content.ContentProviderOperation;
 import android.content.SyncResult;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 
 
 public class ContentProviderSyncOperation implements
@@ -41,13 +39,13 @@ public class ContentProviderSyncOperation implements
 {
    public static class Builder
    {
-      private final Op operationType;
+      private final SyncOperationType operationType;
       
       private final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
       
       
       
-      public Builder( Op operationType )
+      public Builder( SyncOperationType operationType )
       {
          this.operationType = operationType;
       }
@@ -62,7 +60,7 @@ public class ContentProviderSyncOperation implements
       
       
       
-      public Builder( Op operationType, ContentProviderOperation operation )
+      public Builder( SyncOperationType operationType, ContentProviderOperation operation )
       {
          if ( operation == null )
             throw new NullPointerException();
@@ -73,7 +71,7 @@ public class ContentProviderSyncOperation implements
       
       
       
-      public Builder( Op operationType,
+      public Builder( SyncOperationType operationType,
          Collection< ContentProviderOperation > operations )
       {
          if ( operations == null )
@@ -163,7 +161,7 @@ public class ContentProviderSyncOperation implements
    
    private final ArrayList< ContentProviderOperation > operations;
    
-   private final Op operationType;
+   private final SyncOperationType operationType;
    
    
    
@@ -187,7 +185,7 @@ public class ContentProviderSyncOperation implements
    
    
    @Override
-   public Op getOperationType()
+   public SyncOperationType getOperationType()
    {
       return operationType;
    }
@@ -231,18 +229,18 @@ public class ContentProviderSyncOperation implements
    
    
    public static void updateSyncResult( SyncResult syncResult,
-                                        Op operationType,
+                                        SyncOperationType operationType,
                                         int count )
    {
       switch ( operationType )
       {
-         case INSERT:
+         case Insert:
             syncResult.stats.numInserts += count;
             break;
-         case UPDATE:
+         case Update:
             syncResult.stats.numUpdates += count;
             break;
-         case DELETE:
+         case Delete:
             syncResult.stats.numDeletes += count;
             break;
          default :
@@ -252,15 +250,15 @@ public class ContentProviderSyncOperation implements
    
    
    
-   public final static Builder fromType( ISyncOperation.Op type )
+   public final static Builder fromType( SyncOperationType type )
    {
       switch ( type )
       {
-         case INSERT:
+         case Insert:
             return newInsert();
-         case UPDATE:
+         case Update:
             return newUpdate();
-         case DELETE:
+         case Delete:
             return newDelete();
          default :
             return null;
@@ -286,84 +284,84 @@ public class ContentProviderSyncOperation implements
    
    public final static Builder newInsert()
    {
-      return new Builder( Op.INSERT );
+      return new Builder( SyncOperationType.Insert );
    }
    
    
    
    public final static Builder newInsert( ContentProviderOperation operation )
    {
-      return new Builder( Op.INSERT, operation );
+      return new Builder( SyncOperationType.Insert, operation );
    }
    
    
    
    public final static Builder newInsert( Collection< ContentProviderOperation > operations )
    {
-      return new Builder( Op.INSERT, operations );
+      return new Builder( SyncOperationType.Insert, operations );
    }
    
    
    
    public final static Builder newInsert( IContentProviderSyncOperation operation )
    {
-      return new Builder( Op.INSERT ).add( operation );
+      return new Builder( SyncOperationType.Insert ).add( operation );
    }
    
    
    
    public final static Builder newUpdate()
    {
-      return new Builder( Op.UPDATE );
+      return new Builder( SyncOperationType.Update );
    }
    
    
    
    public final static Builder newUpdate( ContentProviderOperation operation )
    {
-      return new Builder( Op.UPDATE, operation );
+      return new Builder( SyncOperationType.Update, operation );
    }
    
    
    
    public final static Builder newUpdate( Collection< ContentProviderOperation > operations )
    {
-      return new Builder( Op.UPDATE, operations );
+      return new Builder( SyncOperationType.Update, operations );
    }
    
    
    
    public final static Builder newUpdate( IContentProviderSyncOperation operation )
    {
-      return new Builder( Op.UPDATE ).add( operation );
+      return new Builder( SyncOperationType.Update ).add( operation );
    }
    
    
    
    public final static Builder newDelete()
    {
-      return new Builder( Op.DELETE );
+      return new Builder( SyncOperationType.Delete );
    }
    
    
    
    public final static Builder newDelete( ContentProviderOperation operation )
    {
-      return new Builder( Op.DELETE, operation );
+      return new Builder( SyncOperationType.Delete, operation );
    }
    
    
    
    public final static Builder newDelete( Collection< ContentProviderOperation > operations )
    {
-      return new Builder( Op.DELETE, operations );
+      return new Builder( SyncOperationType.Delete, operations );
    }
    
    
    
    public final static Builder newDelete( IContentProviderSyncOperation operation )
    {
-      return new Builder( Op.DELETE ).add( operation );
+      return new Builder( SyncOperationType.Delete ).add( operation );
    }
    
 }

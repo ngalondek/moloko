@@ -30,11 +30,11 @@ import java.util.Collections;
 import android.content.ContentResolver;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
-import dev.drsoran.moloko.content.ContentCompare;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.Compare;
 import dev.drsoran.rtm.RtmCalendar;
 import dev.drsoran.rtm.sync.model.Modification;
 
@@ -167,7 +167,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       
       // If we have a postponed change, this will also change the due date. So
       // the due date will not be tested on change then.
-      if ( ContentCompare.isDifferent( existingTask.getPostponedCount(),
+      if ( Compare.isDifferent( existingTask.getPostponedCount(),
                                        updatedTask.getPostponedCount() ) )
       {
          addPostponedChangedModifications( modifications,

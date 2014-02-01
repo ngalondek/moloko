@@ -22,8 +22,8 @@
 
 package dev.drsoran.rtm.rest;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 import org.xml.sax.Attributes;
@@ -33,7 +33,7 @@ import dev.drsoran.rtm.model.RtmTask;
 
 
 public class RtmTaskSeriesListContentHandler extends
-         RtmSortedListContentHandler< RtmTask >
+         RtmContentHandler< List< RtmTask > >
 {
    private final IRtmContentHandlerListener< Collection< RtmTask > > taskSeriesListener = new IRtmContentHandlerListener< Collection< RtmTask > >()
    {
@@ -51,22 +51,18 @@ public class RtmTaskSeriesListContentHandler extends
    
    
    
-   public RtmTaskSeriesListContentHandler( Comparator< RtmTask > comparator )
+   public RtmTaskSeriesListContentHandler()
    {
-      this( comparator, null );
+      this( null );
    }
    
    
    
-   public RtmTaskSeriesListContentHandler( Comparator< RtmTask > comparator,
+   public RtmTaskSeriesListContentHandler(
       IRtmContentHandlerListener< List< RtmTask >> listener )
    {
-      super( comparator, listener );
-      
-      if ( comparator == null )
-      {
-         throw new IllegalArgumentException( "comparator" );
-      }
+      super( listener );
+      setContentElement( new ArrayList< RtmTask >() );
    }
    
    
@@ -145,7 +141,7 @@ public class RtmTaskSeriesListContentHandler extends
    {
       for ( RtmTask rtmTask : tasks )
       {
-         addElementSorted( rtmTask );
+         getContentElement().add( rtmTask );
       }
    }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,30 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.operation;
+package dev.drsoran.rtm.sync.operation;
 
-import java.util.List;
-import java.util.Map;
-
-import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceException;
-import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.TimeLineResult;
-
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.domain.model.Modification;
-
-
-public interface IServerSyncOperation< T > extends ISyncOperation
+public enum SyncOperationType
 {
-   public T execute( ContentRepository rtmProvider ) throws ServiceException;
-   
-
-
-   public List< TimeLineResult.Transaction > revert( Service service );
-   
-
-
-   public Map< TimeLineMethod< T >, List< Modification > > getMethods();
-   
+   Noop, Insert, Update, Delete
 }

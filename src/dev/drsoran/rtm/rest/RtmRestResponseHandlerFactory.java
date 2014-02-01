@@ -22,7 +22,6 @@
 
 package dev.drsoran.rtm.rest;
 
-import java.util.Comparator;
 import java.util.List;
 
 import dev.drsoran.rtm.IRtmResponseHandler;
@@ -42,19 +41,18 @@ public class RtmRestResponseHandlerFactory implements
          IRtmResponseHandlerFactory
 {
    @Override
-   public IRtmResponseHandler< List< RtmTask >> createRtmTasksResponseHandler( Comparator< RtmTask > sortOrder )
+   public IRtmResponseHandler< List< RtmTask >> createRtmTasksResponseHandler()
    {
-      return new RtmRestResponseHandler< List< RtmTask >>( new RtmTaskSeriesListContentHandler( sortOrder ) );
+      return new RtmRestResponseHandler< List< RtmTask >>( new RtmTaskSeriesListContentHandler() );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< List< RtmTasksList >> createRtmTaskListsResponseHandler( Comparator< RtmTasksList > sortOrder )
+   public IRtmResponseHandler< List< RtmTasksList >> createRtmTaskListsResponseHandler()
    {
       return new RtmRestResponseHandler< List< RtmTasksList > >( new XmlCollectionTagContentHandler< RtmTasksList >( "lists",
-                                                                                                                     new RtmListContentHandler(),
-                                                                                                                     sortOrder ) );
+                                                                                                                     new RtmListContentHandler() ) );
    }
    
    
@@ -68,21 +66,19 @@ public class RtmRestResponseHandlerFactory implements
    
    
    @Override
-   public IRtmResponseHandler< List< RtmContact >> createRtmContactsResponseHandler( Comparator< RtmContact > sortOrder )
+   public IRtmResponseHandler< List< RtmContact >> createRtmContactsResponseHandler()
    {
       return new RtmRestResponseHandler< List< RtmContact > >( new XmlCollectionTagContentHandler< RtmContact >( "contacts",
-                                                                                                                 new RtmContactContentHandler(),
-                                                                                                                 sortOrder ) );
+                                                                                                                 new RtmContactContentHandler() ) );
    }
    
    
    
    @Override
-   public IRtmResponseHandler< List< RtmLocation >> createRtmLocationsResponseHandler( Comparator< RtmLocation > sortOrder )
+   public IRtmResponseHandler< List< RtmLocation >> createRtmLocationsResponseHandler()
    {
       return new RtmRestResponseHandler< List< RtmLocation > >( new XmlCollectionTagContentHandler< RtmLocation >( "locations",
-                                                                                                                   new RtmLocationContentHandler(),
-                                                                                                                   sortOrder ) );
+                                                                                                                   new RtmLocationContentHandler() ) );
    }
    
    

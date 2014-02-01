@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.service;
+package dev.drsoran.rtm.sync;
 
 import java.util.Comparator;
 
@@ -46,7 +46,7 @@ public final class RtmContentSort
          @Override
          public int compare( RtmTask lhs, RtmTask rhs )
          {
-            return lhs.getId().compareTo( rhs.getId() );
+            return RtmContentSort.compareIds( lhs.getId(), rhs.getId() );
          }
       };
    }
@@ -60,7 +60,7 @@ public final class RtmContentSort
          @Override
          public int compare( RtmTasksList lhs, RtmTasksList rhs )
          {
-            return lhs.getId().compareTo( rhs.getId() );
+            return RtmContentSort.compareIds( lhs.getId(), rhs.getId() );
          }
       };
    }
@@ -74,7 +74,7 @@ public final class RtmContentSort
          @Override
          public int compare( RtmLocation lhs, RtmLocation rhs )
          {
-            return lhs.getId().compareTo( rhs.getId() );
+            return RtmContentSort.compareIds( lhs.getId(), rhs.getId() );
          }
       };
    }
@@ -88,8 +88,25 @@ public final class RtmContentSort
          @Override
          public int compare( RtmContact lhs, RtmContact rhs )
          {
-            return lhs.getId().compareTo( rhs.getId() );
+            return RtmContentSort.compareIds( lhs.getId(), rhs.getId() );
          }
       };
+   }
+   
+   
+   
+   private static int compareIds( String lhs, String rhs )
+   {
+      if ( lhs == null && rhs != null )
+      {
+         return -1;
+      }
+      
+      if ( lhs != null && rhs == null )
+      {
+         return 1;
+      }
+      
+      return lhs.compareTo( rhs );
    }
 }

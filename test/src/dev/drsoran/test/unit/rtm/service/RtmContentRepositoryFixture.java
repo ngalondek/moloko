@@ -28,7 +28,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.easymock.EasyMock;
@@ -91,7 +90,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmContactsResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmContactsResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -131,7 +130,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTaskListsResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmTaskListsResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -175,7 +174,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -234,7 +233,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -273,7 +272,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -313,7 +312,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -374,7 +373,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -413,7 +412,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmTasksResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       
@@ -474,7 +473,7 @@ public class RtmContentRepositoryFixture
       EasyMock.replay( handler );
       
       final IRtmResponseHandlerFactory responseHandlerFactory = EasyMock.createStrictMock( IRtmResponseHandlerFactory.class );
-      EasyMock.expect( responseHandlerFactory.createRtmLocationsResponseHandler( EasyMock.notNull( Comparator.class ) ) )
+      EasyMock.expect( responseHandlerFactory.createRtmLocationsResponseHandler() )
               .andReturn( handler );
       EasyMock.replay( responseHandlerFactory );
       

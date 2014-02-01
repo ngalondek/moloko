@@ -22,9 +22,6 @@
 
 package dev.drsoran.moloko.sync.operation;
 
-import com.mdt.rtm.data.RtmTaskList;
-
-import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
 
 
 public class TaskServerSyncOperation extends ServerSyncOperation< RtmTaskList >

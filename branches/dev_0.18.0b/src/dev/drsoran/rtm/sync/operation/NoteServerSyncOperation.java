@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.sync.operation;
 
-import com.mdt.rtm.data.RtmTaskNote;
 
 
 public class NoteServerSyncOperation extends ServerSyncOperation< RtmTaskNote >

@@ -22,7 +22,7 @@
 
 package dev.drsoran.rtm.sync;
 
-import java.util.Collection;
+import java.util.List;
 
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
@@ -34,23 +34,60 @@ import dev.drsoran.rtm.model.RtmTasksList;
 
 public interface IRtmSyncPartner
 {
-   Collection< RtmTasksList > getTasksListsModifiedSince( long millisUtc );
+   List< RtmTasksList > getAllTasksLists( long modifiedSinceMsUtc );
    
    
    
-   Collection< RtmTask > getTasksModifiedSince( long millisUtc );
+   void insertTasksList( RtmTasksList tasksList );
    
    
    
-   Collection< RtmNote > getNotesModifiedSince( long millisUtc );
+   void updateTasksList( RtmTasksList currentTasksList,
+                         RtmTasksList updatedTasksList );
    
    
    
-   Collection< RtmLocation > getLocations();
+   void deleteTasksList( RtmTasksList tasksList );
    
    
    
-   Collection< RtmContact > getContacts();
+   List< RtmTask > getAllTasks( long modifiedSinceMsUtc );
+   
+   
+   
+   void insertTask( RtmTask task );
+   
+   
+   
+   void updateTask( RtmTask currentTask, RtmTask updatedTask );
+   
+   
+   
+   void deleteTask( RtmTask task );
+   
+   
+   
+   List< RtmNote > getAllNotes( long modifiedSinceMsUtc );
+   
+   
+   
+   void insertNote( RtmNote note );
+   
+   
+   
+   void updateNote( RtmNote currentNote, RtmNote updatedNote );
+   
+   
+   
+   void deleteNote( RtmNote note );
+   
+   
+   
+   List< RtmLocation > getAllLocations();
+   
+   
+   
+   List< RtmContact > getAllContacts();
    
    
    

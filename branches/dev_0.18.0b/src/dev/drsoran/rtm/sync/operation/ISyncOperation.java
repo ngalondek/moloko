@@ -20,17 +20,9 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.operation;
+package dev.drsoran.rtm.sync.operation;
 
 public interface ISyncOperation
 {
-   public enum Op
-   {
-      NOOP, INSERT, UPDATE, DELETE
-   }
-   
-   
-
-   public Op getOperationType();
-   
+   SyncOperationType getOperationType();
 }

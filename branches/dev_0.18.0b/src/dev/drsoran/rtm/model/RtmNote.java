@@ -22,7 +22,6 @@
 
 package dev.drsoran.rtm.model;
 
-import dev.drsoran.Strings;
 
 
 public class RtmNote
@@ -42,11 +41,6 @@ public class RtmNote
    public RtmNote( String id, long createdMillisUtc, long modifiedMillisUtc,
       String title, String text )
    {
-      if ( Strings.isNullOrEmpty( id ) )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
       if ( createdMillisUtc == RtmConstants.NO_TIME )
       {
          throw new IllegalArgumentException( "createdMillisUtc" );

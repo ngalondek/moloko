@@ -42,7 +42,6 @@ import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.rest.IRtmContentHandlerListener;
 import dev.drsoran.rtm.rest.RtmContentHandler;
 import dev.drsoran.rtm.rest.RtmTaskSeriesListContentHandler;
-import dev.drsoran.rtm.service.RtmContentSort;
 
 
 public class RtmTaskSeriesListContentHandlerFixture extends
@@ -221,7 +220,7 @@ public class RtmTaskSeriesListContentHandlerFixture extends
    @Override
    protected RtmContentHandler< List< RtmTask > > createHandler()
    {
-      return new RtmTaskSeriesListContentHandler( RtmContentSort.getRtmTaskIdSort() );
+      return new RtmTaskSeriesListContentHandler();
    }
    
    
@@ -229,8 +228,7 @@ public class RtmTaskSeriesListContentHandlerFixture extends
    @Override
    protected RtmContentHandler< List< RtmTask > > createHandlerWithListener( IRtmContentHandlerListener< List< RtmTask > > listener )
    {
-      return new RtmTaskSeriesListContentHandler( RtmContentSort.getRtmTaskIdSort(),
-                                                  listener );
+      return new RtmTaskSeriesListContentHandler( listener );
    }
    
    

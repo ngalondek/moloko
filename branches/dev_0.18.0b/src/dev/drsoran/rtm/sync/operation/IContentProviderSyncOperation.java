@@ -25,7 +25,7 @@ package dev.drsoran.moloko.sync.operation;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
-import dev.drsoran.moloko.content.ContentRepository;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 
 
 public interface IContentProviderSyncOperation extends ISyncOperation

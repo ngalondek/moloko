@@ -24,11 +24,6 @@ package dev.drsoran.moloko.sync.operation;
 
 import java.util.Collections;
 
-import com.mdt.rtm.data.RtmList;
-
-import dev.drsoran.moloko.sync.elements.SyncRtmList;
-import dev.drsoran.moloko.sync.elements.SyncRtmListsList;
-
 
 public class RtmListServerSyncOperation extends ServerSyncOperation< RtmList >
 {

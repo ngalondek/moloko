@@ -35,30 +35,24 @@ import java.util.Set;
 import android.content.ContentProviderOperation;
 
 import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.TimeLineResult;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.RtmServiceConstants;
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.domain.model.Modification;
-import dev.drsoran.moloko.domain.model.ModificationsProviderPart;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 
 
-public class ServerSyncOperation< T > implements IServerSyncOperation< T >
+public class ServerSyncOperation< T > implements IRtmSyncOperation< T >
 {
    public static class Builder< T >
    {
-      private final Op operationType;
+      private final SyncOperationType operationType;
       
       private final Map< TimeLineMethod< T >, List< Modification > > methods = new HashMap< TimeLineMethod< T >, List< Modification > >();
       
       
       
-      public Builder( Op operationType )
+      public Builder( SyncOperationType operationType )
       {
          this.operationType = operationType;
       }
@@ -73,7 +67,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
       
       
-      public Builder( Op operationType, TimeLineMethod< T > method,
+      public Builder( SyncOperationType operationType, TimeLineMethod< T > method,
          Modification modification )
       {
          this( operationType );
@@ -117,7 +111,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
       
       
-      public Builder< T > add( IServerSyncOperation< T > operation )
+      public Builder< T > add( IRtmSyncOperation< T > operation )
       {
          if ( !( operation instanceof INoopSyncOperation ) )
          {
@@ -131,7 +125,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
       
       
-      public < O extends IServerSyncOperation< T >> IServerSyncOperation< T > build( Class< O > opType )
+      public < O extends IRtmSyncOperation< T >> IRtmSyncOperation< T > build( Class< O > opType )
       {
          if ( methods.size() == 0 )
          {
@@ -177,7 +171,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       }
    }
    
-   private final Op operationType;
+   private final SyncOperationType operationType;
    
    private final Map< TimeLineMethod< T >, List< Modification > > serviceMethods;
    
@@ -308,7 +302,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    
    @Override
-   public Op getOperationType()
+   public SyncOperationType getOperationType()
    {
       return operationType;
    }
@@ -330,15 +324,15 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    
    
-   public final static < T > Builder< T > fromType( ISyncOperation.Op type )
+   public final static < T > Builder< T > fromType( SyncOperationType type )
    {
       switch ( type )
       {
-         case INSERT:
+         case Insert:
             return newInsert();
-         case UPDATE:
+         case Update:
             return newUpdate();
-         case DELETE:
+         case Delete:
             return newDelete();
          default :
             return null;
@@ -349,14 +343,14 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    public final static < T > Builder< T > newInsert()
    {
-      return new Builder< T >( Op.INSERT );
+      return new Builder< T >( SyncOperationType.Insert );
    }
    
    
    
-   public final static < T > Builder< T > newInsert( IServerSyncOperation< T > operation )
+   public final static < T > Builder< T > newInsert( IRtmSyncOperation< T > operation )
    {
-      return new Builder< T >( Op.INSERT ).add( operation );
+      return new Builder< T >( SyncOperationType.Insert ).add( operation );
    }
    
    
@@ -364,21 +358,21 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    public final static < T > Builder< T > newInsert( TimeLineMethod< T > method,
                                                      Modification modification )
    {
-      return new Builder< T >( Op.INSERT, method, modification );
+      return new Builder< T >( SyncOperationType.Insert, method, modification );
    }
    
    
    
    public final static < T > Builder< T > newUpdate()
    {
-      return new Builder< T >( Op.UPDATE );
+      return new Builder< T >( SyncOperationType.Update );
    }
    
    
    
-   public final static < T > Builder< T > newUpdate( IServerSyncOperation< T > operation )
+   public final static < T > Builder< T > newUpdate( IRtmSyncOperation< T > operation )
    {
-      return new Builder< T >( Op.UPDATE ).add( operation );
+      return new Builder< T >( SyncOperationType.Update ).add( operation );
    }
    
    
@@ -386,27 +380,27 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    public final static < T > Builder< T > newUpdate( TimeLineMethod< T > method,
                                                      Modification modification )
    {
-      return new Builder< T >( Op.UPDATE, method, modification );
+      return new Builder< T >( SyncOperationType.Update, method, modification );
    }
    
    
    
    public final static < T > Builder< T > newDelete()
    {
-      return new Builder< T >( Op.DELETE );
+      return new Builder< T >( SyncOperationType.Delete );
    }
    
    
    
-   public final static < T > Builder< T > newDelete( IServerSyncOperation< T > operation )
+   public final static < T > Builder< T > newDelete( IRtmSyncOperation< T > operation )
    {
-      return new Builder< T >( Op.DELETE ).add( operation );
+      return new Builder< T >( SyncOperationType.Delete ).add( operation );
    }
    
    
    
    public final static < T > Builder< T > newDelete( TimeLineMethod< T > method )
    {
-      return new Builder< T >( Op.DELETE, method, null );
+      return new Builder< T >( SyncOperationType.Delete, method, null );
    }
 }

@@ -42,7 +42,7 @@ public class RtmTasksListFixture extends MolokoTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testRtmTasksList_NoId()
    {
       new RtmTasksList( RtmConstants.NO_ID,

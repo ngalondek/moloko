@@ -155,7 +155,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.add",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -180,7 +180,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.complete",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -207,7 +207,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.uncomplete",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -234,7 +234,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.delete",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -262,7 +262,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.movePriority",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -295,7 +295,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.moveTo",
                                                                                    timelineParam,
                                                                                    new Param( "from_list_id",
@@ -324,7 +324,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.postpone",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -357,7 +357,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< List< RtmTask > > response;
       if ( dueMillisUtc == RtmConstants.NO_TIME )
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setDueDate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -367,7 +367,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setDueDate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -402,7 +402,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< List< RtmTask > > response;
       if ( Strings.isNullOrEmpty( estimate ) )
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setEstimate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -412,7 +412,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setEstimate",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -443,7 +443,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.setName",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -473,7 +473,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.setPriority",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -507,7 +507,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< List< RtmTask > > response;
       if ( Strings.isNullOrEmpty( repeat ) )
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setRecurrence",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -517,7 +517,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setRecurrence",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -556,7 +556,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
       final IRtmConnection rtmConnection = connectionFactory.createRtmConnection();
-      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+      final RtmResponse< List< RtmTask > > response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                                                    "rtm.tasks.setTags",
                                                                                    timelineParam,
                                                                                    new Param( "list_id",
@@ -590,7 +590,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< List< RtmTask > > response;
       if ( Strings.isNullOrEmpty( locationId ) )
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setLocation",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -600,7 +600,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setLocation",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -634,7 +634,7 @@ public class RtmContentEditService implements IRtmContentEditService
       final RtmResponse< List< RtmTask > > response;
       if ( Strings.isNullOrEmpty( url ) )
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setURL",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),
@@ -644,7 +644,7 @@ public class RtmContentEditService implements IRtmContentEditService
       }
       else
       {
-         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler( RtmContentSort.getRtmTaskIdSort() ),
+         response = rtmConnection.executeMethod( responseHandlerFactory.createRtmTasksResponseHandler(),
                                                  "rtm.tasks.setURL",
                                                  timelineParam,
                                                  new Param( "list_id", listId ),

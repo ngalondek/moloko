@@ -27,10 +27,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.ModificationColumns;
-import dev.drsoran.moloko.content.ContentCompare;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.rtm.Compare;
 import dev.drsoran.rtm.sync.model.Modification;
 
 
@@ -125,7 +125,7 @@ public class DefaultModificationsApplier implements IModificationsApplier
    {
       // Check if the new value equals the synced value from the existing modification, if so the
       // user has reverted his change and we delete the modification.
-      if ( ContentCompare.isDifferent( CursorUtils.getOptString( existingModification,
+      if ( Compare.isDifferent( CursorUtils.getOptString( existingModification,
                                                                  ModificationColumns.SYNCED_VALUE_IDX ),
                                        newModification.getNewValue() ) )
       {

@@ -22,10 +22,7 @@
 
 package dev.drsoran.rtm.sync;
 
-import java.util.Collection;
-
 import dev.drsoran.rtm.RtmServiceException;
-import dev.drsoran.rtm.model.RtmTasksList;
 import dev.drsoran.rtm.service.IRtmContentEditService;
 import dev.drsoran.rtm.service.IRtmContentRepository;
 
@@ -102,13 +99,8 @@ public class RtmSyncDriver implements IRtmSyncDriver
    private void performIncomingRtmTasksListSync( IRtmSyncPartner syncPartner,
                                                  SyncTime syncTime ) throws RtmServiceException
    {
-      final Collection< RtmTasksList > tasksListsModified = syncPartner.getTasksListsModifiedSince( syncTime.getLastSyncOutMillis() );
-      final Collection< RtmTasksList > rtmTasksLists = contentRepository.lists_getList();
-      
-      final IRtmSyncHandler< RtmTasksList > tasksListsSyncHandler = syncHandlerFactory.createRtmTasksListsSyncHandler();
-      
-      tasksListsSyncHandler.handleIncomingSync( tasksListsModified,
-                                                rtmTasksLists );
+      final IRtmSyncHandler tasksListsSyncHandler = syncHandlerFactory.createRtmTasksListsSyncHandler( RtmContentSort.getRtmTasksListIdSort() );
+      tasksListsSyncHandler.handleIncomingSync( null, syncTime.getLastSyncInMillis() );
    }
    
    

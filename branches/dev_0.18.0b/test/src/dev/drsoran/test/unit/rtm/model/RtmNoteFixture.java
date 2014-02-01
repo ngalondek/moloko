@@ -44,18 +44,10 @@ public class RtmNoteFixture extends MolokoTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testNoteNullId()
    {
       new RtmNote( null, NOW, NEVER, "title", "text" );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testNoteEmptyId()
-   {
-      new RtmNote( "", NOW, NEVER, "title", "text" );
    }
    
    

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2014 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,14 +20,31 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.sync;
+package dev.drsoran.rtm.sync.operation;
 
-import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
-import dev.drsoran.rtm.model.RtmTasksList;
+import com.mdt.rtm.Service;
+import com.mdt.rtm.TimeLineMethod;
+
+import dev.drsoran.moloko.domain.services.ContentRepository;
+import dev.drsoran.rtm.RtmServiceException;
 
 
-public interface IRtmSyncHandlerFactory
+public interface IRtmSyncOperation< T >
 {
-   public IRtmSyncHandler createRtmTasksListsSyncHandler( Comparator< RtmTasksList > comparator );
+   SyncOperationType getOperationType();
+   
+   
+   
+   T execute( ContentRepository rtmProvider ) throws RtmServiceException;
+   
+   
+   
+   List< TimeLineResult.Transaction > revert( Service service );
+   
+   
+   
+   Map< TimeLineMethod< T >, List< Modification > > getMethods();
 }

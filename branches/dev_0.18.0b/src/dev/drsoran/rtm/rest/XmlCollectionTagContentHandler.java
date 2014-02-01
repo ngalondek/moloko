@@ -22,7 +22,7 @@
 
 package dev.drsoran.rtm.rest;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.xml.sax.Attributes;
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
 
 
 public class XmlCollectionTagContentHandler< T > extends
-         RtmSortedListContentHandler< T > implements
+         RtmContentHandler< List< T >> implements
          IRtmContentHandlerListener< T >
 {
    private final String xmlCollectionTag;
@@ -40,24 +40,24 @@ public class XmlCollectionTagContentHandler< T > extends
    
    
    public XmlCollectionTagContentHandler( String xmlCollectionTag,
-      RtmContentHandler< T > collectionElementHandler,
-      Comparator< T > comparator )
+      RtmContentHandler< T > collectionElementHandler )
    {
-      this( xmlCollectionTag, collectionElementHandler, comparator, null );
+      this( xmlCollectionTag, collectionElementHandler, null );
    }
    
    
    
    public XmlCollectionTagContentHandler( String xmlCollectionTag,
       RtmContentHandler< T > collectionElementHandler,
-      Comparator< T > comparator,
       IRtmContentHandlerListener< List< T >> listener )
    {
-      super( comparator, listener );
+      super( listener );
       
       this.collectionElementHandler = collectionElementHandler;
       this.collectionElementHandler.setListener( this );
       this.xmlCollectionTag = xmlCollectionTag;
+      
+      setContentElement( new ArrayList< T >() );
    }
    
    
@@ -99,6 +99,6 @@ public class XmlCollectionTagContentHandler< T > extends
    @Override
    public void onContentHandled( T collectionElement ) throws SAXException
    {
-      addElementSorted( collectionElement );
+      getContentElement().add( collectionElement );
    }
 }

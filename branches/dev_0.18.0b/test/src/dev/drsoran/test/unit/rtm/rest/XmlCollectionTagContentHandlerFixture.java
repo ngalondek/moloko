@@ -22,8 +22,8 @@
 
 package dev.drsoran.test.unit.rtm.rest;
 
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import org.easymock.EasyMock;
@@ -38,7 +38,6 @@ import dev.drsoran.rtm.rest.XmlCollectionTagContentHandler;
 
 public class XmlCollectionTagContentHandlerFixture extends MolokoTestCase
 {
-   
    @Test
    public void testCollection() throws SAXException
    {
@@ -57,7 +56,7 @@ public class XmlCollectionTagContentHandlerFixture extends MolokoTestCase
       handler.endElement( null, null, "int" );
       handler.endElement( null, null, "ints" );
       
-      assertThat( handler.getContentElement(), contains( 1, 2 ) );
+      assertThat( handler.getContentElement(), containsInAnyOrder( 1, 2 ) );
    }
    
    
@@ -94,7 +93,6 @@ public class XmlCollectionTagContentHandlerFixture extends MolokoTestCase
    {
       new XmlCollectionTagContentHandler< Integer >( "int",
                                                      EasyMock.createNiceMock( RtmContentHandler.class ),
-                                                     null,
                                                      EasyMock.createNiceMock( IRtmContentHandlerListener.class ) );
    }
 }

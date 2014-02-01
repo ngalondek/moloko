@@ -46,11 +46,6 @@ public class RtmTasksList
    public RtmTasksList( String id, int position, boolean deleted,
       boolean locked, boolean archived, String name, String smartFilter )
    {
-      if ( id == RtmConstants.NO_ID )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
       if ( Strings.isNullOrEmpty( name ) )
       {
          throw new IllegalArgumentException( "name" );

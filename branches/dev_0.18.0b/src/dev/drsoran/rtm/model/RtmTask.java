@@ -85,16 +85,6 @@ public class RtmTask
       Collection< String > tags, Collection< RtmNote > notes,
       Collection< RtmContact > participants )
    {
-      if ( id == RtmConstants.NO_ID )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
-      if ( taskSeriesId == RtmConstants.NO_ID )
-      {
-         throw new IllegalArgumentException( "taskSeriesId" );
-      }
-      
       if ( createdMillisUtc == RtmConstants.NO_TIME )
       {
          throw new IllegalArgumentException( "createdMillisUtc" );

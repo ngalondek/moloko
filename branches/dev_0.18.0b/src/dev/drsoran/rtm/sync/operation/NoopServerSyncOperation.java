@@ -27,17 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.TimeLineResult;
 
-import dev.drsoran.moloko.content.ContentRepository;
-import dev.drsoran.moloko.domain.model.Modification;
-import dev.drsoran.moloko.domain.model.ModificationSet;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 
 
 public final class NoopServerSyncOperation< T > implements
-         IServerSyncOperation< T >, INoopSyncOperation
+         IRtmSyncOperation< T >, INoopSyncOperation
 {
    
    private NoopServerSyncOperation()
@@ -46,9 +42,9 @@ public final class NoopServerSyncOperation< T > implements
    
 
 
-   public Op getOperationType()
+   public SyncOperationType getOperationType()
    {
-      return ISyncOperation.Op.NOOP;
+      return SyncOperationType.Noop;
    }
    
 

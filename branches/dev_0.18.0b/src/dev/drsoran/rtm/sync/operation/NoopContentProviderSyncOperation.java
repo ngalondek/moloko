@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
-import dev.drsoran.moloko.content.ContentRepository;
+import dev.drsoran.moloko.domain.services.ContentRepository;
 
 
 public final class NoopContentProviderSyncOperation implements
@@ -50,9 +50,9 @@ public final class NoopContentProviderSyncOperation implements
    
 
 
-   public Op getOperationType()
+   public SyncOperationType getOperationType()
    {
-      return ISyncOperation.Op.NOOP;
+      return SyncOperationType.Noop;
    }
    
 

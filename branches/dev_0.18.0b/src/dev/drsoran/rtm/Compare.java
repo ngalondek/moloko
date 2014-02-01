@@ -20,11 +20,11 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.content;
+package dev.drsoran.rtm;
 
-public final class ContentCompare
+public final class Compare
 {
-   private ContentCompare()
+   private Compare()
    {
       throw new AssertionError();
    }

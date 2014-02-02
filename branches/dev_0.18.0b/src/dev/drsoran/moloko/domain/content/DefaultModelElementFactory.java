@@ -33,11 +33,9 @@ import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
-import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
-import dev.drsoran.moloko.content.Columns.SyncColumns;
 import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
@@ -54,13 +52,15 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.Modification;
+import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
+import dev.drsoran.moloko.sync.db.TableColumns.TimesColumns;
 import dev.drsoran.rtm.model.Priority;
-import dev.drsoran.rtm.sync.model.Modification;
-import dev.drsoran.rtm.sync.model.SyncTime;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 public class DefaultModelElementFactory implements IModelElementFactory

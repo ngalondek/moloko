@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.unit.sync.model;
+package dev.drsoran.moloko.test.unit.sync;
 
 import static dev.drsoran.moloko.test.IterableAsserts.assertCount;
 import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
@@ -41,8 +41,8 @@ import org.junit.Test;
 
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.sync.Modification;
 import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
-import dev.drsoran.rtm.sync.model.Modification;
 
 
 public class ModificationFixture extends EqualsHashCodeTestCase

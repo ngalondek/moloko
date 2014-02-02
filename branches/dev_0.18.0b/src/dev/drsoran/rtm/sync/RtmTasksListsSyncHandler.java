@@ -22,12 +22,17 @@
 
 package dev.drsoran.rtm.sync;
 
+import static dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties.NAME;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.RtmTransaction;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmTasksList;
 import dev.drsoran.rtm.service.IRtmContentEditService;
@@ -62,71 +67,80 @@ public class RtmTasksListsSyncHandler implements IRtmSyncHandler
    
    
    @Override
-   public void handleIncomingSync( IRtmContentRepository contentRepository,
-                                   long lastInSyncMillis ) throws RtmServiceException
+   public RtmSyncResult handleIncomingSync( IRtmContentRepository contentRepository,
+                                            long lastInSyncMillis )
    {
       if ( contentRepository == null )
       {
          throw new IllegalArgumentException( "contentRepository" );
       }
       
-      final List< RtmTasksList > syncPartnerElements = syncPartner.getAllTasksLists( RtmConstants.NO_TIME );
-      final List< RtmTasksList > rtmElements = contentRepository.lists_getList();
-      
-      sortLists( syncPartnerElements, rtmElements );
-      
-      for ( int i = 0, count = rtmElements.size(); i < count; i++ )
+      try
       {
-         final RtmTasksList rtmTasksList = rtmElements.get( i );
-         final int posPartnerList = Collections.binarySearch( syncPartnerElements,
-                                                              rtmTasksList,
-                                                              comparator );
-         RtmTasksList syncPartnerList = null;
-         if ( posPartnerList > -1 )
-         {
-            syncPartnerList = syncPartnerElements.get( posPartnerList );
-         }
+         final List< RtmTasksList > syncPartnerElements = syncPartner.getTasksLists( RtmConstants.NO_TIME );
+         final List< RtmTasksList > rtmElements = contentRepository.lists_getList();
          
-         // Check if the RTM element is not deleted
-         if ( !rtmTasksList.isDeleted() )
+         sortLists( syncPartnerElements, rtmElements );
+         
+         for ( int i = 0, count = rtmElements.size(); i < count; i++ )
          {
-            // INSERT: The server element is not contained in the partner list.
-            if ( syncPartnerList == null )
+            final RtmTasksList rtmTasksList = rtmElements.get( i );
+            final int posPartnerList = Collections.binarySearch( syncPartnerElements,
+                                                                 rtmTasksList,
+                                                                 comparator );
+            RtmTasksList syncPartnerList = null;
+            if ( posPartnerList > -1 )
             {
-               syncPartner.insertTasksList( rtmTasksList );
+               syncPartnerList = syncPartnerElements.get( posPartnerList );
             }
             
-            // UPDATE: The RTM element is contained in the partner list.
+            // Check if the RTM element is not deleted
+            if ( !rtmTasksList.isDeleted() )
+            {
+               // INSERT: The server element is not contained in the partner list.
+               if ( syncPartnerList == null )
+               {
+                  syncPartner.insertTasksList( rtmTasksList );
+               }
+               
+               // UPDATE: The RTM element is contained in the partner list.
+               else
+               {
+                  syncPartner.updateTasksList( syncPartnerList, rtmTasksList );
+                  syncPartnerElements.remove( posPartnerList );
+               }
+            }
             else
             {
-               syncPartner.updateTasksList( syncPartnerList, rtmTasksList );
-               syncPartnerElements.remove( posPartnerList );
+               // DELETE: The RTM element is contained in the partner list and is deleted at RTM side.
+               if ( syncPartnerList != null )
+               {
+                  syncPartner.deleteTasksList( syncPartnerList );
+                  syncPartnerElements.remove( posPartnerList );
+               }
             }
-         }
-         else
-         {
-            // DELETE: The RTM element is contained in the partner list and is deleted at RTM side.
-            if ( syncPartnerList != null )
+            
+            // DELETE: The partner list elements are and no longer at RTM side.
+            for ( RtmTasksList untouchedSyncPartnerList : syncPartnerElements )
             {
-               syncPartner.deleteTasksList( syncPartnerList );
-               syncPartnerElements.remove( posPartnerList );
+               syncPartner.deleteTasksList( untouchedSyncPartnerList );
             }
          }
          
-         // DELETE: The partner list elements are and no longer at RTM side.
-         for ( RtmTasksList untouchedSyncPartnerList : syncPartnerElements )
-         {
-            syncPartner.deleteTasksList( untouchedSyncPartnerList );
-         }
+         return RtmSyncResult.newSucceeded();
+      }
+      catch ( RtmServiceException e )
+      {
+         return RtmSyncResult.newFailed( e );
       }
    }
    
    
    
    @Override
-   public void handleOutgoingSync( IRtmContentEditService contentEditService,
-                                   String timelineId,
-                                   long lastOutSyncMillis ) throws RtmServiceException
+   public RtmSyncResult handleOutgoingSync( IRtmContentEditService contentEditService,
+                                            String timelineId,
+                                            long lastOutSyncMillis )
    {
       if ( contentEditService == null )
       {
@@ -138,56 +152,104 @@ public class RtmTasksListsSyncHandler implements IRtmSyncHandler
          throw new IllegalArgumentException( "timelineId" );
       }
       
-      final List< RtmTasksList > syncPartnerElements = syncPartner.getAllTasksLists( lastOutSyncMillis );
+      final Collection< RtmTransaction > transactions = new ArrayList< RtmTransaction >();
       
-      for ( int i = 0, count = syncPartnerElements.size(); i < count; i++ )
+      try
       {
-         final RtmTasksList syncPartnerTasksList = syncPartnerElements.get( i );
-         RtmResponse< RtmTasksList > rtmResponse = null;
+         final List< RtmTasksList > syncPartnerElements = syncPartner.getTasksLists( lastOutSyncMillis );
          
-         try
+         for ( int i = 0, count = syncPartnerElements.size(); i < count; i++ )
          {
-            // Check if the partner element is not deleted
-            if ( !syncPartnerTasksList.isDeleted() )
+            final RtmTasksList syncPartnerTasksList = syncPartnerElements.get( i );
+            RtmResponse< RtmTasksList > rtmResponse = null;
+            
+            try
             {
-               // INSERT: The partner element is new.
-               if ( syncPartnerTasksList.getId() == RtmConstants.NO_ID )
+               // Check if the partner element is not deleted
+               if ( !syncPartnerTasksList.isDeleted() )
                {
-                  rtmResponse = contentEditService.lists_add( timelineId,
-                                                              syncPartnerTasksList.getName(),
-                                                              syncPartnerTasksList.getSmartFilter() );
+                  // INSERT: The partner element is new.
+                  if ( syncPartnerTasksList.getId() == RtmConstants.NO_ID )
+                  {
+                     rtmResponse = contentEditService.lists_add( timelineId,
+                                                                 syncPartnerTasksList.getName(),
+                                                                 syncPartnerTasksList.getSmartFilter() );
+                     addIfTransactional( transactions, rtmResponse );
+                  }
+                  
+                  // UPDATE: The partner element is already known at RTM.
+                  else
+                  {
+                     rtmResponse = sendModifications( contentEditService,
+                                                      timelineId,
+                                                      syncPartnerTasksList );
+                     addIfTransactional( transactions, rtmResponse );
+                  }
                }
-               
-               // UPDATE: The partner element is already present.
-               else
+               else if ( syncPartnerTasksList.getId() != RtmConstants.NO_ID )
                {
-                  rtmResponse = contentEditService.lists_setName( timelineId,
-                                                                  syncPartnerTasksList.getId(),
-                                                                  syncPartnerTasksList.getName() );
+                  // DELETE: The partner element is deleted and not new.
+                  rtmResponse = contentEditService.lists_delete( timelineId,
+                                                                 syncPartnerTasksList.getId() );
+                  addIfTransactional( transactions, rtmResponse );
                }
             }
-            else if ( syncPartnerTasksList.getId() != RtmConstants.NO_ID )
+            catch ( RtmServiceException e )
             {
-               // DELETE: The partner element is deleted and not new.
-               rtmResponse = contentEditService.lists_delete( timelineId,
-                                                              syncPartnerTasksList.getId() );
+               // We may get an invalid list ID error from RTM if the list has been deleted
+               // on RTM side by another partner.
+               if ( e.getResponseCode() != RtmErrorCodes.LIST_INVALID_ID )
+               {
+                  throw e;
+               }
             }
-         }
-         catch ( RtmServiceException e )
-         {
-            // We may get an invalid list ID error from RTM if the list has been deleted
-            // on RTM side by another partner.
-            if ( e.getResponseCode() != RtmErrorCodes.LIST_INVALID_ID )
+            
+            if ( rtmResponse != null )
             {
-               throw e;
+               syncPartner.updateTasksList( syncPartnerTasksList,
+                                            rtmResponse.getElement() );
             }
          }
          
-         if ( rtmResponse != null )
+         return RtmSyncResult.newSucceeded( transactions );
+      }
+      catch ( Exception e )
+      {
+         return RtmSyncResult.newFailed( e, transactions );
+      }
+   }
+   
+   
+   
+   private RtmResponse< RtmTasksList > sendModifications( IRtmContentEditService contentEditService,
+                                                          String timelineId,
+                                                          RtmTasksList syncPartnerTasksList ) throws RtmServiceException
+   {
+      RtmResponse< RtmTasksList > rtmResponse = null;
+      
+      final List< IModification > modifications = syncPartner.getModificationsOfTasksList( syncPartnerTasksList.getId() );
+      
+      for ( IModification modification : modifications )
+      {
+         if ( NAME.equalsIgnoreCase( modification.getPropertyName() ) )
          {
-            syncPartner.updateTasksList( syncPartnerTasksList,
-                                         rtmResponse.getElement() );
+            rtmResponse = contentEditService.lists_setName( timelineId,
+                                                            syncPartnerTasksList.getId(),
+                                                            syncPartnerTasksList.getName() );
          }
+      }
+      
+      return rtmResponse;
+   }
+   
+   
+   
+   private void addIfTransactional( Collection< RtmTransaction > transactions,
+                                    RtmResponse< RtmTasksList > rtmResponse )
+   {
+      if ( rtmResponse.isTransactional() )
+      {
+         transactions.add( rtmResponse.getTransaction() );
       }
    }
    

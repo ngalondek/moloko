@@ -20,21 +20,21 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.sync.db;
+package dev.drsoran.moloko.sync.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.AbstractTable;
-import dev.drsoran.rtm.sync.db.TableColumns.CreationsColumns;
+import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
 
 
-class DeletionsTable extends AbstractTable
+class ModificationsTable extends AbstractTable
 {
-   public final static String TABLE_NAME = "deletions";
+   public final static String TABLE_NAME = "modifications";
    
    
    
-   public DeletionsTable( SQLiteDatabase database )
+   public ModificationsTable( SQLiteDatabase database )
    {
       super( database, TABLE_NAME );
    }
@@ -49,13 +49,19 @@ class DeletionsTable extends AbstractTable
       builder.append( "CREATE TABLE " );
       builder.append( TABLE_NAME );
       builder.append( " ( " );
-      builder.append( CreationsColumns._ID );
-      builder.append( " INTEGER NOT NULL CONSTRAINT PK_CREATIONS PRIMARY KEY AUTOINCREMENT, " );
-      builder.append( CreationsColumns.SRC_ENTITY_URI );
+      builder.append( ModificationColumns._ID );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_MODIFICATIONS PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( ModificationColumns.SRC_ENTITY_URI );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( CreationsColumns.DST_ENTITY_URI );
+      builder.append( ModificationColumns.DST_ENTITY_URI );
       builder.append( " TEXT NOT NULL, " );
-      builder.append( CreationsColumns.TIMESTAMP );
+      builder.append( ModificationColumns.ATTRIBUTE );
+      builder.append( " TEXT NOT NULL, " );
+      builder.append( ModificationColumns.NEW_VALUE );
+      builder.append( " TEXT, " );
+      builder.append( ModificationColumns.SYNCED_VALUE );
+      builder.append( " TEXT, " );
+      builder.append( ModificationColumns.TIMESTAMP );
       builder.append( " INTEGER NOT NULL" );
       builder.append( ");" );
       
@@ -67,7 +73,7 @@ class DeletionsTable extends AbstractTable
    @Override
    public String getDefaultSortOrder()
    {
-      return CreationsColumns.DEFAULT_SORT_ORDER;
+      return ModificationColumns.DEFAULT_SORT_ORDER;
    }
    
    
@@ -75,6 +81,6 @@ class DeletionsTable extends AbstractTable
    @Override
    public String[] getProjection()
    {
-      return CreationsColumns.PROJECTION;
+      return ModificationColumns.PROJECTION;
    }
 }

@@ -30,7 +30,7 @@ import android.content.ContentResolver;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.rtm.sync.model.Modification;
+import dev.drsoran.moloko.sync.Modification;
 
 
 public class TasksListContentEditHandler extends

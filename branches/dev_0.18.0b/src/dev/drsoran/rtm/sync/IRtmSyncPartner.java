@@ -34,7 +34,11 @@ import dev.drsoran.rtm.model.RtmTasksList;
 
 public interface IRtmSyncPartner
 {
-   List< RtmTasksList > getAllTasksLists( long modifiedSinceMsUtc );
+   List< RtmTasksList > getTasksLists( long modifiedSinceMsUtc );
+   
+   
+   
+   List< IModification > getModificationsOfTasksList( String tasksListId );
    
    
    
@@ -51,7 +55,11 @@ public interface IRtmSyncPartner
    
    
    
-   List< RtmTask > getAllTasks( long modifiedSinceMsUtc );
+   List< RtmTask > getTasks( long modifiedSinceMsUtc );
+   
+   
+   
+   List< IModification > getModificationsOfTask( String taskId );
    
    
    
@@ -67,7 +75,11 @@ public interface IRtmSyncPartner
    
    
    
-   List< RtmNote > getAllNotes( long modifiedSinceMsUtc );
+   List< RtmNote > getNotes( String taskId, long modifiedSinceMsUtc );
+   
+   
+   
+   List< IModification > getModificationsOfNote( String taskId, String noteId );
    
    
    
@@ -83,11 +95,11 @@ public interface IRtmSyncPartner
    
    
    
-   List< RtmLocation > getAllLocations();
+   List< RtmLocation > getLocations();
    
    
    
-   List< RtmContact > getAllContacts();
+   List< RtmContact > getContacts();
    
    
    

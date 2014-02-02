@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.sync.db;
+package dev.drsoran.moloko.sync.db;
 
 import android.provider.BaseColumns;
 

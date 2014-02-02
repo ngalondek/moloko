@@ -22,6 +22,12 @@
 
 package dev.drsoran.rtm.rest;
 
+import static dev.drsoran.rtm.content.ContentProperties.RtmSettingsProperties.DATEFORMAT;
+import static dev.drsoran.rtm.content.ContentProperties.RtmSettingsProperties.DEFAULTLIST;
+import static dev.drsoran.rtm.content.ContentProperties.RtmSettingsProperties.LANGUAGE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmSettingsProperties.TIMEFORMAT;
+import static dev.drsoran.rtm.content.ContentProperties.RtmSettingsProperties.TIMEZONE;
+
 import java.text.MessageFormat;
 
 import org.xml.sax.Attributes;
@@ -104,23 +110,23 @@ public class RtmSettingsContentHandler extends RtmContentHandler< RtmSettings >
    @Override
    protected void startElement( String qName, Attributes attributes ) throws SAXException
    {
-      if ( "timezone".equalsIgnoreCase( qName ) )
+      if ( TIMEZONE.equalsIgnoreCase( qName ) )
       {
          charactersContext = CharactersContext.Timezone;
       }
-      else if ( "dateformat".equalsIgnoreCase( qName ) )
+      else if ( DATEFORMAT.equalsIgnoreCase( qName ) )
       {
          charactersContext = CharactersContext.Dateformat;
       }
-      else if ( "timeformat".equalsIgnoreCase( qName ) )
+      else if ( TIMEFORMAT.equalsIgnoreCase( qName ) )
       {
          charactersContext = CharactersContext.Timeformat;
       }
-      else if ( "defaultlist".equalsIgnoreCase( qName ) )
+      else if ( DEFAULTLIST.equalsIgnoreCase( qName ) )
       {
          charactersContext = CharactersContext.Defaultlist;
       }
-      else if ( "language".equalsIgnoreCase( qName ) )
+      else if ( LANGUAGE.equalsIgnoreCase( qName ) )
       {
          charactersContext = CharactersContext.Language;
       }

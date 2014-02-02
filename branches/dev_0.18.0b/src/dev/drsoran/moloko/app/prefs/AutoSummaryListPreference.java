@@ -33,7 +33,7 @@ import android.util.AttributeSet;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.rtm.Compare;
+import dev.drsoran.moloko.sync.Compare;
 
 
 public class AutoSummaryListPreference extends ListPreference implements

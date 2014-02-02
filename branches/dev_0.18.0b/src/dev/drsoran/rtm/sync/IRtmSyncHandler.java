@@ -22,18 +22,18 @@
 
 package dev.drsoran.rtm.sync;
 
-import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.service.IRtmContentEditService;
 import dev.drsoran.rtm.service.IRtmContentRepository;
 
 
 public interface IRtmSyncHandler
 {
-   void handleIncomingSync( IRtmContentRepository contentRepository, long lastInSyncMillis ) throws RtmServiceException;
+   RtmSyncResult handleIncomingSync( IRtmContentRepository contentRepository,
+                                     long lastInSyncMillis );
    
    
    
-   void handleOutgoingSync( IRtmContentEditService contentEditService,
-                            String timelineId,
-                            long lastOutSyncMillis ) throws RtmServiceException;
+   RtmSyncResult handleOutgoingSync( IRtmContentEditService contentEditService,
+                                     String timelineId,
+                                     long lastOutSyncMillis );
 }

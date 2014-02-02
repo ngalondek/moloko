@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2013 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,13 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.content;
+package dev.drsoran.rtm.sync;
 
-import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.sync.Modification;
-
-
-public interface IModificationsApplier
+public interface IModification
 {
-   void applyPersistentModifications( Iterable< Modification > modifications ) throws ContentException;
+   String getPropertyName();
+   
+   
+   
+   String getSyncedValue();
 }

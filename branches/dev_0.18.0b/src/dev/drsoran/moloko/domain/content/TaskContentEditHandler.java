@@ -33,10 +33,10 @@ import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.sync.Compare;
+import dev.drsoran.moloko.sync.Modification;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.rtm.Compare;
 import dev.drsoran.rtm.RtmCalendar;
-import dev.drsoran.rtm.sync.model.Modification;
 
 
 public class TaskContentEditHandler extends AbstractContentEditHandler< Task >

@@ -22,6 +22,10 @@
 
 package dev.drsoran.rtm.rest;
 
+import static dev.drsoran.rtm.content.ContentProperties.BaseProperties.ID;
+import static dev.drsoran.rtm.content.ContentProperties.RtmContactProperties.FULLNAME;
+import static dev.drsoran.rtm.content.ContentProperties.RtmContactProperties.USERNAME;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -50,9 +54,9 @@ public class RtmContactContentHandler extends RtmContentHandler< RtmContact >
    {
       if ( "contact".equalsIgnoreCase( qName ) )
       {
-         setContentElement( new RtmContact( attributes.getValue( "id" ),
-                                            attributes.getValue( "username" ),
-                                            attributes.getValue( "fullname" ) ) );
+         setContentElement( new RtmContact( attributes.getValue( ID ),
+                                            attributes.getValue( USERNAME ),
+                                            attributes.getValue( FULLNAME ) ) );
       }
    }
    

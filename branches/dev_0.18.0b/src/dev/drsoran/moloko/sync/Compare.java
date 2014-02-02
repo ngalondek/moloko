@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm;
+package dev.drsoran.moloko.sync;
 
 public final class Compare
 {

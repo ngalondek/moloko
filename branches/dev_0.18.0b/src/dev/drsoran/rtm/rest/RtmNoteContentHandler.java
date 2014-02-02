@@ -22,6 +22,11 @@
 
 package dev.drsoran.rtm.rest;
 
+import static dev.drsoran.rtm.content.ContentProperties.BaseProperties.ID;
+import static dev.drsoran.rtm.content.ContentProperties.RtmNoteProperties.CREATED_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmNoteProperties.MODIFIED_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmNoteProperties.TITLE;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -84,12 +89,12 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
    private void readNote() throws SAXException
    {
       setContentElementAndNotify( new RtmNote( XmlAttr.getStringNotNull( noteAttributes,
-                                                                         "id" ),
+                                                                         ID ),
                                                XmlAttr.getOptMillisUtc( noteAttributes,
-                                                                        "created" ),
+                                                                        CREATED_DATE ),
                                                XmlAttr.getOptMillisUtc( noteAttributes,
-                                                                        "modified" ),
-                                               Strings.emptyIfNull( noteAttributes.getValue( "title" ) ),
+                                                                        MODIFIED_DATE ),
+                                               Strings.emptyIfNull( noteAttributes.getValue( TITLE ) ),
                                                noteText ) );
    }
 }

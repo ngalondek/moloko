@@ -26,12 +26,12 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.rtm.Compare;
-import dev.drsoran.rtm.sync.model.Modification;
+import dev.drsoran.moloko.sync.Compare;
+import dev.drsoran.moloko.sync.Modification;
+import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
 
 
 public class DefaultModificationsApplier implements IModificationsApplier

@@ -22,12 +22,17 @@
 
 package dev.drsoran.rtm.sync;
 
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.LIST_ID;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.RtmTransaction;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.service.IRtmContentEditService;
@@ -61,15 +66,15 @@ public class RtmTasksSyncHandler implements IRtmSyncHandler
    
    
    @Override
-   public void handleIncomingSync( IRtmContentRepository contentRepository,
-                                   long lastInSyncMillisUtc ) throws RtmServiceException
+   public RtmSyncResult handleIncomingSync( IRtmContentRepository contentRepository,
+                                            long lastInSyncMillisUtc ) throws RtmServiceException
    {
       if ( contentRepository == null )
       {
          throw new IllegalArgumentException( "contentRepository" );
       }
       
-      final List< RtmTask > syncPartnerElements = syncPartner.getAllTasks( lastInSyncMillisUtc );
+      final List< RtmTask > syncPartnerElements = syncPartner.getTasks( lastInSyncMillisUtc );
       final List< RtmTask > rtmElements = contentRepository.tasks_getList( lastInSyncMillisUtc );
       
       sortLists( syncPartnerElements, rtmElements );
@@ -115,9 +120,9 @@ public class RtmTasksSyncHandler implements IRtmSyncHandler
    
    
    @Override
-   public void handleOutgoingSync( IRtmContentEditService contentEditService,
-                                   String timelineId,
-                                   long lastOutSyncMillis ) throws RtmServiceException
+   public RtmSyncResult handleOutgoingSync( IRtmContentEditService contentEditService,
+                                            String timelineId,
+                                            long lastOutSyncMillis ) throws RtmServiceException
    {
       if ( contentEditService == null )
       {
@@ -128,7 +133,9 @@ public class RtmTasksSyncHandler implements IRtmSyncHandler
          throw new IllegalArgumentException( "timelineId" );
       }
       
-      final List< RtmTask > syncPartnerElements = syncPartner.getAllTasks( lastOutSyncMillis );
+      final Collection< RtmTransaction > transactions = new ArrayList< RtmTransaction >();
+      
+      final List< RtmTask > syncPartnerElements = syncPartner.getTasks( lastOutSyncMillis );
       
       for ( int i = 0, count = syncPartnerElements.size(); i < count; i++ )
       {
@@ -144,20 +151,27 @@ public class RtmTasksSyncHandler implements IRtmSyncHandler
                rtmResponse = contentEditService.tasks_add( timelineId,
                                                            syncPartnerTask.getListId(),
                                                            syncPartnerTask.getName() );
+               if ( rtmResponse.isTransactional() )
+               {
+                  transactions.add( rtmResponse.getTransaction() );
+               }
             }
             
-            // UPDATE: The partner element is contained in the RTM list.
+            // UPDATE: The partner element is known at RTM side.
             else
             {
-               rtmResponse = ...;
+               final Collection< RtmTransaction > sendModificationsTransactions = sendModifications( contentEditService,
+                                                                                                     timelineId,
+                                                                                                     syncPartnerTask );
+               transactions.addAll( sendModificationsTransactions );
             }
          }
          else if ( syncPartnerTask.getId() != RtmConstants.NO_ID )
          {
-            // DELETE: The partner element is deleted and not new.            
-               rtmResponse = contentEditService.lists_delete( timelineId,
-                                                              syncPartnerTask.getId() );
-                           
+            // DELETE: The partner element is deleted and not new.
+            rtmResponse = contentEditService.lists_delete( timelineId,
+                                                           syncPartnerTask.getId() );
+            
          }
          
          if ( rtmResponse != null )
@@ -165,11 +179,39 @@ public class RtmTasksSyncHandler implements IRtmSyncHandler
             for ( RtmTask rtmTask : rtmResponse.getElement() )
             {
                // TODO: perform an in sync
-               syncPartner.updateTask( syncPartnerTask,
-                                       rtmTask );   
-            }            
+               syncPartner.updateTask( syncPartnerTask, rtmTask );
+            }
          }
       }
+      
+      return transactions;
+   }
+   
+   
+   
+   private Collection< RtmResponse< List<> > > sendModifications( IRtmContentEditService contentEditService,
+                                                                  String timelineId,
+                                                                  RtmTask syncPartnerTask ) throws RtmServiceException
+   {
+      final Collection< RtmTransaction > transactions = new ArrayList< RtmTransaction >();
+      
+      final List< IModification > modifications = syncPartner.getModificationsOfTask( syncPartnerTask.getId() );
+      
+      for ( IModification modification : modifications )
+      {
+         final String property = modification.getPropertyName();
+         
+         if ( LIST_ID.equalsIgnoreCase( property ) )
+         {
+            final RtmResponse< List< RtmTask >> response = contentEditService.tasks_moveTo( timelineId,
+                                                                                            modification.getSyncedValue(),
+                                                                                            syncPartnerTask.getListId(),
+                                                                                            syncPartnerTask.getTaskSeriesId(),
+                                                                                            syncPartnerTask.getId() );
+         }
+      }
+      
+      return rtmResponse;
    }
    
    

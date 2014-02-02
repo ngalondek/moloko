@@ -22,6 +22,14 @@
 
 package dev.drsoran.rtm.rest;
 
+import static dev.drsoran.rtm.content.ContentProperties.BaseProperties.ID;
+import static dev.drsoran.rtm.content.ContentProperties.RtmLocationProperties.ADDRESS;
+import static dev.drsoran.rtm.content.ContentProperties.RtmLocationProperties.LATITUDE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmLocationProperties.LONGITUDE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmLocationProperties.NAME;
+import static dev.drsoran.rtm.content.ContentProperties.RtmLocationProperties.VIEWABLE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmLocationProperties.ZOOM;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -50,19 +58,19 @@ public class RtmLocationContentHandler extends RtmContentHandler< RtmLocation >
    public void startElement( String qName, Attributes attributes ) throws SAXException
    {
       setContentElementAndNotify( new RtmLocation( XmlAttr.getStringNotNull( attributes,
-                                                                             "id" ),
+                                                                             ID ),
                                                    XmlAttr.getStringNotNull( attributes,
-                                                                             "name" ),
+                                                                             NAME ),
                                                    XmlAttr.getFloat( attributes,
-                                                                     "longitude" ),
+                                                                     LONGITUDE ),
                                                    XmlAttr.getFloat( attributes,
-                                                                     "latitude" ),
+                                                                     LATITUDE ),
                                                    XmlAttr.getOptString( attributes,
-                                                                         "address",
+                                                                         ADDRESS,
                                                                          Strings.EMPTY_STRING ),
                                                    XmlAttr.getBoolean( attributes,
-                                                                       "viewable" ),
+                                                                       VIEWABLE ),
                                                    XmlAttr.getInt( attributes,
-                                                                   "zoom" ) ) );
+                                                                   ZOOM ) ) );
    }
 }

@@ -23,6 +23,8 @@
 package dev.drsoran.test.unit.rtm.sync;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -32,11 +34,13 @@ import org.junit.Test;
 import dev.drsoran.moloko.test.TestConstants;
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmTasksList;
 import dev.drsoran.rtm.service.IRtmContentEditService;
 import dev.drsoran.rtm.service.IRtmContentRepository;
 import dev.drsoran.rtm.service.RtmErrorCodes;
+import dev.drsoran.rtm.sync.IModification;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;
 import dev.drsoran.rtm.sync.RtmContentSort;
 import dev.drsoran.rtm.sync.RtmTasksListsSyncHandler;
@@ -89,7 +93,7 @@ public class RtmTasksListsSyncHandlerFixture
    public void testHandleIncomingSync_BothEmpty() throws RtmServiceException
    {
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( RtmConstants.NO_TIME ) )
+      EasyMock.expect( syncPartner.getTasksLists( RtmConstants.NO_TIME ) )
               .andReturn( new ArrayList< RtmTasksList >() );
       EasyMock.replay( syncPartner );
       
@@ -117,7 +121,7 @@ public class RtmTasksListsSyncHandlerFixture
       final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( RtmConstants.NO_TIME ) )
+      EasyMock.expect( syncPartner.getTasksLists( RtmConstants.NO_TIME ) )
               .andReturn( partnerList );
       syncPartner.insertTasksList( listFromRtm );
       EasyMock.replay( syncPartner );
@@ -148,7 +152,7 @@ public class RtmTasksListsSyncHandlerFixture
       final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( RtmConstants.NO_TIME ) )
+      EasyMock.expect( syncPartner.getTasksLists( RtmConstants.NO_TIME ) )
               .andReturn( partnerList );
       EasyMock.replay( syncPartner );
       
@@ -180,7 +184,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( RtmConstants.NO_TIME ) )
+      EasyMock.expect( syncPartner.getTasksLists( RtmConstants.NO_TIME ) )
               .andReturn( partnerList );
       syncPartner.updateTasksList( listFromPartner, listFromRtm );
       EasyMock.replay( syncPartner );
@@ -213,7 +217,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( RtmConstants.NO_TIME ) )
+      EasyMock.expect( syncPartner.getTasksLists( RtmConstants.NO_TIME ) )
               .andReturn( partnerList );
       syncPartner.deleteTasksList( listFromPartner );
       EasyMock.replay( syncPartner );
@@ -248,7 +252,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( list1FromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( RtmConstants.NO_TIME ) )
+      EasyMock.expect( syncPartner.getTasksLists( RtmConstants.NO_TIME ) )
               .andReturn( partnerList );
       syncPartner.updateTasksList( list1FromPartner, list1FromRtm );
       syncPartner.deleteTasksList( list2FromPartner );
@@ -302,7 +306,7 @@ public class RtmTasksListsSyncHandlerFixture
    public void testHandleOutgoingSync_Empty() throws RtmServiceException
    {
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( new ArrayList< RtmTasksList >() );
       EasyMock.replay( syncPartner );
       
@@ -333,7 +337,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
       syncPartner.updateTasksList( listFromPartner, respList );
       EasyMock.replay( syncPartner );
@@ -365,7 +369,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
       EasyMock.replay( syncPartner );
       
@@ -392,9 +396,16 @@ public class RtmTasksListsSyncHandlerFixture
       final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
       partnerList.add( listFromPartner );
       
+      final IModification nameMod = EasyMock.createStrictMock( IModification.class );
+      EasyMock.expect( nameMod.getPropertyName() )
+              .andReturn( RtmTasksListProperties.NAME );
+      EasyMock.replay( nameMod );
+      
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
+      EasyMock.expect( syncPartner.getModificationsOfTasksList( "1" ) )
+              .andReturn( Arrays.asList( nameMod ) );
       syncPartner.updateTasksList( listFromPartner, respList );
       EasyMock.replay( syncPartner );
       
@@ -412,12 +423,48 @@ public class RtmTasksListsSyncHandlerFixture
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
+      EasyMock.verify( nameMod );
    }
    
    
    
    @Test
-   public void testHandleOutgoingSync_UpdateNotFound() throws RtmServiceException
+   public void testHandleOutgoingSync_Update_UnhandledModification() throws RtmServiceException
+   {
+      final RtmTasksList listFromPartner = newList( "1", "NewName", false );
+      
+      final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
+      partnerList.add( listFromPartner );
+      
+      final IModification nameMod = EasyMock.createStrictMock( IModification.class );
+      EasyMock.expect( nameMod.getPropertyName() )
+              .andReturn( RtmTasksListProperties.ARCHIVED );
+      EasyMock.replay( nameMod );
+      
+      final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
+              .andReturn( partnerList );
+      EasyMock.expect( syncPartner.getModificationsOfTasksList( "1" ) )
+              .andReturn( Arrays.asList( nameMod ) );
+      EasyMock.replay( syncPartner );
+      
+      final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
+      EasyMock.replay( rtmEdit );
+      
+      final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
+                                                                                 RtmContentSort.getRtmTasksListIdSort() );
+      
+      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      
+      EasyMock.verify( syncPartner );
+      EasyMock.verify( rtmEdit );
+      EasyMock.verify( nameMod );
+   }
+   
+   
+   
+   @Test
+   public void testHandleOutgoingSync_Update_NoModification() throws RtmServiceException
    {
       final RtmTasksList listFromPartner = newList( "1", "NewName", false );
       
@@ -425,8 +472,44 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
+      EasyMock.expect( syncPartner.getModificationsOfTasksList( "1" ) )
+              .andReturn( Collections.< IModification > emptyList() );
+      EasyMock.replay( syncPartner );
+      
+      final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
+      EasyMock.replay( rtmEdit );
+      
+      final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
+                                                                                 RtmContentSort.getRtmTasksListIdSort() );
+      
+      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      
+      EasyMock.verify( syncPartner );
+      EasyMock.verify( rtmEdit );
+   }
+   
+   
+   
+   @Test
+   public void testHandleOutgoingSync_Update_NotFound() throws RtmServiceException
+   {
+      final RtmTasksList listFromPartner = newList( "1", "NewName", false );
+      
+      final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
+      partnerList.add( listFromPartner );
+      
+      final IModification nameMod = EasyMock.createStrictMock( IModification.class );
+      EasyMock.expect( nameMod.getPropertyName() )
+              .andReturn( RtmTasksListProperties.NAME );
+      EasyMock.replay( nameMod );
+      
+      final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
+              .andReturn( partnerList );
+      EasyMock.expect( syncPartner.getModificationsOfTasksList( "1" ) )
+              .andReturn( Arrays.asList( nameMod ) );
       EasyMock.replay( syncPartner );
       
       final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
@@ -442,6 +525,7 @@ public class RtmTasksListsSyncHandlerFixture
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
+      EasyMock.verify( nameMod );
    }
    
    
@@ -454,9 +538,16 @@ public class RtmTasksListsSyncHandlerFixture
       final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
       partnerList.add( listFromPartner );
       
+      final IModification nameMod = EasyMock.createStrictMock( IModification.class );
+      EasyMock.expect( nameMod.getPropertyName() )
+              .andReturn( RtmTasksListProperties.NAME );
+      EasyMock.replay( nameMod );
+      
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
+      EasyMock.expect( syncPartner.getModificationsOfTasksList( "1" ) )
+              .andReturn( Arrays.asList( nameMod ) );
       EasyMock.replay( syncPartner );
       
       final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
@@ -476,6 +567,7 @@ public class RtmTasksListsSyncHandlerFixture
       {
          EasyMock.verify( syncPartner );
          EasyMock.verify( rtmEdit );
+         EasyMock.verify( nameMod );
       }
    }
    
@@ -491,7 +583,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
       syncPartner.updateTasksList( listFromPartner, respList );
       EasyMock.replay( syncPartner );
@@ -523,7 +615,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
       EasyMock.replay( syncPartner );
       
@@ -558,7 +650,7 @@ public class RtmTasksListsSyncHandlerFixture
       partnerList.add( listFromPartner );
       
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
-      EasyMock.expect( syncPartner.getAllTasksLists( TestConstants.NOW ) )
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
               .andReturn( partnerList );
       EasyMock.replay( syncPartner );
       

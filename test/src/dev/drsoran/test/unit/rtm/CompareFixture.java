@@ -27,9 +27,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import dev.drsoran.moloko.sync.Compare;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.PrivateCtorCaller;
-import dev.drsoran.rtm.Compare;
 
 
 public class CompareFixture extends MolokoTestCase

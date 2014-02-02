@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.unit.sync.model;
+package dev.drsoran.moloko.test.unit.sync;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.TestConstants;
-import dev.drsoran.rtm.sync.model.SyncTime;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 @RunWith( Theories.class )
@@ -100,7 +100,8 @@ public class SyncTimesFixture extends MolokoTestCase
    public void testHasEverSyncedOutFalse( long syncIn, long syncOut )
    {
       assumeThat( syncOut, is( Constants.NO_TIME ) );
-      assertThat( new SyncTime( syncIn, syncOut ).hasEverSyncedOut(), is( false ) );
+      assertThat( new SyncTime( syncIn, syncOut ).hasEverSyncedOut(),
+                  is( false ) );
    }
    
    

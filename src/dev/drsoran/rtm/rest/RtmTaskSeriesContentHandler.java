@@ -22,6 +22,23 @@
 
 package dev.drsoran.rtm.rest;
 
+import static dev.drsoran.rtm.content.ContentProperties.BaseProperties.ID;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.ADDED_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.COMPLETED_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.CREATED_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.DELETED_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.DUE_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.ESTIMATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.HAS_DUE_TIME;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.LOCATION_ID;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.MODIFIED_DATE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.NAME;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.POSTPONED;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.PRIORITY;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.RECURRENCE_EVERY;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.SOURCE;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties.URL;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -135,7 +152,7 @@ public class RtmTaskSeriesContentHandler extends
       }
       else if ( "rrule".equalsIgnoreCase( qName ) )
       {
-         isEveryRecurrence = XmlAttr.getBoolean( attributes, "every" );
+         isEveryRecurrence = XmlAttr.getBoolean( attributes, RECURRENCE_EVERY );
          charactersContext = CharactersContext.Recurrence;
       }
       else if ( "tag".equalsIgnoreCase( qName ) )
@@ -218,43 +235,43 @@ public class RtmTaskSeriesContentHandler extends
    private void addTask() throws SAXException
    {
       final RtmTask task = new RtmTask( XmlAttr.getStringNotNull( taskAttributes,
-                                                                  "id" ),
+                                                                  ID ),
                                         XmlAttr.getStringNotNull( taskSeriesAttributes,
-                                                                  "id" ),
+                                                                  ID ),
                                         XmlAttr.getOptMillisUtc( taskSeriesAttributes,
-                                                                 "created" ),
+                                                                 CREATED_DATE ),
                                         XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 "added" ),
+                                                                 ADDED_DATE ),
                                         XmlAttr.getOptMillisUtc( taskSeriesAttributes,
-                                                                 "modified" ),
+                                                                 MODIFIED_DATE ),
                                         XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 "deleted" ),
+                                                                 DELETED_DATE ),
                                         listId,
                                         XmlAttr.getOptString( taskSeriesAttributes,
-                                                              "location_id",
+                                                              LOCATION_ID,
                                                               RtmConstants.NO_ID ),
                                         XmlAttr.getStringNotNull( taskSeriesAttributes,
-                                                                  "name" ),
+                                                                  NAME ),
                                         XmlAttr.getOptString( taskSeriesAttributes,
-                                                              "source",
+                                                              SOURCE,
                                                               Strings.EMPTY_STRING ),
                                         XmlAttr.getOptString( taskSeriesAttributes,
-                                                              "url",
+                                                              URL,
                                                               Strings.EMPTY_STRING ),
                                         XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 "completed" ),
+                                                                 COMPLETED_DATE ),
                                         Priority.fromString( XmlAttr.getStringNotNull( taskAttributes,
-                                                                                       "priority" ) ),
+                                                                                       PRIORITY ) ),
                                         XmlAttr.getInt( taskAttributes,
-                                                        "postponed" ),
+                                                        POSTPONED ),
                                         XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 "due" ),
+                                                                 DUE_DATE ),
                                         XmlAttr.getBoolean( taskAttributes,
-                                                            "has_due_time" ),
+                                                            HAS_DUE_TIME ),
                                         recurrencePattern,
                                         isEveryRecurrence,
                                         Strings.nullIfEmpty( XmlAttr.getOptString( taskAttributes,
-                                                                                   "estimate",
+                                                                                   ESTIMATE,
                                                                                    null ) ),
                                         tags,
                                         notes,

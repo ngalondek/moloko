@@ -20,17 +20,17 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.sync.model;
+package dev.drsoran.moloko.sync;
 
 import java.util.Collection;
 import java.util.Date;
 
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.content.ContentCompare;
+import dev.drsoran.rtm.sync.IModification;
 
 
-public class Modification
+public class Modification implements IModification
 {
    private final String entityUri;
    
@@ -85,6 +85,7 @@ public class Modification
    
    
    
+   @Override
    public String getColName()
    {
       return colName;
@@ -92,6 +93,7 @@ public class Modification
    
    
    
+   @Override
    public String getNewValue()
    {
       return newValue;
@@ -99,6 +101,7 @@ public class Modification
    
    
    
+   @Override
    public < T > T getNewValue( Class< T > valueClass )
    {
       return Strings.convertTo( newValue, valueClass );
@@ -106,6 +109,7 @@ public class Modification
    
    
    
+   @Override
    public String getSyncedValue()
    {
       return syncedValue;
@@ -113,6 +117,7 @@ public class Modification
    
    
    
+   @Override
    public < T > T getSyncedValue( Class< T > valueClass )
    {
       return Strings.convertTo( syncedValue, valueClass );
@@ -120,6 +125,7 @@ public class Modification
    
    
    
+   @Override
    public boolean isSetSyncedValue()
    {
       return isSetSyncedValue;
@@ -272,7 +278,7 @@ public class Modification
          throw new IllegalArgumentException( "modifications" );
       }
       
-      if ( ContentCompare.isDifferent( existingValue, updatedValue ) )
+      if ( Compare.isDifferent( existingValue, updatedValue ) )
       {
          modifications.add( Modification.newModification( entityUri,
                                                           colName,
@@ -294,7 +300,7 @@ public class Modification
          throw new IllegalArgumentException( "modifications" );
       }
       
-      if ( ContentCompare.isDifferent( existingValue, updatedValue ) )
+      if ( Compare.isDifferent( existingValue, updatedValue ) )
       {
          modifications.add( Modification.newNonPersistentModification( entityUri,
                                                                        colName,

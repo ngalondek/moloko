@@ -30,7 +30,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import dev.drsoran.rtm.Compare;
+import dev.drsoran.moloko.sync.Compare;
 
 
 class AutoSummaryEditTextPreference extends EditTextPreference implements

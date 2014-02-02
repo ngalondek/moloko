@@ -22,6 +22,13 @@
 
 package dev.drsoran.rtm.rest;
 
+import static dev.drsoran.rtm.content.ContentProperties.BaseProperties.ID;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties.ARCHIVED;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties.DELETED;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties.LOCKED;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties.NAME;
+import static dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties.POSITION;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -84,16 +91,16 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
    
    private void readTasksList() throws SAXException
    {
-      setContentElementAndNotify( new RtmTasksList( listAttributes.getValue( "id" ),
+      setContentElementAndNotify( new RtmTasksList( listAttributes.getValue( ID ),
                                                     XmlAttr.getInt( listAttributes,
-                                                                    "position" ),
+                                                                    POSITION ),
                                                     XmlAttr.getBoolean( listAttributes,
-                                                                        "deleted" ),
+                                                                        DELETED ),
                                                     XmlAttr.getBoolean( listAttributes,
-                                                                        "locked" ),
+                                                                        LOCKED ),
                                                     XmlAttr.getBoolean( listAttributes,
-                                                                        "archived" ),
-                                                    listAttributes.getValue( "name" ),
+                                                                        ARCHIVED ),
+                                                    listAttributes.getValue( NAME ),
                                                     smartFilter ) );
    }
 }

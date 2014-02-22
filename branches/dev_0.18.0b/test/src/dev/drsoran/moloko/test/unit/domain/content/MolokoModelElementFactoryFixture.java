@@ -23,7 +23,8 @@
 package dev.drsoran.moloko.test.unit.domain.content;
 
 import static dev.drsoran.moloko.test.matchers.ReflectionEqualToMatcher.refEqualTo;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
@@ -36,8 +37,8 @@ import org.junit.Test;
 
 import android.database.Cursor;
 import dev.drsoran.Pair;
-import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
+import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.Location;
@@ -46,14 +47,14 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.Modification;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource.TestData;
-import dev.drsoran.rtm.sync.model.Modification;
-import dev.drsoran.rtm.sync.model.SyncTime;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
-public class DefaultModelElementFactoryFixture extends MolokoTestCase
+public class MolokoModelElementFactoryFixture extends MolokoTestCase
 {
    private final static ModelElementFactoryTestDataSource testDataSource = new ModelElementFactoryTestDataSource();
    
@@ -196,7 +197,7 @@ public class DefaultModelElementFactoryFixture extends MolokoTestCase
       for ( TestData< Settings > testData : testDataSource.getRtmSettingsTestData() )
       {
          final Settings element = fact.createElementFromCursor( getCursor( testData.contentValues ),
-                                                                   Settings.class );
+                                                                Settings.class );
          
          assertThat( testData.testName, element, notNullValue() );
          assertThat( testData.testName,
@@ -213,7 +214,7 @@ public class DefaultModelElementFactoryFixture extends MolokoTestCase
       for ( TestData< SyncTime > testData : testDataSource.getSyncTestData() )
       {
          final SyncTime element = fact.createElementFromCursor( getCursor( testData.contentValues ),
-                                                            SyncTime.class );
+                                                                SyncTime.class );
          
          assertThat( testData.testName, element, notNullValue() );
          assertThat( testData.testName,

@@ -44,10 +44,10 @@ import dev.drsoran.moloko.domain.content.IModificationsApplier;
 import dev.drsoran.moloko.domain.content.TaskParticipantContentEditHandler;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.sync.Modification;
 import dev.drsoran.moloko.test.ModificationComparator;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.sources.TaskParticipantEditHandlerTestDataSource;
-import dev.drsoran.rtm.sync.model.Modification;
 
 
 @Config( manifest = Config.NONE )

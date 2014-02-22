@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync;
+package dev.drsoran.moloko.content.db.sync;
 
 import static dev.drsoran.moloko.content.db.TableNames.RTM_CONTACTS_TABLE;
 import static dev.drsoran.moloko.content.db.TableNames.RTM_LOCATIONS_TABLE;

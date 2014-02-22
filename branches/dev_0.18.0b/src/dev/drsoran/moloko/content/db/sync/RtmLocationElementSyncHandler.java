@@ -20,20 +20,20 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync;
+package dev.drsoran.moloko.content.db.sync;
 
-import static dev.drsoran.moloko.content.db.TableNames.RTM_SETTINGS_TABLE;
-import dev.drsoran.Strings;
+import static dev.drsoran.moloko.content.db.TableNames.RTM_LOCATIONS_TABLE;
 import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
-import dev.drsoran.rtm.model.RtmSettings;
+import dev.drsoran.rtm.model.RtmLocation;
 
 
-public class RtmSettingsElementSyncHandler extends
-         AbstractElementSyncHandler< RtmSettings >
+public class RtmLocationElementSyncHandler extends
+         AbstractElementSyncHandler< RtmLocation >
 {
-   public RtmSettingsElementSyncHandler( RtmDatabase rtmDatabase,
+   public RtmLocationElementSyncHandler( RtmDatabase rtmDatabase,
       IModelElementFactory modelElementFactory,
       IContentValuesFactory contentValuesFactory )
    {
@@ -45,15 +45,15 @@ public class RtmSettingsElementSyncHandler extends
    @Override
    protected String getTableName()
    {
-      return RTM_SETTINGS_TABLE;
+      return RTM_LOCATIONS_TABLE;
    }
    
    
    
    @Override
-   protected String getId( RtmSettings element )
+   protected String getId( RtmLocation element )
    {
-      return Strings.EMPTY_STRING;
+      return element.getId();
    }
    
    
@@ -69,14 +69,14 @@ public class RtmSettingsElementSyncHandler extends
    @Override
    protected String getEqualIdClause()
    {
-      return null;
+      return RtmLocationColumns.RTM_LOCATION_ID + " = '?'";
    }
    
    
    
    @Override
-   protected Class< RtmSettings > getElementClass()
+   protected Class< RtmLocation > getElementClass()
    {
-      return RtmSettings.class;
+      return RtmLocation.class;
    }
 }

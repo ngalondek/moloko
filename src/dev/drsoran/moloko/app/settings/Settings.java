@@ -41,9 +41,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.domain.model.Settings;
 
 
 public class Settings implements ISettingsService, IOnSettingsChangedListener
@@ -327,7 +325,7 @@ public class Settings implements ISettingsService, IOnSettingsChangedListener
    
    
    /**
-    * Value: Collection of list IDs to notify tasks for, or the constant {@link RtmSettingsColumns.ALL_LISTS}.
+    * Value: Collection of list IDs to notify tasks for, or the constant {@link SettingsColumns.ALL_LISTS}.
     */
    @Override
    public Map< PermanentNotificationType, Collection< String > > getNotifyingPermanentTaskLists()

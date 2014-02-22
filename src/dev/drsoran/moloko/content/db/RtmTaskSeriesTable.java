@@ -75,6 +75,10 @@ class RtmTaskSeriesTable extends AbstractTable
       builder.append( " TEXT, " );
       builder.append( RtmTaskSeriesColumns.RTM_TASKSERIES_ID );
       builder.append( " TEXT, " );
+      builder.append( RtmTaskSeriesColumns.RTM_LIST_ID );
+      builder.append( " TEXT, " );
+      builder.append( RtmTaskSeriesColumns.RTM_LOCATION_ID );
+      builder.append( " TEXT, " );
       builder.append( "CONSTRAINT list FOREIGN KEY ( " );
       builder.append( RtmTaskSeriesColumns.LIST_ID );
       builder.append( " ) REFERENCES " );

@@ -22,8 +22,8 @@
 
 package dev.drsoran.rtm.sync;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import dev.drsoran.rtm.RtmTransaction;
 
@@ -32,12 +32,12 @@ public class RtmSyncResult
 {
    private final Exception exception;
    
-   private final Collection< RtmTransaction > transactions;
+   private final List< RtmTransaction > transactions;
    
    
    
    private RtmSyncResult( Exception exception,
-      Collection< RtmTransaction > transactions )
+      List< RtmTransaction > transactions )
    {
       if ( transactions == null )
       {
@@ -57,7 +57,7 @@ public class RtmSyncResult
    
    
    
-   public Collection< RtmTransaction > getTransactions()
+   public List< RtmTransaction > getTransactions()
    {
       return transactions;
    }
@@ -78,7 +78,7 @@ public class RtmSyncResult
    
    
    
-   public static RtmSyncResult newSucceeded( Collection< RtmTransaction > transactions )
+   public static RtmSyncResult newSucceeded( List< RtmTransaction > transactions )
    {
       return new RtmSyncResult( null, transactions );
    }
@@ -100,7 +100,7 @@ public class RtmSyncResult
    
    
    public static RtmSyncResult newFailed( Exception exception,
-                                          Collection< RtmTransaction > transactions )
+                                          List< RtmTransaction > transactions )
    {
       if ( exception == null )
       {

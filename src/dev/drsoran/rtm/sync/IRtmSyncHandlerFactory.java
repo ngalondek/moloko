@@ -24,10 +24,25 @@ package dev.drsoran.rtm.sync;
 
 import java.util.Comparator;
 
+import dev.drsoran.rtm.model.RtmContact;
+import dev.drsoran.rtm.model.RtmLocation;
+import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.model.RtmTasksList;
 
 
 public interface IRtmSyncHandlerFactory
 {
-   public IRtmSyncHandler createRtmTasksListsSyncHandler( Comparator< RtmTasksList > comparator );
+   IRtmSyncHandler createRtmTasksListsSyncHandler( Comparator< RtmTasksList > comparator );
+   
+   
+   
+   IRtmSyncHandler createRtmTasksSyncHandler( Comparator< RtmTask > comparator );
+   
+   
+   
+   IRtmSyncHandler createRtmLocationsSyncHandler( Comparator< RtmLocation > comparator );
+   
+   
+   
+   IRtmSyncHandler createRtmContactsSyncHandler( Comparator< RtmContact > comparator );
 }

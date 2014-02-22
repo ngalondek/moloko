@@ -22,7 +22,12 @@
 
 package dev.drsoran.rtm.sync;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.RtmTransaction;
+import dev.drsoran.rtm.model.RtmTimeline;
 import dev.drsoran.rtm.service.IRtmContentEditService;
 import dev.drsoran.rtm.service.IRtmContentRepository;
 
@@ -35,11 +40,14 @@ public class RtmSyncDriver implements IRtmSyncDriver
    
    private final IRtmSyncHandlerFactory syncHandlerFactory;
    
+   private final IRtmTimelineFactory timelineFactory;
+   
    
    
    public RtmSyncDriver( IRtmContentRepository contentRepository,
       IRtmContentEditService contentEditService,
-      IRtmSyncHandlerFactory syncHandlerFactory )
+      IRtmSyncHandlerFactory syncHandlerFactory,
+      IRtmTimelineFactory timelineFactory )
    {
       if ( contentRepository == null )
       {
@@ -53,10 +61,15 @@ public class RtmSyncDriver implements IRtmSyncDriver
       {
          throw new IllegalArgumentException( "syncHandlerFactory" );
       }
+      if ( timelineFactory == null )
+      {
+         throw new IllegalArgumentException( "timelineFactory" );
+      }
       
       this.contentRepository = contentRepository;
       this.contentEditService = contentEditService;
       this.syncHandlerFactory = syncHandlerFactory;
+      this.timelineFactory = timelineFactory;
    }
    
    
@@ -68,7 +81,27 @@ public class RtmSyncDriver implements IRtmSyncDriver
       checkSyncPartner( syncPartner );
       checkSyncTime( syncTime );
       
-      performIncomingRtmTasksListSync( syncPartner, syncTime );
+      try
+      {
+         syncPartner.onSyncStarted();
+         
+         syncIncoming( syncPartner, syncTime );
+         
+         syncPartner.onSyncSuccessful();
+      }
+      catch ( SyncException e )
+      {
+         syncPartner.onSyncFailed();
+         
+         if ( e.getCause() instanceof RtmServiceException )
+         {
+            throw (RtmServiceException) e.getCause();
+         }
+         else
+         {
+            throw new RuntimeException( e.getCause() );
+         }
+      }
    }
    
    
@@ -80,6 +113,32 @@ public class RtmSyncDriver implements IRtmSyncDriver
       checkSyncPartner( syncPartner );
       checkSyncTime( syncTime );
       
+      final RtmTimeline timeline = timelineFactory.createTimeline();
+      
+      try
+      {
+         syncPartner.onSyncStarted();
+         
+         syncOutgoing( syncPartner, timeline.getId(), syncTime );
+         
+         syncPartner.onSyncSuccessful();
+      }
+      catch ( SyncException e )
+      {
+         undoTransactions( timeline.getId(), e.getSyncResult()
+                                              .getTransactions() );
+         
+         syncPartner.onSyncFailed();
+         
+         if ( e.getCause() instanceof RtmServiceException )
+         {
+            throw (RtmServiceException) e.getCause();
+         }
+         else
+         {
+            throw new RuntimeException( e.getCause() );
+         }
+      }
    }
    
    
@@ -90,17 +149,166 @@ public class RtmSyncDriver implements IRtmSyncDriver
       checkSyncPartner( syncPartner );
       checkSyncTime( syncTime );
       
-      performOutgoingSync( syncPartner, syncTime );
-      performIncomingSync( syncPartner, syncTime );
+      final RtmTimeline timeline = timelineFactory.createTimeline();
+      
+      try
+      {
+         syncPartner.onSyncStarted();
+         
+         syncIncoming( syncPartner, syncTime );
+         
+         syncOutgoing( syncPartner, timeline.getId(), syncTime );
+         
+         syncPartner.onSyncSuccessful();
+      }
+      catch ( SyncException e )
+      {
+         undoTransactions( timeline.getId(), e.getSyncResult()
+                                              .getTransactions() );
+         
+         syncPartner.onSyncFailed();
+         
+         if ( e.getCause() instanceof RtmServiceException )
+         {
+            throw (RtmServiceException) e.getCause();
+         }
+         else
+         {
+            throw new RuntimeException( e.getCause() );
+         }
+      }
+   }
+   
+   
+   
+   private void syncIncoming( IRtmSyncPartner syncPartner, SyncTime syncTime ) throws SyncException
+   {
+      performIncomingRtmTasksListSync( syncPartner, syncTime );
+      performIncomingRtmTasksSync( syncPartner, syncTime );
+      performIncomingRtmLocationsSync( syncPartner, syncTime );
+      performIncomingRtmContactsSync( syncPartner, syncTime );
    }
    
    
    
    private void performIncomingRtmTasksListSync( IRtmSyncPartner syncPartner,
-                                                 SyncTime syncTime ) throws RtmServiceException
+                                                 SyncTime syncTime ) throws SyncException
    {
-      final IRtmSyncHandler tasksListsSyncHandler = syncHandlerFactory.createRtmTasksListsSyncHandler( RtmContentSort.getRtmTasksListIdSort() );
-      tasksListsSyncHandler.handleIncomingSync( null, syncTime.getLastSyncInMillis() );
+      final IRtmSyncHandler syncHandler = syncHandlerFactory.createRtmTasksListsSyncHandler( RtmContentSort.getRtmTasksListIdSort() );
+      performIncomingSyncImpl( syncHandler, syncTime );
+   }
+   
+   
+   
+   private void performIncomingRtmTasksSync( IRtmSyncPartner syncPartner,
+                                             SyncTime syncTime ) throws SyncException
+   {
+      final IRtmSyncHandler syncHandler = syncHandlerFactory.createRtmTasksSyncHandler( RtmContentSort.getRtmTaskIdSort() );
+      performIncomingSyncImpl( syncHandler, syncTime );
+   }
+   
+   
+   
+   private void performIncomingRtmLocationsSync( IRtmSyncPartner syncPartner,
+                                                 SyncTime syncTime ) throws SyncException
+   {
+      final IRtmSyncHandler syncHandler = syncHandlerFactory.createRtmLocationsSyncHandler( RtmContentSort.getRtmLocationIdSort() );
+      performIncomingSyncImpl( syncHandler, syncTime );
+   }
+   
+   
+   
+   private void performIncomingRtmContactsSync( IRtmSyncPartner syncPartner,
+                                                SyncTime syncTime ) throws SyncException
+   {
+      final IRtmSyncHandler syncHandler = syncHandlerFactory.createRtmContactsSyncHandler( RtmContentSort.getRtmContactIdSort() );
+      performIncomingSyncImpl( syncHandler, syncTime );
+   }
+   
+   
+   
+   private void performIncomingSyncImpl( IRtmSyncHandler syncHandler,
+                                         SyncTime syncTime ) throws SyncException
+   {
+      checkSyncResult( syncHandler.handleIncomingSync( contentRepository,
+                                                       syncTime.getLastSyncInMillis() ) );
+   }
+   
+   
+   
+   private void syncOutgoing( IRtmSyncPartner syncPartner,
+                              String timelineId,
+                              SyncTime syncTime ) throws SyncException
+   {
+      
+      performOutgoingRtmTasksListSync( syncPartner, timelineId, syncTime );
+      performOutgoingRtmTasksSync( syncPartner, timelineId, syncTime );
+   }
+   
+   
+   
+   private void performOutgoingRtmTasksListSync( IRtmSyncPartner syncPartner,
+                                                 String timelineId,
+                                                 SyncTime syncTime ) throws SyncException
+   {
+      final IRtmSyncHandler syncHandler = syncHandlerFactory.createRtmTasksListsSyncHandler( RtmContentSort.getRtmTasksListIdSort() );
+      performOutgoingSyncImpl( syncHandler, timelineId, syncTime );
+   }
+   
+   
+   
+   private void performOutgoingRtmTasksSync( IRtmSyncPartner syncPartner,
+                                             String timelineId,
+                                             SyncTime syncTime ) throws SyncException
+   {
+      final IRtmSyncHandler syncHandler = syncHandlerFactory.createRtmTasksSyncHandler( RtmContentSort.getRtmTaskIdSort() );
+      performOutgoingSyncImpl( syncHandler, timelineId, syncTime );
+   }
+   
+   
+   
+   private void performOutgoingSyncImpl( IRtmSyncHandler syncHandler,
+                                         String timelineId,
+                                         SyncTime syncTime ) throws SyncException
+   {
+      checkSyncResult( syncHandler.handleOutgoingSync( contentEditService,
+                                                       timelineId,
+                                                       syncTime.getLastSyncOutMillis() ) );
+   }
+   
+   
+   
+   private void undoTransactions( String timelineId,
+                                  List< RtmTransaction > transactions )
+   {
+      transactions = new ArrayList< RtmTransaction >( transactions );
+      
+      try
+      {
+         for ( int i = transactions.size() - 1; i > -1; --i )
+         {
+            final RtmTransaction transaction = transactions.get( i );
+            contentEditService.transactions_undo( timelineId,
+                                                  transaction.getId() );
+            
+            transactions.remove( i );
+         }
+      }
+      catch ( RtmServiceException se )
+      {
+         // TODO: What if undo failed? The transactions list contains all not yet undone transactions.
+         // We cannot throw since this is called from an exception handler.
+      }
+   }
+   
+   
+   
+   private static void checkSyncResult( RtmSyncResult syncResult ) throws SyncException
+   {
+      if ( syncResult.getException() != null )
+      {
+         throw new SyncException( syncResult );
+      }
    }
    
    

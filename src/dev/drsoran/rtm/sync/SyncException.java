@@ -22,15 +22,26 @@
 
 package dev.drsoran.rtm.sync;
 
-public interface IModification
+class SyncException extends Exception
 {
-   String getPropertyName();
+   private static final long serialVersionUID = 8966486145541704233L;
+   
+   private final RtmSyncResult syncResult;
    
    
    
-   String getValue();
+   public SyncException( RtmSyncResult syncResult )
+   {
+      super( "A sync operation has failed.",
+             syncResult != null ? syncResult.getException() : null );
+      this.syncResult = syncResult;
+   }
    
    
    
-   String getSyncedValue();
+   public RtmSyncResult getSyncResult()
+   {
+      return syncResult;
+   }
+   
 }

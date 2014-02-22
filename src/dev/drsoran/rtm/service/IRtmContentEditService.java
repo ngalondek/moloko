@@ -1,6 +1,5 @@
 package dev.drsoran.rtm.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import dev.drsoran.rtm.RtmResponse;
@@ -125,7 +124,7 @@ public interface IRtmContentEditService
                                                  String listId,
                                                  String taskSeriesId,
                                                  String taskId,
-                                                 Collection< String > tags ) throws RtmServiceException;
+                                                 String tagsJoined ) throws RtmServiceException;
    
    
    

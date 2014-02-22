@@ -22,6 +22,11 @@
 
 package dev.drsoran.test.unit.rtm.sync;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +39,7 @@ import org.junit.Test;
 import dev.drsoran.moloko.test.TestConstants;
 import dev.drsoran.rtm.RtmResponse;
 import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.RtmTransaction;
 import dev.drsoran.rtm.content.ContentProperties.RtmTasksListProperties;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmTasksList;
@@ -43,6 +49,7 @@ import dev.drsoran.rtm.service.RtmErrorCodes;
 import dev.drsoran.rtm.sync.IModification;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;
 import dev.drsoran.rtm.sync.RtmContentSort;
+import dev.drsoran.rtm.sync.RtmSyncResult;
 import dev.drsoran.rtm.sync.RtmTasksListsSyncHandler;
 
 
@@ -90,6 +97,34 @@ public class RtmTasksListsSyncHandlerFixture
    
    
    @Test
+   public void testHandleIncomingSync_RtmError() throws RtmServiceException
+   {
+      final IRtmSyncPartner syncPartner = EasyMock.createNiceMock( IRtmSyncPartner.class );
+      EasyMock.replay( syncPartner );
+      
+      final IRtmContentRepository rtmRepo = EasyMock.createMock( IRtmContentRepository.class );
+      EasyMock.expect( rtmRepo.lists_getList() )
+              .andThrow( new RtmServiceException( "" ) );
+      EasyMock.replay( rtmRepo );
+      
+      final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
+                                                                                 RtmContentSort.getRtmTasksListIdSort() );
+      
+      RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                    TestConstants.NEVER );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( false ) );
+      assertThat( rtmSyncResult.getException(),
+                  is( instanceOf( RtmServiceException.class ) ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
+      
+      EasyMock.verify( syncPartner );
+      EasyMock.verify( rtmRepo );
+   }
+   
+   
+   
+   @Test
    public void testHandleIncomingSync_BothEmpty() throws RtmServiceException
    {
       final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
@@ -105,7 +140,11 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleIncomingSync( rtmRepo, TestConstants.NEVER );
+      final RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                          TestConstants.NEVER );
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmRepo );
@@ -136,7 +175,11 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleIncomingSync( rtmRepo, TestConstants.NEVER );
+      final RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                          TestConstants.NEVER );
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmRepo );
@@ -166,7 +209,12 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleIncomingSync( rtmRepo, TestConstants.NEVER );
+      RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                    TestConstants.NEVER );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmRepo );
@@ -199,7 +247,12 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleIncomingSync( rtmRepo, TestConstants.NEVER );
+      RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                    TestConstants.NEVER );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmRepo );
@@ -232,7 +285,12 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleIncomingSync( rtmRepo, TestConstants.NEVER );
+      RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                    TestConstants.NEVER );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmRepo );
@@ -268,7 +326,12 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleIncomingSync( rtmRepo, TestConstants.NEVER );
+      RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                    TestConstants.NEVER );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmRepo );
@@ -319,7 +382,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -342,7 +411,9 @@ public class RtmTasksListsSyncHandlerFixture
       syncPartner.updateTasksList( listFromPartner, respList );
       EasyMock.replay( syncPartner );
       
-      final RtmResponse< RtmTasksList > rtmResponse = new RtmResponse< RtmTasksList >( respList );
+      final RtmResponse< RtmTasksList > rtmResponse = new RtmResponse< RtmTasksList >( new RtmTransaction( "50",
+                                                                                                           true ),
+                                                                                       respList );
       
       final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
       EasyMock.expect( rtmEdit.lists_add( "1000", "TestList", null ) )
@@ -352,7 +423,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 1 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -379,7 +456,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -409,7 +492,9 @@ public class RtmTasksListsSyncHandlerFixture
       syncPartner.updateTasksList( listFromPartner, respList );
       EasyMock.replay( syncPartner );
       
-      final RtmResponse< RtmTasksList > rtmResponse = new RtmResponse< RtmTasksList >( respList );
+      final RtmResponse< RtmTasksList > rtmResponse = new RtmResponse< RtmTasksList >( new RtmTransaction( "50",
+                                                                                                           true ),
+                                                                                       respList );
       
       final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
       EasyMock.expect( rtmEdit.lists_setName( "1000", "1", "NewName" ) )
@@ -419,7 +504,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 1 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -454,7 +545,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -484,7 +581,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -493,7 +596,7 @@ public class RtmTasksListsSyncHandlerFixture
    
    
    @Test
-   public void testHandleOutgoingSync_Update_NotFound() throws RtmServiceException
+   public void testHandleOutgoingSync_Update_NotFoundAtRTM() throws RtmServiceException
    {
       final RtmTasksList listFromPartner = newList( "1", "NewName", false );
       
@@ -521,7 +624,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -530,8 +639,8 @@ public class RtmTasksListsSyncHandlerFixture
    
    
    
-   @Test( expected = RtmServiceException.class )
-   public void testHandleOutgoingSync_Update_RtmError() throws RtmServiceException
+   @Test
+   public void testHandleOutgoingSync_Update_OtherRTMError() throws RtmServiceException
    {
       final RtmTasksList listFromPartner = newList( "1", "NewName", false );
       
@@ -559,16 +668,18 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      try
-      {
-         syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
-      }
-      finally
-      {
-         EasyMock.verify( syncPartner );
-         EasyMock.verify( rtmEdit );
-         EasyMock.verify( nameMod );
-      }
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( false ) );
+      assertThat( rtmSyncResult.getException(),
+                  is( instanceOf( RtmServiceException.class ) ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
+      
+      EasyMock.verify( syncPartner );
+      EasyMock.verify( rtmEdit );
+      EasyMock.verify( nameMod );
    }
    
    
@@ -588,7 +699,9 @@ public class RtmTasksListsSyncHandlerFixture
       syncPartner.updateTasksList( listFromPartner, respList );
       EasyMock.replay( syncPartner );
       
-      final RtmResponse< RtmTasksList > rtmResponse = new RtmResponse< RtmTasksList >( respList );
+      final RtmResponse< RtmTasksList > rtmResponse = new RtmResponse< RtmTasksList >( new RtmTransaction( "50",
+                                                                                                           true ),
+                                                                                       respList );
       
       final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
       EasyMock.expect( rtmEdit.lists_delete( "1000", "1" ) )
@@ -598,7 +711,13 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 1 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
@@ -607,7 +726,7 @@ public class RtmTasksListsSyncHandlerFixture
    
    
    @Test
-   public void testHandleOutgoingSync_Delete_NotFound() throws RtmServiceException
+   public void testHandleOutgoingSync_Delete_NotFoundAtRTM() throws RtmServiceException
    {
       final RtmTasksList listFromPartner = newDeletedList( "1" );
       
@@ -628,21 +747,22 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      try
-      {
-         syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
-      }
-      finally
-      {
-         EasyMock.verify( syncPartner );
-         EasyMock.verify( rtmEdit );
-      }
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
+      
+      EasyMock.verify( syncPartner );
+      EasyMock.verify( rtmEdit );
    }
    
    
    
-   @Test( expected = RtmServiceException.class )
-   public void testHandleOutgoingSync_Delete_RtmError() throws RtmServiceException
+   @Test
+   public void testHandleOutgoingSync_Delete_OtherRTMError() throws RtmServiceException
    {
       final RtmTasksList listFromPartner = newDeletedList( "1" );
       
@@ -663,10 +783,55 @@ public class RtmTasksListsSyncHandlerFixture
       final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
                                                                                  RtmContentSort.getRtmTasksListIdSort() );
       
-      syncHandler.handleOutgoingSync( rtmEdit, "1000", TestConstants.NOW );
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( false ) );
+      assertThat( rtmSyncResult.getException(),
+                  is( instanceOf( RtmServiceException.class ) ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
       
       EasyMock.verify( syncPartner );
       EasyMock.verify( rtmEdit );
+   }
+   
+   
+   
+   @Test
+   public void testHandleOutgoingSync_DontAddNonUndoable() throws RtmServiceException
+   {
+      final RtmTasksList listFromPartner = newDeletedList( "1" );
+      final RtmTasksList respList = newDeletedList( "1" );
+      
+      final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
+      partnerList.add( listFromPartner );
+      
+      final IRtmSyncPartner syncPartner = EasyMock.createNiceMock( IRtmSyncPartner.class );
+      EasyMock.expect( syncPartner.getTasksLists( TestConstants.NOW ) )
+              .andReturn( partnerList );
+      syncPartner.updateTasksList( listFromPartner, respList );
+      EasyMock.replay( syncPartner );
+      
+      final RtmResponse< RtmTasksList > rtmResponse = new RtmResponse< RtmTasksList >( new RtmTransaction( "50",
+                                                                                                           false ),
+                                                                                       respList );
+      
+      final IRtmContentEditService rtmEdit = EasyMock.createMock( IRtmContentEditService.class );
+      EasyMock.expect( rtmEdit.lists_delete( "1000", "1" ) )
+              .andReturn( rtmResponse );
+      EasyMock.replay( rtmEdit );
+      
+      final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
+                                                                                 RtmContentSort.getRtmTasksListIdSort() );
+      
+      RtmSyncResult rtmSyncResult = syncHandler.handleOutgoingSync( rtmEdit,
+                                                                    "1000",
+                                                                    TestConstants.NOW );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
    }
    
    

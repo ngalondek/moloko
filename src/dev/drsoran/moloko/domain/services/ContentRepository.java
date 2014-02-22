@@ -38,7 +38,7 @@ import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
-import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.Columns.SettingsColumns;
 import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
@@ -141,7 +141,7 @@ public class ContentRepository implements IContentRepository
                                                                  String.class );
       
       this.settingsQueryHandler = new ContentQueryHandler< Settings >( contentResolver,
-                                                                       RtmSettingsColumns.PROJECTION,
+                                                                       SettingsColumns.PROJECTION,
                                                                        modelElementFactory,
                                                                        Settings.class );
       

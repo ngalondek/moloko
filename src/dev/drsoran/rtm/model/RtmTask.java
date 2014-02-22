@@ -22,10 +22,12 @@
 
 package dev.drsoran.rtm.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import dev.drsoran.Strings;
+import dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties;
 
 
 public class RtmTask
@@ -70,9 +72,11 @@ public class RtmTask
    
    private final Collection< String > tags;
    
-   private final Collection< RtmNote > notes;
-   
    private final Collection< RtmContact > participants;
+   
+   private Collection< RtmNote > notes;
+   
+   private String recurrenceSentence;
    
    
    
@@ -241,6 +245,20 @@ public class RtmTask
    
    
    
+   public String getRecurrenceSentence()
+   {
+      return recurrenceSentence;
+   }
+   
+   
+   
+   public void setRecurrenceSentence( String recurrenceSentence )
+   {
+      this.recurrenceSentence = recurrenceSentence;
+   }
+   
+   
+   
    public boolean isEveryRecurrence()
    {
       return isEveryRecurrence;
@@ -258,6 +276,13 @@ public class RtmTask
    public Collection< String > getTags()
    {
       return tags != null ? tags : Collections.< String > emptyList();
+   }
+   
+   
+   
+   public String getTagsJoined()
+   {
+      return Strings.join( RtmTaskProperties.TAGS_SEPARATOR, getTags() );
    }
    
    
@@ -287,6 +312,23 @@ public class RtmTask
    public boolean hasNote( String noteId )
    {
       return getNote( noteId ) != null;
+   }
+   
+   
+   
+   public void addNote( RtmNote note )
+   {
+      if ( note == null )
+      {
+         throw new IllegalArgumentException( "note" );
+      }
+      
+      if ( notes == null )
+      {
+         notes = new ArrayList< RtmNote >();
+      }
+      
+      notes.add( note );
    }
    
    

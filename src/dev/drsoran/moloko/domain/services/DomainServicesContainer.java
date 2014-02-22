@@ -28,9 +28,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluator;
-import dev.drsoran.moloko.domain.content.DefaultContentValuesFactory;
-import dev.drsoran.moloko.domain.content.DefaultModelElementFactory;
-import dev.drsoran.moloko.domain.content.DefaultModificationsApplier;
+import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
+import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
+import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
@@ -95,7 +95,7 @@ public class DomainServicesContainer implements IDomainServices
       
       final IRtmSmartFilterEvaluator dbSmartFilterEvaluator = new DbRtmSmartFilterEvaluator( dateTimeParsing );
       final ContentResolver contentResolver = context.getContentResolver();
-      final IModelElementFactory modelElementFactory = new DefaultModelElementFactory();
+      final IModelElementFactory modelElementFactory = new MolokoModelElementFactory();
       
       contentRepository = new ContentRepository( contentResolver,
                                                  modelElementFactory,
@@ -103,8 +103,8 @@ public class DomainServicesContainer implements IDomainServices
                                                  rtmSmartFilterParsing,
                                                  dbSmartFilterEvaluator );
       
-      final IContentValuesFactory contentValuesFactory = new DefaultContentValuesFactory();
-      final IModificationsApplier modificationsApplier = new DefaultModificationsApplier( contentResolver,
+      final IContentValuesFactory contentValuesFactory = new MolokoContentValuesFactory();
+      final IModificationsApplier modificationsApplier = new MolokoModificationsApplier( contentResolver,
                                                                                           contentValuesFactory );
       
       contentEditService = new ContentEditService( new TaskContentEditHandler( contentResolver,

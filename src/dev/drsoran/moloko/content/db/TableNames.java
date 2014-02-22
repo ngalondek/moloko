@@ -20,17 +20,28 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.sync;
+package dev.drsoran.moloko.content.db;
 
-public interface IModification
+public final class TableNames
 {
-   String getPropertyName();
+   private TableNames()
+   {
+      throw new AssertionError();
+   }
    
+   public final static String RTM_TASKS_LIST_TABLE = RtmTasksListsTable.TABLE_NAME;
    
+   public final static String RTM_RAW_TASKS_TABLE = RtmRawTasksTable.TABLE_NAME;
    
-   String getValue();
+   public final static String RTM_TASK_SERIES_TABLE = RtmTaskSeriesTable.TABLE_NAME;
    
+   public final static String RTM_NOTES_TABLE = RtmNotesTable.TABLE_NAME;
    
+   public final static String RTM_LOCATIONS_TABLE = RtmLocationsTable.TABLE_NAME;
    
-   String getSyncedValue();
+   public final static String RTM_CONTACTS_TABLE = RtmContactsTable.TABLE_NAME;
+   
+   public final static String RTM_SETTINGS_TABLE = RtmSettingsTable.TABLE_NAME;
+   
+   public final static String RTM_PARTICIPANTS_TABLE = RtmParticipantsTable.TABLE_NAME;
 }

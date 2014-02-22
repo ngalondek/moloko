@@ -24,20 +24,21 @@ package dev.drsoran.moloko.util;
 
 public final class Lambda
 {
+   
    public static interface Func< T >
    {
       void call( T param );
    }
    
    
-   public static interface Func1< T1, T2 >
+   public static interface Func1< T1, TRet >
    {
-      T2 call( T1 param );
+      TRet call( T1 param );
    }
    
    
-   public static interface Func2< T1, T2, T3 >
+   public static interface Func2< T1, T2, TRet >
    {
-      T3 call( T1 param1, T2 param2 );
+      TRet call( T1 param1, T2 param2 );
    }
 }

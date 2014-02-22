@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.content;
+package dev.drsoran.moloko.content.db;
 
 import java.util.List;
 

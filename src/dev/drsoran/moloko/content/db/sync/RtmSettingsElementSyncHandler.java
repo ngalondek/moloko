@@ -20,20 +20,20 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync;
+package dev.drsoran.moloko.content.db.sync;
 
-import static dev.drsoran.moloko.content.db.TableNames.RTM_CONTACTS_TABLE;
+import static dev.drsoran.moloko.content.db.TableNames.RTM_SETTINGS_TABLE;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.db.RtmDatabase;
-import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
-import dev.drsoran.rtm.model.RtmContact;
+import dev.drsoran.rtm.model.RtmSettings;
 
 
-public class RtmContactElementSyncHandler extends
-         AbstractElementSyncHandler< RtmContact >
+public class RtmSettingsElementSyncHandler extends
+         AbstractElementSyncHandler< RtmSettings >
 {
-   public RtmContactElementSyncHandler( RtmDatabase rtmDatabase,
+   public RtmSettingsElementSyncHandler( RtmDatabase rtmDatabase,
       IModelElementFactory modelElementFactory,
       IContentValuesFactory contentValuesFactory )
    {
@@ -45,15 +45,15 @@ public class RtmContactElementSyncHandler extends
    @Override
    protected String getTableName()
    {
-      return RTM_CONTACTS_TABLE;
+      return RTM_SETTINGS_TABLE;
    }
    
    
    
    @Override
-   protected String getId( RtmContact element )
+   protected String getId( RtmSettings element )
    {
-      return element.getId();
+      return Strings.EMPTY_STRING;
    }
    
    
@@ -69,14 +69,14 @@ public class RtmContactElementSyncHandler extends
    @Override
    protected String getEqualIdClause()
    {
-      return RtmContactColumns.RTM_CONTACT_ID + " = '?'";
+      return null;
    }
    
    
    
    @Override
-   protected Class< RtmContact > getElementClass()
+   protected Class< RtmSettings > getElementClass()
    {
-      return RtmContact.class;
+      return RtmSettings.class;
    }
 }

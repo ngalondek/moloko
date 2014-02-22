@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.unit.content;
+package dev.drsoran.moloko.test.unit.content.db;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
@@ -36,7 +36,7 @@ import org.robolectric.annotation.Config;
 import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.os.Bundle;
-import dev.drsoran.moloko.content.ListCursor;
+import dev.drsoran.moloko.content.db.ListCursor;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 
 

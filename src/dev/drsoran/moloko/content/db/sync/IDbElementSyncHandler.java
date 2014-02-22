@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync;
+package dev.drsoran.moloko.content.db.sync;
 
 import java.util.List;
 

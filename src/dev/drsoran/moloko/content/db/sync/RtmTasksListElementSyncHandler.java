@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync;
+package dev.drsoran.moloko.content.db.sync;
 
 import static dev.drsoran.moloko.content.db.TableNames.RTM_TASKS_LIST_TABLE;
 import android.content.ContentValues;

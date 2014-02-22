@@ -35,7 +35,6 @@ import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.content.IContentUriHandler;
-import dev.drsoran.moloko.content.ListCursor;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 
 

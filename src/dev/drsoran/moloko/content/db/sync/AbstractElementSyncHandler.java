@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync;
+package dev.drsoran.moloko.content.db.sync;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -92,13 +92,7 @@ abstract class AbstractElementSyncHandler< T > implements
       adaptContentValuesForInsert( contentValues, element );
       
       final ITable table = getTable( getTableName() );
-      final long numInserted = table.insert( contentValues );
-      
-      if ( numInserted < 1 )
-      {
-         throw new SQLiteException( MessageFormat.format( "{0} not inserted.",
-                                                          element ) );
-      }
+      table.insert( contentValues );
    }
    
    

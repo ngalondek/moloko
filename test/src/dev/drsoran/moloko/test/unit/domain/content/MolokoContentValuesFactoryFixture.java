@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.robolectric.annotation.Config;
 
 import android.content.ContentValues;
-import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
+import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
@@ -40,15 +40,15 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.Modification;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.sources.ContentValuesFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ContentValuesFactoryTestDataSource.TestData;
-import dev.drsoran.rtm.sync.model.Modification;
-import dev.drsoran.rtm.sync.model.SyncTime;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 @Config( manifest = Config.NONE )
-public class DefaultContentValuesFactoryFixture extends MolokoRoboTestCase
+public class MolokoContentValuesFactoryFixture extends MolokoRoboTestCase
 {
    private final static ContentValuesFactoryTestDataSource testDataSource = new ContentValuesFactoryTestDataSource();
    

@@ -34,14 +34,14 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
+import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.moloko.sync.Modification;
+import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
-import dev.drsoran.rtm.sync.model.Modification;
 
 
 @Config( manifest = Config.NONE )
@@ -51,7 +51,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
    public void testApplyPersistentModifications_Empty()
    {
       final IModificationsApplier applier = new MolokoModificationsApplier( EasyMock.createNiceMock( ContentResolver.class ),
-                                                                             EasyMock.createNiceMock( IContentValuesFactory.class ) );
+                                                                            EasyMock.createNiceMock( IContentValuesFactory.class ) );
       
       applier.applyPersistentModifications( Collections.< Modification > emptyList() );
    }
@@ -68,7 +68,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       EasyMock.replay( fact );
       
       final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                             fact );
+                                                                            fact );
       
       applier.applyPersistentModifications( Arrays.asList( Modification.newNonPersistentModification( "content://test/elements/1",
                                                                                                       "testCol",
@@ -96,7 +96,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       EasyMock.replay( fact );
       
       final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                             fact );
+                                                                            fact );
       
       try
       {
@@ -136,7 +136,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       EasyMock.replay( fact );
       
       final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                             fact );
+                                                                            fact );
       
       try
       {
@@ -188,7 +188,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       EasyMock.replay( fact );
       
       final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                             fact );
+                                                                            fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
       
@@ -238,7 +238,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       EasyMock.replay( fact );
       
       final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                             fact );
+                                                                            fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
       
@@ -284,7 +284,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       EasyMock.replay( fact );
       
       final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                             fact );
+                                                                            fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
       

@@ -25,7 +25,7 @@ package dev.drsoran.moloko.content.db;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.AbstractTable;
-import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 
@@ -63,6 +63,8 @@ class RtmSettingsTable extends AbstractTable
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( " INTEGER, " );
       builder.append( RtmSettingsColumns.LANGUAGE );
+      builder.append( " TEXT, " );
+      builder.append( RtmSettingsColumns.RTM_DEFAULTLIST_ID );
       builder.append( " TEXT, " );
       builder.append( "CONSTRAINT defaultlist FOREIGN KEY (" );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );

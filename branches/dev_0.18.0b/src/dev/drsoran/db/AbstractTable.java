@@ -169,25 +169,25 @@ public abstract class AbstractTable implements ITable
                       String where,
                       String[] whereArgs )
    {
-      if ( id == Constants.NO_ID )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
       if ( values == null )
       {
          throw new IllegalArgumentException( "values" );
       }
       
-      throwIfContentValuesIdDiffers( id, values );
-      
-      int numUpdated = 0;
-      
-      if ( values.size() > 0 )
+      if ( id != Constants.NO_ID )
       {
-         where = itemIdAndWhereClause( id, where );
-         numUpdated = database.update( getTableName(), values, where, whereArgs );
+         throwIfContentValuesIdDiffers( id, values );
+         
+         if ( values.size() > 0 )
+         {
+            where = itemIdAndWhereClause( id, where );
+         }
       }
+      
+      int numUpdated = database.update( getTableName(),
+                                        values,
+                                        where,
+                                        whereArgs );
       
       return numUpdated;
    }

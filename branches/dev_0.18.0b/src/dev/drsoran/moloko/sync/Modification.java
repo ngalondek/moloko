@@ -86,6 +86,15 @@ public class Modification implements IModification
    
    
    @Override
+   public String getPropertyName()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+   
+   
+   @Override
    public String getColName()
    {
       return colName;
@@ -94,15 +103,14 @@ public class Modification implements IModification
    
    
    @Override
-   public String getNewValue()
+   public String getValue()
    {
       return newValue;
    }
    
    
    
-   @Override
-   public < T > T getNewValue( Class< T > valueClass )
+   public < T > T getValue( Class< T > valueClass )
    {
       return Strings.convertTo( newValue, valueClass );
    }
@@ -117,7 +125,6 @@ public class Modification implements IModification
    
    
    
-   @Override
    public < T > T getSyncedValue( Class< T > valueClass )
    {
       return Strings.convertTo( syncedValue, valueClass );
@@ -125,7 +132,6 @@ public class Modification implements IModification
    
    
    
-   @Override
    public boolean isSetSyncedValue()
    {
       return isSetSyncedValue;

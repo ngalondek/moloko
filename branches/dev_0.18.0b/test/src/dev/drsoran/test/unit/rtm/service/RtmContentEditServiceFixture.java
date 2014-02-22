@@ -26,8 +26,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.easymock.EasyMock;
@@ -1927,8 +1925,7 @@ public class RtmContentEditServiceFixture
                                                                             "10",
                                                                             "100",
                                                                             "1000",
-                                                                            Arrays.asList( "tag1",
-                                                                                           "tag2" ) );
+                                                                            "tag1,tag2" );
       
       assertThat( response, is( notNullValue() ) );
       assertThat( response.isTransactional(), is( true ) );
@@ -2003,7 +2000,7 @@ public class RtmContentEditServiceFixture
                                                                                                               "1",
                                                                                                               "2",
                                                                                                               "3",
-                                                                                                              Collections.< String > emptyList() );
+                                                                                                              "" );
    }
    
    
@@ -2016,7 +2013,7 @@ public class RtmContentEditServiceFixture
                                                                                                               null,
                                                                                                               "2",
                                                                                                               "3",
-                                                                                                              Collections.< String > emptyList() );
+                                                                                                              null );
    }
    
    
@@ -2029,7 +2026,7 @@ public class RtmContentEditServiceFixture
                                                                                                               "2",
                                                                                                               null,
                                                                                                               "3",
-                                                                                                              Collections.< String > emptyList() );
+                                                                                                              "" );
    }
    
    
@@ -2042,7 +2039,7 @@ public class RtmContentEditServiceFixture
                                                                                                               "2",
                                                                                                               "3",
                                                                                                               null,
-                                                                                                              Collections.< String > emptyList() );
+                                                                                                              null );
    }
    
    

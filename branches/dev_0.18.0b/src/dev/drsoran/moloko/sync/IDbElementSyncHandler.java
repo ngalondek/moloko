@@ -20,17 +20,24 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.sync;
+package dev.drsoran.moloko.sync;
 
-public interface IModification
+import java.util.List;
+
+
+public interface IDbElementSyncHandler< T >
 {
-   String getPropertyName();
+   List< T > getElementsModifiedSince( long modifiedSinceMsUtc );
    
    
    
-   String getValue();
+   void insert( T element );
    
    
    
-   String getSyncedValue();
+   void update( T currentElement, T updatedElement );
+   
+   
+   
+   void delete( T element );
 }

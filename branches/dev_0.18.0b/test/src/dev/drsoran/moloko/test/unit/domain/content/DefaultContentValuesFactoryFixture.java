@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.robolectric.annotation.Config;
 
 import android.content.ContentValues;
-import dev.drsoran.moloko.domain.content.DefaultContentValuesFactory;
+import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Location;
@@ -61,7 +61,7 @@ public class DefaultContentValuesFactoryFixture extends MolokoRoboTestCase
    public void setUp() throws Exception
    {
       super.setUp();
-      fact = new DefaultContentValuesFactory();
+      fact = new MolokoContentValuesFactory();
    }
    
    

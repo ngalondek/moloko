@@ -22,7 +22,6 @@
 
 package dev.drsoran.rtm.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import dev.drsoran.Strings;
@@ -537,21 +536,13 @@ public class RtmContentEditService implements IRtmContentEditService
                                                         String listId,
                                                         String taskSeriesId,
                                                         String taskId,
-                                                        Collection< String > tags ) throws RtmServiceException
+                                                        String tagsJoined ) throws RtmServiceException
    {
       checkNotNull( listId );
       checkNotNull( taskSeriesId );
       checkNotNull( taskId );
       
-      final String joinedTags;
-      if ( tags == null || tags.isEmpty() )
-      {
-         joinedTags = Strings.EMPTY_STRING;
-      }
-      else
-      {
-         joinedTags = Strings.join( ",", tags );
-      }
+      tagsJoined = Strings.emptyIfNull( tagsJoined );
       
       final Param timelineParam = checkAndCreateTimelineParam( timelineId );
       
@@ -566,7 +557,7 @@ public class RtmContentEditService implements IRtmContentEditService
                                                                                    new Param( "task_id",
                                                                                               taskId ),
                                                                                    new Param( "tags",
-                                                                                              joinedTags ) );
+                                                                                              tagsJoined ) );
       return response;
    }
    

@@ -59,7 +59,7 @@ public interface IRtmSyncPartner
    
    
    
-   List< IModification > getModificationsOfTask( String taskId );
+   List< IModification > getModificationsOfTask( RtmTask task );
    
    
    
@@ -75,23 +75,7 @@ public interface IRtmSyncPartner
    
    
    
-   List< RtmNote > getNotes( String taskId, long modifiedSinceMsUtc );
-   
-   
-   
-   List< IModification > getModificationsOfNote( String taskId, String noteId );
-   
-   
-   
-   void insertNote( RtmNote note );
-   
-   
-   
-   void updateNote( RtmNote currentNote, RtmNote updatedNote );
-   
-   
-   
-   void deleteNote( RtmNote note );
+   List< RtmNote > getDeletedNotes( RtmTask task, long deletedSinceMsUtc );
    
    
    
@@ -99,9 +83,45 @@ public interface IRtmSyncPartner
    
    
    
+   void insertLocation( RtmLocation location );
+   
+   
+   
+   void updateLocation( RtmLocation currentLocation, RtmLocation updatedLocation );
+   
+   
+   
+   void deleteLocation( RtmLocation location );
+   
+   
+   
    List< RtmContact > getContacts();
    
    
    
+   void insertContact( RtmContact contact );
+   
+   
+   
+   void updateContact( RtmContact currentContact, RtmContact updatedContact );
+   
+   
+   
+   void deleteContact( RtmContact contact );
+   
+   
+   
    RtmSettings getSettings();
+   
+   
+   
+   void onSyncStarted( long startMillisUtc );
+   
+   
+   
+   void onSyncSuccessful();
+   
+   
+   
+   void onSyncFailed();
 }

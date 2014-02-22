@@ -31,6 +31,7 @@ import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
+import dev.drsoran.moloko.content.Columns.SettingsColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 
@@ -101,6 +102,14 @@ public final class TableColumns
       
       public final static int RTM_TASKSERIES_ID_IDX = 11;
       
+      public final static String RTM_LIST_ID = "rtm_list_id";
+      
+      public final static int RTM_LIST_ID_IDX = 12;
+      
+      public final static String RTM_LOCATION_ID = "rtm_location_id";
+      
+      public final static int RTM_LOCATION_ID_IDX = 13;
+      
       public final static String TAGS_SEPARATOR = TaskColumns.TAGS_SEPARATOR;
       
       public final static String DEFAULT_SORT_ORDER = TaskColumns.DEFAULT_SORT_ORDER;
@@ -108,7 +117,7 @@ public final class TableColumns
       public final static String[] TABLE_PROJECTION =
       { _ID, TASKSERIES_CREATED_DATE, TASKSERIES_MODIFIED_DATE,
        TASKSERIES_NAME, SOURCE, URL, RECURRENCE, RECURRENCE_EVERY, LOCATION_ID,
-       LIST_ID, TAGS, RTM_TASKSERIES_ID };
+       LIST_ID, TAGS, RTM_TASKSERIES_ID, RTM_LIST_ID, RTM_LOCATION_ID };
    }
    
    
@@ -238,6 +247,24 @@ public final class TableColumns
          baseProjection.add( RTM_LOCATION_ID );
          
          RtmLocationColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );
+      }
+      
+      public static String[] TABLE_PROJECTION;
+   }
+   
+   
+   public final static class RtmSettingsColumns extends SettingsColumns
+   {
+      public final static String RTM_DEFAULTLIST_ID = "rtm_defaultlist_id";
+      
+      public final static int RTM_DEFAULTLIST_ID_IDX = SettingsColumns.PROJECTION.length + 1;
+      
+      static
+      {
+         final List< String > baseProjection = new ArrayList< String >( Arrays.asList( SettingsColumns.PROJECTION ) );
+         baseProjection.add( RTM_DEFAULTLIST_ID );
+         
+         RtmSettingsColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );
       }
       
       public static String[] TABLE_PROJECTION;

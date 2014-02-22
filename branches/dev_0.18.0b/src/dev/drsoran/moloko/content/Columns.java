@@ -710,7 +710,7 @@ public final class Columns
    }
    
    
-   public static class RtmSettingsColumns implements BaseColumns
+   public static class SettingsColumns implements BaseColumns
    {
       /**
        * The time stamp when the settings were retrieved from the server

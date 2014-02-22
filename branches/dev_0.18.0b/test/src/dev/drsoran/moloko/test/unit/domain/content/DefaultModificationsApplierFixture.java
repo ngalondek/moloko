@@ -36,7 +36,7 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.ModificationColumns;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.domain.content.DefaultModificationsApplier;
+import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
 import dev.drsoran.moloko.domain.services.ContentException;
@@ -50,7 +50,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
    @Test
    public void testApplyPersistentModifications_Empty()
    {
-      final IModificationsApplier applier = new DefaultModificationsApplier( EasyMock.createNiceMock( ContentResolver.class ),
+      final IModificationsApplier applier = new MolokoModificationsApplier( EasyMock.createNiceMock( ContentResolver.class ),
                                                                              EasyMock.createNiceMock( IContentValuesFactory.class ) );
       
       applier.applyPersistentModifications( Collections.< Modification > emptyList() );
@@ -67,7 +67,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new DefaultModificationsApplier( contentResolver,
+      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
                                                                              fact );
       
       applier.applyPersistentModifications( Arrays.asList( Modification.newNonPersistentModification( "content://test/elements/1",
@@ -95,7 +95,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new DefaultModificationsApplier( contentResolver,
+      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
                                                                              fact );
       
       try
@@ -135,7 +135,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
               .andThrow( new IllegalArgumentException() );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new DefaultModificationsApplier( contentResolver,
+      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
                                                                              fact );
       
       try
@@ -187,7 +187,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
               .andReturn( modContentValues );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new DefaultModificationsApplier( contentResolver,
+      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
                                                                              fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
@@ -237,7 +237,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new DefaultModificationsApplier( contentResolver,
+      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
                                                                              fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
@@ -283,7 +283,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new DefaultModificationsApplier( contentResolver,
+      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
                                                                              fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );

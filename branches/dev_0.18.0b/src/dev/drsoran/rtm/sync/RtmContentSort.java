@@ -97,6 +97,11 @@ public final class RtmContentSort
    
    private static int compareIds( String lhs, String rhs )
    {
+      if ( lhs == rhs )
+      {
+         return 0;
+      }
+      
       if ( lhs == null && rhs != null )
       {
          return -1;

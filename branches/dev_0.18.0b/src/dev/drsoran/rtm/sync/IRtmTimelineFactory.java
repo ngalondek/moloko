@@ -22,15 +22,10 @@
 
 package dev.drsoran.rtm.sync;
 
-public interface IModification
+import dev.drsoran.rtm.model.RtmTimeline;
+
+
+public interface IRtmTimelineFactory
 {
-   String getPropertyName();
-   
-   
-   
-   String getValue();
-   
-   
-   
-   String getSyncedValue();
+   RtmTimeline createTimeline();
 }

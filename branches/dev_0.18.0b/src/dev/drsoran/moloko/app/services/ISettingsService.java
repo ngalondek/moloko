@@ -28,7 +28,6 @@ import java.util.Map;
 
 import android.net.Uri;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
-import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
 import dev.drsoran.moloko.domain.model.Settings;
 
 
@@ -120,7 +119,7 @@ public interface ISettingsService
    
    
    /**
-    * Value: Collection of list IDs to notify tasks for, or the constant {@link RtmSettingsColumns.ALL_LISTS}.
+    * Value: Collection of list IDs to notify tasks for, or the constant {@link SettingsColumns.ALL_LISTS}.
     */
    Map< PermanentNotificationType, Collection< String > > getNotifyingPermanentTaskLists();
    

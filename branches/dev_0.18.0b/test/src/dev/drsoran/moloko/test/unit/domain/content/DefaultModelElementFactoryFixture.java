@@ -36,7 +36,7 @@ import org.junit.Test;
 
 import android.database.Cursor;
 import dev.drsoran.Pair;
-import dev.drsoran.moloko.domain.content.DefaultModelElementFactory;
+import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
@@ -66,7 +66,7 @@ public class DefaultModelElementFactoryFixture extends MolokoTestCase
    public void setUp() throws Exception
    {
       super.setUp();
-      fact = new DefaultModelElementFactory();
+      fact = new MolokoModelElementFactory();
    }
    
    

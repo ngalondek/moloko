@@ -48,6 +48,7 @@ import dev.drsoran.moloko.app.event.ISyncStatusListener;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.app.services.SyncStartResult;
 import dev.drsoran.moloko.app.sync.ISyncActionProviderHost;
+import dev.drsoran.moloko.app.sync.SyncConstants;
 import dev.drsoran.moloko.state.AnnotatedConfigurationSupport;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -580,11 +581,11 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
       {
          switch ( status )
          {
-            case Constants.SYNC_STATUS_STARTED:
+            case SyncConstants.SYNC_STATUS_STARTED:
                setSupportProgressBarIndeterminateVisibility( true );
                break;
             
-            case Constants.SYNC_STATUS_FINISHED:
+            case SyncConstants.SYNC_STATUS_FINISHED:
                setSupportProgressBarIndeterminateVisibility( false );
                break;
             

@@ -153,7 +153,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onInsertNewList( TasksList tasksList )
    {
-      getAppContext().getContentEditService().insertTasksList( tasksList );
+      getAppContext().getContentEditService().insertTasksList( this, tasksList );
    }
    
    
@@ -161,7 +161,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onRenameList( TasksList tasksList )
    {
-      getAppContext().getContentEditService().updateTasksList( tasksList );
+      getAppContext().getContentEditService().updateTasksList( this, tasksList );
    }
    
    
@@ -239,7 +239,8 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    {
       if ( which == Dialog.BUTTON_POSITIVE )
       {
-         getAppContext().getContentEditService().deleteTasksList( listToDelete );
+         getAppContext().getContentEditService().deleteTasksList( this,
+                                                                  listToDelete );
       }
       
       setListToDelete( null );

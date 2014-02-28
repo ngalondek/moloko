@@ -30,12 +30,8 @@ import dev.drsoran.moloko.domain.model.CloudEntryType;
 
 
 class LocationCloudEntry extends PresentableCloudEntry implements
-         View.OnClickListener, View.OnLongClickListener
+         View.OnClickListener
 {
-   private final long locationId;
-   
-   
-   
    public LocationCloudEntry( CloudEntry cloudEntry )
    {
       super( cloudEntry );
@@ -45,8 +41,6 @@ class LocationCloudEntry extends PresentableCloudEntry implements
          throw new IllegalArgumentException( "Expected tag cloud entry of type "
             + CloudEntryType.Location );
       }
-      
-      this.locationId = cloudEntry.getElementId();
    }
    
    
@@ -56,7 +50,6 @@ class LocationCloudEntry extends PresentableCloudEntry implements
    {
       button.setOnClickListener( this );
       button.setLongClickable( true );
-      button.setOnLongClickListener( this );
       button.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
       button.setTextColor( button.getContext()
                                  .getResources()
@@ -66,25 +59,11 @@ class LocationCloudEntry extends PresentableCloudEntry implements
    
    
    @Override
-   public boolean onLongClick( View v )
-   {
-      if ( getTagCloudFragmentListener() != null )
-      {
-         getTagCloudFragmentListener().onOpenLocationWithOtherApp( locationId );
-         return true;
-      }
-      
-      return false;
-   }
-   
-   
-   
-   @Override
    public void onClick( View v )
    {
       if ( getTagCloudFragmentListener() != null )
       {
-         getTagCloudFragmentListener().onOpenLocation( locationId );
+         getTagCloudFragmentListener().onOpenLocation( getDisplay() );
       }
    }
 }

@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
@@ -36,7 +37,7 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentEditService;
-import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
 public class AppContentEditService implements IAppContentEditService
@@ -60,9 +61,9 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void insertTask( final Task task )
+   public void insertTask( FragmentActivity context, final Task task )
    {
-      if ( checkWritableAccess() )
+      if ( checkWritableAccess( context ) )
       {
          final AppContentEditInfo editInfo = new AppContentEditInfo( context.getString( R.string.toast_insert_task,
                                                                                         task.getName() ),
@@ -85,18 +86,19 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void updateTask( Task task )
+   public void updateTask( FragmentActivity context, Task task )
    {
-      updateTasks( Collections.singletonList( task ) );
+      updateTasks( context, Collections.singletonList( task ) );
    }
    
    
    
    @Override
-   public void updateTasks( final Collection< ? extends Task > tasks )
+   public void updateTasks( FragmentActivity context,
+                            final Collection< ? extends Task > tasks )
    {
       final int tasksCount = tasks.size();
-      if ( tasksCount > 0 && checkWritableAccess() )
+      if ( tasksCount > 0 && checkWritableAccess( context ) )
       {
          final Resources res = context.getResources();
          final AppContentEditInfo editInfo = new AppContentEditInfo( res.getQuantityString( R.plurals.toast_save_task,
@@ -127,18 +129,19 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void deleteTask( Task task )
+   public void deleteTask( FragmentActivity context, Task task )
    {
-      deleteTasks( Collections.singletonList( task ) );
+      deleteTasks( context, Collections.singletonList( task ) );
    }
    
    
    
    @Override
-   public void deleteTasks( final Collection< ? extends Task > tasks )
+   public void deleteTasks( FragmentActivity context,
+                            final Collection< ? extends Task > tasks )
    {
       final int tasksCount = tasks.size();
-      if ( tasksCount > 0 && checkWritableAccess() )
+      if ( tasksCount > 0 && checkWritableAccess( context ) )
       {
          final Resources res = context.getResources();
          final AppContentEditInfo editInfo = new AppContentEditInfo( res.getQuantityString( R.plurals.toast_delete_task,
@@ -169,19 +172,24 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void completeTask( Task task, long completedMillisUtc )
+   public void completeTask( FragmentActivity context,
+                             Task task,
+                             long completedMillisUtc )
    {
-      completeTasks( Collections.singletonList( task ), completedMillisUtc );
+      completeTasks( context,
+                     Collections.singletonList( task ),
+                     completedMillisUtc );
    }
    
    
    
    @Override
-   public void completeTasks( final Collection< ? extends Task > tasks,
+   public void completeTasks( FragmentActivity context,
+                              final Collection< ? extends Task > tasks,
                               final long completedMillisUtc )
    {
       final int tasksCount = tasks.size();
-      if ( tasksCount > 0 && checkWritableAccess() )
+      if ( tasksCount > 0 && checkWritableAccess( context ) )
       {
          final Resources res = context.getResources();
          final AppContentEditInfo editInfo = new AppContentEditInfo( res.getQuantityString( R.plurals.toast_save_task,
@@ -213,34 +221,36 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void incompleteTask( Task task )
+   public void incompleteTask( FragmentActivity context, Task task )
    {
-      incompleteTasks( Collections.singletonList( task ) );
+      incompleteTasks( context, Collections.singletonList( task ) );
    }
    
    
    
    @Override
-   public void incompleteTasks( final Collection< ? extends Task > tasks )
+   public void incompleteTasks( FragmentActivity context,
+                                final Collection< ? extends Task > tasks )
    {
-      completeTasks( tasks, Constants.NO_TIME );
+      completeTasks( context, tasks, Constants.NO_TIME );
    }
    
    
    
    @Override
-   public void postponeTask( Task task )
+   public void postponeTask( FragmentActivity context, Task task )
    {
-      postponeTasks( Collections.singletonList( task ) );
+      postponeTasks( context, Collections.singletonList( task ) );
    }
    
    
    
    @Override
-   public void postponeTasks( final Collection< ? extends Task > tasks )
+   public void postponeTasks( FragmentActivity context,
+                              final Collection< ? extends Task > tasks )
    {
       final int tasksCount = tasks.size();
-      if ( tasksCount > 0 && checkWritableAccess() )
+      if ( tasksCount > 0 && checkWritableAccess( context ) )
       {
          final Resources res = context.getResources();
          final AppContentEditInfo editInfo = new AppContentEditInfo( res.getQuantityString( R.plurals.toast_save_task,
@@ -272,9 +282,10 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void insertTasksList( final TasksList tasksList )
+   public void insertTasksList( FragmentActivity context,
+                                final TasksList tasksList )
    {
-      if ( checkWritableAccess() )
+      if ( checkWritableAccess( context ) )
       {
          final AppContentEditInfo editInfo = new AppContentEditInfo( context.getString( R.string.toast_insert_list,
                                                                                         tasksList.getName() ),
@@ -296,9 +307,10 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void updateTasksList( final TasksList tasksList )
+   public void updateTasksList( FragmentActivity context,
+                                final TasksList tasksList )
    {
-      if ( checkWritableAccess() )
+      if ( checkWritableAccess( context ) )
       {
          final AppContentEditInfo editInfo = new AppContentEditInfo( context.getString( R.string.toast_save_list,
                                                                                         tasksList.getName() ),
@@ -321,9 +333,10 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void deleteTasksList( final TasksList tasksList )
+   public void deleteTasksList( FragmentActivity context,
+                                final TasksList tasksList )
    {
-      if ( checkWritableAccess() )
+      if ( checkWritableAccess( context ) )
       {
          final AppContentEditInfo editInfo = new AppContentEditInfo( context.getString( R.string.toast_delete_list,
                                                                                         tasksList.getName() ),
@@ -344,11 +357,11 @@ public class AppContentEditService implements IAppContentEditService
    
    
    
-   private boolean checkWritableAccess()
+   private boolean checkWritableAccess( FragmentActivity context )
    {
       if ( !hasWritableAccess() )
       {
-         showOnlyReadableDatabaseAccessDialog();
+         showOnlyReadableDatabaseAccessDialog( context );
          return false;
       }
       
@@ -400,8 +413,11 @@ public class AppContentEditService implements IAppContentEditService
    
    
    
-   private void showOnlyReadableDatabaseAccessDialog()
+   private void showOnlyReadableDatabaseAccessDialog( FragmentActivity activity )
    {
-      UiUtils.showReadOnlyAccessDialog( context );
+      new AlertDialogFragment.Builder( R.id.dlg_read_only_access ).setMessage( context.getString( R.string.err_modify_access_level_read ) )
+                                                                  .setPositiveButton( R.string.btn_account_settings )
+                                                                  .setNegativeButton( R.string.btn_cancel )
+                                                                  .show( activity );
    }
 }

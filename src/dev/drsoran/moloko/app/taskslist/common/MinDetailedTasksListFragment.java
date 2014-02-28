@@ -83,8 +83,6 @@ public class MinDetailedTasksListFragment extends AbstractTasksListFragment
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
       final RtmSmartFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
-      final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
-      
       final TasksLoader loader = new TasksLoader( getUiContext().asDomainContext(),
                                                   filter,
                                                   TaskContentOptions.Minimal );

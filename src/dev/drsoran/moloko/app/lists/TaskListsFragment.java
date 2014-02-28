@@ -41,7 +41,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.lists.TaskListsAdapter.IOnGroupIndicatorClickedListener;
 import dev.drsoran.moloko.app.loaders.TasksListsLoader;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.ui.fragments.MolokoExpandableListFragment;
 
@@ -374,6 +374,7 @@ class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
    
    private void resetDefaultList()
    {
-      appContext.getSettings().setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+      appContext.getSettings()
+                .setDefaultListId( SettingConstants.NO_DEFAULT_LIST_ID );
    }
 }

@@ -34,9 +34,12 @@ public class Contact
    
    private final String fullName;
    
+   private final int numTasksParticipating;
    
    
-   public Contact( long id, String userName, String fullName )
+   
+   public Contact( long id, String userName, String fullName,
+      int numTasksParticipating )
    {
       if ( id == Constants.NO_ID )
       {
@@ -53,9 +56,15 @@ public class Contact
          throw new IllegalArgumentException( "fullname" );
       }
       
+      if ( numTasksParticipating < 0 )
+      {
+         throw new IllegalArgumentException( "numTasksParticipating" );
+      }
+      
       this.id = id;
       this.userName = userName;
       this.fullName = fullName;
+      this.numTasksParticipating = numTasksParticipating;
    }
    
    
@@ -81,13 +90,21 @@ public class Contact
    
    
    
+   public int getNumTasksParticipating()
+   {
+      return numTasksParticipating;
+   }
+   
+   
+   
    @Override
    public String toString()
    {
-      return String.format( "Contact [id=%s, userName=%s, fullName=%s]",
+      return String.format( "Contact [id=%s, userName=%s, fullName=%s, part=%d]",
                             id,
                             userName,
-                            fullName );
+                            fullName,
+                            numTasksParticipating );
    }
    
 }

@@ -22,7 +22,19 @@
 
 package dev.drsoran.rtm.service;
 
+import dev.drsoran.rtm.RtmServiceException;
+import dev.drsoran.rtm.sync.SyncTime;
+
+
 public interface IRtmSyncService
 {
+   void performIncomingSync( SyncTime syncTime ) throws RtmServiceException;
    
+   
+   
+   void performOutgoingSync( SyncTime syncTime ) throws RtmServiceException;
+   
+   
+   
+   void performFullSync( SyncTime syncTime ) throws RtmServiceException;
 }

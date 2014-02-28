@@ -29,6 +29,7 @@ import java.util.Map;
 import android.net.Uri;
 import dev.drsoran.moloko.app.settings.PermanentNotificationType;
 import dev.drsoran.moloko.domain.model.Settings;
+import dev.drsoran.rtm.RtmConnectionProtocol;
 
 
 public interface ISettingsService
@@ -130,6 +131,10 @@ public interface ISettingsService
    
    
    boolean isUsingHttps();
+   
+   
+   
+   RtmConnectionProtocol getRtmConnectionProtocol();
    
    
    

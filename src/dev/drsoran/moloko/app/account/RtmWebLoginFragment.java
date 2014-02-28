@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.account;
 
+import java.text.MessageFormat;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -33,22 +35,20 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.mdt.rtm.ServiceInternalException;
-
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmAuthHandle;
 import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
 {
-   
-   @InstanceState( key = Constants.FEAT_PERMISSION, defaultValue = "read" )
+   @InstanceState( key = AuthConstants.FEAT_PERMISSION, defaultValue = "read" )
    private String permission;
    
    private AuthenticatorActivity authenticatorActivity;
@@ -188,25 +188,27 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    
    @Override
-   public void onPostBeginAuthentication( String loginUrl,
+   public void onPostBeginAuthentication( RtmAuthHandle authHandle,
                                           RtmServiceException exception )
    {
       if ( exception != null )
       {
          notifyAuthenticationFailed( exception );
       }
-      else if ( TextUtils.isEmpty( loginUrl ) )
+      else if ( TextUtils.isEmpty( authHandle.getAuthUri() ) )
       {
          notifyAuthenticationFailed( R.string.auth_err_cause_inv_login_url );
       }
       else
       {
-         Log().d( getClass(), "LoginURL: " + loginUrl );
+         Log().d( getClass(),
+                  MessageFormat.format( "LoginURL: {0}",
+                                        authHandle.getAuthUri() ) );
          
          messageText.setText( getString( R.string.auth_info_text ) );
          
          webView.setVisibility( View.VISIBLE );
-         webView.loadUrl( loginUrl );
+         webView.loadUrl( authHandle.getAuthUri() );
          
          button.setText( R.string.btn_continue );
       }
@@ -215,16 +217,16 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    
    @Override
-   public void onAuthenticationCompleted( String authToken,
+   public void onAuthenticationCompleted( RtmAuth rtmAuth,
                                           RtmServiceException exception )
    {
-      Log().d( getClass(), "AuthToken: " + authToken );
+      Log().d( getClass(), MessageFormat.format( "AuthToken: {0}", rtmAuth ) );
       
       if ( exception != null )
       {
          notifyAuthenticationFailed( exception );
       }
-      else if ( TextUtils.isEmpty( authToken ) )
+      else if ( TextUtils.isEmpty( rtmAuth.getToken() ) )
       {
          notifyAuthenticationFailed( R.string.auth_err_cause_inv_auth_token );
       }
@@ -234,30 +236,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
          webView.setVisibility( View.INVISIBLE );
          button.setText( R.string.btn_cancel );
          
-         getSherlockActivity().setSupportProgressBarIndeterminateVisibility( true );
-         
-         // We want to get the complete RtmAuth instance
-         authenticator.checkAuthToken( this, authToken );
-      }
-   }
-   
-   
-   
-   @Override
-   public void onAuthTokenChecked( RtmAuth rtmAuth, RtmServiceException exception )
-   {
-      getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
-      
-      if ( exception != null )
-      {
-         notifyAuthenticationFailed( exception );
-      }
-      else if ( rtmAuth == null )
-      {
-         notifyAuthenticationFailed( R.string.auth_err_cause_inv_auth_token );
-      }
-      else
-      {
+         getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
          notifyAuthenticationFinished( rtmAuth );
       }
    }
@@ -273,7 +252,8 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
       {
          notifyAuthenticationCanceled();
       }
-      else if ( Strings.equalsNullAware( buttonText, getString( R.string.btn_continue ) ) )
+      else if ( Strings.equalsNullAware( buttonText,
+                                         getString( R.string.btn_continue ) ) )
       {
          authenticator.completeAuthentication( this );
       }
@@ -313,14 +293,9 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    private void createAuthenticator()
    {
-      try
-      {
-         authenticator = new AsyncRtmAuthenticator( authenticatorActivity );
-      }
-      catch ( ServiceInternalException e )
-      {
-         Log().e( getClass(), "Error creating RTM service", e );
-      }
+      final AppContext appContext = AppContext.get( authenticatorActivity );
+      authenticator = new AsyncRtmAuthenticator( appContext.getRtmAuthService(),
+                                                 appContext.getExecutorService() );
    }
    
    
@@ -337,9 +312,9 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    
    
-   private void notifyAuthenticationFinished( RtmAuth rtmAuth )
+   private void notifyAuthenticationFinished( RtmAuth auth )
    {
-      authenticatorActivity.onAuthenticationFinished( rtmAuth );
+      authenticatorActivity.onAuthenticationFinished( auth );
    }
    
    

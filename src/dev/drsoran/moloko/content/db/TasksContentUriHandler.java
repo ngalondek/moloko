@@ -149,8 +149,7 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
                                   long id,
                                   String[] projection,
                                   String selection,
-                                  String[] selectionArgs,
-                                  String sortOrder )
+                                  String[] selectionArgs )
    {
       final SQLiteQueryBuilder queryBuilder = getTasksQueryBuilder( getIdMapping()
          + "=" + String.valueOf( id ) );
@@ -159,7 +158,7 @@ class TasksContentUriHandler extends AbstractContentUriHandler implements
                            projection,
                            selection,
                            selectionArgs,
-                           sortOrder );
+                           null );
    }
    
    

@@ -61,7 +61,7 @@ public class EstimationFixture extends EqualsHashCodeTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testEstimationNoTime()
    {
       new Estimation( "sentence", NEVER );

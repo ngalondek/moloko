@@ -24,6 +24,7 @@ package dev.drsoran.moloko.app.services;
 
 import android.accounts.Account;
 import android.content.SyncResult;
+import dev.drsoran.rtm.sync.IRtmSyncPartner;
 
 
 public interface ISyncService
@@ -65,4 +66,8 @@ public interface ISyncService
    
    
    void delayNextPeriodicSync( SyncResult syncResult, long seconds );
+   
+   
+   
+   IRtmSyncPartner getSyncPartner();
 }

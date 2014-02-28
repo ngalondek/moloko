@@ -33,6 +33,7 @@ import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 public interface IContentRepository
@@ -95,6 +96,10 @@ public interface IContentRepository
    
    
    Iterable< Location > getAllLocations() throws ContentException;
+   
+   
+   
+   SyncTime getSyncTimes() throws ContentException;
    
    
    

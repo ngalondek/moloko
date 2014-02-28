@@ -66,6 +66,13 @@ public class DbContentProvider extends MolokoContentProvider
    
    
    
+   public RtmDatabase getDatabase()
+   {
+      return database;
+   }
+   
+   
+   
    public List< ? extends ITable > getTables()
    {
       return database.getAllTables();
@@ -138,7 +145,7 @@ public class DbContentProvider extends MolokoContentProvider
       handler = new ReadOnlyContentUriHandler( new CloudEntriesUriHandler( tasksContentUriHandler ) );
       handlerLookup.put( handler, ContentUris.MATCH_CLOUD_ENTRIES );
       
-      handler = new ReadOnlyContentUriHandler( new ContentUriHandlerTableAdapter( database.getTable( RtmContactsTable.TABLE_NAME ) ) );
+      handler = new ContactsContentUriHandler( database.getReadable() );
       handlerLookup.put( handler, ContentUris.MATCH_CONTACTS );
       handlerLookup.put( handler, ContentUris.MATCH_CONTACTS_ID );
       
@@ -150,7 +157,7 @@ public class DbContentProvider extends MolokoContentProvider
       handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS );
       handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( database.getTable( TimesTable.TABLE_NAME ) );
+      handler = new ContentUriHandlerTableAdapter( database.getTable( SyncTimesTable.TABLE_NAME ) );
       handlerLookup.put( handler, ContentUris.MATCH_SYNC );
       handlerLookup.put( handler, ContentUris.MATCH_SYNC_ID );
       

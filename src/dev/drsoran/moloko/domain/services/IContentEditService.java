@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 public interface IContentEditService
@@ -55,4 +56,8 @@ public interface IContentEditService
    
    void deleteTasksList( long tasksListId ) throws NoSuchElementException,
                                            ContentException;
+   
+   
+   
+   void setSyncTimes( SyncTime syncTime ) throws ContentException;
 }

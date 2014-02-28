@@ -24,5 +24,5 @@ package dev.drsoran.moloko.domain.services;
 
 public enum TaskContentOptions
 {
-   Minimal, Complete
+   Minimal, Complete, CompleteWithLocation
 }

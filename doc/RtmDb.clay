@@ -221,7 +221,7 @@
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fec" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="a15918:12b160056d6:-7feb" mandatory="true" name="sync_timestamp">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="-1" id="a15918:12b160056d6:-7feb" mandatory="true" name="sync_timestamp">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fe9" mandatory="false" name="timezone">
@@ -252,19 +252,19 @@
 </foreign-key>
 </foreign-key-list>
 </table>
-<table id="1735ee1:12b714ecdc7:-7fed" name="sync">
+<table id="1735ee1:12b714ecdc7:-7fed" name="synctimes">
 <column-list>
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="1735ee1:12b714ecdc7:-7fe9" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="1735ee1:12b714ecdc7:-7fe8" mandatory="false" name="last_in">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="-1" id="1735ee1:12b714ecdc7:-7fe8" mandatory="false" name="last_in">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="1735ee1:12b714ecdc7:-7fe7" mandatory="false" name="last_out">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="-1" id="1735ee1:12b714ecdc7:-7fe7" mandatory="false" name="last_out">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 </column-list>
-<primary-key id="1735ee1:12b714ecdc7:-7fec" name="PK_SYNC">
+<primary-key id="1735ee1:12b714ecdc7:-7fec" name="PK_SYNCTIMES">
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
@@ -325,7 +325,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fdf" mandatory="true" name="entity_uri">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fdd" mandatory="true" name="col_name">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fdd" mandatory="true" name="property">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fda" mandatory="false" name="new_value">
@@ -339,22 +339,6 @@
 </column>
 </column-list>
 <primary-key id="8339e4:12d9ed556c8:-7fe5" name="PK_MODIFICATIONS">
-<primary-key-column name="_id"/>
-</primary-key>
-</table>
-<table id="1ecfc22:12e03bc8e0c:-7fe5" name="creations">
-<column-list>
-<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="1ecfc22:12e03bc8e0c:-7fdf" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="1ecfc22:12e03bc8e0c:-7fdd" mandatory="true" name="entity_uri">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="1ecfc22:12e03bc8e0c:-7fd8" mandatory="true" name="timestamp">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-</column-list>
-<primary-key id="1ecfc22:12e03bc8e0c:-7fe4" name="PK_CREATIONS">
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
@@ -379,6 +363,5 @@
 <source-terminal x="39" y="13"/>
 </fk-figure>
 <table-figure refid="8339e4:12d9ed556c8:-7fe6" x="931" y="149"/>
-<table-figure refid="1ecfc22:12e03bc8e0c:-7fe5" x="932" y="283"/>
 </diagram>
 </clay-model>

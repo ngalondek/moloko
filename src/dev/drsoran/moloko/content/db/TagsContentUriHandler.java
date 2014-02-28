@@ -73,8 +73,7 @@ class TagsContentUriHandler extends AbstractContentUriHandler
                                   long id,
                                   String[] projection,
                                   String selection,
-                                  String[] selectionArgs,
-                                  String sortOrder )
+                                  String[] selectionArgs )
    {
       throw new UnsupportedOperationException();
    }

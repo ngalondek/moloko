@@ -46,7 +46,7 @@ import dev.drsoran.rtm.service.RtmServicePermission;
 class ChooseRtmPermissionFragment extends AuthFragment implements
          OnItemSelectedListener
 {
-   @InstanceState( key = Constants.FEAT_PERMISSION, defaultValue = "read" )
+   @InstanceState( key = AuthConstants.FEAT_PERMISSION, defaultValue = "read" )
    private String permission;
    
    private Spinner permissionSpinner;

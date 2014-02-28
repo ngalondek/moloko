@@ -25,7 +25,6 @@ package dev.drsoran.moloko.test;
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowContextWrapper;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.test.shadows.ACRAShadow;
@@ -37,19 +36,12 @@ abstract class MolokoTestRunner extends RobolectricTestRunner
 {
    private MolokoApp molokoApp;
    
-   private ShadowContextWrapper shadowApp;
-   
-   private boolean isInitialized;
-   
    
    
    protected MolokoTestRunner( Class< ? > testClass )
       throws InitializationError
    {
       super( testClass );
-      //
-      // addClassOrPackageToInstrument( "org.acra.ACRA" );
-      // addClassOrPackageToInstrument( "android.text.format.DateFormat" );
    }
    
    
@@ -60,67 +52,6 @@ abstract class MolokoTestRunner extends RobolectricTestRunner
    }
    
    
-   
-   public boolean isInitialized()
-   {
-      return isInitialized;
-   }
-   
-   
-   
-   // @Override
-   // public void internalBeforeTest( Method method )
-   // {
-   // if ( !isInitialized )
-   // {
-   // robolectricConfig.setValuesResQualifiers( getValuesResQualifiers() );
-   // }
-   //
-   // super.internalBeforeTest( method );
-   // }
-   //
-   
-   // @Override
-   // public void beforeTest( Method method )
-   // {
-   // super.beforeTest( method );
-   //
-   // if ( !isInitialized )
-   // {
-   // shadowApp.getResourceLoader()
-   // .reloadValuesResouces( robolectricConfig.getValuesResQualifiers() );
-   // }
-   //
-   // molokoApp.onCreate();
-   //
-   // isInitialized = true;
-   // }
-   //
-   
-   //
-   // @Override
-   // protected void bindShadowClasses()
-   // {
-   // super.bindShadowClasses();
-   //
-   // Robolectric.bindShadowClass( ACRAShadow.class );
-   // Robolectric.bindShadowClass( DateFormatShadow.class );
-   // }
-   //
-   //
-   
-   // @Override
-   // protected Application createApplication()
-   // {
-   // molokoApp = new MolokoApp();
-   // shadowApp = Robolectric.shadowOf( molokoApp );
-   //
-   // shadowApp.setPackageName( "dev.drsoran.moloko" );
-   // shadowApp.setPackageManager( new RobolectricPackageManager( molokoApp,
-   // robolectricConfig ) );
-   //
-   // return molokoApp;
-   // }
    
    public abstract String getValuesResQualifiers();
 }

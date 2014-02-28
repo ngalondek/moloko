@@ -42,8 +42,6 @@ public abstract class AbstractDatabase
    
    private AbstractTable[] tables;
    
-   private AbstractTrigger[] triggers;
-   
    
    
    protected AbstractDatabase( Context context, String databaseName,
@@ -174,6 +172,7 @@ public abstract class AbstractDatabase
          {
             table.create();
             table.createIndices();
+            table.insertInitialRows();
          }
       }
       
@@ -181,7 +180,7 @@ public abstract class AbstractDatabase
       
       private void createTriggers( SQLiteDatabase database )
       {
-         triggers = AbstractDatabase.this.createTriggers( database );
+         final AbstractTrigger[] triggers = AbstractDatabase.this.createTriggers( database );
          
          for ( AbstractTrigger trigger : triggers )
          {

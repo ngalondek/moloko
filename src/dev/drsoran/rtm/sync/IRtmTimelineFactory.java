@@ -22,10 +22,11 @@
 
 package dev.drsoran.rtm.sync;
 
+import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.model.RtmTimeline;
 
 
 public interface IRtmTimelineFactory
 {
-   RtmTimeline createTimeline();
+   RtmTimeline createTimeline() throws RtmServiceException;
 }

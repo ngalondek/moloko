@@ -55,7 +55,6 @@ import android.text.Selection;
 import android.text.TextUtils;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -63,6 +62,7 @@ import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.services.ISmartAddService;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
 import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
 
 
@@ -159,7 +159,7 @@ class QuickAddTaskActionModeInputHandler
                         try
                         {
                            final RtmCalendar cal = parsingService.getDateTimeParsing()
-                                                                    .parseDateTime( token.getText() );
+                                                                 .parseDateTime( token.getText() );
                            config.putLong( DUE_DATE, cal.getTimeInMillis() );
                            config.putBoolean( HAS_DUE_TIME, cal.hasTime() );
                         }

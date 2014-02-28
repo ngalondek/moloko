@@ -48,11 +48,10 @@ class ContentUriHandlerTableAdapter extends AbstractContentUriHandler
                                   long id,
                                   String[] projection,
                                   String selection,
-                                  String[] selectionArgs,
-                                  String sortOrder )
+                                  String[] selectionArgs )
    {
       selection = getElementSelection( contentUri, id, selection );
-      return table.query( projection, selection, selectionArgs, sortOrder );
+      return table.query( projection, selection, selectionArgs, null );
    }
    
    

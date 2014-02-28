@@ -28,9 +28,9 @@ import java.util.Collections;
 
 import android.content.ContentResolver;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Note;
-import dev.drsoran.moloko.sync.Modification;
 
 
 public class TaskNoteContentEditHandler extends

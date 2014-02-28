@@ -31,8 +31,6 @@ class LinkedContact
 {
    private final Contact contact;
    
-   private final int numTasksParticipating;
-   
    private String lookUpKey;
    
    private Bitmap photo;
@@ -41,10 +39,9 @@ class LinkedContact
    
    
    
-   public LinkedContact( Contact contact, int numTasksParticipating )
+   public LinkedContact( Contact contact )
    {
       this.contact = contact;
-      this.numTasksParticipating = numTasksParticipating;
    }
    
    
@@ -72,7 +69,7 @@ class LinkedContact
    
    public int getNumTasksParticipating()
    {
-      return numTasksParticipating;
+      return contact.getNumTasksParticipating();
    }
    
    

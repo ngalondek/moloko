@@ -22,25 +22,41 @@
 
 package dev.drsoran.moloko.app.services;
 
+import java.text.MessageFormat;
+
+import android.content.ContentProvider;
 import android.content.Context;
 import android.os.Handler;
-
-
+import dev.drsoran.moloko.IConnectionService;
 import dev.drsoran.moloko.IHandlerTokenFactory;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.account.AccountService;
 import dev.drsoran.moloko.app.event.AppEventService;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingsService;
+import dev.drsoran.moloko.content.ContentAuthority;
+import dev.drsoran.moloko.content.db.DbContentProvider;
+import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.content.db.sync.DbRtmSyncPartnerFactory;
+import dev.drsoran.moloko.content.db.sync.RtmContentValuesFactory;
+import dev.drsoran.moloko.content.db.sync.RtmModelElementFactory;
 import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
+import dev.drsoran.rtm.RtmConnectionProtocol;
+import dev.drsoran.rtm.service.IRtmService;
+import dev.drsoran.rtm.service.RtmService;
 import dev.drsoran.rtm.service.RtmServicePermission;
 
 
 public class AppServicesContainer implements IAppServices
 {
+   private final Context context;
+   
+   private final IConnectionService connectionService;
+   
    private final AppEventService appEventService;
    
-   private final Settings settingsService;
+   private final SettingsService settingsService;
    
    private final IAccountService accountService;
    
@@ -48,31 +64,47 @@ public class AppServicesContainer implements IAppServices
    
    private final IAppContentEditService appContentEditService;
    
+   private final ILog log;
+   
+   private IRtmService rtmService;
+   
    
    
    public AppServicesContainer( DomainContext context, Handler handler,
-      IHandlerTokenFactory handlerTokenFactory, ILog log )
+      IHandlerTokenFactory handlerTokenFactory,
+      IConnectionService connectionService, SettingsService settingsService,
+      ILog log )
    {
+      this.context = context;
+      this.connectionService = connectionService;
+      this.log = log;
+      
       this.appEventService = new AppEventService( context,
                                                   handler,
                                                   log,
                                                   handlerTokenFactory );
       
-      this.settingsService = new Settings( context, appEventService );
+      this.settingsService = settingsService;
+      settingsService.setAppEvents( appEventService );
       
       this.accountService = new AccountService( context );
       
-      this.syncService = new SyncService( context,
+      this.syncService = new SyncService( new DbRtmSyncPartnerFactory( getDatabase(),
+                                                                       new RtmModelElementFactory(),
+                                                                       new RtmContentValuesFactory(),
+                                                                       new MolokoContentValuesFactory() ),
                                           settingsService,
                                           connectionService,
                                           appEventService,
                                           accountService,
                                           log );
       
-      this.appContentEditService = new AppContentEditService( context.getContentEditService(),
+      this.appContentEditService = new AppContentEditService( context,
+                                                              context.getContentEditService(),
                                                               accountService );
+      checkForcedReadableAccess();
       
-      checkForcedReadableAccess( context );
+      this.rtmService = createRtmService( settingsService.getRtmConnectionProtocol() );
    }
    
    
@@ -126,12 +158,56 @@ public class AppServicesContainer implements IAppServices
    
    
    
-   private void checkForcedReadableAccess( Context context )
+   @Override
+   public IRtmService getRtmService()
+   {
+      return rtmService;
+   }
+   
+   
+   
+   public void setRtmConnectionProtocol( RtmConnectionProtocol connectionProtocol )
+   {
+      this.rtmService = createRtmService( connectionProtocol );
+   }
+   
+   
+   
+   private RtmService createRtmService( RtmConnectionProtocol connectionProtocol )
+   {
+      return new RtmService( log,
+                             connectionService.getConnectionFactory(),
+                             connectionProtocol,
+                             context.getString( R.string.app_rtm_api_key ),
+                             context.getString( R.string.app_rtm_shared_secret ) );
+   }
+   
+   
+   
+   private void checkForcedReadableAccess()
    {
       if ( context.getResources()
                   .getBoolean( R.bool.env_force_readable_rtm_access ) )
       {
          accountService.setForcedAccessLevel( RtmServicePermission.read );
       }
+   }
+   
+   
+   
+   private RtmDatabase getDatabase()
+   {
+      final ContentProvider localContentProvider = context.getContentResolver()
+                                                          .acquireContentProviderClient( ContentAuthority.RTM )
+                                                          .getLocalContentProvider();
+      
+      if ( localContentProvider instanceof DbContentProvider )
+      {
+         return ( (DbContentProvider) localContentProvider ).getDatabase();
+      }
+      
+      throw new RuntimeException( MessageFormat.format( "Expected local content provider to be of type {0} but was {1}",
+                                                        DbContentProvider.class.getSimpleName(),
+                                                        localContentProvider.getClass() ) );
    }
 }

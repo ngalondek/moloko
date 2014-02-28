@@ -44,7 +44,7 @@ public class ParticipantFixture extends MolokoTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testParticipantNoId()
    {
       new Participant( NO_ID, 2, "name", "user" );

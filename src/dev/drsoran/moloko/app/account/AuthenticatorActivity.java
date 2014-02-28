@@ -110,7 +110,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
       if ( getAppContext().getConnectionService().hasInternetConnection() )
       {
          final Bundle config = new Bundle( 1 );
-         config.putString( Constants.FEAT_PERMISSION, permission.toString() );
+         config.putString( AuthConstants.FEAT_PERMISSION, permission.toString() );
          
          getSupportFragmentManager().beginTransaction()
                                     .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
@@ -134,7 +134,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
    public void onAuthenticationFinished( RtmAuth rtmAuth )
    {
       final Account account = new Account( rtmAuth.getUser().getUsername(),
-                                           Constants.ACCOUNT_TYPE );
+                                           AuthConstants.ACCOUNT_TYPE );
       try
       {
          boolean ok = true;
@@ -155,19 +155,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
          if ( ok )
          {
             accountManager.setUserData( account,
-                                        Constants.FEAT_API_KEY,
+                                        AuthConstants.FEAT_API_KEY,
                                         MolokoApp.getRtmApiKey( this ) );
             accountManager.setUserData( account,
-                                        Constants.FEAT_SHARED_SECRET,
+                                        AuthConstants.FEAT_SHARED_SECRET,
                                         MolokoApp.getRtmSharedSecret( this ) );
             accountManager.setUserData( account,
-                                        Constants.FEAT_PERMISSION,
+                                        AuthConstants.FEAT_PERMISSION,
                                         rtmAuth.getPermissions().toString() );
             accountManager.setUserData( account,
-                                        Constants.ACCOUNT_USER_ID,
+                                        AuthConstants.ACCOUNT_USER_ID,
                                         rtmAuth.getUser().getId() );
             accountManager.setUserData( account,
-                                        Constants.ACCOUNT_FULLNAME,
+                                        AuthConstants.ACCOUNT_FULLNAME,
                                         rtmAuth.getUser().getFullname() );
             
             final Intent intent = new Intent();
@@ -177,7 +177,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
             // We store the authToken as password
             intent.putExtra( AccountManager.KEY_PASSWORD, rtmAuth.getToken() );
             intent.putExtra( AccountManager.KEY_ACCOUNT_TYPE,
-                             Constants.ACCOUNT_TYPE );
+                             AuthConstants.ACCOUNT_TYPE );
             intent.putExtra( AccountManager.KEY_AUTHTOKEN, rtmAuth.getToken() );
             
             intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, true );

@@ -74,6 +74,7 @@ public abstract class AbstractTable implements ITable
       drop();
       create();
       createIndices();
+      insertInitialRows();
    }
    
    
@@ -93,6 +94,12 @@ public abstract class AbstractTable implements ITable
    
    
    public void dropIndices()
+   {
+   }
+   
+   
+   
+   public void insertInitialRows()
    {
    }
    

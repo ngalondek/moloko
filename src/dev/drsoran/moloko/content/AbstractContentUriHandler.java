@@ -52,8 +52,7 @@ public abstract class AbstractContentUriHandler implements IContentUriHandler
                               id,
                               projection,
                               selection,
-                              selectionArgs,
-                              sortOrder );
+                              selectionArgs );
       }
    }
    
@@ -114,8 +113,7 @@ public abstract class AbstractContentUriHandler implements IContentUriHandler
                                            long id,
                                            String[] projection,
                                            String selection,
-                                           String[] selectionArgs,
-                                           String sortOrder );
+                                           String[] selectionArgs );
    
    
    

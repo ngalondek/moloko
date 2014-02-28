@@ -42,6 +42,9 @@ import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
+import dev.drsoran.rtm.service.IRtmAuthenticationService;
+import dev.drsoran.rtm.service.IRtmSyncService;
+import dev.drsoran.rtm.sync.IRtmSyncPartner;
 
 
 public final class AppContext extends ContextWrapper
@@ -140,7 +143,7 @@ public final class AppContext extends ContextWrapper
    
    public IConnectionService getConnectionService()
    {
-      return appServices.getConnectionService();
+      return systemContext.getConnectionService();
    }
    
    
@@ -152,9 +155,23 @@ public final class AppContext extends ContextWrapper
    
    
    
+   public IRtmSyncService getRtmSyncService( IRtmSyncPartner syncPartner )
+   {
+      return appServices.getRtmService().getSyncService( syncPartner );
+   }
+   
+   
+   
    public IAccountService getAccountService()
    {
       return appServices.getAccountService();
+   }
+   
+   
+   
+   public IRtmAuthenticationService getRtmAuthService()
+   {
+      return appServices.getRtmService().getAuthenticationService();
    }
    
    
@@ -184,4 +201,5 @@ public final class AppContext extends ContextWrapper
    {
       return appServices.getContentEditService();
    }
+   
 }

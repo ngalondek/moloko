@@ -37,6 +37,7 @@ import dev.drsoran.Pair;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
@@ -45,13 +46,12 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
+import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.rtm.model.Priority;
-import dev.drsoran.rtm.sync.model.Modification;
-import dev.drsoran.rtm.sync.model.SyncTime;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 public class ModelElementFactoryTestDataSource
@@ -373,7 +373,7 @@ public class ModelElementFactoryTestDataSource
       modelElement.setModifiedMillisUtc( EVEN_LATER );
       modelElement.setSource( "TestSource" );
       modelElement.setUrl( "http://test.de" );
-      modelElement.setLocation( 1000L, "TestLoc" );
+      modelElement.setLocationStub( 1000L, "TestLoc" );
       modelElement.setTags( Arrays.asList( "tag1", "tag2" ) );
       modelElement.setCompletedMillisUtc( LATER );
       modelElement.setDeletedMillisUtc( EVEN_LATER );
@@ -667,12 +667,13 @@ public class ModelElementFactoryTestDataSource
    
    private void addContactFull( Collection< TestData< Contact >> testData )
    {
-      final Contact modelElement = new Contact( 1L, "Username", "Fullname" );
+      final Contact modelElement = new Contact( 1L, "Username", "Fullname", 10 );
       
       final List< Pair< Class< ? >, Object > > values = new ArrayList< Pair< Class< ? >, Object > >();
       add( values, Long.class, 1L );
       add( values, String.class, "Fullname" );
       add( values, String.class, "Username" );
+      add( values, Integer.class, 10 );
       
       testData.add( new TestData< Contact >( Contact.class,
                                              modelElement,
@@ -839,11 +840,11 @@ public class ModelElementFactoryTestDataSource
    private void addRtmSettingsNoDefList( Collection< TestData< Settings >> testData )
    {
       final Settings modelElement = new Settings( NOW,
-                                                        "UTC",
-                                                        1,
-                                                        2,
-                                                        Constants.NO_ID,
-                                                        "en" );
+                                                  "UTC",
+                                                  1,
+                                                  2,
+                                                  Constants.NO_ID,
+                                                  "en" );
       
       final List< Pair< Class< ? >, Object > > values = new ArrayList< Pair< Class< ? >, Object > >();
       add( values, Long.class, 1L );
@@ -855,21 +856,16 @@ public class ModelElementFactoryTestDataSource
       add( values, String.class, "en" );
       
       testData.add( new TestData< Settings >( Settings.class,
-                                                 modelElement,
-                                                 values,
-                                                 "NoDefList" ) );
+                                              modelElement,
+                                              values,
+                                              "NoDefList" ) );
    }
    
    
    
    private void addRtmSettingsFull( Collection< TestData< Settings >> testData )
    {
-      final Settings modelElement = new Settings( NOW,
-                                                        "UTC",
-                                                        1,
-                                                        2,
-                                                        100L,
-                                                        "en" );
+      final Settings modelElement = new Settings( NOW, "UTC", 1, 2, 100L, "en" );
       
       final List< Pair< Class< ? >, Object > > values = new ArrayList< Pair< Class< ? >, Object > >();
       add( values, Long.class, 1L );
@@ -881,9 +877,9 @@ public class ModelElementFactoryTestDataSource
       add( values, String.class, "en" );
       
       testData.add( new TestData< Settings >( Settings.class,
-                                                 modelElement,
-                                                 values,
-                                                 "Full" ) );
+                                              modelElement,
+                                              values,
+                                              "Full" ) );
    }
    
    
@@ -898,9 +894,9 @@ public class ModelElementFactoryTestDataSource
       add( values, Long.class, null );
       
       testData.add( new TestData< SyncTime >( SyncTime.class,
-                                          modelElement,
-                                          values,
-                                          "Never" ) );
+                                              modelElement,
+                                              values,
+                                              "Never" ) );
    }
    
    
@@ -915,9 +911,9 @@ public class ModelElementFactoryTestDataSource
       add( values, Long.class, LATER );
       
       testData.add( new TestData< SyncTime >( SyncTime.class,
-                                          modelElement,
-                                          values,
-                                          "Full" ) );
+                                              modelElement,
+                                              values,
+                                              "Full" ) );
    }
    
    

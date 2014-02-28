@@ -22,6 +22,16 @@
 
 package dev.drsoran.moloko.test.comp.content.db;
 
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.ENTITY_URI;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.ENTITY_URI_IDX;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.NEW_VALUE;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.NEW_VALUE_IDX;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.PROPERTY;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.PROPERTY_IDX;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.SYNCED_VALUE;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.SYNCED_VALUE_IDX;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.TIMESTAMP;
+import static dev.drsoran.moloko.content.db.TableColumns.ModificationColumns.TIMESTAMP_IDX;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -34,10 +44,10 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
+import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
 import dev.drsoran.moloko.test.TestConstants;
-import dev.drsoran.rtm.sync.db.TableColumns.ModificationColumns;
 
 
 public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase
@@ -56,7 +66,7 @@ public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase
                          ContentUris.bindElementId( ContentUris.LOCATIONS_CONTENT_URI_ID,
                                                     100 )
                                     .toString() );
-      contentValues.put( COL_NAME, "name" );
+      contentValues.put( PROPERTY, "name" );
       contentValues.put( NEW_VALUE, "City" );
       contentValues.put( SYNCED_VALUE, "Catty" );
       contentValues.put( TIMESTAMP, TestConstants.NOW );
@@ -202,7 +212,7 @@ public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase
    {
       assertThat( c.getLong( Columns.ID_IDX ), is( id ) );
       assertThat( c.getString( ENTITY_URI_IDX ), is( entityUri ) );
-      assertThat( c.getString( COL_NAME_IDX ), is( colName ) );
+      assertThat( c.getString( PROPERTY_IDX ), is( colName ) );
       assertThat( CursorUtils.getOptString( c, NEW_VALUE_IDX ), is( newVal ) );
       assertThat( CursorUtils.getOptString( c, SYNCED_VALUE_IDX ),
                   is( syncedVal ) );

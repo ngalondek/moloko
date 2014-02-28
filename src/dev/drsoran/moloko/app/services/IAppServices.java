@@ -22,7 +22,8 @@
 
 package dev.drsoran.moloko.app.services;
 
-import dev.drsoran.moloko.IConnectionService;
+import dev.drsoran.rtm.service.IRtmService;
+
 
 public interface IAppServices
 {
@@ -31,10 +32,6 @@ public interface IAppServices
    
    
    ISettingsService getSettings();
-   
-   
-   
-   IConnectionService getConnectionService();
    
    
    
@@ -47,4 +44,8 @@ public interface IAppServices
    
    
    IAppContentEditService getContentEditService();
+   
+   
+   
+   IRtmService getRtmService();
 }

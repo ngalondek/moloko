@@ -658,7 +658,7 @@ public class TaskFixture extends MolokoTestCase
       final Task task = createTask();
       assertThat( task.getLocationId(), is( NO_ID ) );
       
-      task.setLocation( 1L, "loc" );
+      task.setLocationStub( 1L, "loc" );
       assertThat( task.getLocationId(), is( 1L ) );
    }
    
@@ -670,7 +670,7 @@ public class TaskFixture extends MolokoTestCase
       final Task task = createTask();
       assertNull( task.getLocationName() );
       
-      task.setLocation( 1L, "loc" );
+      task.setLocationStub( 1L, "loc" );
       assertThat( task.getLocationName(), is( "loc" ) );
    }
    
@@ -682,10 +682,10 @@ public class TaskFixture extends MolokoTestCase
       final Task task = createTask();
       assertFalse( task.isLocated() );
       
-      task.setLocation( 1L, "loc" );
+      task.setLocationStub( 1L, "loc" );
       assertTrue( task.isLocated() );
       
-      task.setLocation( NO_ID, null );
+      task.setLocationStub( NO_ID, null );
       assertFalse( task.isLocated() );
    }
    
@@ -695,7 +695,7 @@ public class TaskFixture extends MolokoTestCase
    public void testSetLocationNoIdButName()
    {
       final Task task = createTask();
-      task.setLocation( NO_ID, "loc" );
+      task.setLocationStub( NO_ID, "loc" );
    }
    
    
@@ -704,7 +704,7 @@ public class TaskFixture extends MolokoTestCase
    public void testSetLocationIdButNullName()
    {
       final Task task = createTask();
-      task.setLocation( 1L, null );
+      task.setLocationStub( 1L, null );
    }
    
    
@@ -713,7 +713,7 @@ public class TaskFixture extends MolokoTestCase
    public void testSetLocationIdButEmptyName()
    {
       final Task task = createTask();
-      task.setLocation( 1L, "" );
+      task.setLocationStub( 1L, "" );
    }
    
    

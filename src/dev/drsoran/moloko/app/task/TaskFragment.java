@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.task;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import android.app.Activity;
@@ -47,10 +48,10 @@ import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.loaders.TaskLoader;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
+import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.MenuItemPreparer;
@@ -60,6 +61,7 @@ import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
+import dev.drsoran.rtm.parsing.GrammarException;
 
 
 class TaskFragment extends MolokoLoaderFragment< Task > implements
@@ -526,23 +528,22 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private void setLocationSection( View view, final Task task )
    {
-      String locationName = null;
-      
+      final Location location = task.getLocation();
       boolean showSection = task.isLocated();
+      
+      String locationName = null;
       
       if ( showSection )
       {
+         locationName = location.getName();
+         
          // Tasks which are received by sharing from someone else may also have
          // a location ID set. But this ID is from the other ones DB. We identify
          // these tasks not by looking for the ID in our DB. These tasks do not
          // have a name and a location of 0.0, 0.0.
          //
          // @see: Issue 12: http://code.google.com/p/moloko/issues/detail?id=12
-         locationName = task.getLocationName();
-         
-         showSection = !TextUtils.isEmpty( locationName )
-            || Float.compare( task.getLongitude(), 0.0f ) != 0
-            || Float.compare( task.getLatitude(), 0.0f ) != 0;
+         showSection = !location.isForeignLocation();
       }
       
       if ( !showSection )
@@ -553,13 +554,14 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
       {
          view.setVisibility( View.VISIBLE );
          
-         if ( TextUtils.isEmpty( locationName ) )
+         if ( TextUtils.isEmpty( location.getName() ) )
          {
-            locationName = "Lon: " + task.getLongitude() + ", Lat: "
-               + task.getLatitude();
+            locationName = MessageFormat.format( "Lon: {0}, Lat: {1}",
+                                                 location.getLongitude(),
+                                                 location.getLatitude() );
          }
          
-         boolean locationIsClickable = task.isLocationViewable();
+         boolean locationIsClickable = location.isViewable();
          
          if ( locationIsClickable )
          {
@@ -572,7 +574,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
                                                             @Override
                                                             public void onClick( View widget )
                                                             {
-                                                               listener.onOpenLocation( task );
+                                                               listener.onOpenLocation( location );
                                                             }
                                                          } );
          }

@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.domain.content;
 
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.sync.Modification;
 
 
 public interface IModificationsApplier

@@ -25,20 +25,20 @@ package dev.drsoran.moloko.domain.content;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import dev.drsoran.Compare;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
+import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.sync.Compare;
-import dev.drsoran.moloko.sync.Modification;
-import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
 
 
 public class MolokoModificationsApplier implements IModificationsApplier
 {
    private final static String SEL_QUERY_MODIFICATION = new StringBuilder( 100 ).append( ModificationColumns.ENTITY_URI )
                                                                                 .append( "=? AND " )
-                                                                                .append( ModificationColumns.COL_NAME )
+                                                                                .append( ModificationColumns.PROPERTY )
                                                                                 .append( "=?" )
                                                                                 .toString();
    
@@ -69,7 +69,7 @@ public class MolokoModificationsApplier implements IModificationsApplier
             {
                // Check if modification already exists
                c = getModification( modification.getEntityUri(),
-                                    modification.getColName() );
+                                    modification.getPropertyName() );
                
                if ( c.moveToNext() )
                {
@@ -126,13 +126,13 @@ public class MolokoModificationsApplier implements IModificationsApplier
       // Check if the new value equals the synced value from the existing modification, if so the
       // user has reverted his change and we delete the modification.
       if ( Compare.isDifferent( CursorUtils.getOptString( existingModification,
-                                                                 ModificationColumns.SYNCED_VALUE_IDX ),
-                                       newModification.getNewValue() ) )
+                                                          ModificationColumns.SYNCED_VALUE_IDX ),
+                                newModification.getValue() ) )
       {
          // Update the modification with the new value.
          contentResolver.update( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI_ID,
                                                             existingModification.getLong( Columns.ID_IDX ) ),
-                                 createUpdateNewValueContentValues( newModification.getNewValue() ),
+                                 createUpdateNewValueContentValues( newModification.getValue() ),
                                  null,
                                  null );
       }

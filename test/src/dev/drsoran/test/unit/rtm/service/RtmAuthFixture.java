@@ -22,8 +22,9 @@
 
 package dev.drsoran.test.unit.rtm.service;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.junit.Assert.assertThat;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

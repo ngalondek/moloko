@@ -33,6 +33,7 @@ import java.text.MessageFormat;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmSettings;
 
 
@@ -139,7 +140,7 @@ public class RtmSettingsContentHandler extends RtmContentHandler< RtmSettings >
    {
       if ( "settings".equalsIgnoreCase( qName ) )
       {
-         setContentElementAndNotify( new RtmSettings( System.currentTimeMillis(),
+         setContentElementAndNotify( new RtmSettings( RtmConstants.NO_TIME,
                                                       timezone,
                                                       dateformat,
                                                       timeformat,

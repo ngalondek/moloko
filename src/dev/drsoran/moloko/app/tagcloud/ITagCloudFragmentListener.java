@@ -1,7 +1,5 @@
 package dev.drsoran.moloko.app.tagcloud;
 
-
-
 interface ITagCloudFragmentListener
 {
    void onOpenList( long listId );
@@ -12,9 +10,5 @@ interface ITagCloudFragmentListener
    
    
    
-   void onOpenLocation( long locationId );
-   
-   
-   
-   void onOpenLocationWithOtherApp( long locationId );
+   void onOpenLocation( String locationName );
 }

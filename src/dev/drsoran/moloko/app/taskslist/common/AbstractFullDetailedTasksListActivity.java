@@ -445,7 +445,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
       getAppContext().getContentEditService()
-                     .completeTasks( tasks, System.currentTimeMillis() );
+                     .completeTasks( this, tasks, System.currentTimeMillis() );
       
       clearListChoices();
    }
@@ -454,7 +454,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void incompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      getAppContext().getContentEditService().incompleteTasks( tasks );
+      getAppContext().getContentEditService().incompleteTasks( this, tasks );
       clearListChoices();
    }
    
@@ -462,7 +462,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void postponeSelectedTasks( List< ? extends Task > tasks )
    {
-      getAppContext().getContentEditService().postponeTasks( tasks );
+      getAppContext().getContentEditService().postponeTasks( this, tasks );
       clearListChoices();
    }
    
@@ -470,7 +470,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void deleteSelectedTasks( List< ? extends Task > tasks )
    {
-      getAppContext().getContentEditService().deleteTasks( tasks );
+      getAppContext().getContentEditService().deleteTasks( this, tasks );
       clearListChoices();
    }
    

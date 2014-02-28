@@ -54,14 +54,10 @@ class TaskNotesContentUriHandler extends AbstractContentUriHandler
                                   long id,
                                   String[] projection,
                                   String selection,
-                                  String[] selectionArgs,
-                                  String sortOrder )
+                                  String[] selectionArgs )
    {
       selection = getElementSelection( contentUri, id, selection );
-      return rtmNotesTable.query( projection,
-                                  selection,
-                                  selectionArgs,
-                                  sortOrder );
+      return rtmNotesTable.query( projection, selection, selectionArgs, null );
    }
    
    

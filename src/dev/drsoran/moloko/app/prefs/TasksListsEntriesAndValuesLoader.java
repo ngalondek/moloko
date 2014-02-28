@@ -27,7 +27,7 @@ import java.util.List;
 
 import android.content.Context;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
@@ -95,7 +95,7 @@ class TasksListsEntriesAndValuesLoader
          entries.add( ListEntriesAndValues.NONE_IDX,
                       context.getResources().getString( R.string.phr_none_f ) );
          values.add( ListEntriesAndValues.NONE_IDX,
-                     String.valueOf( Settings.NO_DEFAULT_LIST_ID ) );
+                     String.valueOf( SettingConstants.NO_DEFAULT_LIST_ID ) );
       }
       
       final int finalElementCount = entries.size();

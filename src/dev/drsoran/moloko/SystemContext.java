@@ -70,6 +70,13 @@ public final class SystemContext extends ContextWrapper
    
    
    
+   public IConnectionService getConnectionService()
+   {
+      return systemServices.getConnectionService();
+   }
+   
+   
+   
    public IHandlerToken acquireHandlerToken()
    {
       return systemServices.acquireHandlerToken();

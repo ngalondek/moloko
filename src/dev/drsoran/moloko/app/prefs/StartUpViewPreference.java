@@ -35,7 +35,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.TasksList;
 
 
@@ -56,12 +56,12 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    {
       super( context, attrs );
       
-      setDefaultListNameFromDatabase();
+      setDefaultListNameFromRepository();
       
       final CharSequence[] entryValues =
-      { String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST ),
-       String.valueOf( Settings.STARTUP_VIEW_LISTS ),
-       String.valueOf( Settings.STARTUP_VIEW_HOME ) };
+      { String.valueOf( SettingConstants.STARTUP_VIEW_DEFAULT_LIST ),
+       String.valueOf( SettingConstants.STARTUP_VIEW_LISTS ),
+       String.valueOf( SettingConstants.STARTUP_VIEW_HOME ) };
       
       setEntries( createEntries() );
       setEntryValues( entryValues );
@@ -90,9 +90,9 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
          // if we don't have a default list set and chose the select a new
          // default
          // list we must open a new list dialog with all lists to select one.
-         if ( String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST )
+         if ( String.valueOf( SettingConstants.STARTUP_VIEW_DEFAULT_LIST )
                     .equals( newValueStr )
-            && getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
+            && getSettings().getDefaultListId() == SettingConstants.NO_DEFAULT_LIST_ID )
          {
             final TasksListsEntriesAndValuesLoader entriesAndValuesLoader = new TasksListsEntriesAndValuesLoader( getContext(),
                                                                                                                   getAppContext().getContentRepository() );
@@ -202,10 +202,11 @@ class StartUpViewPreference extends AutoSummaryListPreference implements
    
    
    
-   private void setDefaultListNameFromDatabase()
+   // TODO: Make Async
+   private void setDefaultListNameFromRepository()
    {
       final long defListId = getSettings().getDefaultListId();
-      if ( defListId != Settings.NO_DEFAULT_LIST_ID )
+      if ( defListId != SettingConstants.NO_DEFAULT_LIST_ID )
       {
          try
          {

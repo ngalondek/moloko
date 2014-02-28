@@ -122,13 +122,6 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    
    
-   protected void showOnlyReadableDatabaseAccessDialog()
-   {
-      UiUtils.showReadOnlyAccessDialog( this );
-   }
-   
-   
-   
    private void handleReadOnlyAccessDialogClick( int which )
    {
       if ( which == Dialog.BUTTON_POSITIVE )

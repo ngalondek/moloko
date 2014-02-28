@@ -43,6 +43,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
 import dev.drsoran.moloko.app.event.ISyncStatusListener;
+import dev.drsoran.moloko.app.sync.SyncConstants;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
@@ -205,7 +206,7 @@ class RtmSyncStatePreference extends InfoTextPreference implements
    @Override
    public void onSyncStatusChanged( int status )
    {
-      if ( status == Constants.SYNC_STATUS_FINISHED )
+      if ( status == SyncConstants.SYNC_STATUS_FINISHED )
       {
          unregisterSyncStatusChangedListener();
          

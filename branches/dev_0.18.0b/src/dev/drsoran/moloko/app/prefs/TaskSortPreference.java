@@ -24,15 +24,15 @@ package dev.drsoran.moloko.app.prefs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 
 
 class TaskSortPreference extends AutoSummaryListPreference
 {
    public final static String[] SORT_ORDER_VALUES =
-   { String.valueOf( Settings.TASK_SORT_PRIORITY ),
-    String.valueOf( Settings.TASK_SORT_DUE_DATE ),
-    String.valueOf( Settings.TASK_SORT_NAME ) };
+   { String.valueOf( SettingConstants.TASK_SORT_PRIORITY ),
+    String.valueOf( SettingConstants.TASK_SORT_DUE_DATE ),
+    String.valueOf( SettingConstants.TASK_SORT_NAME ) };
    
    
    

@@ -25,12 +25,14 @@ package dev.drsoran.moloko.domain.services;
 import java.util.NoSuchElementException;
 
 import android.net.Uri;
+import dev.drsoran.moloko.content.Columns.SyncTimesColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.content.AbstractContentEditHandler;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 public class ContentEditService implements IContentEditService
@@ -45,6 +47,8 @@ public class ContentEditService implements IContentEditService
    
    private final AbstractContentEditHandler< Participant > participantsContentEditHandler;
    
+   private final AbstractContentEditHandler< SyncTime > syncTimesContentEditHandler;
+   
    
    
    public ContentEditService(
@@ -52,6 +56,7 @@ public class ContentEditService implements IContentEditService
       AbstractContentEditHandler< TasksList > tasksListsContentEditHandler,
       AbstractContentEditHandler< Note > notesContentEditHandler,
       AbstractContentEditHandler< Participant > participantsContentEditHandler,
+      AbstractContentEditHandler< SyncTime > syncTimesContentEditHandler,
       IContentRepository contentRepository )
    {
       this.contentRepository = contentRepository;
@@ -59,6 +64,7 @@ public class ContentEditService implements IContentEditService
       this.tasksListsContentEditHandler = tasksListsContentEditHandler;
       this.notesContentEditHandler = notesContentEditHandler;
       this.participantsContentEditHandler = participantsContentEditHandler;
+      this.syncTimesContentEditHandler = syncTimesContentEditHandler;
    }
    
    
@@ -144,6 +150,17 @@ public class ContentEditService implements IContentEditService
    {
       tasksListsContentEditHandler.deleteElement( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
                                                   tasksListId );
+   }
+   
+   
+   
+   @Override
+   public void setSyncTimes( SyncTime syncTime ) throws ContentException
+   {
+      syncTimesContentEditHandler.updateElement( ContentUris.SYNC_CONTENT_URI_ID,
+                                                 null,
+                                                 syncTime,
+                                                 SyncTimesColumns.SINGLETON_ID );
    }
    
    

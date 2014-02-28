@@ -21,6 +21,8 @@ package dev.drsoran.rtm;
 
 import java.text.MessageFormat;
 
+import dev.drsoran.Strings;
+
 
 /**
  * 
@@ -102,5 +104,27 @@ public class RtmServiceException extends Exception
    public String getResponseMessage()
    {
       return responseMessage;
+   }
+   
+   
+   
+   @Override
+   public String getLocalizedMessage()
+   {
+      if ( Strings.isNullOrEmpty( responseMessage ) )
+      {
+         if ( getCause() != null )
+         {
+            return getCause().getLocalizedMessage();
+         }
+         else
+         {
+            return null;
+         }
+      }
+      else
+      {
+         return responseMessage;
+      }
    }
 }

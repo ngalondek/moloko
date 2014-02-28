@@ -37,6 +37,7 @@ import org.junit.Test;
 
 import android.database.Cursor;
 import dev.drsoran.Pair;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
 import dev.drsoran.moloko.domain.model.Contact;
@@ -47,7 +48,6 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.sync.Modification;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.ModelElementFactoryTestDataSource.TestData;

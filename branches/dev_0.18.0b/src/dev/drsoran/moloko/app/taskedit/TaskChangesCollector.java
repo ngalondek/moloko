@@ -25,15 +25,13 @@ package dev.drsoran.moloko.app.taskedit;
 import java.util.List;
 
 import android.text.TextUtils;
-
-
 import dev.drsoran.Strings;
 import dev.drsoran.db.DbUtils;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.rtm.model.old.RtmTask;
-import dev.drsoran.rtm.sync.model.Modification;
+import dev.drsoran.rtm.model.RtmTask;
 
 
 class TaskChangesCollector

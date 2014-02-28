@@ -22,17 +22,28 @@
 
 package dev.drsoran.moloko.content.db.sync;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns;
+import dev.drsoran.moloko.content.Columns.ContactColumns;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableNames;
@@ -54,9 +65,17 @@ public class RtmTaskElementSyncHandler implements
    
    private final RtmDatabase rtmDatabase;
    
-   private final IModelElementFactory modelElementFactory;
+   private final IModelElementFactory rtmModelElementFactory;
    
-   private final IContentValuesFactory contentValuesFactory;
+   private final IContentValuesFactory rtmContentValuesFactory;
+   
+   private final IContentValuesFactory molokoContentValuesFactory;
+   
+   private final ITaskSeriesIdProvider taskSeriesIdProvider;
+   
+   private final Map< String, Long > rtmContactId2contactId = new HashMap< String, Long >();
+   
+   private final Set< String > updatedTaskSerieses = new HashSet< String >();
    
    static
    {
@@ -79,27 +98,41 @@ public class RtmTaskElementSyncHandler implements
    
    
    public RtmTaskElementSyncHandler( RtmDatabase rtmDatabase,
-      IModelElementFactory modelElementFactory,
-      IContentValuesFactory contentValuesFactory )
+      IModelElementFactory rtmModelElementFactory,
+      IContentValuesFactory rtmContentValuesFactory,
+      IContentValuesFactory molokoContentValuesFactory,
+      ITaskSeriesIdProvider taskSeriesIdProvider )
    {
       if ( rtmDatabase == null )
       {
          throw new IllegalArgumentException( "rtmDatabase" );
       }
       
-      if ( modelElementFactory == null )
+      if ( rtmModelElementFactory == null )
       {
-         throw new IllegalArgumentException( "modelElementFactory" );
+         throw new IllegalArgumentException( "rtmModelElementFactory" );
       }
       
-      if ( contentValuesFactory == null )
+      if ( rtmContentValuesFactory == null )
       {
-         throw new IllegalArgumentException( "contentValuesFactory" );
+         throw new IllegalArgumentException( "rtmContentValuesFactory" );
+      }
+      
+      if ( molokoContentValuesFactory == null )
+      {
+         throw new IllegalArgumentException( "molokoContentValuesFactory" );
+      }
+      
+      if ( taskSeriesIdProvider == null )
+      {
+         throw new IllegalArgumentException( "taskSeriesIdProvider" );
       }
       
       this.rtmDatabase = rtmDatabase;
-      this.modelElementFactory = modelElementFactory;
-      this.contentValuesFactory = contentValuesFactory;
+      this.rtmModelElementFactory = rtmModelElementFactory;
+      this.rtmContentValuesFactory = rtmContentValuesFactory;
+      this.molokoContentValuesFactory = molokoContentValuesFactory;
+      this.taskSeriesIdProvider = taskSeriesIdProvider;
    }
    
    
@@ -115,7 +148,7 @@ public class RtmTaskElementSyncHandler implements
    @Override
    public void insert( RtmTask task )
    {
-      final ContentValues contentValues = contentValuesFactory.createContentValues( task );
+      final ContentValues contentValues = rtmContentValuesFactory.createContentValues( task );
       
       final ContentValues taskSeriesValues = getRtmTaskSeriesSubset( contentValues );
       ITable table = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE );
@@ -136,14 +169,21 @@ public class RtmTaskElementSyncHandler implements
    private void insertNotes( Collection< ? extends RtmNote > notes,
                              long taskSeriesId )
    {
-      final ITable notesTable = rtmDatabase.getTable( TableNames.RTM_NOTES_TABLE );
       for ( RtmNote rtmNote : notes )
       {
-         final ContentValues contentValues = contentValuesFactory.createContentValues( rtmNote );
-         contentValues.put( RtmNoteColumns.TASKSERIES_ID, taskSeriesId );
-         
-         notesTable.insert( contentValues );
+         insertNote( rtmNote, taskSeriesId );
       }
+   }
+   
+   
+   
+   private void insertNote( RtmNote note, long taskSeriesId )
+   {
+      final ITable notesTable = rtmDatabase.getTable( TableNames.RTM_NOTES_TABLE );
+      final ContentValues contentValues = rtmContentValuesFactory.createContentValues( note );
+      contentValues.put( RtmNoteColumns.TASKSERIES_ID, taskSeriesId );
+      
+      notesTable.insert( contentValues );
    }
    
    
@@ -151,18 +191,27 @@ public class RtmTaskElementSyncHandler implements
    private void insertParticipants( Collection< RtmContact > participants,
                                     long taskSeriesId )
    {
-      final ITable participantsTable = rtmDatabase.getTable( TableNames.RTM_PARTICIPANTS_TABLE );
       for ( RtmContact contact : participants )
       {
-         final Participant participant = new Participant( id,
-                                                          contactId,
-                                                          fullname,
-                                                          username );
-         final ContentValues contentValues = contentValuesFactory.createContentValues( rtmNote );
-         contentValues.put( RtmNoteColumns.TASKSERIES_ID, taskSeriesId );
-         
-         participantsTable.insert( contentValues );
+         insertParticipant( contact, taskSeriesId );
       }
+   }
+   
+   
+   
+   private void insertParticipant( RtmContact rtmContact, long taskSeriesId )
+   {
+      final ITable participantsTable = rtmDatabase.getTable( TableNames.RTM_PARTICIPANTS_TABLE );
+      final long contactId = getContactIdFromRtmContactId( rtmContact.getId() );
+      final Participant participant = new Participant( Constants.NO_ID,
+                                                       contactId,
+                                                       rtmContact.getFullname(),
+                                                       rtmContact.getUsername() );
+      
+      final ContentValues contentValues = molokoContentValuesFactory.createContentValues( participant );
+      contentValues.put( RtmNoteColumns.TASKSERIES_ID, taskSeriesId );
+      
+      participantsTable.insert( contentValues );
    }
    
    
@@ -170,17 +219,193 @@ public class RtmTaskElementSyncHandler implements
    @Override
    public void update( RtmTask currentTask, RtmTask updatedTask )
    {
-      // TODO Auto-generated method stub
+      if ( !currentTask.getId().equals( updatedTask.getId() ) )
+      {
+         throw new IllegalArgumentException( MessageFormat.format( "IDs differ in update. {0} != {1}",
+                                                                   currentTask,
+                                                                   updatedTask ) );
+      }
       
+      final ContentValues contentValues = rtmContentValuesFactory.createContentValues( updatedTask );
+      final String rtmTaskSeriedId = currentTask.getTaskSeriesId();
+      
+      if ( !hasTaskSeriesAlreadyUpdated( rtmTaskSeriedId ) )
+      {
+         final ContentValues taskSeriesValues = getRtmTaskSeriesSubset( contentValues );
+         final ITable taskSeriesTable = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE );
+         taskSeriesTable.update( Constants.NO_ID,
+                                 taskSeriesValues,
+                                 RtmTaskSeriesColumns.RTM_TASKSERIES_ID
+                                    + "='?'",
+                                 new String[]
+                                 { currentTask.getTaskSeriesId() } );
+         
+         final long taskseriesId = taskSeriesIdProvider.getTaskSeriesIdOfRtmTaskSeriesId( rtmTaskSeriedId );
+         
+         updateNotes( taskseriesId, currentTask, updatedTask );
+         
+         updateParticipants( taskseriesId, currentTask, updatedTask );
+         
+         setTaskSeriesUpdated( rtmTaskSeriedId );
+      }
+      
+      final ContentValues rawTaskValues = getRtmRawTaskSubset( contentValues );
+      final ITable rawTaskTable = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE );
+      rawTaskTable.update( Constants.NO_ID,
+                           rawTaskValues,
+                           RtmRawTaskColumns.RTM_RAWTASK_ID + "='?'",
+                           new String[]
+                           { currentTask.getId() } );
    }
    
    
    
+   private void updateNotes( long taskSeriesId,
+                             RtmTask currentTask,
+                             RtmTask updatedTask )
+   {
+      for ( RtmNote updatedNote : updatedTask.getNotes() )
+      {
+         final RtmNote existingNote = currentTask.getNote( updatedNote.getId() );
+         
+         if ( existingNote == null )
+         {
+            insertNote( updatedNote, taskSeriesId );
+         }
+         else
+         {
+            updateNote( existingNote, updatedNote );
+         }
+      }
+      
+      for ( RtmNote existingNote : currentTask.getNotes() )
+      {
+         if ( !updatedTask.hasNote( existingNote.getId() ) )
+         {
+            deleteNote( existingNote );
+         }
+      }
+   }
+   
+   
+   
+   private void updateNote( RtmNote currentNote, RtmNote updatedNote )
+   {
+      if ( !currentNote.getId().equals( updatedNote.getId() ) )
+      {
+         throw new IllegalArgumentException( MessageFormat.format( "IDs differ in update. {0} != {1}",
+                                                                   currentNote,
+                                                                   updatedNote ) );
+      }
+      
+      final ITable rtmNotesTable = rtmDatabase.getTable( TableNames.RTM_NOTES_TABLE );
+      final ContentValues noteContentValues = rtmContentValuesFactory.createContentValues( updatedNote );
+      
+      rtmNotesTable.update( Constants.NO_ID,
+                            noteContentValues,
+                            RtmNoteColumns.RTM_NOTE_ID + "='?'",
+                            new String[]
+                            { currentNote.getId() } );
+   }
+   
+   
+   
+   private void updateParticipants( long taskSeriesId,
+                                    RtmTask currentTask,
+                                    RtmTask updatedTask )
+   {
+      for ( RtmContact updatedParticipant : updatedTask.getParticipants() )
+      {
+         final RtmContact existingParticipant = currentTask.getParticipant( updatedParticipant.getId() );
+         
+         if ( existingParticipant == null )
+         {
+            insertParticipant( updatedParticipant, taskSeriesId );
+         }
+         
+         // No update for participants because the changeable parts like user name are updated by a trigger
+      }
+      
+      for ( RtmContact existingParticipant : currentTask.getParticipants() )
+      {
+         if ( updatedTask.getParticipant( existingParticipant.getId() ) == null )
+         {
+            deleteParticipant( existingParticipant );
+         }
+      }
+   }
+   
+   
+   
+   private boolean hasTaskSeriesAlreadyUpdated( String taskSeriedId )
+   {
+      return updatedTaskSerieses.contains( taskSeriedId );
+   }
+   
+   
+   
+   private void setTaskSeriesUpdated( String taskSeriedId )
+   {
+      updatedTaskSerieses.add( taskSeriedId );
+   }
+   
+   
+   
+   /**
+    * We only delete the task. The task series, notes, participants are deleted by DB triggers, if no longer referenced.
+    */
    @Override
    public void delete( RtmTask task )
    {
-      // TODO Auto-generated method stub
+      final ITable rawTasksTable = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE );
+      final int numDeleted = rawTasksTable.delete( Constants.NO_ID,
+                                                   RtmRawTaskColumns.RTM_RAWTASK_ID
+                                                      + "='?'",
+                                                   new String[]
+                                                   { task.getId() } );
       
+      if ( numDeleted < 1 )
+      {
+         throw new SQLiteException( MessageFormat.format( "{0} not deleted.",
+                                                          task ) );
+      }
+   }
+   
+   
+   
+   private void deleteNote( RtmNote note )
+   {
+      final ITable rtmNotesTable = rtmDatabase.getTable( TableNames.RTM_NOTES_TABLE );
+      final int numDeleted = rtmNotesTable.delete( Constants.NO_ID,
+                                                   RtmNoteColumns.RTM_NOTE_ID
+                                                      + "='?'",
+                                                   new String[]
+                                                   { note.getId() } );
+      
+      if ( numDeleted < 1 )
+      {
+         throw new SQLiteException( MessageFormat.format( "{0} not deleted.",
+                                                          note ) );
+      }
+   }
+   
+   
+   
+   private void deleteParticipant( RtmContact contact )
+   {
+      final long contactId = getContactIdFromDatabase( contact.getId() );
+      final ITable rtmParticipantsTable = rtmDatabase.getTable( TableNames.RTM_PARTICIPANTS_TABLE );
+      final int numDeleted = rtmParticipantsTable.delete( Constants.NO_ID,
+                                                          RtmParticipantColumns.CONTACT_ID
+                                                             + "=?",
+                                                          new String[]
+                                                          { String.valueOf( contactId ) } );
+      
+      if ( numDeleted < 1 )
+      {
+         throw new SQLiteException( MessageFormat.format( "Participant {0} not deleted.",
+                                                          contact ) );
+      }
    }
    
    
@@ -198,8 +423,8 @@ public class RtmTaskElementSyncHandler implements
          final List< RtmTask > result = new ArrayList< RtmTask >( c.getCount() );
          while ( c.moveToNext() )
          {
-            final RtmTask task = modelElementFactory.createElementFromCursor( c,
-                                                                              RtmTask.class );
+            final RtmTask task = rtmModelElementFactory.createElementFromCursor( c,
+                                                                                 RtmTask.class );
             addNotes( task, c.getLong( Columns.ID_IDX ) );
             
             result.add( task );
@@ -239,8 +464,8 @@ public class RtmTaskElementSyncHandler implements
          
          while ( c.moveToNext() )
          {
-            final RtmNote note = modelElementFactory.createElementFromCursor( c,
-                                                                              RtmNote.class );
+            final RtmNote note = rtmModelElementFactory.createElementFromCursor( c,
+                                                                                 RtmNote.class );
             task.addNote( note );
          }
       }
@@ -304,5 +529,52 @@ public class RtmTaskElementSyncHandler implements
       }
       
       return contentValuesSubset;
+   }
+   
+   
+   
+   private long getContactIdFromRtmContactId( String rtmContactId )
+   {
+      Long storedId = rtmContactId2contactId.get( rtmContactId );
+      if ( storedId == null )
+      {
+         storedId = getContactIdFromDatabase( rtmContactId );
+         rtmContactId2contactId.put( rtmContactId, storedId );
+      }
+      
+      return storedId.longValue();
+   }
+   
+   
+   
+   private long getContactIdFromDatabase( String rtmContactId )
+   {
+      Cursor c = null;
+      try
+      {
+         final ITable contactsTable = rtmDatabase.getTable( TableNames.RTM_CONTACTS_TABLE );
+         c = contactsTable.query( new String[]
+                                  { ContactColumns._ID,
+                                   RtmContactColumns.RTM_CONTACT_ID },
+                                  RtmContactColumns.RTM_CONTACT_ID + "='?'",
+                                  new String[]
+                                  { rtmContactId },
+                                  null );
+         
+         if ( !c.moveToFirst() )
+         {
+            throw new SQLException( MessageFormat.format( "Unable to query contact ID for RTM contact {0}",
+                                                          rtmContactId ) );
+         }
+         
+         return c.getLong( 0 );
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
+      }
    }
 }

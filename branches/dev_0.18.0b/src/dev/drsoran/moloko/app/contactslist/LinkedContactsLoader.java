@@ -86,8 +86,7 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
       
       for ( Contact contact : contacts )
       {
-         final int numParticipatingTasks = contentRepository.getNumTasksContactIsParticipating( contact.getId() );
-         linkedContacts.add( linkRtmContact( contact, numParticipatingTasks ) );
+         linkedContacts.add( linkRtmContact( contact ) );
       }
       
       return linkedContacts;
@@ -95,11 +94,9 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    
    
    
-   private LinkedContact linkRtmContact( Contact contact,
-                                         int numParticipatingTasks )
+   private LinkedContact linkRtmContact( Contact contact )
    {
-      LinkedContact linkedContact = new LinkedContact( contact,
-                                                       numParticipatingTasks );
+      LinkedContact linkedContact = new LinkedContact( contact );
       
       String lookUpKey = null;
       long photoId = 0;

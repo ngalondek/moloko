@@ -512,16 +512,6 @@ public final class UiUtils
    
    
    
-   public final static void showReadOnlyAccessDialog( FragmentActivity activity )
-   {
-      new AlertDialogFragment.Builder( R.id.dlg_read_only_access ).setMessage( activity.getString( R.string.err_modify_access_level_read ) )
-                                                                  .setPositiveButton( R.string.btn_account_settings )
-                                                                  .setNegativeButton( R.string.btn_cancel )
-                                                                  .show( activity );
-   }
-   
-   
-   
    public final static void showAboutMolokoDialog( FragmentActivity fragActivity )
    {
       final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );

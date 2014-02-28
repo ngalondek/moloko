@@ -45,4 +45,8 @@ public interface IRtmSyncHandlerFactory
    
    
    IRtmSyncHandler createRtmContactsSyncHandler( Comparator< RtmContact > comparator );
+   
+   
+   
+   IRtmSyncHandler createRtmSettingsSyncHandler();
 }

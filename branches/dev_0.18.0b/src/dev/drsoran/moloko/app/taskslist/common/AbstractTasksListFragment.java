@@ -49,7 +49,7 @@ import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.loaders.TasksLoader;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -216,19 +216,19 @@ abstract class AbstractTasksListFragment extends
       switch ( item.getItemId() )
       {
          case R.id.menu_sort_priority:
-            tasksSort = Settings.TASK_SORT_PRIORITY;
+            tasksSort = SettingConstants.TASK_SORT_PRIORITY;
             resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
          case R.id.menu_sort_due:
-            tasksSort = Settings.TASK_SORT_DUE_DATE;
+            tasksSort = SettingConstants.TASK_SORT_DUE_DATE;
             resortTasks( tasksSort );
             item.setChecked( true );
             return true;
             
          case R.id.menu_sort_task_name:
-            tasksSort = Settings.TASK_SORT_NAME;
+            tasksSort = SettingConstants.TASK_SORT_NAME;
             resortTasks( tasksSort );
             item.setChecked( true );
             return true;
@@ -331,15 +331,15 @@ abstract class AbstractTasksListFragment extends
       // always sets the item.
       switch ( currentTaskSort )
       {
-         case Settings.TASK_SORT_PRIORITY:
+         case SettingConstants.TASK_SORT_PRIORITY:
             menu.findItem( R.id.menu_sort_priority ).setChecked( true );
             break;
          
-         case Settings.TASK_SORT_DUE_DATE:
+         case SettingConstants.TASK_SORT_DUE_DATE:
             menu.findItem( R.id.menu_sort_due ).setChecked( true );
             break;
          
-         case Settings.TASK_SORT_NAME:
+         case SettingConstants.TASK_SORT_NAME:
             menu.findItem( R.id.menu_sort_task_name ).setChecked( true );
             break;
          
@@ -510,24 +510,6 @@ abstract class AbstractTasksListFragment extends
    public SwappableArrayAdapter< Task > createListAdapter()
    {
       return createListAdapter( getFilter() );
-   }
-   
-   
-   
-   // TODO: Remove SQLite dependency
-   protected static String resolveTaskSortToSqlite( int sortValue )
-   {
-      switch ( sortValue )
-      {
-         case Settings.TASK_SORT_PRIORITY:
-            return Tasks.SORT_PRIORITY;
-         case Settings.TASK_SORT_DUE_DATE:
-            return Tasks.SORT_DUE_DATE;
-         case Settings.TASK_SORT_NAME:
-            return Tasks.SORT_TASK_NAME;
-         default :
-            return null;
-      }
    }
    
    

@@ -30,12 +30,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.sort.CompositeComparator;
-import dev.drsoran.moloko.sort.SortTaskDueDate;
-import dev.drsoran.moloko.sort.SortTaskName;
-import dev.drsoran.moloko.sort.SortTaskPriority;
+import dev.drsoran.moloko.domain.sort.CompositeComparator;
+import dev.drsoran.moloko.domain.sort.SortTaskDueDate;
+import dev.drsoran.moloko.domain.sort.SortTaskName;
+import dev.drsoran.moloko.domain.sort.SortTaskPriority;
 import dev.drsoran.moloko.ui.adapters.LayoutSwitchMultiChoiceModalAdapter;
 import dev.drsoran.moloko.ui.format.RtmStyleTaskDateFormatter;
 import dev.drsoran.moloko.ui.format.RtmStyleTaskDescTextViewFormatter;
@@ -92,15 +92,15 @@ abstract class AbstractTasksListFragmentAdapter extends
       {
          switch ( taskSort )
          {
-            case Settings.TASK_SORT_PRIORITY:
+            case SettingConstants.TASK_SORT_PRIORITY:
                sort( new CompositeComparator< Task >( new SortTaskPriority() ).add( new SortTaskDueDate() ) );
                break;
             
-            case Settings.TASK_SORT_DUE_DATE:
+            case SettingConstants.TASK_SORT_DUE_DATE:
                sort( new CompositeComparator< Task >( new SortTaskDueDate() ).add( new SortTaskPriority() ) );
                break;
             
-            case Settings.TASK_SORT_NAME:
+            case SettingConstants.TASK_SORT_NAME:
                sort( new SortTaskName() );
                break;
             

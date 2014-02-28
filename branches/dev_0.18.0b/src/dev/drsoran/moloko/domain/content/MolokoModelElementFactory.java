@@ -36,12 +36,15 @@ import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.Columns.SettingsColumns;
+import dev.drsoran.moloko.content.Columns.SyncTimesColumns;
 import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.CursorUtils;
+import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.CloudEntryType;
 import dev.drsoran.moloko.domain.model.Contact;
@@ -56,9 +59,6 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.sync.Modification;
-import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
-import dev.drsoran.moloko.sync.db.TableColumns.TimesColumns;
 import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.sync.SyncTime;
 
@@ -153,11 +153,11 @@ public class MolokoModelElementFactory implements IModelElementFactory
                                      c.getLong( TaskColumns.LIST_ID_IDX ),
                                      c.getString( TaskColumns.LIST_NAME_IDX ) );
          
-         task.setLocation( CursorUtils.getOptLong( c,
-                                                   TaskColumns.LOCATION_ID_IDX,
-                                                   Constants.NO_ID ),
-                           CursorUtils.getOptString( c,
-                                                     TaskColumns.LOCATION_NAME_IDX ) );
+         task.setLocationStub( CursorUtils.getOptLong( c,
+                                                       TaskColumns.LOCATION_ID_IDX,
+                                                       Constants.NO_ID ),
+                               CursorUtils.getOptString( c,
+                                                         TaskColumns.LOCATION_NAME_IDX ) );
          task.setModifiedMillisUtc( c.getLong( TaskColumns.TASK_MODIFIED_DATE_IDX ) );
          task.setSource( Strings.emptyIfNull( CursorUtils.getOptString( c,
                                                                         TaskColumns.SOURCE_IDX ) ) );
@@ -245,7 +245,8 @@ public class MolokoModelElementFactory implements IModelElementFactory
       {
          return new Contact( c.getLong( Columns.ID_IDX ),
                              c.getString( ContactColumns.USERNAME_IDX ),
-                             c.getString( ContactColumns.FULLNAME_IDX ) );
+                             c.getString( ContactColumns.FULLNAME_IDX ),
+                             c.getInt( ContactColumns.NUM_TASKS_PARTICIPATING_IDX ) );
       }
    }
    
@@ -335,7 +336,7 @@ public class MolokoModelElementFactory implements IModelElementFactory
       public Modification create( Cursor c )
       {
          return Modification.newModification( c.getString( ModificationColumns.ENTITY_URI_IDX ),
-                                              c.getString( ModificationColumns.COL_NAME_IDX ),
+                                              c.getString( ModificationColumns.PROPERTY_IDX ),
                                               c.getString( ModificationColumns.NEW_VALUE_IDX ),
                                               CursorUtils.getOptString( c,
                                                                         ModificationColumns.SYNCED_VALUE_IDX ),
@@ -350,10 +351,10 @@ public class MolokoModelElementFactory implements IModelElementFactory
       public SyncTime create( Cursor c )
       {
          return new SyncTime( CursorUtils.getOptLong( c,
-                                                      TimesColumns.LAST_IN_IDX,
+                                                      SyncTimesColumns.LAST_IN_IDX,
                                                       Constants.NO_TIME ),
                               CursorUtils.getOptLong( c,
-                                                      TimesColumns.LAST_OUT_IDX,
+                                                      SyncTimesColumns.LAST_OUT_IDX,
                                                       Constants.NO_TIME ) );
       }
    }

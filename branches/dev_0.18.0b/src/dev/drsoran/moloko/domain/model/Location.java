@@ -117,6 +117,15 @@ public class Location
    
    
    
+   public boolean isForeignLocation()
+   {
+      return Strings.isNullOrEmpty( name )
+         || Float.compare( longitude, 0.0f ) == 0
+         || Float.compare( latitude, 0.0f ) == 0;
+   }
+   
+   
+   
    @Override
    public boolean equals( Object o )
    {

@@ -28,7 +28,7 @@ import android.net.NetworkInfo;
 import dev.drsoran.rtm.IConnectionFactory;
 
 
-class ConnectionService implements IConnectionService
+public class ConnectionService implements IConnectionService
 {
    private final Context context;
    
@@ -37,10 +37,10 @@ class ConnectionService implements IConnectionService
    
    
    public ConnectionService( Context context,
-      IConnectionFactory rtmConnectionFactory )
+      IConnectionFactory connectionFactory )
    {
       this.context = context;
-      this.connectionFactory = rtmConnectionFactory;
+      this.connectionFactory = connectionFactory;
    }
    
    

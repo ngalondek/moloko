@@ -68,9 +68,9 @@ public class AccountService implements IAccountService
    {
       final AccountManager accountManager = AccountManager.get( context );
       final String apiKey = accountManager.getUserData( account,
-                                                        Constants.FEAT_API_KEY );
+                                                        AuthConstants.FEAT_API_KEY );
       final String sharedSecret = accountManager.getUserData( account,
-                                                              Constants.FEAT_SHARED_SECRET );
+                                                              AuthConstants.FEAT_SHARED_SECRET );
       
       return new AccountCredentials( apiKey, sharedSecret );
    }
@@ -99,7 +99,7 @@ public class AccountService implements IAccountService
       }
       
       final AccountManager accountManager = AccountManager.get( context );
-      accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE, authToken );
+      accountManager.invalidateAuthToken( AuthConstants.ACCOUNT_TYPE, authToken );
       
       return true;
    }
@@ -113,7 +113,7 @@ public class AccountService implements IAccountService
    {
       final AccountManager accountManager = AccountManager.get( context );
       final String authToken = accountManager.blockingGetAuthToken( account,
-                                                                    Constants.AUTH_TOKEN_TYPE,
+                                                                    AuthConstants.AUTH_TOKEN_TYPE,
                                                                     true /* notifyAuthFailure */);
       
       return authToken;
@@ -176,7 +176,7 @@ public class AccountService implements IAccountService
    private Account getRtmAccount( final AccountManager accountManager )
    {
       Account account;
-      final Account[] accounts = accountManager.getAccountsByType( Constants.ACCOUNT_TYPE );
+      final Account[] accounts = accountManager.getAccountsByType( AuthConstants.ACCOUNT_TYPE );
       
       // TODO: We simple take the first one. Think about showing a choose
       // dialog.
@@ -201,7 +201,7 @@ public class AccountService implements IAccountService
       {
          final AccountManager accountManager = AccountManager.get( context );
          final String permStr = accountManager.getUserData( account,
-                                                            Constants.FEAT_PERMISSION );
+                                                            AuthConstants.FEAT_PERMISSION );
          if ( !TextUtils.isEmpty( permStr ) )
          {
             permission = RtmServicePermission.valueOf( permStr );

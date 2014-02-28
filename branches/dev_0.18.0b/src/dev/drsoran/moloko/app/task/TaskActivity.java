@@ -42,7 +42,7 @@ import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
-import dev.drsoran.moloko.app.taskedit.TaskEditActivity;
+import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
@@ -177,26 +177,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   @Override
-   protected void onActivityResult( int requestCode, int resultCode, Intent data )
-   {
-      if ( requestCode == TaskEditActivity.REQ_DEFAULT )
-      {
-         // The task in edit was deleted by a background sync. Close this
-         // activity.
-         if ( resultCode == TaskEditActivity.RESULT_DELETED )
-         {
-            finish();
-         }
-      }
-      else
-      {
-         super.onActivityResult( requestCode, resultCode, data );
-      }
-   }
-   
-   
-   
    private void createTabs()
    {
       createTabsAdapter();
@@ -304,7 +284,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    public void onCompleteTask( Task task )
    {
       getAppContext().getContentEditService()
-                     .completeTask( task, System.currentTimeMillis() );
+                     .completeTask( this, task, System.currentTimeMillis() );
    }
    
    
@@ -312,7 +292,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onIncompleteTask( Task task )
    {
-      getAppContext().getContentEditService().incompleteTask( task );
+      getAppContext().getContentEditService().incompleteTask( this, task );
    }
    
    
@@ -320,7 +300,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onPostponeTask( Task task )
    {
-      getAppContext().getContentEditService().postponeTask( task );
+      getAppContext().getContentEditService().postponeTask( this, task );
    }
    
    
@@ -343,7 +323,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    private void deleteTaskImpl()
    {
-      getAppContext().getContentEditService().deleteTask( taskToDelete );
+      getAppContext().getContentEditService().deleteTask( this, taskToDelete );
    }
    
    
@@ -351,18 +331,17 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onEditTask( Task task )
    {
-      startActivityForResult( Intents.createEditTaskIntent( this, task ),
-                              TaskEditActivity.REQ_DEFAULT );
+      startActivity( Intents.createEditTaskIntent( this, task ) );
    }
    
    
    
    @Override
-   public void onOpenLocation( Task task )
+   public void onOpenLocation( Location location )
    {
-      startActivity( Intents.createOpenLocationWithOtherAppChooser( task.getLongitude(),
-                                                                    task.getLatitude(),
-                                                                    task.getZoom() ) );
+      startActivity( Intents.createOpenLocationWithOtherAppChooser( location.getLongitude(),
+                                                                    location.getLatitude(),
+                                                                    location.getZoom() ) );
    }
    
    
@@ -427,7 +406,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
          task.removeNote( note );
       }
       
-      getAppContext().getContentEditService().updateTask( task );
+      getAppContext().getContentEditService().updateTask( this, task );
    }
    
    

@@ -24,64 +24,72 @@ package dev.drsoran.moloko.app.services;
 
 import java.util.Collection;
 
+import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 
 
 public interface IAppContentEditService
 {
-   void insertTask( Task task );
+   void insertTask( FragmentActivity context, Task task );
    
    
    
-   void updateTask( Task task );
+   void updateTask( FragmentActivity context, Task task );
    
    
    
-   void updateTasks( Collection< ? extends Task > tasks );
+   void updateTasks( FragmentActivity context,
+                     Collection< ? extends Task > tasks );
    
    
    
-   void deleteTask( Task task );
+   void deleteTask( FragmentActivity context, Task task );
    
    
    
-   void deleteTasks( Collection< ? extends Task > tasks );
+   void deleteTasks( FragmentActivity context,
+                     Collection< ? extends Task > tasks );
    
    
    
-   void completeTask( Task task, long completedMillisUtc );
+   void completeTask( FragmentActivity context,
+                      Task task,
+                      long completedMillisUtc );
    
    
    
-   void completeTasks( Collection< ? extends Task > tasks,
+   void completeTasks( FragmentActivity context,
+                       Collection< ? extends Task > tasks,
                        long completedMillisUtc );
    
    
    
-   void incompleteTask( Task task );
+   void incompleteTask( FragmentActivity context, Task task );
    
    
    
-   void incompleteTasks( Collection< ? extends Task > tasks );
+   void incompleteTasks( FragmentActivity context,
+                         Collection< ? extends Task > tasks );
    
    
    
-   void postponeTask( Task task );
+   void postponeTask( FragmentActivity context, Task task );
    
    
    
-   void postponeTasks( Collection< ? extends Task > tasks );
+   void postponeTasks( FragmentActivity context,
+                       Collection< ? extends Task > tasks );
    
    
    
-   void insertTasksList( TasksList tasksList );
+   void insertTasksList( FragmentActivity context, TasksList tasksList );
    
    
    
-   void updateTasksList( TasksList tasksList );
+   void updateTasksList( FragmentActivity context, TasksList tasksList );
    
    
    
-   void deleteTasksList( TasksList tasksList );
+   void deleteTasksList( FragmentActivity context, TasksList tasksList );
 }

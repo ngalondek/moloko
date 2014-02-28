@@ -35,12 +35,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
 import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
 import dev.drsoran.moloko.domain.services.ContentException;
-import dev.drsoran.moloko.sync.Modification;
-import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 
 

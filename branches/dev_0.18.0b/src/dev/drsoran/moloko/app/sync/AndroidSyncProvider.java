@@ -39,9 +39,6 @@ public class AndroidSyncProvider extends Service
    
    
    
-   /*
-    * {@inheritDoc}
-    */
    @Override
    public void onCreate()
    {
@@ -57,13 +54,9 @@ public class AndroidSyncProvider extends Service
    
    
    
-   /*
-    * {@inheritDoc}
-    */
    @Override
    public IBinder onBind( Intent intent )
    {
       return syncAdapter.getSyncAdapterBinder();
-   }
-   
+   }   
 }

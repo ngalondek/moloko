@@ -28,12 +28,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluator;
-import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
-import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
-import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
+import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
+import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
+import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
+import dev.drsoran.moloko.domain.content.SyncTimesContentEditHandler;
 import dev.drsoran.moloko.domain.content.TaskContentEditHandler;
 import dev.drsoran.moloko.domain.content.TaskNoteContentEditHandler;
 import dev.drsoran.moloko.domain.content.TaskParticipantContentEditHandler;
@@ -105,7 +106,7 @@ public class DomainServicesContainer implements IDomainServices
       
       final IContentValuesFactory contentValuesFactory = new MolokoContentValuesFactory();
       final IModificationsApplier modificationsApplier = new MolokoModificationsApplier( contentResolver,
-                                                                                          contentValuesFactory );
+                                                                                         contentValuesFactory );
       
       contentEditService = new ContentEditService( new TaskContentEditHandler( contentResolver,
                                                                                contentValuesFactory,
@@ -119,6 +120,9 @@ public class DomainServicesContainer implements IDomainServices
                                                    new TaskParticipantContentEditHandler( contentResolver,
                                                                                           contentValuesFactory,
                                                                                           modificationsApplier ),
+                                                   new SyncTimesContentEditHandler( contentResolver,
+                                                                                    contentValuesFactory,
+                                                                                    modificationsApplier ),
                                                    contentRepository );
    }
    

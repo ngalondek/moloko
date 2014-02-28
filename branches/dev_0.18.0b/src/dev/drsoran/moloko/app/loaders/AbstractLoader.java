@@ -236,5 +236,5 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    
    
-   abstract protected D queryResultInBackground( IContentRepository respository ) throws ContentException;
+   abstract protected D queryResultInBackground( IContentRepository repository ) throws ContentException;
 }

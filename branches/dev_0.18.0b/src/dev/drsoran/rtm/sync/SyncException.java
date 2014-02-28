@@ -22,7 +22,7 @@
 
 package dev.drsoran.rtm.sync;
 
-class SyncException extends Exception
+public class SyncException extends Exception
 {
    private static final long serialVersionUID = 8966486145541704233L;
    

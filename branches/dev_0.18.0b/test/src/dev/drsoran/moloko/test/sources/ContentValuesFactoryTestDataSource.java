@@ -38,10 +38,13 @@ import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
-import dev.drsoran.moloko.content.Columns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.Columns.SettingsColumns;
+import dev.drsoran.moloko.content.Columns.SyncTimesColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
@@ -54,10 +57,7 @@ import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.rtm.model.Priority;
-import dev.drsoran.rtm.sync.db.TableColumns.ModificationColumns;
-import dev.drsoran.rtm.sync.db.TableColumns.TimesColumns;
-import dev.drsoran.rtm.sync.model.Modification;
-import dev.drsoran.rtm.sync.model.SyncTime;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 public class ContentValuesFactoryTestDataSource
@@ -353,7 +353,7 @@ public class ContentValuesFactoryTestDataSource
       modelElement.setModifiedMillisUtc( EVEN_LATER );
       modelElement.setSource( "TestSource" );
       modelElement.setUrl( "http://test.de" );
-      modelElement.setLocation( 1000L, "TestLoc" );
+      modelElement.setLocationStub( 1000L, "TestLoc" );
       modelElement.setTags( Arrays.asList( "tag1", "tag2" ) );
       modelElement.setCompletedMillisUtc( LATER );
       modelElement.setDeletedMillisUtc( EVEN_LATER );
@@ -637,12 +637,13 @@ public class ContentValuesFactoryTestDataSource
    
    private void addContactFull( Collection< TestData< Contact >> testData )
    {
-      final Contact modelElement = new Contact( 1L, "Username", "Fullname" );
+      final Contact modelElement = new Contact( 1L, "Username", "Fullname", 10 );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ContactColumns._ID, 1L );
       values.put( ContactColumns.FULLNAME, "Fullname" );
       values.put( ContactColumns.USERNAME, "Username" );
+      values.put( ContactColumns.NUM_TASKS_PARTICIPATING, 10 );
       
       testData.add( new TestData< Contact >( Contact.class,
                                              modelElement,
@@ -717,7 +718,7 @@ public class ContentValuesFactoryTestDataSource
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ModificationColumns.ENTITY_URI, "content://element/1" );
-      values.put( ModificationColumns.COL_NAME, "testCol" );
+      values.put( ModificationColumns.PROPERTY, "testCol" );
       values.put( ModificationColumns.NEW_VALUE, "1" );
       values.put( ModificationColumns.TIMESTAMP, modelElement.getTimestamp() );
       
@@ -739,7 +740,7 @@ public class ContentValuesFactoryTestDataSource
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ModificationColumns.ENTITY_URI, "content://element/1" );
-      values.put( ModificationColumns.COL_NAME, "testCol" );
+      values.put( ModificationColumns.PROPERTY, "testCol" );
       values.put( ModificationColumns.NEW_VALUE, null );
       values.put( ModificationColumns.SYNCED_VALUE, "0" );
       values.put( ModificationColumns.TIMESTAMP, modelElement.getTimestamp() );
@@ -762,7 +763,7 @@ public class ContentValuesFactoryTestDataSource
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ModificationColumns.ENTITY_URI, "content://element/1" );
-      values.put( ModificationColumns.COL_NAME, "testCol" );
+      values.put( ModificationColumns.PROPERTY, "testCol" );
       values.put( ModificationColumns.NEW_VALUE, "1" );
       values.put( ModificationColumns.SYNCED_VALUE, null );
       values.put( ModificationColumns.TIMESTAMP, modelElement.getTimestamp() );
@@ -786,7 +787,7 @@ public class ContentValuesFactoryTestDataSource
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ModificationColumns.ENTITY_URI, "content://element/1" );
-      values.put( ModificationColumns.COL_NAME, "testCol" );
+      values.put( ModificationColumns.PROPERTY, "testCol" );
       values.put( ModificationColumns.NEW_VALUE, "1" );
       values.put( ModificationColumns.SYNCED_VALUE, "0" );
       values.put( ModificationColumns.TIMESTAMP, NOW );
@@ -810,12 +811,12 @@ public class ContentValuesFactoryTestDataSource
                                                   "en" );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
-      values.put( RtmSettingsColumns.SYNC_TIMESTAMP, NOW );
-      values.put( RtmSettingsColumns.TIMEZONE, "UTC" );
-      values.put( RtmSettingsColumns.DATEFORMAT, 1 );
-      values.put( RtmSettingsColumns.TIMEFORMAT, 2 );
-      values.put( RtmSettingsColumns.DEFAULTLIST_ID, null );
-      values.put( RtmSettingsColumns.LANGUAGE, "en" );
+      values.put( SettingsColumns.SYNC_TIMESTAMP, NOW );
+      values.put( SettingsColumns.TIMEZONE, "UTC" );
+      values.put( SettingsColumns.DATEFORMAT, 1 );
+      values.put( SettingsColumns.TIMEFORMAT, 2 );
+      values.put( SettingsColumns.DEFAULTLIST_ID, null );
+      values.put( SettingsColumns.LANGUAGE, "en" );
       
       testData.add( new TestData< Settings >( Settings.class,
                                               modelElement,
@@ -830,12 +831,12 @@ public class ContentValuesFactoryTestDataSource
       final Settings modelElement = new Settings( NOW, "UTC", 1, 2, 100L, "en" );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
-      values.put( RtmSettingsColumns.SYNC_TIMESTAMP, NOW );
-      values.put( RtmSettingsColumns.TIMEZONE, "UTC" );
-      values.put( RtmSettingsColumns.DATEFORMAT, 1 );
-      values.put( RtmSettingsColumns.TIMEFORMAT, 2 );
-      values.put( RtmSettingsColumns.DEFAULTLIST_ID, 100L );
-      values.put( RtmSettingsColumns.LANGUAGE, "en" );
+      values.put( SettingsColumns.SYNC_TIMESTAMP, NOW );
+      values.put( SettingsColumns.TIMEZONE, "UTC" );
+      values.put( SettingsColumns.DATEFORMAT, 1 );
+      values.put( SettingsColumns.TIMEFORMAT, 2 );
+      values.put( SettingsColumns.DEFAULTLIST_ID, 100L );
+      values.put( SettingsColumns.LANGUAGE, "en" );
       
       testData.add( new TestData< Settings >( Settings.class,
                                               modelElement,
@@ -850,8 +851,8 @@ public class ContentValuesFactoryTestDataSource
       final SyncTime modelElement = new SyncTime( NEVER, NEVER );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
-      values.put( TimesColumns.LAST_IN, null );
-      values.put( TimesColumns.LAST_OUT, null );
+      values.put( SyncTimesColumns.LAST_IN, null );
+      values.put( SyncTimesColumns.LAST_OUT, null );
       
       testData.add( new TestData< SyncTime >( SyncTime.class,
                                               modelElement,
@@ -866,8 +867,8 @@ public class ContentValuesFactoryTestDataSource
       final SyncTime modelElement = new SyncTime( NOW, LATER );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
-      values.put( TimesColumns.LAST_IN, NOW );
-      values.put( TimesColumns.LAST_OUT, LATER );
+      values.put( SyncTimesColumns.LAST_IN, NOW );
+      values.put( SyncTimesColumns.LAST_OUT, LATER );
       
       testData.add( new TestData< SyncTime >( SyncTime.class,
                                               modelElement,

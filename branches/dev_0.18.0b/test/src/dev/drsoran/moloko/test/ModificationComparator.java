@@ -24,8 +24,8 @@ package dev.drsoran.moloko.test;
 
 import java.util.Comparator;
 
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.util.Lambda.Func2;
-import dev.drsoran.rtm.sync.model.Modification;
 
 
 public class ModificationComparator implements Comparator< Modification >
@@ -54,18 +54,18 @@ public class ModificationComparator implements Comparator< Modification >
       int res = m1.getEntityUri().compareTo( m2.getEntityUri() );
       if ( res == 0 )
       {
-         res = m1.getColName().compareTo( m2.getColName() );
+         res = m1.getPropertyName().compareTo( m2.getPropertyName() );
       }
       
       if ( res == 0 )
       {
          if ( newValCmp == null )
          {
-            res = compareValue( m1.getNewValue(), m2.getNewValue() );
+            res = compareValue( m1.getValue(), m2.getValue() );
          }
          else
          {
-            res = newValCmp.call( m1.getNewValue(), m2.getNewValue() );
+            res = newValCmp.call( m1.getValue(), m2.getValue() );
          }
       }
       

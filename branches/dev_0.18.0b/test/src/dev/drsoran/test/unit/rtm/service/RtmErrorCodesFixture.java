@@ -22,9 +22,37 @@
 
 package dev.drsoran.test.unit.rtm.service;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static dev.drsoran.rtm.service.RtmErrorCodes.*;
+import static dev.drsoran.rtm.service.RtmErrorCodes.CONTACT_ALREADY_EXISTS;
+import static dev.drsoran.rtm.service.RtmErrorCodes.CONTACT_CANNOT_ADD_YOURSELF;
+import static dev.drsoran.rtm.service.RtmErrorCodes.CONTACT_DOES_NOT_EXISTS;
+import static dev.drsoran.rtm.service.RtmErrorCodes.CONTACT_INVALID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.CONTACT_INVALID_ID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.FORMAT_NOT_FOUND;
+import static dev.drsoran.rtm.service.RtmErrorCodes.GROUP_ALREADY_EXISTS;
+import static dev.drsoran.rtm.service.RtmErrorCodes.GROUP_ID_INVALID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.GROUP_NAME_INVALID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.INVALID_API_KEY;
+import static dev.drsoran.rtm.service.RtmErrorCodes.INVALID_AUTH_TOKEN;
+import static dev.drsoran.rtm.service.RtmErrorCodes.INVALID_SIGNATURE;
+import static dev.drsoran.rtm.service.RtmErrorCodes.INVALID_SOAP_ENVELOPE;
+import static dev.drsoran.rtm.service.RtmErrorCodes.INVALID_TIMELINE;
+import static dev.drsoran.rtm.service.RtmErrorCodes.INVALID_XML_RPC_CALL;
+import static dev.drsoran.rtm.service.RtmErrorCodes.LIST_INVALID_ID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.LIST_LOCKED;
+import static dev.drsoran.rtm.service.RtmErrorCodes.LIST_NAME_INVALID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.LOCATION_ID_INVALID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.LOGIN_FAILED;
+import static dev.drsoran.rtm.service.RtmErrorCodes.METHOD_NOT_FOUND;
+import static dev.drsoran.rtm.service.RtmErrorCodes.MISSING_SIGNATURE;
+import static dev.drsoran.rtm.service.RtmErrorCodes.NOTE_INVALID_ID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.NOT_LOGGED_IN;
+import static dev.drsoran.rtm.service.RtmErrorCodes.NO_ERROR;
+import static dev.drsoran.rtm.service.RtmErrorCodes.TASK_CANNOT_MOVE;
+import static dev.drsoran.rtm.service.RtmErrorCodes.TASK_INVALID_ID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.TASK_NAME_INVALID;
+import static dev.drsoran.rtm.service.RtmErrorCodes.TRANSACTION_INVALID_ID;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 

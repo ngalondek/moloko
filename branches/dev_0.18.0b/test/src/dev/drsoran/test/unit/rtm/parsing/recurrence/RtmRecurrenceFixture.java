@@ -43,7 +43,7 @@ public class RtmRecurrenceFixture extends EqualsHashCodeTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testRecurrenceNullPattern()
    {
       new RtmRecurrence( null, true );
@@ -51,7 +51,7 @@ public class RtmRecurrenceFixture extends EqualsHashCodeTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testRecurrenceEmptyPattern()
    {
       new RtmRecurrence( "", true );

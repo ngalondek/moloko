@@ -34,7 +34,7 @@ import dev.drsoran.moloko.app.Intents.HomeAction;
 import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.services.ISettingsService;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
@@ -112,8 +112,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       else if ( dialogId == R.id.dlg_startup_default_list_not_exists
          && which == Dialog.BUTTON_NEUTRAL )
       {
-         settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-         settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+         settings.setStartupView( SettingConstants.STARTUP_VIEW_DEFAULT );
+         settings.setDefaultListId( SettingConstants.NO_DEFAULT_LIST_ID );
          
          switchToNextState();
       }
@@ -160,7 +160,7 @@ public class StartUpActivity extends MolokoFragmentActivity
    {
       final int startUpView = settings.getStartupView();
       
-      if ( startUpView == Settings.STARTUP_VIEW_DEFAULT_LIST )
+      if ( startUpView == SettingConstants.STARTUP_VIEW_DEFAULT_LIST )
       {
          // Check that the set default list exists and can be shown
          final long defaultListId = settings.getDefaultListId();
@@ -209,19 +209,19 @@ public class StartUpActivity extends MolokoFragmentActivity
       
       switch ( startUpView )
       {
-         case Settings.STARTUP_VIEW_DEFAULT_LIST:
+         case SettingConstants.STARTUP_VIEW_DEFAULT_LIST:
             startActivityWithHomeAction( Intents.createOpenListIntentById( this,
                                                                            settings.getDefaultListId(),
                                                                            null ),
                                          HomeAction.HOME );
             break;
          
-         case Settings.STARTUP_VIEW_LISTS:
+         case SettingConstants.STARTUP_VIEW_LISTS:
             startActivityWithHomeAction( Intents.createOpenListOverviewsIntent(),
                                          HomeAction.HOME );
             break;
          
-         case Settings.STARTUP_VIEW_HOME:
+         case SettingConstants.STARTUP_VIEW_HOME:
             startActivity( new Intent( this, HomeActivity.class ) );
             break;
          

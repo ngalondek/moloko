@@ -30,14 +30,9 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceImpl;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.rtm.RtmClientInfo;
 import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.service.RtmErrorCodes;
 
@@ -143,16 +138,17 @@ public class Authenticator extends AbstractAccountAuthenticator
    {
       final Bundle result = new Bundle();
       
-      if ( authTokenType.equals( Constants.AUTH_TOKEN_TYPE ) )
+      if ( authTokenType.equals( AuthConstants.AUTH_TOKEN_TYPE ) )
       {
          final AccountManager accountManager = AccountManager.get( context );
+         
          final String authToken = accountManager.getPassword( account );
          final String apiKey = accountManager.getUserData( account,
-                                                           Constants.FEAT_API_KEY );
+                                                           AuthConstants.FEAT_API_KEY );
          final String sharedSecret = accountManager.getUserData( account,
-                                                                 Constants.FEAT_SHARED_SECRET );
+                                                                 AuthConstants.FEAT_SHARED_SECRET );
          final String permission = accountManager.getUserData( account,
-                                                               Constants.FEAT_PERMISSION );
+                                                               AuthConstants.FEAT_PERMISSION );
          
          final boolean missingCredential = apiKey == null
             || sharedSecret == null || permission == null;
@@ -161,49 +157,22 @@ public class Authenticator extends AbstractAccountAuthenticator
          
          if ( !missingCredential && !authTokenExpired )
          {
-            Service service = null;
             try
             {
-               service = ServiceImpl.getInstance( context.getConnectionService()
-                                                         .getConnectionFactory(),
-                                                  context.Log(),
-                                                  context.getSettings()
-                                                         .isUsingHttps(),
-                                                  new RtmClientInfo( apiKey,
-                                                                       sharedSecret,
-                                                                       null ) );
-               service.auth_checkToken( authToken );
+               final boolean isAuthorized = context.getRtmAuthService()
+                                                   .isServiceAuthorized( authToken );
+               authTokenExpired = !isAuthorized;
                
-               if ( !authTokenExpired )
-               {
-                  result.putString( AccountManager.KEY_ACCOUNT_NAME,
-                                    account.name );
-                  result.putString( AccountManager.KEY_ACCOUNT_TYPE,
-                                    Constants.ACCOUNT_TYPE );
-                  result.putString( AccountManager.KEY_AUTHTOKEN, authToken );
-               }
+               result.putString( AccountManager.KEY_ACCOUNT_NAME, account.name );
+               result.putString( AccountManager.KEY_ACCOUNT_TYPE,
+                                 AuthConstants.ACCOUNT_TYPE );
+               result.putString( AccountManager.KEY_AUTHTOKEN, authToken );
             }
-            catch ( Throwable e )
+            catch ( RtmServiceException e )
             {
-               if ( e instanceof RtmServiceException )
+               if ( e.getResponseCode() == RtmErrorCodes.INVALID_AUTH_TOKEN )
                {
-                  final RtmServiceException se = (RtmServiceException) e;
-                  
-                  if ( se.responseCode == RtmErrorCodes.INVALID_AUTH_TOKEN )
-                  {
-                     authTokenExpired = true;
-                  }
-                  else
-                  {
-                     result.putInt( AccountManager.KEY_ERROR_CODE,
-                                    AccountManager.ERROR_CODE_REMOTE_EXCEPTION );
-                     result.putString( AccountManager.KEY_ERROR_MESSAGE,
-                                       se.responseMessage );
-                     result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT,
-                                        false );
-                     
-                     return result;
-                  }
+                  authTokenExpired = true;
                }
                else
                {
@@ -215,11 +184,6 @@ public class Authenticator extends AbstractAccountAuthenticator
                   
                   return result;
                }
-            }
-            finally
-            {
-               if ( service != null )
-                  service.shutdown();
             }
          }
          
@@ -256,7 +220,7 @@ public class Authenticator extends AbstractAccountAuthenticator
    @Override
    public String getAuthTokenLabel( String authTokenType )
    {
-      if ( authTokenType.equals( Constants.AUTH_TOKEN_TYPE ) )
+      if ( authTokenType.equals( AuthConstants.AUTH_TOKEN_TYPE ) )
       {
          return context.getString( R.string.rtm_full );
       }
@@ -277,9 +241,9 @@ public class Authenticator extends AbstractAccountAuthenticator
       {
          boolean match = false;
          
-         for ( int j = 0; j < Constants.FEATURES.length && !match; j++ )
+         for ( int j = 0; j < AuthConstants.FEATURES.length && !match; j++ )
          {
-            match = features[ i ].equals( Constants.FEATURES[ j ] );
+            match = features[ i ].equals( AuthConstants.FEATURES[ j ] );
          }
          
          satisfied = match;
@@ -292,20 +256,20 @@ public class Authenticator extends AbstractAccountAuthenticator
    
    
    
-   private final static void configureIntent( Context context,
-                                              Intent intent,
-                                              Account account )
+   private static void configureIntent( Context context,
+                                        Intent intent,
+                                        Account account )
    {
       final AccountManager accountManager = AccountManager.get( context );
       
-      for ( int i = 0; i < Constants.FEATURES.length; i++ )
+      for ( int i = 0; i < AuthConstants.FEATURES.length; i++ )
       {
          final String userData = accountManager.getUserData( account,
-                                                             Constants.FEATURES[ i ] );
+                                                             AuthConstants.FEATURES[ i ] );
          
          if ( userData != null )
          {
-            intent.putExtra( Constants.FEATURES[ i ], userData );
+            intent.putExtra( AuthConstants.FEATURES[ i ], userData );
          }
       }
       

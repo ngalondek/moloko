@@ -23,18 +23,18 @@
 package dev.drsoran.moloko.app.event;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.domain.DomainContext;
 
 
 class SettingsListener implements OnSharedPreferenceChangeListener
 {
-   private final DomainContext context;
+   private final Context context;
    
    private final Handler handler;
    
@@ -48,7 +48,7 @@ class SettingsListener implements OnSharedPreferenceChangeListener
    
    
    
-   public SettingsListener( DomainContext context, IEventDrain eventDrain,
+   public SettingsListener( Context context, IEventDrain eventDrain,
       Handler handler )
    {
       this.context = context;

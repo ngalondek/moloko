@@ -51,9 +51,11 @@ class RtmSettingsTable extends AbstractTable
       builder.append( TABLE_NAME );
       builder.append( "( " );
       builder.append( RtmSettingsColumns._ID );
-      builder.append( " INTEGER NOT NULL CONSTRAINT PK_SETTINGS PRIMARY KEY AUTOINCREMENT, " );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_SETTINGS PRIMARY KEY DEFAULT " );
+      builder.append( RtmSettingsColumns.SINGLETON_ID );
+      builder.append( ", " );
       builder.append( RtmSettingsColumns.SYNC_TIMESTAMP );
-      builder.append( " INTEGER NOT NULL, " );
+      builder.append( " INTEGER NOT NULL DEFAULT -1, " );
       builder.append( RtmSettingsColumns.TIMEZONE );
       builder.append( " TEXT, " );
       builder.append( RtmSettingsColumns.DATEFORMAT );
@@ -75,6 +77,18 @@ class RtmSettingsTable extends AbstractTable
       builder.append( " ) );" );
       
       getDatabase().execSQL( builder.toString() );
+   }
+   
+   
+   
+   @Override
+   public void insertInitialRows()
+   {
+      final StringBuilder builder = new StringBuilder();
+      
+      builder.append( "INSERT INTO TABLE " );
+      builder.append( TABLE_NAME );
+      builder.append( " DEFAULT VALUES;" );
    }
    
    

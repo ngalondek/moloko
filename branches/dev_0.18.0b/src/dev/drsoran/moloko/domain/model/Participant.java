@@ -40,11 +40,6 @@ public class Participant
    
    public Participant( long id, long contactId, String fullname, String username )
    {
-      if ( id == Constants.NO_ID )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
       if ( contactId == Constants.NO_ID )
       {
          throw new IllegalArgumentException( "contactId" );

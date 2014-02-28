@@ -145,7 +145,7 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onUpdateTasksNote( Task updatedTask, Note updatedNote )
    {
-      getAppContext().getContentEditService().updateTask( updatedTask );
+      getAppContext().getContentEditService().updateTask( this, updatedTask );
    }
    
    
@@ -153,7 +153,7 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onAddTasksNote( Task task, Note addedNote )
    {
-      getAppContext().getContentEditService().updateTask( task );
+      getAppContext().getContentEditService().updateTask( this, task );
    }
    
    

@@ -53,12 +53,12 @@ import java.util.Collections;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.rtm.model.Priority;
-import dev.drsoran.rtm.sync.model.Modification;
 
 
 public class TaskEditHandlerTestDataSource extends
@@ -227,10 +227,10 @@ public class TaskEditHandlerTestDataSource extends
    private void addUpdateLocationName( Collection< TestData< Task >> testData )
    {
       Task existing = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
-      existing.setLocation( 1000L, "Loc" );
+      existing.setLocationStub( 1000L, "Loc" );
       
       Task update = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
-      update.setLocation( 1000L, "Loca" );
+      update.setLocationStub( 1000L, "Loca" );
       
       // Expect no modification since the location name cannot be updated through a task.
       testData.add( new TestData< Task >( existing, update ) );
@@ -242,7 +242,7 @@ public class TaskEditHandlerTestDataSource extends
    {
       Task existing = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
       Task update = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
-      update.setLocation( 1000L, "Loc" );
+      update.setLocationStub( 1000L, "Loc" );
       
       Modification mod = Modification.newModification( getEntityUri(),
                                                        LOCATION_ID,
@@ -252,10 +252,10 @@ public class TaskEditHandlerTestDataSource extends
       testData.add( new TestData< Task >( existing, update, mod ) );
       
       existing = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
-      existing.setLocation( 1000L, "Loc" );
+      existing.setLocationStub( 1000L, "Loc" );
       
       update = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
-      update.setLocation( 1001L, "OtherLoc" );
+      update.setLocationStub( 1001L, "OtherLoc" );
       
       mod = Modification.newModification( getEntityUri(),
                                           LOCATION_ID,
@@ -265,10 +265,10 @@ public class TaskEditHandlerTestDataSource extends
       testData.add( new TestData< Task >( existing, update, mod ) );
       
       existing = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
-      existing.setLocation( 1000L, "Loc" );
+      existing.setLocationStub( 1000L, "Loc" );
       
       update = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
-      update.setLocation( Constants.NO_ID, null );
+      update.setLocationStub( Constants.NO_ID, null );
       
       mod = Modification.newModification( getEntityUri(),
                                           LOCATION_ID,

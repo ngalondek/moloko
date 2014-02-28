@@ -46,12 +46,13 @@ import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.TestConstants;
 import dev.drsoran.rtm.RtmCalendar;
 import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 import dev.drsoran.rtm.parsing.datetime.ParseDateWithinReturn;
 
 
 public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
 {
-   private IDateTimeParsing dateTimeParsing;
+   private IRtmDateTimeParsing dateTimeParsing;
    
    private DbRtmSmartFilterEvaluator evaluator;
    
@@ -63,7 +64,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    {
       super.setUp();
       
-      dateTimeParsing = EasyMock.createNiceMock( IDateTimeParsing.class );
+      dateTimeParsing = EasyMock.createNiceMock( IRtmDateTimeParsing.class );
       evaluator = new DbRtmSmartFilterEvaluator( dateTimeParsing );
    }
    

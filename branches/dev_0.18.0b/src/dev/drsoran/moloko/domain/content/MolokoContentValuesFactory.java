@@ -33,9 +33,12 @@ import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.Columns.SettingsColumns;
+import dev.drsoran.moloko.content.Columns.SyncTimesColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
@@ -47,9 +50,6 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.sync.Modification;
-import dev.drsoran.moloko.sync.db.TableColumns.ModificationColumns;
-import dev.drsoran.moloko.sync.db.TableColumns.TimesColumns;
 import dev.drsoran.rtm.sync.SyncTime;
 
 
@@ -395,13 +395,13 @@ public class MolokoContentValuesFactory implements IContentValuesFactory
          
          values.put( ModificationColumns.ENTITY_URI,
                      modification.getEntityUri().toString() );
-         values.put( ModificationColumns.COL_NAME, modification.getColName() );
+         values.put( ModificationColumns.PROPERTY,
+                     modification.getPropertyName() );
          values.put( ModificationColumns.TIMESTAMP, modification.getTimestamp() );
          
-         if ( modification.getNewValue() != null )
+         if ( modification.getValue() != null )
          {
-            values.put( ModificationColumns.NEW_VALUE,
-                        modification.getNewValue() );
+            values.put( ModificationColumns.NEW_VALUE, modification.getValue() );
          }
          else
          {
@@ -469,20 +469,20 @@ public class MolokoContentValuesFactory implements IContentValuesFactory
          
          if ( sync.getLastSyncInMillis() != Constants.NO_TIME )
          {
-            values.put( TimesColumns.LAST_IN, sync.getLastSyncInMillis() );
+            values.put( SyncTimesColumns.LAST_IN, sync.getLastSyncInMillis() );
          }
          else
          {
-            values.putNull( TimesColumns.LAST_IN );
+            values.putNull( SyncTimesColumns.LAST_IN );
          }
          
          if ( sync.getLastSyncOutMillis() != Constants.NO_TIME )
          {
-            values.put( TimesColumns.LAST_OUT, sync.getLastSyncOutMillis() );
+            values.put( SyncTimesColumns.LAST_OUT, sync.getLastSyncOutMillis() );
          }
          else
          {
-            values.putNull( TimesColumns.LAST_OUT );
+            values.putNull( SyncTimesColumns.LAST_OUT );
          }
          
          return values;

@@ -28,11 +28,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
 
 
@@ -173,9 +173,6 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    
    
    
-  
-   
-   
    /**
     * Checks if the list ID belongs to a list from the database or is a custom navigation item ID. E.g. a search query.
     */
@@ -204,6 +201,6 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    private void resetDefaultList()
    {
       getAppContext().getSettings()
-                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+                     .setDefaultListId( SettingConstants.NO_DEFAULT_LIST_ID );
    }
 }

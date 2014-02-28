@@ -38,7 +38,7 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.app.settings.Settings;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 
 
 public class PermNotificationListPreference extends MultiSelectListPreference
@@ -199,7 +199,7 @@ public class PermNotificationListPreference extends MultiSelectListPreference
       final Set< String > setToPersist;
       if ( areAllChecked() )
       {
-         setToPersist = Collections.singleton( Settings.ALL_LISTS );
+         setToPersist = Collections.singleton( SettingConstants.ALL_LISTS );
       }
       else
       {
@@ -215,7 +215,7 @@ public class PermNotificationListPreference extends MultiSelectListPreference
    protected Set< String > getPersistedStringSet( Set< String > values )
    {
       Set< String > persistedSet = super.getPersistedStringSet( values );
-      if ( persistedSet.contains( Settings.ALL_LISTS ) )
+      if ( persistedSet.contains( SettingConstants.ALL_LISTS ) )
       {
          persistedSet = new HashSet< String >();
          for ( CharSequence value : getEntryValues() )

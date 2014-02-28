@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.task;
 
+import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Task;
 
 
@@ -29,7 +30,7 @@ class NullTaskFragmentListener implements ITaskFragmentListener
 {
    
    @Override
-   public void onOpenLocation( Task task )
+   public void onOpenLocation( Location location )
    {
    }
    

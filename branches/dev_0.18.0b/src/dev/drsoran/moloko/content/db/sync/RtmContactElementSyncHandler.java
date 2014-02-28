@@ -30,6 +30,9 @@ import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.rtm.model.RtmContact;
 
 
+/**
+ * If a contact gets deleted, the associated participants are deleted by the trigger {@link DeleteContactTrigger}
+ */
 public class RtmContactElementSyncHandler extends
          AbstractElementSyncHandler< RtmContact >
 {

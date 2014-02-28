@@ -80,19 +80,11 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    
    
    @Override
-   public void onOpenLocation( long locationId )
+   public void onOpenLocation( String locationName )
    {
       startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
-                                                                           location.getName() ),
+                                                                           locationName ),
                                    getClass() );
-   }
-   
-   
-   
-   @Override
-   public void onOpenLocationWithOtherApp( long locationId )
-   {
-      startActivity( Intents.createOpenLocationWithOtherAppChooser( location ) );
    }
    
    

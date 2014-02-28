@@ -39,6 +39,7 @@ import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.Columns.SettingsColumns;
+import dev.drsoran.moloko.content.Columns.SyncTimesColumns;
 import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
@@ -61,6 +62,7 @@ import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 import dev.drsoran.rtm.parsing.IRtmSmartFilterParsing;
 import dev.drsoran.rtm.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterParsingReturn;
+import dev.drsoran.rtm.sync.SyncTime;
 
 
 public class ContentRepository implements IContentRepository
@@ -86,6 +88,8 @@ public class ContentRepository implements IContentRepository
    private final ContentQueryHandler< String > tagsQueryHandler;
    
    private final ContentQueryHandler< Settings > settingsQueryHandler;
+   
+   private final ContentQueryHandler< SyncTime > syncTimesQueryHandler;
    
    private final ContentQueryHandler< CloudEntry > cloudEntriesQueryHandler;
    
@@ -145,6 +149,11 @@ public class ContentRepository implements IContentRepository
                                                                        modelElementFactory,
                                                                        Settings.class );
       
+      this.syncTimesQueryHandler = new ContentQueryHandler< SyncTime >( contentResolver,
+                                                                        SyncTimesColumns.PROJECTION,
+                                                                        modelElementFactory,
+                                                                        SyncTime.class );
+      
       this.cloudEntriesQueryHandler = new ContentQueryHandler< CloudEntry >( contentResolver,
                                                                              CloudEntryColumns.PROJECTION,
                                                                              modelElementFactory,
@@ -160,9 +169,15 @@ public class ContentRepository implements IContentRepository
       final Task task = taskQueryHandler.getElement( ContentUris.TASKS_CONTENT_URI_ID,
                                                      taskId );
       
-      if ( taskContentOptions == TaskContentOptions.Complete )
+      if ( taskContentOptions == TaskContentOptions.Complete
+         || taskContentOptions == TaskContentOptions.CompleteWithLocation )
       {
          addNotesAndParticipants( task );
+         
+         if ( taskContentOptions == TaskContentOptions.CompleteWithLocation )
+         {
+            setLocationToTask( task );
+         }
       }
       
       return task;
@@ -184,11 +199,17 @@ public class ContentRepository implements IContentRepository
    {
       final Iterable< Task > tasks = taskQueryHandler.getAll( ContentUris.TASKS_CONTENT_URI,
                                                               selection );
-      if ( taskContentOptions == TaskContentOptions.Complete )
+      if ( taskContentOptions == TaskContentOptions.Complete
+         || taskContentOptions == TaskContentOptions.CompleteWithLocation )
       {
          for ( Task task : tasks )
          {
             addNotesAndParticipants( task );
+            
+            if ( taskContentOptions == TaskContentOptions.CompleteWithLocation )
+            {
+               setLocationToTask( task );
+            }
          }
       }
       
@@ -226,6 +247,22 @@ public class ContentRepository implements IContentRepository
       for ( Participant participant : participants )
       {
          task.addParticipant( participant );
+      }
+   }
+   
+   
+   
+   private void setLocationToTask( Task task )
+   {
+      if ( task.isLocated() )
+      {
+         final Location location = locationsQueryHandler.getElement( ContentUris.LOCATIONS_CONTENT_URI_ID,
+                                                                     task.getLocationId() );
+         task.setLocation( location );
+      }
+      else
+      {
+         task.setLocation( null );
       }
    }
    
@@ -475,15 +512,17 @@ public class ContentRepository implements IContentRepository
    @Override
    public Settings getRtmSettings() throws ContentException
    {
-      final Iterator< Settings > settingsIter = settingsQueryHandler.getAll( ContentUris.RTM_SETTINGS_CONTENT_URI,
-                                                                             null )
-                                                                    .iterator();
-      if ( !settingsIter.hasNext() )
-      {
-         throw new ContentException( "No RTM settings" );
-      }
-      
-      return settingsIter.next();
+      return settingsQueryHandler.getElement( ContentUris.RTM_SETTINGS_CONTENT_URI_ID,
+                                              SettingsColumns.SINGLETON_ID );
+   }
+   
+   
+   
+   @Override
+   public SyncTime getSyncTimes() throws ContentException
+   {
+      return syncTimesQueryHandler.getElement( ContentUris.SYNC_CONTENT_URI_ID,
+                                               SyncTimesColumns.SINGLETON_ID );
    }
    
    

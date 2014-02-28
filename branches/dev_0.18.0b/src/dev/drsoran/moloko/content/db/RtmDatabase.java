@@ -48,12 +48,11 @@ public class RtmDatabase extends AbstractDatabase
    protected AbstractTable[] createTables( SQLiteDatabase database )
    {
       return new AbstractTable[]
-      { new RtmTasksListsTable( database ), new CreationsTable( database ),
-       new ModificationsTable( database ), new RtmRawTasksTable( database ),
+      { new RtmTasksListsTable( database ), new RtmRawTasksTable( database ),
        new RtmTaskSeriesTable( database ), new RtmNotesTable( database ),
        new RtmContactsTable( database ), new RtmParticipantsTable( database ),
        new RtmLocationsTable( database ), new RtmSettingsTable( database ),
-       new TimesTable( database ) };
+       new ModificationsTable( database ), new SyncTimesTable( database ) };
    }
    
    
@@ -67,9 +66,14 @@ public class RtmDatabase extends AbstractDatabase
        new DeleteRawTaskTrigger( database ),
        new DeleteTaskSeriesTrigger( database ),
        new DeleteContactTrigger( database ),
+       new UpdateContactTrigger( database ),
+       new UpdateTaskSeriesListIdTrigger( database ),
+       new UpdateTaskSeriesRtmListIdTrigger( database ),
+       new UpdateTaskSeriesLocationIdTrigger( database ),
+       new UpdateTaskSeriesRtmLocationIdTrigger( database ),
+       
        new DeleteModificationsTrigger( database, RtmTasksListsTable.TABLE_NAME ),
        new DeleteModificationsTrigger( database, RtmRawTasksTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( database, RtmTaskSeriesTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( database, RtmNotesTable.TABLE_NAME ) };
+       new DeleteModificationsTrigger( database, RtmTaskSeriesTable.TABLE_NAME ) };
    }
 }

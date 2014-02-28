@@ -100,7 +100,7 @@ abstract class AbstractElementSyncHandler< T > implements
    @Override
    public void update( T currentElement, T updatedElement )
    {
-      if ( getId( currentElement ).equals( getId( updatedElement ) ) )
+      if ( !getId( currentElement ).equals( getId( updatedElement ) ) )
       {
          throw new IllegalArgumentException( MessageFormat.format( "IDs differ in update. {0} != {1}",
                                                                    currentElement,
@@ -116,16 +116,11 @@ abstract class AbstractElementSyncHandler< T > implements
       
       final String whereClause = getEqualIdClause();
       
-      final int numUpdated = table.update( Constants.NO_ID,
-                                           contentValues,
-                                           whereClause,
-                                           whereClause != null ? new String[]
-                                           { getId( currentElement ) } : null );
-      if ( numUpdated < 1 )
-      {
-         throw new SQLiteException( MessageFormat.format( " {0} not updated.",
-                                                          currentElement ) );
-      }
+      table.update( Constants.NO_ID,
+                    contentValues,
+                    whereClause,
+                    whereClause != null ? new String[]
+                    { getId( currentElement ) } : null );
    }
    
    
@@ -145,7 +140,7 @@ abstract class AbstractElementSyncHandler< T > implements
                                                                        : null );
       if ( numDeleted < 1 )
       {
-         throw new SQLiteException( MessageFormat.format( "RTM tasks list {0} not deleted.",
+         throw new SQLiteException( MessageFormat.format( "{0} not deleted.",
                                                           element ) );
       }
    }

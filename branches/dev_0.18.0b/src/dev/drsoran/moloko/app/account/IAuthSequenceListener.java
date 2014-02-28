@@ -22,9 +22,9 @@
 
 package dev.drsoran.moloko.app.account;
 
-
 import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.service.RtmAuth;
+import dev.drsoran.rtm.service.RtmAuthHandle;
 
 
 interface IAuthSequenceListener
@@ -33,15 +33,13 @@ interface IAuthSequenceListener
    
    
    
-   void onPostBeginAuthentication( String loginUrl, RtmServiceException exception );
+   void onPostBeginAuthentication( RtmAuthHandle authHandle,
+                                   RtmServiceException exception );
    
    
    
-   void onAuthenticationCompleted( String authToken, RtmServiceException exception );
-   
-   
-   
-   void onAuthTokenChecked( RtmAuth rtmAuth, RtmServiceException exception );
+   void onAuthenticationCompleted( RtmAuth rtmAuth,
+                                   RtmServiceException exception );
    
    
    

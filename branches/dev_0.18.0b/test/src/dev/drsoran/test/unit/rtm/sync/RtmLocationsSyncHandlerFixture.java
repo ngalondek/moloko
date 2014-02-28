@@ -41,8 +41,8 @@ import dev.drsoran.rtm.model.RtmLocation;
 import dev.drsoran.rtm.service.IRtmContentEditService;
 import dev.drsoran.rtm.service.IRtmContentRepository;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;
-import dev.drsoran.rtm.sync.RtmLocationsSyncHandler;
 import dev.drsoran.rtm.sync.RtmContentSort;
+import dev.drsoran.rtm.sync.RtmLocationsSyncHandler;
 import dev.drsoran.rtm.sync.RtmSyncResult;
 
 

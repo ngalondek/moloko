@@ -42,9 +42,10 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
-import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
+import dev.drsoran.moloko.app.sync.SyncConstants;
+import dev.drsoran.moloko.content.ContentAuthority;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.content.db.TableColumns;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
@@ -365,11 +366,71 @@ public final class Intents
    
    public final static Intent createStartNotificationServiceIntent( MolokoApp molokoApp )
    {
-      final Intent intent = new Intent( molokoApp,
-                                        MolokoNotificationService.class );
-      intent.setAction( Action.NOTIFICATION_SERVICE_START );
+      // final Intent intent = new Intent( molokoApp,
+      // MolokoNotificationService.class );
+      // intent.setAction( Action.NOTIFICATION_SERVICE_START );
+      //
+      // return intent;
       
-      return intent;
+      throw new UnsupportedOperationException();
+   }
+   
+   
+   
+   public final static PendingIntent createPermanentNotificationIntent( Context context,
+                                                                        int notificationId )
+   {
+      // final Intent onClickIntent = new Intent( context,
+      // MolokoNotificationService.class );
+      //
+      // onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
+      // onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      //
+      // return PendingIntent.getService( context,
+      // 0,
+      // onClickIntent,
+      // PendingIntent.FLAG_CANCEL_CURRENT );
+      
+      throw new UnsupportedOperationException();
+   }
+   
+   
+   
+   public final static PendingIntent createDueTasksNotificationIntent( Context context,
+                                                                       int notificationId )
+   {
+      // final Intent onClickIntent = new Intent( context,
+      // MolokoNotificationService.class );
+      //
+      // onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
+      // onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      //
+      // return PendingIntent.getService( context,
+      // 1,
+      // onClickIntent,
+      // PendingIntent.FLAG_CANCEL_CURRENT
+      // | PendingIntent.FLAG_ONE_SHOT );
+      
+      throw new UnsupportedOperationException();
+   }
+   
+   
+   
+   public final static PendingIntent createNotificationClearedIntent( Context context,
+                                                                      int notificationId )
+   {
+      // final Intent onClickIntent = new Intent( context,
+      // MolokoNotificationService.class );
+      //
+      // onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED );
+      // onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
+      //
+      // return PendingIntent.getService( context,
+      // 2,
+      // onClickIntent,
+      // PendingIntent.FLAG_CANCEL_CURRENT );
+      
+      throw new UnsupportedOperationException();
    }
    
    
@@ -388,7 +449,7 @@ public final class Intents
    public final static Intent createSyncStartedIntent()
    {
       final Intent intent = new Intent( Intents.Action.SYNC_STATUS_UPDATE );
-      intent.putExtras( Extras.createSyncStatusExtras( Constants.SYNC_STATUS_STARTED ) );
+      intent.putExtras( Extras.createSyncStatusExtras( SyncConstants.SYNC_STATUS_STARTED ) );
       
       return intent;
    }
@@ -398,61 +459,9 @@ public final class Intents
    public final static Intent createSyncFinishedIntent()
    {
       final Intent intent = new Intent( Intents.Action.SYNC_STATUS_UPDATE );
-      intent.putExtras( Extras.createSyncStatusExtras( Constants.SYNC_STATUS_FINISHED ) );
+      intent.putExtras( Extras.createSyncStatusExtras( SyncConstants.SYNC_STATUS_FINISHED ) );
       
       return intent;
-   }
-   
-   
-   
-   public final static PendingIntent createPermanentNotificationIntent( Context context,
-                                                                        int notificationId )
-   {
-      final Intent onClickIntent = new Intent( context,
-                                               MolokoNotificationService.class );
-      
-      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
-      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
-      
-      return PendingIntent.getService( context,
-                                       0,
-                                       onClickIntent,
-                                       PendingIntent.FLAG_CANCEL_CURRENT );
-   }
-   
-   
-   
-   public final static PendingIntent createDueTasksNotificationIntent( Context context,
-                                                                       int notificationId )
-   {
-      final Intent onClickIntent = new Intent( context,
-                                               MolokoNotificationService.class );
-      
-      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATION_CLICKED );
-      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
-      
-      return PendingIntent.getService( context,
-                                       1,
-                                       onClickIntent,
-                                       PendingIntent.FLAG_CANCEL_CURRENT
-                                          | PendingIntent.FLAG_ONE_SHOT );
-   }
-   
-   
-   
-   public final static PendingIntent createNotificationClearedIntent( Context context,
-                                                                      int notificationId )
-   {
-      final Intent onClickIntent = new Intent( context,
-                                               MolokoNotificationService.class );
-      
-      onClickIntent.setAction( Action.NOTIFICATION_SERVICE_NOTIFICATON_CLEARED );
-      onClickIntent.putExtra( Extras.KEY_NOTIFICATION_ID, notificationId );
-      
-      return PendingIntent.getService( context,
-                                       2,
-                                       onClickIntent,
-                                       PendingIntent.FLAG_CANCEL_CURRENT );
    }
    
    
@@ -513,7 +522,7 @@ public final class Intents
    {
       final Intent intent = new Intent( Settings.ACTION_SYNC_SETTINGS );
       
-      intent.putExtra( Settings.EXTRA_AUTHORITIES, TableColumns.AUTHORITY );
+      intent.putExtra( Settings.EXTRA_AUTHORITIES, ContentAuthority.RTM );
       
       return intent;
    }
@@ -640,7 +649,6 @@ public final class Intents
          return Intent.createChooser( createOpenLocationWithOtherAppIntent( location.getAddress() ),
                                       null );
       }
-      
       else
       {
          return null;

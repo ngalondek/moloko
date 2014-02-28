@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.test;
 
-import java.lang.reflect.Method;
 import java.util.Locale;
 
 import org.junit.runners.model.InitializationError;

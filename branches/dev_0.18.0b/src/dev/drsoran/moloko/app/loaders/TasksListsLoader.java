@@ -31,9 +31,9 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public class TasksListsLoader extends AbstractLoader< List< TasksList > >

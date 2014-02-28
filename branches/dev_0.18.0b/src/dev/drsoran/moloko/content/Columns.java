@@ -454,11 +454,21 @@ public final class Columns
       
       public final static int USERNAME_IDX = 2;
       
+      /**
+       * The number of tasks the Contact participates
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String NUM_TASKS_PARTICIPATING = "num_tasks_participates";
+      
+      public final static int NUM_TASKS_PARTICIPATING_IDX = 3;
+      
       public final static String DEFAULT_SORT_ORDER = FULLNAME
          + " COLLATE NOCASE";
       
       public final static String[] PROJECTION =
-      { _ID, FULLNAME, USERNAME };
+      { _ID, FULLNAME, USERNAME, NUM_TASKS_PARTICIPATING };
    }
    
    
@@ -712,6 +722,8 @@ public final class Columns
    
    public static class SettingsColumns implements BaseColumns
    {
+      public final static long SINGLETON_ID = 1L;
+      
       /**
        * The time stamp when the settings were retrieved from the server
        * <P>
@@ -780,4 +792,32 @@ public final class Columns
        LANGUAGE };
    }
    
+   
+   public static class SyncTimesColumns implements BaseColumns
+   {
+      public final static long SINGLETON_ID = 1L;
+      
+      /**
+       * The time stamp of the last synchronization RTM -> local
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String LAST_IN = "last_in";
+      
+      public final static int LAST_IN_IDX = 1;
+      
+      /**
+       * The time stamp of the last synchronization local -> RTM
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String LAST_OUT = "last_out";
+      
+      public final static int LAST_OUT_IDX = 2;
+      
+      public final static String[] PROJECTION =
+      { _ID, LAST_IN, LAST_OUT };
+   }
 }

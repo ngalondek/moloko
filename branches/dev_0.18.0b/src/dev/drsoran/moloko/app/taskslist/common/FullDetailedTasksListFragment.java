@@ -35,9 +35,9 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.loaders.TasksLoader;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.parsing.GrammarException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
+import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 
@@ -85,8 +85,6 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
       final RtmSmartFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
-      final String order = resolveTaskSortToSqlite( config.getInt( Intents.Extras.KEY_TASK_SORT_ORDER ) );
-      
       final TasksLoader loader = new TasksLoader( getAppContext().asDomainContext(),
                                                   filter,
                                                   TaskContentOptions.Minimal );

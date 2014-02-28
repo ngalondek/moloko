@@ -54,14 +54,13 @@ class TaskParticipantsContentUriHandler extends AbstractContentUriHandler
                                   long id,
                                   String[] projection,
                                   String selection,
-                                  String[] selectionArgs,
-                                  String sortOrder )
+                                  String[] selectionArgs )
    {
       selection = getElementSelection( contentUri, id, selection );
       return rtmParticipantsTable.query( projection,
                                          selection,
                                          selectionArgs,
-                                         sortOrder );
+                                         null );
    }
    
    

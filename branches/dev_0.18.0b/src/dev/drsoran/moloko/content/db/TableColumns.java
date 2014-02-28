@@ -34,6 +34,7 @@ import dev.drsoran.moloko.content.Columns.ParticipantColumns;
 import dev.drsoran.moloko.content.Columns.SettingsColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
+import dev.drsoran.rtm.content.ContentProperties;
 
 
 public final class TableColumns
@@ -268,5 +269,66 @@ public final class TableColumns
       }
       
       public static String[] TABLE_PROJECTION;
+   }
+   
+   
+   public static class ModificationColumns implements BaseColumns
+   {
+      /**
+       * Designates the entity that has been modified by it's Content URI with ID.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String ENTITY_URI = "entity_uri";
+      
+      public final static int ENTITY_URI_IDX = 1;
+      
+      /**
+       * The name of the modified property of the entity.
+       * <P>
+       * Type: TEXT
+       * </P>
+       * 
+       * @see ContentProperties
+       */
+      public final static String PROPERTY = "property";
+      
+      public final static int PROPERTY_IDX = 2;
+      
+      /**
+       * The new value.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String NEW_VALUE = "new_value";
+      
+      public final static int NEW_VALUE_IDX = 3;
+      
+      /**
+       * The last synchronized value with the RTM server.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String SYNCED_VALUE = "synced_value";
+      
+      public final static int SYNCED_VALUE_IDX = 4;
+      
+      /**
+       * The point in time when the modification was inserted.
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String TIMESTAMP = "timestamp";
+      
+      public final static int TIMESTAMP_IDX = 5;
+      
+      public final static String DEFAULT_SORT_ORDER = null;
+      
+      public final static String[] PROJECTION =
+      { _ID, ENTITY_URI, PROPERTY, NEW_VALUE, SYNCED_VALUE, TIMESTAMP };
    }
 }

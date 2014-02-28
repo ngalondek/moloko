@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.task;
 
+import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Task;
 
 
@@ -47,7 +48,7 @@ interface ITaskFragmentListener
    
    
    
-   void onOpenLocation( Task task );
+   void onOpenLocation( Location location );
    
    
    

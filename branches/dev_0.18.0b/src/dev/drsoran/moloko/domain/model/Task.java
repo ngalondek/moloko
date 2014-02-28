@@ -48,6 +48,8 @@ public class Task extends LifeTimeManaged implements Serializable
    
    private String locationName;
    
+   private Location location;
+   
    private String name;
    
    private String source = Strings.EMPTY_STRING;
@@ -487,7 +489,14 @@ public class Task extends LifeTimeManaged implements Serializable
    
    
    
-   public void setLocation( long locationId, String locationName )
+   public Location getLocation()
+   {
+      return location;
+   }
+   
+   
+   
+   public void setLocationStub( long locationId, String locationName )
    {
       if ( locationId != Constants.NO_ID && locationName == null )
       {
@@ -502,6 +511,25 @@ public class Task extends LifeTimeManaged implements Serializable
       this.locationId = locationId;
       this.locationName = ( locationId != Constants.NO_ID ) ? locationName
                                                            : null;
+      this.location = null;
+   }
+   
+   
+   
+   public void setLocation( Location location )
+   {
+      if ( location == null )
+      {
+         this.locationId = Constants.NO_ID;
+         this.locationName = null;
+         this.location = null;
+      }
+      else
+      {
+         this.locationId = location.getId();
+         this.locationName = location.getName();
+         this.location = location;
+      }
    }
    
    

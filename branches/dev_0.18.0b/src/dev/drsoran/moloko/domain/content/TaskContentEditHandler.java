@@ -29,12 +29,12 @@ import java.util.Collections;
 
 import android.content.ContentResolver;
 import android.text.TextUtils;
+import dev.drsoran.Compare;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
+import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.sync.Compare;
-import dev.drsoran.moloko.sync.Modification;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmCalendar;
 

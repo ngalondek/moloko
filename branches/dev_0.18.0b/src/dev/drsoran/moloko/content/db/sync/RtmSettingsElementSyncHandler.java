@@ -23,21 +23,29 @@
 package dev.drsoran.moloko.content.db.sync;
 
 import static dev.drsoran.moloko.content.db.TableNames.RTM_SETTINGS_TABLE;
+import android.content.ContentValues;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
+import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmSettings;
 
 
 public class RtmSettingsElementSyncHandler extends
          AbstractElementSyncHandler< RtmSettings >
 {
+   private final long timeOfSyncMsUtc;
+   
+   
+   
    public RtmSettingsElementSyncHandler( RtmDatabase rtmDatabase,
       IModelElementFactory modelElementFactory,
-      IContentValuesFactory contentValuesFactory )
+      IContentValuesFactory contentValuesFactory, long timeOfSyncMsUtc )
    {
       super( rtmDatabase, modelElementFactory, contentValuesFactory );
+      this.timeOfSyncMsUtc = timeOfSyncMsUtc;
    }
    
    
@@ -78,5 +86,18 @@ public class RtmSettingsElementSyncHandler extends
    protected Class< RtmSettings > getElementClass()
    {
       return RtmSettings.class;
+   }
+   
+   
+   
+   @Override
+   protected void adaptContentValuesForUpdate( ContentValues contentValues,
+                                               RtmSettings currentElement,
+                                               RtmSettings updatedElement )
+   {
+      if ( updatedElement.getSyncTimeStampMillis() == RtmConstants.NO_TIME )
+      {
+         contentValues.put( RtmSettingsColumns.SYNC_TIMESTAMP, timeOfSyncMsUtc );
+      }
    }
 }

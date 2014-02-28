@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko;
 
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
@@ -40,6 +41,7 @@ import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.AppServicesContainer;
 import dev.drsoran.moloko.app.services.ISettingsService;
+import dev.drsoran.moloko.app.settings.SettingsService;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.parsing.lang.XmlLanguageReader;
 import dev.drsoran.moloko.domain.services.DomainServicesContainer;
@@ -81,10 +83,12 @@ public class MolokoApp extends Application implements
       ACRA.init( this );
       super.onCreate();
       
+      SettingsService settingsService = createSettingsService();
+      
       createSystemServices();
-      createDomainServices();
+      createDomainServices( settingsService.getLocale() );
       createUiServices();
-      createAppServices();
+      createAppServices( settingsService );
       
       createAppContext();
       
@@ -93,6 +97,13 @@ public class MolokoApp extends Application implements
       
       registerNotificationSettingsListener();
       startNotificationServiceIfNotificationsAreActive();
+   }
+   
+   
+   
+   private SettingsService createSettingsService()
+   {
+      return new SettingsService( this );
    }
    
    
@@ -292,19 +303,23 @@ public class MolokoApp extends Application implements
    
    
    
-   private void createAppServices()
+   private void createAppServices( SettingsService settingsService )
    {
+      settingsService.setContentRepository( domainServicesContainer.getContentRepository() );
+      
       appServicesContainer = new AppServicesContainer( appContext.asDomainContext(),
                                                        systemServicesContainer.getHandler(),
                                                        systemServicesContainer.getHandlerTokenFactory(),
+                                                       systemServicesContainer.getConnectionService(),
+                                                       settingsService,
                                                        systemServicesContainer.Log() );
    }
    
    
    
-   private void createDomainServices()
+   private void createDomainServices( Locale parserLocale )
    {
-      final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage();
+      final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage( parserLocale );
       domainServicesContainer = new DomainServicesContainer( this,
                                                              systemServicesContainer.Log(),
                                                              uiServicesContainer.getDateFormatter(),
@@ -325,7 +340,8 @@ public class MolokoApp extends Application implements
    {
       if ( needsParserLanguagesUpdate() )
       {
-         final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage();
+         final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage( appServicesContainer.getSettings()
+                                                                                                                              .getLocale() );
          domainServicesContainer.updateParserLanguages( recurrenceSentenceLanguage );
       }
    }
@@ -398,17 +414,21 @@ public class MolokoApp extends Application implements
    
    private boolean needsParserLanguagesUpdate()
    {
-      return domainServicesContainer.needsParserLanguageUpdate( appServicesContainer.getSettings()
-                                                                                    .getLocale() );
+      if ( appServicesContainer != null )
+      {
+         return domainServicesContainer.needsParserLanguageUpdate( appServicesContainer.getSettings()
+                                                                                       .getLocale() );
+      }
+      
+      return false;
    }
    
    
    
    // TODO: Is not the DomainServicesContainer responsible to create the language?
-   private IRecurrenceSentenceLanguage createRecurrenceSentenceLanguage()
+   private IRecurrenceSentenceLanguage createRecurrenceSentenceLanguage( Locale locale )
    {
-      final ISettingsService settingsService = appServicesContainer.getSettings();
-      final RecurrenceSentenceLanguage sentenceLanguage = new RecurrenceSentenceLanguage( settingsService.getLocale(),
+      final RecurrenceSentenceLanguage sentenceLanguage = new RecurrenceSentenceLanguage( locale,
                                                                                           systemServicesContainer.Log() );
       final XmlResourceParser xmlParser = getResources().getXml( R.xml.parser_lang_reccur_pattern );
       
@@ -420,8 +440,8 @@ public class MolokoApp extends Application implements
       }
       catch ( ParseException e )
       {
-         throw new RuntimeException( "Unable to create recurrence sentence language for locale "
-                                        + settingsService.getLocale(),
+         throw new RuntimeException( MessageFormat.format( "Unable to create recurrence sentence language for locale {0}",
+                                                           locale ),
                                      e );
       }
       finally

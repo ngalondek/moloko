@@ -115,7 +115,11 @@ public interface IRtmSyncPartner
    
    
    
-   void onSyncStarted( long startMillisUtc );
+   void updateSettings( RtmSettings currentSettings, RtmSettings updatedSettings );
+   
+   
+   
+   void onSyncStarted();
    
    
    

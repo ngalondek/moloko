@@ -24,27 +24,25 @@ package dev.drsoran.moloko.app.event;
 
 public interface IOnSettingsChangedListener
 {
-   public final static int RTM_SETTINGS_SYNCED = 1 << 0;
+   public final static int DATEFORMAT = 1 << 0;
    
-   public final static int DATEFORMAT = 1 << 1;
+   public final static int TIMEFORMAT = 1 << 1;
    
-   public final static int TIMEFORMAT = 1 << 2;
+   public final static int RTM_DEFAULTLIST = 1 << 2;
    
-   public final static int RTM_DEFAULTLIST = 1 << 3;
+   public final static int TASK_SORT = 1 << 3;
    
-   public final static int TASK_SORT = 1 << 4;
+   public final static int STARTUP_VIEW = 1 << 4;
    
-   public final static int STARTUP_VIEW = 1 << 5;
+   public final static int SYNC_INTERVAL = 1 << 5;
    
-   public final static int SYNC_INTERVAL = 1 << 6;
+   public final static int NOTIFY_DUE_TASKS = 1 << 6;
    
-   public final static int NOTIFY_DUE_TASKS = 1 << 7;
+   public final static int NOTIFY_DUE_TASKS_BEFORE_TIME = 1 << 7;
    
-   public final static int NOTIFY_DUE_TASKS_BEFORE_TIME = 1 << 8;
+   public final static int NOTIFY_DUE_TASKS_FEATURE = 1 << 8;
    
-   public final static int NOTIFY_DUE_TASKS_FEATURE = 1 << 9;
-   
-   public final static int NOTIFY_PERMANENT_TASKS = 1 << 10;
+   public final static int NOTIFY_PERMANENT_TASKS = 1 << 9;
    
    public final static int DATE_TIME_RELATED = DATEFORMAT | TIMEFORMAT;
    

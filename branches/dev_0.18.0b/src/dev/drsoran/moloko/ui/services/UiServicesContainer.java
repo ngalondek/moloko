@@ -34,10 +34,11 @@ public class UiServicesContainer implements IUiServices
    
    
    
-   public UiServicesContainer( Context context )
+   public UiServicesContainer( Context context,
+      MolokoDateFormatterService dateFormatterService )
    {
       this.context = context;
-      this.dataFormatterService = new MolokoDateFormatterService( context );
+      this.dataFormatterService = dateFormatterService;
    }
    
    

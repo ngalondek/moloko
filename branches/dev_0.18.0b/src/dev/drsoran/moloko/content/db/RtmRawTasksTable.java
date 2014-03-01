@@ -36,18 +36,16 @@ class RtmRawTasksTable extends AbstractTable
    
    
    
-   public RtmRawTasksTable( SQLiteDatabase database )
+   public RtmRawTasksTable()
    {
-      super( database, TABLE_NAME );
+      super( TABLE_NAME );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
-      final SQLiteDatabase db = getDatabase();
-      
       final StringBuilder builder = new StringBuilder();
       
       builder.append( "CREATE TABLE " );
@@ -88,7 +86,7 @@ class RtmRawTasksTable extends AbstractTable
       builder.append( "\" )" );
       builder.append( " );" );
       
-      db.execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    

@@ -38,16 +38,16 @@ class DeleteModificationsTrigger extends AbstractTrigger
    
    
    
-   public DeleteModificationsTrigger( SQLiteDatabase database, String tableName )
+   public DeleteModificationsTrigger( String tableName )
    {
-      super( database, tableName + "_delete_modifications" );
+      super( tableName + "_delete_modifications" );
       this.tableName = tableName;
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -66,6 +66,6 @@ class DeleteModificationsTrigger extends AbstractTrigger
       builder.append( ";" );
       builder.append( "END;" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
 }

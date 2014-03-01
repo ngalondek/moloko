@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import android.content.ContentResolver;
+import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.Pair;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
@@ -67,6 +69,8 @@ import dev.drsoran.rtm.sync.SyncTime;
 
 public class ContentRepository implements IContentRepository
 {
+   private final ContentResolver contentResolver;
+   
    private final IRtmSmartFilterParsing smartFilterParsing;
    
    private final IRtmSmartFilterEvaluator smartFilterEvaluator;
@@ -101,6 +105,7 @@ public class ContentRepository implements IContentRepository
       IRtmSmartFilterParsing smartFilterParsing,
       IRtmSmartFilterEvaluator smartFilterEvaluator )
    {
+      this.contentResolver = contentResolver;
       this.smartFilterParsing = smartFilterParsing;
       this.smartFilterEvaluator = smartFilterEvaluator;
       
@@ -534,4 +539,19 @@ public class ContentRepository implements IContentRepository
                                               SEL_NO_COMPLETED_AND_DELETED_TASKS );
    }
    
+   
+   
+   @Override
+   public void registerContentObserver( ContentObserver observer, Uri contentUri )
+   {
+      contentResolver.registerContentObserver( contentUri, true, observer );
+   }
+   
+   
+   
+   @Override
+   public void unregisterContentObserver( ContentObserver observer )
+   {
+      contentResolver.unregisterContentObserver( observer );
+   }
 }

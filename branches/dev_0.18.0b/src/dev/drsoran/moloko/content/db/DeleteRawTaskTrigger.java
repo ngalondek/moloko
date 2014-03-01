@@ -34,17 +34,16 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
  */
 class DeleteRawTaskTrigger extends AbstractTrigger
 {
-   public DeleteRawTaskTrigger( SQLiteDatabase database )
+   public DeleteRawTaskTrigger()
    {
-      super( database, RtmRawTasksTable.TABLE_NAME + "_delete_rawtask" );
+      super( RtmRawTasksTable.TABLE_NAME + "_delete_rawtask" );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
-      final SQLiteDatabase db = getDatabase();
       final String rawTasks = RtmRawTasksTable.TABLE_NAME;
       final String taskSeries = RtmTaskSeriesTable.TABLE_NAME;
       
@@ -72,6 +71,6 @@ class DeleteRawTaskTrigger extends AbstractTrigger
       builder.append( RtmRawTaskColumns.TASKSERIES_ID );
       builder.append( "); END;" );
       
-      db.execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
 }

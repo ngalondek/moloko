@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.settings;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,8 +32,10 @@ import java.util.Map;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import dev.drsoran.Strings;
@@ -42,6 +45,7 @@ import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.rtm.RtmConnectionProtocol;
@@ -62,11 +66,16 @@ public class SettingsService implements ISettingsService,
    
    private AsyncTask< IContentRepository, Void, Settings > queryRtmSettingsTask;
    
+   private ContentObserver rtmSettingsChangedObserver;
+   
+   private final Handler handler;
    
    
-   public SettingsService( Context context )
+   
+   public SettingsService( Context context, Handler handler )
    {
       this.context = context;
+      this.handler = handler;
       
       preferences = PreferenceManager.getDefaultSharedPreferences( context );
       if ( preferences == null )
@@ -75,8 +84,6 @@ public class SettingsService implements ISettingsService,
       }
       
       setSettingsVersion();
-      queryRtmSettingsAsync();
-      registerSettingsListener();
    }
    
    
@@ -92,6 +99,8 @@ public class SettingsService implements ISettingsService,
    public void setContentRepository( IContentRepository contentRepository )
    {
       this.contentRepository = contentRepository;
+      
+      registerRtmSettingsDatabaseChangedListener();
       queryRtmSettingsAsync();
    }
    
@@ -104,6 +113,7 @@ public class SettingsService implements ISettingsService,
          queryRtmSettingsTask.cancel( true );
       }
       
+      unregisterRtmSettingsDatabaseChangedListener();
       unregisterSettingsListener();
    }
    
@@ -492,18 +502,13 @@ public class SettingsService implements ISettingsService,
    {
       switch ( which )
       {
-         case IOnSettingsChangedListener.RTM_SETTINGS_SYNCED:
-            queryRtmSettingsAsync();
-            checkDefaultListIdChangedBySync();
-            break;
-         
          case IOnSettingsChangedListener.RTM_DEFAULTLIST:
             checkDefaultListUnset();
             break;
          
          default :
-            throw new IllegalArgumentException( "Unexpected setting changed notification "
-               + which );
+            throw new IllegalArgumentException( MessageFormat.format( "Unexpected setting changed notification {0}",
+                                                                      which ) );
       }
    }
    
@@ -511,8 +516,7 @@ public class SettingsService implements ISettingsService,
    
    private void registerSettingsListener()
    {
-      eventService.registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED
-                                                         | IOnSettingsChangedListener.RTM_DEFAULTLIST,
+      eventService.registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DEFAULTLIST,
                                                       this );
    }
    
@@ -560,6 +564,35 @@ public class SettingsService implements ISettingsService,
                  .putString( context.getString( R.string.key_settings_version ),
                              MolokoApp.getVersionName( context ) )
                  .commit();
+   }
+   
+   
+   
+   private void registerRtmSettingsDatabaseChangedListener()
+   {
+      rtmSettingsChangedObserver = new ContentObserver( handler )
+      {
+         @Override
+         public void onChange( boolean selfChange )
+         {
+            queryRtmSettingsAsync();
+            checkDefaultListIdChangedBySync();
+         }
+      };
+      
+      contentRepository.registerContentObserver( rtmSettingsChangedObserver,
+                                                 ContentUris.RTM_SETTINGS_CONTENT_URI );
+   }
+   
+   
+   
+   private void unregisterRtmSettingsDatabaseChangedListener()
+   {
+      if ( rtmSettingsChangedObserver != null )
+      {
+         contentRepository.unregisterContentObserver( rtmSettingsChangedObserver );
+         rtmSettingsChangedObserver = null;
+      }
    }
    
    

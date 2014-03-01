@@ -34,18 +34,16 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
  */
 class UpdateContactTrigger extends AbstractTrigger
 {
-   public UpdateContactTrigger( SQLiteDatabase database )
+   public UpdateContactTrigger()
    {
-      super( database, RtmContactsTable.TABLE_NAME + "_update_contact" );
+      super( RtmContactsTable.TABLE_NAME + "_update_contact" );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
-      final SQLiteDatabase db = getDatabase();
-      
       final StringBuilder builder = new StringBuilder();
       
       builder.append( "CREATE TRIGGER " );
@@ -74,6 +72,6 @@ class UpdateContactTrigger extends AbstractTrigger
       builder.append( RtmContactColumns._ID );
       builder.append( "; END;" );
       
-      db.execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
 }

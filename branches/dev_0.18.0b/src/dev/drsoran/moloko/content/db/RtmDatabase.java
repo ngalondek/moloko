@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.content.db;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.AbstractDatabase;
 import dev.drsoran.db.AbstractTable;
 import dev.drsoran.db.AbstractTrigger;
@@ -45,35 +44,30 @@ public class RtmDatabase extends AbstractDatabase
    
    
    @Override
-   protected AbstractTable[] createTables( SQLiteDatabase database )
+   protected AbstractTable[] createTables()
    {
       return new AbstractTable[]
-      { new RtmTasksListsTable( database ), new RtmRawTasksTable( database ),
-       new RtmTaskSeriesTable( database ), new RtmNotesTable( database ),
-       new RtmContactsTable( database ), new RtmParticipantsTable( database ),
-       new RtmLocationsTable( database ), new RtmSettingsTable( database ),
-       new ModificationsTable( database ), new SyncTimesTable( database ) };
+      { new RtmTasksListsTable(), new RtmRawTasksTable(),
+       new RtmTaskSeriesTable(), new RtmNotesTable(), new RtmContactsTable(),
+       new RtmParticipantsTable(), new RtmLocationsTable(),
+       new RtmSettingsTable(), new ModificationsTable(), new SyncTimesTable() };
    }
    
    
    
    @Override
-   protected AbstractTrigger[] createTriggers( SQLiteDatabase database )
+   protected AbstractTrigger[] createTriggers()
    {
       return new AbstractTrigger[]
-      {
-       new DefaultListSettingConsistencyTrigger( database ),
-       new DeleteRawTaskTrigger( database ),
-       new DeleteTaskSeriesTrigger( database ),
-       new DeleteContactTrigger( database ),
-       new UpdateContactTrigger( database ),
-       new UpdateTaskSeriesListIdTrigger( database ),
-       new UpdateTaskSeriesRtmListIdTrigger( database ),
-       new UpdateTaskSeriesLocationIdTrigger( database ),
-       new UpdateTaskSeriesRtmLocationIdTrigger( database ),
+      { new DefaultListSettingConsistencyTrigger(), new DeleteRawTaskTrigger(),
+       new DeleteTaskSeriesTrigger(), new DeleteContactTrigger(),
+       new UpdateContactTrigger(), new UpdateTaskSeriesListIdTrigger(),
+       new UpdateTaskSeriesRtmListIdTrigger(),
+       new UpdateTaskSeriesLocationIdTrigger(),
+       new UpdateTaskSeriesRtmLocationIdTrigger(),
        
-       new DeleteModificationsTrigger( database, RtmTasksListsTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( database, RtmRawTasksTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( database, RtmTaskSeriesTable.TABLE_NAME ) };
+       new DeleteModificationsTrigger( RtmTasksListsTable.TABLE_NAME ),
+       new DeleteModificationsTrigger( RtmRawTasksTable.TABLE_NAME ),
+       new DeleteModificationsTrigger( RtmTaskSeriesTable.TABLE_NAME ) };
    }
 }

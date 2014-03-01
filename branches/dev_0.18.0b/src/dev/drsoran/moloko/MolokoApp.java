@@ -42,10 +42,14 @@ import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.AppServicesContainer;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.settings.SettingsService;
+import dev.drsoran.moloko.content.ContentAuthority;
+import dev.drsoran.moloko.content.MolokoContentProvider;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.parsing.lang.XmlLanguageReader;
 import dev.drsoran.moloko.domain.services.DomainServicesContainer;
 import dev.drsoran.moloko.ui.UiContext;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
+import dev.drsoran.moloko.ui.services.MolokoDateFormatterService;
 import dev.drsoran.moloko.ui.services.UiServicesContainer;
 import dev.drsoran.rtm.parsing.lang.IRecurrenceSentenceLanguage;
 import dev.drsoran.rtm.parsing.lang.RecurrenceSentenceLanguage;
@@ -71,25 +75,48 @@ public class MolokoApp extends Application implements
    
    private UiServicesContainer uiServicesContainer;
    
+   private SystemContext systemContext;
+   
+   private DomainContext domainContext;
+   
+   private UiContext uiContext;
+   
    private AppContext appContext;
    
    private static ILog Log;
+   
+   private static boolean isDebug;
    
    
    
    @Override
    public void onCreate()
    {
-      ACRA.init( this );
+      isDebug = getResources().getBoolean( R.bool.env_debug );
+      
+      if ( !isDebug )
+      {
+         ACRA.init( this );
+      }
+      
       super.onCreate();
       
-      SettingsService settingsService = createSettingsService();
-      
       createSystemServices();
-      createDomainServices( settingsService.getLocale() );
-      createUiServices();
-      createAppServices( settingsService );
+      createSystemContext();
       
+      initContentProvider();
+      
+      SettingsService settingsService = new SettingsService( this,
+                                                             systemServicesContainer.getHandler() );
+      MolokoDateFormatterService dateFormatterService = new MolokoDateFormatterService( this );
+      
+      createDomainServices( dateFormatterService, settingsService.getLocale() );
+      createDomainContext();
+      
+      createUiServices( dateFormatterService );
+      createUiContext();
+      
+      createAppServices( settingsService );
       createAppContext();
       
       // TODO: Remove
@@ -101,18 +128,15 @@ public class MolokoApp extends Application implements
    
    
    
-   private SettingsService createSettingsService()
-   {
-      return new SettingsService( this );
-   }
-   
-   
-   
    @Override
    public void onTerminate()
    {
       unregisterNotificationSettingsListener();
-      deleteAppServices();
+      
+      deleteAppContext();
+      deleteUiContext();
+      deleteDomainContext();
+      deleteSystemContext();
       
       super.onTerminate();
    }
@@ -136,30 +160,9 @@ public class MolokoApp extends Application implements
    
    
    
-   public static SystemContext getSystemContext( Context context )
+   public static boolean DEBUG()
    {
-      return MolokoApp.get( context ).appContext.asSystemContext();
-   }
-   
-   
-   
-   public static DomainContext getDomainContext( Context context )
-   {
-      return MolokoApp.get( context ).appContext.asDomainContext();
-   }
-   
-   
-   
-   public static UiContext getUiContext( Context context )
-   {
-      return MolokoApp.get( context ).appContext.asUiContext();
-   }
-   
-   
-   
-   public static AppContext getAppContext( Context context )
-   {
-      return MolokoApp.get( context ).appContext;
+      return isDebug;
    }
    
    
@@ -282,32 +285,111 @@ public class MolokoApp extends Application implements
    
    
    
-   private void createAppContext()
+   private void createSystemContext()
    {
-      final SystemContext systemContext = new SystemContext( getApplicationContext(),
-                                                             systemServicesContainer );
-      final DomainContext domainContext = new DomainContext( systemContext,
-                                                             domainServicesContainer );
-      final UiContext uiContext = new UiContext( domainContext,
-                                                 uiServicesContainer );
-      
-      appContext = new AppContext( uiContext, appServicesContainer );
+      systemContext = new SystemContext( getApplicationContext(),
+                                         systemServicesContainer );
    }
    
    
    
-   private void createUiServices()
+   public static SystemContext getSystemContext( Context context )
    {
-      uiServicesContainer = new UiServicesContainer( this );
+      return MolokoApp.get( context ).systemContext;
+   }
+   
+   
+   
+   private void deleteSystemContext()
+   {
+      if ( systemServicesContainer != null )
+      {
+         systemServicesContainer.shutdown();
+         systemServicesContainer = null;
+      }
+      
+      systemContext = null;
+   }
+   
+   
+   
+   private void createDomainServices( IDateFormatterService dateFormatterService,
+                                      Locale parserLocale )
+   {
+      final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage( parserLocale );
+      domainServicesContainer = new DomainServicesContainer( this,
+                                                             systemServicesContainer.Log(),
+                                                             dateFormatterService,
+                                                             recurrenceSentenceLanguage );
+   }
+   
+   
+   
+   private void createDomainContext()
+   {
+      domainContext = new DomainContext( systemContext, domainServicesContainer );
+   }
+   
+   
+   
+   public static DomainContext getDomainContext( Context context )
+   {
+      return MolokoApp.get( context ).domainContext;
+   }
+   
+   
+   
+   private void deleteDomainContext()
+   {
+      if ( domainServicesContainer != null )
+      {
+         domainServicesContainer = null;
+      }
+      
+      domainContext = null;
+   }
+   
+   
+   
+   private void createUiServices( MolokoDateFormatterService dateFormatterService )
+   {
+      uiServicesContainer = new UiServicesContainer( this, dateFormatterService );
+   }
+   
+   
+   
+   private void createUiContext()
+   {
+      uiContext = new UiContext( domainContext, uiServicesContainer );
+   }
+   
+   
+   
+   public static UiContext getUiContext( Context context )
+   {
+      return MolokoApp.get( context ).uiContext;
+   }
+   
+   
+   
+   private void deleteUiContext()
+   {
+      if ( uiServicesContainer != null )
+      {
+         uiServicesContainer = null;
+      }
+      
+      uiContext = null;
    }
    
    
    
    private void createAppServices( SettingsService settingsService )
    {
-      settingsService.setContentRepository( domainServicesContainer.getContentRepository() );
+      // TODO:
+      // settingsService.setContentRepository( domainServicesContainer.getContentRepository() );
       
-      appServicesContainer = new AppServicesContainer( appContext.asDomainContext(),
+      appServicesContainer = new AppServicesContainer( domainContext,
                                                        systemServicesContainer.getHandler(),
                                                        systemServicesContainer.getHandlerTokenFactory(),
                                                        systemServicesContainer.getConnectionService(),
@@ -317,21 +399,29 @@ public class MolokoApp extends Application implements
    
    
    
-   private void createDomainServices( Locale parserLocale )
+   private void createAppContext()
    {
-      final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage( parserLocale );
-      domainServicesContainer = new DomainServicesContainer( this,
-                                                             systemServicesContainer.Log(),
-                                                             uiServicesContainer.getDateFormatter(),
-                                                             recurrenceSentenceLanguage );
+      appContext = new AppContext( uiContext, appServicesContainer );
    }
    
    
    
-   private void deleteAppServices()
+   public static AppContext getAppContext( Context context )
    {
-      appServicesContainer.shutdown();
-      appServicesContainer = null;
+      return MolokoApp.get( context ).appContext;
+   }
+   
+   
+   
+   private void deleteAppContext()
+   {
+      if ( appServicesContainer != null )
+      {
+         appServicesContainer.shutdown();
+         appServicesContainer = null;
+      }
+      
+      appContext = null;
    }
    
    
@@ -421,6 +511,15 @@ public class MolokoApp extends Application implements
       }
       
       return false;
+   }
+   
+   
+   
+   private void initContentProvider()
+   {
+      final MolokoContentProvider molokoContentProvider = (MolokoContentProvider) getContentResolver().acquireContentProviderClient( ContentAuthority.RTM )
+                                                                                                      .getLocalContentProvider();
+      molokoContentProvider.init( systemServicesContainer.Log() );
    }
    
    

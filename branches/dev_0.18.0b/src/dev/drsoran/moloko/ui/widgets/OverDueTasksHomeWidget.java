@@ -35,6 +35,7 @@ import dev.drsoran.Iterables;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.ContentException;
@@ -101,7 +102,11 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    public void start()
    {
       super.start();
-      TasksProviderPart.put( getContext(), dbObserver );
+      
+      getUiContext().asDomainContext()
+                    .getContentRepository()
+                    .registerContentObserver( dbObserver,
+                                              ContentUris.TASKS_CONTENT_URI );
    }
    
    
@@ -109,7 +114,10 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    @Override
    public void stop()
    {
-      TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
+      getUiContext().asDomainContext()
+                    .getContentRepository()
+                    .unregisterContentObserver( dbObserver );
+      
       handlerToken.removeRunnablesAndMessages();
       
       super.stop();

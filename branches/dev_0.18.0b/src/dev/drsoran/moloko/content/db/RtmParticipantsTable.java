@@ -37,15 +37,15 @@ class RtmParticipantsTable extends AbstractTable
    
    
    
-   public RtmParticipantsTable( SQLiteDatabase database )
+   public RtmParticipantsTable()
    {
-      super( database, TABLE_NAME );
+      super( TABLE_NAME );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -78,7 +78,7 @@ class RtmParticipantsTable extends AbstractTable
       builder.append( "\") " );
       builder.append( " );" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    

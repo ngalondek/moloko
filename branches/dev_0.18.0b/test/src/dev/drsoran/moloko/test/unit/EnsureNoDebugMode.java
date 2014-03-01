@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of MolokoTest.
  *
@@ -20,19 +20,24 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test;
+package dev.drsoran.moloko.test.unit;
 
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
 
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.test.MolokoRoboTestCase;
 
 
-@RunWith( MolokoTestRunner_en.class )
-public abstract class MolokoRoboTestCase extends MolokoTestCase
+public class EnsureNoDebugMode extends MolokoRoboTestCase
 {
-   public MolokoApp getMolokoApp()
+   @Test
+   public void testNotShippingDebugVersion()
    {
-      return (MolokoApp) Robolectric.application;
+      assertThat( "Warning!! Shipping version with DEBUG enabled!",
+                  MolokoApp.DEBUG(),
+                  is( false ) );
    }
 }

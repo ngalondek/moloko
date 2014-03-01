@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of MolokoTest.
  *
@@ -20,19 +20,22 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test;
+package dev.drsoran.moloko.test.shadows;
 
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
 
-import dev.drsoran.moloko.MolokoApp;
+import android.content.ContentProvider;
+import android.content.ContentProviderClient;
+import dev.drsoran.moloko.content.db.DbContentProvider;
 
 
-@RunWith( MolokoTestRunner_en.class )
-public abstract class MolokoRoboTestCase extends MolokoTestCase
+@Implements( value = ContentProviderClient.class )
+public class ContentProviderClientShadow
 {
-   public MolokoApp getMolokoApp()
+   @Implementation
+   public ContentProvider getLocalContentProvider()
    {
-      return (MolokoApp) Robolectric.application;
+      return new DbContentProvider();
    }
 }

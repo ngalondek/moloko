@@ -24,6 +24,8 @@ package dev.drsoran.moloko.domain.services;
 
 import java.util.NoSuchElementException;
 
+import android.database.ContentObserver;
+import android.net.Uri;
 import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
@@ -108,4 +110,12 @@ public interface IContentRepository
    
    
    Iterable< CloudEntry > getCloudEntries() throws ContentException;
+   
+   
+   
+   void registerContentObserver( ContentObserver observer, Uri contentUri );
+   
+   
+   
+   void unregisterContentObserver( ContentObserver observer );
 }

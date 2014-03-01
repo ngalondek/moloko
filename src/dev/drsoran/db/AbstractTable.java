@@ -39,23 +39,22 @@ public abstract class AbstractTable implements ITable
 {
    private final static String ITEM_ID_EQUALS = BaseColumns._ID + "=";
    
-   private final SQLiteDatabase database;
-   
    private final String tableName;
    
+   private SQLiteDatabase database;
    
    
-   protected AbstractTable( SQLiteDatabase database, String tableName )
+   
+   protected AbstractTable( String tableName )
    {
-      this.database = database;
       this.tableName = tableName;
    }
    
    
    
-   public SQLiteDatabase getDatabase()
+   public void init( SQLiteDatabase database )
    {
-      return database;
+      this.database = database;
    }
    
    
@@ -68,18 +67,18 @@ public abstract class AbstractTable implements ITable
    
    
    
-   public void upgrade( int oldVersion, int newVersion ) throws SQLException
+   public void upgrade( SQLiteDatabase database, int oldVersion, int newVersion ) throws SQLException
    {
-      dropIndices();
-      drop();
-      create();
-      createIndices();
-      insertInitialRows();
+      dropIndices( database );
+      drop( database );
+      create( database );
+      createIndices( database );
+      insertInitialRows( database );
    }
    
    
    
-   public void drop()
+   public void drop( SQLiteDatabase database )
    {
       database.execSQL( MessageFormat.format( "DROP TABLE IF EXISTS {0}",
                                               getTableName() ) );
@@ -87,26 +86,26 @@ public abstract class AbstractTable implements ITable
    
    
    
-   public void createIndices()
+   public void createIndices( SQLiteDatabase database )
    {
    }
    
    
    
-   public void dropIndices()
+   public void dropIndices( SQLiteDatabase database )
    {
    }
    
    
    
-   public void insertInitialRows()
+   public void insertInitialRows( SQLiteDatabase database )
    {
    }
    
    
    
    @Override
-   public void clear()
+   public void clear( SQLiteDatabase database )
    {
       database.execSQL( MessageFormat.format( "DELETE FROM TABLE {0}",
                                               getTableName() ) );
@@ -257,5 +256,5 @@ public abstract class AbstractTable implements ITable
    
    
    
-   public abstract void create() throws SQLException;
+   public abstract void create( SQLiteDatabase database ) throws SQLException;
 }

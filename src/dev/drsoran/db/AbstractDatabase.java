@@ -40,7 +40,7 @@ public abstract class AbstractDatabase
    
    private final int databaseVersion;
    
-   private AbstractTable[] tables;
+   private final AbstractTable[] tables;
    
    
    
@@ -50,6 +50,7 @@ public abstract class AbstractDatabase
       this.databaseName = databaseName;
       this.databaseVersion = databaseVersion;
       this.dbAccess = new DatabaseOpenHelper( context );
+      this.tables = createTables();
    }
    
    
@@ -86,7 +87,7 @@ public abstract class AbstractDatabase
    {
       for ( ITable table : tables )
       {
-         table.clear();
+         table.clear( null );
       }
    }
    
@@ -102,7 +103,7 @@ public abstract class AbstractDatabase
                                                                  databaseName ) );
       }
       
-      table.clear();
+      table.clear( null );
    }
    
    
@@ -145,20 +146,22 @@ public abstract class AbstractDatabase
       
       
       @Override
-      public void onCreate( SQLiteDatabase db )
+      public void onCreate( SQLiteDatabase database )
       {
-         createTables( db );
-         createTriggers( db );
+         createTables( database );
+         createTriggers( database );
       }
       
       
       
       @Override
-      public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
+      public void onUpgrade( SQLiteDatabase database,
+                             int oldVersion,
+                             int newVersion )
       {
          for ( AbstractTable table : tables )
          {
-            table.upgrade( oldVersion, newVersion );
+            table.upgrade( database, oldVersion, newVersion );
          }
       }
       
@@ -166,13 +169,12 @@ public abstract class AbstractDatabase
       
       private void createTables( SQLiteDatabase database )
       {
-         tables = AbstractDatabase.this.createTables( database );
-         
          for ( AbstractTable table : tables )
          {
-            table.create();
-            table.createIndices();
-            table.insertInitialRows();
+            table.create( database );
+            table.createIndices( database );
+            table.insertInitialRows( database );
+            table.init( database );
          }
       }
       
@@ -180,20 +182,18 @@ public abstract class AbstractDatabase
       
       private void createTriggers( SQLiteDatabase database )
       {
-         final AbstractTrigger[] triggers = AbstractDatabase.this.createTriggers( database );
-         
-         for ( AbstractTrigger trigger : triggers )
+         for ( AbstractTrigger trigger : AbstractDatabase.this.createTriggers() )
          {
-            trigger.create();
+            trigger.create( database );
          }
       }
    }
    
    
    
-   protected abstract AbstractTable[] createTables( SQLiteDatabase database );
+   protected abstract AbstractTable[] createTables();
    
    
    
-   protected abstract AbstractTrigger[] createTriggers( SQLiteDatabase database );
+   protected abstract AbstractTrigger[] createTriggers();
 }

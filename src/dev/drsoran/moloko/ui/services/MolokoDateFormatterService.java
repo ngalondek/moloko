@@ -31,7 +31,7 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.TimeStruct;
 
 
-final class MolokoDateFormatterService implements IDateFormatterService
+public final class MolokoDateFormatterService implements IDateFormatterService
 {
    private final Context context;
    

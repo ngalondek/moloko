@@ -34,18 +34,16 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
  */
 class DeleteContactTrigger extends AbstractTrigger
 {
-   public DeleteContactTrigger( SQLiteDatabase database )
+   public DeleteContactTrigger()
    {
-      super( database, RtmContactsTable.TABLE_NAME + "_delete_contact" );
+      super( RtmContactsTable.TABLE_NAME + "_delete_contact" );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
-      final SQLiteDatabase db = getDatabase();
-      
       final StringBuilder builder = new StringBuilder();
       
       builder.append( "CREATE TRIGGER " );
@@ -60,6 +58,6 @@ class DeleteContactTrigger extends AbstractTrigger
       builder.append( RtmContactColumns._ID );
       builder.append( "; END;" );
       
-      db.execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
 }

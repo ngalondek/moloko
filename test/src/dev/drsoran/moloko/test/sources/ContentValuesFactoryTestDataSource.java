@@ -637,13 +637,12 @@ public class ContentValuesFactoryTestDataSource
    
    private void addContactFull( Collection< TestData< Contact >> testData )
    {
-      final Contact modelElement = new Contact( 1L, "Username", "Fullname", 10 );
+      final Contact modelElement = new Contact( 1L, "Username", "Fullname", 0 );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ContactColumns._ID, 1L );
       values.put( ContactColumns.FULLNAME, "Fullname" );
       values.put( ContactColumns.USERNAME, "Username" );
-      values.put( ContactColumns.NUM_TASKS_PARTICIPATING, 10 );
       
       testData.add( new TestData< Contact >( Contact.class,
                                              modelElement,

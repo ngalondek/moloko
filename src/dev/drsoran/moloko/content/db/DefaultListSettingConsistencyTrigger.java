@@ -35,15 +35,15 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 class DefaultListSettingConsistencyTrigger extends AbstractTrigger
 {
    
-   public DefaultListSettingConsistencyTrigger( SQLiteDatabase database )
+   public DefaultListSettingConsistencyTrigger()
    {
-      super( database, RtmSettingsTable.TABLE_NAME + "_default_list" );
+      super( RtmSettingsTable.TABLE_NAME + "_default_list" );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -64,6 +64,6 @@ class DefaultListSettingConsistencyTrigger extends AbstractTrigger
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( "; END;" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
 }

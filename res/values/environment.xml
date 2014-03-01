@@ -13,6 +13,7 @@
       Röhricht - implementation
    -->
 <resources>
+    <bool name="env_debug">true</bool>
     <bool name="env_force_readable_rtm_access">false</bool>
     <bool name="env_enable_abs_viewpager_workaround">true</bool>
     

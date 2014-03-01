@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.PendingIntent;
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -324,25 +323,6 @@ public final class Intents
       
       
       
-      public final static Bundle createSqlSelectionFilterExtras( Context context,
-                                                                 SqlSelectionFilter filter,
-                                                                 String title )
-      {
-         final Bundle extras = new Bundle();
-         
-         extras.putString( Extras.KEY_ACTIVITY_TITLE,
-                           context.getString( R.string.taskslist_actionbar,
-                                              ( title != null )
-                                                               ? title
-                                                               : context.getString( R.string.app_name ) ) );
-         
-         extras.putParcelable( Extras.KEY_FILTER, filter );
-         
-         return extras;
-      }
-      
-      
-      
       public final static Bundle createSmartFilterExtras( Context context,
                                                           RtmSmartFilter filter,
                                                           String title )
@@ -531,7 +511,8 @@ public final class Intents
    
    public final static Intent createOpenListOverviewsIntent()
    {
-      return new Intent( Intent.ACTION_VIEW, ListOverviews.CONTENT_URI );
+      // return new Intent( Intent.ACTION_VIEW, ListOverviews.CONTENT_URI );
+      return null;
    }
    
    
@@ -549,23 +530,23 @@ public final class Intents
    {
       Intent intent = null;
       
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( ListOverviews.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                      ListOverviews._ID
-                                                                                         + "="
-                                                                                         + id );
-         
-         if ( list != null )
-         {
-            intent = createOpenListIntent( context, list, filter );
-         }
-         
-         client.release();
-      }
+      // final ContentProviderClient client = context.getContentResolver()
+      // .acquireContentProviderClient( ListOverviews.CONTENT_URI );
+      //
+      // if ( client != null )
+      // {
+      // final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
+      // ListOverviews._ID
+      // + "="
+      // + id );
+      //
+      // if ( list != null )
+      // {
+      // intent = createOpenListIntent( context, list, filter );
+      // }
+      //
+      // client.release();
+      // }
       
       return intent;
    }

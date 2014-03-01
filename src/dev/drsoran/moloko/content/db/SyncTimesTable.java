@@ -34,15 +34,15 @@ class SyncTimesTable extends AbstractTable
    
    
    
-   public SyncTimesTable( SQLiteDatabase database )
+   public SyncTimesTable()
    {
-      super( database, TABLE_NAME );
+      super( TABLE_NAME );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -50,7 +50,7 @@ class SyncTimesTable extends AbstractTable
       builder.append( TABLE_NAME );
       builder.append( "( " );
       builder.append( SyncTimesColumns._ID );
-      builder.append( " INTEGER NOT NULL CONSTRAINT PK_SYNC PRIMARY KEY DEAFULT " );
+      builder.append( " INTEGER NOT NULL CONSTRAINT PK_SYNC PRIMARY KEY DEFAULT " );
       builder.append( SyncTimesColumns.SINGLETON_ID );
       builder.append( ", " );
       builder.append( SyncTimesColumns.LAST_IN );
@@ -58,21 +58,21 @@ class SyncTimesTable extends AbstractTable
       builder.append( SyncTimesColumns.LAST_OUT );
       builder.append( " INTEGER DEFAULT -1);" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    
    
    @Override
-   public void insertInitialRows()
+   public void insertInitialRows( SQLiteDatabase database )
    {
       final StringBuilder builder = new StringBuilder();
       
-      builder.append( "INSERT INTO TABLE " );
+      builder.append( "INSERT INTO " );
       builder.append( TABLE_NAME );
       builder.append( " DEFAULT VALUES;" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    

@@ -25,6 +25,7 @@ package dev.drsoran.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 
 
 public interface ITable
@@ -60,5 +61,5 @@ public interface ITable
    
    
    
-   void clear();
+   void clear(SQLiteDatabase database);
 }

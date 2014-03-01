@@ -34,15 +34,15 @@ class RtmTasksListsTable extends AbstractTable
    
    
    
-   public RtmTasksListsTable( SQLiteDatabase database )
+   public RtmTasksListsTable()
    {
-      super( database, TABLE_NAME );
+      super( TABLE_NAME );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -73,7 +73,7 @@ class RtmTasksListsTable extends AbstractTable
       builder.append( " TEXT" );
       builder.append( " );" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    

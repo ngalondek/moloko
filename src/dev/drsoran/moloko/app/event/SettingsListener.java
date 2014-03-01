@@ -44,8 +44,6 @@ class SettingsListener implements OnSharedPreferenceChangeListener
    
    private ContentObserver dateFormatChangedOberver;
    
-   private ContentObserver rtmSettingsChangedObserver;
-   
    
    
    public SettingsListener( Context context, IEventDrain eventDrain,
@@ -57,14 +55,12 @@ class SettingsListener implements OnSharedPreferenceChangeListener
       
       registerPreferenceChangeListener();
       registerSystemSettingsChangedListener();
-      registerRtmSettingsDatabaseChangedListener();
    }
    
    
    
    public void shutdown()
    {
-      unregisterRtmSettingsDatabaseChangedListener();
       unregisterSystemSettingsChangedListener();
       unregisterPreferenceChangeListener();
    }
@@ -135,34 +131,6 @@ class SettingsListener implements OnSharedPreferenceChangeListener
       if ( prefs != null )
       {
          prefs.unregisterOnSharedPreferenceChangeListener( this );
-      }
-   }
-   
-   
-   
-   private void registerRtmSettingsDatabaseChangedListener()
-   {
-      rtmSettingsChangedObserver = new ContentObserver( handler )
-      {
-         @Override
-         public void onChange( boolean selfChange )
-         {
-            onSettingChanged( IOnSettingsChangedListener.RTM_SETTINGS_SYNCED );
-         }
-      };
-      
-      RtmSettingsTable.put( context, rtmSettingsChangedObserver );
-   }
-   
-   
-   
-   private void unregisterRtmSettingsDatabaseChangedListener()
-   {
-      if ( rtmSettingsChangedObserver != null )
-      {
-         RtmSettingsTable.unregisterContentObserver( context,
-                                                     rtmSettingsChangedObserver );
-         rtmSettingsChangedObserver = null;
       }
    }
    

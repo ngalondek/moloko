@@ -27,12 +27,10 @@ import java.util.NoSuchElementException;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.content.db.DbContentProvider;
 
 
@@ -44,18 +42,21 @@ public abstract class MolokoContentProvider extends ContentProvider
    
    
    
+   /**
+    * Note: This is called by the OS before any Application onCreate(). So referring to App resources is not valid here.
+    */
    @Override
    public boolean onCreate()
    {
-      final Context context = getContext();
-      
-      if ( log == null )
-      {
-         log = SystemContext.get( context ).Log();
-      }
-      
       contentUriToHandlerLookup = createContentUriToHandlerLookup();
       return true;
+   }
+   
+   
+   
+   public void init( ILog log )
+   {
+      this.log = log;
    }
    
    
@@ -243,9 +244,9 @@ public abstract class MolokoContentProvider extends ContentProvider
    
    private void logOperationFailed( String operation, Exception e )
    {
-      log.e( DbContentProvider.class,
-             MessageFormat.format( "Operation ''{0}'' failed.", operation ),
-             e );
+      Log().e( DbContentProvider.class,
+               MessageFormat.format( "Operation ''{0}'' failed.", operation ),
+               e );
    }
    
    

@@ -55,12 +55,12 @@ public class DbContentProvider extends MolokoContentProvider
    @Override
    public boolean onCreate()
    {
-      boolean ok = super.onCreate();
-      if ( ok && database == null )
+      if ( database == null )
       {
          database = new RtmDatabase( getContext() );
       }
       
+      boolean ok = super.onCreate();
       return ok;
    }
    

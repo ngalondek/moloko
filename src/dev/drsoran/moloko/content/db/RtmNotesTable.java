@@ -35,15 +35,15 @@ class RtmNotesTable extends AbstractTable
    
    
    
-   public RtmNotesTable( SQLiteDatabase database )
+   public RtmNotesTable()
    {
-      super( database, TABLE_NAME );
+      super( TABLE_NAME );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -74,13 +74,13 @@ class RtmNotesTable extends AbstractTable
       builder.append( RtmTaskSeriesColumns._ID );
       builder.append( " ) );" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    
    
    @Override
-   public void createIndices()
+   public void createIndices( SQLiteDatabase database )
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -94,13 +94,13 @@ class RtmNotesTable extends AbstractTable
       builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( ");" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    
    
    @Override
-   public void dropIndices()
+   public void dropIndices( SQLiteDatabase database )
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -110,7 +110,7 @@ class RtmNotesTable extends AbstractTable
       builder.append( RtmNoteColumns.TASKSERIES_ID );
       builder.append( ";" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    

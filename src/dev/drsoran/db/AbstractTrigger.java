@@ -28,23 +28,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractTrigger
 {
-   private final SQLiteDatabase database;
-   
    private final String triggerName;
    
    
    
-   protected AbstractTrigger( SQLiteDatabase database, String triggerName )
+   protected AbstractTrigger( String triggerName )
    {
-      this.database = database;
       this.triggerName = triggerName;
-   }
-   
-   
-   
-   public SQLiteDatabase getDatabase()
-   {
-      return database;
    }
    
    
@@ -56,18 +46,18 @@ public abstract class AbstractTrigger
    
    
    
-   public void upgrade( int oldVersion, int newVersion ) throws SQLException
+   public void upgrade( SQLiteDatabase database, int oldVersion, int newVersion ) throws SQLException
    {
    }
    
    
    
-   public void drop()
+   public void drop( SQLiteDatabase database )
    {
       database.execSQL( "DROP TRIGGER " + triggerName );
    }
    
    
    
-   public abstract void create() throws SQLException;
+   public abstract void create( SQLiteDatabase database ) throws SQLException;
 }

@@ -35,15 +35,15 @@ class RtmSettingsTable extends AbstractTable
    
    
    
-   public RtmSettingsTable( SQLiteDatabase database )
+   public RtmSettingsTable()
    {
-      super( database, TABLE_NAME );
+      super( TABLE_NAME );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -76,19 +76,21 @@ class RtmSettingsTable extends AbstractTable
       builder.append( RtmTasksListColumns._ID );
       builder.append( " ) );" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    
    
    @Override
-   public void insertInitialRows()
+   public void insertInitialRows( SQLiteDatabase database )
    {
       final StringBuilder builder = new StringBuilder();
       
-      builder.append( "INSERT INTO TABLE " );
+      builder.append( "INSERT INTO " );
       builder.append( TABLE_NAME );
       builder.append( " DEFAULT VALUES;" );
+      
+      database.execSQL( builder.toString() );
    }
    
    

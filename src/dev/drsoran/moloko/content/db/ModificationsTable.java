@@ -34,15 +34,15 @@ class ModificationsTable extends AbstractTable
    
    
    
-   public ModificationsTable( SQLiteDatabase database )
+   public ModificationsTable()
    {
-      super( database, TABLE_NAME );
+      super( TABLE_NAME );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
       final StringBuilder builder = new StringBuilder();
       
@@ -63,7 +63,7 @@ class ModificationsTable extends AbstractTable
       builder.append( " INTEGER NOT NULL" );
       builder.append( ");" );
       
-      getDatabase().execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
    
    

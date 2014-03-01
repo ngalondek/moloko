@@ -145,7 +145,7 @@ class ClearDbPreference extends InfoTextPreference
          {
             for ( ITable table : tablesToClear )
             {
-               table.clear();
+               table.clear(null);
             }
             
             return null;

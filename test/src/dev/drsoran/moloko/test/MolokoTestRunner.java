@@ -24,14 +24,15 @@ package dev.drsoran.moloko.test;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.bytecode.ShadowMap;
+import org.robolectric.bytecode.ShadowMap.Builder;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.test.shadows.ACRAShadow;
+import dev.drsoran.moloko.test.shadows.ContentProviderClientShadow;
+import dev.drsoran.moloko.test.shadows.ContentResolverShadow;
 
 
-@Config( shadows =
-{ ACRAShadow.class } )
 abstract class MolokoTestRunner extends RobolectricTestRunner
 {
    private MolokoApp molokoApp;
@@ -49,6 +50,21 @@ abstract class MolokoTestRunner extends RobolectricTestRunner
    public MolokoApp getMolokoApp()
    {
       return molokoApp;
+   }
+   
+   
+   
+   @Override
+   protected ShadowMap createShadowMap()
+   {
+      final ShadowMap shadowMap = super.createShadowMap();
+      
+      final Builder shadowMapBuilder = shadowMap.newBuilder();
+      shadowMapBuilder.addShadowClass( ACRAShadow.class );
+      shadowMapBuilder.addShadowClass( ContentResolverShadow.class );
+      shadowMapBuilder.addShadowClass( ContentProviderClientShadow.class );
+      
+      return shadowMapBuilder.build();
    }
    
    

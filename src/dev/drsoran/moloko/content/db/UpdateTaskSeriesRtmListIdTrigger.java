@@ -34,18 +34,16 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
  */
 class UpdateTaskSeriesRtmListIdTrigger extends AbstractTrigger
 {
-   public UpdateTaskSeriesRtmListIdTrigger( SQLiteDatabase database )
+   public UpdateTaskSeriesRtmListIdTrigger()
    {
-      super( database, RtmTaskSeriesTable.TABLE_NAME + "_update_rtm_list_id" );
+      super( RtmTaskSeriesTable.TABLE_NAME + "_update_rtm_list_id" );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
-      final SQLiteDatabase db = getDatabase();
-      
       final StringBuilder builder = new StringBuilder();
       
       builder.append( "CREATE TRIGGER " );
@@ -69,6 +67,6 @@ class UpdateTaskSeriesRtmListIdTrigger extends AbstractTrigger
       builder.append( ")" );
       builder.append( "; END;" );
       
-      db.execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
 }

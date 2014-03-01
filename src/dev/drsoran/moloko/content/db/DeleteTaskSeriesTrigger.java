@@ -36,18 +36,16 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
  */
 class DeleteTaskSeriesTrigger extends AbstractTrigger
 {
-   public DeleteTaskSeriesTrigger( SQLiteDatabase database )
+   public DeleteTaskSeriesTrigger()
    {
-      super( database, RtmTaskSeriesTable.TABLE_NAME + "_delete_taskseries" );
+      super( RtmTaskSeriesTable.TABLE_NAME + "_delete_taskseries" );
    }
    
    
    
    @Override
-   public void create() throws SQLException
+   public void create( SQLiteDatabase database ) throws SQLException
    {
-      final SQLiteDatabase db = getDatabase();
-      
       final StringBuilder builder = new StringBuilder();
       
       builder.append( "CREATE TRIGGER " );
@@ -69,6 +67,6 @@ class DeleteTaskSeriesTrigger extends AbstractTrigger
       
       builder.append( "; END;" );
       
-      db.execSQL( builder.toString() );
+      database.execSQL( builder.toString() );
    }
 }

@@ -55,7 +55,9 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
                                   String selection,
                                   String[] selectionArgs )
    {
+      projection = getProjectionWithoutNumTasksParticipates( projection );
       selection = getElementSelection( contentUri, id, selection );
+      
       return queryAll( contentUri, projection, selection, selectionArgs, null );
    }
    
@@ -68,7 +70,7 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
                               String[] selectionArgs,
                               String sortOrder )
    {
-      
+      projection = getProjectionWithoutNumTasksParticipates( projection );
       Cursor contactsCursor = null;
       try
       {
@@ -101,6 +103,23 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
             contactsCursor.close();
          }
       }
+   }
+   
+   
+   
+   private String[] getProjectionWithoutNumTasksParticipates( String[] projection )
+   {
+      final List< String > projectionList = new ArrayList< String >( projection.length );
+      for ( String string : projection )
+      {
+         if ( !ContactColumns.NUM_TASKS_PARTICIPATING.equals( string ) )
+         {
+            projectionList.add( string );
+         }
+      }
+      
+      final String[] newArray = new String[ projectionList.size() ];
+      return projectionList.toArray( newArray );
    }
    
    

@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.provider.BaseColumns;
-import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Columns.LocationColumns;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Columns.ParticipantColumns;
@@ -200,21 +199,25 @@ public final class TableColumns
    }
    
    
-   public final static class RtmContactColumns extends ContactColumns
+   public final static class RtmContactColumns implements BaseColumns
    {
+      public final static String FULLNAME = "fullname";
+      
+      public final static int FULLNAME_IDX = 1;
+      
+      public final static String USERNAME = "username";
+      
+      public final static int USERNAME_IDX = 2;
+      
       public final static String RTM_CONTACT_ID = "rtm_contact_id";
       
-      public final static int RTM_CONTACT_ID_IDX = ContactColumns.PROJECTION.length + 1;
+      public final static int RTM_CONTACT_ID_IDX = 3;
       
-      static
-      {
-         final List< String > baseProjection = new ArrayList< String >( Arrays.asList( ContactColumns.PROJECTION ) );
-         baseProjection.add( RTM_CONTACT_ID );
-         
-         RtmContactColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );
-      }
+      public final static String DEFAULT_SORT_ORDER = FULLNAME
+         + " COLLATE NOCASE";
       
-      public static String[] TABLE_PROJECTION;
+      public static String[] TABLE_PROJECTION = new String[]
+      { _ID, FULLNAME, USERNAME, RTM_CONTACT_ID };
    }
    
    

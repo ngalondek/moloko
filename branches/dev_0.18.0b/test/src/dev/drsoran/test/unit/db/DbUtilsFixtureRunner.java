@@ -23,14 +23,15 @@
 package dev.drsoran.test.unit.db;
 
 import org.junit.runners.model.InitializationError;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.bytecode.ShadowMap;
 
 import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.moloko.test.MolokoTestRunner;
+import dev.drsoran.moloko.test.MolokoTestRunner_en;
 import dev.drsoran.moloko.test.shadows.SQLiteDatabaseTransactionShadow;
 
 
-public class DbUtilsFixtureRunner extends RobolectricTestRunner
+public class DbUtilsFixtureRunner extends MolokoTestRunner_en
 {
    public DbUtilsFixtureRunner( Class< ? > testClass )
       throws InitializationError

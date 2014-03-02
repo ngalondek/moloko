@@ -190,12 +190,12 @@ public abstract class AbstractTable implements ITable
          }
       }
       
-      int numUpdated = database.update( getTableName(),
-                                        values,
-                                        where,
-                                        whereArgs );
+      if ( values.size() > 0 )
+      {
+         return database.update( getTableName(), values, where, whereArgs );
+      }
       
-      return numUpdated;
+      return 0;
    }
    
    

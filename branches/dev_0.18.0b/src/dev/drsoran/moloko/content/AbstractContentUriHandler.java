@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.content;
 
+import java.text.MessageFormat;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
@@ -64,8 +66,8 @@ public abstract class AbstractContentUriHandler implements IContentUriHandler
       final long id = ContentUris.getLastPathIdFromUri( contentUri );
       if ( id != Constants.NO_ID )
       {
-         throw new IllegalArgumentException( "Cannot insert into an element. The content URI '"
-            + contentUri + "' must not contain an ID." );
+         throw new IllegalArgumentException( MessageFormat.format( "Cannot insert into an element. The content URI ''{0}'' must not contain an ID.",
+                                                                   contentUri ) );
       }
       
       return insertElement( contentUri, initialValues );
@@ -83,8 +85,8 @@ public abstract class AbstractContentUriHandler implements IContentUriHandler
       final long id = ContentUris.getLastPathIdFromUri( contentUri );
       if ( id == Constants.NO_ID )
       {
-         throw new IllegalArgumentException( "Cannot update a hole directory. The content URI '"
-            + contentUri + "' must contain an element ID." );
+         throw new IllegalArgumentException( MessageFormat.format( "Cannot update a hole directory. The content URI ''{0}'' must contain an element ID.",
+                                                                   contentUri ) );
       }
       
       return updateElement( contentUri, id, values );

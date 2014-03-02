@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
 
 import java.util.TimeZone;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -57,9 +57,9 @@ import dev.drsoran.moloko.test.TestConstants;
 
 public class RtmSettingsContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @ClassRule
-   public static SQLiteScript sqliteScript = new SQLiteScript( RtmSettingsContentTest.class,
-                                                               "RtmSettingsContentTest.sql" );
+   @Rule
+   public SQLiteScript sqliteScript = new SQLiteScript( RtmSettingsContentTest.class,
+                                                        "RtmSettingsContentTest.sql" );
    
    
    

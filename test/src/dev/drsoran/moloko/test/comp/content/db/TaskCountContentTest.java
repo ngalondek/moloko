@@ -41,7 +41,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import android.database.Cursor;
@@ -56,17 +56,17 @@ import dev.drsoran.moloko.test.SQLiteScript;
 
 public class TaskCountContentTest extends MolokoReadDbContentTestCase
 {
-   @ClassRule
-   public static ProcessedSQLiteScript sqliteScript = new ProcessedSQLiteScript( new SQLiteScript( TasksContentTest.class,
-                                                                                                   "TaskCountContentTest.sql" ) ).replaceScriptVariable( VAR_TODAY,
-                                                                                                                                                         TODAY )
-                                                                                                                                 .replaceScriptVariable( VAR_TOMORROW,
-                                                                                                                                                         TOMORROW )
-                                                                                                                                 .replaceScriptVariable( VAR_YESTERDAY,
-                                                                                                                                                         YESTERDAY )
-                                                                                                                                 .replaceScriptVariable( "${in2Days}",
-                                                                                                                                                         TOMORROW
-                                                                                                                                                            + DateUtils.DAY_IN_MILLIS );
+   @Rule
+   public ProcessedSQLiteScript sqliteScript = new ProcessedSQLiteScript( new SQLiteScript( TasksContentTest.class,
+                                                                                            "TaskCountContentTest.sql" ) ).replaceScriptVariable( VAR_TODAY,
+                                                                                                                                                  TODAY )
+                                                                                                                          .replaceScriptVariable( VAR_TOMORROW,
+                                                                                                                                                  TOMORROW )
+                                                                                                                          .replaceScriptVariable( VAR_YESTERDAY,
+                                                                                                                                                  YESTERDAY )
+                                                                                                                          .replaceScriptVariable( "${in2Days}",
+                                                                                                                                                  TOMORROW
+                                                                                                                                                     + DateUtils.DAY_IN_MILLIS );
    
    
    

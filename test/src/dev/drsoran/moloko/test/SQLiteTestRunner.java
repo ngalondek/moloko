@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.test;
 
 import org.junit.runners.model.InitializationError;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.bytecode.ShadowMap;
 import org.robolectric.util.DatabaseConfig.UsingDatabaseMap;
 import org.robolectric.util.SQLiteMap;
@@ -33,7 +32,7 @@ import dev.drsoran.moloko.test.shadows.SQLiteQueryShadow;
 
 
 @UsingDatabaseMap( SQLiteMap.class )
-public class SQLiteTestRunner extends RobolectricTestRunner
+public class SQLiteTestRunner extends MolokoTestRunner_en
 {
    public SQLiteTestRunner( Class< ? > testClass ) throws InitializationError
    {

@@ -45,7 +45,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.robolectric.annotation.Config;
 
 import android.content.ContentValues;
@@ -64,9 +64,9 @@ import dev.drsoran.moloko.test.TestConstants;
 @Config( manifest = Config.NONE )
 public class TasksListsContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @ClassRule
-   public static SQLiteScript sqliteScript = new SQLiteScript( TasksListsContentTest.class,
-                                                               "TasksListsContentTest.sql" );
+   @Rule
+   public SQLiteScript sqliteScript = new SQLiteScript( TasksListsContentTest.class,
+                                                        "TasksListsContentTest.sql" );
    
    
    

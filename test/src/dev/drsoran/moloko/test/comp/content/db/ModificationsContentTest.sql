@@ -1,6 +1,6 @@
 INSERT INTO modifications ( _id,
                             entity_uri,
-                            col_name,
+                            property,
                             new_value,
                             synced_value,
                             timestamp)
@@ -13,7 +13,7 @@ INSERT INTO modifications ( _id,
 
 INSERT INTO modifications ( _id,
                             entity_uri,
-                            col_name,
+                            property,
                             new_value,
                             synced_value,
                             timestamp)
@@ -26,7 +26,7 @@ INSERT INTO modifications ( _id,
            
  INSERT INTO modifications ( _id,
                              entity_uri,
-                             col_name,
+                             property,
                              new_value,
                              synced_value,
                              timestamp)

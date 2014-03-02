@@ -23,12 +23,15 @@
 package dev.drsoran.moloko.test.comp.content.db;
 
 import static dev.drsoran.moloko.content.Columns.ContactColumns.FULLNAME_IDX;
+import static dev.drsoran.moloko.content.Columns.ContactColumns.NUM_TASKS_PARTICIPATING_IDX;
 import static dev.drsoran.moloko.content.Columns.ContactColumns.USERNAME_IDX;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -41,16 +44,56 @@ import dev.drsoran.moloko.test.SQLiteScript;
 
 public class ContactsContentTest extends MolokoReadDbContentTestCase
 {
-   @ClassRule
-   public static SQLiteScript sqliteScript = new SQLiteScript( ContactsContentTest.class,
-                                                               "ContactsContentTest.sql" );
+   @Rule
+   public SQLiteScript contactsScript = new SQLiteScript( ContactsContentTest.class,
+                                                          "ContactsContentTest.sql" );
+   
+   @Rule
+   public SQLiteScript participantsScript = new SQLiteScript( ContactsContentTest.class,
+                                                              "TaskParticipantsContentTest.sql" );
+   
+   
+   
+   @Test
+   public void testNumTasksParticipates()
+   {
+      prepareDatabase( participantsScript.getSqlStatements() );
+      
+      c = getContentProvider().query( getContentUri(),
+                                      ContactColumns.PROJECTION,
+                                      null,
+                                      null,
+                                      getQueryAllSortOrder() );
+      assertNotNull( c );
+      
+      final int numRows = getNumberOfQueryAllRows();
+      assertThat( c.getCount(), is( numRows ) );
+      
+      for ( int i = 0; i < numRows; i++ )
+      {
+         assertThat( c.moveToNext(), is( true ) );
+         switch ( i + 1 )
+         {
+            case 1:
+               checkResult( c, 1L, "Full Name1", "User1", 1 );
+               break;
+            
+            case 2:
+               checkResult( c, 2L, "Full Name2", "User2", 1 );
+               break;
+            
+            default :
+               fail( "Unknown row ID " + i );
+         }
+      }
+   }
    
    
    
    @Override
    protected Iterable< String > getSqlStatements()
    {
-      return sqliteScript.getSqlStatements();
+      return contactsScript.getSqlStatements();
    }
    
    
@@ -104,11 +147,11 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
       switch ( (int) rowId )
       {
          case 1:
-            checkResult( c, 1L, "Full Name1", "User1" );
+            checkResult( c, 1L, "Full Name1", "User1", 0 );
             break;
          
          case 2:
-            checkResult( c, 2L, "Full Name2", "User2" );
+            checkResult( c, 2L, "Full Name2", "User2", 0 );
             break;
          
          default :
@@ -121,10 +164,12 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
    private static void checkResult( Cursor c,
                                     long id,
                                     String fullname,
-                                    String username )
+                                    String username,
+                                    int numTasks )
    {
       assertThat( c.getLong( Columns.ID_IDX ), is( id ) );
       assertThat( c.getString( FULLNAME_IDX ), is( fullname ) );
       assertThat( c.getString( USERNAME_IDX ), is( username ) );
+      assertThat( c.getInt( NUM_TASKS_PARTICIPATING_IDX ), is( numTasks ) );
    }
 }

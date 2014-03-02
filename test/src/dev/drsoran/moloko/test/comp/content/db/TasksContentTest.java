@@ -69,7 +69,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import android.content.ContentValues;
@@ -87,17 +87,17 @@ import dev.drsoran.moloko.test.TestConstants;
 
 public class TasksContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @ClassRule
-   public static SQLiteScript tasksSqliteScript = new SQLiteScript( TasksContentTest.class,
-                                                                    "TasksContentTest.sql" );
+   @Rule
+   public SQLiteScript tasksSqliteScript = new SQLiteScript( TasksContentTest.class,
+                                                             "TasksContentTest.sql" );
    
-   @ClassRule
-   public static SQLiteScript taskId10SqliteScript = new SQLiteScript( TasksContentTest.class,
-                                                                       "TasksContentTest_TaskId_10.sql" );
+   @Rule
+   public SQLiteScript taskId10SqliteScript = new SQLiteScript( TasksContentTest.class,
+                                                                "TasksContentTest_TaskId_10.sql" );
    
-   @ClassRule
-   public static SQLiteScript listsSqliteScript = new SQLiteScript( TasksContentTest.class,
-                                                                    "TasksContentTest_Lists.sql" );
+   @Rule
+   public SQLiteScript listsSqliteScript = new SQLiteScript( TasksContentTest.class,
+                                                             "TasksContentTest_Lists.sql" );
    
    
    

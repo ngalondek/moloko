@@ -31,7 +31,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -47,9 +47,9 @@ import dev.drsoran.moloko.test.TestConstants;
 
 public class SyncTimesContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @ClassRule
-   public static SQLiteScript sqliteScript = new SQLiteScript( SyncTimesContentTest.class,
-                                                               "SyncContentTest.sql" );
+   @Rule
+   public SQLiteScript sqliteScript = new SQLiteScript( SyncTimesContentTest.class,
+                                                        "SyncTimesContentTest.sql" );
    
    
    

@@ -145,7 +145,7 @@ public class DbContentProvider extends MolokoContentProvider
       handler = new ReadOnlyContentUriHandler( new CloudEntriesUriHandler( tasksContentUriHandler ) );
       handlerLookup.put( handler, ContentUris.MATCH_CLOUD_ENTRIES );
       
-      handler = new ContactsContentUriHandler( database.getReadable() );
+      handler = new ReadOnlyContentUriHandler( new ContactsContentUriHandler( database.getReadable() ) );
       handlerLookup.put( handler, ContentUris.MATCH_CONTACTS );
       handlerLookup.put( handler, ContentUris.MATCH_CONTACTS_ID );
       

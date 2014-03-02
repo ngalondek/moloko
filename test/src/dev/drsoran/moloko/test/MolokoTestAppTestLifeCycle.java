@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of MolokoTest.
  *
@@ -22,39 +22,20 @@
 
 package dev.drsoran.moloko.test;
 
-import org.junit.runners.model.InitializationError;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.TestLifecycle;
+import java.lang.reflect.Method;
+
+import org.robolectric.AndroidManifest;
+import org.robolectric.DefaultTestLifecycle;
 
 import android.app.Application;
 
 
-public abstract class MolokoTestRunner extends RobolectricTestRunner
+public class MolokoTestAppTestLifeCycle extends DefaultTestLifecycle
 {
-   protected MolokoTestRunner( Class< ? > testClass )
-      throws InitializationError
-   {
-      super( testClass );
-   }
-   
-   
-   
-   public Application getApplication()
-   {
-      return Robolectric.application;
-   }
-   
-   
-   
-   @SuppressWarnings( "rawtypes" )
    @Override
-   protected Class< ? extends TestLifecycle > getTestLifecycleClass()
+   public Application createApplication( Method method,
+                                         AndroidManifest appManifest )
    {
-      return MolokoTestAppTestLifeCycle.class;
+      return new MolokoTestApp();
    }
-   
-   
-   
-   public abstract String getValuesResQualifiers();
 }

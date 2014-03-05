@@ -27,34 +27,128 @@ import static dev.drsoran.moloko.content.Columns.SyncTimesColumns.LAST_IN_IDX;
 import static dev.drsoran.moloko.content.Columns.SyncTimesColumns.LAST_OUT;
 import static dev.drsoran.moloko.content.Columns.SyncTimesColumns.LAST_OUT_IDX;
 import static dev.drsoran.moloko.content.Columns.SyncTimesColumns.PROJECTION;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.Rule;
+import java.util.Collections;
+
+import org.junit.Test;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.content.Columns;
+import dev.drsoran.moloko.content.Columns.SyncTimesColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
-import dev.drsoran.moloko.test.SQLiteScript;
 import dev.drsoran.moloko.test.TestConstants;
 
 
 public class SyncTimesContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @Rule
-   public SQLiteScript sqliteScript = new SQLiteScript( SyncTimesContentTest.class,
-                                                        "SyncTimesContentTest.sql" );
+   @Test
+   public void testDefaultRowExists()
+   {
+      final Cursor defaultEntryCursor = getContentProvider().query( getContentUriWithId_1(),
+                                                                    getProjection(),
+                                                                    null,
+                                                                    null,
+                                                                    null );
+      try
+      {
+         assertThat( defaultEntryCursor, is( notNullValue() ) );
+         assertThat( defaultEntryCursor.getCount(), is( 1 ) );
+         assertThat( defaultEntryCursor.moveToNext(), is( true ) );
+         
+         checkResult( defaultEntryCursor,
+                      SyncTimesColumns.SINGLETON_ID,
+                      Constants.NO_TIME,
+                      Constants.NO_TIME );
+      }
+      finally
+      {
+         defaultEntryCursor.close();
+      }
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testInsert()
+   {
+      super.testInsert();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteAll()
+   {
+      super.testDeleteAll();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithId()
+   {
+      super.testDeleteWithId();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithSelection()
+   {
+      super.testDeleteWithSelection();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithSelectionArgs()
+   {
+      super.testDeleteWithSelectionArgs();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithNonExistingId()
+   {
+      super.testDeleteWithNonExistingId();
+   }
    
    
    
    @Override
    protected ContentValues createInsertContent()
+   {
+      return new ContentValues();
+   }
+   
+   
+   
+   @Override
+   protected void checkInsertContent( Cursor c )
+   {
+      fail( "Expected not to be called since insert throws" );
+   }
+   
+   
+   
+   @Override
+   protected ContentValues createUpdateContentForId_1()
    {
       final ContentValues contentValues = new ContentValues();
       contentValues.put( LAST_IN, TestConstants.NOW );
@@ -66,25 +160,12 @@ public class SyncTimesContentTest extends MolokoReadWriteDbContentTestCase
    
    
    @Override
-   protected void checkInsertContent( Cursor c )
-   {
-      checkResult( c, 1L, TestConstants.NOW, TestConstants.LATER );
-   }
-   
-   
-   
-   @Override
-   protected ContentValues createUpdateContentForId_1()
-   {
-      return createInsertContent();
-   }
-   
-   
-   
-   @Override
    protected void checkUpdatedContent( Cursor c )
    {
-      checkInsertContent( c );
+      checkResult( c,
+                   SyncTimesColumns.SINGLETON_ID,
+                   TestConstants.NOW,
+                   TestConstants.LATER );
    }
    
    
@@ -92,7 +173,7 @@ public class SyncTimesContentTest extends MolokoReadWriteDbContentTestCase
    @Override
    protected Iterable< String > getSqlStatements()
    {
-      return sqliteScript.getSqlStatements();
+      return Collections.emptyList();
    }
    
    
@@ -144,7 +225,7 @@ public class SyncTimesContentTest extends MolokoReadWriteDbContentTestCase
       
       if ( rowId == 1 )
       {
-         checkResult( c, 1L, 1356998400000L, Constants.NO_TIME );
+         checkResult( c, 1L, Constants.NO_TIME, Constants.NO_TIME );
       }
       else
       {

@@ -31,11 +31,13 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import dev.drsoran.Strings;
+import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
-import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.content.IContentUriHandler;
 import dev.drsoran.moloko.domain.model.CloudEntryType;
 
@@ -85,28 +87,34 @@ public class CloudEntriesUriHandler extends AbstractContentUriHandler
          c = tasksContentUriHandler.query( ContentUris.TASKS_CONTENT_URI,
                                            TaskColumns.PROJECTION,
                                            selection,
-                                           null,
+                                           selectionArgs,
                                            null );
          
          final Map< Entry, Integer > cloudEntriesSorted = new TreeMap< Entry, Integer >();
          
          while ( c.moveToNext() )
          {
-            addOrIncrementTags( cloudEntriesSorted,
-                                c.getString( TaskColumns.TAGS_IDX ) );
+            final String tags = CursorUtils.getOptString( c,
+                                                          TaskColumns.TAGS_IDX );
+            if ( tags != null )
+            {
+               addOrIncrementTags( cloudEntriesSorted,
+                                   c.getString( TaskColumns.TAGS_IDX ) );
+            }
             
             addOrIncrementLists( cloudEntriesSorted,
                                  c.getString( TaskColumns.LIST_NAME_IDX ),
                                  c.getLong( TaskColumns.LIST_ID_IDX ) );
             
-            final long locationId = c.getLong( TaskColumns.LOCATION_ID_IDX );
+            final long locationId = CursorUtils.getOptLong( c,
+                                                            TaskColumns.LOCATION_ID_IDX,
+                                                            Constants.NO_ID );
             if ( locationId != Constants.NO_ID )
             {
                addOrIncrementLocations( cloudEntriesSorted,
                                         c.getString( TaskColumns.LOCATION_NAME_IDX ),
                                         locationId );
             }
-            
          }
          
          final List< Object[] > cloudEntryColumns = new ArrayList< Object[] >( cloudEntriesSorted.size() );
@@ -236,6 +244,11 @@ public class CloudEntriesUriHandler extends AbstractContentUriHandler
       
       public Entry( String name, int type, long elementId )
       {
+         if ( Strings.isNullOrEmpty( name ) )
+         {
+            throw new IllegalArgumentException( "name" );
+         }
+         
          this.name = name;
          this.type = type;
          this.elementId = elementId;

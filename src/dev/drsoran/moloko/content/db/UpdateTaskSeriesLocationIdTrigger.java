@@ -30,7 +30,10 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
 
 /**
- * If a taskseries location ID gets updated, try to set the corresponding RTM location ID.
+ * @brief If a taskseries location ID gets updated, try to set the corresponding RTM location ID.
+ * 
+ *        The other direction, if the RTM location ID gets updated by a sync, is handled by the sync handler to avoid
+ *        cyclic updates.
  */
 class UpdateTaskSeriesLocationIdTrigger extends AbstractTrigger
 {

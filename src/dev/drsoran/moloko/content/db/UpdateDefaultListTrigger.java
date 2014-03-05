@@ -25,18 +25,22 @@ package dev.drsoran.moloko.content.db;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.AbstractTrigger;
-import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
-import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 
 /**
- * If a taskseries RTM location ID gets updated, set the corresponding location ID.
+ * @brief If the default list setting gets updated, also update the RTM default list ID.
+ * 
+ *        The other direction, if the RTM default list ID gets updated by a sync, is handled by the sync handler to
+ *        avoid cyclic updates.
  */
-class UpdateTaskSeriesRtmLocationIdTrigger extends AbstractTrigger
+class UpdateDefaultListTrigger extends AbstractTrigger
 {
-   public UpdateTaskSeriesRtmLocationIdTrigger()
+   
+   public UpdateDefaultListTrigger()
    {
-      super( RtmTaskSeriesTable.TABLE_NAME + "_update_rtm_location_id" );
+      super( RtmSettingsTable.TABLE_NAME + "_update_default_list" );
    }
    
    
@@ -49,23 +53,22 @@ class UpdateTaskSeriesRtmLocationIdTrigger extends AbstractTrigger
       builder.append( "CREATE TRIGGER " );
       builder.append( getTriggerName() );
       builder.append( " AFTER UPDATE OF " );
-      builder.append( RtmTaskSeriesColumns.RTM_LOCATION_ID );
+      builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
       builder.append( " ON " );
-      builder.append( RtmTaskSeriesTable.TABLE_NAME );
+      builder.append( RtmSettingsTable.TABLE_NAME );
       builder.append( " FOR EACH ROW BEGIN UPDATE " );
-      builder.append( RtmTaskSeriesTable.TABLE_NAME );
+      builder.append( RtmSettingsTable.TABLE_NAME );
       builder.append( " SET " );
-      builder.append( RtmTaskSeriesColumns.LOCATION_ID );
+      builder.append( RtmSettingsColumns.RTM_DEFAULTLIST_ID );
       builder.append( " = (SELECT " );
-      builder.append( RtmLocationColumns._ID );
+      builder.append( RtmTasksListColumns.RTM_LIST_ID );
       builder.append( " FROM " );
-      builder.append( RtmLocationsTable.TABLE_NAME );
-      builder.append( " WHERE " );
-      builder.append( RtmLocationColumns.RTM_LOCATION_ID );
-      builder.append( " = new." );
-      builder.append( RtmTaskSeriesColumns.RTM_LOCATION_ID );
-      builder.append( ")" );
-      builder.append( "; END;" );
+      builder.append( RtmTasksListsTable.TABLE_NAME );
+      builder.append( " WHERE new." );
+      builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
+      builder.append( " = " );
+      builder.append( RtmTasksListColumns._ID );
+      builder.append( "); END;" );
       
       database.execSQL( builder.toString() );
    }

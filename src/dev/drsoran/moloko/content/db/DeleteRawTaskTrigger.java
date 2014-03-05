@@ -30,7 +30,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
 
 /**
- * If a RawTask gets deleted, also delete the associated taskseries if it contains no RawTasks anymore
+ * @brief If a RawTask gets deleted, also delete the associated taskseries if it contains no RawTasks anymore
  */
 class DeleteRawTaskTrigger extends AbstractTrigger
 {

@@ -24,32 +24,16 @@ package dev.drsoran.moloko.test;
 
 import static org.junit.Assert.assertTrue;
 
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 
-import android.app.Activity;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.db.DbContentProvider;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 
 
-@RunWith( SQLiteTestRunner.class )
-public abstract class MolokoDbContentTestCase extends MolokoRoboTestCase
+public abstract class MolokoDbContentTestCase extends MolokoDbTestCase
 {
-   private Context context;
-   
-   private RtmDatabase database;
-   
    private DbContentProvider contentProvider;
-   
-   protected Cursor c;
    
    
    
@@ -59,12 +43,11 @@ public abstract class MolokoDbContentTestCase extends MolokoRoboTestCase
    {
       super.setUp();
       
-      context = Robolectric.buildActivity( Activity.class ).get();
-      
-      database = createDatabase( context );
-      contentProvider = createContentProvider( database );
+      contentProvider = createContentProvider( getDb() );
       
       assertTrue( contentProvider.onCreate() );
+      
+      contentProvider.init( createLog() );
    }
    
    
@@ -73,12 +56,6 @@ public abstract class MolokoDbContentTestCase extends MolokoRoboTestCase
    @After
    public void tearDown() throws Exception
    {
-      if ( c != null )
-      {
-         c.close();
-         c = null;
-      }
-      
       if ( contentProvider != null )
       {
          contentProvider.shutdown();
@@ -89,42 +66,9 @@ public abstract class MolokoDbContentTestCase extends MolokoRoboTestCase
    
    
    
-   public RtmDatabase getDb()
-   {
-      return database;
-   }
-   
-   
-   
    public DbContentProvider getContentProvider()
    {
       return contentProvider;
-   }
-   
-   
-   
-   public void prepareDatabase( Iterable< String > sqlStatements ) throws SQLException
-   {
-      final SQLiteDatabase db = getDb().getWritable();
-      
-      for ( String statement : sqlStatements )
-      {
-         db.execSQL( statement );
-      }
-   }
-   
-   
-   
-   protected ILog createLog()
-   {
-      return EasyMock.createNiceMock( ILog.class );
-   }
-   
-   
-   
-   protected RtmDatabase createDatabase( Context context )
-   {
-      return new RtmDatabase( context );
    }
    
    

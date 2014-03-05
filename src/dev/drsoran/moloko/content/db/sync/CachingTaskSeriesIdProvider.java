@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.Cursor;
-import android.database.SQLException;
+import android.database.sqlite.SQLiteException;
 import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
@@ -79,15 +79,15 @@ public class CachingTaskSeriesIdProvider implements ITaskSeriesIdProvider
                                     { RtmTaskSeriesColumns._ID,
                                      RtmTaskSeriesColumns.RTM_TASKSERIES_ID },
                                     RtmTaskSeriesColumns.RTM_TASKSERIES_ID
-                                       + "='?'",
+                                       + "=?",
                                     new String[]
                                     { rtmTaskSeriesId },
                                     null );
          
          if ( !c.moveToFirst() )
          {
-            throw new SQLException( MessageFormat.format( "Unable to query taskseried ID for RTM taskseries ID {0}",
-                                                          rtmTaskSeriesId ) );
+            throw new SQLiteException( MessageFormat.format( "Unable to query taskseried ID for RTM taskseries ID {0}",
+                                                             rtmTaskSeriesId ) );
          }
          
          return c.getLong( 0 );

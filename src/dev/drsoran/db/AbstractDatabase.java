@@ -69,6 +69,13 @@ public abstract class AbstractDatabase
    
    
    
+   public void open()
+   {
+      dbAccess.getReadableDatabase();
+   }
+   
+   
+   
    public SQLiteDatabase getWritable()
    {
       return dbAccess.getWritableDatabase();
@@ -104,6 +111,27 @@ public abstract class AbstractDatabase
       }
       
       table.clear( null );
+   }
+   
+   
+   
+   public void beginTransaction()
+   {
+      getWritable().beginTransaction();
+   }
+   
+   
+   
+   public void setTransactionSuccessful()
+   {
+      getWritable().setTransactionSuccessful();
+   }
+   
+   
+   
+   public void endTransaction()
+   {
+      getWritable().endTransaction();
    }
    
    

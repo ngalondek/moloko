@@ -59,12 +59,11 @@ public class RtmDatabase extends AbstractDatabase
    protected AbstractTrigger[] createTriggers()
    {
       return new AbstractTrigger[]
-      { new DefaultListSettingConsistencyTrigger(), new DeleteRawTaskTrigger(),
+      { new DeleteDefaultListTrigger(), new DeleteRawTaskTrigger(),
        new DeleteTaskSeriesTrigger(), new DeleteContactTrigger(),
-       new UpdateContactTrigger(), new UpdateTaskSeriesListIdTrigger(),
-       new UpdateTaskSeriesRtmListIdTrigger(),
+       new UpdateDefaultListTrigger(), new UpdateContactTrigger(),
+       new UpdateTaskSeriesListIdTrigger(),
        new UpdateTaskSeriesLocationIdTrigger(),
-       new UpdateTaskSeriesRtmLocationIdTrigger(),
        
        new DeleteModificationsTrigger( RtmTasksListsTable.TABLE_NAME ),
        new DeleteModificationsTrigger( RtmRawTasksTable.TABLE_NAME ),

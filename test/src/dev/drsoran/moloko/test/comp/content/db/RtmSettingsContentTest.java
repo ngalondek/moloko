@@ -34,13 +34,15 @@ import static dev.drsoran.moloko.content.Columns.SettingsColumns.TIMEFORMAT;
 import static dev.drsoran.moloko.content.Columns.SettingsColumns.TIMEFORMAT_IDX;
 import static dev.drsoran.moloko.content.Columns.SettingsColumns.TIMEZONE;
 import static dev.drsoran.moloko.content.Columns.SettingsColumns.TIMEZONE_IDX;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.Collections;
 import java.util.TimeZone;
 
-import org.junit.Rule;
+import org.junit.Test;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -51,20 +53,114 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
-import dev.drsoran.moloko.test.SQLiteScript;
 import dev.drsoran.moloko.test.TestConstants;
 
 
 public class RtmSettingsContentTest extends MolokoReadWriteDbContentTestCase
 {
-   @Rule
-   public SQLiteScript sqliteScript = new SQLiteScript( RtmSettingsContentTest.class,
-                                                        "RtmSettingsContentTest.sql" );
+   @Test
+   public void testDefaultRowExists()
+   {
+      final Cursor defaultEntryCursor = getContentProvider().query( getContentUriWithId_1(),
+                                                                    getProjection(),
+                                                                    null,
+                                                                    null,
+                                                                    null );
+      try
+      {
+         assertThat( defaultEntryCursor, is( notNullValue() ) );
+         assertThat( defaultEntryCursor.getCount(), is( 1 ) );
+         assertThat( defaultEntryCursor.moveToNext(), is( true ) );
+         
+         checkResult( defaultEntryCursor,
+                      RtmSettingsColumns.SINGLETON_ID,
+                      Constants.NO_TIME,
+                      null,
+                      0,
+                      0,
+                      null,
+                      Constants.NO_ID );
+      }
+      finally
+      {
+         defaultEntryCursor.close();
+      }
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testInsert()
+   {
+      super.testInsert();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteAll()
+   {
+      super.testDeleteAll();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithId()
+   {
+      super.testDeleteWithId();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithSelection()
+   {
+      super.testDeleteWithSelection();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithSelectionArgs()
+   {
+      super.testDeleteWithSelectionArgs();
+   }
+   
+   
+   
+   @Override
+   @Test( expected = UnsupportedOperationException.class )
+   public void testDeleteWithNonExistingId()
+   {
+      super.testDeleteWithNonExistingId();
+   }
    
    
    
    @Override
    protected ContentValues createInsertContent()
+   {
+      return new ContentValues();
+   }
+   
+   
+   
+   @Override
+   protected void checkInsertContent( Cursor c )
+   {
+      fail( "Expected not to be called since insert throws" );
+   }
+   
+   
+   
+   @Override
+   protected ContentValues createUpdateContentForId_1()
    {
       final ContentValues contentValues = new ContentValues();
       contentValues.put( SYNC_TIMESTAMP, TestConstants.NOW );
@@ -80,7 +176,7 @@ public class RtmSettingsContentTest extends MolokoReadWriteDbContentTestCase
    
    
    @Override
-   protected void checkInsertContent( Cursor c )
+   protected void checkUpdatedContent( Cursor c )
    {
       checkResult( c,
                    1L,
@@ -95,25 +191,9 @@ public class RtmSettingsContentTest extends MolokoReadWriteDbContentTestCase
    
    
    @Override
-   protected ContentValues createUpdateContentForId_1()
-   {
-      return createInsertContent();
-   }
-   
-   
-   
-   @Override
-   protected void checkUpdatedContent( Cursor c )
-   {
-      checkInsertContent( c );
-   }
-   
-   
-   
-   @Override
    protected Iterable< String > getSqlStatements()
    {
-      return sqliteScript.getSqlStatements();
+      return Collections.emptyList();
    }
    
    
@@ -167,7 +247,14 @@ public class RtmSettingsContentTest extends MolokoReadWriteDbContentTestCase
       
       if ( rowId == 1 )
       {
-         checkResult( c, 1L, 1356998400000L, null, 0, 1, "fr", Constants.NO_ID );
+         checkResult( c,
+                      1L,
+                      Constants.NO_TIME,
+                      null,
+                      0,
+                      0,
+                      null,
+                      Constants.NO_ID );
       }
       else
       {

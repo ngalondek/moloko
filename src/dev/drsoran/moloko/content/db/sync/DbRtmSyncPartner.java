@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
@@ -327,7 +326,7 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    @Override
    public void onSyncStarted()
    {
-      database.getWritable().beginTransaction();
+      database.beginTransaction();
    }
    
    
@@ -335,10 +334,8 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    @Override
    public void onSyncSuccessful()
    {
-      final SQLiteDatabase db = database.getWritable();
-      
-      db.setTransactionSuccessful();
-      db.endTransaction();
+      database.setTransactionSuccessful();
+      database.endTransaction();
    }
    
    
@@ -346,6 +343,6 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    @Override
    public void onSyncFailed()
    {
-      database.getWritable().endTransaction();
+      database.endTransaction();
    }
 }

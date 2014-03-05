@@ -69,7 +69,7 @@ public class RtmLocationElementSyncHandler extends
    @Override
    protected String getEqualIdClause()
    {
-      return RtmLocationColumns.RTM_LOCATION_ID + " = '?'";
+      return RtmLocationColumns.RTM_LOCATION_ID + "=?";
    }
    
    

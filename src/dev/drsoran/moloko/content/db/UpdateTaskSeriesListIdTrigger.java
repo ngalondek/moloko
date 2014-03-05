@@ -30,7 +30,10 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 
 /**
- * If a taskseries list ID gets updated, try to set the corresponding RTM list ID.
+ * @brief If a taskseries list ID gets updated, try to set the corresponding RTM list ID.
+ * 
+ *        The other direction, if the RTM list ID gets updated by a sync, is handled by the sync handler to avoid cyclic
+ *        updates.
  */
 class UpdateTaskSeriesListIdTrigger extends AbstractTrigger
 {

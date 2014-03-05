@@ -74,6 +74,13 @@ abstract class AbstractElementSyncHandler< T > implements
    
    
    
+   public RtmDatabase getRtmDatabase()
+   {
+      return rtmDatabase;
+   }
+   
+   
+   
    @Override
    public List< T > getElementsModifiedSince( long modifiedSinceMsUtc )
    {

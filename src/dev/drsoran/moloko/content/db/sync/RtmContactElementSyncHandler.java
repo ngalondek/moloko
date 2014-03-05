@@ -72,7 +72,7 @@ public class RtmContactElementSyncHandler extends
    @Override
    protected String getEqualIdClause()
    {
-      return RtmContactColumns.RTM_CONTACT_ID + " = '?'";
+      return RtmContactColumns.RTM_CONTACT_ID + "=?";
    }
    
    

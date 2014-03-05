@@ -54,6 +54,11 @@ public abstract class AbstractTable implements ITable
    
    public void init( SQLiteDatabase database )
    {
+      if ( database == null )
+      {
+         throw new IllegalArgumentException( "database" );
+      }
+      
       this.database = database;
    }
    
@@ -160,8 +165,8 @@ public abstract class AbstractTable implements ITable
       
       if ( rowId == Constants.NO_ID )
       {
-         throw new SQLException( MessageFormat.format( "Failed to insert content values in table ''{0}''",
-                                                       getTableName() ) );
+         throw new SQLiteException( MessageFormat.format( "Failed to insert content values in table ''{0}''",
+                                                          getTableName() ) );
       }
       
       return rowId;

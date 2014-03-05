@@ -403,7 +403,7 @@ public final class ContentUris
    
    
    
-   private static Uri buildUri( String path )
+   public static Uri buildUri( String path )
    {
       return new Uri.Builder().scheme( SCHEME_CONTENT )
                               .authority( RTM )

@@ -43,5 +43,9 @@ public final class TableNames
    
    public final static String RTM_SETTINGS_TABLE = RtmSettingsTable.TABLE_NAME;
    
+   public final static String SYNC_TIMES_TABLE = SyncTimesTable.TABLE_NAME;
+   
    public final static String RTM_PARTICIPANTS_TABLE = RtmParticipantsTable.TABLE_NAME;
+   
+   public final static String MODIFICATIONS_TABLE = ModificationsTable.TABLE_NAME;
 }

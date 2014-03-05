@@ -29,7 +29,9 @@ import org.robolectric.shadows.ShadowSQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase;
 
 
-@Implements( value = SQLiteDatabase.class, inheritImplementationMethods = true )
+@Implements( value = SQLiteDatabase.class,
+             inheritImplementationMethods = true,
+             callThroughByDefault = true )
 public class SQLiteDatabaseTransactionShadow extends ShadowSQLiteDatabase
 {
    public int beginCalledCount;

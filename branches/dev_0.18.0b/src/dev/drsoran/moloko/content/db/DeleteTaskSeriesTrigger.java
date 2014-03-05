@@ -31,8 +31,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 
 
 /**
- * If a taskseries gets deleted, we also delete all referenced notes and all referenced participants and all referenced
- * tags
+ * @brief If a taskseries gets deleted, we also delete all referenced notes and all referenced participants.
  */
 class DeleteTaskSeriesTrigger extends AbstractTrigger
 {
@@ -64,7 +63,6 @@ class DeleteTaskSeriesTrigger extends AbstractTrigger
       builder.append( RtmParticipantColumns.TASKSERIES_ID );
       builder.append( " = old." );
       builder.append( RtmTaskSeriesColumns._ID );
-      
       builder.append( "; END;" );
       
       database.execSQL( builder.toString() );

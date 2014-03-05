@@ -33,7 +33,6 @@ import java.util.Set;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import dev.drsoran.db.ITable;
@@ -42,14 +41,17 @@ import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.model.Participant;
+import dev.drsoran.moloko.util.Lambda.Func1;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmNote;
@@ -73,9 +75,61 @@ public class RtmTaskElementSyncHandler implements
    
    private final ITaskSeriesIdProvider taskSeriesIdProvider;
    
+   private final Set< String > updatedTaskSerieses = new HashSet< String >();
+   
    private final Map< String, Long > rtmContactId2contactId = new HashMap< String, Long >();
    
-   private final Set< String > updatedTaskSerieses = new HashSet< String >();
+   private final Func1< String, Cursor > contactIdQueryFunc = new Func1< String, Cursor >()
+   {
+      @Override
+      public Cursor call( String param )
+      {
+         final ITable table = rtmDatabase.getTable( TableNames.RTM_CONTACTS_TABLE );
+         return table.query( new String[]
+                             { ContactColumns._ID,
+                              RtmContactColumns.RTM_CONTACT_ID },
+                             RtmContactColumns.RTM_CONTACT_ID + "=?",
+                             new String[]
+                             { param },
+                             null );
+      }
+   };
+   
+   private final Map< String, Long > rtmListId2ListId = new HashMap< String, Long >();
+   
+   private final Func1< String, Cursor > listIdQueryFunc = new Func1< String, Cursor >()
+   {
+      @Override
+      public Cursor call( String param )
+      {
+         final ITable table = rtmDatabase.getTable( TableNames.RTM_TASKS_LIST_TABLE );
+         return table.query( new String[]
+                             { RtmTasksListColumns._ID,
+                              RtmTasksListColumns.RTM_LIST_ID },
+                             RtmTasksListColumns.RTM_LIST_ID + "=?",
+                             new String[]
+                             { param },
+                             null );
+      }
+   };
+   
+   private final Map< String, Long > rtmLocationId2LocationId = new HashMap< String, Long >();
+   
+   private final Func1< String, Cursor > locationIdQueryFunc = new Func1< String, Cursor >()
+   {
+      @Override
+      public Cursor call( String param )
+      {
+         final ITable table = rtmDatabase.getTable( TableNames.RTM_LOCATIONS_TABLE );
+         return table.query( new String[]
+                             { RtmLocationColumns._ID,
+                              RtmLocationColumns.RTM_LOCATION_ID },
+                             RtmLocationColumns.RTM_LOCATION_ID + "=?",
+                             new String[]
+                             { param },
+                             null );
+      }
+   };
    
    static
    {
@@ -149,6 +203,7 @@ public class RtmTaskElementSyncHandler implements
    public void insert( RtmTask task )
    {
       final ContentValues contentValues = rtmContentValuesFactory.createContentValues( task );
+      putListIdAndLocationIdForTask( task, contentValues );
       
       final ContentValues taskSeriesValues = getRtmTaskSeriesSubset( contentValues );
       ITable table = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE );
@@ -232,11 +287,12 @@ public class RtmTaskElementSyncHandler implements
       if ( !hasTaskSeriesAlreadyUpdated( rtmTaskSeriedId ) )
       {
          final ContentValues taskSeriesValues = getRtmTaskSeriesSubset( contentValues );
+         putListIdAndLocationIdForTask( updatedTask, taskSeriesValues );
+         
          final ITable taskSeriesTable = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE );
          taskSeriesTable.update( Constants.NO_ID,
                                  taskSeriesValues,
-                                 RtmTaskSeriesColumns.RTM_TASKSERIES_ID
-                                    + "='?'",
+                                 RtmTaskSeriesColumns.RTM_TASKSERIES_ID + "=?",
                                  new String[]
                                  { currentTask.getTaskSeriesId() } );
          
@@ -253,7 +309,7 @@ public class RtmTaskElementSyncHandler implements
       final ITable rawTaskTable = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE );
       rawTaskTable.update( Constants.NO_ID,
                            rawTaskValues,
-                           RtmRawTaskColumns.RTM_RAWTASK_ID + "='?'",
+                           RtmRawTaskColumns.RTM_RAWTASK_ID + "=?",
                            new String[]
                            { currentTask.getId() } );
    }
@@ -303,7 +359,7 @@ public class RtmTaskElementSyncHandler implements
       
       rtmNotesTable.update( Constants.NO_ID,
                             noteContentValues,
-                            RtmNoteColumns.RTM_NOTE_ID + "='?'",
+                            RtmNoteColumns.RTM_NOTE_ID + "=?",
                             new String[]
                             { currentNote.getId() } );
    }
@@ -360,7 +416,7 @@ public class RtmTaskElementSyncHandler implements
       final ITable rawTasksTable = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE );
       final int numDeleted = rawTasksTable.delete( Constants.NO_ID,
                                                    RtmRawTaskColumns.RTM_RAWTASK_ID
-                                                      + "='?'",
+                                                      + "=?",
                                                    new String[]
                                                    { task.getId() } );
       
@@ -378,7 +434,7 @@ public class RtmTaskElementSyncHandler implements
       final ITable rtmNotesTable = rtmDatabase.getTable( TableNames.RTM_NOTES_TABLE );
       final int numDeleted = rtmNotesTable.delete( Constants.NO_ID,
                                                    RtmNoteColumns.RTM_NOTE_ID
-                                                      + "='?'",
+                                                      + "=?",
                                                    new String[]
                                                    { note.getId() } );
       
@@ -393,7 +449,7 @@ public class RtmTaskElementSyncHandler implements
    
    private void deleteParticipant( RtmContact contact )
    {
-      final long contactId = getContactIdFromDatabase( contact.getId() );
+      final long contactId = getContactIdFromRtmContactId( contact.getId() );
       final ITable rtmParticipantsTable = rtmDatabase.getTable( TableNames.RTM_PARTICIPANTS_TABLE );
       final int numDeleted = rtmParticipantsTable.delete( Constants.NO_ID,
                                                           RtmParticipantColumns.CONTACT_ID
@@ -533,12 +589,31 @@ public class RtmTaskElementSyncHandler implements
    
    
    
+   private void putListIdAndLocationIdForTask( RtmTask task,
+                                               ContentValues contentValues )
+   {
+      contentValues.put( RtmTaskSeriesColumns.LIST_ID,
+                         getListIdFromRtmListId( task.getListId() ) );
+      
+      if ( task.getLocationId() != RtmConstants.NO_ID )
+      {
+         contentValues.put( RtmTaskSeriesColumns.LOCATION_ID,
+                            getLocationIdFromRtmLocationId( task.getLocationId() ) );
+      }
+      else
+      {
+         contentValues.put( RtmTaskSeriesColumns.LOCATION_ID, Constants.NO_ID );
+      }
+   }
+   
+   
+   
    private long getContactIdFromRtmContactId( String rtmContactId )
    {
       Long storedId = rtmContactId2contactId.get( rtmContactId );
       if ( storedId == null )
       {
-         storedId = getContactIdFromDatabase( rtmContactId );
+         storedId = getIdFromDatabase( rtmContactId, contactIdQueryFunc );
          rtmContactId2contactId.put( rtmContactId, storedId );
       }
       
@@ -547,24 +622,45 @@ public class RtmTaskElementSyncHandler implements
    
    
    
-   private long getContactIdFromDatabase( String rtmContactId )
+   private long getListIdFromRtmListId( String rtmListId )
+   {
+      Long storedId = rtmListId2ListId.get( rtmListId );
+      if ( storedId == null )
+      {
+         storedId = getIdFromDatabase( rtmListId, listIdQueryFunc );
+         rtmListId2ListId.put( rtmListId, storedId );
+      }
+      
+      return storedId.longValue();
+   }
+   
+   
+   
+   private long getLocationIdFromRtmLocationId( String rtmLocationId )
+   {
+      Long storedId = rtmLocationId2LocationId.get( rtmLocationId );
+      if ( storedId == null )
+      {
+         storedId = getIdFromDatabase( rtmLocationId, locationIdQueryFunc );
+         rtmLocationId2LocationId.put( rtmLocationId, storedId );
+      }
+      
+      return storedId.longValue();
+   }
+   
+   
+   
+   private long getIdFromDatabase( String rtmId, Func1< String, Cursor > func )
    {
       Cursor c = null;
       try
       {
-         final ITable contactsTable = rtmDatabase.getTable( TableNames.RTM_CONTACTS_TABLE );
-         c = contactsTable.query( new String[]
-                                  { ContactColumns._ID,
-                                   RtmContactColumns.RTM_CONTACT_ID },
-                                  RtmContactColumns.RTM_CONTACT_ID + "='?'",
-                                  new String[]
-                                  { rtmContactId },
-                                  null );
+         c = func.call( rtmId );
          
          if ( !c.moveToFirst() )
          {
-            throw new SQLException( MessageFormat.format( "Unable to query contact ID for RTM contact {0}",
-                                                          rtmContactId ) );
+            throw new SQLiteException( MessageFormat.format( "Unable to query ID for RTM ID {0}",
+                                                             rtmId ) );
          }
          
          return c.getLong( 0 );

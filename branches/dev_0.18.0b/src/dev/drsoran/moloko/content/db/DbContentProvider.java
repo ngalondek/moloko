@@ -153,11 +153,11 @@ public class DbContentProvider extends MolokoContentProvider
       handlerLookup.put( handler, ContentUris.MATCH_MODIFICATIONS );
       handlerLookup.put( handler, ContentUris.MATCH_MODIFICATIONS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( database.getTable( RtmSettingsTable.TABLE_NAME ) );
+      handler = new RtmSettingsContentUriHandler( database.getTable( RtmSettingsTable.TABLE_NAME ) );
       handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS );
       handlerLookup.put( handler, ContentUris.MATCH_RTM_SETTINGS_ID );
       
-      handler = new ContentUriHandlerTableAdapter( database.getTable( SyncTimesTable.TABLE_NAME ) );
+      handler = new SyncTimesContentUriHandler( database.getTable( SyncTimesTable.TABLE_NAME ) );
       handlerLookup.put( handler, ContentUris.MATCH_SYNC );
       handlerLookup.put( handler, ContentUris.MATCH_SYNC_ID );
       

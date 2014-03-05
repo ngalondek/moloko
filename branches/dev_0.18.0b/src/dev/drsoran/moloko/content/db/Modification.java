@@ -192,7 +192,7 @@ public class Modification implements IModification
    @Override
    public String toString()
    {
-      return String.format( "Modification [entityUri=%s, col=%s, new=%s, synced=%s, time=%s]",
+      return String.format( "Modification [entityUri=%s, prop=%s, new=%s, synced=%s, time=%s]",
                             entityUri,
                             property,
                             newValue,

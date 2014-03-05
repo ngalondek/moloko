@@ -26,11 +26,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import dev.drsoran.db.AbstractTrigger;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 
 
 /**
- * If a RTM element gets deleted we also delete all possible open modifications for this element.
+ * @brief If a RTM element gets deleted we also delete all possible open modifications for this element.
  */
 class DeleteModificationsTrigger extends AbstractTrigger
 {
@@ -59,8 +60,8 @@ class DeleteModificationsTrigger extends AbstractTrigger
       builder.append( ModificationsTable.TABLE_NAME );
       builder.append( " WHERE " );
       builder.append( ModificationColumns.ENTITY_URI );
-      builder.append( " = '" );
-      builder.append( tableName );
+      builder.append( " LIKE '" );
+      builder.append( ContentUris.buildUri( tableName ) );
       builder.append( "' || '/' || old." );
       builder.append( BaseColumns._ID );
       builder.append( ";" );

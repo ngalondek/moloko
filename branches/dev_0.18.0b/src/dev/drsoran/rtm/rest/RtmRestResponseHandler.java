@@ -24,8 +24,8 @@ package dev.drsoran.rtm.rest;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.text.ParseException;
 
-import org.apache.http.ParseException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -114,8 +114,9 @@ public class RtmRestResponseHandler< T > extends RtmContentHandler< T >
       }
       catch ( SAXException e )
       {
-         throw new RtmServiceException( "Failed SAX parsing the response of a request",
-                                        new ParseException( e.getLocalizedMessage() ) );
+         throw new RtmServiceException( "Failed to parse the response of a request",
+                                        new ParseException( e.getLocalizedMessage(),
+                                                            -1 ) );
       }
       catch ( IOException e )
       {

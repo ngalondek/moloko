@@ -30,14 +30,14 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 
 /**
- * If a list gets deleted, check the default list setting
+ * If a list gets deleted, check if the default list was deleted and set it to no ID
  */
-class DefaultListSettingConsistencyTrigger extends AbstractTrigger
+class DeleteDefaultListTrigger extends AbstractTrigger
 {
    
-   public DefaultListSettingConsistencyTrigger()
+   public DeleteDefaultListTrigger()
    {
-      super( RtmSettingsTable.TABLE_NAME + "_default_list" );
+      super( RtmSettingsTable.TABLE_NAME + "_delete_default_list" );
    }
    
    
@@ -55,7 +55,7 @@ class DefaultListSettingConsistencyTrigger extends AbstractTrigger
       builder.append( RtmSettingsTable.TABLE_NAME );
       builder.append( " SET " );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
-      builder.append( " = NULL, " );
+      builder.append( " = -1, " );
       builder.append( RtmSettingsColumns.RTM_DEFAULTLIST_ID );
       builder.append( " = NULL" );
       builder.append( " WHERE old." );

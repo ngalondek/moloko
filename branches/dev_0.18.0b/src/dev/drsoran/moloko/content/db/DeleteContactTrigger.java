@@ -30,7 +30,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 
 
 /**
- * If a contact gets deleted, we also delete all referenced participants
+ * @brief If a contact gets deleted, we also delete all referenced participants.
  */
 class DeleteContactTrigger extends AbstractTrigger
 {

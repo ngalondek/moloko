@@ -23,10 +23,18 @@
 package dev.drsoran.moloko.content.db.sync;
 
 import static dev.drsoran.moloko.content.db.TableNames.RTM_SETTINGS_TABLE;
+
+import java.text.MessageFormat;
+
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import dev.drsoran.Strings;
+import dev.drsoran.moloko.content.Columns.SettingsColumns;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
+import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.rtm.model.RtmConstants;
@@ -98,6 +106,47 @@ public class RtmSettingsElementSyncHandler extends
       if ( updatedElement.getSyncTimeStampMillis() == RtmConstants.NO_TIME )
       {
          contentValues.put( RtmSettingsColumns.SYNC_TIMESTAMP, timeOfSyncMsUtc );
+      }
+      
+      final String updatedDefaultListId = updatedElement.getDefaultListId();
+      
+      if ( updatedDefaultListId != null
+         && !updatedDefaultListId.equals( currentElement.getDefaultListId() ) )
+      {
+         final long listId = getListIdFromRtmListId( updatedDefaultListId );
+         contentValues.put( SettingsColumns.DEFAULTLIST_ID, listId );
+      }
+   }
+   
+   
+   
+   private long getListIdFromRtmListId( String rtmId )
+   {
+      Cursor c = null;
+      try
+      {
+         c = getRtmDatabase().getTable( TableNames.RTM_TASKS_LIST_TABLE )
+                             .query( new String[]
+                                     { RtmTasksListColumns._ID },
+                                     RtmTasksListColumns.RTM_LIST_ID + "=?",
+                                     new String[]
+                                     { rtmId },
+                                     null );
+         
+         if ( !c.moveToFirst() )
+         {
+            throw new SQLiteException( MessageFormat.format( "Unable to query ID for RTM ID {0}",
+                                                             rtmId ) );
+         }
+         
+         return c.getLong( 0 );
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
       }
    }
 }

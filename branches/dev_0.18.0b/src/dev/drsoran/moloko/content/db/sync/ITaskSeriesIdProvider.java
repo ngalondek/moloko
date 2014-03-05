@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.content.db.sync;
 
-interface ITaskSeriesIdProvider
+public interface ITaskSeriesIdProvider
 {
    long getTaskSeriesIdOfRtmTaskSeriesId( String rtmTaskSeriesId );
 }

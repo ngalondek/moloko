@@ -211,7 +211,7 @@ public class RtmSyncServiceFixture
    
    
    @SuppressWarnings( "unchecked" )
-   @Test( expected = RuntimeException.class )
+   @Test( expected = RtmServiceException.class )
    public void testPerformIncomingSync_Failed_OtherException() throws RtmServiceException
    {
       final IRtmTimelineFactory timelineFactory = EasyMock.createMock( IRtmTimelineFactory.class );
@@ -376,7 +376,7 @@ public class RtmSyncServiceFixture
    
    
    @SuppressWarnings( "unchecked" )
-   @Test( expected = RuntimeException.class )
+   @Test( expected = RtmServiceException.class )
    public void testPerformOutgoingSync_Failed_OtherException() throws RtmServiceException
    {
       final IRtmContentEditService contentEditService = EasyMock.createStrictMock( IRtmContentEditService.class );
@@ -587,7 +587,7 @@ public class RtmSyncServiceFixture
    
    
    @SuppressWarnings( "unchecked" )
-   @Test( expected = RuntimeException.class )
+   @Test( expected = RtmServiceException.class )
    public void testPerformFullSync_Failed_OtherException() throws RtmServiceException
    {
       final IRtmContentRepository contentRepository = EasyMock.createStrictMock( IRtmContentRepository.class );

@@ -31,7 +31,7 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.SyncResult;
-import android.database.SQLException;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.AppContext;
@@ -138,9 +138,9 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
             {
                handleIOException( syncResult, (IOException) innerException );
             }
-            else if ( innerException instanceof SQLException )
+            else if ( innerException instanceof SQLiteException )
             {
-               handleSQLException( syncResult, (SQLException) innerException );
+               handleSQLException( syncResult, (SQLiteException) innerException );
             }
             else if ( innerException instanceof ParseException )
             {
@@ -200,7 +200,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    
    
    
-   private void handleSQLException( SyncResult syncResult, SQLException ex )
+   private void handleSQLException( SyncResult syncResult, SQLiteException ex )
    {
       syncResult.databaseError = true;
       log.e( TAG,

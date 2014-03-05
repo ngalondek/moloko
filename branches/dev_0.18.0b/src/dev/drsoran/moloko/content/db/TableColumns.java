@@ -42,7 +42,7 @@ public final class TableColumns
    {
       public final static String RTM_LIST_ID = "rtm_list_id";
       
-      public final static int RTM_LIST_ID_IDX = TasksListColumns.PROJECTION.length + 1;
+      public final static int RTM_LIST_ID_IDX = TasksListColumns.PROJECTION.length;
       
       static
       {
@@ -180,11 +180,11 @@ public final class TableColumns
    {
       public final static String TASKSERIES_ID = "taskseries_id";
       
-      public final static int TASKSERIES_ID_IDX = NoteColumns.PROJECTION.length + 1;
+      public final static int TASKSERIES_ID_IDX = NoteColumns.PROJECTION.length;
       
       public final static String RTM_NOTE_ID = "rtm_note_id";
       
-      public final static int RTM_NOTE_ID_IDX = NoteColumns.PROJECTION.length + 2;
+      public final static int RTM_NOTE_ID_IDX = NoteColumns.PROJECTION.length + 1;
       
       static
       {
@@ -243,7 +243,7 @@ public final class TableColumns
    {
       public final static String RTM_LOCATION_ID = "rtm_location_id";
       
-      public final static int RTM_LOCATION_ID_IDX = LocationColumns.PROJECTION.length + 1;
+      public final static int RTM_LOCATION_ID_IDX = LocationColumns.PROJECTION.length;
       
       static
       {
@@ -261,7 +261,7 @@ public final class TableColumns
    {
       public final static String RTM_DEFAULTLIST_ID = "rtm_defaultlist_id";
       
-      public final static int RTM_DEFAULTLIST_ID_IDX = SettingsColumns.PROJECTION.length + 1;
+      public final static int RTM_DEFAULTLIST_ID_IDX = SettingsColumns.PROJECTION.length;
       
       static
       {

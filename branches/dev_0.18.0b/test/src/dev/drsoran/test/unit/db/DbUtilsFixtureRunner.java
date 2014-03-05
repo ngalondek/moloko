@@ -26,7 +26,6 @@ import org.junit.runners.model.InitializationError;
 import org.robolectric.bytecode.ShadowMap;
 
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.moloko.test.MolokoTestRunner;
 import dev.drsoran.moloko.test.MolokoTestRunner_en;
 import dev.drsoran.moloko.test.shadows.SQLiteDatabaseTransactionShadow;
 
@@ -46,7 +45,7 @@ public class DbUtilsFixtureRunner extends MolokoTestRunner_en
    {
       final ShadowMap map = new ShadowMap.Builder( super.createShadowMap() ).addShadowClass( SQLiteDatabase.class,
                                                                                              SQLiteDatabaseTransactionShadow.class,
-                                                                                             false,
+                                                                                             true,
                                                                                              true,
                                                                                              false )
                                                                             .build();

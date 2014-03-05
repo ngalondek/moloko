@@ -78,7 +78,7 @@ public class RtmTasksListElementSyncHandler extends
    @Override
    protected String getEqualIdClause()
    {
-      return RtmTasksListColumns.RTM_LIST_ID + " = '?'";
+      return RtmTasksListColumns.RTM_LIST_ID + "=?";
    }
    
    

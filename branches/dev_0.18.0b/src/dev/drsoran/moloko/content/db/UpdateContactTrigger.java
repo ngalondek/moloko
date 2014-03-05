@@ -30,7 +30,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 
 
 /**
- * If a contact gets updated, we also update the user name and full name of all referenced participants.
+ * @brief If a contact gets updated, we also update the user name and full name of all referenced participants.
  */
 class UpdateContactTrigger extends AbstractTrigger
 {

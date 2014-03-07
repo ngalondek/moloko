@@ -100,59 +100,65 @@ public final class IterableAsserts
    
    
    
-   public static < T > void assertEqualSet( Iterable< T > iterable,
-                                            T... elements )
+   public static < T > void assertEqualSet( Iterable< ? extends T > iterable,
+                                            T... expected )
    {
-      assertEqualSet( iterable, Arrays.asList( elements ) );
+      assertEqualSet( Arrays.asList( expected ), iterable );
    }
    
    
    
-   public static < T > void assertEqualSet( Iterable< T > iterable1,
-                                            Iterable< T > iterable2 )
+   public static < T > void assertEqualSet( Iterable< ? extends T > expected,
+                                            Iterable< ? extends T > iterable )
    {
-      assertEqualSet( iterable1, iterable2, new EqualCmp< T >() );
+      assertEqualSet( expected, iterable, new EqualCmp< T >() );
    }
    
    
    
-   public static < T > void assertEqualSet( Iterable< T > iterable,
-                                            Comparator< T > cmp,
-                                            T... elements )
+   public static < T > void assertEqualSet( Iterable< ? extends T > iterable,
+                                            Comparator< ? super T > cmp,
+                                            T... expected )
    {
-      assertEqualSet( iterable, Arrays.asList( elements ), cmp );
+      assertEqualSet( Arrays.asList( expected ), iterable, cmp );
    }
    
    
    
-   public static < T > void assertEqualSet( Iterable< T > iterable1,
-                                            Iterable< T > iterable2,
-                                            Comparator< T > cmp )
+   public static < T > void assertEqualSet( Iterable< ? extends T > expected,
+                                            Iterable< ? extends T > iterable,
+                                            Comparator< ? super T > cmp )
    {
-      compareSets( iterable1, iterable2, cmp );
-      compareSets( iterable2, iterable1, cmp );
+      compareSets( "The expected element ''{0}'' has not been found",
+                   expected,
+                   iterable,
+                   cmp );
+      compareSets( "The element ''{0}'' is not expected to be in the set",
+                   iterable,
+                   expected,
+                   cmp );
    }
    
    
    
-   private static < T > void compareSets( Iterable< T > iterable1,
-                                          Iterable< T > iterable2,
-                                          Comparator< T > cmp )
+   private static < T > void compareSets( String messageFormat,
+                                          Iterable< ? extends T > expected,
+                                          Iterable< ? extends T > iterable,
+                                          Comparator< ? super T > cmp )
    {
-      for ( T setElement1 : iterable1 )
+      for ( T expectedElement : expected )
       {
          boolean found = false;
-         for ( T setElement2 : iterable2 )
+         for ( T element : iterable )
          {
-            found = cmp.compare( setElement1, setElement2 ) == 0;
+            found = cmp.compare( expectedElement, element ) == 0;
             if ( found )
             {
                break;
             }
          }
          
-         assertTrue( MessageFormat.format( "The element ''{0}'' has not been found",
-                                           setElement1 ),
+         assertTrue( MessageFormat.format( messageFormat, expectedElement ),
                      found );
       }
    }

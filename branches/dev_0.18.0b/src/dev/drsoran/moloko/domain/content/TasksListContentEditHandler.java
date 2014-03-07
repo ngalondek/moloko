@@ -28,19 +28,25 @@ import java.util.Collections;
 
 import android.content.ContentResolver;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class TasksListContentEditHandler extends
          AbstractContentEditHandler< TasksList >
 {
+   private final IRtmCalendarProvider calendarProvider;
+   
+   
+   
    public TasksListContentEditHandler( ContentResolver contentResolver,
       IContentValuesFactory contentValuesFactory,
-      IModificationsApplier modificationsApplier )
+      IModificationsApplier modificationsApplier,
+      IRtmCalendarProvider calendarProvider )
    {
       super( contentResolver, contentValuesFactory, modificationsApplier );
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -148,7 +154,7 @@ public class TasksListContentEditHandler extends
       
       final Modification modification = Modification.newNonPersistentModification( entityUri,
                                                                                    TasksListColumns.LIST_DELETED_DATE,
-                                                                                   System.currentTimeMillis() );
+                                                                                   calendarProvider.getNowMillisUtc() );
       
       return Collections.singletonList( modification );
    }

@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.model.Note;
 
 

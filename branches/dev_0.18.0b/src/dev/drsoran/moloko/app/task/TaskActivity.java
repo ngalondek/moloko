@@ -283,8 +283,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onCompleteTask( Task task )
    {
-      getAppContext().getContentEditService()
-                     .completeTask( this, task, System.currentTimeMillis() );
+      getAppContext().getContentEditService().completeTask( this, task );
    }
    
    

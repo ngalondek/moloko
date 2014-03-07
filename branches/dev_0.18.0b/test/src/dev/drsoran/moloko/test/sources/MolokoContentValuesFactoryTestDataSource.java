@@ -43,8 +43,8 @@ import dev.drsoran.moloko.content.Columns.SyncTimesColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.model.Contact;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
@@ -60,7 +60,7 @@ import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.sync.SyncTime;
 
 
-public class ContentValuesFactoryTestDataSource
+public class MolokoContentValuesFactoryTestDataSource
 {
    
    public Collection< TestData< TasksList >> getTasksListTestData()

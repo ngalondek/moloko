@@ -353,7 +353,9 @@ public class MolokoApp extends Application implements
    
    private void createUiServices( MolokoDateFormatterService dateFormatterService )
    {
-      uiServicesContainer = new UiServicesContainer( this, dateFormatterService );
+      uiServicesContainer = new UiServicesContainer( this,
+                                                     dateFormatterService,
+                                                     domainServicesContainer.getCalendarProvider() );
    }
    
    
@@ -386,8 +388,7 @@ public class MolokoApp extends Application implements
    
    private void createAppServices( SettingsService settingsService )
    {
-      // TODO:
-      // settingsService.setContentRepository( domainServicesContainer.getContentRepository() );
+      settingsService.setContentRepository( domainServicesContainer.getContentRepository() );
       
       appServicesContainer = new AppServicesContainer( domainContext,
                                                        systemServicesContainer.getHandler(),
@@ -519,7 +520,8 @@ public class MolokoApp extends Application implements
    {
       final MolokoContentProvider molokoContentProvider = (MolokoContentProvider) getContentResolver().acquireContentProviderClient( ContentAuthority.RTM )
                                                                                                       .getLocalContentProvider();
-      molokoContentProvider.init( systemServicesContainer.Log() );
+      molokoContentProvider.init( systemServicesContainer.Log(),
+                                  domainServicesContainer.getCalendarProvider() );
    }
    
    

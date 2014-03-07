@@ -37,12 +37,15 @@ class DeleteModificationsTrigger extends AbstractTrigger
 {
    private final String tableName;
    
+   private final String uriPath;
    
    
-   public DeleteModificationsTrigger( String tableName )
+   
+   public DeleteModificationsTrigger( String tableName, String uriPath )
    {
       super( tableName + "_delete_modifications" );
       this.tableName = tableName;
+      this.uriPath = uriPath;
    }
    
    
@@ -61,7 +64,7 @@ class DeleteModificationsTrigger extends AbstractTrigger
       builder.append( " WHERE " );
       builder.append( ModificationColumns.ENTITY_URI );
       builder.append( " LIKE '" );
-      builder.append( ContentUris.buildUri( tableName ) );
+      builder.append( ContentUris.buildUri( uriPath ) );
       builder.append( "' || '/' || old." );
       builder.append( BaseColumns._ID );
       builder.append( ";" );

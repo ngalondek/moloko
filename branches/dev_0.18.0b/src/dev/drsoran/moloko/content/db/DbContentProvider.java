@@ -129,7 +129,8 @@ public class DbContentProvider extends MolokoContentProvider
       final IContentUriHandler tagsContentUriHandler = new ReadOnlyContentUriHandler( new TagsContentUriHandler( database.getReadable() ) );
       handlerLookup.put( tagsContentUriHandler, ContentUris.MATCH_TAGS );
       
-      IContentUriHandler handler = new ReadOnlyContentUriHandler( new TaskCountContentUriHandler( tasksContentUriHandler ) );
+      IContentUriHandler handler = new ReadOnlyContentUriHandler( new TaskCountContentUriHandler( tasksContentUriHandler,
+                                                                                                  getCalendarProvider() ) );
       handlerLookup.put( handler, ContentUris.MATCH_TASKS_COUNT );
       
       handler = new TaskNotesContentUriHandler( database.getTable( RtmNotesTable.TABLE_NAME ),

@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.content.db;
+package dev.drsoran.moloko.domain.content;
 
 import java.util.Collection;
 import java.util.Date;
@@ -28,10 +28,9 @@ import java.util.Date;
 import dev.drsoran.Compare;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.rtm.sync.IModification;
 
 
-public class Modification implements IModification
+public class Modification
 {
    private final String entityUri;
    
@@ -86,7 +85,6 @@ public class Modification implements IModification
    
    
    
-   @Override
    public String getPropertyName()
    {
       return property;
@@ -94,7 +92,6 @@ public class Modification implements IModification
    
    
    
-   @Override
    public String getValue()
    {
       return newValue;
@@ -109,7 +106,6 @@ public class Modification implements IModification
    
    
    
-   @Override
    public String getSyncedValue()
    {
       return syncedValue;
@@ -192,11 +188,12 @@ public class Modification implements IModification
    @Override
    public String toString()
    {
-      return String.format( "Modification [entityUri=%s, prop=%s, new=%s, synced=%s, time=%s]",
+      return String.format( "Modification [entityUri=%s, prop=%s, new=%s, synced=%s, pers=%s, time=%s]",
                             entityUri,
                             property,
                             newValue,
                             syncedValue,
+                            Boolean.toString( persistent ),
                             new Date( timestampMillisUtc ) );
    }
    

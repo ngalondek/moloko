@@ -28,25 +28,31 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TaskCountColumns;
-import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.content.IContentUriHandler;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 class TaskCountContentUriHandler extends AbstractContentUriHandler
 {
    private final IContentUriHandler tasksContentUriHandler;
    
+   private final IRtmCalendarProvider calendarProvider;
    
    
-   public TaskCountContentUriHandler( IContentUriHandler tasksContentUriHandler )
+   
+   public TaskCountContentUriHandler(
+      IContentUriHandler tasksContentUriHandler,
+      IRtmCalendarProvider calendarProvider )
    {
       this.tasksContentUriHandler = tasksContentUriHandler;
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -127,7 +133,7 @@ class TaskCountContentUriHandler extends AbstractContentUriHandler
             
             if ( dueMillisUtc != Constants.NO_TIME )
             {
-               final int diffToNow = MolokoDateUtils.getTimespanInDays( System.currentTimeMillis(),
+               final int diffToNow = MolokoDateUtils.getTimespanInDays( calendarProvider.getTodayMillisUtc(),
                                                                         dueMillisUtc );
                
                // Today?

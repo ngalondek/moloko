@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.unit.domain.content;
+package dev.drsoran.moloko.test.unit.content.db;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,29 +29,27 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import org.robolectric.annotation.Config;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
+import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.content.db.DbModificationsApplier;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
-import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 
 
 @Config( manifest = Config.NONE )
-public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
+public class DbModificationsApplierFixture extends MolokoRoboTestCase
 {
    @Test
    public void testApplyPersistentModifications_Empty()
    {
-      final IModificationsApplier applier = new MolokoModificationsApplier( EasyMock.createNiceMock( ContentResolver.class ),
-                                                                            EasyMock.createNiceMock( IContentValuesFactory.class ) );
+      final IModificationsApplier applier = new DbModificationsApplier( EasyMock.createNiceMock( ITable.class ),
+                                                                        EasyMock.createNiceMock( IContentValuesFactory.class ) );
       
       applier.applyPersistentModifications( Collections.< Modification > emptyList() );
    }
@@ -61,20 +59,20 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
    @Test
    public void testApplyPersistentModifications_NonPersistent()
    {
-      final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
-      EasyMock.replay( contentResolver );
+      final ITable table = EasyMock.createStrictMock( ITable.class );
+      EasyMock.replay( table );
       
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                            fact );
+      final IModificationsApplier applier = new DbModificationsApplier( table,
+                                                                        fact );
       
       applier.applyPersistentModifications( Arrays.asList( Modification.newNonPersistentModification( "content://test/elements/1",
                                                                                                       "testCol",
                                                                                                       "1" ) ) );
       
-      EasyMock.verify( contentResolver );
+      EasyMock.verify( table );
       EasyMock.verify( fact );
    }
    
@@ -83,20 +81,19 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
    @Test( expected = ContentException.class )
    public void testApplyPersistentModifications_ContentResolverException()
    {
-      final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
-      EasyMock.expect( contentResolver.query( EasyMock.anyObject( Uri.class ),
-                                              EasyMock.anyObject( String[].class ),
-                                              EasyMock.anyObject( String.class ),
-                                              EasyMock.anyObject( String[].class ),
-                                              EasyMock.anyObject( String.class ) ) )
+      final ITable table = EasyMock.createStrictMock( ITable.class );
+      EasyMock.expect( table.query( EasyMock.anyObject( String[].class ),
+                                    EasyMock.anyObject( String.class ),
+                                    EasyMock.anyObject( String[].class ),
+                                    EasyMock.anyObject( String.class ) ) )
               .andThrow( new RuntimeException() );
-      EasyMock.replay( contentResolver );
+      EasyMock.replay( table );
       
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                            fact );
+      final IModificationsApplier applier = new DbModificationsApplier( table,
+                                                                        fact );
       
       try
       {
@@ -106,7 +103,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       }
       finally
       {
-         EasyMock.verify( contentResolver );
+         EasyMock.verify( table );
          EasyMock.verify( fact );
       }
    }
@@ -121,22 +118,21 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       c.close();
       EasyMock.replay( c );
       
-      final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
-      EasyMock.expect( contentResolver.query( EasyMock.anyObject( Uri.class ),
-                                              EasyMock.anyObject( String[].class ),
-                                              EasyMock.anyObject( String.class ),
-                                              EasyMock.anyObject( String[].class ),
-                                              EasyMock.anyObject( String.class ) ) )
+      final ITable table = EasyMock.createStrictMock( ITable.class );
+      EasyMock.expect( table.query( EasyMock.anyObject( String[].class ),
+                                    EasyMock.anyObject( String.class ),
+                                    EasyMock.anyObject( String[].class ),
+                                    EasyMock.anyObject( String.class ) ) )
               .andReturn( c );
-      EasyMock.replay( contentResolver );
+      EasyMock.replay( table );
       
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.expect( fact.createContentValues( EasyMock.anyObject( Modification.class ) ) )
               .andThrow( new IllegalArgumentException() );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                            fact );
+      final IModificationsApplier applier = new DbModificationsApplier( table,
+                                                                        fact );
       
       try
       {
@@ -147,7 +143,7 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       }
       finally
       {
-         EasyMock.verify( contentResolver );
+         EasyMock.verify( table );
          EasyMock.verify( fact );
       }
    }
@@ -169,31 +165,28 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       c.close();
       EasyMock.replay( c );
       
-      final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
-      EasyMock.expect( contentResolver.query( EasyMock.eq( ContentUris.MODIFICATIONS_CONTENT_URI ),
-                                              EasyMock.aryEq( ModificationColumns.PROJECTION ),
-                                              EasyMock.anyObject( String.class ),
-                                              EasyMock.aryEq( new String[]
-                                              { uri, colName } ),
-                                              EasyMock.eq( (String) null ) ) )
+      final ITable table = EasyMock.createStrictMock( ITable.class );
+      EasyMock.expect( table.query( EasyMock.aryEq( ModificationColumns.PROJECTION ),
+                                    EasyMock.anyObject( String.class ),
+                                    EasyMock.aryEq( new String[]
+                                    { uri, colName } ),
+                                    EasyMock.eq( (String) null ) ) )
               .andReturn( c );
-      EasyMock.expect( contentResolver.insert( ContentUris.MODIFICATIONS_CONTENT_URI,
-                                               modContentValues ) )
-              .andReturn( null );
-      EasyMock.replay( contentResolver );
+      EasyMock.expect( table.insert( modContentValues ) ).andReturn( 1L );
+      EasyMock.replay( table );
       
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.expect( fact.createContentValues( modification ) )
               .andReturn( modContentValues );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                            fact );
+      final IModificationsApplier applier = new DbModificationsApplier( table,
+                                                                        fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
       
       EasyMock.verify( c );
-      EasyMock.verify( contentResolver );
+      EasyMock.verify( table );
       EasyMock.verify( fact );
    }
    
@@ -218,32 +211,27 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       c.close();
       EasyMock.replay( c );
       
-      final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
-      EasyMock.expect( contentResolver.query( EasyMock.eq( ContentUris.MODIFICATIONS_CONTENT_URI ),
-                                              EasyMock.aryEq( ModificationColumns.PROJECTION ),
-                                              EasyMock.anyObject( String.class ),
-                                              EasyMock.aryEq( new String[]
-                                              { uri, colName } ),
-                                              EasyMock.eq( (String) null ) ) )
+      final ITable table = EasyMock.createStrictMock( ITable.class );
+      EasyMock.expect( table.query( EasyMock.aryEq( ModificationColumns.PROJECTION ),
+                                    EasyMock.anyObject( String.class ),
+                                    EasyMock.aryEq( new String[]
+                                    { uri, colName } ),
+                                    EasyMock.eq( (String) null ) ) )
               .andReturn( c );
-      EasyMock.expect( contentResolver.update( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI_ID,
-                                                                          1L ),
-                                               updateContentValues,
-                                               null,
-                                               null ) )
+      EasyMock.expect( table.update( 1L, updateContentValues, null, null ) )
               .andReturn( 1 );
-      EasyMock.replay( contentResolver );
+      EasyMock.replay( table );
       
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                            fact );
+      final IModificationsApplier applier = new DbModificationsApplier( table,
+                                                                        fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
       
       EasyMock.verify( c );
-      EasyMock.verify( contentResolver );
+      EasyMock.verify( table );
       EasyMock.verify( fact );
    }
    
@@ -265,31 +253,26 @@ public class DefaultModificationsApplierFixture extends MolokoRoboTestCase
       c.close();
       EasyMock.replay( c );
       
-      final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
-      EasyMock.expect( contentResolver.query( EasyMock.eq( ContentUris.MODIFICATIONS_CONTENT_URI ),
-                                              EasyMock.aryEq( ModificationColumns.PROJECTION ),
-                                              EasyMock.anyObject( String.class ),
-                                              EasyMock.aryEq( new String[]
-                                              { uri, colName } ),
-                                              EasyMock.eq( (String) null ) ) )
+      final ITable table = EasyMock.createStrictMock( ITable.class );
+      EasyMock.expect( table.query( EasyMock.aryEq( ModificationColumns.PROJECTION ),
+                                    EasyMock.anyObject( String.class ),
+                                    EasyMock.aryEq( new String[]
+                                    { uri, colName } ),
+                                    EasyMock.eq( (String) null ) ) )
               .andReturn( c );
-      EasyMock.expect( contentResolver.delete( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI_ID,
-                                                                          1L ),
-                                               null,
-                                               null ) )
-              .andReturn( 1 );
-      EasyMock.replay( contentResolver );
+      EasyMock.expect( table.delete( 1L, null, null ) ).andReturn( 1 );
+      EasyMock.replay( table );
       
       final IContentValuesFactory fact = EasyMock.createStrictMock( IContentValuesFactory.class );
       EasyMock.replay( fact );
       
-      final IModificationsApplier applier = new MolokoModificationsApplier( contentResolver,
-                                                                            fact );
+      final IModificationsApplier applier = new DbModificationsApplier( table,
+                                                                        fact );
       
       applier.applyPersistentModifications( Arrays.asList( modification ) );
       
       EasyMock.verify( c );
-      EasyMock.verify( contentResolver );
+      EasyMock.verify( table );
       EasyMock.verify( fact );
    }
 }

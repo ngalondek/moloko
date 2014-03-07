@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.test.MolokoDbContentTestCase;
@@ -40,16 +41,20 @@ import dev.drsoran.moloko.test.SQLiteScript;
 public class DeleteModificationsTest extends MolokoDbContentTestCase
 {
    @Rule
+   public SQLiteScript sqliteScriptList = new SQLiteScript( DeleteModificationsTest.class,
+                                                            "DeleteModificationsTest_List.sql" );
+   
+   @Rule
    public SQLiteScript sqliteScriptTask = new SQLiteScript( DeleteModificationsTest.class,
-                                                            "DeleteModificationsTest.sql" );
+                                                            "DeleteModificationsTest_Task.sql" );
    
    
    
    @Test
-   public void testDeleteOrphanedModifications() throws IOException
+   public void testDeleteOrphanedListModifications() throws IOException
    {
-      prepareDatabase( sqliteScriptTask.getSqlStatements() );
-      checkTestPreconditions();
+      prepareDatabase( sqliteScriptList.getSqlStatements() );
+      checkTestPreconditionsList();
       
       final int numDeleted = getDb().getWritable()
                                     .delete( TableNames.RTM_TASKS_LIST_TABLE,
@@ -83,13 +88,69 @@ public class DeleteModificationsTest extends MolokoDbContentTestCase
    
    
    
-   private void checkTestPreconditions()
+   @Test
+   public void testDeleteOrphanedTaskModifications() throws IOException
+   {
+      prepareDatabase( sqliteScriptTask.getSqlStatements() );
+      checkTestPreconditionsTask();
+      
+      final int numDeleted = getDb().getWritable()
+                                    .delete( TableNames.RTM_RAW_TASKS_TABLE,
+                                             RtmRawTaskColumns._ID + "=1",
+                                             null );
+      assertThat( numDeleted, is( 1 ) );
+      
+      c = getDb().getReadable()
+                 .query( TableNames.MODIFICATIONS_TABLE,
+                         ModificationColumns.PROJECTION,
+                         ModificationColumns.ENTITY_URI
+                            + " = 'content://dev.drsoran.provider.Rtm/tasks/1'",
+                         null,
+                         null,
+                         null,
+                         null );
+      
+      assertThat( c.getCount(), is( 0 ) );
+      c.close();
+      
+      c = getDb().getReadable().query( TableNames.MODIFICATIONS_TABLE,
+                                       ModificationColumns.PROJECTION,
+                                       ModificationColumns._ID + "=3",
+                                       null,
+                                       null,
+                                       null,
+                                       null );
+      
+      assertThat( c.getCount(), is( 1 ) );
+   }
+   
+   
+   
+   private void checkTestPreconditionsList()
    {
       c = getDb().getReadable()
                  .query( TableNames.MODIFICATIONS_TABLE,
                          ModificationColumns.PROJECTION,
                          ModificationColumns.ENTITY_URI
                             + " = 'content://dev.drsoran.provider.Rtm/lists/1'",
+                         null,
+                         null,
+                         null,
+                         null );
+      
+      assertThat( c.getCount(), is( 2 ) );
+      c.close();
+   }
+   
+   
+   
+   private void checkTestPreconditionsTask()
+   {
+      c = getDb().getReadable()
+                 .query( TableNames.MODIFICATIONS_TABLE,
+                         ModificationColumns.PROJECTION,
+                         ModificationColumns.ENTITY_URI
+                            + " = 'content://dev.drsoran.provider.Rtm/tasks/1'",
                          null,
                          null,
                          null,

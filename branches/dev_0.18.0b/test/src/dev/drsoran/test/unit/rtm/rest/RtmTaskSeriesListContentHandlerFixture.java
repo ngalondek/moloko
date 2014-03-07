@@ -35,6 +35,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import dev.drsoran.Iterables;
+import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.XmlFileResource;
 import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.model.RtmConstants;
@@ -220,7 +221,7 @@ public class RtmTaskSeriesListContentHandlerFixture extends
    @Override
    protected RtmContentHandler< List< RtmTask > > createHandler()
    {
-      return new RtmTaskSeriesListContentHandler();
+      return new RtmTaskSeriesListContentHandler( TestCalendarProvider.get() );
    }
    
    
@@ -228,7 +229,8 @@ public class RtmTaskSeriesListContentHandlerFixture extends
    @Override
    protected RtmContentHandler< List< RtmTask > > createHandlerWithListener( IRtmContentHandlerListener< List< RtmTask > > listener )
    {
-      return new RtmTaskSeriesListContentHandler( listener );
+      return new RtmTaskSeriesListContentHandler( TestCalendarProvider.get(),
+                                                  listener );
    }
    
    

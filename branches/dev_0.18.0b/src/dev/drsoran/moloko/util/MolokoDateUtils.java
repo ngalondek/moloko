@@ -58,32 +58,16 @@ public class MolokoDateUtils
    
    
    
-   public final static Time newTime()
+   public static boolean isToday( long today, long when )
    {
-      final Time t = new Time( TimeZone.getDefault().getID() );
-      t.setToNow();
-      return t;
+      return getTimespanInDays( today, when ) == 0;
    }
    
    
    
-   public final static Time newTime( long millis )
+   public static boolean isBefore( long when, long reference )
    {
-      if ( millis < 0 )
-      {
-         throw new IllegalArgumentException( "millis" );
-      }
-      
-      final Time t = new Time( TimeZone.getDefault().getID() );
-      t.set( millis );
-      return t;
-   }
-   
-   
-   
-   public static boolean isToday( long when )
-   {
-      return getTimespanInDays( System.currentTimeMillis(), when ) == 0;
+      return when < reference;
    }
    
    
@@ -91,6 +75,13 @@ public class MolokoDateUtils
    public static boolean isDaysBefore( long when, long reference )
    {
       return getTimespanInDays( when, reference ) > 0;
+   }
+   
+   
+   
+   public static boolean isAfter( long when, long reference )
+   {
+      return when > reference;
    }
    
    

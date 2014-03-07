@@ -95,20 +95,20 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
          try
          {
             SyncTime newSyncTime = null;
+            final long nowMillis = context.getCalendarProvider()
+                                          .getNowMillisUtc();
             
             if ( isSettingsOnlySync( extras )
                || permission == RtmServicePermission.read )
             {
                rtmSyncService.performIncomingSync( lastSyncTime );
-               newSyncTime = new SyncTime( System.currentTimeMillis(),
+               newSyncTime = new SyncTime( nowMillis,
                                            lastSyncTime.getLastSyncOutMillis() );
             }
             else if ( permission == RtmServicePermission.write )
             {
                rtmSyncService.performFullSync( lastSyncTime );
-               
-               final long now = System.currentTimeMillis();
-               newSyncTime = new SyncTime( now, now );
+               newSyncTime = new SyncTime( nowMillis, nowMillis );
             }
             
             if ( newSyncTime != null )

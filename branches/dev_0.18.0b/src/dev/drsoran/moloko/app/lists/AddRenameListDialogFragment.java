@@ -311,7 +311,8 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    private TasksList createNewList()
    {
       final TasksList newList = new TasksList( Constants.NO_ID,
-                                               System.currentTimeMillis(),
+                                               getUiContext().getCalendarProvider()
+                                                             .getNowMillisUtc(),
                                                UiUtils.getTrimmedText( listNameEdit ),
                                                0,
                                                false,

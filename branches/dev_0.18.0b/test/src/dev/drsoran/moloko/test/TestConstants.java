@@ -47,6 +47,10 @@ public final class TestConstants
    
    public final static RtmCalendar DATE_YESTERDAY;
    
+   public final static long BEFORE_A_WEEK;
+   
+   public final static RtmCalendar DATE_BEFORE_A_WEEK;
+   
    public final static long LATER = NOW + 3600 * 1000;
    
    public final static long EVEN_LATER = LATER + 3600 * 1000;
@@ -76,5 +80,10 @@ public final class TestConstants
       DATE_YESTERDAY.add( Calendar.DATE, -1 );
       
       YESTERDAY = DATE_YESTERDAY.getTimeInMillis();
+      
+      DATE_BEFORE_A_WEEK = DATE_TODAY.clone();
+      DATE_BEFORE_A_WEEK.add( Calendar.WEEK_OF_YEAR, -1 );
+      
+      BEFORE_A_WEEK = DATE_BEFORE_A_WEEK.getTimeInMillis();
    }
 }

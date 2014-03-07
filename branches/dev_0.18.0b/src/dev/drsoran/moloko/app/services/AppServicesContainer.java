@@ -43,6 +43,7 @@ import dev.drsoran.moloko.content.db.sync.RtmModelElementFactory;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
 import dev.drsoran.rtm.RtmConnectionProtocol;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.service.IRtmService;
 import dev.drsoran.rtm.service.RtmService;
 import dev.drsoran.rtm.service.RtmServicePermission;
@@ -65,6 +66,8 @@ public class AppServicesContainer implements IAppServices
    private final IAppContentEditService appContentEditService;
    
    private final ILog log;
+   
+   private final IRtmCalendarProvider calendarProvider;
    
    private IRtmService rtmService;
    
@@ -89,10 +92,16 @@ public class AppServicesContainer implements IAppServices
       
       this.accountService = new AccountService( context );
       
+      this.calendarProvider = context.getCalendarProvider();
+      
       this.syncService = new SyncService( new DbRtmSyncPartnerFactory( getDatabase(),
                                                                        new RtmModelElementFactory(),
                                                                        new RtmContentValuesFactory(),
-                                                                       new MolokoContentValuesFactory() ),
+                                                                       new MolokoContentValuesFactory(),
+                                                                       context.getParsingService()
+                                                                              .getDateTimeParsing(),
+                                                                       calendarProvider,
+                                                                       log ),
                                           settingsService,
                                           connectionService,
                                           appEventService,
@@ -101,7 +110,8 @@ public class AppServicesContainer implements IAppServices
       
       this.appContentEditService = new AppContentEditService( context,
                                                               context.getContentEditService(),
-                                                              accountService );
+                                                              accountService,
+                                                              calendarProvider );
       checkForcedReadableAccess();
       
       this.rtmService = createRtmService( settingsService.getRtmConnectionProtocol() );
@@ -177,6 +187,7 @@ public class AppServicesContainer implements IAppServices
    {
       return new RtmService( log,
                              connectionService.getConnectionFactory(),
+                             calendarProvider,
                              connectionProtocol,
                              context.getString( R.string.app_rtm_api_key ),
                              context.getString( R.string.app_rtm_shared_secret ) );

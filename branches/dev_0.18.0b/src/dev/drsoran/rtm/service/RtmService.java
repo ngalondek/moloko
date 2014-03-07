@@ -29,6 +29,7 @@ import dev.drsoran.rtm.IRtmConnectionFactory;
 import dev.drsoran.rtm.IRtmResponseHandlerFactory;
 import dev.drsoran.rtm.RtmConnectionFactory;
 import dev.drsoran.rtm.RtmConnectionProtocol;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.rest.RtmRestRequestFactory;
 import dev.drsoran.rtm.rest.RtmRestResponseHandlerFactory;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;
@@ -47,7 +48,8 @@ public class RtmService implements IRtmService
    
    
    public RtmService( ILog log, IConnectionFactory connectionFactory,
-      RtmConnectionProtocol protocol, String apiKey, String sharedSecret )
+      IRtmCalendarProvider calendarProvider, RtmConnectionProtocol protocol,
+      String apiKey, String sharedSecret )
    {
       rtmConnectionFactory = new RtmConnectionFactory( log,
                                                        connectionFactory,
@@ -57,7 +59,7 @@ public class RtmService implements IRtmService
                                                        apiKey,
                                                        sharedSecret );
       
-      responseHandlerFactory = new RtmRestResponseHandlerFactory();
+      responseHandlerFactory = new RtmRestResponseHandlerFactory( calendarProvider );
       
       contentRepository = new RtmContentRepository( rtmConnectionFactory,
                                                     responseHandlerFactory );

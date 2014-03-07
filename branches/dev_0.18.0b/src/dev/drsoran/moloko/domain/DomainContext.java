@@ -33,6 +33,7 @@ import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IDomainServices;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.event.ISystemEventService;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public final class DomainContext extends ContextWrapper
@@ -105,5 +106,12 @@ public final class DomainContext extends ContextWrapper
    public IContentEditService getContentEditService()
    {
       return domainServices.getContentEditService();
+   }
+   
+   
+   
+   public IRtmCalendarProvider getCalendarProvider()
+   {
+      return domainServices.getCalendarProvider();
    }
 }

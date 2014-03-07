@@ -385,7 +385,8 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
       
       RtmStyleTaskDescTextViewFormatter.setTaskDescription( description,
                                                             task,
-                                                            null );
+                                                            appContext.getCalendarProvider()
+                                                                      .getNowMillisUtc() );
       
       listName.setText( task.getListName() );
       

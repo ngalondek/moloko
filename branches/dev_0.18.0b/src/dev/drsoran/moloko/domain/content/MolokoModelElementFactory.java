@@ -43,7 +43,6 @@ import dev.drsoran.moloko.content.Columns.TaskCountColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.CursorUtils;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.domain.model.CloudEntryType;

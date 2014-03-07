@@ -20,21 +20,22 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.domain.content;
+package dev.drsoran.moloko.content.db;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import dev.drsoran.Compare;
+import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
+import dev.drsoran.moloko.domain.content.IContentValuesFactory;
+import dev.drsoran.moloko.domain.content.IModificationsApplier;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.services.ContentException;
 
 
-public class MolokoModificationsApplier implements IModificationsApplier
+public class DbModificationsApplier implements IModificationsApplier
 {
    private final static String SEL_QUERY_MODIFICATION = new StringBuilder( 100 ).append( ModificationColumns.ENTITY_URI )
                                                                                 .append( "=? AND " )
@@ -42,16 +43,16 @@ public class MolokoModificationsApplier implements IModificationsApplier
                                                                                 .append( "=?" )
                                                                                 .toString();
    
-   private final ContentResolver contentResolver;
+   private final ITable modificationsTable;
    
    private final IContentValuesFactory contentValuesFactory;
    
    
    
-   public MolokoModificationsApplier( ContentResolver contentResolver,
+   public DbModificationsApplier( ITable modificationsTable,
       IContentValuesFactory contentValuesFactory )
    {
-      this.contentResolver = contentResolver;
+      this.modificationsTable = modificationsTable;
       this.contentValuesFactory = contentValuesFactory;
    }
    
@@ -102,20 +103,18 @@ public class MolokoModificationsApplier implements IModificationsApplier
    
    private Cursor getModification( String entityUri, String columnName )
    {
-      return contentResolver.query( ContentUris.MODIFICATIONS_CONTENT_URI,
-                                    ModificationColumns.PROJECTION,
-                                    SEL_QUERY_MODIFICATION,
-                                    new String[]
-                                    { entityUri, columnName },
-                                    null );
+      return modificationsTable.query( ModificationColumns.PROJECTION,
+                                       SEL_QUERY_MODIFICATION,
+                                       new String[]
+                                       { entityUri, columnName },
+                                       null );
    }
    
    
    
    private void insertNewModification( Modification modification )
    {
-      contentResolver.insert( ContentUris.MODIFICATIONS_CONTENT_URI,
-                              contentValuesFactory.createContentValues( modification ) );
+      modificationsTable.insert( contentValuesFactory.createContentValues( modification ) );
    }
    
    
@@ -130,18 +129,16 @@ public class MolokoModificationsApplier implements IModificationsApplier
                                 newModification.getValue() ) )
       {
          // Update the modification with the new value.
-         contentResolver.update( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI_ID,
-                                                            existingModification.getLong( Columns.ID_IDX ) ),
-                                 createUpdateNewValueContentValues( newModification.getValue() ),
-                                 null,
-                                 null );
+         modificationsTable.update( existingModification.getLong( Columns.ID_IDX ),
+                                    createUpdateNewValueContentValues( newModification.getValue() ),
+                                    null,
+                                    null );
       }
       else
       {
-         contentResolver.delete( ContentUris.bindElementId( ContentUris.MODIFICATIONS_CONTENT_URI_ID,
-                                                            existingModification.getLong( Columns.ID_IDX ) ),
-                                 null,
-                                 null );
+         modificationsTable.delete( existingModification.getLong( Columns.ID_IDX ),
+                                    null,
+                                    null );
       }
    }
    

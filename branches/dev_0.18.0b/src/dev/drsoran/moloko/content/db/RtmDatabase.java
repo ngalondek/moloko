@@ -26,6 +26,7 @@ import android.content.Context;
 import dev.drsoran.db.AbstractDatabase;
 import dev.drsoran.db.AbstractTable;
 import dev.drsoran.db.AbstractTrigger;
+import dev.drsoran.moloko.content.ContentUris;
 
 
 public class RtmDatabase extends AbstractDatabase
@@ -59,14 +60,19 @@ public class RtmDatabase extends AbstractDatabase
    protected AbstractTrigger[] createTriggers()
    {
       return new AbstractTrigger[]
-      { new DeleteDefaultListTrigger(), new DeleteRawTaskTrigger(),
-       new DeleteTaskSeriesTrigger(), new DeleteContactTrigger(),
-       new UpdateDefaultListTrigger(), new UpdateContactTrigger(),
+      {
+       new DeleteDefaultListTrigger(),
+       new DeleteRawTaskTrigger(),
+       new DeleteTaskSeriesTrigger(),
+       new DeleteContactTrigger(),
+       new UpdateDefaultListTrigger(),
+       new UpdateContactTrigger(),
        new UpdateTaskSeriesListIdTrigger(),
        new UpdateTaskSeriesLocationIdTrigger(),
        
-       new DeleteModificationsTrigger( RtmTasksListsTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( RtmRawTasksTable.TABLE_NAME ),
-       new DeleteModificationsTrigger( RtmTaskSeriesTable.TABLE_NAME ) };
+       new DeleteModificationsTrigger( RtmRawTasksTable.TABLE_NAME,
+                                       ContentUris.TASKS_URI_PATH ),
+       new DeleteModificationsTrigger( RtmTasksListsTable.TABLE_NAME,
+                                       ContentUris.TASKS_LISTS_URI_PATH ) };
    }
 }

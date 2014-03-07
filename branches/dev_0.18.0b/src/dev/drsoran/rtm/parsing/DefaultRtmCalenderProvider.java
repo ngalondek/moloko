@@ -22,6 +22,7 @@
 
 package dev.drsoran.rtm.parsing;
 
+import android.text.format.DateUtils;
 import dev.drsoran.rtm.RtmCalendar;
 
 
@@ -36,11 +37,27 @@ public class DefaultRtmCalenderProvider implements IRtmCalendarProvider
    
    
    @Override
+   public long getNowMillisUtc()
+   {
+      return System.currentTimeMillis();
+   }
+   
+   
+   
+   @Override
    public RtmCalendar getToday()
    {
       final RtmCalendar cal = RtmCalendar.getInstance();
       cal.setHasTime( false );
       
       return cal;
+   }
+   
+   
+   
+   @Override
+   public long getTodayMillisUtc()
+   {
+      return getNowMillisUtc() % DateUtils.DAY_IN_MILLIS;
    }
 }

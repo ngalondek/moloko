@@ -29,11 +29,10 @@ import static dev.drsoran.moloko.content.Columns.SettingsColumns.SYNC_TIMESTAMP_
 import static dev.drsoran.moloko.content.Columns.SettingsColumns.TIMEFORMAT_IDX;
 import static dev.drsoran.moloko.content.Columns.SettingsColumns.TIMEZONE_IDX;
 import static dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns.RTM_DEFAULTLIST_ID_IDX;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,43 +43,26 @@ import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.db.TableNames;
-import dev.drsoran.moloko.content.db.sync.DbRtmSyncPartnerFactory;
-import dev.drsoran.moloko.content.db.sync.RtmContentValuesFactory;
-import dev.drsoran.moloko.content.db.sync.RtmModelElementFactory;
-import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
-import dev.drsoran.moloko.test.MolokoDbTestCase;
+import dev.drsoran.moloko.test.MolokoSyncTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
 import dev.drsoran.moloko.test.TestConstants;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmSettings;
-import dev.drsoran.rtm.sync.IRtmSyncPartner;
 
 
-public class RtmSettingsSyncTest extends MolokoDbTestCase
+public class RtmSettingsSyncTest extends MolokoSyncTestCase
 {
    @Rule
    public SQLiteScript sqliteScript = new SQLiteScript( RtmSettingsSyncTest.class,
                                                         "RtmSettingsSyncTest.sql" );
    
-   private IRtmSyncPartner syncPartner;
-   
-   private long syncTime;
    
    
-   
-   @Override
-   @Before
-   public void setUp() throws Exception
+   @Test
+   public void testGet()
    {
-      super.setUp();
-      
-      openDb();
-      
-      syncTime = System.currentTimeMillis();
-      syncPartner = new DbRtmSyncPartnerFactory( getDb(),
-                                                 new RtmModelElementFactory(),
-                                                 new RtmContentValuesFactory(),
-                                                 new MolokoContentValuesFactory() ).createRtmSyncPartner();
+      final RtmSettings settings = getSyncPartner().getSettings();
+      assertThat( settings, is( notNullValue() ) );
    }
    
    
@@ -88,18 +70,18 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
    @Test
    public void testUpdate()
    {
-      syncPartner.updateSettings( new RtmSettings( TestConstants.LATER,
-                                                   "UTC",
-                                                   1,
-                                                   2,
-                                                   RtmConstants.NO_ID,
-                                                   "en-US" ),
-                                  new RtmSettings( TestConstants.NEVER,
-                                                   "UTC+1",
-                                                   3,
-                                                   4,
-                                                   RtmConstants.NO_ID,
-                                                   "de-De" ) );
+      getSyncPartner().updateSettings( new RtmSettings( TestConstants.LATER,
+                                                        "UTC",
+                                                        1,
+                                                        2,
+                                                        RtmConstants.NO_ID,
+                                                        "en-US" ),
+                                       new RtmSettings( TestConstants.NEVER,
+                                                        "UTC+1",
+                                                        3,
+                                                        4,
+                                                        RtmConstants.NO_ID,
+                                                        "de-De" ) );
       
       c = getDb().getReadable().query( TableNames.RTM_SETTINGS_TABLE,
                                        RtmSettingsColumns.TABLE_PROJECTION,
@@ -114,7 +96,7 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
       
       checkResult( c,
                    RtmSettingsColumns.SINGLETON_ID,
-                   syncTime,
+                   getSyncTime(),
                    "UTC+1",
                    3,
                    4,
@@ -128,18 +110,18 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
    @Test
    public void testUpdate_ResetDefaultListId()
    {
-      syncPartner.updateSettings( new RtmSettings( TestConstants.LATER,
-                                                   "UTC",
-                                                   1,
-                                                   2,
-                                                   "1000",
-                                                   "en-US" ),
-                                  new RtmSettings( TestConstants.NEVER,
-                                                   "UTC",
-                                                   1,
-                                                   2,
-                                                   RtmConstants.NO_ID,
-                                                   "en-US" ) );
+      getSyncPartner().updateSettings( new RtmSettings( TestConstants.LATER,
+                                                        "UTC",
+                                                        1,
+                                                        2,
+                                                        "1000",
+                                                        "en-US" ),
+                                       new RtmSettings( TestConstants.NEVER,
+                                                        "UTC",
+                                                        1,
+                                                        2,
+                                                        RtmConstants.NO_ID,
+                                                        "en-US" ) );
       
       c = getDb().getReadable().query( TableNames.RTM_SETTINGS_TABLE,
                                        RtmSettingsColumns.TABLE_PROJECTION,
@@ -154,7 +136,7 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
       
       checkResult( c,
                    RtmSettingsColumns.SINGLETON_ID,
-                   syncTime,
+                   getSyncTime(),
                    "UTC",
                    1,
                    2,
@@ -170,18 +152,18 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
    {
       prepareDatabase( sqliteScript.getSqlStatements() );
       
-      syncPartner.updateSettings( new RtmSettings( TestConstants.LATER,
-                                                   "UTC",
-                                                   1,
-                                                   2,
-                                                   "1000",
-                                                   "en-US" ),
-                                  new RtmSettings( TestConstants.NEVER,
-                                                   "UTC",
-                                                   1,
-                                                   2,
-                                                   "1001",
-                                                   "en-US" ) );
+      getSyncPartner().updateSettings( new RtmSettings( TestConstants.LATER,
+                                                        "UTC",
+                                                        1,
+                                                        2,
+                                                        "1000",
+                                                        "en-US" ),
+                                       new RtmSettings( TestConstants.NEVER,
+                                                        "UTC",
+                                                        1,
+                                                        2,
+                                                        "1001",
+                                                        "en-US" ) );
       
       c = getDb().getReadable().query( TableNames.RTM_SETTINGS_TABLE,
                                        RtmSettingsColumns.TABLE_PROJECTION,
@@ -196,7 +178,7 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
       
       checkResult( c,
                    RtmSettingsColumns.SINGLETON_ID,
-                   syncTime,
+                   getSyncTime(),
                    "UTC",
                    1,
                    2,
@@ -210,18 +192,18 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
    @Test( expected = SQLiteException.class )
    public void testUpdate_SetNewDefaultListId_NotFound()
    {
-      syncPartner.updateSettings( new RtmSettings( TestConstants.LATER,
-                                                   "UTC",
-                                                   1,
-                                                   2,
-                                                   "1000",
-                                                   "en-US" ),
-                                  new RtmSettings( TestConstants.NEVER,
-                                                   "UTC",
-                                                   1,
-                                                   2,
-                                                   "1001",
-                                                   "en-US" ) );
+      getSyncPartner().updateSettings( new RtmSettings( TestConstants.LATER,
+                                                        "UTC",
+                                                        1,
+                                                        2,
+                                                        "1000",
+                                                        "en-US" ),
+                                       new RtmSettings( TestConstants.NEVER,
+                                                        "UTC",
+                                                        1,
+                                                        2,
+                                                        "1001",
+                                                        "en-US" ) );
    }
    
    
@@ -239,8 +221,7 @@ public class RtmSettingsSyncTest extends MolokoDbTestCase
       assertThat( c.getLong( Columns.ID_IDX ), is( id ) );
       assertThat( CursorUtils.getOptLong( c,
                                           SYNC_TIMESTAMP_IDX,
-                                          Constants.NO_TIME ),
-                  is( greaterThanOrEqualTo( syncTs ) ) );
+                                          Constants.NO_TIME ), is( syncTs ) );
       assertThat( CursorUtils.getOptString( c, TIMEZONE_IDX ), is( tz ) );
       assertThat( c.getInt( DATEFORMAT_IDX ), is( df ) );
       assertThat( c.getInt( TIMEFORMAT_IDX ), is( tf ) );

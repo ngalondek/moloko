@@ -34,8 +34,9 @@ import java.util.Set;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteQueryBuilder;
+import dev.drsoran.Strings;
 import dev.drsoran.db.ITable;
+import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Constants;
@@ -55,16 +56,16 @@ import dev.drsoran.moloko.util.Lambda.Func1;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmRawTask;
 import dev.drsoran.rtm.model.RtmTask;
+import dev.drsoran.rtm.model.RtmTaskSeries;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 
 
 public class RtmTaskElementSyncHandler implements
          IDbElementSyncHandler< RtmTask >
 {
-   private final static String RTM_TASKS_QUERY_TABLE_NAMES;
-   
-   private final static String RTM_TASKS_QUERY_WHERE_CLAUSE_MODIFIED_SINCE;
-   
    private final RtmDatabase rtmDatabase;
    
    private final IModelElementFactory rtmModelElementFactory;
@@ -75,7 +76,13 @@ public class RtmTaskElementSyncHandler implements
    
    private final ITaskSeriesIdProvider taskSeriesIdProvider;
    
+   private final IRtmDateTimeParsing dateTimeParsing;
+   
+   private final ILog log;
+   
    private final Set< String > updatedTaskSerieses = new HashSet< String >();
+   
+   private final Map< String, Long > insertedTaskSerieses = new HashMap< String, Long >();
    
    private final Map< String, Long > rtmContactId2contactId = new HashMap< String, Long >();
    
@@ -131,31 +138,14 @@ public class RtmTaskElementSyncHandler implements
       }
    };
    
-   static
-   {
-      RTM_TASKS_QUERY_TABLE_NAMES = TableNames.RTM_TASK_SERIES_TABLE + ", "
-         + TableNames.RTM_RAW_TASKS_TABLE;
-      
-      RTM_TASKS_QUERY_WHERE_CLAUSE_MODIFIED_SINCE = TableNames.RTM_TASK_SERIES_TABLE
-         + "."
-         + RtmTaskSeriesColumns._ID
-         + "="
-         + TableNames.RTM_RAW_TASKS_TABLE
-         + "."
-         + RtmRawTaskColumns.TASKSERIES_ID
-         + " AND "
-         + TableNames.RTM_TASK_SERIES_TABLE
-         + "."
-         + RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE + ">=?";
-   }
-   
    
    
    public RtmTaskElementSyncHandler( RtmDatabase rtmDatabase,
       IModelElementFactory rtmModelElementFactory,
       IContentValuesFactory rtmContentValuesFactory,
       IContentValuesFactory molokoContentValuesFactory,
-      ITaskSeriesIdProvider taskSeriesIdProvider )
+      ITaskSeriesIdProvider taskSeriesIdProvider,
+      IRtmDateTimeParsing dateTimeParsing, ILog log )
    {
       if ( rtmDatabase == null )
       {
@@ -182,11 +172,18 @@ public class RtmTaskElementSyncHandler implements
          throw new IllegalArgumentException( "taskSeriesIdProvider" );
       }
       
+      if ( dateTimeParsing == null )
+      {
+         throw new IllegalArgumentException( "dateTimeParsing" );
+      }
+      
       this.rtmDatabase = rtmDatabase;
       this.rtmModelElementFactory = rtmModelElementFactory;
       this.rtmContentValuesFactory = rtmContentValuesFactory;
       this.molokoContentValuesFactory = molokoContentValuesFactory;
       this.taskSeriesIdProvider = taskSeriesIdProvider;
+      this.dateTimeParsing = dateTimeParsing;
+      this.log = log;
    }
    
    
@@ -202,17 +199,27 @@ public class RtmTaskElementSyncHandler implements
    @Override
    public void insert( RtmTask task )
    {
-      final ContentValues contentValues = rtmContentValuesFactory.createContentValues( task );
-      putListIdAndLocationIdForTask( task, contentValues );
+      Long taskSeriesId = tryGetInsertedTaskSeriesId( task.getTaskSeriesId() );
       
-      final ContentValues taskSeriesValues = getRtmTaskSeriesSubset( contentValues );
-      ITable table = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE );
-      long taskSeriesId = table.insert( taskSeriesValues );
+      if ( taskSeriesId == null )
+      {
+         final RtmTaskSeries taskSeries = task.getTaskSeries();
+         
+         final ContentValues taskSeriesValues = rtmContentValuesFactory.createContentValues( taskSeries );
+         putListIdAndLocationIdForTaskSeries( taskSeries, taskSeriesValues );
+         
+         final ITable table = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE );
+         taskSeriesId = Long.valueOf( table.insert( taskSeriesValues ) );
+         
+         setTaskSeriesInserted( task.getTaskSeriesId(), taskSeriesId );
+      }
       
-      final ContentValues rawTaskValues = getRtmRawTaskSubset( contentValues );
+      final ContentValues rawTaskValues = rtmContentValuesFactory.createContentValues( task.getRawTask() );
       rawTaskValues.put( RtmRawTaskColumns.TASKSERIES_ID, taskSeriesId );
+      rawTaskValues.put( RtmRawTaskColumns.ESTIMATE_MILLIS,
+                         getEstimateMillis( task.getEstimationSentence() ) );
       
-      table = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE );
+      final ITable table = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE );
       table.insert( rawTaskValues );
       
       insertNotes( task.getNotes(), taskSeriesId );
@@ -281,13 +288,14 @@ public class RtmTaskElementSyncHandler implements
                                                                    updatedTask ) );
       }
       
-      final ContentValues contentValues = rtmContentValuesFactory.createContentValues( updatedTask );
       final String rtmTaskSeriedId = currentTask.getTaskSeriesId();
       
       if ( !hasTaskSeriesAlreadyUpdated( rtmTaskSeriedId ) )
       {
-         final ContentValues taskSeriesValues = getRtmTaskSeriesSubset( contentValues );
-         putListIdAndLocationIdForTask( updatedTask, taskSeriesValues );
+         final RtmTaskSeries updatedTaskSeries = updatedTask.getTaskSeries();
+         final ContentValues taskSeriesValues = rtmContentValuesFactory.createContentValues( updatedTaskSeries );
+         putListIdAndLocationIdForTaskSeries( updatedTaskSeries,
+                                              taskSeriesValues );
          
          final ITable taskSeriesTable = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE );
          taskSeriesTable.update( Constants.NO_ID,
@@ -305,7 +313,7 @@ public class RtmTaskElementSyncHandler implements
          setTaskSeriesUpdated( rtmTaskSeriedId );
       }
       
-      final ContentValues rawTaskValues = getRtmRawTaskSubset( contentValues );
+      final ContentValues rawTaskValues = rtmContentValuesFactory.createContentValues( updatedTask.getRawTask() );
       final ITable rawTaskTable = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE );
       rawTaskTable.update( Constants.NO_ID,
                            rawTaskValues,
@@ -393,6 +401,20 @@ public class RtmTaskElementSyncHandler implements
    
    
    
+   private Long tryGetInsertedTaskSeriesId( String rtmTaskSeriedId )
+   {
+      return insertedTaskSerieses.get( rtmTaskSeriedId );
+   }
+   
+   
+   
+   private void setTaskSeriesInserted( String rtmTaskSeriedId, Long taskSeriesId )
+   {
+      insertedTaskSerieses.put( rtmTaskSeriedId, taskSeriesId );
+   }
+   
+   
+   
    private boolean hasTaskSeriesAlreadyUpdated( String taskSeriedId )
    {
       return updatedTaskSerieses.contains( taskSeriedId );
@@ -471,19 +493,26 @@ public class RtmTaskElementSyncHandler implements
       Cursor c = null;
       try
       {
-         final String rawQueryString = getRtmTasksQueryBuilder().toString();
-         
-         c = rtmDatabase.getReadable().rawQuery( rawQueryString, new String[]
-         { String.valueOf( modifiedSinceMsUtc ) } );
+         c = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE )
+                        .query( RtmTaskSeriesColumns.TABLE_PROJECTION,
+                                RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE
+                                   + ">=?",
+                                new String[]
+                                { String.valueOf( modifiedSinceMsUtc ) },
+                                null );
          
          final List< RtmTask > result = new ArrayList< RtmTask >( c.getCount() );
          while ( c.moveToNext() )
          {
-            final RtmTask task = rtmModelElementFactory.createElementFromCursor( c,
-                                                                                 RtmTask.class );
-            addNotes( task, c.getLong( Columns.ID_IDX ) );
+            final RtmTaskSeries taskSeries = rtmModelElementFactory.createElementFromCursor( c,
+                                                                                             RtmTaskSeries.class );
+            final long taskSeriesId = c.getLong( Columns.ID_IDX );
+            addNotes( taskSeries, taskSeriesId );
             
-            result.add( task );
+            for ( RtmRawTask rawTask : getRawTasksOfTaskSeries( taskSeriesId ) )
+            {
+               result.add( new RtmTask( taskSeries, rawTask ) );
+            }
          }
          
          return result;
@@ -499,7 +528,40 @@ public class RtmTaskElementSyncHandler implements
    
    
    
-   private void addNotes( RtmTask task, long taskseriesId )
+   private Iterable< RtmRawTask > getRawTasksOfTaskSeries( long taskSeriesId )
+   {
+      Cursor c = null;
+      try
+      {
+         c = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE )
+                        .query( RtmRawTaskColumns.TABLE_PROJECTION,
+                                RtmRawTaskColumns.TASKSERIES_ID + "=?",
+                                new String[]
+                                { String.valueOf( taskSeriesId ) },
+                                null );
+         
+         final List< RtmRawTask > result = new ArrayList< RtmRawTask >( c.getCount() );
+         while ( c.moveToNext() )
+         {
+            final RtmRawTask rawTask = rtmModelElementFactory.createElementFromCursor( c,
+                                                                                       RtmRawTask.class );
+            result.add( rawTask );
+         }
+         
+         return result;
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
+      }
+   }
+   
+   
+   
+   private void addNotes( RtmTaskSeries taskSeries, long taskseriesId )
    {
       Cursor c = null;
       try
@@ -522,7 +584,7 @@ public class RtmTaskElementSyncHandler implements
          {
             final RtmNote note = rtmModelElementFactory.createElementFromCursor( c,
                                                                                  RtmNote.class );
-            task.addNote( note );
+            taskSeries.addNote( note );
          }
       }
       finally
@@ -536,69 +598,16 @@ public class RtmTaskElementSyncHandler implements
    
    
    
-   private SQLiteQueryBuilder getRtmTasksQueryBuilder()
-   {
-      final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-      queryBuilder.setTables( RTM_TASKS_QUERY_TABLE_NAMES );
-      queryBuilder.appendWhere( RTM_TASKS_QUERY_WHERE_CLAUSE_MODIFIED_SINCE );
-      
-      return queryBuilder;
-   }
-   
-   
-   
-   private ContentValues getRtmTaskSeriesSubset( ContentValues contentValues )
-   {
-      return getContentValueSubset( contentValues,
-                                    RtmTaskSeriesColumns.TABLE_PROJECTION );
-   }
-   
-   
-   
-   private ContentValues getRtmRawTaskSubset( ContentValues contentValues )
-   {
-      return getContentValueSubset( contentValues,
-                                    RtmRawTaskColumns.TABLE_PROJECTION );
-   }
-   
-   
-   
-   private ContentValues getContentValueSubset( ContentValues contentValues,
-                                                String[] projection )
-   {
-      final ContentValues contentValuesSubset = new ContentValues();
-      
-      for ( String column : projection )
-      {
-         if ( contentValues.containsKey( column ) )
-         {
-            final Object value = contentValues.get( column );
-            if ( value != null )
-            {
-               contentValuesSubset.put( column, String.valueOf( value ) );
-            }
-            else
-            {
-               contentValuesSubset.putNull( column );
-            }
-         }
-      }
-      
-      return contentValuesSubset;
-   }
-   
-   
-   
-   private void putListIdAndLocationIdForTask( RtmTask task,
-                                               ContentValues contentValues )
+   private void putListIdAndLocationIdForTaskSeries( RtmTaskSeries taskSeries,
+                                                     ContentValues contentValues )
    {
       contentValues.put( RtmTaskSeriesColumns.LIST_ID,
-                         getListIdFromRtmListId( task.getListId() ) );
+                         getListIdFromRtmListId( taskSeries.getListId() ) );
       
-      if ( task.getLocationId() != RtmConstants.NO_ID )
+      if ( taskSeries.getLocationId() != RtmConstants.NO_ID )
       {
          contentValues.put( RtmTaskSeriesColumns.LOCATION_ID,
-                            getLocationIdFromRtmLocationId( task.getLocationId() ) );
+                            getLocationIdFromRtmLocationId( taskSeries.getLocationId() ) );
       }
       else
       {
@@ -672,5 +681,27 @@ public class RtmTaskElementSyncHandler implements
             c.close();
          }
       }
+   }
+   
+   
+   
+   private long getEstimateMillis( String estimationSentence )
+   {
+      if ( !Strings.isNullOrEmpty( estimationSentence ) )
+      {
+         try
+         {
+            return dateTimeParsing.parseEstimated( estimationSentence );
+         }
+         catch ( GrammarException e )
+         {
+            log.e( getClass(),
+                   MessageFormat.format( "Unable to parse estimation sentence {0}",
+                                         estimationSentence ),
+                   e );
+         }
+      }
+      
+      return Constants.NO_TIME;
    }
 }

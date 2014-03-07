@@ -42,14 +42,15 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.content.TaskContentEditHandler;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.test.ModificationComparator;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
+import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.sources.TaskEditHandlerTestDataSource;
 import dev.drsoran.moloko.util.Lambda.Func2;
 
@@ -57,6 +58,7 @@ import dev.drsoran.moloko.util.Lambda.Func2;
 @Config( manifest = Config.NONE )
 public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
 {
+   
    @Test
    public void testInsertElement()
    {
@@ -81,7 +83,8 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskContentEditHandler handler = new TaskContentEditHandler( contentResolver,
                                                                          fact,
-                                                                         applier );
+                                                                         applier,
+                                                                         TestCalendarProvider.get() );
       
       final Uri res = handler.insertElement( ContentUris.TASKS_CONTENT_URI,
                                              task );
@@ -117,7 +120,8 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskContentEditHandler handler = new TaskContentEditHandler( contentResolver,
                                                                          fact,
-                                                                         applier );
+                                                                         applier,
+                                                                         TestCalendarProvider.get() );
       try
       {
          handler.insertElement( ContentUris.TASKS_CONTENT_URI, list );
@@ -137,7 +141,8 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
    {
       final ContentValues contentValues = new ContentValues();
       
-      for ( TaskEditHandlerTestDataSource.TestData< Task > testData : new TaskEditHandlerTestDataSource( 1L ).getUpdateTestData() )
+      for ( TaskEditHandlerTestDataSource.TestData< Task > testData : new TaskEditHandlerTestDataSource( 1L,
+                                                                                                         TestCalendarProvider.get() ).getUpdateTestData() )
       {
          final Uri boundUri = ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
                                                          1L );
@@ -161,15 +166,16 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
          
          final TaskContentEditHandler handler = new TaskContentEditHandler( contentResolver,
                                                                             fact,
-                                                                            applier );
+                                                                            applier,
+                                                                            TestCalendarProvider.get() );
          
          handler.updateElement( ContentUris.TASKS_CONTENT_URI_ID,
                                 testData.existingElement,
                                 testData.updateElement,
                                 1L );
          
-         assertEqualSet( modCapture.getValue(),
-                         testData.expectedModifications,
+         assertEqualSet( testData.expectedModifications,
+                         modCapture.getValue(),
                          new ModificationComparator() );
          
          EasyMock.verify( contentResolver );
@@ -205,7 +211,8 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskContentEditHandler handler = new TaskContentEditHandler( contentResolver,
                                                                          fact,
-                                                                         applier );
+                                                                         applier,
+                                                                         TestCalendarProvider.get() );
       
       try
       {
@@ -250,7 +257,8 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskContentEditHandler handler = new TaskContentEditHandler( contentResolver,
                                                                          fact,
-                                                                         applier );
+                                                                         applier,
+                                                                         TestCalendarProvider.get() );
       
       try
       {
@@ -285,7 +293,8 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskContentEditHandler handler = new TaskContentEditHandler( contentResolver,
                                                                          fact,
-                                                                         applier );
+                                                                         applier,
+                                                                         TestCalendarProvider.get() );
       
       handler.deleteElement( ContentUris.TASKS_CONTENT_URI_ID, 1L );
       
@@ -338,7 +347,8 @@ public class TaskContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskContentEditHandler handler = new TaskContentEditHandler( contentResolver,
                                                                          fact,
-                                                                         applier );
+                                                                         applier,
+                                                                         TestCalendarProvider.get() );
       
       try
       {

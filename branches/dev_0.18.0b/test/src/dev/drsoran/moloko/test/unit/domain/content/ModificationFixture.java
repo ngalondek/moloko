@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.test.unit.content.db;
+package dev.drsoran.moloko.test.unit.domain.content;
 
 import static dev.drsoran.moloko.test.IterableAsserts.assertCount;
 import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
@@ -41,7 +41,7 @@ import org.junit.Test;
 
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
 
 

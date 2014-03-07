@@ -22,18 +22,24 @@
 
 package dev.drsoran.moloko.domain.services;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.content.ContentAuthority;
+import dev.drsoran.moloko.content.db.DbContentProvider;
+import dev.drsoran.moloko.content.db.DbModificationsApplier;
 import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluator;
+import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
 import dev.drsoran.moloko.domain.content.MolokoContentValuesFactory;
 import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
-import dev.drsoran.moloko.domain.content.MolokoModificationsApplier;
 import dev.drsoran.moloko.domain.content.SyncTimesContentEditHandler;
 import dev.drsoran.moloko.domain.content.TaskContentEditHandler;
 import dev.drsoran.moloko.domain.content.TaskNoteContentEditHandler;
@@ -43,6 +49,7 @@ import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.domain.parsing.RecurrenceParsing;
 import dev.drsoran.rtm.parsing.DefaultRtmCalenderProvider;
 import dev.drsoran.rtm.parsing.IDateFormatter;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 import dev.drsoran.rtm.parsing.IRtmSmartFilterParsing;
 import dev.drsoran.rtm.parsing.RtmDateTimeParsing;
@@ -68,6 +75,8 @@ public class DomainServicesContainer implements IDomainServices
    
    private final IDateFormatter dateFormatter;
    
+   private final IRtmCalendarProvider calendarProvider;
+   
    private IRecurrenceSentenceLanguage currentRecurrenceSentenceLanguage;
    
    
@@ -77,6 +86,7 @@ public class DomainServicesContainer implements IDomainServices
       IRecurrenceSentenceLanguage recurrenceSentenceLanguage )
    {
       this.dateFormatter = dateFormatter;
+      this.calendarProvider = new DefaultRtmCalenderProvider();
       this.dateLanguageRepository = new DateLanguageRepository();
       this.currentRecurrenceSentenceLanguage = recurrenceSentenceLanguage;
       
@@ -105,18 +115,21 @@ public class DomainServicesContainer implements IDomainServices
                                                  dbSmartFilterEvaluator );
       
       final IContentValuesFactory contentValuesFactory = new MolokoContentValuesFactory();
-      final IModificationsApplier modificationsApplier = new MolokoModificationsApplier( contentResolver,
-                                                                                         contentValuesFactory );
+      final IModificationsApplier modificationsApplier = new DbModificationsApplier( getDatabase( context ).getTable( TableNames.MODIFICATIONS_TABLE ),
+                                                                                     contentValuesFactory );
       
       contentEditService = new ContentEditService( new TaskContentEditHandler( contentResolver,
                                                                                contentValuesFactory,
-                                                                               modificationsApplier ),
+                                                                               modificationsApplier,
+                                                                               calendarProvider ),
                                                    new TasksListContentEditHandler( contentResolver,
                                                                                     contentValuesFactory,
-                                                                                    modificationsApplier ),
+                                                                                    modificationsApplier,
+                                                                                    calendarProvider ),
                                                    new TaskNoteContentEditHandler( contentResolver,
                                                                                    contentValuesFactory,
-                                                                                   modificationsApplier ),
+                                                                                   modificationsApplier,
+                                                                                   calendarProvider ),
                                                    new TaskParticipantContentEditHandler( contentResolver,
                                                                                           contentValuesFactory,
                                                                                           modificationsApplier ),
@@ -152,6 +165,14 @@ public class DomainServicesContainer implements IDomainServices
    
    
    
+   @Override
+   public IRtmCalendarProvider getCalendarProvider()
+   {
+      return calendarProvider;
+   }
+   
+   
+   
    public void updateParserLanguages( IRecurrenceSentenceLanguage recurrenceSentenceLanguage )
    {
       final IRecurrenceParsing recurrenceParsing = createRecurrenceParsing( recurrenceSentenceLanguage,
@@ -179,5 +200,23 @@ public class DomainServicesContainer implements IDomainServices
                                                                                                     dateTimeParsing,
                                                                                                     dateLanguageRepository ) );
       return recurrenceParsing;
+   }
+   
+   
+   
+   private RtmDatabase getDatabase( Context context )
+   {
+      final ContentProvider localContentProvider = context.getContentResolver()
+                                                          .acquireContentProviderClient( ContentAuthority.RTM )
+                                                          .getLocalContentProvider();
+      
+      if ( localContentProvider instanceof DbContentProvider )
+      {
+         return ( (DbContentProvider) localContentProvider ).getDatabase();
+      }
+      
+      throw new RuntimeException( MessageFormat.format( "Expected local content provider to be of type {0} but was {1}",
+                                                        DbContentProvider.class.getSimpleName(),
+                                                        localContentProvider.getClass() ) );
    }
 }

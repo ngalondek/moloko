@@ -42,6 +42,7 @@ import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.service.IRtmAuthenticationService;
 import dev.drsoran.rtm.service.IRtmSyncService;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;
@@ -202,4 +203,10 @@ public final class AppContext extends ContextWrapper
       return appServices.getContentEditService();
    }
    
+   
+   
+   public IRtmCalendarProvider getCalendarProvider()
+   {
+      return domainContext.getCalendarProvider();
+   }
 }

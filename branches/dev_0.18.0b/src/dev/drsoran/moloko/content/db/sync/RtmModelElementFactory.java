@@ -44,8 +44,9 @@ import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
 import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmRawTask;
 import dev.drsoran.rtm.model.RtmSettings;
-import dev.drsoran.rtm.model.RtmTask;
+import dev.drsoran.rtm.model.RtmTaskSeries;
 import dev.drsoran.rtm.model.RtmTasksList;
 
 
@@ -59,7 +60,9 @@ public class RtmModelElementFactory implements IModelElementFactory
    {
       factoryMethodLookUp.put( RtmTasksList.class,
                                new RtmTasksListFactoryMethod() );
-      factoryMethodLookUp.put( RtmTask.class, new RtmTaskFactoryMethod() );
+      factoryMethodLookUp.put( RtmTaskSeries.class,
+                               new RtmTaskSeriesFactoryMethod() );
+      factoryMethodLookUp.put( RtmRawTask.class, new RtmRawTaskFactoryMethod() );
       factoryMethodLookUp.put( RtmNote.class, new RtmNoteFactoryMethod() );
       factoryMethodLookUp.put( RtmContact.class, new RtmContactFactoryMethod() );
       factoryMethodLookUp.put( RtmLocation.class,
@@ -114,49 +117,61 @@ public class RtmModelElementFactory implements IModelElementFactory
    }
    
    
-   private final class RtmTaskFactoryMethod implements IFactoryMethod< RtmTask >
+   private final class RtmTaskSeriesFactoryMethod implements
+            IFactoryMethod< RtmTaskSeries >
    {
       @Override
-      public RtmTask create( Cursor c )
+      public RtmTaskSeries create( Cursor c )
       {
          final Collection< String > tags = getTags( c );
          
-         final RtmTask task = new RtmTask( c.getString( RtmRawTaskColumns.RTM_RAWTASK_ID_IDX ),
-                                           c.getString( RtmTaskSeriesColumns.RTM_TASKSERIES_ID_IDX ),
-                                           c.getLong( RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE_IDX ),
-                                           c.getLong( RtmRawTaskColumns.ADDED_DATE_IDX ),
-                                           c.getLong( RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE_IDX ),
-                                           CursorUtils.getOptLong( c,
-                                                                   RtmRawTaskColumns.DELETED_DATE_IDX,
-                                                                   RtmConstants.NO_TIME ),
-                                           c.getString( RtmTaskSeriesColumns.RTM_LIST_ID_IDX ),
-                                           CursorUtils.getOptString( c,
-                                                                     RtmTaskSeriesColumns.RTM_LOCATION_ID_IDX ),
-                                           c.getString( RtmTaskSeriesColumns.TASKSERIES_NAME_IDX ),
-                                           c.getString( RtmTaskSeriesColumns.SOURCE_IDX ),
-                                           CursorUtils.getOptString( c,
-                                                                     RtmTaskSeriesColumns.URL_IDX ),
-                                           CursorUtils.getOptLong( c,
-                                                                   RtmRawTaskColumns.COMPLETED_DATE_IDX,
-                                                                   RtmConstants.NO_TIME ),
-                                           Priority.fromString( c.getString( RtmRawTaskColumns.PRIORITY_IDX ) ),
-                                           c.getInt( RtmRawTaskColumns.POSTPONED_IDX ),
-                                           CursorUtils.getOptLong( c,
-                                                                   RtmRawTaskColumns.DUE_IDX,
-                                                                   RtmConstants.NO_TIME ),
-                                           CursorUtils.getOptBool( c,
-                                                                   RtmRawTaskColumns.HAS_DUE_TIME_IDX,
-                                                                   false ),
-                                           CursorUtils.getOptString( c,
-                                                                     RtmTaskSeriesColumns.RECURRENCE_IDX ),
-                                           CursorUtils.getOptBool( c,
-                                                                   RtmTaskSeriesColumns.RECURRENCE_EVERY_IDX,
-                                                                   false ),
-                                           CursorUtils.getOptString( c,
-                                                                     RtmRawTaskColumns.ESTIMATE_IDX ),
-                                           tags,
-                                           null,
-                                           null );
+         final RtmTaskSeries taskSeries = new RtmTaskSeries( c.getString( RtmTaskSeriesColumns.RTM_TASKSERIES_ID_IDX ),
+                                                             c.getLong( RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE_IDX ),
+                                                             c.getLong( RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE_IDX ),
+                                                             c.getString( RtmTaskSeriesColumns.RTM_LIST_ID_IDX ),
+                                                             CursorUtils.getOptString( c,
+                                                                                       RtmTaskSeriesColumns.RTM_LOCATION_ID_IDX ),
+                                                             c.getString( RtmTaskSeriesColumns.TASKSERIES_NAME_IDX ),
+                                                             c.getString( RtmTaskSeriesColumns.SOURCE_IDX ),
+                                                             CursorUtils.getOptString( c,
+                                                                                       RtmTaskSeriesColumns.URL_IDX ),
+                                                             CursorUtils.getOptString( c,
+                                                                                       RtmTaskSeriesColumns.RECURRENCE_IDX ),
+                                                             CursorUtils.getOptBool( c,
+                                                                                     RtmTaskSeriesColumns.RECURRENCE_EVERY_IDX,
+                                                                                     false ),
+                                                             tags,
+                                                             null,
+                                                             null );
+         return taskSeries;
+      }
+   }
+   
+   
+   private final class RtmRawTaskFactoryMethod implements
+            IFactoryMethod< RtmRawTask >
+   {
+      @Override
+      public RtmRawTask create( Cursor c )
+      {
+         final RtmRawTask task = new RtmRawTask( c.getString( RtmRawTaskColumns.RTM_RAWTASK_ID_IDX ),
+                                                 c.getLong( RtmRawTaskColumns.ADDED_DATE_IDX ),
+                                                 CursorUtils.getOptLong( c,
+                                                                         RtmRawTaskColumns.DELETED_DATE_IDX,
+                                                                         RtmConstants.NO_TIME ),
+                                                 CursorUtils.getOptLong( c,
+                                                                         RtmRawTaskColumns.COMPLETED_DATE_IDX,
+                                                                         RtmConstants.NO_TIME ),
+                                                 Priority.fromString( c.getString( RtmRawTaskColumns.PRIORITY_IDX ) ),
+                                                 c.getInt( RtmRawTaskColumns.POSTPONED_IDX ),
+                                                 CursorUtils.getOptLong( c,
+                                                                         RtmRawTaskColumns.DUE_IDX,
+                                                                         RtmConstants.NO_TIME ),
+                                                 CursorUtils.getOptBool( c,
+                                                                         RtmRawTaskColumns.HAS_DUE_TIME_IDX,
+                                                                         false ),
+                                                 CursorUtils.getOptString( c,
+                                                                           RtmRawTaskColumns.ESTIMATE_IDX ) );
          return task;
       }
    }
@@ -166,9 +181,14 @@ public class RtmModelElementFactory implements IModelElementFactory
    private final Collection< String > getTags( Cursor c )
    {
       final String tagsJoined = CursorUtils.getOptString( c,
-                                                          RtmTaskSeriesColumns.TAGS_IDX,
-                                                          Strings.EMPTY_STRING );
-      return Arrays.asList( tagsJoined.split( RtmTaskSeriesColumns.TAGS_SEPARATOR ) );
+                                                          RtmTaskSeriesColumns.TAGS_IDX );
+      
+      if ( tagsJoined != null )
+      {
+         return Arrays.asList( tagsJoined.split( RtmTaskSeriesColumns.TAGS_SEPARATOR ) );
+      }
+      
+      return null;
    }
    
    

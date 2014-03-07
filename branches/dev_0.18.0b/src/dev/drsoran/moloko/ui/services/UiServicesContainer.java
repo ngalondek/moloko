@@ -24,6 +24,7 @@ package dev.drsoran.moloko.ui.services;
 
 import android.content.Context;
 import dev.drsoran.moloko.domain.DomainContext;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class UiServicesContainer implements IUiServices
@@ -32,13 +33,17 @@ public class UiServicesContainer implements IUiServices
    
    private final MolokoDateFormatterService dataFormatterService;
    
+   private final IRtmCalendarProvider calendarProvider;
+   
    
    
    public UiServicesContainer( Context context,
-      MolokoDateFormatterService dateFormatterService )
+      MolokoDateFormatterService dateFormatterService,
+      IRtmCalendarProvider calendarProvider )
    {
       this.context = context;
       this.dataFormatterService = dateFormatterService;
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -70,7 +75,8 @@ public class UiServicesContainer implements IUiServices
                                                .getDateTimeParsing(),
                                   domainContext.getParsingService()
                                                .getRecurrenceParsing(),
-                                  dataFormatterService );
+                                  dataFormatterService,
+                                  calendarProvider );
    }
    
 }

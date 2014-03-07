@@ -47,7 +47,7 @@ public abstract class MolokoDbContentTestCase extends MolokoDbTestCase
       
       assertTrue( contentProvider.onCreate() );
       
-      contentProvider.init( createLog() );
+      contentProvider.init( createLog(), TestCalendarProvider.get() );
    }
    
    

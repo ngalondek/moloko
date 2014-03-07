@@ -51,7 +51,9 @@ import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmRawTask;
 import dev.drsoran.rtm.model.RtmTask;
+import dev.drsoran.rtm.model.RtmTaskSeries;
 
 
 public class RtmTaskSeriesContentHandler extends
@@ -89,6 +91,8 @@ public class RtmTaskSeriesContentHandler extends
    private CharactersContext charactersContext = CharactersContext.None;
    
    private Attributes taskSeriesAttributes;
+   
+   private RtmTaskSeries taskSeries;
    
    private String recurrencePattern;
    
@@ -190,8 +194,36 @@ public class RtmTaskSeriesContentHandler extends
       else if ( "taskseries".equalsIgnoreCase( qName ) )
       {
          setContentElementAndNotify( tasks );
-         taskSeriesAttributes = null;
       }
+   }
+   
+   
+   
+   private void createTaskSeries() throws SAXException
+   {
+      taskSeries = new RtmTaskSeries( XmlAttr.getStringNotNull( taskSeriesAttributes,
+                                                                ID ),
+                                      XmlAttr.getOptMillisUtc( taskSeriesAttributes,
+                                                               CREATED_DATE ),
+                                      XmlAttr.getOptMillisUtc( taskSeriesAttributes,
+                                                               MODIFIED_DATE ),
+                                      listId,
+                                      XmlAttr.getOptString( taskSeriesAttributes,
+                                                            LOCATION_ID,
+                                                            RtmConstants.NO_ID ),
+                                      XmlAttr.getStringNotNull( taskSeriesAttributes,
+                                                                NAME ),
+                                      XmlAttr.getOptString( taskSeriesAttributes,
+                                                            SOURCE,
+                                                            Strings.EMPTY_STRING ),
+                                      XmlAttr.getOptString( taskSeriesAttributes,
+                                                            URL,
+                                                            Strings.EMPTY_STRING ),
+                                      recurrencePattern,
+                                      isEveryRecurrence,
+                                      tags,
+                                      notes,
+                                      participants );
    }
    
    
@@ -234,48 +266,31 @@ public class RtmTaskSeriesContentHandler extends
    
    private void addTask() throws SAXException
    {
-      final RtmTask task = new RtmTask( XmlAttr.getStringNotNull( taskAttributes,
-                                                                  ID ),
-                                        XmlAttr.getStringNotNull( taskSeriesAttributes,
-                                                                  ID ),
-                                        XmlAttr.getOptMillisUtc( taskSeriesAttributes,
-                                                                 CREATED_DATE ),
-                                        XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 ADDED_DATE ),
-                                        XmlAttr.getOptMillisUtc( taskSeriesAttributes,
-                                                                 MODIFIED_DATE ),
-                                        XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 DELETED_DATE ),
-                                        listId,
-                                        XmlAttr.getOptString( taskSeriesAttributes,
-                                                              LOCATION_ID,
-                                                              RtmConstants.NO_ID ),
-                                        XmlAttr.getStringNotNull( taskSeriesAttributes,
-                                                                  NAME ),
-                                        XmlAttr.getOptString( taskSeriesAttributes,
-                                                              SOURCE,
-                                                              Strings.EMPTY_STRING ),
-                                        XmlAttr.getOptString( taskSeriesAttributes,
-                                                              URL,
-                                                              Strings.EMPTY_STRING ),
-                                        XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 COMPLETED_DATE ),
-                                        Priority.fromString( XmlAttr.getStringNotNull( taskAttributes,
-                                                                                       PRIORITY ) ),
-                                        XmlAttr.getInt( taskAttributes,
-                                                        POSTPONED ),
-                                        XmlAttr.getOptMillisUtc( taskAttributes,
-                                                                 DUE_DATE ),
-                                        XmlAttr.getBoolean( taskAttributes,
-                                                            HAS_DUE_TIME ),
-                                        recurrencePattern,
-                                        isEveryRecurrence,
-                                        Strings.nullIfEmpty( XmlAttr.getOptString( taskAttributes,
-                                                                                   ESTIMATE,
-                                                                                   null ) ),
-                                        tags,
-                                        notes,
-                                        participants );
+      if ( taskSeries == null )
+      {
+         createTaskSeries();
+      }
+      
+      final RtmTask task = new RtmTask( taskSeries,
+                                        new RtmRawTask( XmlAttr.getStringNotNull( taskAttributes,
+                                                                                  ID ),
+                                                        XmlAttr.getOptMillisUtc( taskAttributes,
+                                                                                 ADDED_DATE ),
+                                                        XmlAttr.getOptMillisUtc( taskAttributes,
+                                                                                 DELETED_DATE ),
+                                                        XmlAttr.getOptMillisUtc( taskAttributes,
+                                                                                 COMPLETED_DATE ),
+                                                        Priority.fromString( XmlAttr.getStringNotNull( taskAttributes,
+                                                                                                       PRIORITY ) ),
+                                                        XmlAttr.getInt( taskAttributes,
+                                                                        POSTPONED ),
+                                                        XmlAttr.getOptMillisUtc( taskAttributes,
+                                                                                 DUE_DATE ),
+                                                        XmlAttr.getBoolean( taskAttributes,
+                                                                            HAS_DUE_TIME ),
+                                                        Strings.nullIfEmpty( XmlAttr.getOptString( taskAttributes,
+                                                                                                   ESTIMATE,
+                                                                                                   null ) ) ) );
       tasks.add( task );
    }
 }

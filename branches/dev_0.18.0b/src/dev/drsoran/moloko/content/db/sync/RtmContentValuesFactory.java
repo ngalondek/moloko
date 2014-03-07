@@ -40,8 +40,9 @@ import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
 import dev.drsoran.rtm.model.RtmNote;
+import dev.drsoran.rtm.model.RtmRawTask;
 import dev.drsoran.rtm.model.RtmSettings;
-import dev.drsoran.rtm.model.RtmTask;
+import dev.drsoran.rtm.model.RtmTaskSeries;
 import dev.drsoran.rtm.model.RtmTasksList;
 
 
@@ -55,8 +56,10 @@ public class RtmContentValuesFactory implements IContentValuesFactory
    {
       factoryMethodLookUp.put( RtmTasksList.class,
                                new RtmTasksListContentValuesFactoryMethod() );
-      factoryMethodLookUp.put( RtmTask.class,
-                               new RtmTaskContentValuesFactoryMethod() );
+      factoryMethodLookUp.put( RtmTaskSeries.class,
+                               new RtmTaskSeriesContentValuesFactoryMethod() );
+      factoryMethodLookUp.put( RtmRawTask.class,
+                               new RtmRawTaskContentValuesFactoryMethod() );
       factoryMethodLookUp.put( RtmNote.class,
                                new RtmNoteContentValuesFactoryMethod() );
       factoryMethodLookUp.put( RtmContact.class,
@@ -125,46 +128,46 @@ public class RtmContentValuesFactory implements IContentValuesFactory
    }
    
    
-   private final class RtmTaskContentValuesFactoryMethod implements
-            IFactoryMethod< RtmTask >
+   private final class RtmTaskSeriesContentValuesFactoryMethod implements
+            IFactoryMethod< RtmTaskSeries >
    {
       @Override
-      public ContentValues create( RtmTask task )
+      public ContentValues create( RtmTaskSeries taskSeries )
       {
          final ContentValues values = new ContentValues();
          
-         values.put( RtmRawTaskColumns.RTM_RAWTASK_ID, task.getId() );
+         values.put( RtmTaskSeriesColumns.RTM_TASKSERIES_ID, taskSeries.getId() );
          values.put( RtmTaskSeriesColumns.TASKSERIES_CREATED_DATE,
-                     task.getCreatedMillisUtc() );
+                     taskSeries.getCreatedMillisUtc() );
          values.put( RtmTaskSeriesColumns.TASKSERIES_MODIFIED_DATE,
-                     task.getModifiedMillisUtc() );
-         values.put( RtmTaskSeriesColumns.TASKSERIES_NAME, task.getName() );
-         values.put( RtmTaskSeriesColumns.RTM_LIST_ID, task.getListId() );
+                     taskSeries.getModifiedMillisUtc() );
+         values.put( RtmTaskSeriesColumns.TASKSERIES_NAME, taskSeries.getName() );
+         values.put( RtmTaskSeriesColumns.RTM_LIST_ID, taskSeries.getListId() );
          
-         if ( !Strings.isNullOrEmpty( task.getSource() ) )
+         if ( !Strings.isNullOrEmpty( taskSeries.getSource() ) )
          {
-            values.put( RtmTaskSeriesColumns.SOURCE, task.getSource() );
+            values.put( RtmTaskSeriesColumns.SOURCE, taskSeries.getSource() );
          }
          else
          {
             values.putNull( RtmTaskSeriesColumns.SOURCE );
          }
          
-         if ( !Strings.isNullOrEmpty( task.getUrl() ) )
+         if ( !Strings.isNullOrEmpty( taskSeries.getUrl() ) )
          {
-            values.put( RtmTaskSeriesColumns.URL, task.getUrl() );
+            values.put( RtmTaskSeriesColumns.URL, taskSeries.getUrl() );
          }
          else
          {
             values.putNull( RtmTaskSeriesColumns.URL );
          }
          
-         final String recurrencePattern = task.getRecurrencePattern();
+         final String recurrencePattern = taskSeries.getRecurrencePattern();
          if ( recurrencePattern != null )
          {
             values.put( RtmTaskSeriesColumns.RECURRENCE, recurrencePattern );
             values.put( RtmTaskSeriesColumns.RECURRENCE_EVERY,
-                        task.isEveryRecurrence() ? 1 : 0 );
+                        taskSeries.isEveryRecurrence() ? 1 : 0 );
          }
          else
          {
@@ -172,16 +175,17 @@ public class RtmContentValuesFactory implements IContentValuesFactory
             values.putNull( RtmTaskSeriesColumns.RECURRENCE_EVERY );
          }
          
-         if ( task.getLocationId() != RtmConstants.NO_ID )
+         if ( taskSeries.getLocationId() != RtmConstants.NO_ID )
          {
-            values.put( RtmTaskSeriesColumns.LOCATION_ID, task.getLocationId() );
+            values.put( RtmTaskSeriesColumns.RTM_LOCATION_ID,
+                        taskSeries.getLocationId() );
          }
          else
          {
-            values.putNull( RtmTaskSeriesColumns.LOCATION_ID );
+            values.putNull( RtmTaskSeriesColumns.RTM_LOCATION_ID );
          }
          
-         final Iterable< String > tags = task.getTags();
+         final Iterable< String > tags = taskSeries.getTags();
          final String tagsJoined = Strings.join( RtmTaskSeriesColumns.TAGS_SEPARATOR,
                                                  tags );
          
@@ -194,43 +198,59 @@ public class RtmContentValuesFactory implements IContentValuesFactory
             values.putNull( RtmTaskSeriesColumns.TAGS );
          }
          
-         values.put( RtmRawTaskColumns.ADDED_DATE, task.getAddedMillisUtc() );
-         values.put( RtmRawTaskColumns.PRIORITY, task.getPriority().toString() );
-         values.put( RtmRawTaskColumns.POSTPONED, task.getPostponedCount() );
+         return values;
+      }
+   }
+   
+   
+   private final class RtmRawTaskContentValuesFactoryMethod implements
+            IFactoryMethod< RtmRawTask >
+   {
+      @Override
+      public ContentValues create( RtmRawTask rawTask )
+      {
+         final ContentValues values = new ContentValues();
          
-         final long due = task.getDueMillisUtc();
+         values.put( RtmRawTaskColumns.RTM_RAWTASK_ID, rawTask.getId() );
+         values.put( RtmRawTaskColumns.ADDED_DATE, rawTask.getAddedMillisUtc() );
+         values.put( RtmRawTaskColumns.PRIORITY, rawTask.getPriority()
+                                                        .toString() );
+         values.put( RtmRawTaskColumns.POSTPONED, rawTask.getPostponedCount() );
+         
+         final long due = rawTask.getDueMillisUtc();
          if ( due != RtmConstants.NO_TIME )
          {
             values.put( RtmRawTaskColumns.DUE_DATE, due );
-            values.put( RtmRawTaskColumns.HAS_DUE_TIME, task.hasDueTime() ? 1
-                                                                         : 0 );
+            values.put( RtmRawTaskColumns.HAS_DUE_TIME, rawTask.hasDueTime()
+                                                                            ? 1
+                                                                            : 0 );
          }
          else
          {
             values.putNull( RtmRawTaskColumns.DUE_DATE );
          }
          
-         if ( task.getCompletedMillisUtc() != RtmConstants.NO_TIME )
+         if ( rawTask.getCompletedMillisUtc() != RtmConstants.NO_TIME )
          {
             values.put( RtmRawTaskColumns.COMPLETED_DATE,
-                        task.getCompletedMillisUtc() );
+                        rawTask.getCompletedMillisUtc() );
          }
          else
          {
             values.putNull( RtmRawTaskColumns.COMPLETED_DATE );
          }
          
-         if ( task.getDeletedMillisUtc() != RtmConstants.NO_TIME )
+         if ( rawTask.getDeletedMillisUtc() != RtmConstants.NO_TIME )
          {
             values.put( RtmRawTaskColumns.DELETED_DATE,
-                        task.getDeletedMillisUtc() );
+                        rawTask.getDeletedMillisUtc() );
          }
          else
          {
             values.putNull( RtmRawTaskColumns.DELETED_DATE );
          }
          
-         final String estimation = task.getEstimationSentence();
+         final String estimation = rawTask.getEstimationSentence();
          if ( estimation != null )
          {
             values.put( RtmRawTaskColumns.ESTIMATE, estimation );
@@ -258,16 +278,8 @@ public class RtmContentValuesFactory implements IContentValuesFactory
                      note.getCreatedMillisUtc() );
          values.put( RtmNoteColumns.NOTE_MODIFIED_DATE,
                      note.getModifiedMillisUtc() );
+         values.put( RtmNoteColumns.NOTE_TITLE, note.getTitle() );
          values.put( RtmNoteColumns.NOTE_TEXT, note.getText() );
-         
-         if ( !Strings.isNullOrEmpty( note.getTitle() ) )
-         {
-            values.put( RtmNoteColumns.NOTE_TITLE, note.getTitle() );
-         }
-         else
-         {
-            values.putNull( RtmNoteColumns.NOTE_TITLE );
-         }
          
          return values;
       }

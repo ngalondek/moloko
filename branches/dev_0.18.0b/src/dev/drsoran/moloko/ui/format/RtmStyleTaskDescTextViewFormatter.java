@@ -24,7 +24,6 @@ package dev.drsoran.moloko.ui.format;
 
 import android.graphics.Typeface;
 import android.text.SpannableString;
-import android.text.format.Time;
 import android.text.style.UnderlineSpan;
 import android.widget.TextView;
 import dev.drsoran.moloko.domain.model.Due;
@@ -36,13 +35,8 @@ public final class RtmStyleTaskDescTextViewFormatter
 {
    public final static void setTaskDescription( TextView view,
                                                 Task task,
-                                                Time timeBase )
+                                                long nowMillisUtc )
    {
-      if ( timeBase == null )
-      {
-         timeBase = MolokoDateUtils.newTime();
-      }
-      
       view.setText( task.getName() );
       
       boolean setTypeFace = false;
@@ -55,7 +49,7 @@ public final class RtmStyleTaskDescTextViewFormatter
          final long dueDateMillis = taskDue.getMillisUtc();
          
          // Make bold if the task is today
-         if ( MolokoDateUtils.isToday( dueDateMillis ) )
+         if ( MolokoDateUtils.isToday( nowMillisUtc, dueDateMillis ) )
          {
             view.setTypeface( Typeface.DEFAULT_BOLD );
             view.setText( task.getName() );
@@ -65,9 +59,7 @@ public final class RtmStyleTaskDescTextViewFormatter
          // Make underline and bold if overdue
          else
          {
-            final Time dueTime = MolokoDateUtils.newTime( dueDateMillis );
-            
-            if ( timeBase.after( dueTime ) )
+            if ( MolokoDateUtils.isAfter( dueDateMillis, nowMillisUtc ) )
             {
                final SpannableString content = new SpannableString( task.getName() );
                

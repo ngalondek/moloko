@@ -32,7 +32,6 @@ import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 public class TestCalendarProvider
 {
-   
    private final static RtmCalendar TODAY_CAL;
    
    static
@@ -47,14 +46,33 @@ public class TestCalendarProvider
    
    
    
+   private TestCalendarProvider()
+   {
+   }
+   
+   
+   
+   public static IRtmCalendarProvider get()
+   {
+      return get( TestConstants.DATE_NOW, TestConstants.DATE_TODAY );
+   }
+   
+   
+   
    public static IRtmCalendarProvider get( RtmCalendar now, RtmCalendar today )
    {
       final IRtmCalendarProvider calenderProvider = EasyMock.createNiceMock( IRtmCalendarProvider.class );
       EasyMock.expect( calenderProvider.getNow() )
               .andReturn( now.clone() )
               .anyTimes();
+      EasyMock.expect( calenderProvider.getNowMillisUtc() )
+              .andReturn( now.getTimeInMillis() )
+              .anyTimes();
       EasyMock.expect( calenderProvider.getToday() )
               .andReturn( today.clone() )
+              .anyTimes();
+      EasyMock.expect( calenderProvider.getTodayMillisUtc() )
+              .andReturn( today.getTimeInMillis() )
               .anyTimes();
       EasyMock.replay( calenderProvider );
       

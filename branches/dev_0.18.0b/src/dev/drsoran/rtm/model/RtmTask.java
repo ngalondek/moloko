@@ -22,61 +22,14 @@
 
 package dev.drsoran.rtm.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-
-import dev.drsoran.Strings;
-import dev.drsoran.rtm.content.ContentProperties.RtmTaskProperties;
 
 
 public class RtmTask
 {
-   private final String id;
+   private final RtmTaskSeries taskSeries;
    
-   private final String taskSeriesId;
-   
-   private final long createdMillisUtc;
-   
-   private final long addedMillisUtc;
-   
-   private final long modifiedMillisUtc;
-   
-   private final long deletedMillisUtc;
-   
-   private final String listId;
-   
-   private final String locationId;
-   
-   private final String name;
-   
-   private final String source;
-   
-   private final String url;
-   
-   private final long completedMillisUtc;
-   
-   private final Priority priority;
-   
-   private final int numPostponed;
-   
-   private final long dueMillisUtc;
-   
-   private final boolean hasDueTime;
-   
-   private final String recurrencePattern;
-   
-   private final boolean isEveryRecurrence;
-   
-   private final String estimationSentence;
-   
-   private final Collection< String > tags;
-   
-   private final Collection< RtmContact > participants;
-   
-   private Collection< RtmNote > notes;
-   
-   private String recurrenceSentence;
+   private final RtmRawTask rawTask;
    
    
    
@@ -89,283 +42,263 @@ public class RtmTask
       Collection< String > tags, Collection< RtmNote > notes,
       Collection< RtmContact > participants )
    {
-      if ( createdMillisUtc == RtmConstants.NO_TIME )
+      this( new RtmTaskSeries( taskSeriesId,
+                               createdMillisUtc,
+                               modifiedMillisUtc,
+                               listId,
+                               locationId,
+                               name,
+                               source,
+                               url,
+                               recurrencePattern,
+                               isEveryRecurrence,
+                               tags,
+                               notes,
+                               participants ),
+            new RtmRawTask( id,
+                            addedMillisUtc,
+                            deletedMillisUtc,
+                            completedMillisUtc,
+                            priority,
+                            numPostponed,
+                            dueMillisUtc,
+                            hasDueTime,
+                            estimationSentence ) );
+   }
+   
+   
+   
+   public RtmTask( RtmTaskSeries taskSeries, RtmRawTask rawTask )
+   {
+      if ( taskSeries == null )
       {
-         throw new IllegalArgumentException( "createdMillisUtc" );
+         throw new IllegalArgumentException( "taskSeries" );
       }
       
-      if ( addedMillisUtc == RtmConstants.NO_TIME )
+      if ( rawTask == null )
       {
-         throw new IllegalArgumentException( "addedMillisUtc" );
+         throw new IllegalArgumentException( "rawTask" );
       }
       
-      if ( listId == RtmConstants.NO_ID )
-      {
-         throw new IllegalArgumentException( "listId" );
-      }
-      
-      if ( Strings.isNullOrEmpty( name ) )
-      {
-         throw new IllegalArgumentException( "name" );
-      }
-      
-      if ( numPostponed < 0 )
-      {
-         throw new IllegalArgumentException( "numPostponed" );
-      }
-      
-      this.id = id;
-      this.taskSeriesId = taskSeriesId;
-      this.createdMillisUtc = createdMillisUtc;
-      this.addedMillisUtc = addedMillisUtc;
-      this.modifiedMillisUtc = modifiedMillisUtc;
-      this.deletedMillisUtc = deletedMillisUtc;
-      this.listId = listId;
-      this.locationId = locationId;
-      this.name = name;
-      this.source = source;
-      this.url = Strings.emptyIfNull( url );
-      this.completedMillisUtc = completedMillisUtc;
-      this.priority = priority;
-      this.numPostponed = numPostponed;
-      this.dueMillisUtc = dueMillisUtc;
-      this.hasDueTime = hasDueTime;
-      this.recurrencePattern = recurrencePattern;
-      this.isEveryRecurrence = isEveryRecurrence;
-      this.estimationSentence = estimationSentence;
-      this.tags = tags;
-      this.notes = notes;
-      this.participants = participants;
+      this.taskSeries = taskSeries;
+      this.rawTask = rawTask;
    }
    
    
    
    public String getId()
    {
-      return id;
+      return rawTask.getId();
    }
    
    
    
    public String getTaskSeriesId()
    {
-      return taskSeriesId;
+      return taskSeries.getId();
    }
    
    
    
    public String getName()
    {
-      return name;
+      return taskSeries.getName();
    }
    
    
    
    public String getSource()
    {
-      return source;
+      return taskSeries.getSource();
    }
    
    
    
    public String getUrl()
    {
-      return url;
+      return taskSeries.getUrl();
    }
    
    
    
    public long getCreatedMillisUtc()
    {
-      return createdMillisUtc;
+      return taskSeries.getCreatedMillisUtc();
    }
    
    
    
    public long getAddedMillisUtc()
    {
-      return addedMillisUtc;
+      return rawTask.getAddedMillisUtc();
    }
    
    
    
    public long getModifiedMillisUtc()
    {
-      return modifiedMillisUtc;
+      return taskSeries.getModifiedMillisUtc();
    }
    
    
    
    public long getDeletedMillisUtc()
    {
-      return deletedMillisUtc;
+      return rawTask.getDeletedMillisUtc();
    }
    
    
    
    public long getCompletedMillisUtc()
    {
-      return completedMillisUtc;
+      return rawTask.getCompletedMillisUtc();
    }
    
    
    
    public Priority getPriority()
    {
-      return priority;
+      return rawTask.getPriority();
    }
    
    
    
    public int getPostponedCount()
    {
-      return numPostponed;
+      return rawTask.getPostponedCount();
    }
    
    
    
    public long getDueMillisUtc()
    {
-      return dueMillisUtc;
+      return rawTask.getDueMillisUtc();
    }
    
    
    
    public boolean hasDueTime()
    {
-      return hasDueTime;
+      return rawTask.hasDueTime();
    }
    
    
    
    public String getRecurrencePattern()
    {
-      return recurrencePattern;
+      return taskSeries.getRecurrencePattern();
    }
    
    
    
    public String getRecurrenceSentence()
    {
-      return recurrenceSentence;
+      return taskSeries.getRecurrenceSentence();
    }
    
    
    
    public void setRecurrenceSentence( String recurrenceSentence )
    {
-      this.recurrenceSentence = recurrenceSentence;
+      taskSeries.setRecurrenceSentence( recurrenceSentence );
    }
    
    
    
    public boolean isEveryRecurrence()
    {
-      return isEveryRecurrence;
+      return taskSeries.isEveryRecurrence();
    }
    
    
    
    public String getEstimationSentence()
    {
-      return estimationSentence;
+      return rawTask.getEstimationSentence();
    }
    
    
    
    public Collection< String > getTags()
    {
-      return tags != null ? tags : Collections.< String > emptyList();
+      return taskSeries.getTags();
    }
    
    
    
    public String getTagsJoined()
    {
-      return Strings.join( RtmTaskProperties.TAGS_SEPARATOR, getTags() );
+      return taskSeries.getTagsJoined();
    }
    
    
    
    public Collection< ? extends RtmNote > getNotes()
    {
-      return notes != null ? notes : Collections.< RtmNote > emptyList();
+      return taskSeries.getNotes();
    }
    
    
    
    public RtmNote getNote( String noteId )
    {
-      for ( RtmNote note : getNotes() )
-      {
-         if ( note.getId().equals( noteId ) )
-         {
-            return note;
-         }
-      }
-      
-      return null;
+      return taskSeries.getNote( noteId );
    }
    
    
    
    public boolean hasNote( String noteId )
    {
-      return getNote( noteId ) != null;
+      return taskSeries.hasNote( noteId );
    }
    
    
    
    public void addNote( RtmNote note )
    {
-      if ( note == null )
-      {
-         throw new IllegalArgumentException( "note" );
-      }
-      
-      if ( notes == null )
-      {
-         notes = new ArrayList< RtmNote >();
-      }
-      
-      notes.add( note );
+      taskSeries.addNote( note );
    }
    
    
    
    public Collection< RtmContact > getParticipants()
    {
-      return participants != null ? participants
-                                 : Collections.< RtmContact > emptyList();
+      return taskSeries.getParticipants();
    }
    
    
    
    public RtmContact getParticipant( String participantId )
    {
-      for ( RtmContact participant : getParticipants() )
-      {
-         if ( participant.getId().equals( participantId ) )
-         {
-            return participant;
-         }
-      }
-      
-      return null;
+      return taskSeries.getParticipant( participantId );
    }
    
    
    
    public String getLocationId()
    {
-      return locationId;
+      return taskSeries.getLocationId();
    }
    
    
    
    public String getListId()
    {
-      return listId;
+      return taskSeries.getListId();
+   }
+   
+   
+   
+   public RtmTaskSeries getTaskSeries()
+   {
+      return taskSeries;
+   }
+   
+   
+   
+   public RtmRawTask getRawTask()
+   {
+      return rawTask;
    }
    
    
@@ -374,11 +307,11 @@ public class RtmTask
    public String toString()
    {
       return String.format( "RtmTask [id=%s, name=%s, added=%s, completed=%s, listId=%s, notes=%s]",
-                            id,
-                            name,
-                            addedMillisUtc,
-                            completedMillisUtc,
-                            listId,
-                            notes != null ? notes.size() : 0 );
+                            getId(),
+                            getName(),
+                            getAddedMillisUtc(),
+                            getCompletedMillisUtc(),
+                            getListId(),
+                            getNotes().size() );
    }
 }

@@ -112,8 +112,7 @@ public abstract class AbstractTable implements ITable
    @Override
    public void clear( SQLiteDatabase database )
    {
-      database.execSQL( MessageFormat.format( "DELETE FROM TABLE {0}",
-                                              getTableName() ) );
+      database.delete( tableName, null, null );
    }
    
    

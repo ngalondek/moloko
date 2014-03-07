@@ -62,9 +62,17 @@ public class Estimation implements Serializable
    
    
    
+   // TODO: This must not always be set, even if we have a sentence. The sentence may not be parsable. Consider this.
    public long getMillis()
    {
       return estimateMillis;
+   }
+   
+   
+   
+   public boolean hasMillis()
+   {
+      return estimateMillis != Constants.NO_TIME;
    }
    
    

@@ -47,6 +47,7 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmCalendar;
 import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class RtmSmartAddSuggestor
@@ -59,16 +60,20 @@ public class RtmSmartAddSuggestor
    
    private final IDateFormatterService dateFormatter;
    
+   private final IRtmCalendarProvider calendarProvider;
+   
    
    
    public RtmSmartAddSuggestor( Context context,
       IContentRepository contentRepository,
-      IRecurrenceParsing recurrenceParsing, IDateFormatterService dateFormatter )
+      IRecurrenceParsing recurrenceParsing,
+      IDateFormatterService dateFormatter, IRtmCalendarProvider calendarProvider )
    {
       this.context = context;
       this.contentRepository = contentRepository;
       this.recurrenceParsing = recurrenceParsing;
       this.dateFormatter = dateFormatter;
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -107,11 +112,11 @@ public class RtmSmartAddSuggestor
    {
       final Collection< RtmSmartAddSuggestion > suggestions = new ArrayList< RtmSmartAddSuggestion >( 7 );
       
+      final RtmCalendar cal = calendarProvider.getToday();
+      
       // Today
       suggestions.add( new RtmSmartAddSuggestion( context.getString( R.string.phr_today ),
-                                                  Long.valueOf( System.currentTimeMillis() ) ) );
-      
-      final RtmCalendar cal = RtmCalendar.getInstance();
+                                                  Long.valueOf( cal.getTimeInMillis() ) ) );
       
       // Tomorrow
       cal.add( Calendar.DAY_OF_YEAR, 1 );

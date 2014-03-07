@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.test.unit.util;
 
 import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.moloko.test.TestConstants.DATE_NOW;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -39,6 +40,7 @@ import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.test.shadows.DateUtilsShadow;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.TimeStruct;
+import dev.drsoran.rtm.RtmCalendar;
 
 
 @Config( manifest = Config.NONE, shadows =
@@ -71,43 +73,20 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    
    
    @Test
-   public void testNewTime()
-   {
-      final long nowMillis = ( System.currentTimeMillis() / 10000 ) * 10000;
-      final long newTimeMillis = ( MolokoDateUtils.newTime().toMillis( true ) / 10000 ) * 10000;
-      assertThat( newTimeMillis, is( nowMillis ) );
-   }
-   
-   
-   
-   @Test
-   public void testNewTimeLong()
-   {
-      assertThat( MolokoDateUtils.newTime( NOW ).toMillis( true ),
-                  is( ( NOW / 1000 ) * 1000 ) );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testNewTimeLongNegMillis()
-   {
-      MolokoDateUtils.newTime( -1 );
-   }
-   
-   
-   
-   @Test
    public void testIsToday()
    {
-      final Calendar cal = Calendar.getInstance();
-      assertTrue( MolokoDateUtils.isToday( cal.getTimeInMillis() ) );
+      final RtmCalendar cal = DATE_NOW.clone();
+      
+      assertTrue( MolokoDateUtils.isToday( DATE_NOW.getTimeInMillis(),
+                                           cal.getTimeInMillis() ) );
       
       cal.add( Calendar.DAY_OF_YEAR, 1 );
-      assertFalse( MolokoDateUtils.isToday( cal.getTimeInMillis() ) );
+      assertFalse( MolokoDateUtils.isToday( DATE_NOW.getTimeInMillis(),
+                                            cal.getTimeInMillis() ) );
       
       cal.add( Calendar.DAY_OF_YEAR, -2 );
-      assertFalse( MolokoDateUtils.isToday( cal.getTimeInMillis() ) );
+      assertFalse( MolokoDateUtils.isToday( DATE_NOW.getTimeInMillis(),
+                                            cal.getTimeInMillis() ) );
    }
    
    
@@ -115,7 +94,7 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testIsTodayNegMillis()
    {
-      MolokoDateUtils.isToday( -10 );
+      MolokoDateUtils.isToday( DATE_NOW.getTimeInMillis(), -10 );
    }
    
    

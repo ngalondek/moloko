@@ -35,7 +35,7 @@ public class RtmTasksListElementSyncHandler extends
          AbstractElementSyncHandler< RtmTasksList >
 {
    private final static String SEL_RTM_TASKS_LIST_MODIFIED_SINCE = RtmTasksListColumns.LIST_MODIFIED_DATE
-      + " >= ?";
+      + ">=?";
    
    private final long timeOfSyncMsUtc;
    
@@ -98,12 +98,7 @@ public class RtmTasksListElementSyncHandler extends
       contentValues.put( RtmTasksListColumns.LIST_CREATED_DATE, timeOfSyncMsUtc );
       contentValues.put( RtmTasksListColumns.LIST_MODIFIED_DATE,
                          timeOfSyncMsUtc );
-      
-      if ( elementToInsert.isDeleted() )
-      {
-         contentValues.put( RtmTasksListColumns.LIST_DELETED_DATE,
-                            timeOfSyncMsUtc );
-      }
+      putDeletedDate( contentValues, elementToInsert );
    }
    
    
@@ -115,11 +110,22 @@ public class RtmTasksListElementSyncHandler extends
    {
       contentValues.put( RtmTasksListColumns.LIST_MODIFIED_DATE,
                          timeOfSyncMsUtc );
-      
-      if ( updatedElement.isDeleted() )
+      putDeletedDate( contentValues, updatedElement );
+   }
+   
+   
+   
+   private void putDeletedDate( ContentValues contentValues,
+                                RtmTasksList tasksList )
+   {
+      if ( tasksList.isDeleted() )
       {
          contentValues.put( RtmTasksListColumns.LIST_DELETED_DATE,
                             timeOfSyncMsUtc );
+      }
+      else
+      {
+         contentValues.putNull( RtmTasksListColumns.LIST_DELETED_DATE );
       }
    }
 }

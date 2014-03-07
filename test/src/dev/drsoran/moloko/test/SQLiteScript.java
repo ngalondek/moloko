@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.test;
 
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,19 +45,21 @@ public class SQLiteScript extends FileResource
    
    
    
-   @Override
-   protected void before() throws Throwable
-   {
-      super.before();
-      
-      sqlStatements = readScriptFromFile();
-      close();
-   }
-   
-   
-   
    public Collection< String > getSqlStatements()
    {
+      try
+      {
+         sqlStatements = readScriptFromFile();
+      }
+      catch ( IOException e )
+      {
+         fail( e.getLocalizedMessage() );
+      }
+      finally
+      {
+         close();
+      }
+      
       return sqlStatements;
    }
    

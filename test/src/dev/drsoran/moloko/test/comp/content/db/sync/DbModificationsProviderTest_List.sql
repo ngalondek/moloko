@@ -1,0 +1,48 @@
+INSERT INTO lists (_id,
+                   list_name,
+                   list_created,
+                   list_modified,
+                   list_deleted,
+                   locked,
+                   archived,
+                   position,
+                   smart,
+                   filter,
+                   rtm_list_id)
+   VALUES (1,
+           "NonSmartList",
+           1356998400000,
+           1356998400001,
+           NULL,
+           0,
+           0,
+           -1,
+           0,
+           NULL,
+           "1");
+
+INSERT INTO modifications ( _id,
+                            entity_uri,
+                            property,
+                            new_value,
+                            synced_value,
+                            timestamp)
+   VALUES (1,
+           "content://dev.drsoran.provider.Rtm/lists/1",
+           "list_name",
+           "List1",
+           "List",
+           1356998400000);
+           
+INSERT INTO modifications ( _id,
+                            entity_uri,
+                            property,
+                            new_value,
+                            synced_value,
+                            timestamp)
+   VALUES (2,
+           "content://dev.drsoran.provider.Rtm/lists/2",
+           "list_name",
+           "List2",
+           "List",
+           1356998400000);           

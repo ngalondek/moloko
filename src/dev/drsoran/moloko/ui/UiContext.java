@@ -34,6 +34,7 @@ import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.services.ISmartAddService;
 import dev.drsoran.moloko.ui.services.IUiServices;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public final class UiContext extends ContextWrapper
@@ -116,5 +117,12 @@ public final class UiContext extends ContextWrapper
    public ISmartAddService getSmartAddService()
    {
       return uiServices.getSmartAddService();
+   }
+   
+   
+   
+   public IRtmCalendarProvider getCalendarProvider()
+   {
+      return domainContext.getCalendarProvider();
    }
 }

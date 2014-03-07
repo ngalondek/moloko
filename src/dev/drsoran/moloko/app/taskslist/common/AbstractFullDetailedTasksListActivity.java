@@ -444,8 +444,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private void completeSelectedTasks( List< ? extends Task > tasks )
    {
-      getAppContext().getContentEditService()
-                     .completeTasks( this, tasks, System.currentTimeMillis() );
+      getAppContext().getContentEditService().completeTasks( this, tasks );
       
       clearListChoices();
    }

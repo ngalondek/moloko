@@ -34,47 +34,47 @@ import android.net.Uri;
 
 public final class ContentUris
 {
-   private static final String TASKS_LISTS_URI_PATH = "lists";
+   public static final String TASKS_LISTS_URI_PATH = "lists";
    
-   private static final String TASKS_LISTS_ID_URI_PATH = "lists/#";
+   public static final String TASKS_LISTS_ID_URI_PATH = "lists/#";
    
-   private static final String TASKS_URI_PATH = "tasks";
+   public static final String TASKS_URI_PATH = "tasks";
    
-   private static final String TASKS_ID_URI_PATH = "tasks/#";
+   public static final String TASKS_ID_URI_PATH = "tasks/#";
    
-   private static final String TASKS_COUNT_URI_PATH = "tasks/count";
+   public static final String TASKS_COUNT_URI_PATH = "tasks/count";
    
-   private static final String TASK_NOTES_URI_PATH = "tasks/#/notes";
+   public static final String TASK_NOTES_URI_PATH = "tasks/#/notes";
    
-   private static final String TASK_NOTES_ID_URI_PATH = "tasks/#/notes/#";
+   public static final String TASK_NOTES_ID_URI_PATH = "tasks/#/notes/#";
    
-   private static final String TASK_PARTICIPANTS_URI_PATH = "tasks/#/participants";
+   public static final String TASK_PARTICIPANTS_URI_PATH = "tasks/#/participants";
    
-   private static final String TASK_PARTICIPANTS_ID_URI_PATH = "tasks/#/participants/#";
+   public static final String TASK_PARTICIPANTS_ID_URI_PATH = "tasks/#/participants/#";
    
-   private static final String LOCATIONS_URI_PATH = "locations";
+   public static final String LOCATIONS_URI_PATH = "locations";
    
-   private static final String LOCATIONS_ID_URI_PATH = "locations/#";
+   public static final String LOCATIONS_ID_URI_PATH = "locations/#";
    
-   private static final String CONTACTS_URI_PATH = "contacts";
+   public static final String CONTACTS_URI_PATH = "contacts";
    
-   private static final String CONTACTS_ID_URI_PATH = "contacts/#";
+   public static final String CONTACTS_ID_URI_PATH = "contacts/#";
    
-   private static final String TAGS_URI_PATH = "tags";
+   public static final String TAGS_URI_PATH = "tags";
    
-   private static final String CLOUD_ENTRIES_URI_PATH = "cloud_entries";
+   public static final String CLOUD_ENTRIES_URI_PATH = "cloud_entries";
    
-   private static final String MODIFICATIONS_URI_PATH = "modifications";
+   public static final String MODIFICATIONS_URI_PATH = "modifications";
    
-   private static final String MODIFICATIONS_ID_URI_PATH = "modifications/#";
+   public static final String MODIFICATIONS_ID_URI_PATH = "modifications/#";
    
-   private static final String RTM_SETTINGS_URI_PATH = "rtm_settings";
+   public static final String RTM_SETTINGS_URI_PATH = "rtm_settings";
    
-   private static final String RTM_SETTINGS_ID_URI_PATH = "rtm_settings/#";
+   public static final String RTM_SETTINGS_ID_URI_PATH = "rtm_settings/#";
    
-   private static final String SYNC_URI_PATH = "sync";
+   public static final String SYNC_URI_PATH = "sync";
    
-   private static final String SYNC_ID_URI_PATH = "sync/#";
+   public static final String SYNC_ID_URI_PATH = "sync/#";
    
    
    

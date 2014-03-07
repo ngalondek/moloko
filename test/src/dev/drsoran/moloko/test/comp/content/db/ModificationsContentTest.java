@@ -168,7 +168,7 @@ public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase
          case 1:
             checkResult( c,
                          1L,
-                         "content://dev.drsoran.moloko.Rtm/lists/1",
+                         "content://dev.drsoran.provider.Rtm/lists/1",
                          "list_name",
                          "RenamedList",
                          "List",
@@ -178,7 +178,7 @@ public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase
          case 2:
             checkResult( c,
                          2L,
-                         "content://dev.drsoran.moloko.Rtm/tasks/10",
+                         "content://dev.drsoran.provider.Rtm/tasks/10",
                          "postponed",
                          "1",
                          null,
@@ -188,7 +188,7 @@ public class ModificationsContentTest extends MolokoReadWriteDbContentTestCase
          case 3:
             checkResult( c,
                          3L,
-                         "content://dev.drsoran.moloko.Rtm/tasks/10",
+                         "content://dev.drsoran.provider.Rtm/tasks/10",
                          "url",
                          null,
                          "http://www.google.de",

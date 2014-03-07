@@ -44,6 +44,7 @@ import static dev.drsoran.moloko.content.Columns.TaskColumns.URL;
 import static dev.drsoran.moloko.content.ContentUris.TASKS_CONTENT_URI_ID;
 import static dev.drsoran.moloko.test.TestConstants.LATER;
 import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.moloko.test.TestConstants.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,12 +54,13 @@ import java.util.Collections;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.content.db.Modification;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.rtm.model.Priority;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class TaskEditHandlerTestDataSource extends
@@ -66,11 +68,15 @@ public class TaskEditHandlerTestDataSource extends
 {
    private final long elementId;
    
+   private final IRtmCalendarProvider calendarProvider;
    
    
-   public TaskEditHandlerTestDataSource( long elementId )
+   
+   public TaskEditHandlerTestDataSource( long elementId,
+      IRtmCalendarProvider calendarProvider )
    {
       this.elementId = elementId;
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -93,7 +99,9 @@ public class TaskEditHandlerTestDataSource extends
       addUpdateUrl( testData );
       addUpdateTags( testData );
       addUpdatePriority( testData );
-      addUpdatePostponed( testData );
+      addUpdatePostponedNoDueDate( testData );
+      addUpdatePostponedOverdue( testData );
+      addUpdatePostponedDueToday( testData );
       addUpdateRecurrence( testData );
       addUpdateDue( testData );
       addUpdateEstimation( testData );
@@ -356,7 +364,7 @@ public class TaskEditHandlerTestDataSource extends
    
    
    
-   private void addUpdatePostponed( Collection< TestData< Task >> testData )
+   private void addUpdatePostponedNoDueDate( Collection< TestData< Task >> testData )
    {
       Task existing = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
       Task update = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
@@ -367,7 +375,63 @@ public class TaskEditHandlerTestDataSource extends
                                                        2,
                                                        0 );
       
-      testData.add( new TestData< Task >( existing, update, mod ) );
+      Modification mod1 = Modification.newNonPersistentModification( getEntityUri(),
+                                                                     DUE_DATE,
+                                                                     calendarProvider.getTodayMillisUtc() );
+      
+      testData.add( new TestData< Task >( existing,
+                                          update,
+                                          Arrays.asList( mod, mod1 ) ) );
+   }
+   
+   
+   
+   private void addUpdatePostponedOverdue( Collection< TestData< Task >> testData )
+   {
+      Task existing = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
+      existing.setDue( new Due( YESTERDAY, false ) );
+      
+      Task update = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
+      update.setDue( new Due( YESTERDAY, false ) );
+      update.setPostponedCount( 2 );
+      
+      Modification mod = Modification.newModification( getEntityUri(),
+                                                       POSTPONED,
+                                                       2,
+                                                       0 );
+      
+      Modification mod1 = Modification.newNonPersistentModification( getEntityUri(),
+                                                                     DUE_DATE,
+                                                                     calendarProvider.getTodayMillisUtc() );
+      
+      testData.add( new TestData< Task >( existing,
+                                          update,
+                                          Arrays.asList( mod, mod1 ) ) );
+   }
+   
+   
+   
+   private void addUpdatePostponedDueToday( Collection< TestData< Task >> testData )
+   {
+      Task existing = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
+      existing.setDue( new Due( TODAY, false ) );
+      
+      Task update = new Task( 1L, NOW, NOW, "Task", 100L, "List" );
+      update.setDue( new Due( TODAY, false ) );
+      update.setPostponedCount( 2 );
+      
+      Modification mod = Modification.newModification( getEntityUri(),
+                                                       POSTPONED,
+                                                       2,
+                                                       0 );
+      
+      Modification mod1 = Modification.newNonPersistentModification( getEntityUri(),
+                                                                     DUE_DATE,
+                                                                     TOMORROW );
+      
+      testData.add( new TestData< Task >( existing,
+                                          update,
+                                          Arrays.asList( mod, mod1 ) ) );
    }
    
    

@@ -22,10 +22,13 @@
 
 package dev.drsoran.moloko.content.db.sync;
 
+import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.services.IRtmSyncPartnerFactory;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
+import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;
 
 
@@ -39,17 +42,28 @@ public class DbRtmSyncPartnerFactory implements IRtmSyncPartnerFactory
    
    private final IContentValuesFactory molokoContentValuesFactory;
    
+   private final IRtmDateTimeParsing dateTimeParsing;
+   
+   private final IRtmCalendarProvider calendarProvider;
+   
+   private final ILog log;
+   
    
    
    public DbRtmSyncPartnerFactory( RtmDatabase database,
       IModelElementFactory rtmModelElementFactory,
       IContentValuesFactory rtmContentValuesFactory,
-      IContentValuesFactory molokoContentValuesFactory )
+      IContentValuesFactory molokoContentValuesFactory,
+      IRtmDateTimeParsing dateTimeParsing,
+      IRtmCalendarProvider calendarProvider, ILog log )
    {
       this.database = database;
       this.rtmModelElementFactory = rtmModelElementFactory;
       this.rtmContentValuesFactory = rtmContentValuesFactory;
       this.molokoContentValuesFactory = molokoContentValuesFactory;
+      this.dateTimeParsing = dateTimeParsing;
+      this.calendarProvider = calendarProvider;
+      this.log = log;
    }
    
    
@@ -58,7 +72,7 @@ public class DbRtmSyncPartnerFactory implements IRtmSyncPartnerFactory
    public IRtmSyncPartner createRtmSyncPartner()
    {
       final ITaskSeriesIdProvider taskSeriesIdProvider = new CachingTaskSeriesIdProvider( database );
-      final long timeOfSync = System.currentTimeMillis();
+      final long timeOfSync = calendarProvider.getNowMillisUtc();
       
       return new DbRtmSyncPartner( database,
                                    new RtmTasksListElementSyncHandler( database,
@@ -69,7 +83,9 @@ public class DbRtmSyncPartnerFactory implements IRtmSyncPartnerFactory
                                                                   rtmModelElementFactory,
                                                                   rtmContentValuesFactory,
                                                                   molokoContentValuesFactory,
-                                                                  taskSeriesIdProvider ),
+                                                                  taskSeriesIdProvider,
+                                                                  dateTimeParsing,
+                                                                  log ),
                                    new RtmLocationElementSyncHandler( database,
                                                                       rtmModelElementFactory,
                                                                       rtmContentValuesFactory ),
@@ -80,6 +96,7 @@ public class DbRtmSyncPartnerFactory implements IRtmSyncPartnerFactory
                                                                       rtmModelElementFactory,
                                                                       rtmContentValuesFactory,
                                                                       timeOfSync ),
+                                   new DbModificationsProvider( database ),
                                    rtmModelElementFactory,
                                    taskSeriesIdProvider );
    }

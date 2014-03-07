@@ -361,7 +361,7 @@ public class DefaultDateTimeEvaluator extends DateTimeParserBaseVisitor< Void >
       if ( !cal.hasTime() )
       {
          // NOW has always a time.
-         cal.setTimeInMillis( calendarProvider.getNow().getTimeInMillis() );
+         cal.setTimeInMillis( calendarProvider.getNowMillisUtc() );
          cal.setHasTime( true );
       }
       

@@ -38,6 +38,7 @@ import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentEditService;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class AppContentEditService implements IAppContentEditService
@@ -48,14 +49,18 @@ public class AppContentEditService implements IAppContentEditService
    
    private final IAccountService accountService;
    
+   private final IRtmCalendarProvider calendarProvider;
+   
    
    
    public AppContentEditService( Context context,
-      IContentEditService contentEditService, IAccountService accountService )
+      IContentEditService contentEditService, IAccountService accountService,
+      IRtmCalendarProvider calendarProvider )
    {
       this.context = context;
       this.contentEditService = contentEditService;
       this.accountService = accountService;
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -172,50 +177,18 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void completeTask( FragmentActivity context,
-                             Task task,
-                             long completedMillisUtc )
+   public void completeTask( FragmentActivity context, Task task )
    {
-      completeTasks( context,
-                     Collections.singletonList( task ),
-                     completedMillisUtc );
+      completeTasks( context, Collections.singletonList( task ) );
    }
    
    
    
    @Override
    public void completeTasks( FragmentActivity context,
-                              final Collection< ? extends Task > tasks,
-                              final long completedMillisUtc )
+                              final Collection< ? extends Task > tasks )
    {
-      final int tasksCount = tasks.size();
-      if ( tasksCount > 0 && checkWritableAccess( context ) )
-      {
-         final Resources res = context.getResources();
-         final AppContentEditInfo editInfo = new AppContentEditInfo( res.getQuantityString( R.plurals.toast_save_task,
-                                                                                            tasksCount,
-                                                                                            tasksCount ),
-                                                                     res.getQuantityString( R.plurals.toast_completed_task,
-                                                                                            tasksCount,
-                                                                                            tasksCount,
-                                                                                            Iterables.first( tasks )
-                                                                                                     .getName() ),
-                                                                     res.getQuantityString( R.plurals.toast_save_task_failed,
-                                                                                            tasksCount,
-                                                                                            tasksCount ) );
-         performOperation( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               for ( Task task : tasks )
-               {
-                  task.setCompletedMillisUtc( completedMillisUtc );
-                  contentEditService.updateTask( task.getId(), task );
-               }
-            }
-         }, editInfo );
-      }
+      completeTasksImpl( context, tasks, calendarProvider.getNowMillisUtc() );
    }
    
    
@@ -232,7 +205,7 @@ public class AppContentEditService implements IAppContentEditService
    public void incompleteTasks( FragmentActivity context,
                                 final Collection< ? extends Task > tasks )
    {
-      completeTasks( context, tasks, Constants.NO_TIME );
+      completeTasksImpl( context, tasks, Constants.NO_TIME );
    }
    
    
@@ -366,6 +339,42 @@ public class AppContentEditService implements IAppContentEditService
       }
       
       return true;
+   }
+   
+   
+   
+   public void completeTasksImpl( FragmentActivity context,
+                                  final Collection< ? extends Task > tasks,
+                                  final long completedMillisUtc )
+   {
+      final int tasksCount = tasks.size();
+      if ( tasksCount > 0 && checkWritableAccess( context ) )
+      {
+         final Resources res = context.getResources();
+         final AppContentEditInfo editInfo = new AppContentEditInfo( res.getQuantityString( R.plurals.toast_save_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount ),
+                                                                     res.getQuantityString( R.plurals.toast_completed_task,
+                                                                                            tasksCount,
+                                                                                            tasksCount,
+                                                                                            Iterables.first( tasks )
+                                                                                                     .getName() ),
+                                                                     res.getQuantityString( R.plurals.toast_save_task_failed,
+                                                                                            tasksCount,
+                                                                                            tasksCount ) );
+         performOperation( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               for ( Task task : tasks )
+               {
+                  task.setCompletedMillisUtc( completedMillisUtc );
+                  contentEditService.updateTask( task.getId(), task );
+               }
+            }
+         }, editInfo );
+      }
    }
    
    

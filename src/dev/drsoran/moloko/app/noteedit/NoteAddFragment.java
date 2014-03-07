@@ -25,7 +25,6 @@ package dev.drsoran.moloko.app.noteedit;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,12 +38,12 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 class NoteAddFragment extends AbstractNoteEditFragment
 {
-   private final Time created = MolokoDateUtils.newTime();
+   @InstanceState( key = "createdMillis" )
+   private long createdMillisUtc;
    
    @InstanceState( key = Intents.Extras.KEY_TASK,
                    defaultValue = InstanceState.NO_DEFAULT )
@@ -76,6 +75,15 @@ class NoteAddFragment extends AbstractNoteEditFragment
    public NoteAddFragment()
    {
       registerAnnotatedConfiguredInstance( this, NoteAddFragment.class );
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      createdMillisUtc = getUiContext().getCalendarProvider().getNowMillisUtc();
    }
    
    
@@ -117,7 +125,7 @@ class NoteAddFragment extends AbstractNoteEditFragment
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
       createdDate.setText( getUiContext().getDateFormatter()
-                                         .formatDateTime( created.toMillis( true ),
+                                         .formatDateTime( createdMillisUtc,
                                                           IDateFormatterService.FORMAT_WITH_YEAR ) );
       
       title.setText( newTitle );
@@ -174,8 +182,7 @@ class NoteAddFragment extends AbstractNoteEditFragment
    {
       if ( listener != null )
       {
-         final Note newNote = new Note( Constants.NO_ID,
-                                        created.toMillis( true ) );
+         final Note newNote = new Note( Constants.NO_ID, createdMillisUtc );
          newNote.setTitle( UiUtils.getTrimmedText( title ) );
          newNote.setText( UiUtils.getTrimmedText( text ) );
          

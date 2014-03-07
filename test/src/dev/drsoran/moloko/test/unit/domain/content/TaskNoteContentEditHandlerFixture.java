@@ -43,14 +43,15 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
+import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.content.TaskNoteContentEditHandler;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.test.ModificationComparator;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
+import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.sources.TaskNoteEditHandlerTestDataSource;
 import dev.drsoran.moloko.util.Lambda.Func2;
 
@@ -86,7 +87,8 @@ public class TaskNoteContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskNoteContentEditHandler handler = new TaskNoteContentEditHandler( contentResolver,
                                                                                  fact,
-                                                                                 applier );
+                                                                                 applier,
+                                                                                 TestCalendarProvider.get() );
       
       final Uri res = handler.insertAggregatedElement( ContentUris.TASK_NOTES_CONTENT_URI,
                                                        note,
@@ -126,7 +128,8 @@ public class TaskNoteContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskNoteContentEditHandler handler = new TaskNoteContentEditHandler( contentResolver,
                                                                                  fact,
-                                                                                 applier );
+                                                                                 applier,
+                                                                                 TestCalendarProvider.get() );
       try
       {
          handler.insertAggregatedElement( ContentUris.TASK_NOTES_CONTENT_URI,
@@ -174,7 +177,8 @@ public class TaskNoteContentEditHandlerFixture extends MolokoRoboTestCase
          
          final TaskNoteContentEditHandler handler = new TaskNoteContentEditHandler( contentResolver,
                                                                                     fact,
-                                                                                    applier );
+                                                                                    applier,
+                                                                                    TestCalendarProvider.get() );
          
          handler.updateAggregatedElement( ContentUris.TASK_NOTES_CONTENT_URI_ID,
                                           testData.existingElement,
@@ -220,7 +224,8 @@ public class TaskNoteContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskNoteContentEditHandler handler = new TaskNoteContentEditHandler( contentResolver,
                                                                                  fact,
-                                                                                 applier );
+                                                                                 applier,
+                                                                                 TestCalendarProvider.get() );
       
       try
       {
@@ -267,7 +272,8 @@ public class TaskNoteContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskNoteContentEditHandler handler = new TaskNoteContentEditHandler( contentResolver,
                                                                                  fact,
-                                                                                 applier );
+                                                                                 applier,
+                                                                                 TestCalendarProvider.get() );
       
       try
       {
@@ -303,7 +309,8 @@ public class TaskNoteContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskNoteContentEditHandler handler = new TaskNoteContentEditHandler( contentResolver,
                                                                                  fact,
-                                                                                 applier );
+                                                                                 applier,
+                                                                                 TestCalendarProvider.get() );
       
       handler.deleteAggregatedElement( ContentUris.TASK_NOTES_CONTENT_URI_ID,
                                        100L,
@@ -361,7 +368,8 @@ public class TaskNoteContentEditHandlerFixture extends MolokoRoboTestCase
       
       final TaskNoteContentEditHandler handler = new TaskNoteContentEditHandler( contentResolver,
                                                                                  fact,
-                                                                                 applier );
+                                                                                 applier,
+                                                                                 TestCalendarProvider.get() );
       
       try
       {

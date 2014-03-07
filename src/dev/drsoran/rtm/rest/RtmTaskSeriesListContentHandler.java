@@ -30,6 +30,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import dev.drsoran.rtm.model.RtmTask;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class RtmTaskSeriesListContentHandler extends
@@ -49,19 +50,24 @@ public class RtmTaskSeriesListContentHandler extends
    
    private boolean expectMultipleLists;
    
+   private final IRtmCalendarProvider calendarProvider;
    
    
-   public RtmTaskSeriesListContentHandler()
+   
+   public RtmTaskSeriesListContentHandler( IRtmCalendarProvider calendarProvider )
    {
-      this( null );
+      this( calendarProvider, null );
    }
    
    
    
    public RtmTaskSeriesListContentHandler(
+      IRtmCalendarProvider calendarProvider,
       IRtmContentHandlerListener< List< RtmTask >> listener )
    {
       super( listener );
+      
+      this.calendarProvider = calendarProvider;
       setContentElement( new ArrayList< RtmTask >() );
    }
    
@@ -80,6 +86,7 @@ public class RtmTaskSeriesListContentHandler extends
       else if ( "deleted".equalsIgnoreCase( qName ) )
       {
          pushNestedContentHandlerAndStartElement( new DeletedRtmTaskSeriesContentHandler( activeListId,
+                                                                                          calendarProvider,
                                                                                           taskSeriesListener ),
                                                   qName,
                                                   attributes );

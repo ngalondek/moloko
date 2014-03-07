@@ -62,6 +62,8 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    
    private final IDbElementSyncHandler< RtmSettings > settingsSyncHandler;
    
+   private final IModificationsProvider modificationsProvider;
+   
    private final IModelElementFactory rtmModelElementFactory;
    
    private final ITaskSeriesIdProvider rtmTaskSeriesIdProvider;
@@ -74,6 +76,7 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
       IDbElementSyncHandler< RtmLocation > locationSyncHandler,
       IDbElementSyncHandler< RtmContact > contactSyncHandler,
       IDbElementSyncHandler< RtmSettings > settingsSyncHandler,
+      IModificationsProvider modificationsProvider,
       IModelElementFactory rtmModelElementFactory,
       ITaskSeriesIdProvider rtmTaskSeriesIdProvider )
    {
@@ -97,6 +100,10 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
       {
          throw new IllegalArgumentException( "contactSyncHandler" );
       }
+      if ( modificationsProvider == null )
+      {
+         throw new IllegalArgumentException( "modificationsProvider" );
+      }
       if ( settingsSyncHandler == null )
       {
          throw new IllegalArgumentException( "settingsSyncHandler" );
@@ -116,6 +123,7 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
       this.locationSyncHandler = locationSyncHandler;
       this.contactSyncHandler = contactSyncHandler;
       this.settingsSyncHandler = settingsSyncHandler;
+      this.modificationsProvider = modificationsProvider;
       this.rtmModelElementFactory = rtmModelElementFactory;
       this.rtmTaskSeriesIdProvider = rtmTaskSeriesIdProvider;
    }
@@ -133,8 +141,7 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    @Override
    public List< IModification > getModificationsOfTasksList( String tasksListId )
    {
-      // TODO Auto-generated method stub
-      return null;
+      return modificationsProvider.getModificationsOfRtmTasksList( tasksListId );
    }
    
    
@@ -175,8 +182,7 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    @Override
    public List< IModification > getModificationsOfTask( RtmTask task )
    {
-      // TODO Auto-generated method stub
-      return null;
+      return modificationsProvider.getModificationsOfRtmTask( task.getId() );
    }
    
    
@@ -334,6 +340,8 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    @Override
    public void onSyncSuccessful()
    {
+      modificationsProvider.clearModifications();
+      
       database.setTransactionSuccessful();
       database.endTransaction();
    }

@@ -27,11 +27,17 @@ import dev.drsoran.rtm.RtmCalendar;
 
 public interface IRtmCalendarProvider
 {
-   
-   public abstract RtmCalendar getNow();
-   
+   RtmCalendar getNow();
    
    
-   public abstract RtmCalendar getToday();
    
+   long getNowMillisUtc();
+   
+   
+   
+   RtmCalendar getToday();
+   
+   
+   
+   long getTodayMillisUtc();
 }

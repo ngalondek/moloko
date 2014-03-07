@@ -32,6 +32,7 @@ import android.net.Uri;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.db.DbContentProvider;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public abstract class MolokoContentProvider extends ContentProvider
@@ -39,6 +40,8 @@ public abstract class MolokoContentProvider extends ContentProvider
    private ILog log;
    
    private UriLookup< IContentUriHandler > contentUriToHandlerLookup;
+   
+   private IRtmCalendarProvider calendarProvider;
    
    
    
@@ -48,15 +51,16 @@ public abstract class MolokoContentProvider extends ContentProvider
    @Override
    public boolean onCreate()
    {
-      contentUriToHandlerLookup = createContentUriToHandlerLookup();
       return true;
    }
    
    
    
-   public void init( ILog log )
+   public void init( ILog log, IRtmCalendarProvider calendarProvider )
    {
       this.log = log;
+      this.calendarProvider = calendarProvider;
+      this.contentUriToHandlerLookup = createContentUriToHandlerLookup();
    }
    
    
@@ -238,6 +242,13 @@ public abstract class MolokoContentProvider extends ContentProvider
    public ILog Log()
    {
       return log;
+   }
+   
+   
+   
+   public IRtmCalendarProvider getCalendarProvider()
+   {
+      return calendarProvider;
    }
    
    

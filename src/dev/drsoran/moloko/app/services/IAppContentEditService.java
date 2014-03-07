@@ -53,15 +53,12 @@ public interface IAppContentEditService
    
    
    
-   void completeTask( FragmentActivity context,
-                      Task task,
-                      long completedMillisUtc );
+   void completeTask( FragmentActivity context, Task task );
    
    
    
    void completeTasks( FragmentActivity context,
-                       Collection< ? extends Task > tasks,
-                       long completedMillisUtc );
+                       Collection< ? extends Task > tasks );
    
    
    

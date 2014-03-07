@@ -31,21 +31,27 @@ import android.content.ContentResolver;
 import android.text.TextUtils;
 import dev.drsoran.Compare;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
-import dev.drsoran.moloko.content.db.Modification;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
 {
+   private final IRtmCalendarProvider calendarProvider;
+   
+   
+   
    public TaskContentEditHandler( ContentResolver contentResolver,
       IContentValuesFactory contentValuesFactory,
-      IModificationsApplier modificationsApplier )
+      IModificationsApplier modificationsApplier,
+      IRtmCalendarProvider calendarProvider )
    {
       super( contentResolver, contentValuesFactory, modificationsApplier );
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -168,7 +174,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       // If we have a postponed change, this will also change the due date. So
       // the due date will not be tested on change then.
       if ( Compare.isDifferent( existingTask.getPostponedCount(),
-                                       updatedTask.getPostponedCount() ) )
+                                updatedTask.getPostponedCount() ) )
       {
          addPostponedChangedModifications( modifications,
                                            entityUri,
@@ -220,8 +226,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       if ( updatedTask.getEstimation() != null )
       {
          updateTaskEstimation = updatedTask.getEstimation().getSentence();
-         updateTaskEstimationMillis = updatedTask.getEstimation()
-                                                 .getMillis();
+         updateTaskEstimationMillis = updatedTask.getEstimation().getMillis();
       }
       
       Modification.addIfDifferent( modifications,
@@ -250,7 +255,7 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
       
       final Modification modification = Modification.newNonPersistentModification( entityUri,
                                                                                    TaskColumns.DELETED_DATE,
-                                                                                   System.currentTimeMillis() );
+                                                                                   calendarProvider.getNowMillisUtc() );
       
       return Collections.singletonList( modification );
    }
@@ -262,37 +267,32 @@ public class TaskContentEditHandler extends AbstractContentEditHandler< Task >
                                                   Task existingTask,
                                                   Task updatedTask )
    {
-      
-      final RtmCalendar cal = RtmCalendar.getInstance();
+      final RtmCalendar cal = calendarProvider.getToday();
       final Due due = updatedTask.getDue();
       
-      // If the task has no due date...
-      if ( due == null )
+      // If the task has a due date...
+      if ( due != null )
       {
-         cal.setTimeInMillis( System.currentTimeMillis() );
-         cal.setHasTime( false );
-      }
-      // ...or is overdue, its due date is set to today.
-      else if ( MolokoDateUtils.isDaysBefore( due.getMillisUtc(),
-                                              cal.getTimeInMillis() ) )
-      {
-         cal.setTimeInMillis( System.currentTimeMillis() );
+         // ...and is overdue, its due date is set to today.
+         if ( MolokoDateUtils.isDaysBefore( due.getMillisUtc(),
+                                            cal.getTimeInMillis() ) )
+         {
+            final RtmCalendar calDue = MolokoDateUtils.newCalendar( due.getMillisUtc() );
+            
+            // Preserve the original time when setting to today
+            cal.set( Calendar.HOUR_OF_DAY, calDue.get( Calendar.HOUR_OF_DAY ) );
+            cal.set( Calendar.MINUTE, calDue.get( Calendar.MINUTE ) );
+            cal.set( Calendar.SECOND, calDue.get( Calendar.SECOND ) );
+            cal.set( Calendar.MILLISECOND, 0 );
+         }
          
-         final RtmCalendar calDue = MolokoDateUtils.newCalendar( due.getMillisUtc() );
-         
-         // Preserve the original time when setting to today
-         cal.set( Calendar.HOUR_OF_DAY, calDue.get( Calendar.HOUR_OF_DAY ) );
-         cal.set( Calendar.MINUTE, calDue.get( Calendar.MINUTE ) );
-         cal.set( Calendar.SECOND, calDue.get( Calendar.SECOND ) );
-         cal.set( Calendar.MILLISECOND, 0 );
-      }
-      
-      // Otherwise, the task due date is advanced a day.
-      else
-      {
-         cal.setTimeInMillis( due.getMillisUtc() );
-         cal.add( Calendar.DAY_OF_YEAR, 1 );
-         cal.setHasTime( due.hasDueTime() );
+         // Otherwise, the task due date is advanced a day.
+         else
+         {
+            cal.setTimeInMillis( due.getMillisUtc() );
+            cal.add( Calendar.DAY_OF_YEAR, 1 );
+            cal.setHasTime( due.hasDueTime() );
+         }
       }
       
       modifications.add( Modification.newModification( entityUri,

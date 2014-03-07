@@ -34,6 +34,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import dev.drsoran.Iterables;
+import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.XmlFileResource;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.rest.DeletedRtmTaskSeriesContentHandler;
@@ -77,7 +78,8 @@ public class DeletedRtmTaskSeriesContentHandlerFixture extends
    @Override
    protected RtmContentHandler< Collection< RtmTask >> createHandler()
    {
-      return new DeletedRtmTaskSeriesContentHandler( "1000" );
+      return new DeletedRtmTaskSeriesContentHandler( "1000",
+                                                     TestCalendarProvider.get() );
    }
    
    
@@ -85,7 +87,9 @@ public class DeletedRtmTaskSeriesContentHandlerFixture extends
    @Override
    protected RtmContentHandler< Collection< RtmTask >> createHandlerWithListener( IRtmContentHandlerListener< Collection< RtmTask >> listener )
    {
-      return new DeletedRtmTaskSeriesContentHandler( "1000", listener );
+      return new DeletedRtmTaskSeriesContentHandler( "1000",
+                                                     TestCalendarProvider.get(),
+                                                     listener );
    }
    
    

@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.domain.services;
 
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
+
+
 public interface IDomainServices
 {
    IParsingService getParsingService();
@@ -33,4 +36,8 @@ public interface IDomainServices
    
    
    IContentEditService getContentEditService();
+   
+   
+   
+   IRtmCalendarProvider getCalendarProvider();
 }

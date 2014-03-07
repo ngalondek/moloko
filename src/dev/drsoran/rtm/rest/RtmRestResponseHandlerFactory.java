@@ -33,6 +33,7 @@ import dev.drsoran.rtm.model.RtmSettings;
 import dev.drsoran.rtm.model.RtmTask;
 import dev.drsoran.rtm.model.RtmTasksList;
 import dev.drsoran.rtm.model.RtmTimeline;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.service.RtmAuth;
 import dev.drsoran.rtm.service.RtmFrob;
 
@@ -40,10 +41,21 @@ import dev.drsoran.rtm.service.RtmFrob;
 public class RtmRestResponseHandlerFactory implements
          IRtmResponseHandlerFactory
 {
+   private final IRtmCalendarProvider calendarProvider;
+   
+   
+   
+   public RtmRestResponseHandlerFactory( IRtmCalendarProvider calendarProvider )
+   {
+      this.calendarProvider = calendarProvider;
+   }
+   
+   
+   
    @Override
    public IRtmResponseHandler< List< RtmTask >> createRtmTasksResponseHandler()
    {
-      return new RtmRestResponseHandler< List< RtmTask >>( new RtmTaskSeriesListContentHandler() );
+      return new RtmRestResponseHandler< List< RtmTask >>( new RtmTaskSeriesListContentHandler( calendarProvider ) );
    }
    
    

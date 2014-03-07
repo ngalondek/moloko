@@ -106,6 +106,6 @@ class RtmSettingsTable extends AbstractTable
    @Override
    public String[] getProjection()
    {
-      return RtmSettingsColumns.PROJECTION;
+      return RtmSettingsColumns.TABLE_PROJECTION;
    }
 }

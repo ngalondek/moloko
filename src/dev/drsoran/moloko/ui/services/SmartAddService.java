@@ -31,6 +31,7 @@ import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddSuggestion;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddSuggestor;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddTokenizer;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 
 
@@ -45,13 +46,15 @@ class SmartAddService implements ISmartAddService
    public SmartAddService( Context context,
       IContentRepository contentRepository,
       IRtmDateTimeParsing dateTimeParsing,
-      IRecurrenceParsing recurrenceParsing, IDateFormatterService dateFormatter )
+      IRecurrenceParsing recurrenceParsing,
+      IDateFormatterService dateFormatter, IRtmCalendarProvider calendarProvider )
    {
       this.rtmSmartAddTokenizer = new RtmSmartAddTokenizer( dateTimeParsing );
       this.rtmSmartAddSuggestor = new RtmSmartAddSuggestor( context,
                                                             contentRepository,
                                                             recurrenceParsing,
-                                                            dateFormatter );
+                                                            dateFormatter,
+                                                            calendarProvider );
    }
    
    

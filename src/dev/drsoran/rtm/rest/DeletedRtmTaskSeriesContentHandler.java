@@ -35,6 +35,7 @@ import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmNote;
 import dev.drsoran.rtm.model.RtmTask;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class DeletedRtmTaskSeriesContentHandler extends
@@ -46,20 +47,26 @@ public class DeletedRtmTaskSeriesContentHandler extends
    
    private Attributes taskSeriesAttributes;
    
+   private final IRtmCalendarProvider calendarProvider;
    
    
-   public DeletedRtmTaskSeriesContentHandler( String listId )
+   
+   public DeletedRtmTaskSeriesContentHandler( String listId,
+      IRtmCalendarProvider calendarProvider )
    {
-      this( listId, null );
+      this( listId, calendarProvider, null );
    }
    
    
    
    public DeletedRtmTaskSeriesContentHandler( String listId,
+      IRtmCalendarProvider calendarProvider,
       IRtmContentHandlerListener< Collection< RtmTask >> listener )
    {
       super( listener );
+      
       this.listId = listId;
+      this.calendarProvider = calendarProvider;
    }
    
    
@@ -93,7 +100,7 @@ public class DeletedRtmTaskSeriesContentHandler extends
    
    private void addTask( Attributes taskAttributes ) throws SAXException
    {
-      final long nowMillis = System.currentTimeMillis();
+      final long nowMillis = calendarProvider.getNowMillisUtc();
       
       final RtmTask task = new RtmTask( XmlAttr.getStringNotNull( taskAttributes,
                                                                   "id" ),

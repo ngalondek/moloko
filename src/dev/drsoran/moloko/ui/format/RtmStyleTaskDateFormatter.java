@@ -83,8 +83,11 @@ public final class RtmStyleTaskDateFormatter
          final long dueMillis = cal.getTimeInMillis();
          final boolean hasDueTime = cal.hasTime();
          
+         final long todayMillis = context.getCalendarProvider()
+                                         .getTodayMillisUtc();
+         
          // Today
-         if ( MolokoDateUtils.isToday( dueMillis ) )
+         if ( MolokoDateUtils.isToday( todayMillis, dueMillis ) )
          {
             // If it has a time, we show the time
             if ( hasDueTime )
@@ -101,8 +104,7 @@ public final class RtmStyleTaskDateFormatter
          // Not today
          else
          {
-            final long nowMillis = System.currentTimeMillis();
-            RtmCalendar nowCal = MolokoDateUtils.newCalendar( nowMillis );
+            RtmCalendar nowCal = context.getCalendarProvider().getNow();
             
             // If it is the same year
             if ( cal.get( Calendar.YEAR ) == nowCal.get( Calendar.YEAR ) )
@@ -155,7 +157,6 @@ public final class RtmStyleTaskDateFormatter
                                                          IDateFormatterService.FORMAT_ABR_MONTH );
                   }
                }
-               
             }
             
             // Not the same year

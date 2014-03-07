@@ -28,6 +28,7 @@ import org.junit.Test;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.sync.DbRtmSyncPartner;
 import dev.drsoran.moloko.content.db.sync.IDbElementSyncHandler;
+import dev.drsoran.moloko.content.db.sync.IModificationsProvider;
 import dev.drsoran.moloko.content.db.sync.ITaskSeriesIdProvider;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 
@@ -44,6 +45,7 @@ public class DbRtmSyncPartnerFixture
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             EasyMock.createNiceMock( IModelElementFactory.class ),
                             EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
    }
@@ -60,6 +62,7 @@ public class DbRtmSyncPartnerFixture
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             EasyMock.createNiceMock( IModelElementFactory.class ),
                             EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
    }
@@ -76,6 +79,7 @@ public class DbRtmSyncPartnerFixture
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             EasyMock.createNiceMock( IModelElementFactory.class ),
                             EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
    }
@@ -92,6 +96,7 @@ public class DbRtmSyncPartnerFixture
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             EasyMock.createNiceMock( IModelElementFactory.class ),
                             EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
    }
@@ -108,6 +113,7 @@ public class DbRtmSyncPartnerFixture
                             null,
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             EasyMock.createNiceMock( IModelElementFactory.class ),
                             EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
    }
@@ -124,6 +130,7 @@ public class DbRtmSyncPartnerFixture
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             null,
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             EasyMock.createNiceMock( IModelElementFactory.class ),
                             EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
    }
@@ -135,6 +142,24 @@ public class DbRtmSyncPartnerFixture
    public void testDbRtmSyncPartner_NullSettingsSyncHandler()
    {
       new DbRtmSyncPartner( EasyMock.createNiceMock( RtmDatabase.class ),
+                            EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            null,
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
+                            EasyMock.createNiceMock( IModelElementFactory.class ),
+                            EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
+   }
+   
+   
+   
+   @SuppressWarnings( "unchecked" )
+   @Test( expected = IllegalArgumentException.class )
+   public void testDbRtmSyncPartner_NullModificationsProvider()
+   {
+      new DbRtmSyncPartner( EasyMock.createNiceMock( RtmDatabase.class ),
+                            EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
@@ -156,6 +181,7 @@ public class DbRtmSyncPartnerFixture
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             null,
                             EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
    }
@@ -172,6 +198,7 @@ public class DbRtmSyncPartnerFixture
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                             EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                            EasyMock.createNiceMock( IModificationsProvider.class ),
                             EasyMock.createNiceMock( IModelElementFactory.class ),
                             null );
    }
@@ -182,6 +209,9 @@ public class DbRtmSyncPartnerFixture
    @Test
    public void testOnSyncStarted()
    {
+      final IModificationsProvider modificationsProvider = EasyMock.createMock( IModificationsProvider.class );
+      EasyMock.replay( modificationsProvider );
+      
       final RtmDatabase rtmDatabase = EasyMock.createStrictMock( RtmDatabase.class );
       rtmDatabase.beginTransaction();
       EasyMock.replay( rtmDatabase );
@@ -192,11 +222,13 @@ public class DbRtmSyncPartnerFixture
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                                                                      modificationsProvider,
                                                                       EasyMock.createNiceMock( IModelElementFactory.class ),
                                                                       EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
       
       dbRtmSyncPartner.onSyncStarted();
       
+      EasyMock.verify( modificationsProvider );
       EasyMock.verify( rtmDatabase );
    }
    
@@ -206,6 +238,10 @@ public class DbRtmSyncPartnerFixture
    @Test
    public void testOnSyncSuccessful()
    {
+      final IModificationsProvider modificationsProvider = EasyMock.createMock( IModificationsProvider.class );
+      modificationsProvider.clearModifications();
+      EasyMock.replay( modificationsProvider );
+      
       final RtmDatabase rtmDatabase = EasyMock.createStrictMock( RtmDatabase.class );
       rtmDatabase.setTransactionSuccessful();
       rtmDatabase.endTransaction();
@@ -217,11 +253,14 @@ public class DbRtmSyncPartnerFixture
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                                                                      modificationsProvider,
                                                                       EasyMock.createNiceMock( IModelElementFactory.class ),
                                                                       EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
       
       dbRtmSyncPartner.onSyncSuccessful();
+      
       EasyMock.verify( rtmDatabase );
+      EasyMock.verify( modificationsProvider );
    }
    
    
@@ -230,6 +269,9 @@ public class DbRtmSyncPartnerFixture
    @Test
    public void testOnSyncFailed()
    {
+      final IModificationsProvider modificationsProvider = EasyMock.createMock( IModificationsProvider.class );
+      EasyMock.replay( modificationsProvider );
+      
       final RtmDatabase rtmDatabase = EasyMock.createStrictMock( RtmDatabase.class );
       rtmDatabase.endTransaction();
       EasyMock.replay( rtmDatabase );
@@ -240,11 +282,14 @@ public class DbRtmSyncPartnerFixture
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
                                                                       EasyMock.createNiceMock( IDbElementSyncHandler.class ),
+                                                                      modificationsProvider,
                                                                       EasyMock.createNiceMock( IModelElementFactory.class ),
                                                                       EasyMock.createNiceMock( ITaskSeriesIdProvider.class ) );
       
       dbRtmSyncPartner.onSyncFailed();
+      
       EasyMock.verify( rtmDatabase );
+      EasyMock.verify( modificationsProvider );
    }
    
 }

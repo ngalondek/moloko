@@ -35,8 +35,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
@@ -52,6 +54,8 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    private final int type;
    
    private final RtmCalendar calendar;
+   
+   private final IRtmCalendarProvider calendarProvider;
    
    private final int calField;
    
@@ -77,6 +81,9 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
       this.calendar = RtmCalendar.getInstance();
       this.calendar.setTimeInMillis( millisUtc );
       this.calendar.setHasTime( false );
+      
+      this.calendarProvider = DomainContext.get( context )
+                                           .getCalendarProvider();
       
       this.calField = calField;
       this.type = type;
@@ -152,7 +159,8 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
          int color = valueColor;
          
          if ( ( flags & FLAG_MARK_TODAY ) == FLAG_MARK_TODAY
-            && MolokoDateUtils.isToday( date.getTime() ) )
+            && MolokoDateUtils.isToday( calendarProvider.getTodayMillisUtc(),
+                                        date.getTime() ) )
          {
             color = todayColor;
          }

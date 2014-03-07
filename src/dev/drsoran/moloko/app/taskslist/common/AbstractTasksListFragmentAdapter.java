@@ -40,13 +40,15 @@ import dev.drsoran.moloko.ui.adapters.LayoutSwitchMultiChoiceModalAdapter;
 import dev.drsoran.moloko.ui.format.RtmStyleTaskDateFormatter;
 import dev.drsoran.moloko.ui.format.RtmStyleTaskDescTextViewFormatter;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
 abstract class AbstractTasksListFragmentAdapter extends
          LayoutSwitchMultiChoiceModalAdapter< Task >
 {
    private final RtmStyleTaskDateFormatter taskDateFormatter;
+   
+   private final IRtmCalendarProvider calendarProvider;
    
    private final DataSetObserver dataSetObserver = new DataSetObserver()
    {
@@ -77,9 +79,10 @@ abstract class AbstractTasksListFragmentAdapter extends
       super( listView, unselectedResourceId, selectedResourceId );
       
       taskDateFormatter = new RtmStyleTaskDateFormatter( getUiContext() );
-      lastTasksSort = AppContext.get( getContext() )
-                                .getSettings()
-                                .getTaskSort();
+      
+      final AppContext appContext = AppContext.get( getContext() );
+      lastTasksSort = appContext.getSettings().getTaskSort();
+      calendarProvider = appContext.getCalendarProvider();
       
       registerDataSetObserver( dataSetObserver );
    }
@@ -155,7 +158,7 @@ abstract class AbstractTasksListFragmentAdapter extends
       
       RtmStyleTaskDescTextViewFormatter.setTaskDescription( description,
                                                             task,
-                                                            MolokoDateUtils.newTime() );
+                                                            calendarProvider.getNowMillisUtc() );
       setDueDate( dueDate, task );
       setCompleted( completed, task );
    }

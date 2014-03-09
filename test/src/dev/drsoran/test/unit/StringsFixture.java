@@ -169,10 +169,10 @@ public class StringsFixture extends MolokoTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testNullIfEmptyStringNull()
    {
-      Strings.nullIfEmpty( (String) null );
+      assertThat( Strings.nullIfEmpty( null ), is( (String) null ) );
    }
    
    
@@ -188,10 +188,11 @@ public class StringsFixture extends MolokoTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testNullIfEmptyCharSequenceNull()
    {
-      Strings.nullIfEmpty( (CharSequence) null );
+      assertThat( Strings.nullIfEmpty( (CharSequence) null ),
+                  is( (CharSequence) null ) );
    }
    
    

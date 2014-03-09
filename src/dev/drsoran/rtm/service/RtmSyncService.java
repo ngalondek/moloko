@@ -205,6 +205,11 @@ public class RtmSyncService implements IRtmSyncService
       }
       catch ( Exception e )
       {
+         if ( e instanceof SyncException )
+         {
+            throw (SyncException) e;
+         }
+         
          throw new SyncException( RtmSyncResult.newFailed( e ) );
       }
    }

@@ -64,7 +64,7 @@ public class TaskParticipantContentEditHandlerFixture extends
                                                                    100L,
                                                                    1L );
       
-      final Participant participant = new Participant( 1L, 2L, "name", "user" );
+      final Participant participant = new Participant( 1L, "name", "user" );
       
       final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
       EasyMock.expect( contentResolver.insert( EasyMock.eq( boundUri ),
@@ -104,7 +104,7 @@ public class TaskParticipantContentEditHandlerFixture extends
       final Uri boundUri = ContentUris.bindAggregationIdToUri( ContentUris.TASK_PARTICIPANTS_CONTENT_URI,
                                                                100L );
       
-      final Participant participant = new Participant( 1L, 2L, "name", "user" );
+      final Participant participant = new Participant( 1L, "name", "user" );
       
       final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
       EasyMock.expect( contentResolver.insert( EasyMock.eq( boundUri ),
@@ -221,8 +221,8 @@ public class TaskParticipantContentEditHandlerFixture extends
       try
       {
          handler.updateAggregatedElement( ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID,
-                                          new Participant( 1L, 10L, "f", "u" ),
-                                          new Participant( 1L, 10L, "f", "e" ),
+                                          new Participant( 1L, "f", "u" ),
+                                          new Participant( 1L, "f", "e" ),
                                           100L,
                                           1L );
       }
@@ -268,8 +268,8 @@ public class TaskParticipantContentEditHandlerFixture extends
       try
       {
          handler.updateAggregatedElement( ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID,
-                                          new Participant( 1L, 10L, "f", "u" ),
-                                          new Participant( 1L, 10L, "f", "e" ),
+                                          new Participant( 1L, "f", "u" ),
+                                          new Participant( 1L, "f", "e" ),
                                           100L,
                                           1L );
       }

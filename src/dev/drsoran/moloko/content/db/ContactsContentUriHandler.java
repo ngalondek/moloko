@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.content.db;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -32,6 +33,7 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
+import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
 
 
@@ -55,9 +57,7 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
                                   String selection,
                                   String[] selectionArgs )
    {
-      projection = getProjectionWithoutNumTasksParticipates( projection );
       selection = getElementSelection( contentUri, id, selection );
-      
       return queryAll( contentUri, projection, selection, selectionArgs, null );
    }
    
@@ -70,7 +70,7 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
                               String[] selectionArgs,
                               String sortOrder )
    {
-      projection = getProjectionWithoutNumTasksParticipates( projection );
+      projection = prepareProjection( projection );
       Cursor contactsCursor = null;
       try
       {
@@ -85,10 +85,10 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
          final List< Object[] > contactsCursorList = new ArrayList< Object[] >( contactsCursor.getCount() );
          while ( contactsCursor.moveToNext() )
          {
-            long contactId = contactsCursor.getLong( Columns.ID_IDX );
-            int numTasksContactParticiapting = getNumTasksContactIsParticipating( contactId );
+            String rtmContactId = contactsCursor.getString( RtmContactColumns.RTM_CONTACT_ID_IDX );
+            int numTasksContactParticiapting = getNumTasksContactIsParticipating( rtmContactId );
             
-            final Object[] contactColumns = createContactColumns( contactId,
+            final Object[] contactColumns = createContactColumns( contactsCursor.getLong( Columns.ID_IDX ),
                                                                   contactsCursor,
                                                                   numTasksContactParticiapting );
             contactsCursorList.add( contactColumns );
@@ -107,16 +107,12 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
    
    
    
-   private String[] getProjectionWithoutNumTasksParticipates( String[] projection )
+   private String[] prepareProjection( String[] projection )
    {
-      final List< String > projectionList = new ArrayList< String >( projection.length );
-      for ( String string : projection )
-      {
-         if ( !ContactColumns.NUM_TASKS_PARTICIPATING.equals( string ) )
-         {
-            projectionList.add( string );
-         }
-      }
+      List< String > projectionList = new ArrayList< String >( Arrays.asList( projection ) );
+      
+      projectionList = getProjectionWithoutNumTasksParticipates( projectionList );
+      projectionList = insertRtmContactId( projectionList );
       
       final String[] newArray = new String[ projectionList.size() ];
       return projectionList.toArray( newArray );
@@ -124,15 +120,37 @@ class ContactsContentUriHandler extends AbstractContentUriHandler
    
    
    
-   private int getNumTasksContactIsParticipating( long contactId )
+   private List< String > getProjectionWithoutNumTasksParticipates( List< String > projection )
+   {
+      projection.remove( ContactColumns.NUM_TASKS_PARTICIPATING );
+      return projection;
+   }
+   
+   
+   
+   private List< String > insertRtmContactId( List< String > projection )
+   {
+      projection.add( RtmContactColumns.RTM_CONTACT_ID_IDX,
+                      RtmContactColumns.RTM_CONTACT_ID );
+      return projection;
+   }
+   
+   
+   
+   private int getNumTasksContactIsParticipating( String rtmContactId )
    {
       Cursor c = null;
       try
       {
-         c = database.query( RtmParticipantsTable.TABLE_NAME, new String[]
-         { RtmParticipantColumns.CONTACT_ID }, RtmParticipantColumns.CONTACT_ID
-            + "=?", new String[]
-         { Long.toString( contactId ) }, null, null, null );
+         c = database.query( RtmParticipantsTable.TABLE_NAME,
+                             new String[]
+                             { RtmParticipantColumns.RTM_CONTACT_ID },
+                             RtmParticipantColumns.RTM_CONTACT_ID + "=?",
+                             new String[]
+                             { rtmContactId },
+                             null,
+                             null,
+                             null );
          
          return c.getCount();
       }

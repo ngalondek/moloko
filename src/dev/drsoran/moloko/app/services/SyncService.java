@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.services;
 
+import java.text.MessageFormat;
+
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.SyncResult;
@@ -264,8 +266,9 @@ public class SyncService implements ISyncService, IOnSettingsChangedListener,
                                           getExtras(),
                                           intervalMs / 1000 );
          
-         log.i( getClass(), "Added new periodic sync repeating every "
-            + DateUtils.formatElapsedTime( intervalMs / 1000 ) );
+         log.i( getClass(),
+                MessageFormat.format( "Added new periodic sync repeating every {0}",
+                                      DateUtils.formatElapsedTime( intervalMs / 1000 ) ) );
       }
    }
    

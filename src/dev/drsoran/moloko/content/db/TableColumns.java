@@ -227,10 +227,21 @@ public final class TableColumns
       
       public final static int TASKSERIES_ID_IDX = ParticipantColumns.PROJECTION.length;
       
+      /**
+       * The contact ID of the contact who participates
+       * <P>
+       * Type: INTEGER (long)
+       * </P>
+       */
+      public final static String RTM_CONTACT_ID = "rtm_contact_id";
+      
+      public final static int RTM_CONTACT_ID_IDX = TASKSERIES_ID_IDX + 1;
+      
       static
       {
          final List< String > baseProjection = new ArrayList< String >( Arrays.asList( ParticipantColumns.PROJECTION ) );
          baseProjection.add( TASKSERIES_ID );
+         baseProjection.add( RTM_CONTACT_ID );
          
          RtmParticipantColumns.TABLE_PROJECTION = baseProjection.toArray( new String[ baseProjection.size() ] );
       }

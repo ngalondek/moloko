@@ -27,17 +27,17 @@ import dev.drsoran.rtm.sync.IRtmSyncPartner;
 
 public interface IRtmService
 {
-   IRtmContentRepository getContentRepository();
-   
-   
-   
-   IRtmContentEditService getContentEditService();
-   
-   
-   
    IRtmAuthenticationService getAuthenticationService();
    
    
    
-   IRtmSyncService getSyncService( IRtmSyncPartner syncPartner );
+   IRtmContentRepository getContentRepository( String authToken );
+   
+   
+   
+   IRtmContentEditService getContentEditService( String authToken );
+   
+   
+   
+   IRtmSyncService getSyncService( IRtmSyncPartner syncPartner, String authToken );
 }

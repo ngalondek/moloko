@@ -57,12 +57,6 @@ public class TaskParticipantContentEditHandler extends
       
       Modification.addIfDifferentNonPersistent( modifications,
                                                 entityUri,
-                                                ParticipantColumns.CONTACT_ID,
-                                                existingParticipant.getContactId(),
-                                                updateParticipant.getContactId() );
-      
-      Modification.addIfDifferentNonPersistent( modifications,
-                                                entityUri,
                                                 ParticipantColumns.USERNAME,
                                                 existingParticipant.getUsername(),
                                                 updateParticipant.getUsername() );

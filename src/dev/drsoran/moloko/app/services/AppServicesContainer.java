@@ -183,18 +183,6 @@ public class AppServicesContainer implements IAppServices
    
    
    
-   private RtmService createRtmService( RtmConnectionProtocol connectionProtocol )
-   {
-      return new RtmService( log,
-                             connectionService.getConnectionFactory(),
-                             calendarProvider,
-                             connectionProtocol,
-                             context.getString( R.string.app_rtm_api_key ),
-                             context.getString( R.string.app_rtm_shared_secret ) );
-   }
-   
-   
-   
    private void checkForcedReadableAccess()
    {
       if ( context.getResources()
@@ -202,6 +190,19 @@ public class AppServicesContainer implements IAppServices
       {
          accountService.setForcedAccessLevel( RtmServicePermission.read );
       }
+   }
+   
+   
+   
+   private RtmService createRtmService( RtmConnectionProtocol connectionProtocol )
+   {
+      final RtmService rtmService = new RtmService( log,
+                                                    connectionService.getConnectionFactory(),
+                                                    calendarProvider,
+                                                    connectionProtocol,
+                                                    context.getString( R.string.app_rtm_api_key ),
+                                                    context.getString( R.string.app_rtm_shared_secret ) );
+      return rtmService;
    }
    
    

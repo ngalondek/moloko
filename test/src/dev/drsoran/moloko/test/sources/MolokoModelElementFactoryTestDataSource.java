@@ -646,13 +646,11 @@ public class MolokoModelElementFactoryTestDataSource
    private void addParticipantFull( Collection< TestData< Participant >> testData )
    {
       final Participant modelElement = new Participant( 1L,
-                                                        100L,
                                                         "Fullname",
                                                         "Username" );
       
       final List< Pair< Class< ? >, Object > > values = new ArrayList< Pair< Class< ? >, Object > >();
       add( values, Long.class, 1L );
-      add( values, Long.class, 100L );
       add( values, String.class, "Fullname" );
       add( values, String.class, "Username" );
       

@@ -79,6 +79,18 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
                               ContentProviderClient provider,
                               SyncResult syncResult )
    {
+      if ( !accountService.isAccountAuthenticated( account ) )
+      {
+         log.w( TAG,
+                MessageFormat.format( "Didn't processed sync for unauthorized account {0}",
+                                      account.name ) );
+         
+         ++syncResult.stats.numAuthExceptions;
+         accountService.notifyInvalidAuthToken( account );
+         
+         return;
+      }
+      
       if ( shouldProcessRequest( extras ) )
       {
          log.i( TAG,
@@ -87,7 +99,9 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
          context.sendBroadcast( Intents.createSyncStartedIntent() );
          
          final IRtmSyncPartner syncPartner = syncService.getSyncPartner();
-         final IRtmSyncService rtmSyncService = context.getRtmSyncService( syncPartner );
+         final String authToken = accountService.getAuthToken( account );
+         final IRtmSyncService rtmSyncService = context.getRtmSyncService( syncPartner,
+                                                                           authToken );
          final RtmServicePermission permission = accountService.getAccessLevel( account );
          final SyncTime lastSyncTime = context.getContentRepository()
                                               .getSyncTimes();
@@ -105,7 +119,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
                newSyncTime = new SyncTime( nowMillis,
                                            lastSyncTime.getLastSyncOutMillis() );
             }
-            else if ( permission == RtmServicePermission.write )
+            else if ( permission == RtmServicePermission.delete )
             {
                rtmSyncService.performFullSync( lastSyncTime );
                newSyncTime = new SyncTime( nowMillis, nowMillis );
@@ -146,6 +160,10 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
             {
                handleParseError( syncResult, (ParseException) innerException );
             }
+            else
+            {
+               handleOtherError( syncResult, innerException );
+            }
          }
          finally
          {
@@ -155,7 +173,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
       else
       {
          log.i( TAG,
-                MessageFormat.format( "Didn''t processed sync with extras {0}",
+                MessageFormat.format( "Didn't processed sync with extras {0}",
                                       extras ) );
       }
    }
@@ -176,7 +194,9 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
       if ( e.getResponseCode() == RtmErrorCodes.INVALID_AUTH_TOKEN )
       {
          log.i( TAG, "Invalidating auth token." );
+         
          accountService.invalidateAccount( account );
+         accountService.notifyInvalidAuthToken( account );
       }
    }
    
@@ -195,7 +215,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    private void handleIOException( SyncResult syncResult, IOException ex )
    {
       ++syncResult.stats.numIoExceptions;
-      log.e( TAG, MessageFormat.format( "Sync failed due to IO error", ex ) );
+      log.e( TAG, "Sync failed due to IO error", ex );
    }
    
    
@@ -203,8 +223,7 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    private void handleSQLException( SyncResult syncResult, SQLiteException ex )
    {
       syncResult.databaseError = true;
-      log.e( TAG,
-             MessageFormat.format( "Sync failed due to database error", ex ) );
+      log.e( TAG, "Sync failed due to database error", ex );
    }
    
    
@@ -212,7 +231,14 @@ public final class SyncAdapter extends AbstractThreadedSyncAdapter
    private void handleParseError( SyncResult syncResult, ParseException ex )
    {
       ++syncResult.stats.numParseExceptions;
-      log.e( TAG, MessageFormat.format( "Sync failed due to parsing error", ex ) );
+      log.e( TAG, "Sync failed due to parsing error", ex );
+   }
+   
+   
+   
+   private void handleOtherError( SyncResult syncResult, Throwable ex )
+   {
+      log.e( TAG, "Sync failed due to other error", ex );
    }
    
    

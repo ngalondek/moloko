@@ -32,12 +32,14 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import android.annotation.SuppressLint;
 import dev.drsoran.Strings;
 import dev.drsoran.rtm.model.RtmConstants;
 
 
 public final class XmlAttr
 {
+   @SuppressLint( "SimpleDateFormat" )
    private final static DateFormat RTM_DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
    
    static
@@ -94,7 +96,7 @@ public final class XmlAttr
                                       String defValue )
    {
       String value = attrs.getValue( attrName );
-      if ( value == null )
+      if ( Strings.isNullOrEmpty( value ) )
       {
          value = defValue;
       }

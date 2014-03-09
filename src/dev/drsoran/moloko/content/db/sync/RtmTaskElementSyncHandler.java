@@ -38,10 +38,8 @@ import dev.drsoran.Strings;
 import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.Columns;
-import dev.drsoran.moloko.content.Columns.ContactColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.db.RtmDatabase;
-import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmParticipantColumns;
@@ -83,24 +81,6 @@ public class RtmTaskElementSyncHandler implements
    private final Set< String > updatedTaskSerieses = new HashSet< String >();
    
    private final Map< String, Long > insertedTaskSerieses = new HashMap< String, Long >();
-   
-   private final Map< String, Long > rtmContactId2contactId = new HashMap< String, Long >();
-   
-   private final Func1< String, Cursor > contactIdQueryFunc = new Func1< String, Cursor >()
-   {
-      @Override
-      public Cursor call( String param )
-      {
-         final ITable table = rtmDatabase.getTable( TableNames.RTM_CONTACTS_TABLE );
-         return table.query( new String[]
-                             { ContactColumns._ID,
-                              RtmContactColumns.RTM_CONTACT_ID },
-                             RtmContactColumns.RTM_CONTACT_ID + "=?",
-                             new String[]
-                             { param },
-                             null );
-      }
-   };
    
    private final Map< String, Long > rtmListId2ListId = new HashMap< String, Long >();
    
@@ -264,14 +244,14 @@ public class RtmTaskElementSyncHandler implements
    private void insertParticipant( RtmContact rtmContact, long taskSeriesId )
    {
       final ITable participantsTable = rtmDatabase.getTable( TableNames.RTM_PARTICIPANTS_TABLE );
-      final long contactId = getContactIdFromRtmContactId( rtmContact.getId() );
       final Participant participant = new Participant( Constants.NO_ID,
-                                                       contactId,
                                                        rtmContact.getFullname(),
                                                        rtmContact.getUsername() );
       
       final ContentValues contentValues = molokoContentValuesFactory.createContentValues( participant );
-      contentValues.put( RtmNoteColumns.TASKSERIES_ID, taskSeriesId );
+      contentValues.put( RtmParticipantColumns.TASKSERIES_ID, taskSeriesId );
+      contentValues.put( RtmParticipantColumns.RTM_CONTACT_ID,
+                         rtmContact.getId() );
       
       participantsTable.insert( contentValues );
    }
@@ -471,13 +451,12 @@ public class RtmTaskElementSyncHandler implements
    
    private void deleteParticipant( RtmContact contact )
    {
-      final long contactId = getContactIdFromRtmContactId( contact.getId() );
       final ITable rtmParticipantsTable = rtmDatabase.getTable( TableNames.RTM_PARTICIPANTS_TABLE );
       final int numDeleted = rtmParticipantsTable.delete( Constants.NO_ID,
-                                                          RtmParticipantColumns.CONTACT_ID
+                                                          RtmParticipantColumns.RTM_CONTACT_ID
                                                              + "=?",
                                                           new String[]
-                                                          { String.valueOf( contactId ) } );
+                                                          { contact.getId() } );
       
       if ( numDeleted < 1 )
       {
@@ -613,20 +592,6 @@ public class RtmTaskElementSyncHandler implements
       {
          contentValues.put( RtmTaskSeriesColumns.LOCATION_ID, Constants.NO_ID );
       }
-   }
-   
-   
-   
-   private long getContactIdFromRtmContactId( String rtmContactId )
-   {
-      Long storedId = rtmContactId2contactId.get( rtmContactId );
-      if ( storedId == null )
-      {
-         storedId = getIdFromDatabase( rtmContactId, contactIdQueryFunc );
-         rtmContactId2contactId.put( rtmContactId, storedId );
-      }
-      
-      return storedId.longValue();
    }
    
    

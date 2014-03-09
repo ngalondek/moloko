@@ -51,6 +51,8 @@ import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.services.MolokoDateFormatterService;
 import dev.drsoran.moloko.ui.services.UiServicesContainer;
+import dev.drsoran.rtm.parsing.DefaultRtmCalenderProvider;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.parsing.lang.IRecurrenceSentenceLanguage;
 import dev.drsoran.rtm.parsing.lang.RecurrenceSentenceLanguage;
 
@@ -104,13 +106,17 @@ public class MolokoApp extends Application implements
       createSystemServices();
       createSystemContext();
       
-      initContentProvider();
+      final IRtmCalendarProvider calendarProvider = new DefaultRtmCalenderProvider();
+      
+      initContentProvider( calendarProvider );
       
       SettingsService settingsService = new SettingsService( this,
                                                              systemServicesContainer.getHandler() );
-      MolokoDateFormatterService dateFormatterService = new MolokoDateFormatterService( this );
+      final MolokoDateFormatterService dateFormatterService = new MolokoDateFormatterService( this );
       
-      createDomainServices( dateFormatterService, settingsService.getLocale() );
+      createDomainServices( calendarProvider,
+                            dateFormatterService,
+                            settingsService.getLocale() );
       createDomainContext();
       
       createUiServices( dateFormatterService );
@@ -313,12 +319,14 @@ public class MolokoApp extends Application implements
    
    
    
-   private void createDomainServices( IDateFormatterService dateFormatterService,
+   private void createDomainServices( IRtmCalendarProvider calendarProvider,
+                                      IDateFormatterService dateFormatterService,
                                       Locale parserLocale )
    {
       final IRecurrenceSentenceLanguage recurrenceSentenceLanguage = createRecurrenceSentenceLanguage( parserLocale );
       domainServicesContainer = new DomainServicesContainer( this,
                                                              systemServicesContainer.Log(),
+                                                             calendarProvider,
                                                              dateFormatterService,
                                                              recurrenceSentenceLanguage );
    }
@@ -516,12 +524,12 @@ public class MolokoApp extends Application implements
    
    
    
-   private void initContentProvider()
+   private void initContentProvider( IRtmCalendarProvider calendarProvider )
    {
       final MolokoContentProvider molokoContentProvider = (MolokoContentProvider) getContentResolver().acquireContentProviderClient( ContentAuthority.RTM )
                                                                                                       .getLocalContentProvider();
       molokoContentProvider.init( systemServicesContainer.Log(),
-                                  domainServicesContainer.getCalendarProvider() );
+                                  calendarProvider );
    }
    
    

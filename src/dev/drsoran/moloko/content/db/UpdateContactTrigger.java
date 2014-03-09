@@ -67,9 +67,9 @@ class UpdateContactTrigger extends AbstractTrigger
       builder.append( " new. " );
       builder.append( RtmContactColumns.USERNAME );
       builder.append( " WHERE " );
-      builder.append( RtmParticipantColumns.CONTACT_ID );
+      builder.append( RtmParticipantColumns.RTM_CONTACT_ID );
       builder.append( " = new." );
-      builder.append( RtmContactColumns._ID );
+      builder.append( RtmContactColumns.RTM_CONTACT_ID );
       builder.append( "; END;" );
       
       database.execSQL( builder.toString() );

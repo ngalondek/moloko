@@ -37,6 +37,8 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
    
    private IRtmContentHandlerListener< T > listener;
    
+   private StringBuilder charactersBuffer;
+   
    
    
    protected RtmContentHandler( IRtmContentHandlerListener< T > listener )
@@ -84,6 +86,12 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
       final RtmContentHandler< ? > handler = currentHandler();
       if ( handler == this )
       {
+         if ( charactersBuffer != null )
+         {
+            characters( charactersBuffer.toString() );
+            charactersBuffer = null;
+         }
+         
          handler.endElement( qName );
       }
       else
@@ -106,7 +114,12 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
       final RtmContentHandler< ? > handler = currentHandler();
       if ( handler == this )
       {
-         handler.characters( new String( ch, start, length ) );
+         if ( charactersBuffer == null )
+         {
+            charactersBuffer = new StringBuilder();
+         }
+         
+         charactersBuffer.append( ch, start, length );
       }
       else
       {

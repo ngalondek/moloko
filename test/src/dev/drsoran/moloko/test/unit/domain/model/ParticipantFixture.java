@@ -39,7 +39,7 @@ public class ParticipantFixture extends MolokoTestCase
    public void testParticipant()
    {
       createParticipant();
-      new Participant( 1, 2, "", "user" );
+      new Participant( 1, "", "user" );
    }
    
    
@@ -47,15 +47,7 @@ public class ParticipantFixture extends MolokoTestCase
    @Test
    public void testParticipantNoId()
    {
-      new Participant( NO_ID, 2, "name", "user" );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testParticipantNoContactId()
-   {
-      new Participant( 1, NO_ID, "name", "user" );
+      new Participant( NO_ID, "name", "user" );
    }
    
    
@@ -63,7 +55,7 @@ public class ParticipantFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testParticipantNullName()
    {
-      new Participant( 1, 2, null, "user" );
+      new Participant( 1, null, "user" );
    }
    
    
@@ -71,7 +63,7 @@ public class ParticipantFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testParticipantNullUser()
    {
-      new Participant( 1, 2, "name", null );
+      new Participant( 1, "name", null );
    }
    
    
@@ -79,7 +71,7 @@ public class ParticipantFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testParticipantEmptyUser()
    {
-      new Participant( 1, 2, "name", "" );
+      new Participant( 1, "name", "" );
    }
    
    
@@ -88,14 +80,6 @@ public class ParticipantFixture extends MolokoTestCase
    public void testGetId()
    {
       assertThat( createParticipant().getId(), is( 1L ) );
-   }
-   
-   
-   
-   @Test
-   public void testGetContactId()
-   {
-      assertThat( createParticipant().getContactId(), is( 2L ) );
    }
    
    
@@ -126,6 +110,6 @@ public class ParticipantFixture extends MolokoTestCase
    
    private Participant createParticipant()
    {
-      return new Participant( 1, 2, "name", "user" );
+      return new Participant( 1, "name", "user" );
    }
 }

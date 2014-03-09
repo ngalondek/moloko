@@ -72,15 +72,17 @@ public class RtmTaskSeries
       {
          throw new IllegalArgumentException( "createdMillisUtc" );
       }
-      
       if ( listId == RtmConstants.NO_ID )
       {
          throw new IllegalArgumentException( "listId" );
       }
-      
       if ( Strings.isNullOrEmpty( name ) )
       {
          throw new IllegalArgumentException( "name" );
+      }
+      if ( Strings.EMPTY_STRING.equals( locationId ) )
+      {
+         throw new IllegalArgumentException( "locationId" );
       }
       
       this.id = id;

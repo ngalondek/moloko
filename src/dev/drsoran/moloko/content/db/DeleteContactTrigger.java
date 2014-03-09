@@ -53,9 +53,9 @@ class DeleteContactTrigger extends AbstractTrigger
       builder.append( " FOR EACH ROW BEGIN DELETE FROM " );
       builder.append( RtmParticipantsTable.TABLE_NAME );
       builder.append( " WHERE " );
-      builder.append( RtmParticipantColumns.CONTACT_ID );
+      builder.append( RtmParticipantColumns.RTM_CONTACT_ID );
       builder.append( " = old." );
-      builder.append( RtmContactColumns._ID );
+      builder.append( RtmContactColumns.RTM_CONTACT_ID );
       builder.append( "; END;" );
       
       database.execSQL( builder.toString() );

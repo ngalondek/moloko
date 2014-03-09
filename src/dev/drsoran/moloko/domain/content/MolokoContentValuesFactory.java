@@ -328,8 +328,11 @@ public class MolokoContentValuesFactory implements IContentValuesFactory
       {
          final ContentValues values = new ContentValues();
          
-         values.put( ParticipantColumns._ID, participant.getId() );
-         values.put( ParticipantColumns.CONTACT_ID, participant.getContactId() );
+         if ( participant.getId() != Constants.NO_ID )
+         {
+            values.put( ParticipantColumns._ID, participant.getId() );
+         }
+         
          values.put( ParticipantColumns.FULLNAME, participant.getFullname() );
          values.put( ParticipantColumns.USERNAME, participant.getUsername() );
          
@@ -346,7 +349,11 @@ public class MolokoContentValuesFactory implements IContentValuesFactory
       {
          final ContentValues values = new ContentValues();
          
-         values.put( ContactColumns._ID, contact.getId() );
+         if ( contact.getId() != Constants.NO_ID )
+         {
+            values.put( ContactColumns._ID, contact.getId() );
+         }
+         
          values.put( ContactColumns.FULLNAME, contact.getFullname() );
          values.put( ContactColumns.USERNAME, contact.getUsername() );
          
@@ -363,7 +370,11 @@ public class MolokoContentValuesFactory implements IContentValuesFactory
       {
          final ContentValues values = new ContentValues();
          
-         values.put( LocationColumns._ID, location.getId() );
+         if ( location.getId() != Constants.NO_ID )
+         {
+            values.put( LocationColumns._ID, location.getId() );
+         }
+         
          values.put( LocationColumns.LOCATION_NAME, location.getName() );
          values.put( LocationColumns.LONGITUDE, location.getLongitude() );
          values.put( LocationColumns.LATITUDE, location.getLatitude() );

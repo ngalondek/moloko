@@ -26,11 +26,14 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import dev.drsoran.rtm.IRtmResponseHandler;
 import dev.drsoran.rtm.RtmResponse;
@@ -99,7 +102,11 @@ public class RtmRestResponseHandler< T > extends RtmContentHandler< T >
       try
       {
          final InputSource inputSource = new InputSource( responseReader );
-         final XMLReader xmlReader = new RemoveWhiteSpaceXmlFilter( XMLReaderFactory.createXMLReader() );
+         
+         final SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+         final SAXParser saxParser = parserFactory.newSAXParser();
+         // final XMLReader xmlReader = new RemoveWhiteSpaceXmlFilter( saxParser.getXMLReader() );
+         final XMLReader xmlReader = saxParser.getXMLReader();
          
          xmlReader.setContentHandler( this );
          xmlReader.parse( inputSource );
@@ -122,6 +129,10 @@ public class RtmRestResponseHandler< T > extends RtmContentHandler< T >
       {
          throw new RtmServiceException( "IO error during the read of response of a request",
                                         e );
+      }
+      catch ( ParserConfigurationException e )
+      {
+         throw new RtmServiceException( "Failed to set up SAX parser", e );
       }
    }
    

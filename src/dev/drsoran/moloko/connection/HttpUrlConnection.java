@@ -22,39 +22,31 @@
 
 package dev.drsoran.moloko.connection;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.rtm.IConnection;
 
 
 class HttpUrlConnection implements IConnection
-{   
+{
    private final ILog log;
    
-   private final String scheme;
+   private final IReaderFactory readerFactory;
    
-   private final String host;
-   
-   private final int port;
+   private HttpURLConnection openConnection;
    
    
    
-   public HttpUrlConnection( ILog log, String scheme, String hostname,
-      int port )
+   public HttpUrlConnection( IReaderFactory readerFactory, ILog log )
    {
+      this.readerFactory = readerFactory;
       this.log = log;
-      this.scheme = scheme;
-      this.host = hostname;
-      this.port = port;
    }
    
    
@@ -65,27 +57,21 @@ class HttpUrlConnection implements IConnection
       final URL url;
       try
       {
-         url = assembleUrl( requestUri );
+         url = new URL( requestUri );
       }
       catch ( MalformedURLException e )
       {
-         log.e( getClass(), "Invalid request URI " + requestUri, e );
-         throw new IOException( Strings.EMPTY_STRING, e );
+         final String message = MessageFormat.format( "Invalid request URI {0}",
+                                                      requestUri );
+         log.e( getClass(), message, e );
+         throw new IOException( message, e );
       }
       
       logRequest( url );
       
-      final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+      openConnection = (HttpURLConnection) url.openConnection();
+      final Reader reader = readerFactory.createReader( openConnection.getInputStream() );
       
-      final InputStream inputStream = new BufferedInputStream( urlConnection.getInputStream(),
-                                                               4096 );
-      
-      final Reader decoratedReader = new LoggingReader( log,
-                                                        new InputStreamReader( inputStream ),
-                                                        getClass() );
-      
-      final Reader reader = new HttpUrlConnectionReader( decoratedReader,
-                                                         urlConnection );
       return reader;
    }
    
@@ -94,13 +80,22 @@ class HttpUrlConnection implements IConnection
    @Override
    public void close()
    {
+      disconnectOpenConnection();
    }
    
    
    
-   private URL assembleUrl( String requestUri ) throws MalformedURLException
+   private void disconnectOpenConnection()
    {
-      return new URL( scheme, host, port, requestUri );
+      if ( openConnection != null )
+      {
+         log.d( getClass(),
+                MessageFormat.format( "Disconnected from {0}",
+                                      openConnection.getURL() ) );
+         
+         openConnection.disconnect();
+         openConnection = null;
+      }
    }
    
    

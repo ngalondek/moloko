@@ -43,13 +43,18 @@ import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.RtmServiceException;
 import dev.drsoran.rtm.service.RtmAuth;
 import dev.drsoran.rtm.service.RtmAuthHandle;
+import dev.drsoran.rtm.service.RtmFrob;
 import dev.drsoran.rtm.service.RtmServicePermission;
 
 
-class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
+public class RtmWebLoginFragment extends AuthFragment implements
+         IAuthSequenceListener
 {
    @InstanceState( key = AuthConstants.FEAT_PERMISSION, defaultValue = "read" )
    private String permission;
+   
+   @InstanceState( key = "frob", defaultValue = InstanceState.NULL )
+   private String frob;
    
    private AuthenticatorActivity authenticatorActivity;
    
@@ -201,6 +206,8 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
       }
       else
       {
+         frob = authHandle.getFrob().getValue();
+         
          Log().d( getClass(),
                   MessageFormat.format( "LoginURL: {0}",
                                         authHandle.getAuthUri() ) );
@@ -255,7 +262,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
       else if ( Strings.equalsNullAware( buttonText,
                                          getString( R.string.btn_continue ) ) )
       {
-         authenticator.completeAuthentication( this );
+         authenticator.completeAuthentication( this, new RtmFrob( frob ) );
       }
    }
    
@@ -331,7 +338,7 @@ class RtmWebLoginFragment extends AuthFragment implements IAuthSequenceListener
    
    private void notifyAuthenticationFailed( Exception exception )
    {
-      notifyAuthenticationFailed( AsyncRtmAuthenticator.getExceptionCause( exception ) );
+      notifyAuthenticationFailed( exception.getLocalizedMessage() );
    }
    
    

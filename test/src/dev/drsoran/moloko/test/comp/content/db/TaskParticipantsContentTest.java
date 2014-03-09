@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.test.comp.content.db;
 
-import static dev.drsoran.moloko.content.Columns.ParticipantColumns.CONTACT_ID_IDX;
 import static dev.drsoran.moloko.content.Columns.ParticipantColumns.FULLNAME_IDX;
 import static dev.drsoran.moloko.content.Columns.ParticipantColumns.PROJECTION;
 import static dev.drsoran.moloko.content.Columns.ParticipantColumns.USERNAME_IDX;
@@ -109,11 +108,11 @@ public class TaskParticipantsContentTest extends MolokoReadDbContentTestCase
       switch ( (int) rowId )
       {
          case 1:
-            checkResult( c, 1L, 1L, "Full Name1", "User1" );
+            checkResult( c, 1L, "Full Name1", "User1" );
             break;
          
          case 2:
-            checkResult( c, 2L, 2L, "Full Name2", "User2" );
+            checkResult( c, 2L, "Full Name2", "User2" );
             break;
          
          default :
@@ -125,12 +124,10 @@ public class TaskParticipantsContentTest extends MolokoReadDbContentTestCase
    
    private static void checkResult( Cursor c,
                                     long id,
-                                    long contactId,
                                     String fullName,
                                     String userName )
    {
       assertThat( c.getLong( Columns.ID_IDX ), is( id ) );
-      assertThat( c.getLong( CONTACT_ID_IDX ), is( contactId ) );
       assertThat( c.getString( FULLNAME_IDX ), is( fullName ) );
       assertThat( c.getString( USERNAME_IDX ), is( userName ) );
    }

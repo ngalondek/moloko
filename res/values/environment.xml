@@ -24,6 +24,6 @@
          - warn
          - error
      -->
-    <string name="env_log_level">info</string>
+    <string name="env_log_level">warn</string>
     <integer name="env_loader_update_throttle_ms">1000</integer>
 </resources>

@@ -20,34 +20,40 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm.sync;
+package dev.drsoran.moloko.connection;
 
-import dev.drsoran.rtm.RtmServiceException;
-import dev.drsoran.rtm.model.RtmTimeline;
-import dev.drsoran.rtm.service.IRtmContentEditService;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
+import dev.drsoran.moloko.ILog;
+import dev.drsoran.moloko.MolokoApp;
 
 
-public class RtmTimelineFactory implements IRtmTimelineFactory
+public class DefaultReaderFactory implements IReaderFactory
 {
-   private final IRtmContentEditService contentEditService;
+   private final ILog log;
    
    
    
-   public RtmTimelineFactory( IRtmContentEditService contentEditService )
+   public DefaultReaderFactory( ILog log )
    {
-      if ( contentEditService == null )
-      {
-         throw new IllegalArgumentException( "contentEditService" );
-      }
-      
-      this.contentEditService = contentEditService;
+      this.log = log;
    }
    
    
    
+   @SuppressWarnings( "resource" )
    @Override
-   public RtmTimeline createTimeline() throws RtmServiceException
+   public Reader createReader( InputStream inputStream )
    {
-      return contentEditService.timelines_create();
+      Reader reader = new InputStreamReader( inputStream );
+      
+      if ( MolokoApp.DEBUG() )
+      {
+         reader = new LoggingReader( log, reader, HttpUrlConnection.class );
+      }
+      
+      return reader;
    }
 }

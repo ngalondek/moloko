@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.domain.model;
 
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.content.Constants;
 
 
 public class Location
@@ -47,11 +46,6 @@ public class Location
    public Location( long id, String name, float longitude, float latitude,
       String address, boolean isViewable, int zoom )
    {
-      if ( id == Constants.NO_ID )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
       if ( name == null )
       {
          throw new IllegalArgumentException( "name" );

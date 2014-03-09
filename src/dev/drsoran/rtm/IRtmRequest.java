@@ -22,14 +22,8 @@
 
 package dev.drsoran.rtm;
 
-
-
 public interface IRtmRequest
 {
-   String getRtmMethod();
-   
-   
-   
    void addParam( Param param );
    
    

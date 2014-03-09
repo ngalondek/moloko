@@ -32,7 +32,7 @@ import dev.drsoran.moloko.test.shadows.SQLiteQueryShadow;
 
 
 @UsingDatabaseMap( SQLiteMap.class )
-public class SQLiteTestRunner extends MolokoTestRunner_en
+public class SQLiteTestRunner extends MolokoTestAppRunner_en
 {
    public SQLiteTestRunner( Class< ? > testClass ) throws InitializationError
    {

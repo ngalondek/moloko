@@ -26,12 +26,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import dev.drsoran.Strings;
 
@@ -40,42 +38,22 @@ public class RtmRequestUriBuilder
 {
    private final static String ENCODING = "UTF-8";
    
-   private final String apiKey;
+   private final Set< Param > params = new TreeSet< Param >();
    
    private final String sharedSecret;
-   
-   private final Collection< Param > params = new ArrayList< Param >();
    
    private String scheme;
    
    private String host;
    
-   private int port;
-   
    private String serviceUrl;
-   
-   private String authToken;
    
    
    
    public RtmRequestUriBuilder( String apiKey, String sharedSecret )
    {
-      this.apiKey = apiKey;
+      params.add( new Param( "api_key", apiKey ) );
       this.sharedSecret = sharedSecret;
-   }
-   
-   
-   
-   public String getApiKey()
-   {
-      return apiKey;
-   }
-   
-   
-   
-   public String getSharedSecret()
-   {
-      return sharedSecret;
    }
    
    
@@ -85,52 +63,48 @@ public class RtmRequestUriBuilder
    {
       this.scheme = protocol.toString();
       this.host = host;
-      this.port = protocol.getPort();
       
       return this;
    }
    
    
    
-   public String getHost()
-   {
-      return host;
-   }
-   
-   
-   
-   public int getPort()
-   {
-      return port;
-   }
-   
-   
-   
-   public void setScheme( String scheme )
+   public RtmRequestUriBuilder setScheme( String scheme )
    {
       this.scheme = scheme;
+      return this;
    }
    
    
    
-   public String getScheme()
+   public RtmRequestUriBuilder setMethod( String method )
    {
-      return scheme;
+      if ( method != null )
+      {
+         params.add( new Param( "method", method ) );
+      }
+      else
+      {
+         params.remove( new Param( "method", Strings.EMPTY_STRING ) );
+      }
+      
+      return this;
    }
    
    
    
    public RtmRequestUriBuilder setAuthToken( String authToken )
    {
-      this.authToken = authToken;
+      if ( !Strings.isNullOrEmpty( authToken ) )
+      {
+         params.add( new Param( "auth_token", authToken ) );
+      }
+      else
+      {
+         params.remove( new Param( "auth_token", Strings.EMPTY_STRING ) );
+      }
+      
       return this;
-   }
-   
-   
-   
-   public String getAuthToken()
-   {
-      return authToken;
    }
    
    
@@ -139,13 +113,6 @@ public class RtmRequestUriBuilder
    {
       this.serviceUrl = serviceUrl;
       return this;
-   }
-   
-   
-   
-   public String getServiceUrl()
-   {
-      return serviceUrl;
    }
    
    
@@ -166,17 +133,8 @@ public class RtmRequestUriBuilder
    
    
    
-   public Collection< Param > getParams()
-   {
-      return params;
-   }
-   
-   
-   
    public String build()
    {
-      final List< Param > parametersSorted = signAndSortParameters();
-      
       final StringBuilder requestUri = new StringBuilder();
       
       if ( !Strings.isNullOrEmpty( host ) )
@@ -189,14 +147,12 @@ public class RtmRequestUriBuilder
          requestUri.append( serviceUrl );
       }
       
-      if ( !parametersSorted.isEmpty() )
-      {
-         requestUri.append( "?" );
-      }
+      params.add( calcApiSig( params ) );
+      requestUri.append( "?" );
       
       try
       {
-         for ( Iterator< Param > i = parametersSorted.iterator(); i.hasNext(); )
+         for ( Iterator< Param > i = params.iterator(); i.hasNext(); )
          {
             final Param param = i.next();
             
@@ -220,24 +176,7 @@ public class RtmRequestUriBuilder
    
    
    
-   private List< Param > signAndSortParameters()
-   {
-      final List< Param > parametersSorted = new ArrayList< Param >( params );
-      if ( !Strings.isNullOrEmpty( authToken ) )
-      {
-         parametersSorted.add( new Param( "auth_token", authToken ) );
-      }
-      
-      parametersSorted.add( new Param( "api_key", apiKey ) );
-      parametersSorted.add( new Param( "api_sig", calcApiSig( parametersSorted ) ) );
-      
-      Collections.sort( parametersSorted );
-      return parametersSorted;
-   }
-   
-   
-   
-   private String calcApiSig( Iterable< Param > params )
+   private Param calcApiSig( Iterable< Param > params )
    {
       try
       {
@@ -252,7 +191,7 @@ public class RtmRequestUriBuilder
             digest.update( param.getValue().getBytes( ENCODING ) );
          }
          
-         return convertToHex( digest.digest() );
+         return new Param( "api_sig", convertToHex( digest.digest() ) );
       }
       catch ( NoSuchAlgorithmException e )
       {

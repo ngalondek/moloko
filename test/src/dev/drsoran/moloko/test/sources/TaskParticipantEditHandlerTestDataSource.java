@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.test.sources;
 
-import static dev.drsoran.moloko.content.Columns.ParticipantColumns.CONTACT_ID;
 import static dev.drsoran.moloko.content.Columns.ParticipantColumns.FULLNAME;
 import static dev.drsoran.moloko.content.Columns.ParticipantColumns.USERNAME;
 import static dev.drsoran.moloko.content.ContentUris.TASK_PARTICIPANTS_CONTENT_URI_ID;
@@ -58,7 +57,6 @@ public class TaskParticipantEditHandlerTestDataSource extends
    {
       final Collection< TestData< Participant >> testData = new ArrayList< TestData< Participant > >();
       
-      addUpdateContactId( testData );
       addUpdateFullname( testData );
       addUpdateUsername( testData );
       addUpdateMultiple( testData );
@@ -68,36 +66,12 @@ public class TaskParticipantEditHandlerTestDataSource extends
    
    
    
-   private void addUpdateContactId( Collection< TestData< Participant >> testData )
-   {
-      final Participant existing = new Participant( elementId,
-                                                    100L,
-                                                    "fullname",
-                                                    "username" );
-      final Participant update = new Participant( elementId,
-                                                  101L,
-                                                  "fullname",
-                                                  "username" );
-      
-      final Modification mod = Modification.newNonPersistentModification( getEntityUri(),
-                                                                          CONTACT_ID,
-                                                                          101L );
-      
-      testData.add( new TestData< Participant >( existing, update, mod ) );
-   }
-   
-   
-   
    private void addUpdateFullname( Collection< TestData< Participant >> testData )
    {
       final Participant existing = new Participant( elementId,
-                                                    100L,
-                                                    "fullname",
-                                                    "username" );
-      final Participant update = new Participant( elementId,
-                                                  100L,
-                                                  "full",
-                                                  "username" );
+      
+      "fullname", "username" );
+      final Participant update = new Participant( elementId, "full", "username" );
       
       final Modification mod = Modification.newNonPersistentModification( getEntityUri(),
                                                                           FULLNAME,
@@ -111,13 +85,9 @@ public class TaskParticipantEditHandlerTestDataSource extends
    private void addUpdateUsername( Collection< TestData< Participant >> testData )
    {
       final Participant existing = new Participant( elementId,
-                                                    100L,
                                                     "fullname",
                                                     "username" );
-      final Participant update = new Participant( elementId,
-                                                  100L,
-                                                  "fullname",
-                                                  "user" );
+      final Participant update = new Participant( elementId, "fullname", "user" );
       
       final Modification mod = Modification.newNonPersistentModification( getEntityUri(),
                                                                           USERNAME,
@@ -131,13 +101,9 @@ public class TaskParticipantEditHandlerTestDataSource extends
    private void addUpdateMultiple( Collection< TestData< Participant >> testData )
    {
       final Participant existing = new Participant( elementId,
-                                                    100L,
                                                     "fullname",
                                                     "username" );
-      final Participant update = new Participant( elementId,
-                                                  100L,
-                                                  "full",
-                                                  "user" );
+      final Participant update = new Participant( elementId, "full", "user" );
       
       final Modification mod1 = Modification.newNonPersistentModification( getEntityUri(),
                                                                            FULLNAME,

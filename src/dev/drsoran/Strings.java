@@ -110,12 +110,12 @@ public final class Strings
    
    public final static CharSequence nullIfEmpty( CharSequence input )
    {
-      if ( input == null )
+      if ( isNullOrEmpty( input ) )
       {
-         throw new IllegalArgumentException( "input" );
+         return null;
       }
       
-      return input.length() == 0 ? null : input;
+      return input;
    }
    
    

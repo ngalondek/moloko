@@ -26,6 +26,8 @@ import dev.drsoran.moloko.ILog;
 import dev.drsoran.rtm.BlockingRtmRequestLimiter;
 import dev.drsoran.rtm.IConnectionFactory;
 import dev.drsoran.rtm.IRtmConnectionFactory;
+import dev.drsoran.rtm.IRtmRequestFactory;
+import dev.drsoran.rtm.IRtmRequestLimiter;
 import dev.drsoran.rtm.IRtmResponseHandlerFactory;
 import dev.drsoran.rtm.RtmConnectionFactory;
 import dev.drsoran.rtm.RtmConnectionProtocol;
@@ -39,11 +41,21 @@ import dev.drsoran.rtm.sync.RtmTimelineFactory;
 
 public class RtmService implements IRtmService
 {
-   private final IRtmConnectionFactory rtmConnectionFactory;
+   private final IRtmRequestLimiter requestLimiter = new BlockingRtmRequestLimiter();
+   
+   private final IRtmRequestFactory requestFactory = new RtmRestRequestFactory();
    
    private final IRtmResponseHandlerFactory responseHandlerFactory;
    
-   private final IRtmContentRepository contentRepository;
+   private final ILog log;
+   
+   private final IConnectionFactory connectionFactory;
+   
+   private final RtmConnectionProtocol protocol;
+   
+   private final String apiKey;
+   
+   private final String sharedSecret;
    
    
    
@@ -51,35 +63,13 @@ public class RtmService implements IRtmService
       IRtmCalendarProvider calendarProvider, RtmConnectionProtocol protocol,
       String apiKey, String sharedSecret )
    {
-      rtmConnectionFactory = new RtmConnectionFactory( log,
-                                                       connectionFactory,
-                                                       new RtmRestRequestFactory(),
-                                                       new BlockingRtmRequestLimiter(),
-                                                       protocol,
-                                                       apiKey,
-                                                       sharedSecret );
+      this.log = log;
+      this.connectionFactory = connectionFactory;
+      this.protocol = protocol;
+      this.apiKey = apiKey;
+      this.sharedSecret = sharedSecret;
       
-      responseHandlerFactory = new RtmRestResponseHandlerFactory( calendarProvider );
-      
-      contentRepository = new RtmContentRepository( rtmConnectionFactory,
-                                                    responseHandlerFactory );
-   }
-   
-   
-   
-   @Override
-   public IRtmContentRepository getContentRepository()
-   {
-      return contentRepository;
-   }
-   
-   
-   
-   @Override
-   public IRtmContentEditService getContentEditService()
-   {
-      return new RtmContentEditService( rtmConnectionFactory,
-                                        responseHandlerFactory );
+      this.responseHandlerFactory = new RtmRestResponseHandlerFactory( calendarProvider );
    }
    
    
@@ -87,22 +77,54 @@ public class RtmService implements IRtmService
    @Override
    public IRtmAuthenticationService getAuthenticationService()
    {
-      return new RtmAuthenticationService( rtmConnectionFactory,
+      return new RtmAuthenticationService( createConnectionFactory( null ),
                                            responseHandlerFactory );
    }
    
    
    
    @Override
-   public IRtmSyncService getSyncService( IRtmSyncPartner syncPartner )
+   public IRtmContentRepository getContentRepository( String authToken )
    {
-      final IRtmContentEditService contentEditService = getContentEditService();
+      return new RtmContentRepository( createConnectionFactory( authToken ),
+                                       responseHandlerFactory );
+   }
+   
+   
+   
+   @Override
+   public IRtmContentEditService getContentEditService( String authToken )
+   {
+      return new RtmContentEditService( createConnectionFactory( authToken ),
+                                        responseHandlerFactory );
+   }
+   
+   
+   
+   @Override
+   public IRtmSyncService getSyncService( IRtmSyncPartner syncPartner,
+                                          String authToken )
+   {
+      final IRtmContentEditService contentEditService = getContentEditService( authToken );
       
       return new RtmSyncService( syncPartner,
-                                 getContentRepository(),
+                                 getContentRepository( authToken ),
                                  contentEditService,
                                  new RtmSyncHandlerFactory( syncPartner ),
                                  new RtmTimelineFactory( contentEditService ) );
    }
    
+   
+   
+   private IRtmConnectionFactory createConnectionFactory( String authToken )
+   {
+      return new RtmConnectionFactory( log,
+                                       connectionFactory,
+                                       requestFactory,
+                                       requestLimiter,
+                                       protocol,
+                                       apiKey,
+                                       sharedSecret,
+                                       authToken );
+   }
 }

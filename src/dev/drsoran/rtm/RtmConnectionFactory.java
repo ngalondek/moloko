@@ -28,7 +28,7 @@ import dev.drsoran.moloko.ILog;
 
 public class RtmConnectionFactory implements IRtmConnectionFactory
 {
-   public final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
+   public final static String SERVER_HOST_NAME = "api.rememberthemilk.com";
    
    private final ILog log;
    
@@ -44,11 +44,14 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
    
    private final String sharedSecret;
    
+   private final String authToken;
+   
    
    
    public RtmConnectionFactory( ILog log, IConnectionFactory connectionFactory,
       IRtmRequestFactory requestFactory, IRtmRequestLimiter requestLimiter,
-      RtmConnectionProtocol protocol, String apiKey, String sharedSecret )
+      RtmConnectionProtocol protocol, String apiKey, String sharedSecret,
+      String authToken )
    {
       if ( log == null )
       {
@@ -74,6 +77,10 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
       {
          throw new IllegalArgumentException( "sharedSecret" );
       }
+      if ( Strings.EMPTY_STRING.equals( authToken ) )
+      {
+         throw new IllegalArgumentException( "authToken" );
+      }
       
       this.log = log;
       this.connectionFactory = connectionFactory;
@@ -82,6 +89,14 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
       this.protocol = protocol;
       this.apiKey = apiKey;
       this.sharedSecret = sharedSecret;
+      this.authToken = authToken;
+   }
+   
+   
+   
+   public String getAuthToken()
+   {
+      return authToken;
    }
    
    
@@ -90,7 +105,8 @@ public class RtmConnectionFactory implements IRtmConnectionFactory
    public RtmRequestUriBuilder createUriBuilder()
    {
       return new RtmRequestUriBuilder( apiKey, sharedSecret ).setHost( protocol,
-                                                                       SERVER_HOST_NAME );
+                                                                       SERVER_HOST_NAME )
+                                                             .setAuthToken( authToken );
    }
    
    

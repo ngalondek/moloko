@@ -28,15 +28,14 @@ import org.junit.runners.model.InitializationError;
 import org.robolectric.annotation.Config;
 
 
-@Config( qualifiers = "en" )
-public class MolokoTestRunner_en extends MolokoTestRunner
+@Config( qualifiers = "de" )
+public class MolokoTestAppRunner_de extends MolokoTestAppRunner
 {
-   
-   public MolokoTestRunner_en( Class< ? > testClass )
+   public MolokoTestAppRunner_de( Class< ? > testClass )
       throws InitializationError
    {
       super( testClass );
-      Locale.setDefault( Locale.US );
+      Locale.setDefault( Locale.GERMAN );
    }
    
    
@@ -44,6 +43,6 @@ public class MolokoTestRunner_en extends MolokoTestRunner
    @Override
    public String getValuesResQualifiers()
    {
-      return "";
+      return "de";
    }
 }

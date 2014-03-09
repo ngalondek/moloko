@@ -102,26 +102,26 @@ INSERT INTO notes ( _id,
            10);
            
 INSERT INTO participants ( _id,
-                           contact_id,
                            fullname,
                            username,
-                           taskseries_id)
+                           taskseries_id,
+                           rtm_contact_id)
    VALUES (1,
-           1,
            "Full Name1",
            "User1",
-           10);
+           10,
+           "1000");
 
 INSERT INTO participants ( _id,
-                           contact_id,
                            fullname,
                            username,
-                           taskseries_id)
+                           taskseries_id,
+                           rtm_contact_id)
    VALUES (2,
-           2,
            "Full Name2",
            "User2",
-           10);
+           10,
+           "1001");
            
 INSERT INTO taskseries ( _id,
                          task_created,
@@ -190,12 +190,12 @@ INSERT INTO notes ( _id,
            11);
            
 INSERT INTO participants ( _id,
-                           contact_id,
                            fullname,
                            username,
-                           taskseries_id)
+                           taskseries_id,
+                           rtm_contact_id)
    VALUES (3,
-           2,
            "Full Name2",
            "User2",
-           11);
+           11,
+           "1002");

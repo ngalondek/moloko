@@ -22,9 +22,7 @@
 
 package dev.drsoran.moloko.connection;
 
-import android.os.Build;
 import dev.drsoran.moloko.ILog;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.rtm.IConnection;
 import dev.drsoran.rtm.IConnectionFactory;
 
@@ -33,30 +31,21 @@ public class DefaultConnectionFactory implements IConnectionFactory
 {
    private final ILog log;
    
-   private final String userAgent;
+   private final IReaderFactory readerFactory;
    
    
    
-   public DefaultConnectionFactory( ILog log, String userAgent )
+   public DefaultConnectionFactory( IReaderFactory readerFactory, ILog log )
    {
       this.log = log;
-      this.userAgent = userAgent;
+      this.readerFactory = readerFactory;
    }
    
    
    
    @Override
-   public IConnection createConnection( String scheme, String hostname, int port )
+   public IConnection createConnection()
    {
-      if ( MolokoApp.isApiLevelSupported( Build.VERSION_CODES.GINGERBREAD ) )
-      {
-         return new HttpUrlConnection( log, scheme, hostname, port );
-      }
-      
-      return new ApacheHttpClientConnection( log,
-                                             userAgent,
-                                             scheme,
-                                             hostname,
-                                             port );
+      return new HttpUrlConnection( readerFactory, log );
    }
 }

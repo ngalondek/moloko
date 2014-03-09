@@ -29,6 +29,7 @@ import static org.junit.Assert.assertThat;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.rtm.IConnectionFactory;
 import dev.drsoran.rtm.IRtmRequestFactory;
@@ -49,7 +50,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 "key",
-                                "secret" );
+                                "secret",
+                                "authToken" );
    }
    
    
@@ -63,7 +65,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 "key",
-                                "secret" );
+                                "secret",
+                                "authToken" );
    }
    
    
@@ -77,7 +80,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 "key",
-                                "secret" );
+                                "secret",
+                                "authToken" );
    }
    
    
@@ -91,7 +95,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 "key",
-                                "secret" );
+                                "secret",
+                                "authToken" );
    }
    
    
@@ -105,7 +110,8 @@ public class RtmConnectionFactoryFixture
                                 null,
                                 RtmConnectionProtocol.https,
                                 "key",
-                                "secret" );
+                                "secret",
+                                "authToken" );
    }
    
    
@@ -119,7 +125,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 null,
-                                "secret" );
+                                "secret",
+                                "authToken" );
    }
    
    
@@ -133,7 +140,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 "",
-                                "secret" );
+                                "secret",
+                                "authToken" );
    }
    
    
@@ -147,7 +155,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 "key",
-                                null );
+                                null,
+                                "authToken" );
    }
    
    
@@ -161,7 +170,8 @@ public class RtmConnectionFactoryFixture
                                 EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                 RtmConnectionProtocol.https,
                                 "key",
-                                "" );
+                                Strings.EMPTY_STRING,
+                                "authToken" );
    }
    
    
@@ -175,14 +185,10 @@ public class RtmConnectionFactoryFixture
                                                                EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                                                RtmConnectionProtocol.https,
                                                                "key",
-                                                               "secret" ).createUriBuilder();
+                                                               "secret",
+                                                               "authToken" ).createUriBuilder();
       
       assertThat( builder, is( notNullValue() ) );
-      assertThat( builder.getApiKey(), is( "key" ) );
-      assertThat( builder.getSharedSecret(), is( "secret" ) );
-      assertThat( builder.getHost(), is( RtmConnectionFactory.SERVER_HOST_NAME ) );
-      assertThat( builder.getScheme(), is( "https" ) );
-      assertThat( builder.getPort(), is( RtmConnectionProtocol.https.getPort() ) );
    }
    
    
@@ -196,7 +202,8 @@ public class RtmConnectionFactoryFixture
                                             EasyMock.createNiceMock( IRtmRequestLimiter.class ),
                                             RtmConnectionProtocol.https,
                                             "key",
-                                            "secret" ).createRtmConnection(),
+                                            "secret",
+                                            "authToken" ).createRtmConnection(),
                   is( notNullValue() ) );
    }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taskseries id="987654321" created="2006-05-07T10:19:54Z"
-	modified="2006-05-07T10:19:54Z" name="Get Bananas" source="api">
+	modified="2006-05-07T10:19:54Z" name="Get Bananas" source="api" location_id="">
 	<tags />
 	<participants />
 	<notes />

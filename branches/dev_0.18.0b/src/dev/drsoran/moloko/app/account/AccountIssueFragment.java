@@ -31,9 +31,10 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.rtm.service.RtmServicePermission;
 
 
-class AccountIssueFragment extends AuthFragment
+public class AccountIssueFragment extends AuthFragment
 {
    public final static class Config
    {
@@ -47,7 +48,10 @@ class AccountIssueFragment extends AuthFragment
    private boolean isMissingCredentials;
    
    @InstanceState( key = Config.ACCOUNT_ALREADY_EXISTS )
-   private boolean isAccountExisting;
+   private boolean isAccountAlreadyExisting;
+   
+   @InstanceState( key = AuthConstants.FEAT_PERMISSION )
+   private String permission;
    
    private IStartAuthenticationFragmentListener listener;
    
@@ -111,7 +115,7 @@ class AccountIssueFragment extends AuthFragment
       {
          messageView.setText( R.string.auth_missing_credential );
       }
-      else if ( isAccountExisting )
+      else if ( isAccountAlreadyExisting )
       {
          messageView.setText( R.string.auth_account_exists );
          fragmentView.findViewById( android.R.id.button1 ).setEnabled( false );
@@ -127,7 +131,7 @@ class AccountIssueFragment extends AuthFragment
    {
       if ( listener != null )
       {
-         listener.onStartAuthentication( null );
+         listener.onStartAuthentication( RtmServicePermission.valueOf( permission ) );
       }
    }
 }

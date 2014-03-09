@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko;
 
+import java.text.MessageFormat;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -143,7 +145,7 @@ class AndroidLogger implements ILog
    {
       if ( isLogLevelSet( Log.ERROR ) )
       {
-         Log.e( makeTag( clazz ), msg );
+         Log.e( makeTag( clazz ), msg, tr );
       }
    }
    
@@ -165,33 +167,39 @@ class AndroidLogger implements ILog
    
    private void setLogLevel( Context context )
    {
-      final String logLevelString = context.getString( R.string.env_log_level );
-      
-      if ( "verbose".equalsIgnoreCase( logLevelString ) )
-      {
-         logLevel = Log.VERBOSE;
-      }
-      else if ( "debug".equalsIgnoreCase( logLevelString ) )
+      if ( MolokoApp.DEBUG() )
       {
          logLevel = Log.DEBUG;
       }
-      else if ( "info".equalsIgnoreCase( logLevelString ) )
-      {
-         logLevel = Log.INFO;
-      }
-      else if ( "error".equalsIgnoreCase( logLevelString ) )
-      {
-         logLevel = Log.ERROR;
-      }
-      else if ( "warn".equalsIgnoreCase( logLevelString ) )
-      {
-         logLevel = Log.WARN;
-      }
       else
       {
-         throw new IllegalArgumentException( String.format( "%s is no supported log level.",
-                                                            logLevelString ) );
+         final String logLevelString = context.getString( R.string.env_log_level );
+         
+         if ( "verbose".equalsIgnoreCase( logLevelString ) )
+         {
+            logLevel = Log.VERBOSE;
+         }
+         else if ( "debug".equalsIgnoreCase( logLevelString ) )
+         {
+            logLevel = Log.DEBUG;
+         }
+         else if ( "info".equalsIgnoreCase( logLevelString ) )
+         {
+            logLevel = Log.INFO;
+         }
+         else if ( "error".equalsIgnoreCase( logLevelString ) )
+         {
+            logLevel = Log.ERROR;
+         }
+         else if ( "warn".equalsIgnoreCase( logLevelString ) )
+         {
+            logLevel = Log.WARN;
+         }
+         else
+         {
+            throw new IllegalArgumentException( MessageFormat.format( "{0} is no supported log level",
+                                                                      logLevelString ) );
+         }
       }
    }
-   
 }

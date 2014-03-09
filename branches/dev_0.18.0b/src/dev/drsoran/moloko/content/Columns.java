@@ -475,16 +475,6 @@ public final class Columns
    public static class ParticipantColumns implements BaseColumns
    {
       /**
-       * The contact ID of the contact who participates
-       * <P>
-       * Type: INTEGER (long)
-       * </P>
-       */
-      public final static String CONTACT_ID = "contact_id";
-      
-      public final static int CONTACT_ID_IDX = 1;
-      
-      /**
        * The full name of the contact participates in.
        * <P>
        * Type: TEXT
@@ -492,7 +482,7 @@ public final class Columns
        */
       public final static String FULLNAME = "fullname";
       
-      public final static int FULLNAME_IDX = 2;
+      public final static int FULLNAME_IDX = 1;
       
       /**
        * The user name the contact participates in.
@@ -502,13 +492,13 @@ public final class Columns
        */
       public final static String USERNAME = "username";
       
-      public final static int USERNAME_IDX = 3;
+      public final static int USERNAME_IDX = 2;
       
       public final static String DEFAULT_SORT_ORDER = FULLNAME
          + " COLLATE NOCASE";
       
       public final static String[] PROJECTION =
-      { _ID, CONTACT_ID, FULLNAME, USERNAME };
+      { _ID, FULLNAME, USERNAME };
    }
    
    

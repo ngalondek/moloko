@@ -156,9 +156,11 @@ public final class AppContext extends ContextWrapper
    
    
    
-   public IRtmSyncService getRtmSyncService( IRtmSyncPartner syncPartner )
+   public IRtmSyncService getRtmSyncService( IRtmSyncPartner syncPartner,
+                                             String authToken )
    {
-      return appServices.getRtmService().getSyncService( syncPartner );
+      return appServices.getRtmService()
+                        .getSyncService( syncPartner, authToken );
    }
    
    

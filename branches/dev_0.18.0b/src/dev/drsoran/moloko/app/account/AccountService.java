@@ -22,16 +22,12 @@
 
 package dev.drsoran.moloko.app.account;
 
-import java.io.IOException;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
-
-
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.app.services.AccountCredentials;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.rtm.service.RtmServicePermission;
@@ -78,45 +74,50 @@ public class AccountService implements IAccountService
    
    
    @Override
-   public boolean invalidateAccount( Account account )
+   public boolean isAccountAuthenticated( Account account )
    {
-      String authToken;
-      try
-      {
-         authToken = getAuthToken( account );
-      }
-      catch ( OperationCanceledException e )
-      {
-         return false;
-      }
-      catch ( AuthenticatorException e )
-      {
-         return false;
-      }
-      catch ( IOException e )
-      {
-         return false;
-      }
-      
-      final AccountManager accountManager = AccountManager.get( context );
-      accountManager.invalidateAuthToken( AuthConstants.ACCOUNT_TYPE, authToken );
-      
-      return true;
+      return !Strings.isNullOrEmpty( getAuthToken( account ) );
    }
    
    
    
    @Override
-   public String getAuthToken( Account account ) throws OperationCanceledException,
-                                                AuthenticatorException,
-                                                IOException
+   public boolean invalidateAccount( Account account )
+   {
+      final String authToken = getAuthToken( account );
+      if ( authToken != null )
+      {
+         final AccountManager accountManager = AccountManager.get( context );
+         accountManager.invalidateAuthToken( AuthConstants.ACCOUNT_TYPE,
+                                             authToken );
+         return true;
+      }
+      
+      return false;
+   }
+   
+   
+   
+   @Override
+   public void notifyInvalidAuthToken( Account account )
    {
       final AccountManager accountManager = AccountManager.get( context );
-      final String authToken = accountManager.blockingGetAuthToken( account,
-                                                                    AuthConstants.AUTH_TOKEN_TYPE,
-                                                                    true /* notifyAuthFailure */);
-      
-      return authToken;
+      accountManager.getAuthToken( account,
+                                   AuthConstants.AUTH_TOKEN_TYPE,
+                                   Bundle.EMPTY,
+                                   true,
+                                   null,
+                                   null );
+   }
+   
+   
+   
+   @Override
+   public String getAuthToken( Account account )
+   {
+      final AccountManager accountManager = AccountManager.get( context );
+      return accountManager.peekAuthToken( account,
+                                           AuthConstants.AUTH_TOKEN_TYPE );
    }
    
    
@@ -215,6 +216,7 @@ public class AccountService implements IAccountService
    
    private final static boolean isReadOnlyAccess( RtmServicePermission level )
    {
-      return level == RtmServicePermission.nothing || level == RtmServicePermission.read;
+      return level == RtmServicePermission.nothing
+         || level == RtmServicePermission.read;
    }
 }

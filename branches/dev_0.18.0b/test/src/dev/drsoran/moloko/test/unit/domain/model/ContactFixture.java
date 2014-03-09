@@ -42,8 +42,8 @@ public class ContactFixture extends MolokoTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
-   public void testContactInvId()
+   @Test
+   public void testContactNoId()
    {
       new Contact( Constants.NO_ID, "user", "full", 0 );
    }

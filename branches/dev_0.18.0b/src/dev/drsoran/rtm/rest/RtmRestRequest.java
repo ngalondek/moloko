@@ -29,24 +29,14 @@ import dev.drsoran.rtm.RtmRequestUriBuilder;
 
 public class RtmRestRequest implements IRtmRequest
 {
-   private final String rtmMethod;
-   
    private final RtmRequestUriBuilder requestBuilder;
    
    
    
    public RtmRestRequest( String rtmMethod, RtmRequestUriBuilder builder )
    {
-      this.rtmMethod = rtmMethod;
       this.requestBuilder = builder;
-   }
-   
-   
-   
-   @Override
-   public String getRtmMethod()
-   {
-      return rtmMethod;
+      this.requestBuilder.setMethod( rtmMethod );
    }
    
    

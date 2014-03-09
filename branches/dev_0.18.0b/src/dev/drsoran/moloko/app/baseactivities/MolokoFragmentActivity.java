@@ -68,7 +68,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    
    private final AnnotatedConfigurationSupport annotatedConfigSupport = new AnnotatedConfigurationSupport();
    
-   private final AppContext appContext = AppContext.get( this );
+   private AppContext appContext;
    
    private IHandlerToken handlerToken;
    
@@ -115,6 +115,7 @@ public abstract class MolokoFragmentActivity extends SherlockFragmentActivity
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
+      appContext = AppContext.get( this );
       annotatedConfigSupport.onAttach( appContext.asSystemContext(),
                                        savedInstanceState );
       handlerToken = getAppContext().acquireHandlerToken();

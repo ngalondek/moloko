@@ -30,9 +30,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
-import com.actionbarsherlock.view.Window;
-
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
@@ -59,7 +57,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
    {
       super.onCreate( icicle );
       
-      requestWindowFeature( Window.FEATURE_INDETERMINATE_PROGRESS );
       setContentView( R.layout.authenticator_activity );
       setSupportProgressBarIndeterminateVisibility( false );
       
@@ -96,10 +93,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
       {
          return authFragment.onRetainNonConfigurationInstance();
       }
-      else
-      {
-         return null;
-      }
+      
+      return null;
    }
    
    
@@ -169,13 +164,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
             accountManager.setUserData( account,
                                         AuthConstants.ACCOUNT_FULLNAME,
                                         rtmAuth.getUser().getFullname() );
+            accountManager.setAuthToken( account,
+                                         AuthConstants.AUTH_TOKEN_TYPE,
+                                         rtmAuth.getToken() );
             
             final Intent intent = new Intent();
             
             intent.putExtra( AccountManager.KEY_ACCOUNT_NAME,
                              rtmAuth.getUser().getUsername() );
-            // We store the authToken as password
-            intent.putExtra( AccountManager.KEY_PASSWORD, rtmAuth.getToken() );
             intent.putExtra( AccountManager.KEY_ACCOUNT_TYPE,
                              AuthConstants.ACCOUNT_TYPE );
             intent.putExtra( AccountManager.KEY_AUTHTOKEN, rtmAuth.getToken() );
@@ -243,13 +239,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
       final Fragment chosenFragment;
       final Intent intent = getIntent();
       
+      final String permission = intent.getStringExtra( AuthConstants.FEAT_PERMISSION );
+      
       if ( intent.getBooleanExtra( Intents.Extras.AUTH_MISSINGCREDENTIALS,
                                    false )
          || intent.getBooleanExtra( Intents.Extras.AUTH_TOKEN_EXPIRED, false ) )
       {
-         chosenFragment = AccountIssueFragment.newInstance( getIntent().getExtras() );
+         if ( Strings.isNullOrEmpty( permission ) )
+         {
+            chosenFragment = ChooseRtmPermissionFragment.newInstance( getIntent().getExtras() );
+         }
+         else
+         {
+            chosenFragment = AccountIssueFragment.newInstance( getIntent().getExtras() );
+         }
       }
       
+      // We only allow one account a.t.m.
       else if ( getAppContext().getAccountService().getRtmAccount() != null )
       {
          final Bundle config = new Bundle( 1 );
@@ -257,6 +263,20 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                             true );
          
          chosenFragment = AccountIssueFragment.newInstance( config );
+      }
+      
+      else if ( intent.getBooleanExtra( Intents.Extras.AUTH_MISSINGCREDENTIALS,
+                                        false )
+         || intent.getBooleanExtra( Intents.Extras.AUTH_TOKEN_EXPIRED, false ) )
+      {
+         if ( Strings.isNullOrEmpty( permission ) )
+         {
+            chosenFragment = ChooseRtmPermissionFragment.newInstance( getIntent().getExtras() );
+         }
+         else
+         {
+            chosenFragment = AccountIssueFragment.newInstance( getIntent().getExtras() );
+         }
       }
       
       else

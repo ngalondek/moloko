@@ -183,6 +183,17 @@ public abstract class AbstractDatabase
       
       
       @Override
+      public void onOpen( SQLiteDatabase database )
+      {
+         for ( AbstractTable table : tables )
+         {
+            table.init( database );
+         }
+      }
+      
+      
+      
+      @Override
       public void onUpgrade( SQLiteDatabase database,
                              int oldVersion,
                              int newVersion )
@@ -202,7 +213,6 @@ public abstract class AbstractDatabase
             table.create( database );
             table.createIndices( database );
             table.insertInitialRows( database );
-            table.init( database );
          }
       }
       

@@ -22,12 +22,7 @@
 
 package dev.drsoran.moloko.app.services;
 
-import java.io.IOException;
-
 import android.accounts.Account;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-
 import dev.drsoran.rtm.service.RtmServicePermission;
 
 
@@ -41,13 +36,19 @@ public interface IAccountService
    
    
    
+   boolean isAccountAuthenticated( Account account );
+   
+   
+   
    boolean invalidateAccount( Account account );
    
    
    
-   String getAuthToken( Account account ) throws OperationCanceledException,
-                                         AuthenticatorException,
-                                         IOException;
+   void notifyInvalidAuthToken( Account account );
+   
+   
+   
+   String getAuthToken( Account account );
    
    
    

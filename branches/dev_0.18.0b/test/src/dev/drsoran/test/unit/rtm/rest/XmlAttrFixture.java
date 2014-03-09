@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.rtm.model.RtmConstants;
@@ -104,6 +105,10 @@ public class XmlAttrFixture extends MolokoTestCase
                                         "string",
                                         null ), is( "str" ) );
       assertThat( XmlAttr.getOptString( getAttrs( "string", null ),
+                                        "string",
+                                        "???" ), is( "???" ) );
+      assertThat( XmlAttr.getOptString( getAttrs( "string",
+                                                  Strings.EMPTY_STRING ),
                                         "string",
                                         "???" ), is( "???" ) );
    }

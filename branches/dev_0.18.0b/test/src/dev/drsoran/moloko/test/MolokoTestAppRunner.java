@@ -30,9 +30,9 @@ import org.robolectric.TestLifecycle;
 import android.app.Application;
 
 
-public abstract class MolokoTestRunner extends RobolectricTestRunner
+public abstract class MolokoTestAppRunner extends RobolectricTestRunner
 {
-   protected MolokoTestRunner( Class< ? > testClass )
+   protected MolokoTestAppRunner( Class< ? > testClass )
       throws InitializationError
    {
       super( testClass );

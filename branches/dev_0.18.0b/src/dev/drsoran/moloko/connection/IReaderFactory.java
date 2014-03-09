@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2011 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,9 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.rtm;
+package dev.drsoran.moloko.connection;
 
-public interface IConnectionFactory
+import java.io.InputStream;
+import java.io.Reader;
+
+
+interface IReaderFactory
 {
-   IConnection createConnection();
+   Reader createReader( InputStream inputStream );
 }

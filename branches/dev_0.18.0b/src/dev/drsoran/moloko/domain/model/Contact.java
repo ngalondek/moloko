@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import android.annotation.SuppressLint;
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.content.Constants;
 
 
 public class Contact
@@ -41,21 +41,14 @@ public class Contact
    public Contact( long id, String userName, String fullName,
       int numTasksParticipating )
    {
-      if ( id == Constants.NO_ID )
-      {
-         throw new IllegalArgumentException( "id" );
-      }
-      
       if ( Strings.isNullOrEmpty( userName ) )
       {
          throw new IllegalArgumentException( "userName" );
       }
-      
       if ( Strings.isNullOrEmpty( fullName ) )
       {
          throw new IllegalArgumentException( "fullname" );
       }
-      
       if ( numTasksParticipating < 0 )
       {
          throw new IllegalArgumentException( "numTasksParticipating" );
@@ -97,6 +90,7 @@ public class Contact
    
    
    
+   @SuppressLint( "DefaultLocale" )
    @Override
    public String toString()
    {

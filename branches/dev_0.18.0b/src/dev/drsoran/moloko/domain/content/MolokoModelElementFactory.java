@@ -229,7 +229,6 @@ public class MolokoModelElementFactory implements IModelElementFactory
       public Participant create( Cursor c )
       {
          final Participant participant = new Participant( c.getLong( Columns.ID_IDX ),
-                                                          c.getLong( ParticipantColumns.CONTACT_ID_IDX ),
                                                           c.getString( ParticipantColumns.FULLNAME_IDX ),
                                                           c.getString( ParticipantColumns.USERNAME_IDX ) );
          return participant;

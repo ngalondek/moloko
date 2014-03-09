@@ -24,6 +24,7 @@ package dev.drsoran.moloko.test.unit;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -36,6 +37,7 @@ public class EnsureNoDebugMode extends MolokoRoboTestCase
    @Test
    public void testNotShippingDebugVersion()
    {
+      fail( "Run with real MolokoApp" );
       assertThat( "Warning!! Shipping version with DEBUG enabled!",
                   MolokoApp.DEBUG(),
                   is( false ) );

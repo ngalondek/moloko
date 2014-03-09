@@ -142,10 +142,7 @@ public class RtmConnectionFixture
       EasyMock.replay( conn );
       
       final IConnectionFactory connFact = EasyMock.createStrictMock( IConnectionFactory.class );
-      EasyMock.expect( connFact.createConnection( RtmConnectionProtocol.https.toString(),
-                                                  RtmConnectionFactory.SERVER_HOST_NAME,
-                                                  RtmConnectionProtocol.https.getPort() ) )
-              .andReturn( conn );
+      EasyMock.expect( connFact.createConnection() ).andReturn( conn );
       EasyMock.replay( connFact );
       
       final IRtmRequestLimiter reqLimiter = EasyMock.createStrictMock( IRtmRequestLimiter.class );
@@ -211,10 +208,7 @@ public class RtmConnectionFixture
       EasyMock.replay( conn );
       
       final IConnectionFactory connFact = EasyMock.createStrictMock( IConnectionFactory.class );
-      EasyMock.expect( connFact.createConnection( RtmConnectionProtocol.https.toString(),
-                                                  RtmConnectionFactory.SERVER_HOST_NAME,
-                                                  RtmConnectionProtocol.https.getPort() ) )
-              .andReturn( conn );
+      EasyMock.expect( connFact.createConnection() ).andReturn( conn );
       EasyMock.replay( connFact );
       
       final IRtmRequest req = EasyMock.createStrictMock( IRtmRequest.class );

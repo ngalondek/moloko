@@ -113,7 +113,8 @@ class AsyncRtmAuthenticator
    
    
    
-   public void completeAuthentication( IAuthSequenceListener authSequenceListener )
+   public void completeAuthentication( IAuthSequenceListener authSequenceListener,
+                                       RtmFrob frob )
    {
       if ( runningTask != null && !( runningTask instanceof CompleteAuthTask ) )
       {
@@ -123,21 +124,8 @@ class AsyncRtmAuthenticator
       final CompleteAuthTask task = new CompleteAuthTask( rtmAuthService );
       task.onAttach( authSequenceListener );
       
-      runningTask = (RtmAsyncAuthTask< ?, ? >) executorService.execute( task );
-   }
-   
-   
-   
-   public static String getExceptionCause( final Exception e )
-   {
-      if ( e instanceof RtmServiceException )
-      {
-         return ( (RtmServiceException) e ).getResponseMessage();
-      }
-      else
-      {
-         return e.getMessage();
-      }
+      runningTask = (RtmAsyncAuthTask< ?, ? >) executorService.execute( task,
+                                                                        frob );
    }
    
    

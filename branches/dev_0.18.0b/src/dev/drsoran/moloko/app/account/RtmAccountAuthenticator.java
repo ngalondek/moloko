@@ -30,20 +30,19 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.rtm.RtmServiceException;
-import dev.drsoran.rtm.service.RtmErrorCodes;
 
 
-public class Authenticator extends AbstractAccountAuthenticator
+public class RtmAccountAuthenticator extends AbstractAccountAuthenticator
 {
    private final AppContext context;
    
    
    
-   public Authenticator( Context context )
+   public RtmAccountAuthenticator( Context context )
    {
       super( context );
       this.context = AppContext.get( context );
@@ -96,27 +95,6 @@ public class Authenticator extends AbstractAccountAuthenticator
       // is intended to be used to update the password. But we store no password so
       // we can't use it.
       throw new UnsupportedOperationException();
-      
-      /**
-       * final Bundle result = new Bundle();
-       * 
-       * boolean ok = options != null;
-       * 
-       * if ( ok ) { // Check the feature to update if ( options.getBoolean( Constants.FEAT_PERMISSION ) ) { final
-       * Intent intent = new Intent( context, AuthenticatorActivity.class );
-       * 
-       * configureIntent( context, intent, account );
-       * 
-       * intent.putExtra( AuthenticatorActivity.PARAM_UPDATECREDENTIALS, true ); intent.putExtra(
-       * AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response );
-       * 
-       * result.putParcelable( AccountManager.KEY_INTENT, intent ); } else { ok = false; } }
-       * 
-       * if ( !ok ) { result.putInt( AccountManager.KEY_ERROR_CODE, AccountManager.ERROR_CODE_BAD_ARGUMENTS );
-       * result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false ); }
-       * 
-       * return result; }
-       */
    }
    
    
@@ -138,11 +116,11 @@ public class Authenticator extends AbstractAccountAuthenticator
    {
       final Bundle result = new Bundle();
       
-      if ( authTokenType.equals( AuthConstants.AUTH_TOKEN_TYPE ) )
+      if ( AuthConstants.AUTH_TOKEN_TYPE.equals( authTokenType ) )
       {
          final AccountManager accountManager = AccountManager.get( context );
-         
-         final String authToken = accountManager.getPassword( account );
+         final String authToken = accountManager.peekAuthToken( account,
+                                                                AuthConstants.AUTH_TOKEN_TYPE );
          final String apiKey = accountManager.getUserData( account,
                                                            AuthConstants.FEAT_API_KEY );
          final String sharedSecret = accountManager.getUserData( account,
@@ -153,38 +131,15 @@ public class Authenticator extends AbstractAccountAuthenticator
          final boolean missingCredential = apiKey == null
             || sharedSecret == null || permission == null;
          
-         boolean authTokenExpired = authToken == null;
+         boolean authTokenExpired = Strings.isNullOrEmpty( authToken );
          
          if ( !missingCredential && !authTokenExpired )
          {
-            try
-            {
-               final boolean isAuthorized = context.getRtmAuthService()
-                                                   .isServiceAuthorized( authToken );
-               authTokenExpired = !isAuthorized;
-               
-               result.putString( AccountManager.KEY_ACCOUNT_NAME, account.name );
-               result.putString( AccountManager.KEY_ACCOUNT_TYPE,
-                                 AuthConstants.ACCOUNT_TYPE );
-               result.putString( AccountManager.KEY_AUTHTOKEN, authToken );
-            }
-            catch ( RtmServiceException e )
-            {
-               if ( e.getResponseCode() == RtmErrorCodes.INVALID_AUTH_TOKEN )
-               {
-                  authTokenExpired = true;
-               }
-               else
-               {
-                  result.putInt( AccountManager.KEY_ERROR_CODE,
-                                 AccountManager.ERROR_CODE_REMOTE_EXCEPTION );
-                  result.putString( AccountManager.KEY_ERROR_MESSAGE,
-                                    e.getLocalizedMessage() );
-                  result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
-                  
-                  return result;
-               }
-            }
+            result.putString( AccountManager.KEY_ACCOUNT_NAME, account.name );
+            result.putString( AccountManager.KEY_ACCOUNT_TYPE,
+                              AuthConstants.ACCOUNT_TYPE );
+            result.putString( AccountManager.KEY_AUTHTOKEN, authToken );
+            return result;
          }
          
          if ( missingCredential || authTokenExpired )
@@ -252,6 +207,26 @@ public class Authenticator extends AbstractAccountAuthenticator
       final Bundle result = new Bundle();
       result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, satisfied );
       return result;
+   }
+   
+   
+   
+   @Override
+   public Bundle getAccountRemovalAllowed( AccountAuthenticatorResponse response,
+                                           Account account ) throws NetworkErrorException
+   {
+      final Bundle responseBundle = new Bundle( 1 );
+      
+      if ( AuthConstants.ACCOUNT_TYPE.equals( account.type ) )
+      {
+         responseBundle.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, true );
+      }
+      else
+      {
+         responseBundle.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
+      }
+      
+      return responseBundle;
    }
    
    

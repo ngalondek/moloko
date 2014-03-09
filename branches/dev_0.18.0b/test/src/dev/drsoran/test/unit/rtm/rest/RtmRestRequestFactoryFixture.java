@@ -48,7 +48,7 @@ public class RtmRestRequestFactoryFixture extends MolokoTestCase
    public void testCreateRequest()
    {
       RtmRestRequestFactory rtmRestRequestFactory = new RtmRestRequestFactory();
-      IRtmRequest request = rtmRestRequestFactory.createRequest( "method",
+      IRtmRequest request = rtmRestRequestFactory.createRequest( "rtm.some.method",
                                                                  new RtmRequestUriBuilder( "key",
                                                                                            "secret" ).addParam(
                                                                  
@@ -58,8 +58,7 @@ public class RtmRestRequestFactoryFixture extends MolokoTestCase
                                                                                                                            "v2" ) )
                                                                                                      .addParam( new Param( "auth_token",
                                                                                                                            "auth_token" ) ) );
-      assertThat( request.getRtmMethod(), is( "method" ) );
       assertThat( request.getMethodExecutionUri(),
-                  is( "/services/rest/?api_key=key&api_sig=31c022baa99adf36a76e8fa0b42e1b86&auth_token=auth_token&p1=v1&p2=v2" ) );
+                  is( "/services/rest/?api_key=key&api_sig=43d0953a67def6dd6b15fe44c98c6e0e&auth_token=auth_token&method=rtm.some.method&p1=v1&p2=v2" ) );
    }
 }

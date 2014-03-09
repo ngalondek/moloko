@@ -109,6 +109,7 @@ public class MolokoContentValuesFactoryTestDataSource
    {
       final Collection< TestData< Participant >> testData = new LinkedList< TestData< Participant > >();
       
+      addParticipantNoId( testData );
       addParticipantFull( testData );
       
       return testData;
@@ -120,6 +121,7 @@ public class MolokoContentValuesFactoryTestDataSource
    {
       final Collection< TestData< Contact >> testData = new LinkedList< TestData< Contact > >();
       
+      addContactNoId( testData );
       addContactFull( testData );
       
       return testData;
@@ -131,6 +133,7 @@ public class MolokoContentValuesFactoryTestDataSource
    {
       final Collection< TestData< Location >> testData = new LinkedList< TestData< Location > >();
       
+      addLocationNoId( testData );
       addLocationNoAddr( testData );
       addLocationFull( testData );
       
@@ -608,7 +611,24 @@ public class MolokoContentValuesFactoryTestDataSource
                                           modelElement,
                                           values,
                                           "Full" ) );
+   }
+   
+   
+   
+   private void addParticipantNoId( Collection< TestData< Participant >> testData )
+   {
+      final Participant modelElement = new Participant( Constants.NO_ID,
+                                                        "Fullname",
+                                                        "Username" );
       
+      final Map< String, Object > values = new LinkedHashMap< String, Object >();
+      values.put( ParticipantColumns.FULLNAME, "Fullname" );
+      values.put( ParticipantColumns.USERNAME, "Username" );
+      
+      testData.add( new TestData< Participant >( Participant.class,
+                                                 modelElement,
+                                                 values,
+                                                 "NoId" ) );
    }
    
    
@@ -616,13 +636,11 @@ public class MolokoContentValuesFactoryTestDataSource
    private void addParticipantFull( Collection< TestData< Participant >> testData )
    {
       final Participant modelElement = new Participant( 1L,
-                                                        100L,
                                                         "Fullname",
                                                         "Username" );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ParticipantColumns._ID, 1L );
-      values.put( ParticipantColumns.CONTACT_ID, 100L );
       values.put( ParticipantColumns.FULLNAME, "Fullname" );
       values.put( ParticipantColumns.USERNAME, "Username" );
       
@@ -630,7 +648,25 @@ public class MolokoContentValuesFactoryTestDataSource
                                                  modelElement,
                                                  values,
                                                  "Full" ) );
+   }
+   
+   
+   
+   private void addContactNoId( Collection< TestData< Contact >> testData )
+   {
+      final Contact modelElement = new Contact( Constants.NO_ID,
+                                                "Username",
+                                                "Fullname",
+                                                0 );
       
+      final Map< String, Object > values = new LinkedHashMap< String, Object >();
+      values.put( ContactColumns.FULLNAME, "Fullname" );
+      values.put( ContactColumns.USERNAME, "Username" );
+      
+      testData.add( new TestData< Contact >( Contact.class,
+                                             modelElement,
+                                             values,
+                                             "NoId" ) );
    }
    
    
@@ -648,7 +684,32 @@ public class MolokoContentValuesFactoryTestDataSource
                                              modelElement,
                                              values,
                                              "Full" ) );
+   }
+   
+   
+   
+   private void addLocationNoId( Collection< TestData< Location >> testData )
+   {
+      final Location modelElement = new Location( Constants.NO_ID,
+                                                  "TestLoc",
+                                                  1.0f,
+                                                  2.0f,
+                                                  null,
+                                                  false,
+                                                  10 );
       
+      final Map< String, Object > values = new LinkedHashMap< String, Object >();
+      values.put( LocationColumns.LOCATION_NAME, "TestLoc" );
+      values.put( LocationColumns.LONGITUDE, 1.0f );
+      values.put( LocationColumns.LATITUDE, 2.0f );
+      values.put( LocationColumns.ADDRESS, null );
+      values.put( LocationColumns.VIEWABLE, 0 );
+      values.put( LocationColumns.ZOOM, 10 );
+      
+      testData.add( new TestData< Location >( Location.class,
+                                              modelElement,
+                                              values,
+                                              "NoId" ) );
    }
    
    
@@ -676,7 +737,6 @@ public class MolokoContentValuesFactoryTestDataSource
                                               modelElement,
                                               values,
                                               "NoAddr" ) );
-      
    }
    
    
@@ -704,7 +764,6 @@ public class MolokoContentValuesFactoryTestDataSource
                                               modelElement,
                                               values,
                                               "Full" ) );
-      
    }
    
    
@@ -725,7 +784,6 @@ public class MolokoContentValuesFactoryTestDataSource
                                                   modelElement,
                                                   values,
                                                   "NoSyncedVal" ) );
-      
    }
    
    
@@ -748,7 +806,6 @@ public class MolokoContentValuesFactoryTestDataSource
                                                   modelElement,
                                                   values,
                                                   "NewValNull" ) );
-      
    }
    
    
@@ -771,7 +828,6 @@ public class MolokoContentValuesFactoryTestDataSource
                                                   modelElement,
                                                   values,
                                                   "SyncedValNull" ) );
-      
    }
    
    
@@ -795,7 +851,6 @@ public class MolokoContentValuesFactoryTestDataSource
                                                   modelElement,
                                                   values,
                                                   "Full" ) );
-      
    }
    
    

@@ -404,6 +404,8 @@ public class ContentRepository implements IContentRepository
       final StringBuilder selectionBuilder = selectionBuilderWithResult.first;
       final RtmSmartFilterParsingReturn evaluationResult = selectionBuilderWithResult.second;
       
+      selectionBuilder.insert( 0, " AND " );
+      
       // The predefined, static selections are added first to maintain speed gain from table indices.
       //
       // SPECIAL CASE: If the filter contains any operator 'completed or status:completed',

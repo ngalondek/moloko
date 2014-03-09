@@ -82,11 +82,11 @@ public class DomainServicesContainer implements IDomainServices
    
    
    public DomainServicesContainer( Context context, ILog log,
-      IDateFormatter dateFormatter,
+      IRtmCalendarProvider calendarProvider, IDateFormatter dateFormatter,
       IRecurrenceSentenceLanguage recurrenceSentenceLanguage )
    {
       this.dateFormatter = dateFormatter;
-      this.calendarProvider = new DefaultRtmCalenderProvider();
+      this.calendarProvider = calendarProvider;
       this.dateLanguageRepository = new DateLanguageRepository();
       this.currentRecurrenceSentenceLanguage = recurrenceSentenceLanguage;
       

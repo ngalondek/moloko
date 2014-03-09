@@ -48,7 +48,7 @@ public class LocationFixture extends EqualsHashCodeTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testLocationNoId()
    {
       new Location( NO_ID, "loc", 1.0f, 2.0f, "addr", true, 10 );

@@ -34,14 +34,14 @@ import dev.drsoran.moloko.SystemContext;
  */
 public class AuthenticationService extends Service
 {
-   private Authenticator authenticator;
+   private RtmAccountAuthenticator authenticator;
    
    
    
    @Override
    public void onCreate()
    {
-      authenticator = new Authenticator( SystemContext.get( this ) );
+      authenticator = new RtmAccountAuthenticator( SystemContext.get( this ) );
    }
    
    

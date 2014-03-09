@@ -598,11 +598,11 @@ public class TaskFixture extends MolokoTestCase
    public void testAddParticipant()
    {
       final Task task = createTask();
-      final Participant participant1 = new Participant( 1, 1, "full", "user" );
+      final Participant participant1 = new Participant( 1, "full", "user" );
       task.addParticipant( participant1 );
       assertEqualSet( task.getParticipants(), participant1 );
       
-      final Participant participant2 = new Participant( 2, 2, "full1", "user1" );
+      final Participant participant2 = new Participant( 2, "full1", "user1" );
       task.addParticipant( participant2 );
       assertEqualSet( task.getParticipants(), participant1, participant2 );
    }
@@ -625,8 +625,8 @@ public class TaskFixture extends MolokoTestCase
       assertNull( task.getParticipant( NO_ID ) );
       assertNull( task.getParticipant( 1 ) );
       
-      final Participant participant1 = new Participant( 1, 1, "full", "user" );
-      final Participant participant2 = new Participant( 2, 2, "full1", "user1" );
+      final Participant participant1 = new Participant( 1, "full", "user" );
+      final Participant participant2 = new Participant( 2, "full1", "user1" );
       
       task.addParticipant( participant1 );
       task.addParticipant( participant2 );
@@ -645,7 +645,7 @@ public class TaskFixture extends MolokoTestCase
       assertFalse( task.isParticipating( NO_ID ) );
       assertFalse( task.isParticipating( 1 ) );
       
-      final Participant participant1 = new Participant( 1, 1, "full", "user" );
+      final Participant participant1 = new Participant( 1, "full", "user" );
       task.addParticipant( participant1 );
       assertTrue( task.isParticipating( 1 ) );
    }

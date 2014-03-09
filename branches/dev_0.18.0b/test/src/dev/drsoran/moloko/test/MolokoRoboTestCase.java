@@ -28,7 +28,7 @@ import org.robolectric.Robolectric;
 import dev.drsoran.moloko.MolokoApp;
 
 
-@RunWith( MolokoTestRunner_en.class )
+@RunWith( MolokoTestAppRunner_en.class )
 public abstract class MolokoRoboTestCase extends MolokoTestCase
 {
    public MolokoApp getMolokoApp()

@@ -135,9 +135,7 @@ public class RtmConnection implements IRtmConnection
    
    private IConnection createConnection()
    {
-      final IConnection connection = connectionFactory.createConnection( requestUriBuilder.getScheme(),
-                                                                         requestUriBuilder.getHost(),
-                                                                         requestUriBuilder.getPort() );
+      final IConnection connection = connectionFactory.createConnection();
       return connection;
    }
 }

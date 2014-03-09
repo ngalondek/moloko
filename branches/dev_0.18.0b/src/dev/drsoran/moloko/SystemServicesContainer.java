@@ -25,6 +25,7 @@ package dev.drsoran.moloko;
 import android.content.Context;
 import android.os.Handler;
 import dev.drsoran.moloko.connection.DefaultConnectionFactory;
+import dev.drsoran.moloko.connection.DefaultReaderFactory;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.event.MolokoSystemEventService;
 import dev.drsoran.rtm.IConnectionFactory;
@@ -48,8 +49,8 @@ class SystemServicesContainer implements ISystemServices
    {
       this.log = new AndroidLogger( context );
       
-      final IConnectionFactory rtmConnectionFactory = new DefaultConnectionFactory( log,
-                                                                                          getHttpUserAgent() );
+      final IConnectionFactory rtmConnectionFactory = new DefaultConnectionFactory( new DefaultReaderFactory( log ),
+                                                                                    log );
       this.connectionService = new ConnectionService( context,
                                                       rtmConnectionFactory );
       
@@ -118,13 +119,5 @@ class SystemServicesContainer implements ISystemServices
    public IHandlerToken acquireHandlerToken()
    {
       return Handler.acquireToken();
-   }
-   
-   
-   
-   private String getHttpUserAgent()
-   {
-      // TODO: Make HTTP user agent a resource
-      return "Mozilla/5.0 (Linux; U; Android 1.6; de-ch; HTC Magic Build/DRC92) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1";
    }
 }

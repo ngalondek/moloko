@@ -23,14 +23,11 @@
 package dev.drsoran.moloko.domain.model;
 
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.content.Constants;
 
 
 public class Participant
 {
    private final long id;
-   
-   private final long contactId;
    
    private final String fullname;
    
@@ -38,25 +35,18 @@ public class Participant
    
    
    
-   public Participant( long id, long contactId, String fullname, String username )
+   public Participant( long id, String fullname, String username )
    {
-      if ( contactId == Constants.NO_ID )
-      {
-         throw new IllegalArgumentException( "contactId" );
-      }
-      
       if ( fullname == null )
       {
          throw new IllegalArgumentException( "fullname" );
       }
-      
       if ( Strings.isNullOrEmpty( username ) )
       {
          throw new IllegalArgumentException( "username" );
       }
       
       this.id = id;
-      this.contactId = contactId;
       this.fullname = fullname;
       this.username = username;
    }
@@ -66,13 +56,6 @@ public class Participant
    public long getId()
    {
       return id;
-   }
-   
-   
-   
-   public long getContactId()
-   {
-      return contactId;
    }
    
    
@@ -94,9 +77,8 @@ public class Participant
    @Override
    public String toString()
    {
-      return String.format( "Participant [id=%s, contactId=%s, fullname=%s, username=%s]",
+      return String.format( "Participant [id=%s, fullname=%s, username=%s]",
                             id,
-                            contactId,
                             fullname,
                             username );
    }

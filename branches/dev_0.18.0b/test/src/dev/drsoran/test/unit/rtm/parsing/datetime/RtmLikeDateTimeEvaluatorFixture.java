@@ -709,6 +709,7 @@ public class RtmLikeDateTimeEvaluatorFixture extends MolokoTestCase
    {
       final RtmCalendar cal = today.clone();
       cal.set( Calendar.DAY_OF_WEEK, Calendar.SUNDAY );
+      cal.add( Calendar.WEEK_OF_YEAR, 1 );
       
       assertThat( "Sunday must be the first day of week",
                   cal.getActualMinimum( Calendar.DAY_OF_WEEK ),

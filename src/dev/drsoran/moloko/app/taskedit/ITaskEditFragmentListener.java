@@ -22,11 +22,14 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import java.util.Collection;
 import java.util.List;
 
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.IValueChangedListener;
+import dev.drsoran.moloko.ui.ValidationResult;
 
 
 interface ITaskEditFragmentListener
@@ -46,4 +49,12 @@ interface ITaskEditFragmentListener
    
    void onEditEstimateByPicker( long estimation,
                                 IValueChangedListener valueChangedListener );
+   
+   
+   
+   void onUpdateTasks( Collection< ? extends Task > tasks );
+   
+   
+   
+   void onValidationError( ValidationResult result );
 }

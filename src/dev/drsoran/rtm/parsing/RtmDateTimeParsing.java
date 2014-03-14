@@ -116,7 +116,7 @@ public class RtmDateTimeParsing implements IRtmDateTimeParsing
    {
       for ( Locale availableLocale : parserFactory.getAvailableParserLocales() )
       {
-         if ( availableLocale == locale )
+         if ( availableLocale.equals( locale ) )
          {
             return true;
          }

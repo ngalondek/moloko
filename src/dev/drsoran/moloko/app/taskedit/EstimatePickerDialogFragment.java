@@ -34,11 +34,11 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.DateUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -46,23 +46,16 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.TimeStruct;
 
 
-class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
+public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
 {
-   public final static class Config
-   {
-      public final static String ESTIMATE_MILLIS = "estimate_millis";
-   }
-   
    private final static int UNIT_DAY = 0;
    
    private final static int UNIT_HOUR = 1;
    
    private final static int UNIT_MINUTE = 2;
    
-   private final static long DEFAULT_ESTIMATE_MILLIS = DateUtils.DAY_IN_MILLIS;
-   
-   @InstanceState( key = Config.ESTIMATE_MILLIS )
-   private long estimateMillis = DEFAULT_ESTIMATE_MILLIS;
+   @InstanceState( key = TaskColumns.ESTIMATE_MILLIS )
+   private long estimateMillis;
    
    private WheelView numberWheel;
    
@@ -74,7 +67,7 @@ class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
                                                           long estimateMillis )
    {
       final Bundle config = new Bundle( 1 );
-      config.putLong( Config.ESTIMATE_MILLIS, estimateMillis );
+      config.putLong( TaskColumns.ESTIMATE_MILLIS, estimateMillis );
       
       return show( activity, config );
    }
@@ -116,9 +109,9 @@ class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
       if ( savedInstanceState != null )
+      {
          configure( savedInstanceState );
-      
-      ensureValidEstimateMillis();
+      }
       
       final Pair< Integer, Integer > valueAndUnit = getValueAndUnitFromMillis();
       final View content = initWheels( valueAndUnit.first, valueAndUnit.second );
@@ -133,16 +126,6 @@ class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    protected void notifyValueChanged( IValueChangedListener listener )
    {
       listener.onValueChanged( getEstimateMillis(), long.class );
-   }
-   
-   
-   
-   private void ensureValidEstimateMillis()
-   {
-      if ( estimateMillis == -1 )
-      {
-         estimateMillis = DEFAULT_ESTIMATE_MILLIS;
-      }
    }
    
    

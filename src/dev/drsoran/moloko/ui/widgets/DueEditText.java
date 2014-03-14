@@ -127,8 +127,9 @@ public class DueEditText extends ClearableEditText
          if ( inputValid )
          {
             updateEditDueText();
-            notifyChange();
          }
+         
+         notifyChange();
       }
       
       if ( !stayInEditText )

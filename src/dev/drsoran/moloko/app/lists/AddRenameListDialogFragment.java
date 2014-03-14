@@ -212,24 +212,6 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    
    @Override
-   public boolean hasChanges()
-   {
-      final String trimmedListName = UiUtils.getTrimmedText( listNameEdit );
-      
-      if ( list != null )
-      {
-         return !list.getName().equals( trimmedListName );
-      }
-      else
-      {
-         return !TextUtils.isEmpty( trimmedListName )
-            || !TextUtils.isEmpty( UiUtils.getTrimmedText( filterEdit ) );
-      }
-   }
-   
-   
-   
-   @Override
    protected void applyChanges()
    {
       if ( listener != null )

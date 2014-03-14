@@ -438,6 +438,11 @@ public class SettingsService implements ISettingsService,
          value = preferences.getString( key, defValue );
       }
       
+      if ( TextUtils.isEmpty( value ) )
+      {
+         return defValue;
+      }
+      
       return value;
    }
    

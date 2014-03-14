@@ -318,7 +318,11 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
    @Override
    public Loader< List< TasksList >> newLoaderInstance( int id, Bundle config )
    {
-      return new TasksListsLoader( appContext.asDomainContext(), true );
+      final TasksListsLoader loader = new TasksListsLoader( appContext.asDomainContext(),
+                                                            true );
+      loader.setRespectContentChanges( true );
+      
+      return loader;
    }
    
    

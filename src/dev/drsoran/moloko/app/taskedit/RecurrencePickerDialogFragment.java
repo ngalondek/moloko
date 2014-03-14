@@ -36,11 +36,11 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.state.InstanceState;
@@ -53,21 +53,12 @@ import dev.drsoran.rtm.parsing.recurrence.RecurrencePatternSyntax;
 
 class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
 {
-   public final static class Config
-   {
-      public final static String RECURR_PATTERN = "recurr_pattern";
-      
-      public final static String IS_EVERY_RECURR = "is_every_recurr";
-   }
-   
-   private final static String DEFAULT_RECURRENCE = "after 1 year";
-   
    private IRecurrenceParsing recurrenceParsing;
    
-   @InstanceState( key = Config.RECURR_PATTERN )
+   @InstanceState( key = TaskColumns.RECURRENCE )
    private String recurrencePattern;
    
-   @InstanceState( key = Config.IS_EVERY_RECURR )
+   @InstanceState( key = TaskColumns.RECURRENCE_EVERY )
    private boolean isEveryRecurrence;
    
    private View container;
@@ -84,8 +75,9 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
                                                             Recurrence recurrence )
    {
       final Bundle config = new Bundle( 2 );
-      config.putString( Config.RECURR_PATTERN, recurrence.getPattern() );
-      config.putBoolean( Config.IS_EVERY_RECURR, recurrence.isEveryRecurrence() );
+      config.putString( TaskColumns.RECURRENCE, recurrence.getPattern() );
+      config.putBoolean( TaskColumns.RECURRENCE_EVERY,
+                         recurrence.isEveryRecurrence() );
       
       return show( activity, config );
    }
@@ -143,8 +135,6 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
       
       try
       {
-         ensureValidRecurrencePattern();
-         
          final FragmentActivity activity = getSherlockActivity();
          
          final LayoutInflater inflater = LayoutInflater.from( activity );
@@ -158,18 +148,6 @@ class RecurrencePickerDialogFragment extends AbstractPickerDialogFragment
       catch ( GrammarException e )
       {
          throw new RuntimeException( e );
-      }
-   }
-   
-   
-   
-   private void ensureValidRecurrencePattern() throws GrammarException
-   {
-      if ( TextUtils.isEmpty( recurrencePattern ) )
-      {
-         final Recurrence parseReturn = recurrenceParsing.parseRecurrence( DEFAULT_RECURRENCE );
-         recurrencePattern = parseReturn.getPattern();
-         isEveryRecurrence = parseReturn.isEveryRecurrence();
       }
    }
    

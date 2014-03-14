@@ -88,7 +88,8 @@ public abstract class MolokoEditFragment extends MolokoFragment implements
    
    
    @Override
-   public void onCancelEditing()
+   public boolean onCancelEditing()
    {
+      return true;
    }
 }

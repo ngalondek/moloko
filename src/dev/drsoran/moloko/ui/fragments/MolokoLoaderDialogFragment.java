@@ -99,20 +99,6 @@ public abstract class MolokoLoaderDialogFragment< D > extends
    
    
    
-   public final void setRespectContentChanges( boolean respect )
-   {
-      loaderImpl.setRespectContentChanges( respect );
-   }
-   
-   
-   
-   public final boolean isRespectingContentChanges()
-   {
-      return loaderImpl.isRespectingContentChanges();
-   }
-   
-   
-   
    public D getLoaderData()
    {
       return loaderImpl.getLoaderData();
@@ -145,14 +131,6 @@ public abstract class MolokoLoaderDialogFragment< D > extends
    public boolean isReadyToStartLoader()
    {
       return true;
-   }
-   
-   
-   
-   @Override
-   public Bundle getLoaderConfig()
-   {
-      return getConfiguration();
    }
    
    

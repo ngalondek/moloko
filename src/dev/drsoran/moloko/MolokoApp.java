@@ -210,8 +210,6 @@ public class MolokoApp extends Application implements
    
    
    
-   @Deprecated
-   // TODO: This should not be at MolokoApp
    public Locale getActiveResourcesLocale()
    {
       final String resourcesLangString = getString( R.string.res_language );

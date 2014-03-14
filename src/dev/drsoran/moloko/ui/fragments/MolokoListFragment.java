@@ -81,9 +81,7 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       baseImpl.onCreate( savedInstanceState );
-      loaderImpl.onCreate( savedInstanceState );
    }
    
    
@@ -209,20 +207,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
-   public final void setRespectContentChanges( boolean respect )
-   {
-      loaderImpl.setRespectContentChanges( respect );
-   }
-   
-   
-   
-   public final boolean isRespectingContentChanges()
-   {
-      return loaderImpl.isRespectingContentChanges();
-   }
-   
-   
-   
    protected void invalidateOptionsMenu()
    {
       if ( getSherlockActivity() != null )
@@ -259,14 +243,6 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    public boolean isReadyToStartLoader()
    {
       return true;
-   }
-   
-   
-   
-   @Override
-   public Bundle getLoaderConfig()
-   {
-      return getConfiguration();
    }
    
    

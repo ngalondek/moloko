@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_NAME;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
 
 import java.util.ArrayList;
@@ -45,15 +47,13 @@ import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.model.RtmTask;
 
 
-class TaskAddFragment extends AbstractTaskEditFragment
+public class TaskAddFragment extends AbstractTaskEditFragment
 {
-   private final static String CREATED_DATE = "created_date";
-   
    @InstanceState( key = Intents.Extras.KEY_TASK )
    private Task task;
    
-   @InstanceState( key = CREATED_DATE, defaultValue = "-1" )
-   private long created;
+   @InstanceState( key = "created_date", defaultValue = "-1" )
+   private long createdDate;
    
    
    
@@ -92,12 +92,13 @@ class TaskAddFragment extends AbstractTaskEditFragment
    private void createNewTaskFromArguments()
    {
       final Bundle args = getArguments();
+      
       task = new Task( Constants.NO_ID,
-                       created,
-                       created,
-                       args.getString( TASK_NAME, Strings.EMPTY_STRING ),
-                       listId,
-                       listName );
+                       createdDate,
+                       createdDate,
+                       args.getString( TASK_NAME ),
+                       args.getLong( LIST_ID ),
+                       args.getString( LIST_NAME ) );
       
       final Bundle initialValues = new Bundle( 14 );
       initialValues.putString( Args.TASK_NAME, null );
@@ -177,7 +178,7 @@ class TaskAddFragment extends AbstractTaskEditFragment
    protected void initializeHeadSection()
    {
       addedDate.setText( getUiContext().getDateFormatter()
-                                       .formatDateTime( created,
+                                       .formatDateTime( createdDate,
                                                         FULL_DATE_FLAGS ) );
       completedDate.setVisibility( View.GONE );
       postponed.setVisibility( View.GONE );
@@ -190,9 +191,9 @@ class TaskAddFragment extends AbstractTaskEditFragment
    
    private void checkCreatedDate()
    {
-      if ( created == -1 )
+      if ( createdDate == Constants.NO_TIME )
       {
-         created = System.currentTimeMillis();
+         createdDate = getUiContext().getCalendarProvider().getNowMillisUtc();
       }
    }
    
@@ -336,7 +337,7 @@ class TaskAddFragment extends AbstractTaskEditFragment
    
    private final Task newTask()
    {
-      final Date createdDate = new Date( created );
+      final Date createdDate = new Date( createdDate );
       final long dueDate = getCurrentValue( Tasks.DUE_DATE, Long.class );
       
       return new Task( newTaskIds.rawTaskId,

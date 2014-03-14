@@ -132,8 +132,9 @@ public class EstimateEditText extends ClearableEditText
          if ( inputValid )
          {
             updateEditText();
-            notifyChange();
          }
+         
+         notifyChange();
       }
       
       if ( !stayInEditText )

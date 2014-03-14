@@ -44,15 +44,12 @@ import dev.drsoran.Iterables;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.IParsingService;
-import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
@@ -109,19 +106,6 @@ abstract class AbstractTaskEditFragment extends
    
    private TitleWithEditTextLayout urlEditText;
    
-   @InstanceState( key = Intents.Extras.KEY_TASK )
-   private Task initialTask;
-   
-   @InstanceState( key = "edited_task" )
-   private Task editedTask;
-   
-   
-   
-   protected AbstractTaskEditFragment()
-   {
-      registerAnnotatedConfiguredInstance( this, AbstractTaskEditFragment.class );
-   }
-   
    
    
    @Override
@@ -157,22 +141,9 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   public Task getInitialTaskAssertNotNull()
+   public ITaskEditFragmentListener getListener()
    {
-      if ( initialTask == null )
-         throw new AssertionError( "expected task to be not null" );
-      
-      return initialTask;
-   }
-   
-   
-   
-   public Task getEditedTaskAssertNotNull()
-   {
-      if ( editedTask == null )
-         throw new AssertionError( "expected task to be not null" );
-      
-      return editedTask;
+      return listener;
    }
    
    
@@ -213,31 +184,12 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private void enableParserEnabledFreeTextInput()
-   {
-      final Locale localeFromResources = MolokoApp.get( getActivity() )
-                                                  .getActiveResourcesLocale();
-      
-      final IParsingService parsingService = getUiContext().getParsingService();
-      
-      final boolean hasDateParser = parsingService.getDateTimeParsing()
-                                                  .existsParserWithMatchingLocale( localeFromResources );
-      final boolean hasRecurrenceParser = parsingService.getRecurrenceParsing()
-                                                        .existsParserWithMatchingLocale( localeFromResources );
-      
-      dueEditText.setEnabled( hasDateParser );
-      estimateEditText.setEnabled( hasDateParser );
-      recurrEditText.setEnabled( hasRecurrenceParser );
-   }
-   
-   
-   
    @Override
    public void initContentAfterDataLoaded( ViewGroup content )
    {
       initializeHeadSection();
       
-      final Task editedTask = getEditedTaskAssertNotNull();
+      final Task editedTask = getTask();
       nameEditText.setText( editedTask.getName() );
       urlEditText.setText( editedTask.getUrl() );
       
@@ -258,189 +210,11 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private void registerInputListeners()
-   {
-      nameEditText.addTextChangedListener( new UiUtils.AfterTextChangedWatcher()
-      {
-         @Override
-         public void afterTextChanged( Editable s )
-         {
-            // TODO: Validate name
-            getEditedTaskAssertNotNull().setName( getTrimmed( s ) );
-         }
-      } );
-      
-      urlEditText.addTextChangedListener( new UiUtils.AfterTextChangedWatcher()
-      {
-         @Override
-         public void afterTextChanged( Editable s )
-         {
-            getEditedTaskAssertNotNull().setUrl( getTrimmed( s ) );
-         }
-      } );
-      
-      listsSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
-      {
-         @Override
-         public void onItemSelected( AdapterView< ? > arg0,
-                                     View arg1,
-                                     int arg2,
-                                     long arg3 )
-         {
-            notifyChangeWithIndex( TaskColumns.LIST_ID,
-                                   arg2,
-                                   listsSpinner.getSelectedValue(),
-                                   String.class );
-         }
-         
-         
-         
-         @Override
-         public void onNothingSelected( AdapterView< ? > arg0 )
-         {
-         }
-      } );
-      
-      locationSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
-      {
-         @Override
-         public void onItemSelected( AdapterView< ? > arg0,
-                                     View arg1,
-                                     int arg2,
-                                     long arg3 )
-         {
-            notifyChangeWithIndex( TaskColumns.LOCATION_ID,
-                                   arg2,
-                                   locationSpinner.getSelectedValue(),
-                                   String.class );
-         }
-         
-         
-         
-         @Override
-         public void onNothingSelected( AdapterView< ? > arg0 )
-         {
-         }
-      } );
-      
-      prioritySpinner.setOnItemSelectedListener( new OnItemSelectedListener()
-      {
-         @Override
-         public void onItemSelected( AdapterView< ? > arg0,
-                                     View arg1,
-                                     int arg2,
-                                     long arg3 )
-         {
-            getEditedTaskAssertNotNull().setPriority( Priority.fromString( prioritySpinner.getSelectedValue() ) );
-         }
-         
-         
-         
-         @Override
-         public void onNothingSelected( AdapterView< ? > arg0 )
-         {
-         }
-      } );
-      
-      registerButtonListeners();
-   }
-   
-   
-   
-   private void registerButtonListeners()
-   {
-      final View contentView = getContentView();
-      
-      contentView.findViewById( R.id.task_edit_tags_btn_change )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       if ( listener != null )
-                       {
-                          listener.onChangeTags( Iterables.asList( getTags() ) );
-                       }
-                    }
-                 } );
-      
-      contentView.findViewById( R.id.task_edit_due_btn_picker )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       if ( listener != null )
-                       {
-                          listener.onEditDueByPicker( dueEditText.getDue(),
-                                                      new ValueChangedListener()
-                                                      {
-                                                         @Override
-                                                         public < T > void onValueChanged( T value,
-                                                                                           Class< T > type )
-                                                         {
-                                                            dueEditText.setDue( (Due) value );
-                                                            dueEditText.requestFocus();
-                                                         }
-                                                      } );
-                       }
-                    }
-                 } );
-      
-      contentView.findViewById( R.id.task_edit_recurrence_btn_picker )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       if ( listener != null )
-                       {
-                          listener.onEditRecurrenceByPicker( recurrEditText.getRecurrence(),
-                                                             new ValueChangedListener()
-                                                             {
-                                                                @Override
-                                                                public < T > void onValueChanged( T value,
-                                                                                                  Class< T > type )
-                                                                {
-                                                                   recurrEditText.setRecurrence( (Recurrence) value );
-                                                                   recurrEditText.requestFocus();
-                                                                }
-                                                             } );
-                       }
-                    }
-                 } );
-      
-      contentView.findViewById( R.id.task_edit_estim_btn_picker )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       if ( listener != null )
-                       {
-                          listener.onEditEstimateByPicker( estimateEditText.getEstimateMillis(),
-                                                           new ValueChangedListener()
-                                                           {
-                                                              @Override
-                                                              public < T > void onValueChanged( T value,
-                                                                                                Class< T > type )
-                                                              {
-                                                                 estimateEditText.setEstimate( (Estimation) value );
-                                                                 estimateEditText.requestFocus();
-                                                              }
-                                                           } );
-                       }
-                    }
-                 } );
-   }
-   
-   
-   
    private void initializeHeadSection()
    {
       final UiContext context = getUiContext();
       final IDateFormatterService dateFormatter = context.getDateFormatter();
-      final Task task = getInitialTaskAssertNotNull();
+      final Task task = getTask();
       
       addedDate.setText( dateFormatter.formatDateTime( task.getAddedMillisUtc(),
                                                        FULL_DATE_FLAGS ) );
@@ -502,14 +276,11 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > createListSpinnerAdapterForValues( List< String > listIds,
-                                                                     List< String > listNames,
-                                                                     String initialValue )
+   private ArrayAdapter< String > initializePrioritySpinner( String initialValue )
    {
-      return createSpinnerAdapterForValues( listsSpinner,
-                                            listIds,
-                                            listNames,
-                                            initialValue );
+      return createPrioritySpinnerAdapterForValues( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ),
+                                                    Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ),
+                                                    initialValue );
    }
    
    
@@ -535,6 +306,328 @@ abstract class AbstractTaskEditFragment extends
    
    
    
+   private void initDueEditText( Due due )
+   {
+      dueEditText.setDue( due );
+      dueEditText.setValueChangedListener( new ValueChangedListener()
+      {
+         @Override
+         public < T > void onValueChanged( T value, Class< T > type )
+         {
+            setDueChecked( (Due) value );
+         }
+      } );
+   }
+   
+   
+   
+   private void initRecurrenceEditText( Recurrence recurrence )
+   {
+      recurrEditText.setRecurrence( recurrence );
+      recurrEditText.setValueChangedListener( new ValueChangedListener()
+      {
+         @Override
+         public < T > void onValueChanged( T value, Class< T > type )
+         {
+            setRecurrenceChecked( (Recurrence) value );
+         }
+      } );
+   }
+   
+   
+   
+   private void initEstimateEditText( Estimation estimation )
+   {
+      estimateEditText.setEstimate( estimation );
+      estimateEditText.setValueChangedListener( new ValueChangedListener()
+      {
+         @Override
+         public < T > void onValueChanged( T value, Class< T > type )
+         {
+            setEstimationChecked( (Estimation) value );
+         }
+      } );
+   }
+   
+   
+   
+   private void enableParserEnabledFreeTextInput()
+   {
+      final Locale localeFromResources = MolokoApp.get( getActivity() )
+                                                  .getActiveResourcesLocale();
+      
+      final IParsingService parsingService = getUiContext().getParsingService();
+      
+      final boolean hasDateParser = parsingService.getDateTimeParsing()
+                                                  .existsParserWithMatchingLocale( localeFromResources );
+      final boolean hasRecurrenceParser = parsingService.getRecurrenceParsing()
+                                                        .existsParserWithMatchingLocale( localeFromResources );
+      
+      dueEditText.setEnabled( hasDateParser );
+      estimateEditText.setEnabled( hasDateParser );
+      recurrEditText.setEnabled( hasRecurrenceParser );
+   }
+   
+   
+   
+   private void registerInputListeners()
+   {
+      nameEditText.addTextChangedListener( new UiUtils.AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            setTaskNameChecked( getTrimmed( s ) );
+         }
+      } );
+      
+      urlEditText.addTextChangedListener( new UiUtils.AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            getTask().setUrl( getTrimmed( s ) );
+         }
+      } );
+      
+      listsSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > adapter,
+                                     View arg1,
+                                     int pos,
+                                     long id )
+         {
+            final long listId = Long.valueOf( listsSpinner.getValueAtPos( pos ) );
+            getTask().setList( listId, listsSpinner.getSelectedValue() );
+         }
+         
+         
+         
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+      
+      locationSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > arg0,
+                                     View arg1,
+                                     int pos,
+                                     long id )
+         {
+            final long locationId = Long.valueOf( listsSpinner.getValueAtPos( pos ) );
+            if ( locationId == Constants.NO_ID )
+            {
+               getTask().setLocationStub( Constants.NO_ID, null );
+            }
+            else
+            {
+               getTask().setLocationStub( locationId,
+                                          locationSpinner.getSelectedValue() );
+            }
+         }
+         
+         
+         
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+      
+      prioritySpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > arg0,
+                                     View arg1,
+                                     int arg2,
+                                     long arg3 )
+         {
+            getTask().setPriority( Priority.fromString( prioritySpinner.getSelectedValue() ) );
+         }
+         
+         
+         
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+      
+      registerButtonListeners();
+   }
+   
+   
+   
+   private void registerButtonListeners()
+   {
+      final View contentView = getContentView();
+      
+      contentView.findViewById( R.id.task_edit_tags_btn_change )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       if ( listener != null )
+                       {
+                          listener.onChangeTags( Iterables.asList( getTask().getTags() ) );
+                       }
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_due_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       if ( listener != null )
+                       {
+                          listener.onEditDueByPicker( dueEditText.getDue(),
+                                                      new ValueChangedListener()
+                                                      {
+                                                         @Override
+                                                         public < T > void onValueChanged( T value,
+                                                                                           Class< T > type )
+                                                         {
+                                                            setDueChecked( (Due) value );
+                                                         }
+                                                      } );
+                       }
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_recurrence_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       if ( listener != null )
+                       {
+                          listener.onEditRecurrenceByPicker( recurrEditText.getRecurrence(),
+                                                             new ValueChangedListener()
+                                                             {
+                                                                @Override
+                                                                public < T > void onValueChanged( T value,
+                                                                                                  Class< T > type )
+                                                                {
+                                                                   setRecurrenceChecked( (Recurrence) value );
+                                                                }
+                                                             } );
+                       }
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_estim_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       if ( listener != null )
+                       {
+                          listener.onEditEstimateByPicker( estimateEditText.getEstimateMillis(),
+                                                           new ValueChangedListener()
+                                                           {
+                                                              @Override
+                                                              public < T > void onValueChanged( T value,
+                                                                                                Class< T > type )
+                                                              {
+                                                                 setEstimationChecked( (Estimation) value );
+                                                              }
+                                                           } );
+                       }
+                    }
+                 } );
+   }
+   
+   
+   
+   private void setTaskNameChecked( String name )
+   {
+      final ValidationResult result = validateName( name );
+      if ( result.isOk() )
+      {
+         getTask().setName( name );
+      }
+      else
+      {
+         notifyValidationError( result );
+      }
+   }
+   
+   
+   
+   private void setDueChecked( Due due )
+   {
+      final ValidationResult result = validateDue();
+      if ( result.isOk() )
+      {
+         getTask().setDue( due );
+      }
+      else
+      {
+         notifyValidationError( result );
+      }
+   }
+   
+   
+   
+   private void setRecurrenceChecked( Recurrence recurrence )
+   {
+      final ValidationResult result = validateRecurrence();
+      if ( result.isOk() )
+      {
+         getTask().setRecurrence( recurrence );
+      }
+      else
+      {
+         notifyValidationError( result );
+      }
+   }
+   
+   
+   
+   private void setEstimationChecked( Estimation estimation )
+   {
+      final ValidationResult result = validateEstimate();
+      if ( result.isOk() )
+      {
+         getTask().setEstimation( estimation );
+      }
+      else
+      {
+         notifyValidationError( result );
+      }
+   }
+   
+   
+   
+   public void setTags( List< String > tags )
+   {
+      getTask().setTags( tags );
+      initializeTagsSection( tags );
+   }
+   
+   
+   
+   private ArrayAdapter< String > createListSpinnerAdapterForValues( List< String > listIds,
+                                                                     List< String > listNames,
+                                                                     String initialValue )
+   {
+      return createSpinnerAdapterForValues( listsSpinner,
+                                            listIds,
+                                            listNames,
+                                            initialValue );
+   }
+   
+   
+   
    private ArrayAdapter< String > createLocationSpinnerAdapterForValues( List< String > locationIds,
                                                                          List< String > locationNames,
                                                                          String initialValue )
@@ -556,92 +649,21 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > initializePrioritySpinner( String initialValue )
-   {
-      return createPrioritySpinnerAdapterForValues( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ),
-                                                    Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ),
-                                                    initialValue );
-   }
-   
-   
-   
    private ArrayAdapter< String > createPrioritySpinnerAdapterForValues( List< String > texts,
                                                                          List< String > values,
                                                                          String initialValue )
    {
       return createSpinnerAdapterForValues( prioritySpinner,
-                                            texts,
                                             values,
+                                            texts,
                                             initialValue );
    }
    
    
    
-   private void initDueEditText( Due due )
+   protected ValidationResult validateName( String string )
    {
-      dueEditText.setDue( due );
-      dueEditText.setValueChangedListener( new ValueChangedListener()
-      {
-         @Override
-         public < T > void onValueChanged( T value, Class< T > type )
-         {
-            getEditedTaskAssertNotNull().setDue( (Due) value );
-         }
-      } );
-   }
-   
-   
-   
-   private void initRecurrenceEditText( Recurrence recurrence )
-   {
-      recurrEditText.setRecurrence( recurrence );
-      recurrEditText.setValueChangedListener( new ValueChangedListener()
-      {
-         @Override
-         public < T > void onValueChanged( T value, Class< T > type )
-         {
-            getEditedTaskAssertNotNull().setRecurrence( (Recurrence) value );
-         }
-      } );
-   }
-   
-   
-   
-   private void initEstimateEditText( Estimation estimation )
-   {
-      estimateEditText.setEstimate( estimation );
-      estimateEditText.setValueChangedListener( new ValueChangedListener()
-      {
-         @Override
-         public < T > void onValueChanged( T value, Class< T > type )
-         {
-            getEditedTaskAssertNotNull().setEstimation( (Estimation) value );
-         }
-      } );
-   }
-   
-   
-   
-   public void setTags( List< String > tags )
-   {
-      final String joinedTags = TextUtils.join( TaskColumns.TAGS_SEPARATOR,
-                                                tags );
-      
-      if ( SyncUtils.isDifferent( getCurrentValue( TaskColumns.TAGS,
-                                                   String.class ),
-                                  joinedTags ) )
-      {
-         notifyChange( TaskColumns.TAGS, joinedTags, String.class );
-         initializeTagsSection();
-      }
-   }
-   
-   
-   
-   protected ValidationResult validateName()
-   {
-      final boolean ok = !TextUtils.isEmpty( getCurrentValue( TaskColumns.TASK_NAME,
-                                                              String.class ) );
+      final boolean ok = !TextUtils.isEmpty( string );
       if ( !ok )
       {
          return new ValidationResult( getString( R.string.task_edit_validate_empty_name ),
@@ -677,8 +699,10 @@ abstract class AbstractTaskEditFragment extends
    @Override
    public ValidationResult validate()
    {
+      final Task task = getTask();
+      
       // Task name
-      ValidationResult validationResult = validateName();
+      ValidationResult validationResult = validateName( task.getName() );
       
       // Due
       validationResult = validationResult.and( validateDue() );
@@ -690,6 +714,16 @@ abstract class AbstractTaskEditFragment extends
       validationResult = validationResult.and( validateEstimate() );
       
       return validationResult;
+   }
+   
+   
+   
+   public void notifyValidationError( ValidationResult result )
+   {
+      if ( listener != null )
+      {
+         listener.onValidationError( result );
+      }
    }
    
    
@@ -713,7 +747,10 @@ abstract class AbstractTaskEditFragment extends
    @Override
    public Loader< TaskEditData > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskListsAndLocationsLoader( getAppContext().asDomainContext() );
+      final TaskListsAndLocationsLoader loader = new TaskListsAndLocationsLoader( getAppContext().asDomainContext() );
+      loader.setRespectContentChanges( false );
+      
+      return loader;
    }
    
    
@@ -727,6 +764,7 @@ abstract class AbstractTaskEditFragment extends
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          displayStrings );
+      
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
       spinner.setAdapter( adapter );
       spinner.setValues( values );
@@ -741,4 +779,8 @@ abstract class AbstractTaskEditFragment extends
    {
       return editable.toString().trim();
    }
+   
+   
+   
+   public abstract Task getTask();
 }

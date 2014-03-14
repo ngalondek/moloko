@@ -75,9 +75,7 @@ public abstract class MolokoExpandableListFragment< D > extends
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
       baseImpl.onCreate( savedInstanceState );
-      loaderImpl.onCreate( savedInstanceState );
    }
    
    
@@ -313,14 +311,6 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
-   @Override
-   public Bundle getLoaderConfig()
-   {
-      return getConfiguration();
-   }
-   
-   
-   
    public List< D > getLoaderData()
    {
       return loaderImpl.getLoaderData();
@@ -345,20 +335,6 @@ public abstract class MolokoExpandableListFragment< D > extends
    public boolean isLoaderDataFound()
    {
       return loaderImpl.isLoaderDataFound();
-   }
-   
-   
-   
-   public final void setRespectContentChanges( boolean respect )
-   {
-      loaderImpl.setRespectContentChanges( respect );
-   }
-   
-   
-   
-   public final boolean isRespectingContentChanges()
-   {
-      return loaderImpl.isRespectingContentChanges();
    }
    
    

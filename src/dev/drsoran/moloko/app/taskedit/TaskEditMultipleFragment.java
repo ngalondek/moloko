@@ -55,7 +55,7 @@ import dev.drsoran.moloko.util.Lambda.Func2;
 import dev.drsoran.rtm.model.Priority;
 
 
-class TaskEditMultipleFragment extends AbstractTaskEditFragment
+public class TaskEditMultipleFragment extends AbstractTaskEditFragment
 {
    private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
    
@@ -166,7 +166,6 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
       {
          return new IndexedValueChangedListener()
          {
-            
             @Override
             public < T > void onValueChanged( int index,
                                               T value,
@@ -239,8 +238,8 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
          @Override
          public Void call( Task editedTask )
          {
-            editedTask.setLocation( Long.valueOf( newLocationId ),
-                                    getLocationNameById( newLocationId ) );
+            editedTask.setLocationStub( Long.valueOf( newLocationId ),
+                                        getLocationNameById( newLocationId ) );
             return null;
          }
       } );
@@ -255,8 +254,8 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
          @Override
          public Void call( Task initialTask, Task editedTask )
          {
-            editedTask.setLocation( initialTask.getLocationId(),
-                                    initialTask.getLocationName() );
+            editedTask.setLocationStub( initialTask.getLocationId(),
+                                        initialTask.getLocationName() );
             return null;
          }
       } );
@@ -580,9 +579,13 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    protected ValidationResult validateName()
    {
       if ( hasChange( TASK_NAME ) )
+      {
          return super.validateName();
+      }
       else
+      {
          return ValidationResult.OK;
+      }
    }
    
    
@@ -590,7 +593,9 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    private List< Task > getInitialTasksAssertNotNull()
    {
       if ( initialTasks == null )
+      {
          throw new AssertionError( "expected initial tasks to be not null" );
+      }
       
       return initialTasks;
    }
@@ -636,5 +641,23 @@ class TaskEditMultipleFragment extends AbstractTaskEditFragment
    private final String getCommonStringAttrib( String key )
    {
       return attributeCount.get( key ).toString();
+   }
+   
+   
+   
+   @Override
+   public void onFinishEditing()
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+   
+   
+   @Override
+   public Task getTask()
+   {
+      // TODO Auto-generated method stub
+      return null;
    }
 }

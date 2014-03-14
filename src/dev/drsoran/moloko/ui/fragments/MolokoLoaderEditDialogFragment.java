@@ -97,27 +97,16 @@ public abstract class MolokoLoaderEditDialogFragment< D > extends
    @Override
    public final void onFinishEditing()
    {
-      if ( hasChanges() )
-      {
-         applyChanges();
-      }
-      
+      applyChanges();
       getDialog().dismiss();
    }
    
    
    
    @Override
-   public void onCancelEditing()
+   public boolean onCancelEditing()
    {
-   }
-   
-   
-   
-   @Override
-   public boolean hasWritableAccess()
-   {
-      return accessImpl.hasWritableAccess();
+      return true;
    }
    
    

@@ -184,6 +184,7 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
    {
       final DomainContext domainContext = getUiContext().asDomainContext();
       final ContactsLoader contactsLoader = new ContactsLoader( domainContext );
+      contactsLoader.setRespectContentChanges( true );
       
       return new LinkedContactsLoader( domainContext, contactsLoader );
    }

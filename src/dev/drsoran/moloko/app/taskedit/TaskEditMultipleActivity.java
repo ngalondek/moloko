@@ -76,8 +76,11 @@ public class TaskEditMultipleActivity extends AbstractTaskEditActivity
    
    private Fragment createTaskEditMultipleFragment()
    {
-      final Fragment fragment = TaskEditMultipleFragment.newInstance( createTaskEditMultipleFragmentConfig() );
-      return fragment;
+      // TODO:
+      // final Fragment fragment = TaskEditMultipleFragment.newInstance( createTaskEditMultipleFragmentConfig() );
+      // return fragment;
+      
+      return null;
    }
    
    

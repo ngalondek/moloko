@@ -100,6 +100,8 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
                                    TaskContentOptions.WithNotes );
       }
       
+      loader.setRespectContentChanges( true );
+      
       return loader;
    }
    

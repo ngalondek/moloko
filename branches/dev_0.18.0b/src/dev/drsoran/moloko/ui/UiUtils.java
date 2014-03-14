@@ -469,26 +469,6 @@ public final class UiUtils
    
    
    
-   public final static void showCancelWithChangesDialog( FragmentActivity activity )
-   {
-      showCancelWithChangesDialog( activity, null );
-   }
-   
-   
-   
-   @Deprecated
-   public final static void showCancelWithChangesDialog( FragmentActivity activity,
-                                                         String tag )
-   {
-      new AlertDialogFragment.Builder( R.id.dlg_cancel_with_changes ).setTag( tag )
-                                                                     .setMessage( activity.getString( R.string.phr_edit_dlg_cancel ) )
-                                                                     .setPositiveButton( android.R.string.yes )
-                                                                     .setNegativeButton( android.R.string.no )
-                                                                     .show( activity );
-   }
-   
-   
-   
    public final static void showDeleteElementDialog( FragmentActivity activity,
                                                      String elementName )
    {

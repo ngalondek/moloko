@@ -25,7 +25,6 @@ package dev.drsoran.moloko.ui.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.ui.fragments.impl.EditFragmentImpl;
 
 
@@ -89,11 +88,8 @@ public abstract class MolokoLoaderEditFragment< D > extends
    
    
    @Override
-   public void onCancelEditing()
+   public boolean onCancelEditing()
    {
+      return true;
    }
-   
-   
-   
-   protected abstract AppContentEditInfo getApplyChangesInfo();
 }

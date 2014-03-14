@@ -51,7 +51,7 @@ class TaskListsAndLocationsLoader extends AbstractLoader< TaskEditData >
    @Override
    public Uri getContentUri()
    {
-      return Uri.EMPTY;
+      return null;
    }
    
    

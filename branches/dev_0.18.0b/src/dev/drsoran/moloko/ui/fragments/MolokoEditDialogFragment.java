@@ -90,11 +90,7 @@ public abstract class MolokoEditDialogFragment extends
    @Override
    public final void onFinishEditing()
    {
-      if ( hasChanges() )
-      {
-         applyChanges();
-      }
-      
+      applyChanges();
       getDialog().dismiss();
    }
    
@@ -109,8 +105,9 @@ public abstract class MolokoEditDialogFragment extends
    
    
    @Override
-   public final void onCancelEditing()
+   public final boolean onCancelEditing()
    {
+      return true;
    }
    
    
@@ -126,14 +123,6 @@ public abstract class MolokoEditDialogFragment extends
    protected void onDialogViewCreated( ViewGroup dialogView )
    {
       impl.setWindowToken( dialogView.getWindowToken() );
-   }
-   
-   
-   
-   @Override
-   public boolean hasWritableAccess()
-   {
-      return accessImpl.hasWritableAccess();
    }
    
    

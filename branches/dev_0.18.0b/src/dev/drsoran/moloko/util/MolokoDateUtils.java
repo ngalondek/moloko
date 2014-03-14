@@ -95,15 +95,6 @@ public class MolokoDateUtils
    
    public static int getTimespanInDays( long start, long end )
    {
-      if ( start < 0 )
-      {
-         throw new IllegalArgumentException( "start" );
-      }
-      if ( end < 0 )
-      {
-         throw new IllegalArgumentException( "end" );
-      }
-      
       final TimeZone timeZone = TimeZone.getDefault();
       final int offStart = timeZone.getOffset( start )
          / (int) DateUtils.SECOND_IN_MILLIS; // in sec.

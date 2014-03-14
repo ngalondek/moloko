@@ -251,11 +251,12 @@ public class RecurrenceParsingTest extends MolokoTestCase
    @Test
    public void testExistsParserWithMatchingLocale()
    {
-      assertThat( recurrenceParsing.existsParserWithMatchingLocale( Locale.ENGLISH ),
+      // Using clone to check that compare is not on the reference
+      assertThat( recurrenceParsing.existsParserWithMatchingLocale( (Locale) Locale.ENGLISH.clone() ),
                   is( true ) );
-      assertThat( recurrenceParsing.existsParserWithMatchingLocale( Locale.GERMAN ),
+      assertThat( recurrenceParsing.existsParserWithMatchingLocale( (Locale) Locale.GERMAN.clone() ),
                   is( true ) );
-      assertThat( recurrenceParsing.existsParserWithMatchingLocale( Locale.JAPANESE ),
+      assertThat( recurrenceParsing.existsParserWithMatchingLocale( (Locale) Locale.JAPANESE.clone() ),
                   is( false ) );
    }
    

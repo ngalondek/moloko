@@ -30,8 +30,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.loaders.AbstractLoader;
-import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.ui.fragments.listeners.NullLoaderFragmentListener;
 
@@ -41,10 +39,6 @@ abstract class LoaderFragmentImplBase< D >
    protected static interface Support< D >
    {
       boolean isReadyToStartLoader();
-      
-      
-      
-      Bundle getLoaderConfig();
       
       
       
@@ -59,8 +53,6 @@ abstract class LoaderFragmentImplBase< D >
       Loader< D > newLoaderInstance( int id, Bundle config );
    }
    
-   private final static String RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
-   
    private final Fragment fragment;
    
    private final LoaderCallbacks< D > loaderCallbacks;
@@ -74,9 +66,6 @@ abstract class LoaderFragmentImplBase< D >
    private D loaderData;
    
    private boolean loaderNotDataFound;
-   
-   @InstanceState( key = RESPECT_CONTENT_CHANGES, defaultValue = "true" )
-   private boolean respectContentChanges = true;
    
    
    
@@ -101,25 +90,6 @@ abstract class LoaderFragmentImplBase< D >
          loaderListener = (ILoaderFragmentListener) activity;
       else
          loaderListener = new NullLoaderFragmentListener();
-   }
-   
-   
-   
-   public void onCreate( Bundle savedInstanceState )
-   {
-      final Bundle config;
-      if ( savedInstanceState != null )
-      {
-         config = savedInstanceState;
-      }
-      else
-      {
-         config = new Bundle();
-         config.putBoolean( RESPECT_CONTENT_CHANGES,
-                            isRespectingContentChanges() );
-      }
-      
-      configurable.configure( config );
    }
    
    
@@ -164,34 +134,16 @@ abstract class LoaderFragmentImplBase< D >
    
    
    
-   public void setRespectContentChanges( boolean respect )
-   {
-      respectContentChanges = respect;
-      
-      if ( fragment.isAdded() )
-      {
-         final Loader< D > loader = fragment.getLoaderManager()
-                                            .getLoader( support.getLoaderId() );
-         
-         if ( loader instanceof AbstractLoader< ? > )
-         {
-            ( (AbstractLoader< ? >) loader ).setRespectContentChanges( respect );
-         }
-      }
-   }
-   
-   
-   
-   public boolean isRespectingContentChanges()
-   {
-      return respectContentChanges;
-   }
-   
-   
-   
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
-      final Loader< D > loader = support.newLoaderInstance( id, args );
+      final Bundle loaderArgs = new Bundle( configurable.getConfiguration() );
+      
+      if ( args != null )
+      {
+         loaderArgs.putAll( args );
+      }
+      
+      final Loader< D > loader = support.newLoaderInstance( id, loaderArgs );
       
       if ( loader instanceof AsyncTaskLoader< ? > )
       {
@@ -199,11 +151,6 @@ abstract class LoaderFragmentImplBase< D >
                                                     .getInteger( R.integer.env_loader_update_throttle_ms );
          
          ( (AsyncTaskLoader< ? >) loader ).setUpdateThrottle( loaderUpdateThrottleMs );
-      }
-      
-      if ( loader instanceof AbstractLoader< ? > )
-      {
-         ( (AbstractLoader< ? >) loader ).setRespectContentChanges( isRespectingContentChanges() );
       }
       
       loaderListener.onFragmentLoadStarted( fragment.getId(), fragment.getTag() );
@@ -235,7 +182,7 @@ abstract class LoaderFragmentImplBase< D >
    
    public void startLoader()
    {
-      startLoaderWithConfiguration( support.getLoaderConfig() );
+      startLoaderWithConfiguration( Bundle.EMPTY );
    }
    
    

@@ -93,11 +93,8 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
    
    
    
-   @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      super.onCreate( savedInstanceState );
-      
       if ( getLoaderData() == null && support.isReadyToStartLoader() )
       {
          startLoader();

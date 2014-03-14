@@ -49,12 +49,12 @@ import dev.drsoran.moloko.ui.adapters.DueTimeWheelTextAdapter;
 import dev.drsoran.rtm.RtmCalendar;
 
 
-class DuePickerDialogFragment extends AbstractPickerDialogFragment
+public class DuePickerDialogFragment extends AbstractPickerDialogFragment
 {
    private AppContext appContext;
    
-   @InstanceState( key = TaskColumns.DUE_DATE )
-   private long dueMillis = System.currentTimeMillis();
+   @InstanceState( key = TaskColumns.DUE_DATE, defaultValue = "-1" )
+   private long dueMillis;
    
    @InstanceState( key = TaskColumns.HAS_DUE_TIME )
    private boolean hasDueTime;

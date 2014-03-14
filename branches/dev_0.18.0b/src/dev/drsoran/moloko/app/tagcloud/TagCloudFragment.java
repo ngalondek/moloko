@@ -134,7 +134,10 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
    @Override
    public Loader< List< CloudEntry > > newLoaderInstance( int id, Bundle args )
    {
-      return new CloudEntryLoader( getUiContext().asDomainContext() );
+      final CloudEntryLoader loader = new CloudEntryLoader( getUiContext().asDomainContext() );
+      loader.setRespectContentChanges( true );
+      
+      return loader;
    }
    
    

@@ -35,13 +35,5 @@ public interface IEditFragment
    
    
    
-   boolean hasChanges();
-   
-   
-   
-   void onCancelEditing();
-   
-   
-   
-   boolean hasWritableAccess();
+   boolean onCancelEditing();
 }

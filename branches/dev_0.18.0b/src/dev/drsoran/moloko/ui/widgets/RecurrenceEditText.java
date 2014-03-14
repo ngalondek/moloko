@@ -136,8 +136,9 @@ public class RecurrenceEditText extends ClearableEditText
          if ( inputValid )
          {
             updateEditText();
-            notifyChange();
          }
+         
+         notifyChange();
       }
       
       if ( !stayInEditText )

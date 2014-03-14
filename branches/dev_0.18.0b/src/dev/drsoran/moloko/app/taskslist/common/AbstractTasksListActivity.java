@@ -578,14 +578,16 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
                                             Bundle.EMPTY,
                                             this );
    }
-
-
-
+   
+   
+   
    @Override
    public Loader< List< TasksList >> onCreateLoader( int id, Bundle args )
    {
       final TasksListsLoader loader = new TasksListsLoader( getAppContext().asDomainContext(),
                                                             true );
+      loader.setRespectContentChanges( false );
+      
       return loader;
    }
    

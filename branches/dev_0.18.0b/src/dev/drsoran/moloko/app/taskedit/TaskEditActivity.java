@@ -22,17 +22,21 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import java.util.Collection;
 import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Recurrence;
+import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.IValueChangedListener;
+import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
 
 
@@ -69,9 +73,10 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    public void onEditDueByPicker( Due due,
                                   IValueChangedListener valueChangedListener )
    {
-      if ( due == null )
+      if ( due == null || due == Due.EMPTY )
       {
-         due = Due.EMPTY;
+         due = new Due( getAppContext().getCalendarProvider()
+                                       .getTodayMillisUtc(), false );
       }
       
       final DuePickerDialogFragment frag = DuePickerDialogFragment.show( this,
@@ -85,9 +90,9 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    public void onEditRecurrenceByPicker( Recurrence recurrence,
                                          IValueChangedListener valueChangedListener )
    {
-      if ( recurrence == null )
+      if ( recurrence == null || recurrence == Recurrence.EMPTY )
       {
-         recurrence = Recurrence.EMPTY;
+         recurrence = new Recurrence( "after 1 year", false );
       }
       
       final RecurrencePickerDialogFragment frag = RecurrencePickerDialogFragment.show( this,
@@ -101,9 +106,30 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    public void onEditEstimateByPicker( long estimateMillis,
                                        IValueChangedListener valueChangedListener )
    {
+      if ( estimateMillis == -1 )
+      {
+         estimateMillis = DateUtils.DAY_IN_MILLIS;
+      }
+      
       final EstimatePickerDialogFragment frag = EstimatePickerDialogFragment.show( this,
                                                                                    estimateMillis );
       frag.setValueChangedListener( valueChangedListener );
+   }
+   
+   
+   
+   @Override
+   public void onUpdateTasks( Collection< ? extends Task > tasks )
+   {
+      getAppContext().getContentEditService().updateTasks( this, tasks );
+   }
+   
+   
+   
+   @Override
+   public void onValidationError( ValidationResult result )
+   {
+      showValidationError( result );
    }
    
    
@@ -141,7 +167,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
       }
       else if ( Intent.ACTION_INSERT.equals( action ) )
       {
-         addFragment( TaskAddFragment.class );
+         // TODO: addFragment( TaskAddFragment.class );
       }
       else
       {

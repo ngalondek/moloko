@@ -22,14 +22,21 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import java.util.Collections;
+
 import android.os.Bundle;
-import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.state.InstanceState;
 
 
-class TaskEditFragment extends AbstractTaskEditFragment implements
-         IOnSettingsChangedListener
+public class TaskEditFragment extends AbstractTaskEditFragment
 {
+   @InstanceState( key = Intents.Extras.KEY_TASK,
+                   defaultValue = InstanceState.NULL )
+   private Task task;
+   
+   
    
    public final static TaskEditFragment newInstance( Bundle config )
    {
@@ -50,54 +57,20 @@ class TaskEditFragment extends AbstractTaskEditFragment implements
    
    
    @Override
-   public void onStart()
+   public Task getTask()
    {
-      super.onStart();
-      getAppContext().getAppEvents()
-                     .registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
-                                                         this );
+      return task;
    }
    
    
    
    @Override
-   public void onStop()
+   public void onFinishEditing()
    {
-      getAppContext().getAppEvents().unregisterOnSettingsChangedListener( this );
-      super.onStop();
-   }
-   
-   
-   
-   @Override
-   public void onSettingsChanged( int which )
-   {
-      if ( ( which & IOnSettingsChangedListener.DATE_TIME_RELATED ) != 0
-         && isAdded() && !isRemoving() )
+      final ITaskEditFragmentListener editFragmentListener = getListener();
+      if ( editFragmentListener != null )
       {
-         initializeHeadSection();
+         editFragmentListener.onUpdateTasks( Collections.singletonList( task ) );
       }
-   }
-   
-   
-   
-   @Override
-   public Task getInitialTaskAssertNotNull()
-   {
-      if ( initialTask == null )
-         throw new AssertionError( "expected task to be not null" );
-      
-      return initialTask;
-   }
-   
-   
-   
-   @Override
-   public Task getEditedTaskAssertNotNull()
-   {
-      if ( editedTask == null )
-         throw new AssertionError( "expected task to be not null" );
-      
-      return editedTask;
    }
 }

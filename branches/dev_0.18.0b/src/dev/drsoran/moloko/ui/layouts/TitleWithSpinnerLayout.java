@@ -22,7 +22,8 @@
 
 package dev.drsoran.moloko.ui.layouts;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -170,18 +171,15 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    
    
    
-   public void setValues( List< String > values )
+   public void setValues( Collection< String > values )
    {
       if ( values == null )
       {
-         throw new IllegalArgumentException( "values are null" );
+         throw new IllegalArgumentException( "values" );
       }
       
       this.values = new String[ values.size() ];
-      for ( int i = 0; i < values.size(); ++i )
-      {
-         this.values[ i ] = values.get( i );
-      }
+      this.values = values.toArray( this.values );
    }
    
    
@@ -193,11 +191,7 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
          throw new IllegalArgumentException( "values are null" );
       }
       
-      this.values = new String[ values.length ];
-      for ( int i = 0; i < values.length; ++i )
-      {
-         this.values[ i ] = values[ i ];
-      }
+      this.values = Arrays.copyOf( values, values.length );
    }
    
    

@@ -86,6 +86,8 @@ public class MinDetailedTasksListFragment extends AbstractTasksListFragment
       final TasksLoader loader = new TasksLoader( getUiContext().asDomainContext(),
                                                   filter,
                                                   TaskContentOptions.None );
+      loader.setRespectContentChanges( true );
+      
       return loader;
    }
    

@@ -160,17 +160,6 @@ public class NoteEditFragment extends AbstractNoteEditFragment
    
    
    @Override
-   public boolean hasChanges()
-   {
-      final Note note = getNoteAssertNotNull();
-      
-      return !note.getTitle().equals( UiUtils.getTrimmedText( title ) )
-         || !note.getText().equals( UiUtils.getTrimmedText( text ) );
-   }
-   
-   
-   
-   @Override
    public void onFinishEditing()
    {
       if ( listener != null )

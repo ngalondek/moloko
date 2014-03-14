@@ -257,19 +257,10 @@
       name="loader_task" />
    <item
       type="id"
-      name="loader_tasks" />
-   <item
-      type="id"
-      name="loader_selectable_tasks" />
-   <item
-      type="id"
-      name="loader_lists" />
+      name="loader_tasks" />     
    <item
       type="id"
       name="tasks_lists_loader" />
-   <item
-      type="id"
-      name="loader_note" />
    <item
       type="id"
       name="loader_notes" />

@@ -28,7 +28,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 
@@ -72,7 +71,7 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
       final boolean valid = validationResult.isOk();
       if ( !valid )
       {
-         showValidationErrorAsToast( validationResult );
+         showValidationError( validationResult );
       }
       
       return valid;
@@ -80,7 +79,7 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    
    
-   private void showValidationErrorAsToast( ValidationResult validationResult )
+   public void showValidationError( ValidationResult validationResult )
    {
       Toast.makeText( this,
                       validationResult.getValidationErrorMessage(),
@@ -110,14 +109,7 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    public boolean cancelFragmentEditing( IEditFragment editFragment )
    {
-      boolean canceled = !editFragment.hasChanges();
-      
-      if ( !canceled )
-      {
-         UiUtils.showCancelWithChangesDialog( this );
-      }
-      
-      return canceled;
+      return editFragment.onCancelEditing();
    }
    
    

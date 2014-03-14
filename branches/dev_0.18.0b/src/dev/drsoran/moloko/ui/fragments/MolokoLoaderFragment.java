@@ -150,14 +150,6 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
    
    @Override
-   public Bundle getLoaderConfig()
-   {
-      return getConfiguration();
-   }
-   
-   
-   
-   @Override
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
       return loaderImpl.onCreateLoader( id, args );
@@ -177,20 +169,6 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    public void onLoaderReset( Loader< D > loader )
    {
       loaderImpl.onLoaderReset( loader );
-   }
-   
-   
-   
-   public final void setRespectContentChanges( boolean respect )
-   {
-      loaderImpl.setRespectContentChanges( respect );
-   }
-   
-   
-   
-   public final boolean isRespectingContentChanges()
-   {
-      return loaderImpl.isRespectingContentChanges();
    }
    
    

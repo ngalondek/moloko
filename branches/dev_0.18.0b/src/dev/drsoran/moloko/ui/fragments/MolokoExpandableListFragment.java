@@ -335,6 +335,13 @@ public abstract class MolokoExpandableListFragment< D > extends
    
    
    
+   public void preSetLoaderData( List< D > loaderData )
+   {
+      loaderImpl.preSetLoaderData( loaderData );
+   }
+   
+   
+   
    public boolean isLoaderDataFound()
    {
       return loaderImpl.isLoaderDataFound();

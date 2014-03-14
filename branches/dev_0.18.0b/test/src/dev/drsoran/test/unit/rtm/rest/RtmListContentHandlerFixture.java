@@ -47,6 +47,10 @@ public class RtmListContentHandlerFixture extends
    public static final XmlFileResource testSmartList = new XmlFileResource( RtmListContentHandlerFixture.class,
                                                                             "RtmList_Smart.xml" );
    
+   @ClassRule
+   public static final XmlFileResource testSmartListEmptyFilter = new XmlFileResource( RtmListContentHandlerFixture.class,
+                                                                                       "RtmList_Smart_emptyFilter.xml" );
+   
    
    
    @Test
@@ -79,6 +83,23 @@ public class RtmListContentHandlerFixture extends
       assertThat( content.getPosition(), is( 1 ) );
       assertThat( content.isSmartList(), is( true ) );
       assertThat( content.getSmartFilter(), is( "(priority:1)" ) );
+   }
+   
+   
+   
+   @Test
+   public void testReadSmartListEmptyFilter() throws Exception
+   {
+      final RtmTasksList content = readContent( testSmartListEmptyFilter );
+      
+      assertThat( content.getId(), is( "100" ) );
+      assertThat( content.getName(), is( "SmartList" ) );
+      assertThat( content.isDeleted(), is( true ) );
+      assertThat( content.isLocked(), is( false ) );
+      assertThat( content.isArchived(), is( true ) );
+      assertThat( content.getPosition(), is( 1 ) );
+      assertThat( content.isSmartList(), is( true ) );
+      assertThat( content.getSmartFilter(), is( "" ) );
    }
    
    

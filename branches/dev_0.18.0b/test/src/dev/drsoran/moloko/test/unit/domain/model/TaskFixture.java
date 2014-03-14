@@ -24,12 +24,18 @@ package dev.drsoran.moloko.test.unit.domain.model;
 
 import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
 import static dev.drsoran.moloko.test.IterableAsserts.assertEqualSet;
+import static dev.drsoran.moloko.test.TestConstants.EVEN_LATER;
 import static dev.drsoran.moloko.test.TestConstants.LATER;
 import static dev.drsoran.moloko.test.TestConstants.NEVER;
 import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static dev.drsoran.moloko.test.TestConstants.NO_ID;
+import static dev.drsoran.moloko.test.TestConstants.YESTERDAY;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -37,12 +43,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
+import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
@@ -376,6 +388,21 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testHasDue()
+   {
+      final Task task = createTask();
+      assertFalse( task.hasDue() );
+      
+      task.setDue( new Due( NOW, true ) );
+      assertTrue( task.hasDue() );
+      
+      task.setDue( null );
+      assertFalse( task.hasDue() );
+   }
+   
+   
+   
+   @Test
    public void testGetRecurence()
    {
       assertThat( createTask().getRecurrence(), nullValue() );
@@ -395,6 +422,21 @@ public class TaskFixture extends MolokoTestCase
       
       task.setRecurrence( null );
       assertNull( task.getRecurrence() );
+   }
+   
+   
+   
+   @Test
+   public void testIsRecurrent()
+   {
+      final Task task = createTask();
+      assertFalse( task.isRecurrent() );
+      
+      task.setRecurrence( new Recurrence( "pattern", true ) );
+      assertTrue( task.isRecurrent() );
+      
+      task.setRecurrence( null );
+      assertFalse( task.isRecurrent() );
    }
    
    
@@ -424,6 +466,21 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testHasEstimation()
+   {
+      final Task task = createTask();
+      assertFalse( task.hasEstimation() );
+      
+      task.setEstimation( new Estimation( "sentence", NOW ) );
+      assertTrue( task.hasEstimation() );
+      
+      task.setEstimation( null );
+      assertFalse( task.hasEstimation() );
+   }
+   
+   
+   
+   @Test
    public void testGetTags()
    {
       assertEmpty( createTask().getTags() );
@@ -442,6 +499,22 @@ public class TaskFixture extends MolokoTestCase
       task.setTags( Arrays.asList( new String[]
       { "tag1", "tag2" } ) );
       assertEqualSet( task.getTags(), "tag1", "tag2" );
+   }
+   
+   
+   
+   @Test
+   public void testIsTagged()
+   {
+      final Task task = createTask();
+      assertFalse( task.isTagged() );
+      
+      task.setTags( Arrays.asList( new String[]
+      { "tag1", "tag2" } ) );
+      assertTrue( task.isTagged() );
+      
+      task.setTags( null );
+      assertFalse( task.isTagged() );
    }
    
    
@@ -550,6 +623,23 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testHasNotes()
+   {
+      final Task task = createTask();
+      assertFalse( task.hasNotes() );
+      
+      final Note note1 = new Note( 1, NOW );
+      task.setNotes( Arrays.asList( new Note[]
+      { note1 } ) );
+      assertTrue( task.hasNotes() );
+      
+      task.removeNote( note1 );
+      assertFalse( task.hasNotes() );
+   }
+   
+   
+   
+   @Test
    public void testRemoveNote()
    {
       final Task task = createTask();
@@ -653,6 +743,18 @@ public class TaskFixture extends MolokoTestCase
    
    
    @Test
+   public void testHasParticipants()
+   {
+      final Task task = createTask();
+      assertFalse( task.hasParticipants() );
+      
+      task.addParticipant( new Participant( 1L, "full", "user" ) );
+      assertTrue( task.hasParticipants() );
+   }
+   
+   
+   
+   @Test
    public void testGetLocationId()
    {
       final Task task = createTask();
@@ -660,6 +762,9 @@ public class TaskFixture extends MolokoTestCase
       
       task.setLocationStub( 1L, "loc" );
       assertThat( task.getLocationId(), is( 1L ) );
+      
+      task.setLocation( new Location( 2L, "loc1", 1.0f, 2.0f, null, true, 10 ) );
+      assertThat( task.getLocationId(), is( 2L ) );
    }
    
    
@@ -672,6 +777,9 @@ public class TaskFixture extends MolokoTestCase
       
       task.setLocationStub( 1L, "loc" );
       assertThat( task.getLocationName(), is( "loc" ) );
+      
+      task.setLocation( new Location( 1L, "loc1", 1.0f, 2.0f, null, true, 10 ) );
+      assertThat( task.getLocationName(), is( "loc1" ) );
    }
    
    
@@ -686,6 +794,12 @@ public class TaskFixture extends MolokoTestCase
       assertTrue( task.isLocated() );
       
       task.setLocationStub( NO_ID, null );
+      assertFalse( task.isLocated() );
+      
+      task.setLocation( new Location( 1L, "loc1", 1.0f, 2.0f, null, true, 10 ) );
+      assertTrue( task.isLocated() );
+      
+      task.setLocation( null );
       assertFalse( task.isLocated() );
    }
    
@@ -714,6 +828,36 @@ public class TaskFixture extends MolokoTestCase
    {
       final Task task = createTask();
       task.setLocationStub( 1L, "" );
+   }
+   
+   
+   
+   @Test
+   public void testSetLocation()
+   {
+      final Task task = createTask();
+      assertNull( task.getLocation() );
+      
+      task.setLocation( new Location( 1L, "loc", 1.0f, 2.0f, null, true, 10 ) );
+      assertNotNull( task.getLocation() );
+      
+      task.setLocation( null );
+      assertNull( task.getLocation() );
+   }
+   
+   
+   
+   @Test
+   public void testGetLocation()
+   {
+      final Task task = createTask();
+      assertNull( task.getLocation() );
+      
+      task.setLocationStub( 1L, "loc" );
+      assertNull( task.getLocation() );
+      
+      task.setLocation( new Location( 1L, "loc", 1.0f, 2.0f, null, true, 10 ) );
+      assertNotNull( task.getLocation() );
    }
    
    
@@ -864,5 +1008,69 @@ public class TaskFixture extends MolokoTestCase
       task.setNotes( Arrays.asList( new Note[]
       { note1, note2 } ) );
       task.toString();
+   }
+   
+   
+   
+   @Test
+   public void testSerializeDeserialize() throws IOException,
+                                         ClassNotFoundException
+   {
+      final ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+      final ObjectOutputStream oos = new ObjectOutputStream( memStream );
+      
+      final Task task = new Task( 1L, NOW, LATER, "Task", 1000L, "TaskList" );
+      task.setModifiedMillisUtc( EVEN_LATER );
+      task.setSource( "TestSource" );
+      task.setUrl( "http://test.de" );
+      task.setLocation( new Location( 50L, "loc", 1.0f, 2.0f, "Addr", true, 10 ) );
+      task.setCompletedMillisUtc( LATER );
+      task.setDeletedMillisUtc( EVEN_LATER );
+      task.setPriority( Priority.High );
+      task.setPostponedCount( 1 );
+      task.setEstimation( new Estimation( "1 hour", 3600000L ) );
+      task.setRecurrence( new Recurrence( "every 2 days", true ) );
+      task.setDue( new Due( YESTERDAY, true ) );
+      task.setTags( Arrays.asList( "tag1", "tag2" ) );
+      task.addNote( new Note( 10L, NOW ) );
+      task.addParticipant( new Participant( 20L, "full", "user" ) );
+      
+      oos.writeObject( task );
+      oos.close();
+      
+      byte[] serialized = memStream.toByteArray();
+      memStream.close();
+      
+      final ByteArrayInputStream memIStream = new ByteArrayInputStream( serialized );
+      final ObjectInputStream ois = new ObjectInputStream( memIStream );
+      
+      final Task deserializedTask = (Task) ois.readObject();
+      
+      ois.close();
+      memIStream.close();
+      
+      assertThat( deserializedTask, is( notNullValue() ) );
+      assertThat( deserializedTask.getId(), is( 1L ) );
+      assertThat( deserializedTask.getCreatedMillisUtc(), is( NOW ) );
+      assertThat( deserializedTask.getAddedMillisUtc(), is( LATER ) );
+      assertThat( deserializedTask.getName(), is( "Task" ) );
+      assertThat( deserializedTask.getListId(), is( 1000L ) );
+      assertThat( deserializedTask.getListName(), is( "TaskList" ) );
+      assertThat( deserializedTask.getModifiedMillisUtc(), is( EVEN_LATER ) );
+      assertThat( deserializedTask.getSource(), is( "TestSource" ) );
+      assertThat( deserializedTask.getUrl(), is( "http://test.de" ) );
+      assertThat( deserializedTask.getLocationId(), is( 50L ) );
+      assertThat( deserializedTask.getLocationName(), is( "loc" ) );
+      assertThat( deserializedTask.getLocation(), is( notNullValue() ) );
+      assertThat( deserializedTask.getCompletedMillisUtc(), is( LATER ) );
+      assertThat( deserializedTask.getDeletedMillisUtc(), is( EVEN_LATER ) );
+      assertThat( deserializedTask.getPriority(), is( Priority.High ) );
+      assertThat( deserializedTask.getPostponedCount(), is( 1 ) );
+      assertThat( deserializedTask.getEstimation(), is( notNullValue() ) );
+      assertThat( deserializedTask.getRecurrence(), is( notNullValue() ) );
+      assertThat( deserializedTask.getDue(), is( notNullValue() ) );
+      assertThat( deserializedTask.getTags(), contains( "tag1", "tag2" ) );
+      assertThat( deserializedTask.getNotes(), not( emptyIterable() ) );
+      assertThat( deserializedTask.getParticipants(), not( emptyIterable() ) );
    }
 }

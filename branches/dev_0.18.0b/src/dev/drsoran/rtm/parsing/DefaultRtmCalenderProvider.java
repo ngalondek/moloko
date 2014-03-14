@@ -58,6 +58,7 @@ public class DefaultRtmCalenderProvider implements IRtmCalendarProvider
    @Override
    public long getTodayMillisUtc()
    {
-      return getNowMillisUtc() % DateUtils.DAY_IN_MILLIS;
+      return ( getNowMillisUtc() / DateUtils.DAY_IN_MILLIS )
+         * DateUtils.DAY_IN_MILLIS;
    }
 }

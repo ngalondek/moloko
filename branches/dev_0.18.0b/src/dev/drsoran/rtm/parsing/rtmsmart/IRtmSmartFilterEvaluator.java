@@ -32,6 +32,10 @@ public interface IRtmSmartFilterEvaluator
    
    
    
+   boolean evalEmptyFilter();
+   
+   
+   
    boolean evalList( String listName );
    
    

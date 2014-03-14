@@ -23,8 +23,15 @@
 package dev.drsoran.moloko.test.unit.domain.model;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.junit.Test;
 
@@ -84,6 +91,37 @@ public class RecurrenceFixture extends EqualsHashCodeTestCase
    public void testToString()
    {
       new Recurrence( "pattern", true ).toString();
+   }
+   
+   
+   
+   @Test
+   public void testSerializeDeserialize() throws IOException,
+                                         ClassNotFoundException
+   {
+      final ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+      final ObjectOutputStream oos = new ObjectOutputStream( memStream );
+      
+      final Recurrence recurrence = new Recurrence( "pattern", true );
+      oos.writeObject( recurrence );
+      oos.close();
+      
+      byte[] serialized = memStream.toByteArray();
+      memStream.close();
+      
+      final ByteArrayInputStream memIStream = new ByteArrayInputStream( serialized );
+      final ObjectInputStream ois = new ObjectInputStream( memIStream );
+      
+      final Recurrence deserializedRecurrence = (Recurrence) ois.readObject();
+      
+      ois.close();
+      memIStream.close();
+      
+      assertThat( deserializedRecurrence, is( notNullValue() ) );
+      assertThat( deserializedRecurrence.getPattern(),
+                  is( recurrence.getPattern() ) );
+      assertThat( deserializedRecurrence.isEveryRecurrence(),
+                  is( recurrence.isEveryRecurrence() ) );
    }
    
    

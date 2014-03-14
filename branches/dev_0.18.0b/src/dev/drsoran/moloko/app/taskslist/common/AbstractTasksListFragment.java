@@ -43,7 +43,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -52,7 +51,6 @@ import dev.drsoran.moloko.app.loaders.TasksLoader;
 import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
@@ -70,8 +68,9 @@ abstract class AbstractTasksListFragment extends
    
    private ITasksListActionModeListener actionModeListener;
    
-   @InstanceState( key = Intents.Extras.KEY_LIST )
-   private TasksList tasksList;
+   @InstanceState( key = Intents.Extras.KEY_LIST_ID,
+                   defaultValue = InstanceState.NO_ID )
+   private long listId;
    
    @InstanceState( key = Intents.Extras.KEY_FILTER )
    private RtmSmartFilter filter;
@@ -106,15 +105,6 @@ abstract class AbstractTasksListFragment extends
          actionModeListener = (ITasksListActionModeListener) activity;
       else
          actionModeListener = null;
-   }
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      ensureFilter();
    }
    
    
@@ -362,17 +352,17 @@ abstract class AbstractTasksListFragment extends
    
    
    @Override
-   public RtmSmartFilter getFilter()
+   public long getListId()
    {
-      return filter;
+      return listId;
    }
    
    
    
-   private void ensureFilter()
+   @Override
+   public RtmSmartFilter getFilter()
    {
-      if ( filter == null )
-         filter = new RtmSmartFilter( Strings.EMPTY_STRING );
+      return filter;
    }
    
    

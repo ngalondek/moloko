@@ -78,6 +78,25 @@ class SyncTimesTable extends AbstractTable
    
    
    @Override
+   public void clear( SQLiteDatabase database )
+   {
+      final StringBuilder builder = new StringBuilder();
+      
+      builder.append( "UPDATE " );
+      builder.append( TABLE_NAME );
+      builder.append( " SET " );
+      builder.append( SyncTimesColumns.LAST_IN );
+      builder.append( " = -1, " );
+      builder.append( SyncTimesColumns.LAST_OUT );
+      builder.append( " = -1" );
+      builder.append( ";" );
+      
+      database.execSQL( builder.toString() );
+   }
+   
+   
+   
+   @Override
    public String getDefaultSortOrder()
    {
       return null;

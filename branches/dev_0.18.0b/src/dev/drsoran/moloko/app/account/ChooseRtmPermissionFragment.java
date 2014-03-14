@@ -43,7 +43,7 @@ import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.rtm.service.RtmServicePermission;
 
 
-class ChooseRtmPermissionFragment extends AuthFragment implements
+public class ChooseRtmPermissionFragment extends AuthFragment implements
          OnItemSelectedListener
 {
    @InstanceState( key = AuthConstants.FEAT_PERMISSION, defaultValue = "read" )

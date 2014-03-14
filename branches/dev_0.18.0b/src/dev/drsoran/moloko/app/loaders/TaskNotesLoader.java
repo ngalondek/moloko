@@ -64,7 +64,7 @@ public class TaskNotesLoader extends AbstractLoader< List< Note > >
    protected List< Note > queryResultInBackground( IContentRepository contentRepository )
    {
       final Task task = contentRepository.getTask( taskId,
-                                                   TaskContentOptions.Complete );
+                                                   TaskContentOptions.WithNotes );
       
       final List< Note > notes = new ArrayList< Note >();
       for ( Note note : task.getNotes() )

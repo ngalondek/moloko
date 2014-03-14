@@ -29,13 +29,18 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.loaders.ContactsLoader;
 import dev.drsoran.moloko.content.ContentProviderUtils;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.Contact;
+import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TaskContentOptions;
+import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
 class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
@@ -77,7 +82,7 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    
    
    @Override
-   protected List< LinkedContact > queryResultInBackground( IContentRepository contentRepository )
+   protected List< LinkedContact > queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
       final List< Contact > contacts = contactsLoader.loadInBackground();
       contactsLoader.throwContentExceptionOnError();
@@ -86,7 +91,16 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
       
       for ( Contact contact : contacts )
       {
-         linkedContacts.add( linkRtmContact( contact ) );
+         try
+         {
+            int numTasksParticipating = getNumTasksParticipating( contentRepository,
+                                                                  contact );
+            linkedContacts.add( linkRtmContact( contact, numTasksParticipating ) );
+         }
+         catch ( GrammarException e )
+         {
+            throw new ContentException( e );
+         }
       }
       
       return linkedContacts;
@@ -94,9 +108,22 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    
    
    
-   private LinkedContact linkRtmContact( Contact contact )
+   private int getNumTasksParticipating( IContentRepository contentRepository,
+                                         Contact contact ) throws ContentException,
+                                                          GrammarException
    {
-      LinkedContact linkedContact = new LinkedContact( contact );
+      return Iterables.size( contentRepository.getTasksFromSmartFilter( new RtmSmartFilterBuilder().sharedWith( contact.getUsername() )
+                                                                                                   .toSmartFilter(),
+                                                                        TaskContentOptions.None ) );
+   }
+   
+   
+   
+   private LinkedContact linkRtmContact( Contact contact,
+                                         int numTasksParticipating )
+   {
+      LinkedContact linkedContact = new LinkedContact( contact,
+                                                       numTasksParticipating );
       
       String lookUpKey = null;
       long photoId = 0;

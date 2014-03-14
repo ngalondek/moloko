@@ -23,7 +23,14 @@
 package dev.drsoran.moloko.test.unit.domain.model;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.junit.Test;
 
@@ -131,6 +138,46 @@ public class LocationFixture extends EqualsHashCodeTestCase
    public void testToString()
    {
       createLocation().toString();
+   }
+   
+   
+   
+   @Test
+   public void testSerializeDeserialize() throws IOException,
+                                         ClassNotFoundException
+   {
+      final ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+      final ObjectOutputStream oos = new ObjectOutputStream( memStream );
+      
+      final Location location = new Location( 1L,
+                                              "loc",
+                                              1.0f,
+                                              2.0f,
+                                              "addr",
+                                              true,
+                                              10 );
+      oos.writeObject( location );
+      oos.close();
+      
+      byte[] serialized = memStream.toByteArray();
+      memStream.close();
+      
+      final ByteArrayInputStream memIStream = new ByteArrayInputStream( serialized );
+      final ObjectInputStream ois = new ObjectInputStream( memIStream );
+      
+      final Location deserialized = (Location) ois.readObject();
+      
+      ois.close();
+      memIStream.close();
+      
+      assertThat( deserialized, is( notNullValue() ) );
+      assertThat( deserialized.getId(), is( 1L ) );
+      assertThat( deserialized.getName(), is( "loc" ) );
+      assertThat( deserialized.getLongitude(), is( 1.0f ) );
+      assertThat( deserialized.getLatitude(), is( 2.0f ) );
+      assertThat( deserialized.getAddress(), is( "addr" ) );
+      assertThat( deserialized.isViewable(), is( true ) );
+      assertThat( deserialized.getZoom(), is( 10 ) );
    }
    
    

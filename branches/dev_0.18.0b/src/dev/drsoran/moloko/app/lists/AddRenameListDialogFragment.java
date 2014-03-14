@@ -48,6 +48,9 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    @InstanceState( key = Intents.Extras.KEY_LIST )
    private TasksList list;
    
+   @InstanceState( key = Intents.Extras.KEY_FILTER )
+   private RtmSmartFilter filter;
+   
    private IAddRenameListFragmentListener listener;
    
    private TextView listNameEdit;
@@ -93,12 +96,10 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    {
       final View view = inflater.inflate( R.layout.add_rename_list_dialog, null );
       
-      final boolean isRenameMode = isRenameMode();
-      
       listNameEdit = ( (TextView) view.findViewById( R.id.add_rename_list_list_name ) );
       filterEdit = ( (TextView) view.findViewById( R.id.add_rename_list_smart_filter ) );
       
-      if ( isRenameMode )
+      if ( isRenameMode() )
       {
          configureAsRenameListDialog();
       }
@@ -117,14 +118,13 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    {
       final Activity activity = getSherlockActivity();
       
-      final boolean isRenameMode = isRenameMode();
       final String title;
       
-      if ( isRenameMode )
+      if ( isRenameMode() )
       {
          title = getString( R.string.dlg_rename_list_title );
       }
-      else if ( list.isSmartList() )
+      else if ( list == null && filter != null )
       {
          title = getString( R.string.dlg_add_smart_list_title );
       }
@@ -199,7 +199,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    private void configureAsNewListDialog()
    {
-      filterEdit.setText( list.getSmartFilter().getFilterString() );
+      filterEdit.setText( filter.getFilterString() );
    }
    
    

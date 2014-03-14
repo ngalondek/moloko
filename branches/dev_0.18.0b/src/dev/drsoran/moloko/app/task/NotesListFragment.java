@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -49,8 +50,9 @@ import dev.drsoran.moloko.ui.fragments.MolokoMultiChoiceModalListFragment;
 import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
-class NotesListFragment extends MolokoMultiChoiceModalListFragment< Note >
-         implements IAbsViewPagerSupport, IOnSettingsChangedListener
+public class NotesListFragment extends
+         MolokoMultiChoiceModalListFragment< Note > implements
+         IAbsViewPagerSupport, IOnSettingsChangedListener
 {
    public final static NotesListFragment newInstance( Bundle config )
    {
@@ -63,7 +65,11 @@ class NotesListFragment extends MolokoMultiChoiceModalListFragment< Note >
    
    private boolean enableAbsViewPagerWorkaround;
    
-   @InstanceState( key = Intents.Extras.KEY_TASK_ID )
+   @InstanceState( key = Intents.Extras.KEY_NOTES )
+   private ArrayList< Note > notes;
+   
+   @InstanceState( key = Intents.Extras.KEY_TASK_ID,
+                   defaultValue = InstanceState.NO_ID )
    private long taskId;
    
    private INotesListsFragmentListener listener;
@@ -100,7 +106,10 @@ class NotesListFragment extends MolokoMultiChoiceModalListFragment< Note >
    {
       enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
       
+      preSetLoaderData( notes );
+      
       super.onCreate( savedInstanceState );
+      
       setHasOptionsMenu( !enableAbsViewPagerWorkaround );
    }
    
@@ -257,6 +266,15 @@ class NotesListFragment extends MolokoMultiChoiceModalListFragment< Note >
    public Loader< List< Note >> newLoaderInstance( int id, Bundle config )
    {
       return new TaskNotesLoader( getUiContext().asDomainContext(), taskId );
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< List< Note >> loader, List< Note > data )
+   {
+      super.onLoadFinished( loader, data );
+      notes = new ArrayList< Note >( getLoaderDataAssertNotNull() );
    }
    
    

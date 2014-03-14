@@ -40,7 +40,7 @@ import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
 
-class NoteAddFragment extends AbstractNoteEditFragment
+public class NoteAddFragment extends AbstractNoteEditFragment
 {
    @InstanceState( key = "createdMillis" )
    private long createdMillisUtc;

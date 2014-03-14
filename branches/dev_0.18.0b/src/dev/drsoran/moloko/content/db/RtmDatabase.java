@@ -69,6 +69,10 @@ public class RtmDatabase extends AbstractDatabase
        new UpdateContactTrigger(),
        new UpdateTaskSeriesListIdTrigger(),
        new UpdateTaskSeriesLocationIdTrigger(),
+       new PreventDeleteLockedListTrigger(),
+       new PreventSetDeletedDateOfLockedListTrigger(),
+       new UpdateTasksFromDeletedListTrigger(),
+       new UpdateTasksFromSetDeletedDateListTrigger(),
        
        new DeleteModificationsTrigger( RtmRawTasksTable.TABLE_NAME,
                                        ContentUris.TASKS_URI_PATH ),

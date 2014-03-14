@@ -26,7 +26,7 @@ import android.preference.PreferenceFragment;
 import dev.drsoran.moloko.app.prefs.PreferenceLifecycle;
 
 
-abstract class MolokoPreferenceFragment extends PreferenceFragment
+public abstract class MolokoPreferenceFragment extends PreferenceFragment
 {
    @Override
    public void onStart()

@@ -153,7 +153,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
          final Iterable< Task > tasks = getUiContext().asDomainContext()
                                                       .getContentRepository()
                                                       .getTasksFromSmartFilter( getSmartFilter(),
-                                                                                TaskContentOptions.Minimal );
+                                                                                TaskContentOptions.None );
          return Iterables.size( tasks );
       }
       catch ( ContentException e )

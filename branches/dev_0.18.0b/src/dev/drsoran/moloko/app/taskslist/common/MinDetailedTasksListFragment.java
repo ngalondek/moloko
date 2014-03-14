@@ -82,10 +82,10 @@ public class MinDetailedTasksListFragment extends AbstractTasksListFragment
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
-      final RtmSmartFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
+      final RtmSmartFilter filter = (RtmSmartFilter) config.getSerializable( Intents.Extras.KEY_FILTER );
       final TasksLoader loader = new TasksLoader( getUiContext().asDomainContext(),
                                                   filter,
-                                                  TaskContentOptions.Minimal );
+                                                  TaskContentOptions.None );
       return loader;
    }
    

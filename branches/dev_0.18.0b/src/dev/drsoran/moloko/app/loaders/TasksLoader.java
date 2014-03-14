@@ -27,11 +27,11 @@ import java.util.List;
 import android.net.Uri;
 import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
@@ -44,17 +44,23 @@ public class TasksLoader extends AbstractLoader< List< Task > >
    
    private final TaskContentOptions taskContentOptions;
    
-   private final TasksList tasksList;
+   private final long tasksListId;
    
    private final RtmSmartFilter smartFilter;
    
    
    
-   public TasksLoader( DomainContext context, TasksList tasksList,
+   public TasksLoader( DomainContext context, long tasksListId,
       TaskContentOptions taskContentOptions )
    {
       super( context );
-      this.tasksList = tasksList;
+      
+      if ( tasksListId == Constants.NO_ID )
+      {
+         throw new IllegalArgumentException( "tasksListId" );
+      }
+      
+      this.tasksListId = tasksListId;
       this.taskContentOptions = taskContentOptions;
       this.smartFilter = null;
    }
@@ -65,7 +71,13 @@ public class TasksLoader extends AbstractLoader< List< Task > >
       TaskContentOptions taskContentOptions )
    {
       super( context );
-      this.tasksList = null;
+      
+      if ( filter == null )
+      {
+         throw new IllegalArgumentException( "filter" );
+      }
+      
+      this.tasksListId = Constants.NO_ID;
       this.taskContentOptions = taskContentOptions;
       this.smartFilter = filter;
    }
@@ -87,10 +99,10 @@ public class TasksLoader extends AbstractLoader< List< Task > >
       
       try
       {
-         if ( tasksList != null )
+         if ( tasksListId != Constants.NO_ID )
          {
-            tasks = contentRepository.getTasksInTasksList( tasksList,
-                                                           taskContentOptions );
+            tasks = contentRepository.getTasksInPhysicalTasksList( tasksListId,
+                                                                   taskContentOptions );
          }
          else
          {

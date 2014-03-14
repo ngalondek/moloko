@@ -73,7 +73,7 @@ public class ContentRepository implements IContentRepository
    
    private final IRtmSmartFilterParsing smartFilterParsing;
    
-   private final IRtmSmartFilterEvaluator smartFilterEvaluator;
+   private final IRtmSmartFilterEvaluatorFactory smartFilterEvaluatorFactory;
    
    private final ContentQueryHandler< Task > taskQueryHandler;
    
@@ -103,11 +103,11 @@ public class ContentRepository implements IContentRepository
       IModelElementFactory modelElementFactory,
       IRtmDateTimeParsing dateTimeParsing,
       IRtmSmartFilterParsing smartFilterParsing,
-      IRtmSmartFilterEvaluator smartFilterEvaluator )
+      IRtmSmartFilterEvaluatorFactory smartFilterEvaluatorFactory )
    {
       this.contentResolver = contentResolver;
       this.smartFilterParsing = smartFilterParsing;
-      this.smartFilterEvaluator = smartFilterEvaluator;
+      this.smartFilterEvaluatorFactory = smartFilterEvaluatorFactory;
       
       this.taskQueryHandler = new ContentQueryHandler< Task >( contentResolver,
                                                                TaskColumns.PROJECTION,
@@ -174,18 +174,30 @@ public class ContentRepository implements IContentRepository
       final Task task = taskQueryHandler.getElement( ContentUris.TASKS_CONTENT_URI_ID,
                                                      taskId );
       
-      if ( taskContentOptions == TaskContentOptions.Complete
-         || taskContentOptions == TaskContentOptions.CompleteWithLocation )
-      {
-         addNotesAndParticipants( task );
-         
-         if ( taskContentOptions == TaskContentOptions.CompleteWithLocation )
-         {
-            setLocationToTask( task );
-         }
-      }
+      setRequestedOptions( taskContentOptions, task );
       
       return task;
+   }
+   
+   
+   
+   private void setRequestedOptions( TaskContentOptions taskContentOptions,
+                                     final Task task )
+   {
+      if ( taskContentOptions.hasFlag( TaskContentOptions.WithNotes ) )
+      {
+         addNotesToTask( task );
+      }
+      
+      if ( taskContentOptions.hasFlag( TaskContentOptions.WithParticipants ) )
+      {
+         addParticipantsToTask( task );
+      }
+      
+      if ( taskContentOptions.hasFlag( TaskContentOptions.WithLocation ) )
+      {
+         setLocationToTask( task );
+      }
    }
    
    
@@ -203,30 +215,14 @@ public class ContentRepository implements IContentRepository
                                              TaskContentOptions taskContentOptions ) throws ContentException
    {
       final Iterable< Task > tasks = taskQueryHandler.getAll( ContentUris.TASKS_CONTENT_URI,
-                                                              selection );
-      if ( taskContentOptions == TaskContentOptions.Complete
-         || taskContentOptions == TaskContentOptions.CompleteWithLocation )
+                                                              selection,
+                                                              null );
+      for ( Task task : tasks )
       {
-         for ( Task task : tasks )
-         {
-            addNotesAndParticipants( task );
-            
-            if ( taskContentOptions == TaskContentOptions.CompleteWithLocation )
-            {
-               setLocationToTask( task );
-            }
-         }
+         setRequestedOptions( taskContentOptions, task );
       }
       
       return tasks;
-   }
-   
-   
-   
-   private void addNotesAndParticipants( Task task )
-   {
-      addNotesToTask( task );
-      addParticipantsToTask( task );
    }
    
    
@@ -235,7 +231,8 @@ public class ContentRepository implements IContentRepository
    {
       final Iterable< Note > notes = taskNotesQueryHandler.getAllForAggregation( ContentUris.TASK_NOTES_CONTENT_URI,
                                                                                  task.getId(),
-                                                                                 SEL_NO_DELETED_NOTES );
+                                                                                 SEL_NO_DELETED_NOTES,
+                                                                                 null );
       for ( Note note : notes )
       {
          task.addNote( note );
@@ -248,6 +245,7 @@ public class ContentRepository implements IContentRepository
    {
       final Iterable< Participant > participants = taskParticipantsQueryHandler.getAllForAggregation( ContentUris.TASK_PARTICIPANTS_CONTENT_URI,
                                                                                                       task.getId(),
+                                                                                                      null,
                                                                                                       null );
       for ( Participant participant : participants )
       {
@@ -278,6 +276,11 @@ public class ContentRepository implements IContentRepository
                                                 TaskContentOptions taskContentOptions ) throws ContentException,
                                                                                        GrammarException
    {
+      if ( tasksList == null )
+      {
+         throw new IllegalArgumentException( "tasksList" );
+      }
+      
       if ( tasksList.isSmartList() )
       {
          return getTasksFromSmartFilter( tasksList.getSmartFilter(),
@@ -285,25 +288,34 @@ public class ContentRepository implements IContentRepository
       }
       else
       {
-         return getTasksInPhysicalList( tasksList, taskContentOptions );
+         return getTasksInPhysicalList( tasksList.getId(), taskContentOptions );
       }
    }
    
    
    
-   private Iterable< Task > getTasksInPhysicalList( TasksList tasksList,
+   @Override
+   public Iterable< Task > getTasksInPhysicalTasksList( long tasksListId,
+                                                        TaskContentOptions taskContentOptions ) throws ContentException
+   {
+      return getTasksInPhysicalList( tasksListId, taskContentOptions );
+   }
+   
+   
+   
+   private Iterable< Task > getTasksInPhysicalList( long tasksListId,
                                                     TaskContentOptions options ) throws ContentException
    {
-      final String selection = getSelectionForTasksInPhysicalListBuilder( tasksList ).toString();
+      final String selection = getSelectionForTasksInPhysicalListBuilder( tasksListId ).toString();
       return getAllTasksImpl( selection, options );
    }
    
    
    
-   private StringBuilder getSelectionForTasksInPhysicalListBuilder( TasksList tasksList )
+   private StringBuilder getSelectionForTasksInPhysicalListBuilder( long tasksListId )
    {
-      final StringBuilder selection = getSelectionForTasksInTasksListBuilder( tasksList ).append( " AND " )
-                                                                                         .append( SEL_NO_COMPLETED_AND_DELETED_TASKS );
+      final StringBuilder selection = getSelectionForTasksInTasksListBuilder( tasksListId ).append( " AND " )
+                                                                                           .append( SEL_NO_COMPLETED_AND_DELETED_TASKS );
       return selection;
    }
    
@@ -313,13 +325,18 @@ public class ContentRepository implements IContentRepository
    public ExtendedTaskCount getTaskCountOfTasksList( TasksList tasksList ) throws ContentException,
                                                                           GrammarException
    {
+      if ( tasksList == null )
+      {
+         throw new IllegalArgumentException( "tasksList" );
+      }
+      
       if ( tasksList.isSmartList() )
       {
          return getTasksCountFromSmartFilter( tasksList.getSmartFilter() );
       }
       else
       {
-         return getTasksCountInPhysicalList( tasksList );
+         return getTasksCountInPhysicalList( tasksList.getId() );
       }
    }
    
@@ -337,7 +354,8 @@ public class ContentRepository implements IContentRepository
    private ExtendedTaskCount getExtendedTaskCountOrDefault( String selection )
    {
       final Iterable< ExtendedTaskCount > taskCount = taskCountQueryHandler.getAll( ContentUris.TASKS_COUNT_CONTENT_URI,
-                                                                                    selection );
+                                                                                    selection,
+                                                                                    null );
       final Iterator< ExtendedTaskCount > taskCountIterator = taskCount.iterator();
       
       if ( taskCountIterator.hasNext() )
@@ -359,28 +377,28 @@ public class ContentRepository implements IContentRepository
       final StringBuilder selectionBuilder = selectionBuilderWithResult.first;
       
       // The predefined, static selections are added first to maintain speed gain from table indices.
-      selectionBuilder.insert( 0, SEL_NO_DELETED_TASKS );
+      selectionBuilder.insert( 0, " AND " ).insert( 0, SEL_NO_DELETED_TASKS );
       
       return selectionBuilder.toString();
    }
    
    
    
-   private ExtendedTaskCount getTasksCountInPhysicalList( TasksList tasksList ) throws ContentException
+   private ExtendedTaskCount getTasksCountInPhysicalList( long tasksListId ) throws ContentException
    {
-      final String selection = getSelectionForTasksInTasksListBuilder( tasksList ).append( " AND " )
-                                                                                  .append( SEL_NO_DELETED_TASKS )
-                                                                                  .toString();
+      final String selection = getSelectionForTasksInTasksListBuilder( tasksListId ).append( " AND " )
+                                                                                    .append( SEL_NO_DELETED_TASKS )
+                                                                                    .toString();
       return getExtendedTaskCountOrDefault( selection );
    }
    
    
    
-   private StringBuilder getSelectionForTasksInTasksListBuilder( TasksList tasksList )
+   private StringBuilder getSelectionForTasksInTasksListBuilder( long tasksListId )
    {
       final StringBuilder selection = new StringBuilder().append( TaskColumns.LIST_ID )
                                                          .append( "=" )
-                                                         .append( tasksList.getId() );
+                                                         .append( tasksListId );
       return selection;
    }
    
@@ -391,6 +409,11 @@ public class ContentRepository implements IContentRepository
                                                     TaskContentOptions taskContentOptions ) throws ContentException,
                                                                                            GrammarException
    {
+      if ( smartFilter == null )
+      {
+         throw new IllegalArgumentException( "smartFilter" );
+      }
+      
       final String selection = getSelectionForTasksFromSmartFilter( smartFilter );
       return getAllTasksImpl( selection, taskContentOptions );
    }
@@ -426,16 +449,17 @@ public class ContentRepository implements IContentRepository
    
    private Pair< StringBuilder, RtmSmartFilterParsingReturn > getSelectionFromSmartFilterBuilder( RtmSmartFilter smartFilter ) throws GrammarException
    {
+      final IRtmSmartFilterEvaluator evaluator = smartFilterEvaluatorFactory.createRtmSmartFilterEvaluator();
       final RtmSmartFilterParsingReturn evaluationResult = smartFilterParsing.evaluateRtmSmartFilter( smartFilter.getFilterString(),
-                                                                                                      smartFilterEvaluator );
+                                                                                                      evaluator );
       try
       {
-         return Pair.create( new StringBuilder( smartFilterEvaluator.getResult() ),
+         return Pair.create( new StringBuilder( evaluator.getResult() ),
                              evaluationResult );
       }
       finally
       {
-         smartFilterEvaluator.reset();
+         evaluator.reset();
       }
    }
    
@@ -455,7 +479,8 @@ public class ContentRepository implements IContentRepository
    public Iterable< TasksList > getAllTasksLists() throws ContentException
    {
       return tasksListsQueryHandler.getAll( ContentUris.TASKS_LISTS_CONTENT_URI,
-                                            SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS );
+                                            SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS,
+                                            TasksListColumns.DEFAULT_SORT_ORDER );
    }
    
    
@@ -464,7 +489,8 @@ public class ContentRepository implements IContentRepository
    public Iterable< TasksList > getPhysicalTasksLists() throws ContentException
    {
       return tasksListsQueryHandler.getAll( ContentUris.TASKS_LISTS_CONTENT_URI,
-                                            SEL_PHYSICAL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS );
+                                            SEL_PHYSICAL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS,
+                                            TasksListColumns.DEFAULT_SORT_ORDER );
    }
    
    
@@ -473,7 +499,8 @@ public class ContentRepository implements IContentRepository
    public Iterable< String > getAllTags() throws ContentException
    {
       return tagsQueryHandler.getAll( ContentUris.TAGS_CONTENT_URI,
-                                      SEL_NO_COMPLETED_AND_DELETED_TASKS );
+                                      SEL_NO_COMPLETED_AND_DELETED_TASKS,
+                                      null );
    }
    
    
@@ -492,6 +519,7 @@ public class ContentRepository implements IContentRepository
    public Iterable< Contact > getAllContacts() throws ContentException
    {
       return contactsQueryHandler.getAll( ContentUris.CONTACTS_CONTENT_URI,
+                                          null,
                                           null );
    }
    
@@ -511,6 +539,7 @@ public class ContentRepository implements IContentRepository
    public Iterable< Location > getAllLocations() throws ContentException
    {
       return locationsQueryHandler.getAll( ContentUris.LOCATIONS_CONTENT_URI,
+                                           null,
                                            null );
    }
    
@@ -538,7 +567,8 @@ public class ContentRepository implements IContentRepository
    public Iterable< CloudEntry > getCloudEntries() throws ContentException
    {
       return cloudEntriesQueryHandler.getAll( ContentUris.CLOUD_ENTRIES_CONTENT_URI,
-                                              SEL_NO_COMPLETED_AND_DELETED_TASKS );
+                                              SEL_NO_COMPLETED_AND_DELETED_TASKS,
+                                              null );
    }
    
    
@@ -546,6 +576,16 @@ public class ContentRepository implements IContentRepository
    @Override
    public void registerContentObserver( ContentObserver observer, Uri contentUri )
    {
+      if ( observer == null )
+      {
+         throw new IllegalArgumentException( "observer" );
+      }
+      
+      if ( contentUri == null )
+      {
+         throw new IllegalArgumentException( "contentUri" );
+      }
+      
       contentResolver.registerContentObserver( contentUri, true, observer );
    }
    

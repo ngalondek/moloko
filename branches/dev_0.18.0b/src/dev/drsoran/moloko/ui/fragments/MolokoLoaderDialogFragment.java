@@ -127,6 +127,13 @@ public abstract class MolokoLoaderDialogFragment< D > extends
    
    
    
+   public void preSetLoaderData( D loaderData )
+   {
+      loaderImpl.preSetLoaderData( loaderData );
+   }
+   
+   
+   
    public boolean isLoaderDataFound()
    {
       return loaderImpl.isLoaderDataFound();

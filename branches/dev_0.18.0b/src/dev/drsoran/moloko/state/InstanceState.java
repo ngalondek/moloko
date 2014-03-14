@@ -38,6 +38,8 @@ public @interface InstanceState
    
    public final static String NO_DEFAULT = "no_default";
    
+   public final static String NO_ID = "-1";
+   
    
    
    String key();

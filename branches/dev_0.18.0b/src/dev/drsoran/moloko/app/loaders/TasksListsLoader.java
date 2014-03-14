@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.loaders;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +43,15 @@ public class TasksListsLoader extends AbstractLoader< List< TasksList > >
    
    private final boolean includeTasksCount;
    
+   private final DomainContext context;
+   
    
    
    public TasksListsLoader( DomainContext context, boolean includeTasksCount )
    {
       super( context );
+      
+      this.context = context;
       this.includeTasksCount = includeTasksCount;
    }
    
@@ -76,6 +81,12 @@ public class TasksListsLoader extends AbstractLoader< List< TasksList > >
             }
             catch ( GrammarException e )
             {
+               context.Log()
+                      .e( getClass(),
+                          MessageFormat.format( "Unable to get tasks count for tasks list {0} with filter {1}",
+                                                tasksList,
+                                                tasksList.getSmartFilter() ),
+                          e );
             }
          }
          

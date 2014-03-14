@@ -126,12 +126,12 @@ public class RtmTasksListsSyncHandler implements IRtmSyncHandler
                syncPartnerElements.remove( posPartnerList );
             }
          }
-         
-         // DELETE: The partner list elements are and no longer at RTM side.
-         for ( RtmTasksList untouchedSyncPartnerList : syncPartnerElements )
-         {
-            syncPartner.deleteTasksList( untouchedSyncPartnerList );
-         }
+      }
+      
+      // DELETE: The partner list elements are and no longer at RTM side.
+      for ( RtmTasksList untouchedSyncPartnerList : syncPartnerElements )
+      {
+         syncPartner.deleteTasksList( untouchedSyncPartnerList );
       }
       
       return RtmSyncResult.newSucceeded();

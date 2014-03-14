@@ -32,7 +32,7 @@ import dev.drsoran.moloko.ui.fragments.MolokoFragment;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 
 
-class QuickAddTaskButtonBarFragment extends MolokoFragment implements
+public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
          View.OnClickListener, View.OnLongClickListener
 {
    public final static QuickAddTaskButtonBarFragment newInstance( Bundle config )

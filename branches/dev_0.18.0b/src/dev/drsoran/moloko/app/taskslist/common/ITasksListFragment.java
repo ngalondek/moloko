@@ -31,6 +31,10 @@ import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 interface ITasksListFragment
 {
+   long getListId();
+   
+   
+   
    RtmSmartFilter getFilter();
    
    

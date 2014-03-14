@@ -79,7 +79,11 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder filterString( String filterString )
    {
-      smartFilterString.append( filterString );
+      if ( !Strings.isEmptyOrWhitespace( filterString ) )
+      {
+         smartFilterString.append( " " ).append( filterString );
+      }
+      
       return this;
    }
    
@@ -87,7 +91,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder list( String listName )
    {
-      smartFilterString.append( OP_LIST )
+      smartFilterString.append( " " )
+                       .append( OP_LIST )
                        .append( Strings.quotify( listName ) )
                        .append( " " );
       return this;
@@ -97,7 +102,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder priority( Priority priority )
    {
-      smartFilterString.append( OP_PRIORITY )
+      smartFilterString.append( " " )
+                       .append( OP_PRIORITY )
                        .append( priority.toString() )
                        .append( " " );
       return this;
@@ -107,7 +113,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder isCompleted( boolean isCompleted )
    {
-      smartFilterString.append( OP_STATUS )
+      smartFilterString.append( " " )
+                       .append( OP_STATUS )
                        .append( isCompleted ? COMPLETED : INCOMPLETE )
                        .append( " " );
       return this;
@@ -117,7 +124,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder tag( String tag )
    {
-      smartFilterString.append( OP_TAG )
+      smartFilterString.append( " " )
+                       .append( OP_TAG )
                        .append( Strings.quotify( tag ) )
                        .append( " " );
       return this;
@@ -127,7 +135,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder tagContains( String tag )
    {
-      smartFilterString.append( OP_TAG_CONTAINS )
+      smartFilterString.append( " " )
+                       .append( OP_TAG_CONTAINS )
                        .append( Strings.quotify( tag ) )
                        .append( " " );
       return this;
@@ -137,7 +146,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder isTagged( boolean isTagged )
    {
-      smartFilterString.append( OP_IS_TAGGED )
+      smartFilterString.append( " " )
+                       .append( OP_IS_TAGGED )
                        .append( isTagged ? TRUE : FALSE )
                        .append( " " );
       return this;
@@ -147,7 +157,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder location( String location )
    {
-      smartFilterString.append( OP_LOCATION )
+      smartFilterString.append( " " )
+                       .append( OP_LOCATION )
                        .append( Strings.quotify( location ) )
                        .append( " " );
       return this;
@@ -157,7 +168,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder isLocated( boolean isLocated )
    {
-      smartFilterString.append( OP_IS_LOCATED )
+      smartFilterString.append( " " )
+                       .append( OP_IS_LOCATED )
                        .append( isLocated ? TRUE : FALSE )
                        .append( " " );
       return this;
@@ -167,7 +179,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder isRepeating( boolean isRepeating )
    {
-      smartFilterString.append( OP_IS_REPEATING )
+      smartFilterString.append( " " )
+                       .append( OP_IS_REPEATING )
                        .append( isRepeating ? TRUE : FALSE )
                        .append( " " );
       return this;
@@ -177,7 +190,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder name( String name )
    {
-      smartFilterString.append( OP_NAME )
+      smartFilterString.append( " " )
+                       .append( OP_NAME )
                        .append( Strings.quotify( name ) )
                        .append( " " );
       return this;
@@ -187,7 +201,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder noteContains( String titleOrText )
    {
-      smartFilterString.append( OP_NOTE_CONTAINS )
+      smartFilterString.append( " " )
+                       .append( OP_NOTE_CONTAINS )
                        .append( Strings.quotify( titleOrText ) )
                        .append( " " );
       return this;
@@ -197,7 +212,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder hasNotes( boolean hasNotes )
    {
-      smartFilterString.append( OP_HAS_NOTES )
+      smartFilterString.append( " " )
+                       .append( OP_HAS_NOTES )
                        .append( hasNotes ? TRUE : FALSE )
                        .append( " " );
       return this;
@@ -207,7 +223,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder statusCompleted()
    {
-      smartFilterString.append( OP_STATUS ).append( COMPLETED );
+      smartFilterString.append( " " ).append( OP_STATUS ).append( COMPLETED );
       return this;
    }
    
@@ -215,7 +231,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder statusIncomplete()
    {
-      smartFilterString.append( OP_STATUS ).append( INCOMPLETE );
+      smartFilterString.append( " " ).append( OP_STATUS ).append( INCOMPLETE );
       return this;
    }
    
@@ -223,7 +239,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder due( String date )
    {
-      smartFilterString.append( OP_DUE )
+      smartFilterString.append( " " )
+                       .append( OP_DUE )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -233,7 +250,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder due()
    {
-      smartFilterString.append( OP_DUE );
+      smartFilterString.append( " " ).append( OP_DUE );
       return this;
    }
    
@@ -241,7 +258,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder dueAfter( String date )
    {
-      smartFilterString.append( OP_DUE_AFTER )
+      smartFilterString.append( " " )
+                       .append( OP_DUE_AFTER )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -251,7 +269,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder dueAfter()
    {
-      smartFilterString.append( OP_DUE_AFTER );
+      smartFilterString.append( " " ).append( OP_DUE_AFTER );
       return this;
    }
    
@@ -259,7 +277,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder dueBefore( String date )
    {
-      smartFilterString.append( OP_DUE_BEFORE )
+      smartFilterString.append( " " )
+                       .append( OP_DUE_BEFORE )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -269,7 +288,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder dueBefore()
    {
-      smartFilterString.append( OP_DUE_BEFORE );
+      smartFilterString.append( " " ).append( OP_DUE_BEFORE );
       return this;
    }
    
@@ -277,7 +296,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder dueWithin( String date )
    {
-      smartFilterString.append( OP_DUE_WITHIN )
+      smartFilterString.append( " " )
+                       .append( OP_DUE_WITHIN )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -287,7 +307,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder completed( String date )
    {
-      smartFilterString.append( OP_COMPLETED )
+      smartFilterString.append( " " )
+                       .append( OP_COMPLETED )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -297,7 +318,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder completed()
    {
-      smartFilterString.append( OP_COMPLETED );
+      smartFilterString.append( " " ).append( OP_COMPLETED );
       return this;
    }
    
@@ -305,7 +326,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder completedAfter( String date )
    {
-      smartFilterString.append( OP_COMPLETED_AFTER )
+      smartFilterString.append( " " )
+                       .append( OP_COMPLETED_AFTER )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -315,7 +337,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder completedAfter()
    {
-      smartFilterString.append( OP_COMPLETED_AFTER );
+      smartFilterString.append( " " ).append( OP_COMPLETED_AFTER );
       return this;
    }
    
@@ -323,7 +345,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder completedBefore( String date )
    {
-      smartFilterString.append( OP_COMPLETED_BEFORE )
+      smartFilterString.append( " " )
+                       .append( OP_COMPLETED_BEFORE )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -333,7 +356,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder completedBefore()
    {
-      smartFilterString.append( OP_COMPLETED_BEFORE );
+      smartFilterString.append( " " ).append( OP_COMPLETED_BEFORE );
       return this;
    }
    
@@ -341,7 +364,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder completedWithin( String date )
    {
-      smartFilterString.append( OP_COMPLETED_WITHIN )
+      smartFilterString.append( " " )
+                       .append( OP_COMPLETED_WITHIN )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -351,7 +375,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder added( String date )
    {
-      smartFilterString.append( OP_ADDED )
+      smartFilterString.append( " " )
+                       .append( OP_ADDED )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -361,7 +386,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder added()
    {
-      smartFilterString.append( OP_ADDED );
+      smartFilterString.append( " " ).append( OP_ADDED );
       return this;
    }
    
@@ -369,7 +394,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder addedAfter( String date )
    {
-      smartFilterString.append( OP_ADDED_AFTER )
+      smartFilterString.append( " " )
+                       .append( OP_ADDED_AFTER )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -379,7 +405,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder addedAfter()
    {
-      smartFilterString.append( OP_ADDED_AFTER );
+      smartFilterString.append( " " ).append( OP_ADDED_AFTER );
       return this;
    }
    
@@ -387,7 +413,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder addedBefore( String date )
    {
-      smartFilterString.append( OP_ADDED_BEFORE )
+      smartFilterString.append( " " )
+                       .append( OP_ADDED_BEFORE )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -397,7 +424,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder addedBefore()
    {
-      smartFilterString.append( OP_ADDED_BEFORE );
+      smartFilterString.append( " " ).append( OP_ADDED_BEFORE );
       return this;
    }
    
@@ -405,7 +432,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder addedWithin( String date )
    {
-      smartFilterString.append( OP_ADDED_WITHIN )
+      smartFilterString.append( " " )
+                       .append( OP_ADDED_WITHIN )
                        .append( Strings.quotify( date ) )
                        .append( " " );
       return this;
@@ -415,7 +443,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder estimated( String estimation )
    {
-      smartFilterString.append( OP_TIME_ESTIMATE )
+      smartFilterString.append( " " )
+                       .append( OP_TIME_ESTIMATE )
                        .append( Strings.quotify( estimation ) )
                        .append( " " );
       return this;
@@ -430,7 +459,8 @@ public final class RtmSmartFilterBuilder
          throw new IllegalArgumentException( "postponedCount" );
       }
       
-      smartFilterString.append( OP_POSTPONED )
+      smartFilterString.append( " " )
+                       .append( OP_POSTPONED )
                        .append( postponedCount )
                        .append( " " );
       return this;
@@ -440,7 +470,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder isShared( boolean isShared )
    {
-      smartFilterString.append( OP_IS_SHARED )
+      smartFilterString.append( " " )
+                       .append( OP_IS_SHARED )
                        .append( isShared ? TRUE : FALSE )
                        .append( " " );
       return this;
@@ -450,7 +481,8 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder sharedWith( String sharedWith )
    {
-      smartFilterString.append( OP_SHARED_WITH )
+      smartFilterString.append( " " )
+                       .append( OP_SHARED_WITH )
                        .append( Strings.quotify( sharedWith ) )
                        .append( " " );
       return this;
@@ -476,7 +508,11 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder and()
    {
-      smartFilterString.append( AND ).append( " " );
+      if ( smartFilterString.length() > 0 )
+      {
+         smartFilterString.append( " " ).append( AND ).append( " " );
+      }
+      
       return this;
    }
    
@@ -484,7 +520,11 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder or()
    {
-      smartFilterString.append( OR ).append( " " );
+      if ( smartFilterString.length() > 0 )
+      {
+         smartFilterString.append( " " ).append( OR ).append( " " );
+      }
+      
       return this;
    }
    
@@ -492,7 +532,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder not()
    {
-      smartFilterString.append( NOT ).append( " " );
+      smartFilterString.append( " " ).append( NOT ).append( " " );
       return this;
    }
    
@@ -500,7 +540,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder now()
    {
-      smartFilterString.append( "now" ).append( " " );
+      smartFilterString.append( " " ).append( "now" ).append( " " );
       return this;
    }
    
@@ -508,7 +548,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder today()
    {
-      smartFilterString.append( "today" ).append( " " );
+      smartFilterString.append( " " ).append( "today" ).append( " " );
       return this;
    }
    
@@ -516,7 +556,7 @@ public final class RtmSmartFilterBuilder
    
    public RtmSmartFilterBuilder tomorrow()
    {
-      smartFilterString.append( "tom" ).append( " " );
+      smartFilterString.append( " " ).append( "tom" ).append( " " );
       return this;
    }
    

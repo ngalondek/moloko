@@ -50,7 +50,7 @@ import dev.drsoran.moloko.ui.UiUtils.AfterTextChangedWatcher;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 
 
-class ChangeTagsFragment extends MolokoLoaderFragment< List< String > >
+public class ChangeTagsFragment extends MolokoLoaderFragment< List< String > >
 {
    public static class ChangeTag
    {

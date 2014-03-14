@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +16,8 @@
         android:paddingRight="5dip"
         moloko:title="@string/phr_hint"
         moloko:text="Text"
-        moloko:imageSrc="@drawable/ic_prefs_info" />
+        moloko:imageSrc="@drawable/ic_prefs_info" />
+
     <ImageButton
         android:id="@android:id/closeButton"
         android:layout_width="wrap_content"

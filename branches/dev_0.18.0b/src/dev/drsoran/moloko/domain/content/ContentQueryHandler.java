@@ -63,6 +63,7 @@ public class ContentQueryHandler< T >
    {
       final List< T > elements = performQuery( ContentUris.bindElementId( contentUri,
                                                                           elementId ),
+                                               null,
                                                null );
       
       if ( elements.size() == 0 )
@@ -82,6 +83,7 @@ public class ContentQueryHandler< T >
       final List< T > elements = performQuery( ContentUris.bindAggregatedElementIdToUri( contentUri,
                                                                                          rootId,
                                                                                          elementId ),
+                                               null,
                                                null );
       if ( elements.size() == 0 )
       {
@@ -95,24 +97,25 @@ public class ContentQueryHandler< T >
    
    
    
-   public Iterable< T > getAll( Uri contentUri, String selection ) throws ContentException
+   public Iterable< T > getAll( Uri contentUri, String selection, String sort ) throws ContentException
    {
-      return performQuery( contentUri, selection );
+      return performQuery( contentUri, selection, sort );
    }
    
    
    
    public Iterable< T > getAllForAggregation( Uri contentUri,
                                               long rootId,
-                                              String selection ) throws ContentException
+                                              String selection,
+                                              String sort ) throws ContentException
    {
       contentUri = ContentUris.bindAggregationIdToUri( contentUri, rootId );
-      return performQuery( contentUri, selection );
+      return performQuery( contentUri, selection, sort );
    }
    
    
    
-   private List< T > performQuery( Uri contentUri, String selection ) throws ContentException
+   private List< T > performQuery( Uri contentUri, String selection, String sort ) throws ContentException
    {
       final List< T > elements = new ArrayList< T >();
       
@@ -123,8 +126,7 @@ public class ContentQueryHandler< T >
                                     contentProjection,
                                     selection,
                                     null,
-                                    // TODO: Perhaps the sort order must be a parameter
-                                    null );
+                                    sort );
          
          while ( c.moveToNext() )
          {

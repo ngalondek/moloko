@@ -79,6 +79,14 @@ public class TokenCollectingEvaluator implements IRtmSmartFilterEvaluator
    
    
    @Override
+   public boolean evalEmptyFilter()
+   {
+      return decorated.evalEmptyFilter();
+   }
+   
+   
+   
+   @Override
    public boolean evalList( String listName )
    {
       addRtmToken( RtmSmartFilterLexer.OP_LIST, listName );

@@ -321,7 +321,7 @@ public class Task extends LifeTimeManaged implements Serializable
    
    public boolean isTagged()
    {
-      return tags.size() > 0;
+      return tags != null && tags.size() > 0;
    }
    
    
@@ -357,7 +357,7 @@ public class Task extends LifeTimeManaged implements Serializable
    
    public boolean hasNotes()
    {
-      return notes.size() > 0;
+      return notes != null && notes.size() > 0;
    }
    
    
@@ -428,7 +428,7 @@ public class Task extends LifeTimeManaged implements Serializable
    
    public boolean hasParticipants()
    {
-      return participants.size() > 0;
+      return participants != null && participants.size() > 0;
    }
    
    

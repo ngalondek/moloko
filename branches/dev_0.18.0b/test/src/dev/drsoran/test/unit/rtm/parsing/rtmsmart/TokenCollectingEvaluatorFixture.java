@@ -150,6 +150,15 @@ public class TokenCollectingEvaluatorFixture extends MolokoTestCase
    
    
    @Test
+   public void testEvalEmptyFilter()
+   {
+      assertTrue( evaluator.evalEmptyFilter() );
+      assertEmpty( evaluator.getTokens() );
+   }
+   
+   
+   
+   @Test
    public void testEvalList()
    {
       assertTrue( evaluator.evalList( "List" ) );

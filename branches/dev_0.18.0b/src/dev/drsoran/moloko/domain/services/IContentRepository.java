@@ -55,6 +55,11 @@ public interface IContentRepository
    
    
    
+   Iterable< Task > getTasksInPhysicalTasksList( long tasksListId,
+                                                 TaskContentOptions taskContentOptions ) throws ContentException;
+   
+   
+   
    ExtendedTaskCount getTaskCountOfTasksList( TasksList tasksList ) throws ContentException,
                                                                    GrammarException;
    

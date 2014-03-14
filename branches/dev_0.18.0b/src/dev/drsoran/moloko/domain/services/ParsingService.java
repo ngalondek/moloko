@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.domain.services;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 import dev.drsoran.rtm.parsing.IRtmSmartFilterParsing;
@@ -33,7 +35,7 @@ class ParsingService implements IParsingService
    
    private final IRtmSmartFilterParsing rtmSmartFilterParsing;
    
-   private IRecurrenceParsing recurrenceParsing;
+   private final AtomicReference< IRecurrenceParsing > recurrenceParsing;
    
    
    
@@ -42,7 +44,7 @@ class ParsingService implements IParsingService
       IRtmSmartFilterParsing rtmSmartFilterParsing )
    {
       this.dateTimeParsing = dateTimeParsing;
-      this.recurrenceParsing = recurrenceParsing;
+      this.recurrenceParsing = new AtomicReference< IRecurrenceParsing >( recurrenceParsing );
       this.rtmSmartFilterParsing = rtmSmartFilterParsing;
    }
    
@@ -59,14 +61,14 @@ class ParsingService implements IParsingService
    @Override
    public IRecurrenceParsing getRecurrenceParsing()
    {
-      return recurrenceParsing;
+      return recurrenceParsing.get();
    }
    
    
    
    public void setRecurrenceParsing( IRecurrenceParsing recurrenceParsing )
    {
-      this.recurrenceParsing = recurrenceParsing;
+      this.recurrenceParsing.set( recurrenceParsing );
    }
    
    

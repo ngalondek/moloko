@@ -1,12 +1,13 @@
 package dev.drsoran.moloko.util;
 
+import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
-
-import dev.drsoran.Strings;
 
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
+import dev.drsoran.Strings;
 
 
 public final class Bundles
@@ -112,18 +113,20 @@ public final class Bundles
          bundle.putBooleanArray( key, boolean[].class.cast( value ) );
       }
       
+      else if ( Serializable.class.isAssignableFrom( type ) )
+      {
+         bundle.putSerializable( key, (Serializable) value );
+      }
+      
+      else if ( Parcelable.class.isAssignableFrom( type ) )
+      {
+         bundle.putParcelable( key, (Parcelable) value );
+      }
+      
       else
       {
-         try
-         {
-            final Parcelable parcelable = Parcelable.class.cast( value );
-            bundle.putParcelable( key, parcelable );
-         }
-         catch ( ClassCastException e )
-         {
-            throw new IllegalArgumentException( "The type " + type.getName()
-               + " is not supported" );
-         }
+         throw new IllegalArgumentException( MessageFormat.format( "The type {0} is not supported to be put into a Bundle",
+                                                                   type.getName() ) );
       }
    }
    

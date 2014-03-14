@@ -25,7 +25,7 @@
       android:summary="@string/acc_pref_account_summary">
       <intent
          android:action="dev.drsoran.moloko.prefs.account.MAIN"
-         android:targetClass="prefs.activities.AccountPreferencesActivity.class">
+         android:targetClass=".app.prefs.activities.AccountPreferencesActivity.class">
       </intent>
    </PreferenceScreen>
 

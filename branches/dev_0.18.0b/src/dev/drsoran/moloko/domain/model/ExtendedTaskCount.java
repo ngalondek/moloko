@@ -22,8 +22,13 @@
 
 package dev.drsoran.moloko.domain.model;
 
-public final class ExtendedTaskCount
+import java.io.Serializable;
+
+
+public final class ExtendedTaskCount implements Serializable
 {
+   private static final long serialVersionUID = -8223110030488788833L;
+   
    private final int incompleteTaskCount;
    
    private final int completedTaskCount;

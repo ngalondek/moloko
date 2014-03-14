@@ -58,7 +58,7 @@
          android:layout_below="@android:id/summary"
          android:layout_alignLeft="@android:id/summary"
          android:textAppearance="?android:attr/textAppearanceSmall"
-         android:textSize="11sp"
+         android:textSize="12sp"
          android:text="@string/design_text"
          android:drawableLeft="@drawable/ic_small_black_refresh"
          android:drawablePadding="5dip" />

@@ -395,10 +395,12 @@ class TaskListsAdapter extends BaseExpandableListAdapter
       {
          final Theme theme = context.getTheme();
          final TypedValue outValue = new TypedValue();
+         
          context.getTheme()
                 .resolveAttribute( android.R.attr.expandableListViewStyle,
                                    outValue,
                                    true );
+         
          a = theme.obtainStyledAttributes( outValue.resourceId, new int[]
          { android.R.attr.groupIndicator } );
          
@@ -409,7 +411,6 @@ class TaskListsAdapter extends BaseExpandableListAdapter
          if ( a != null )
          {
             a.recycle();
-            a = null;
          }
       }
    }

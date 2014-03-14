@@ -39,6 +39,7 @@ import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.DueAf
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.DueBeforeContext;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.DueContext;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.DueWithinContext;
+import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.EmptyExpressionContext;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.HasNotesContext;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.IsLocatedContext;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser.IsRepeatingContext;
@@ -138,6 +139,15 @@ public class RtmSmartFilterVisitorAdapter extends
       
       throwIfFailed( evaluator.evalRightParenthesis() );
       
+      return null;
+   }
+   
+   
+   
+   @Override
+   public Void visitEmptyExpression( EmptyExpressionContext ctx )
+   {
+      throwIfFailed( evaluator.evalEmptyFilter() );
       return null;
    }
    

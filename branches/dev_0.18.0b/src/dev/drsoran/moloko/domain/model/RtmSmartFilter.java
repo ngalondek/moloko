@@ -38,7 +38,7 @@ public class RtmSmartFilter implements Serializable
    
    public RtmSmartFilter( String filter )
    {
-      if ( Strings.isNullOrEmpty( filter ) )
+      if ( filter == null )
       {
          throw new IllegalArgumentException( "filter" );
       }
@@ -51,6 +51,13 @@ public class RtmSmartFilter implements Serializable
    public String getFilterString()
    {
       return filter;
+   }
+   
+   
+   
+   public boolean isEmpty()
+   {
+      return filter.length() == 0;
    }
    
    
@@ -99,9 +106,14 @@ public class RtmSmartFilter implements Serializable
    
    private static String transformFilter( String filter )
    {
+      if ( Strings.isEmptyOrWhitespace( filter ) )
+      {
+         filter = Strings.EMPTY_STRING;
+      }
+      
       // Check if there was no operator used. If so it has the
       // same meaning as operator name:
-      if ( !filter.contains( ":" ) )
+      if ( filter.length() > 0 && !filter.contains( ":" ) )
       {
          filter = RtmSmartFilterSyntax.OP_NAME + Strings.quotify( filter );
       }

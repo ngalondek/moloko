@@ -24,6 +24,7 @@ package dev.drsoran.moloko.domain.services;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -32,7 +33,7 @@ import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.ContentAuthority;
 import dev.drsoran.moloko.content.db.DbContentProvider;
 import dev.drsoran.moloko.content.db.DbModificationsApplier;
-import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluator;
+import dev.drsoran.moloko.content.db.DbRtmSmartFilterEvaluatorFactory;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
@@ -60,7 +61,6 @@ import dev.drsoran.rtm.parsing.lang.DateLanguageRepository;
 import dev.drsoran.rtm.parsing.lang.IDateLanguageRepository;
 import dev.drsoran.rtm.parsing.lang.IRecurrenceSentenceLanguage;
 import dev.drsoran.rtm.parsing.recurrence.AntlrRecurrenceParserFactory;
-import dev.drsoran.rtm.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 
 
 public class DomainServicesContainer implements IDomainServices
@@ -77,7 +77,7 @@ public class DomainServicesContainer implements IDomainServices
    
    private final IRtmCalendarProvider calendarProvider;
    
-   private IRecurrenceSentenceLanguage currentRecurrenceSentenceLanguage;
+   private final AtomicReference< IRecurrenceSentenceLanguage > currentRecurrenceSentenceLanguage;
    
    
    
@@ -88,7 +88,7 @@ public class DomainServicesContainer implements IDomainServices
       this.dateFormatter = dateFormatter;
       this.calendarProvider = calendarProvider;
       this.dateLanguageRepository = new DateLanguageRepository();
-      this.currentRecurrenceSentenceLanguage = recurrenceSentenceLanguage;
+      this.currentRecurrenceSentenceLanguage = new AtomicReference< IRecurrenceSentenceLanguage >( recurrenceSentenceLanguage );
       
       final IRtmDateTimeParsing dateTimeParsing = new RtmDateTimeParsing( new AntlrDateTimeParserFactory(),
                                                                           dateFormatter,
@@ -104,7 +104,7 @@ public class DomainServicesContainer implements IDomainServices
                                            recurrenceParsing,
                                            rtmSmartFilterParsing );
       
-      final IRtmSmartFilterEvaluator dbSmartFilterEvaluator = new DbRtmSmartFilterEvaluator( dateTimeParsing );
+      final IRtmSmartFilterEvaluatorFactory dbSmartFilterEvaluatorFactory = new DbRtmSmartFilterEvaluatorFactory( dateTimeParsing );
       final ContentResolver contentResolver = context.getContentResolver();
       final IModelElementFactory modelElementFactory = new MolokoModelElementFactory();
       
@@ -112,7 +112,7 @@ public class DomainServicesContainer implements IDomainServices
                                                  modelElementFactory,
                                                  dateTimeParsing,
                                                  rtmSmartFilterParsing,
-                                                 dbSmartFilterEvaluator );
+                                                 dbSmartFilterEvaluatorFactory );
       
       final IContentValuesFactory contentValuesFactory = new MolokoContentValuesFactory();
       final IModificationsApplier modificationsApplier = new DbModificationsApplier( getDatabase( context ).getTable( TableNames.MODIFICATIONS_TABLE ),
@@ -179,14 +179,15 @@ public class DomainServicesContainer implements IDomainServices
                                                                             parsingService.getDateTimeParsing() );
       
       parsingService.setRecurrenceParsing( recurrenceParsing );
-      currentRecurrenceSentenceLanguage = recurrenceSentenceLanguage;
+      currentRecurrenceSentenceLanguage.set( recurrenceSentenceLanguage );
    }
    
    
    
    public boolean needsParserLanguageUpdate( Locale currentLocale )
    {
-      return !currentLocale.equals( currentRecurrenceSentenceLanguage.getLocale() );
+      return !currentLocale.equals( currentRecurrenceSentenceLanguage.get()
+                                                                     .getLocale() );
    }
    
    

@@ -37,7 +37,7 @@ import dev.drsoran.moloko.ui.fragments.MolokoFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
 
 
-class TaskSearchResultFailedFragment extends MolokoFragment
+public class TaskSearchResultFailedFragment extends MolokoFragment
 {
    @InstanceState( key = SearchManager.QUERY,
                    defaultValue = Strings.EMPTY_STRING )

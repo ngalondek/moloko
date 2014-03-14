@@ -76,6 +76,24 @@ public class RtmSmartFilterParserTest extends MolokoTestCase
    
    
    @Test
+   public void testEmpty() throws GrammarException
+   {
+      Func1< IRtmSmartFilterEvaluator, IExpectationSetters< Boolean > > evalFunc = new Func1< IRtmSmartFilterEvaluator, IExpectationSetters< Boolean > >()
+      {
+         @Override
+         public IExpectationSetters< Boolean > call( IRtmSmartFilterEvaluator param )
+         {
+            return EasyMock.expect( param.evalEmptyFilter() );
+         }
+      };
+      
+      assertParsingOkEvalOk( "", evaluator, evalFunc );
+      assertParsingOkEvalFailed( "", evaluator, evalFunc );
+   }
+   
+   
+   
+   @Test
    public void testOP_LIST() throws GrammarException
    {
       Func1< IRtmSmartFilterEvaluator, IExpectationSetters< Boolean > > evalFunc = new Func1< IRtmSmartFilterEvaluator, IExpectationSetters< Boolean > >()

@@ -9,7 +9,9 @@
    PURPOSE. See the GNU General Public License for more details. You should 
    have received a copy of the GNU General Public License along with Moloko. 
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation
+   - implementation
+
+
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,7 +31,6 @@
 	</include>
 
 	<LinearLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@android:id/empty"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent" >

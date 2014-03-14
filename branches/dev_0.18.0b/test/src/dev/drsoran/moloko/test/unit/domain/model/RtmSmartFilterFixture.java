@@ -23,7 +23,14 @@
 package dev.drsoran.moloko.test.unit.domain.model;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.junit.Test;
 
@@ -50,7 +57,7 @@ public class RtmSmartFilterFixture extends EqualsHashCodeTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testRtmSmartFilterEmptyFilter()
    {
       new RtmSmartFilter( "" );
@@ -68,6 +75,14 @@ public class RtmSmartFilterFixture extends EqualsHashCodeTestCase
    
    
    @Test
+   public void testGetFilterStringNoOperator_EmptyFilter()
+   {
+      assertThat( new RtmSmartFilter( "" ).getFilterString(), is( "" ) );
+   }
+   
+   
+   
+   @Test
    public void testGetFilterStringOperator()
    {
       assertThat( new RtmSmartFilter( "list:filter" ).getFilterString(),
@@ -80,6 +95,35 @@ public class RtmSmartFilterFixture extends EqualsHashCodeTestCase
    public void testToString()
    {
       new RtmSmartFilter( "filter" ).toString();
+   }
+   
+   
+   
+   @Test
+   public void testSerializeDeserialize() throws IOException,
+                                         ClassNotFoundException
+   {
+      final ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+      final ObjectOutputStream oos = new ObjectOutputStream( memStream );
+      
+      final RtmSmartFilter filter = new RtmSmartFilter( "name:Test" );
+      
+      oos.writeObject( filter );
+      oos.close();
+      
+      byte[] serialized = memStream.toByteArray();
+      memStream.close();
+      
+      final ByteArrayInputStream memIStream = new ByteArrayInputStream( serialized );
+      final ObjectInputStream ois = new ObjectInputStream( memIStream );
+      
+      final RtmSmartFilter deserialized = (RtmSmartFilter) ois.readObject();
+      
+      ois.close();
+      memIStream.close();
+      
+      assertThat( deserialized, is( notNullValue() ) );
+      assertThat( deserialized.getFilterString(), is( "name:Test" ) );
    }
    
    

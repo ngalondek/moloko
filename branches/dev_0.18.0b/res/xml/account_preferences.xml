@@ -18,7 +18,7 @@
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    android:orderingFromXml="true">
 
-   <dev.drsoran.moloko.prefs.SyncIntervalPreference
+   <dev.drsoran.moloko.app.prefs.SyncIntervalPreference
       android:title="@string/acc_pref_sync_interval_title"
       moloko:summaryPattern="%s"
       android:key="@string/key_sync_inverval"

@@ -107,7 +107,8 @@ public class RtmAuthenticationServiceFixture
       
       assertThat( authHandle, notNullValue() );
       assertThat( authHandle.getAuthUri(),
-                  is( "/services/auth/?api_key=key&api_sig=688d0f9d8987e90151d9a57de4d59ecc&frob=123456&perms=delete" ) );
+                  is( "/services/auth/?api_key=key&api_sig=292a8799bf8f8c8759cfe66b05a68005&frob=123456&perms=delete" ) );
+      
       assertThat( authHandle.getFrob().getValue(), is( "123456" ) );
       
       EasyMock.verify( frobHandler );

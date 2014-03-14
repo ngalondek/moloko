@@ -24,5 +24,38 @@ package dev.drsoran.moloko.domain.services;
 
 public enum TaskContentOptions
 {
-   Minimal, Complete, CompleteWithLocation
+   None( 0 ), WithNotes( 1 << 0 ), WithParticipants( 1 << 1 ), WithLocation(
+      1 << 2 ), Minimal( WithNotes.getValue() | WithParticipants.getValue() ),
+      Complete( WithNotes.or( WithParticipants ).or( WithLocation ).getValue() );
+   
+   private int value;
+   
+   
+   
+   TaskContentOptions( int value )
+   {
+      this.value = value;
+   }
+   
+   
+   
+   public int getValue()
+   {
+      return value;
+   }
+   
+   
+   
+   public boolean hasFlag( TaskContentOptions flag )
+   {
+      return ( value & flag.value ) == flag.value;
+   }
+   
+   
+   
+   public TaskContentOptions or( TaskContentOptions flag )
+   {
+      value |= flag.value;
+      return this;
+   }
 }

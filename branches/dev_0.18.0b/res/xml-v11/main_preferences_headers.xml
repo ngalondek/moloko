@@ -15,22 +15,22 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
     
     <header
-        android:fragment="dev.drsoran.moloko.prefs.fragments.RtmPreferencesFragment"
+        android:fragment="dev.drsoran.moloko.app.prefs.fragments.RtmPreferencesFragment"        
         android:icon="@drawable/ic_rtm_outline"
         android:title="@string/moloko_prefs_rtm_title" />
     
     <header
-        android:fragment="dev.drsoran.moloko.prefs.fragments.NotificationPreferencesFragment"
+        android:fragment="dev.drsoran.moloko.app.prefs.fragments.NotificationPreferencesFragment"
         android:icon="@drawable/ic_prefs_notification"
         android:title="@string/moloko_prefs_notification_title" />
     
     <header
-        android:fragment="dev.drsoran.moloko.prefs.fragments.GeneralPreferencesFragment"
+        android:fragment="dev.drsoran.moloko.app.prefs.fragments.GeneralPreferencesFragment"
         android:icon="@drawable/ic_prefs_settings"
         android:title="@string/moloko_prefs_general_title" />
     
     <header
-        android:fragment="dev.drsoran.moloko.prefs.fragments.DevelopmentPreferencesFragment"
+        android:fragment="dev.drsoran.moloko.app.prefs.fragments.DevelopmentPreferencesFragment"
         android:icon="@drawable/ic_prefs_development"
         android:title="@string/moloko_prefs_support_dev_title" />   
     

@@ -454,21 +454,11 @@ public final class Columns
       
       public final static int USERNAME_IDX = 2;
       
-      /**
-       * The number of tasks the Contact participates
-       * <P>
-       * Type: INTEGER
-       * </P>
-       */
-      public final static String NUM_TASKS_PARTICIPATING = "num_tasks_participates";
-      
-      public final static int NUM_TASKS_PARTICIPATING_IDX = 3;
-      
       public final static String DEFAULT_SORT_ORDER = FULLNAME
          + " COLLATE NOCASE";
       
       public final static String[] PROJECTION =
-      { _ID, FULLNAME, USERNAME, NUM_TASKS_PARTICIPATING };
+      { _ID, FULLNAME, USERNAME };
    }
    
    

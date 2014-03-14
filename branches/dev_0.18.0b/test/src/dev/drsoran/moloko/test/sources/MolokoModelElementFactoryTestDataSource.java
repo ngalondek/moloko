@@ -665,13 +665,12 @@ public class MolokoModelElementFactoryTestDataSource
    
    private void addContactFull( Collection< TestData< Contact >> testData )
    {
-      final Contact modelElement = new Contact( 1L, "Username", "Fullname", 10 );
+      final Contact modelElement = new Contact( 1L, "Username", "Fullname" );
       
       final List< Pair< Class< ? >, Object > > values = new ArrayList< Pair< Class< ? >, Object > >();
       add( values, Long.class, 1L );
       add( values, String.class, "Fullname" );
       add( values, String.class, "Username" );
-      add( values, Integer.class, 10 );
       
       testData.add( new TestData< Contact >( Contact.class,
                                              modelElement,

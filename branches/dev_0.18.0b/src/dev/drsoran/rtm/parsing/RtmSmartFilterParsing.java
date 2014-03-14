@@ -130,7 +130,7 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
       }
       catch ( ParseCancellationException e )
       {
-         log.w( RtmSmartFilterParsing.class,
+         log.e( RtmSmartFilterParsing.class,
                 MessageFormat.format( "Failed to parse smart filter ''{0}''",
                                       smartFilter ),
                 e );

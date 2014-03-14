@@ -54,7 +54,7 @@ public class RtmSmartFilterBuilderFixture extends MolokoTestCase
    public void testFilter()
    {
       builder.filter( new RtmSmartFilter( "list:\"Test List\"" ) );
-      assertThat( builder.toString(), is( "list:\"Test List\"" ) );
+      assertThat( builder.toString(), is( " list:\"Test List\"" ) );
    }
    
    
@@ -63,7 +63,16 @@ public class RtmSmartFilterBuilderFixture extends MolokoTestCase
    public void testFilterString()
    {
       builder.filterString( "list:\"Test List\"" );
-      assertThat( builder.toString(), is( "list:\"Test List\"" ) );
+      assertThat( builder.toString(), is( " list:\"Test List\"" ) );
+   }
+   
+   
+   
+   @Test
+   public void testFilterString_Empty()
+   {
+      builder.filterString( "   " );
+      assertThat( builder.toString(), is( "" ) );
    }
    
    
@@ -478,10 +487,29 @@ public class RtmSmartFilterBuilderFixture extends MolokoTestCase
    
    
    @Test
-   public void testAnd()
+   public void testAnd_EmptyFilter()
    {
       builder.and();
-      assertThat( builder.toString().trim(), is( "and" ) );
+      assertThat( builder.toString().trim(), is( "" ) );
+   }
+   
+   
+   
+   @Test
+   public void testAnd()
+   {
+      builder.statusCompleted();
+      builder.and();
+      assertThat( builder.toString().trim(), is( "status:completed and" ) );
+   }
+   
+   
+   
+   @Test
+   public void testOr_EmptyFilter()
+   {
+      builder.or();
+      assertThat( builder.toString().trim(), is( "" ) );
    }
    
    
@@ -489,8 +517,9 @@ public class RtmSmartFilterBuilderFixture extends MolokoTestCase
    @Test
    public void testOr()
    {
+      builder.statusCompleted();
       builder.or();
-      assertThat( builder.toString().trim(), is( "or" ) );
+      assertThat( builder.toString().trim(), is( "status:completed or" ) );
    }
    
    

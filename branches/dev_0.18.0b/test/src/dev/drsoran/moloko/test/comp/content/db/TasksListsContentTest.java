@@ -162,7 +162,7 @@ public class TasksListsContentTest extends MolokoReadWriteDbContentTestCase
                          1356998400000L,
                          1356998400001L,
                          1356998400002L,
-                         1,
+                         0,
                          0,
                          1,
                          0,

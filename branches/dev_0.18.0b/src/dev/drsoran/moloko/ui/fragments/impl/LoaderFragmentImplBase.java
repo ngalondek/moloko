@@ -138,10 +138,19 @@ abstract class LoaderFragmentImplBase< D >
    
    
    
+   public void preSetLoaderData( D loaderData )
+   {
+      this.loaderData = loaderData;
+   }
+   
+   
+   
    public D getLoaderDataAssertNotNull()
    {
       if ( getLoaderData() == null )
+      {
          throw new IllegalStateException( "loader data must not be null" );
+      }
       
       return getLoaderData();
    }

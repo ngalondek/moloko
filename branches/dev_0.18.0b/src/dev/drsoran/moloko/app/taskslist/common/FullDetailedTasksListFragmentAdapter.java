@@ -109,20 +109,10 @@ class FullDetailedTasksListFragmentAdapter extends
          
          UiUtils.setPriorityColor( getContext(), priority, task );
          
-         if ( task.getRecurrence() != null )
-            recurrent.setVisibility( View.VISIBLE );
-         else
-            recurrent.setVisibility( View.GONE );
-         
-         if ( task.hasNotes() )
-            hasNotes.setVisibility( View.VISIBLE );
-         else
-            hasNotes.setVisibility( View.GONE );
-         
-         if ( task.isPostponed() )
-            postponed.setVisibility( View.VISIBLE );
-         else
-            postponed.setVisibility( View.GONE );
+         recurrent.setVisibility( task.getRecurrence() != null ? View.VISIBLE
+                                                              : View.GONE );
+         hasNotes.setVisibility( task.hasNotes() ? View.VISIBLE : View.GONE );
+         postponed.setVisibility( task.isPostponed() ? View.VISIBLE : View.GONE );
          
          setListName( listName, task );
          

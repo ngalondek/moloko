@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -49,6 +51,7 @@ import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
 import dev.drsoran.moloko.app.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
@@ -103,7 +106,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.taskslist_activity );
-      setTitle( title );
       initialize();
    }
    
@@ -139,13 +141,24 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    protected void initializeTitle()
    {
-      if ( TextUtils.isEmpty( getTitle() ) )
+      if ( !TextUtils.isEmpty( title ) )
       {
-         final String intentListName = getListNameFromIntent();
-         if ( !TextUtils.isEmpty( intentListName ) )
-         {
-            setTitle( intentListName );
-         }
+         setTitle( title );
+         return;
+      }
+      
+      title = getListNameFromIntentExtras();
+      if ( !TextUtils.isEmpty( title ) )
+      {
+         setTitle( title );
+         return;
+      }
+      
+      title = getTitleFromActiveList();
+      if ( !TextUtils.isEmpty( title ) )
+      {
+         setTitle( title );
+         return;
       }
    }
    
@@ -211,15 +224,6 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   private void startLoadingRtmLists()
-   {
-      getSupportLoaderManager().initLoader( TasksListsLoader.ID,
-                                            Bundle.EMPTY,
-                                            this );
-   }
-   
-   
-   
    public Bundle getCurrentTasksListFragmentConfiguration()
    {
       return getFragmentConfigurations( R.id.frag_taskslist );
@@ -262,14 +266,14 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
-   public boolean hasListNameInIntent()
+   public boolean hasListNameInIntentExtras()
    {
       return getIntent().getExtras().containsKey( Intents.Extras.KEY_LIST_NAME );
    }
    
    
    
-   public String getListNameFromIntent()
+   public String getListNameFromIntentExtras()
    {
       final String listName = getIntent().getExtras()
                                          .getString( Intents.Extras.KEY_LIST_NAME );
@@ -280,10 +284,36 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    public long getListIdFromIntent()
    {
+      long listId = getListIdFromIntentExtras();
+      if ( listId == Constants.NO_ID )
+      {
+         listId = getListIdFromIntentUri();
+      }
+      
+      return listId;
+   }
+   
+   
+   
+   public long getListIdFromIntentExtras()
+   {
       final long listId = getIntent().getExtras()
                                      .getLong( Intents.Extras.KEY_LIST_ID,
                                                Constants.NO_ID );
       return listId;
+   }
+   
+   
+   
+   public long getListIdFromIntentUri()
+   {
+      final Uri intentUri = getIntent().getData();
+      if ( ContentUris.MATCHER.match( intentUri ) == ContentUris.MATCH_TASKS_LISTS_ID )
+      {
+         return ContentUris.getLastPathIdFromUri( intentUri );
+      }
+      
+      return Constants.NO_ID;
    }
    
    
@@ -294,10 +324,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       {
          return selectedNavigationItem.id;
       }
-      else
-      {
-         return getListIdFromIntent();
-      }
+      
+      return getListIdFromIntent();
    }
    
    
@@ -442,7 +470,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       {
          final TasksList list = i.next();
          
-         if ( Long.valueOf( list.getId() ) != selectedNavigationItem.id )
+         if ( list.getId() != selectedNavigationItem.id )
          {
             final IItem newListItem = new TasksListNavigationAdapter.RtmListItem( context,
                                                                                   list );
@@ -452,9 +480,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          {
             final ExtendedTaskCount extendedListInfo = list.getTasksCount();
             
-            Bundle config = Intents.Extras.createOpenListExtras( context,
-                                                                 list,
-                                                                 null );
+            Bundle config = Intents.Extras.createOpenListExtras( list.getId() );
             actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_DEFAULT_TASKS,
                                           new TasksListNavigationAdapter.RtmListItem( context,
                                                                                       list ) );
@@ -546,6 +572,15 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    
    
+   private void startLoadingRtmLists()
+   {
+      getSupportLoaderManager().initLoader( TasksListsLoader.ID,
+                                            Bundle.EMPTY,
+                                            this );
+   }
+
+
+
    @Override
    public Loader< List< TasksList >> onCreateLoader( int id, Bundle args )
    {
@@ -564,6 +599,11 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       
       if ( loadedRtmLists != null && loadedRtmLists.size() > 1 )
       {
+         if ( TextUtils.isEmpty( getTitle() ) )
+         {
+            initializeTitle();
+         }
+         
          if ( actionBarNavigationAdapter == null )
          {
             setListNavigationMode();
@@ -645,10 +685,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
          final ITasksListFragment tasksListFragment = (ITasksListFragment) fragment;
          return tasksListFragment;
       }
-      else
-      {
-         return null;
-      }
+      
+      return null;
    }
    
    
@@ -657,7 +695,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    {
       if ( findAddedFragmentById( R.id.frag_taskslist ) == null )
       {
-         final Fragment fragment = createTasksListFragment( getIntent().getExtras() );
+         final Fragment fragment = createTasksListFragment( getInitalTasksListFragmentConfig() );
          
          final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
          transaction.add( R.id.frag_taskslist, fragment );
@@ -677,6 +715,42 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
       transaction.addToBackStack( null );
       transaction.commit();
+   }
+   
+   
+   
+   private Bundle getInitalTasksListFragmentConfig()
+   {
+      final Intent intent = getIntent();
+      final Bundle config = new Bundle( intent.getExtras() );
+      
+      final long listIdFromUri = getListIdFromIntentUri();
+      if ( listIdFromUri != Constants.NO_ID )
+      {
+         config.putLong( Intents.Extras.KEY_LIST_ID, listIdFromUri );
+      }
+      
+      return config;
+   }
+   
+   
+   
+   private String getTitleFromActiveList()
+   {
+      if ( loadedRtmLists != null )
+      {
+         final long activeListId = getActiveListId();
+         
+         for ( TasksList tasksList : loadedRtmLists )
+         {
+            if ( tasksList.getId() == activeListId )
+            {
+               return tasksList.getName();
+            }
+         }
+      }
+      
+      return null;
    }
    
    

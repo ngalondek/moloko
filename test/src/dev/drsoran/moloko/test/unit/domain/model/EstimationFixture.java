@@ -26,7 +26,14 @@ import static dev.drsoran.moloko.test.TestConstants.LATER;
 import static dev.drsoran.moloko.test.TestConstants.NEVER;
 import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.junit.Test;
 
@@ -90,6 +97,35 @@ public class EstimationFixture extends EqualsHashCodeTestCase
    public void testToString()
    {
       new Estimation( "sentence", NOW ).toString();
+   }
+   
+   
+   
+   @Test
+   public void testSerializeDeserialize() throws IOException,
+                                         ClassNotFoundException
+   {
+      final ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+      final ObjectOutputStream oos = new ObjectOutputStream( memStream );
+      
+      final Estimation estimation = new Estimation( "2 days", NOW );
+      oos.writeObject( estimation );
+      oos.close();
+      
+      byte[] serialized = memStream.toByteArray();
+      memStream.close();
+      
+      final ByteArrayInputStream memIStream = new ByteArrayInputStream( serialized );
+      final ObjectInputStream ois = new ObjectInputStream( memIStream );
+      
+      final Estimation deserialized = (Estimation) ois.readObject();
+      
+      ois.close();
+      memIStream.close();
+      
+      assertThat( deserialized, is( notNullValue() ) );
+      assertThat( deserialized.getSentence(), is( "2 days" ) );
+      assertThat( deserialized.getMillis(), is( NOW ) );
    }
    
    

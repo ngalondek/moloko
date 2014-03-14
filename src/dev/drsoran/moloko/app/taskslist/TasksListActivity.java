@@ -178,7 +178,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
     */
    private static boolean isRealList( long listId )
    {
-      return CUSTOM_NAVIGATION_ITEM_ID == listId;
+      return CUSTOM_NAVIGATION_ITEM_ID != listId;
    }
    
    

@@ -198,6 +198,24 @@ public class StringsFixture extends MolokoTestCase
    
    
    @Test
+   public void testEmptyOrWhitespaceCharSequenceNull()
+   {
+      assertThat( Strings.isEmptyOrWhitespace( (CharSequence) null ), is( true ) );
+   }
+   
+   
+   
+   @Test
+   public void testEmptyOrWhitespaceCharSequence()
+   {
+      assertThat( Strings.isEmptyOrWhitespace( "" ), is( true ) );
+      assertThat( Strings.isEmptyOrWhitespace( "         " ), is( true ) );
+      assertThat( Strings.isEmptyOrWhitespace( "   v    " ), is( false ) );
+   }
+   
+   
+   
+   @Test
    public void testEqualsNullAwareStringString()
    {
       final String t1 = new String( "test" );

@@ -256,6 +256,50 @@ public class RtmLocationsSyncHandlerFixture
    
    
    
+   @Test
+   public void testHandleIncomingSync_Insert_Update_DeleteUntouched() throws RtmServiceException
+   {
+      final RtmLocation location2FromPartner = newLocation( "2" );
+      final RtmLocation location3FromPartner = newLocation( "3" );
+      
+      final RtmLocation location1FromRtm = newLocation( "1" );
+      final RtmLocation location2FromRtm = newLocation( "2" );
+      
+      final List< RtmLocation > partnerList = new ArrayList< RtmLocation >();
+      partnerList.add( location2FromPartner );
+      partnerList.add( location3FromPartner );
+      
+      final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
+      EasyMock.expect( syncPartner.getLocations() ).andReturn( partnerList );
+      syncPartner.insertLocation( location1FromRtm );
+      syncPartner.updateLocation( location2FromPartner, location2FromRtm );
+      syncPartner.deleteLocation( location3FromPartner );
+      EasyMock.replay( syncPartner );
+      
+      final List< RtmLocation > rtmList = new ArrayList< RtmLocation >();
+      rtmList.add( location1FromRtm );
+      rtmList.add( location2FromRtm );
+      
+      final IRtmContentRepository rtmRepo = EasyMock.createMock( IRtmContentRepository.class );
+      EasyMock.expect( rtmRepo.locations_getList() ).andReturn( rtmList );
+      EasyMock.replay( rtmRepo );
+      
+      final RtmLocationsSyncHandler syncHandler = new RtmLocationsSyncHandler( syncPartner,
+                                                                               RtmContentSort.getRtmLocationIdSort() );
+      
+      RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                    TestConstants.NEVER );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
+      
+      EasyMock.verify( syncPartner );
+      EasyMock.verify( rtmRepo );
+   }
+   
+   
+   
    @Test( expected = UnsupportedOperationException.class )
    public void testHandleOutgoingSync() throws RtmServiceException
    {

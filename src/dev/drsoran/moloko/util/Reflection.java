@@ -56,5 +56,4 @@ public final class Reflection
       
       return method;
    }
-   
 }

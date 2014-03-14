@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.test.comp.content.db;
 
 import static dev.drsoran.moloko.content.Columns.ContactColumns.FULLNAME_IDX;
-import static dev.drsoran.moloko.content.Columns.ContactColumns.NUM_TASKS_PARTICIPATING_IDX;
 import static dev.drsoran.moloko.content.Columns.ContactColumns.USERNAME_IDX;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -75,11 +74,11 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
          switch ( i + 1 )
          {
             case 1:
-               checkResult( c, 1L, "Full Name1", "User1", 1 );
+               checkResult( c, 1L, "Full Name1", "User1" );
                break;
             
             case 2:
-               checkResult( c, 2L, "Full Name2", "User2", 1 );
+               checkResult( c, 2L, "Full Name2", "User2" );
                break;
             
             default :
@@ -147,11 +146,11 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
       switch ( (int) rowId )
       {
          case 1:
-            checkResult( c, 1L, "Full Name1", "User1", 0 );
+            checkResult( c, 1L, "Full Name1", "User1" );
             break;
          
          case 2:
-            checkResult( c, 2L, "Full Name2", "User2", 0 );
+            checkResult( c, 2L, "Full Name2", "User2" );
             break;
          
          default :
@@ -164,12 +163,10 @@ public class ContactsContentTest extends MolokoReadDbContentTestCase
    private static void checkResult( Cursor c,
                                     long id,
                                     String fullname,
-                                    String username,
-                                    int numTasks )
+                                    String username )
    {
       assertThat( c.getLong( Columns.ID_IDX ), is( id ) );
       assertThat( c.getString( FULLNAME_IDX ), is( fullname ) );
       assertThat( c.getString( USERNAME_IDX ), is( username ) );
-      assertThat( c.getInt( NUM_TASKS_PARTICIPATING_IDX ), is( numTasks ) );
    }
 }

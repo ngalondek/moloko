@@ -243,8 +243,7 @@ public class MolokoModelElementFactory implements IModelElementFactory
       {
          return new Contact( c.getLong( Columns.ID_IDX ),
                              c.getString( ContactColumns.USERNAME_IDX ),
-                             c.getString( ContactColumns.FULLNAME_IDX ),
-                             c.getInt( ContactColumns.NUM_TASKS_PARTICIPATING_IDX ) );
+                             c.getString( ContactColumns.FULLNAME_IDX ) );
       }
    }
    

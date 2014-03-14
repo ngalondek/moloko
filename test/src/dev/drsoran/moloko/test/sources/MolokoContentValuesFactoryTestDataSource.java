@@ -656,8 +656,7 @@ public class MolokoContentValuesFactoryTestDataSource
    {
       final Contact modelElement = new Contact( Constants.NO_ID,
                                                 "Username",
-                                                "Fullname",
-                                                0 );
+                                                "Fullname" );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ContactColumns.FULLNAME, "Fullname" );
@@ -673,7 +672,7 @@ public class MolokoContentValuesFactoryTestDataSource
    
    private void addContactFull( Collection< TestData< Contact >> testData )
    {
-      final Contact modelElement = new Contact( 1L, "Username", "Fullname", 0 );
+      final Contact modelElement = new Contact( 1L, "Username", "Fullname" );
       
       final Map< String, Object > values = new LinkedHashMap< String, Object >();
       values.put( ContactColumns._ID, 1L );

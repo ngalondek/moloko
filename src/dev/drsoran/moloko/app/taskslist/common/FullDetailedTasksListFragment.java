@@ -84,10 +84,22 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
-      final RtmSmartFilter filter = config.getParcelable( Intents.Extras.KEY_FILTER );
-      final TasksLoader loader = new TasksLoader( getAppContext().asDomainContext(),
-                                                  filter,
-                                                  TaskContentOptions.Minimal );
+      final TasksLoader loader;
+      
+      final RtmSmartFilter filter = (RtmSmartFilter) config.getSerializable( Intents.Extras.KEY_FILTER );
+      if ( filter != null )
+      {
+         loader = new TasksLoader( getAppContext().asDomainContext(),
+                                   filter,
+                                   TaskContentOptions.WithNotes );
+      }
+      else
+      {
+         loader = new TasksLoader( getAppContext().asDomainContext(),
+                                   config.getLong( Intents.Extras.KEY_LIST_ID ),
+                                   TaskContentOptions.WithNotes );
+      }
+      
       return loader;
    }
    
@@ -123,15 +135,18 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
    
    private RtmSmartFilterTokenCollection getFilterTokens( RtmSmartFilter filter )
    {
-      try
+      if ( filter != null )
       {
-         return getAppContext().getParsingService()
-                               .getSmartFilterParsing()
-                               .getSmartFilterTokens( filter.getFilterString() );
-      }
-      catch ( GrammarException e )
-      {
-         Log().e( getClass(), "Unparsable smart filter", e );
+         try
+         {
+            return getAppContext().getParsingService()
+                                  .getSmartFilterParsing()
+                                  .getSmartFilterTokens( filter.getFilterString() );
+         }
+         catch ( GrammarException e )
+         {
+            Log().e( getClass(), "Unparsable smart filter", e );
+         }
       }
       
       return new RtmSmartFilterTokenCollection( Collections.< RtmSmartFilterToken > emptyList() );

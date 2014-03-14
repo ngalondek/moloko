@@ -203,11 +203,34 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
                                   public Iterable< Integer > call( ContentQueryHandler< Integer > queryHandler )
                                   {
                                      return queryHandler.getAll( ALL_URI,
-                                                                 selection );
+                                                                 selection,
+                                                                 null );
                                   }
                                },
                                ALL_URI,
                                selection );
+   }
+   
+   
+   
+   @Test
+   public void testGetAll_WithSort()
+   {
+      final String selection = "value > 90";
+      final String sort = "value ASC";
+      testGetMultipleElements( new Func1< ContentQueryHandler< Integer >, Iterable< Integer > >()
+                               {
+                                  @Override
+                                  public Iterable< Integer > call( ContentQueryHandler< Integer > queryHandler )
+                                  {
+                                     return queryHandler.getAll( ALL_URI,
+                                                                 selection,
+                                                                 sort );
+                                  }
+                               },
+                               ALL_URI,
+                               selection,
+                               sort );
    }
    
    
@@ -220,7 +243,7 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
          @Override
          public Iterable< Integer > call( ContentQueryHandler< Integer > queryHandler )
          {
-            return queryHandler.getAll( ALL_URI, "value > 90" );
+            return queryHandler.getAll( ALL_URI, "value > 90", null );
          }
       } );
    }
@@ -235,7 +258,7 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
          @Override
          public Iterable< Integer > call( ContentQueryHandler< Integer > queryHandler )
          {
-            return queryHandler.getAll( ALL_URI, "value > 90" );
+            return queryHandler.getAll( ALL_URI, "value > 90", null );
          }
       } );
    }
@@ -256,11 +279,38 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
                                   {
                                      return queryHandler.getAllForAggregation( ALL_AGG_URI,
                                                                                100L,
-                                                                               selection );
+                                                                               selection,
+                                                                               null );
                                   }
                                },
                                queryUri,
                                selection );
+   }
+   
+   
+   
+   @Test
+   public void testGetAllForAggregation_WithSort()
+   {
+      final Uri queryUri = Uri.parse( ALL_AGG_URI.toString()
+                                                 .replaceFirst( "#", "100" ) );
+      final String selection = "value > 90";
+      final String sort = "value ASC";
+      
+      testGetMultipleElements( new Func1< ContentQueryHandler< Integer >, Iterable< Integer > >()
+                               {
+                                  @Override
+                                  public Iterable< Integer > call( ContentQueryHandler< Integer > queryHandler )
+                                  {
+                                     return queryHandler.getAllForAggregation( ALL_AGG_URI,
+                                                                               100L,
+                                                                               selection,
+                                                                               sort );
+                                  }
+                               },
+                               queryUri,
+                               selection,
+                               sort );
    }
    
    
@@ -275,7 +325,8 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
          {
             return queryHandler.getAllForAggregation( ALL_AGG_URI,
                                                       100L,
-                                                      "value > 90" );
+                                                      "value > 90",
+                                                      null );
          }
       } );
    }
@@ -292,7 +343,8 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
          {
             return queryHandler.getAllForAggregation( ALL_AGG_URI,
                                                       100L,
-                                                      "value > 90" );
+                                                      "value > 90",
+                                                      null );
          }
       } );
    }
@@ -334,6 +386,16 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
                                          Uri queryUri,
                                          String selection )
    {
+      testGetMultipleElements( methodToCall, queryUri, selection, null );
+   }
+   
+   
+   
+   private void testGetMultipleElements( Func1< ContentQueryHandler< Integer >, Iterable< Integer > > methodToCall,
+                                         Uri queryUri,
+                                         String selection,
+                                         String sort )
+   {
       final Cursor c = createCursor( 2 );
       
       final ContentResolver contentResolver = EasyMock.createStrictMock( ContentResolver.class );
@@ -341,7 +403,7 @@ public class ContentQueryHandlerFixture extends MolokoRoboTestCase
                                               PROJECTION,
                                               selection,
                                               null,
-                                              null ) ).andReturn( c );
+                                              sort ) ).andReturn( c );
       EasyMock.replay( contentResolver );
       
       final IModelElementFactory modelElementFactory = createModelElementFactory( Arrays.asList( 99,

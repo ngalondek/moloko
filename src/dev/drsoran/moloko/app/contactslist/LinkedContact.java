@@ -37,11 +37,14 @@ class LinkedContact
    
    private boolean isLinkedByNotes;
    
+   private final int numTasksParticipating;
    
    
-   public LinkedContact( Contact contact )
+   
+   public LinkedContact( Contact contact, int numTasksParticipating )
    {
       this.contact = contact;
+      this.numTasksParticipating = numTasksParticipating;
    }
    
    
@@ -69,7 +72,7 @@ class LinkedContact
    
    public int getNumTasksParticipating()
    {
-      return contact.getNumTasksParticipating();
+      return numTasksParticipating;
    }
    
    

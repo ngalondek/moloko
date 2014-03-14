@@ -43,13 +43,7 @@ import dev.drsoran.moloko.ui.fragments.IEditFragment;
 public class TaskListsActivity extends MolokoEditFragmentActivity implements
          ITaskListsFragmentListener, IAddRenameListFragmentListener
 {
-   private final static class Config
-   {
-      public final static String LIST_TO_DELETE = "list_to_delete";
-   }
-   
-   @InstanceState( key = Config.LIST_TO_DELETE,
-                   defaultValue = InstanceState.NULL )
+   @InstanceState( key = "list_to_delete", defaultValue = InstanceState.NULL )
    private TasksList listToDelete;
    
    
@@ -112,7 +106,11 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       
       // Check if the smart filter could be parsed. Otherwise
       // we do not fire the intent.
-      if ( isSmartFilterValid( tasksList.getSmartFilter() ) )
+      final boolean fireIntent = !tasksList.isSmartList()
+         || tasksList.isSmartList()
+         && isSmartFilterValid( tasksList.getSmartFilter() );
+      
+      if ( fireIntent )
       {
          final Intent intent = Intents.createOpenListIntent( this,
                                                              tasksList,

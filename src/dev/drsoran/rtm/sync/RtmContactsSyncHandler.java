@@ -105,12 +105,12 @@ public class RtmContactsSyncHandler implements IRtmSyncHandler
             syncPartner.updateContact( syncPartnerContact, rtmContact );
             syncPartnerContacts.remove( posPartnerLocation );
          }
-         
-         // DELETE: The partner list elements are and no longer at RTM side.
-         for ( RtmContact untouchedContact : syncPartnerContacts )
-         {
-            syncPartner.deleteContact( untouchedContact );
-         }
+      }
+      
+      // DELETE: The partner list elements are and no longer at RTM side.
+      for ( RtmContact untouchedContact : syncPartnerContacts )
+      {
+         syncPartner.deleteContact( untouchedContact );
       }
       
       return RtmSyncResult.newSucceeded();

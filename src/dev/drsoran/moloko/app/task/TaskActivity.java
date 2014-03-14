@@ -42,6 +42,8 @@ import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Task;
@@ -182,7 +184,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       createTabsAdapter();
       createAbsTabsPagerHandler();
       
-      final String taskId = getTaskIdFromIntent();
+      final long taskId = getTaskIdFromIntent();
       
       createTab( R.string.taskactivity_tab_task,
                  TaskFragment.class,
@@ -266,14 +268,16 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   public String getTaskIdFromIntent()
+   public long getTaskIdFromIntent()
    {
-      String taskId = null;
+      long taskId = Constants.NO_ID;
       
       final Uri taskUri = getIntent().getData();
       
       if ( taskUri != null )
-         taskId = taskUri.getLastPathSegment();
+      {
+         taskId = ContentUris.getLastPathIdFromUri( taskUri );
+      }
       
       return taskId;
    }
@@ -439,22 +443,22 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private Bundle createTaskFragmentConfiguration( String taskId )
+   private Bundle createTaskFragmentConfiguration( long taskId )
    {
       final Bundle config = getFragmentConfigurations( R.id.frag_task );
       
-      config.putString( Intents.Extras.KEY_TASK_ID, taskId );
+      config.putLong( Intents.Extras.KEY_TASK_ID, taskId );
       
       return config;
    }
    
    
    
-   private Bundle createNotesListFragmentConfiguration( String taskId )
+   private Bundle createNotesListFragmentConfiguration( long taskId )
    {
       final Bundle config = new Bundle();
       
-      config.putString( Intents.Extras.KEY_TASK_ID, taskId );
+      config.putLong( Intents.Extras.KEY_TASK_ID, taskId );
       
       return config;
    }

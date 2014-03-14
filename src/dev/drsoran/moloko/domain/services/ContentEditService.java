@@ -98,7 +98,7 @@ public class ContentEditService implements IContentEditService
                                                           ContentException
    {
       final Task existingTask = contentRepository.getTask( taskId,
-                                                           TaskContentOptions.Complete );
+                                                           TaskContentOptions.WithNotes.or( TaskContentOptions.WithParticipants ) );
       
       tasksContentEditHandler.updateElement( ContentUris.TASKS_CONTENT_URI_ID,
                                              existingTask,

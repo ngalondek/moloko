@@ -67,6 +67,14 @@ public class NullRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    
    
    @Test
+   public void testEvalEmptyFilter()
+   {
+      assertThat( evaluator.evalEmptyFilter(), is( true ) );
+   }
+   
+   
+   
+   @Test
    public void testEvalList()
    {
       assertThat( evaluator.evalList( "" ), is( true ) );

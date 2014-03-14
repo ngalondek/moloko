@@ -64,7 +64,7 @@ import dev.drsoran.moloko.ui.widgets.SimpleLineView;
 import dev.drsoran.rtm.parsing.GrammarException;
 
 
-class TaskFragment extends MolokoLoaderFragment< Task > implements
+public class TaskFragment extends MolokoLoaderFragment< Task > implements
          IAbsViewPagerSupport, IOnSettingsChangedListener
 {
    public final int FULL_DATE_FLAGS = IDateFormatterService.FORMAT_WITH_YEAR;
@@ -75,7 +75,11 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private AppContext appContext;
    
-   @InstanceState( key = Intents.Extras.KEY_TASK_ID )
+   @InstanceState( key = Intents.Extras.KEY_TASK )
+   private Task task;
+   
+   @InstanceState( key = Intents.Extras.KEY_TASK_ID,
+                   defaultValue = InstanceState.NO_ID )
    private long taskId;
    
    private ViewGroup content;
@@ -129,7 +133,10 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    {
       enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
       
+      preSetLoaderData( task );
+      
       super.onCreate( savedInstanceState );
+      
       setHasOptionsMenu( !enableAbsViewPagerWorkaround );
    }
    
@@ -233,7 +240,6 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private void onCreateOptionsMenuImpl( Menu menu, MenuInflater inflater )
    {
-      final Task task = getLoaderData();
       if ( task != null && hasWritableAccess() )
       {
          inflater.inflate( R.menu.task_fragment_rwd, menu );
@@ -265,7 +271,6 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private void onPrepareOptionsMenuImpl( Menu menu )
    {
-      final Task task = getLoaderData();
       if ( task != null )
       {
          final boolean taskIsCompleted = task.isComplete();
@@ -336,7 +341,8 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    @Override
    public void initContentAfterDataLoaded( ViewGroup container )
    {
-      final Task task = getLoaderDataAssertNotNull();
+      assertNotNull();
+      
       final SherlockFragmentActivity activity = getSherlockActivity();
       
       UiUtils.setPriorityColor( activity, priorityBar, task );
@@ -392,11 +398,11 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
       
       UiUtils.inflateTags( activity, tagsLayout, task.getTags(), null );
       
-      setDateTimeSection( dateTimeSection, task );
+      setDateTimeSection( dateTimeSection );
       
-      setLocationSection( locationSection, task );
+      setLocationSection( locationSection );
       
-      setParticipantsSection( participantsSection, task );
+      setParticipantsSection( participantsSection );
       
       if ( !TextUtils.isEmpty( task.getUrl() ) )
       {
@@ -413,7 +419,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
-   private void setDateTimeSection( View view, Task task )
+   private void setDateTimeSection( View view )
    {
       // Check if we need this section
       if ( !task.hasEstimation() && !task.hasDue() && !task.isRecurrent() )
@@ -426,11 +432,9 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
          
          final StringBuilder textBuffer = new StringBuilder();
          
-         appendDue( textBuffer, task );
-         
-         appendRecurrence( textBuffer, task );
-         
-         appendEstimation( textBuffer, task );
+         appendDue( textBuffer );
+         appendRecurrence( textBuffer );
+         appendEstimation( textBuffer );
          
          // Determine the section title
          int titleId;
@@ -450,7 +454,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
-   private void appendDue( StringBuilder textBuffer, Task task )
+   private void appendDue( StringBuilder textBuffer )
    {
       final Due due = task.getDue();
       
@@ -477,7 +481,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
-   private void appendRecurrence( StringBuilder textBuffer, Task task )
+   private void appendRecurrence( StringBuilder textBuffer )
    {
       final Recurrence recurrence = task.getRecurrence();
       
@@ -512,7 +516,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
-   private void appendEstimation( StringBuilder textBuffer, Task task )
+   private void appendEstimation( StringBuilder textBuffer )
    {
       final Estimation estimation = task.getEstimation();
       
@@ -527,7 +531,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
-   private void setLocationSection( View view, final Task task )
+   private void setLocationSection( View view )
    {
       final Location location = task.getLocation();
       boolean showSection = task.isLocated();
@@ -590,7 +594,7 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    
    
-   private void setParticipantsSection( ViewGroup view, Task task )
+   private void setParticipantsSection( ViewGroup view )
    {
       final Iterator< Participant > participantsIter = task.getParticipants()
                                                            .iterator();
@@ -633,7 +637,16 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    {
       return new TaskLoader( getUiContext().asDomainContext(),
                              args.getLong( Intents.Extras.KEY_TASK_ID ),
-                             TaskContentOptions.Minimal );
+                             TaskContentOptions.Complete );
+   }
+   
+   
+   
+   @Override
+   public void onLoadFinished( Loader< Task > loader, Task data )
+   {
+      super.onLoadFinished( loader, data );
+      task = getLoaderDataAssertNotNull();
    }
    
    
@@ -668,6 +681,17 @@ class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    public Task getTaskAssertNotNull()
    {
-      return getLoaderDataAssertNotNull();
+      assertNotNull();
+      return task;
+   }
+   
+   
+   
+   private void assertNotNull()
+   {
+      if ( task == null )
+      {
+         throw new IllegalArgumentException( "Expected task to be not null" );
+      }
    }
 }

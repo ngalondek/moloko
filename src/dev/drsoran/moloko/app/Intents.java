@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -117,6 +118,8 @@ public final class Intents
       
       public final static String KEY_NOTE = "note";
       
+      public final static String KEY_NOTES = "notes";
+      
       public final static String KEY_NOTE_ID = "note_id";
       
       public final static String KEY_NOTE_TITLE = "note_title";
@@ -156,7 +159,7 @@ public final class Intents
       
       
       
-      public final static Bundle createEditTaskExtras( Task task )
+      public final static Bundle createTaskExtras( Task task )
       {
          final Bundle bundle = new Bundle( 1 );
          
@@ -167,12 +170,12 @@ public final class Intents
       
       
       
-      public final static Bundle createEditNoteExtras( Task task, long noteId )
+      public final static Bundle createEditNoteExtras( Task task, Note note )
       {
          final Bundle bundle = new Bundle( 2 );
          
          bundle.putSerializable( Extras.KEY_TASK, task );
-         bundle.putLong( Extras.KEY_NOTE_ID, noteId );
+         bundle.putSerializable( Extras.KEY_NOTE, note );
          
          return bundle;
       }
@@ -241,7 +244,17 @@ public final class Intents
                                                         context.getString( R.string.taskslist_actionbar,
                                                                            list.getName() ) );
          extras.putString( Intents.Extras.KEY_LIST_NAME, list.getName() );
-         extras.putLong( Intents.Extras.KEY_LIST_ID, list.getId() );
+         
+         return extras;
+      }
+      
+      
+      
+      public final static Bundle createOpenListExtras( long listId )
+      {
+         final Bundle extras = new Bundle( 1 );
+         
+         extras.putLong( Intents.Extras.KEY_LIST_ID, listId );
          
          return extras;
       }
@@ -352,7 +365,7 @@ public final class Intents
       //
       // return intent;
       
-      throw new UnsupportedOperationException();
+      return new Intent();
    }
    
    
@@ -371,7 +384,7 @@ public final class Intents
       // onClickIntent,
       // PendingIntent.FLAG_CANCEL_CURRENT );
       
-      throw new UnsupportedOperationException();
+      return null;
    }
    
    
@@ -509,14 +522,6 @@ public final class Intents
    
    
    
-   public final static Intent createOpenListOverviewsIntent()
-   {
-      // return new Intent( Intent.ACTION_VIEW, ListOverviews.CONTENT_URI );
-      return null;
-   }
-   
-   
-   
    public final static Intent createNewAccountIntent()
    {
       return new Intent( Settings.ACTION_ADD_ACCOUNT );
@@ -524,31 +529,19 @@ public final class Intents
    
    
    
-   public final static Intent createOpenListIntentById( Context context,
-                                                        long id,
-                                                        String filter )
+   public final static Intent createOpenListOverviewsIntent()
    {
-      Intent intent = null;
-      
-      // final ContentProviderClient client = context.getContentResolver()
-      // .acquireContentProviderClient( ListOverviews.CONTENT_URI );
-      //
-      // if ( client != null )
-      // {
-      // final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-      // ListOverviews._ID
-      // + "="
-      // + id );
-      //
-      // if ( list != null )
-      // {
-      // intent = createOpenListIntent( context, list, filter );
-      // }
-      //
-      // client.release();
-      // }
-      
-      return intent;
+      return new Intent( Intent.ACTION_VIEW,
+                         ContentUris.TASKS_LISTS_CONTENT_URI );
+   }
+   
+   
+   
+   public final static Intent createOpenListIntentById( long id )
+   {
+      return new Intent( Intent.ACTION_VIEW,
+                         ContentUris.bindElementId( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
+                                                    id ) );
    }
    
    
@@ -576,10 +569,10 @@ public final class Intents
    
    
    public final static Intent createOpenLocationIntentByName( Context context,
-                                                              String name )
+                                                              String locationName )
    {
       return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenLocationExtras( context,
-                                                                                                                         name ) );
+                                                                                                                         locationName ) );
    }
    
    
@@ -588,15 +581,20 @@ public final class Intents
                                                                     float lat,
                                                                     int zoom )
    {
-      return new Intent( Intent.ACTION_VIEW, Uri.parse( "geo:" + lat + ","
-         + lon + "?z=" + zoom ) );
+      return new Intent( Intent.ACTION_VIEW,
+                         Uri.parse( MessageFormat.format( "geo:{0},{1}?z={2}",
+                                                          lat,
+                                                          lon,
+                                                          zoom ) ) );
    }
    
    
    
    public final static Intent createOpenLocationWithOtherAppIntent( String address )
    {
-      return new Intent( Intent.ACTION_VIEW, Uri.parse( "geo:0,0?q=" + address ) );
+      return new Intent( Intent.ACTION_VIEW,
+                         Uri.parse( MessageFormat.format( "geo:0,0?q={0}",
+                                                          address ) ) );
    }
    
    
@@ -680,7 +678,7 @@ public final class Intents
    {
       return new Intent( Intent.ACTION_EDIT,
                          ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
-                                                    task.getId() ) ).putExtras( Extras.createEditTaskExtras( task ) );
+                                                    task.getId() ) ).putExtras( Extras.createTaskExtras( task ) );
    }
    
    
@@ -718,8 +716,7 @@ public final class Intents
                                         ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
                                                                                   task.getId(),
                                                                                   note.getId() ) );
-      
-      intent.putExtras( Extras.createEditNoteExtras( task, note.getId() ) );
+      intent.putExtras( Extras.createEditNoteExtras( task, note ) );
       
       return intent;
    }
@@ -732,8 +729,8 @@ public final class Intents
                                                    String text )
    {
       final Intent intent = new Intent( Intent.ACTION_INSERT,
-                                        ContentUris.TASK_NOTES_CONTENT_URI );
-      
+                                        ContentUris.bindAggregationIdToUri( ContentUris.TASK_NOTES_CONTENT_URI,
+                                                                            task.getId() ) );
       intent.putExtras( Extras.createAddNoteExtras( task, title, text ) );
       
       return intent;

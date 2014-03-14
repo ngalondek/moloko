@@ -22,13 +22,16 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import dev.drsoran.moloko.content.Constants;
 
 
-abstract class LifeTimeManaged
+abstract class LifeTimeManaged implements Serializable
 {
+   private static final long serialVersionUID = -8846418296297341180L;
+   
    private final long createdMillisUtc;
    
    private long modifiedMillisUtc = Constants.NO_TIME;

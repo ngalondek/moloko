@@ -285,6 +285,13 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    
    
+   public void preSetLoaderData( List< D > loaderData )
+   {
+      loaderImpl.preSetLoaderData( loaderData );
+   }
+   
+   
+   
    public boolean isLoaderDataFound()
    {
       return loaderImpl.isLoaderDataFound();

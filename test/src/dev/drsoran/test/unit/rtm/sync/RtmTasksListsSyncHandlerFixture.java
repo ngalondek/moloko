@@ -339,6 +339,56 @@ public class RtmTasksListsSyncHandlerFixture
    
    
    
+   @Test
+   public void testHandleIncomingSync_Insert_Update_Delete_DeleteUntouched() throws RtmServiceException
+   {
+      final RtmTasksList list2FromPartner = newList( "2" );
+      final RtmTasksList list3FromPartner = newList( "3" );
+      final RtmTasksList list4FromPartner = newList( "4" );
+      
+      final RtmTasksList list1FromRtm = newList( "1" );
+      final RtmTasksList list2FromRtm = newList( "2" );
+      final RtmTasksList list3FromRtm = newDeletedList( "3" );
+      
+      final List< RtmTasksList > partnerList = new ArrayList< RtmTasksList >();
+      partnerList.add( list2FromPartner );
+      partnerList.add( list3FromPartner );
+      partnerList.add( list4FromPartner );
+      
+      final IRtmSyncPartner syncPartner = EasyMock.createMock( IRtmSyncPartner.class );
+      EasyMock.expect( syncPartner.getTasksLists( RtmConstants.NO_TIME ) )
+              .andReturn( partnerList );
+      syncPartner.insertTasksList( list1FromRtm );
+      syncPartner.updateTasksList( list2FromPartner, list2FromRtm );
+      syncPartner.deleteTasksList( list3FromPartner );
+      syncPartner.deleteTasksList( list4FromPartner );
+      EasyMock.replay( syncPartner );
+      
+      final List< RtmTasksList > rtmList = new ArrayList< RtmTasksList >();
+      rtmList.add( list1FromRtm );
+      rtmList.add( list2FromRtm );
+      rtmList.add( list3FromRtm );
+      
+      final IRtmContentRepository rtmRepo = EasyMock.createMock( IRtmContentRepository.class );
+      EasyMock.expect( rtmRepo.lists_getList() ).andReturn( rtmList );
+      EasyMock.replay( rtmRepo );
+      
+      final RtmTasksListsSyncHandler syncHandler = new RtmTasksListsSyncHandler( syncPartner,
+                                                                                 RtmContentSort.getRtmTasksListIdSort() );
+      
+      RtmSyncResult rtmSyncResult = syncHandler.handleIncomingSync( rtmRepo,
+                                                                    TestConstants.NEVER );
+      
+      assertThat( rtmSyncResult.hasSucceeded(), is( true ) );
+      assertThat( rtmSyncResult.getException(), is( nullValue() ) );
+      assertThat( rtmSyncResult.getTransactions().size(), is( 0 ) );
+      
+      EasyMock.verify( syncPartner );
+      EasyMock.verify( rtmRepo );
+   }
+   
+   
+   
    @Test( expected = IllegalArgumentException.class )
    public void testHandleOutgoingSync_NullEditService() throws RtmServiceException
    {

@@ -25,7 +25,7 @@ package dev.drsoran.moloko.test.unit.util;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.easymock.EasyMock;
@@ -113,6 +113,10 @@ public class BundlesFixture extends MolokoRoboTestCase
       final Parcelable parcelable = EasyMock.createNiceMock( Parcelable.class );
       Bundles.put( bundle, key, parcelable, Parcelable.class );
       assertThat( bundle.getParcelable( key ), is( parcelable ) );
+      
+      final Serializable serializable = EasyMock.createNiceMock( Serializable.class );
+      Bundles.put( bundle, key, serializable, Serializable.class );
+      assertThat( bundle.getSerializable( key ), is( serializable ) );
    }
    
    
@@ -121,7 +125,7 @@ public class BundlesFixture extends MolokoRoboTestCase
    public void testPutBundleStringObjectClassOfQ_Unsupported()
    {
       final Bundle bundle = new Bundle();
-      Bundles.put( bundle, "key", "0", BigDecimal.class );
+      Bundles.put( bundle, "key", "0", Object.class );
    }
    
    
@@ -219,7 +223,7 @@ public class BundlesFixture extends MolokoRoboTestCase
    public void testPutBundleStringObject_Unsupported()
    {
       final Bundle bundle = new Bundle();
-      Bundles.put( bundle, "key", new BigDecimal( 0 ) );
+      Bundles.put( bundle, "key", new Object() );
    }
    
    

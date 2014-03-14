@@ -35,6 +35,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentAuthority;
 import dev.drsoran.moloko.content.db.DbContentProvider;
+import dev.drsoran.moloko.content.db.RtmDatabase;
 
 
 class ClearDbPreference extends InfoTextPreference
@@ -61,7 +63,9 @@ class ClearDbPreference extends InfoTextPreference
       if ( client != null
          && ( client.getLocalContentProvider() instanceof DbContentProvider ) )
       {
-         final List< ? extends ITable > tables = ( (DbContentProvider) client.getLocalContentProvider() ).getTables();
+         final DbContentProvider dbContentProvider = (DbContentProvider) client.getLocalContentProvider();
+         final List< ? extends ITable > tables = dbContentProvider.getTables();
+         final RtmDatabase rtmDatabase = dbContentProvider.getDatabase();
          
          final CharSequence[] tableNames = new CharSequence[ tables.size() ];
          final boolean[] checked = new boolean[ tables.size() ];
@@ -105,7 +109,8 @@ class ClearDbPreference extends InfoTextPreference
                                                                           
                                                                           if ( clearList.size() > 0 )
                                                                           {
-                                                                             clear( clearList );
+                                                                             clear( rtmDatabase.getWritable(),
+                                                                                    clearList );
                                                                           }
                                                                        }
                                                                     } )
@@ -118,7 +123,8 @@ class ClearDbPreference extends InfoTextPreference
    
    
    
-   private void clear( final List< ITable > tablesToClear )
+   private void clear( final SQLiteDatabase database,
+                       final List< ITable > tablesToClear )
    {
       final AsyncTask< ITable, Void, Void > task = new AsyncTask< ITable, Void, Void >()
       {
@@ -143,9 +149,20 @@ class ClearDbPreference extends InfoTextPreference
          @Override
          protected Void doInBackground( ITable... params )
          {
-            for ( ITable table : tablesToClear )
+            try
             {
-               table.clear(null);
+               database.beginTransaction();
+               
+               for ( ITable table : tablesToClear )
+               {
+                  table.clear( database );
+               }
+               
+               database.setTransactionSuccessful();
+            }
+            finally
+            {
+               database.endTransaction();
             }
             
             return null;

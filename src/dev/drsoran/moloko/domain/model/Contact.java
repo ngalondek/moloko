@@ -34,12 +34,9 @@ public class Contact
    
    private final String fullName;
    
-   private final int numTasksParticipating;
    
    
-   
-   public Contact( long id, String userName, String fullName,
-      int numTasksParticipating )
+   public Contact( long id, String userName, String fullName )
    {
       if ( Strings.isNullOrEmpty( userName ) )
       {
@@ -49,15 +46,10 @@ public class Contact
       {
          throw new IllegalArgumentException( "fullname" );
       }
-      if ( numTasksParticipating < 0 )
-      {
-         throw new IllegalArgumentException( "numTasksParticipating" );
-      }
       
       this.id = id;
       this.userName = userName;
       this.fullName = fullName;
-      this.numTasksParticipating = numTasksParticipating;
    }
    
    
@@ -83,22 +75,13 @@ public class Contact
    
    
    
-   public int getNumTasksParticipating()
-   {
-      return numTasksParticipating;
-   }
-   
-   
-   
    @SuppressLint( "DefaultLocale" )
    @Override
    public String toString()
    {
-      return String.format( "Contact [id=%s, userName=%s, fullName=%s, part=%d]",
+      return String.format( "Contact [id=%s, userName=%s, fullName=%s]",
                             id,
                             userName,
-                            fullName,
-                            numTasksParticipating );
+                            fullName );
    }
-   
 }

@@ -210,9 +210,7 @@ public class StartUpActivity extends MolokoFragmentActivity
       switch ( startUpView )
       {
          case SettingConstants.STARTUP_VIEW_DEFAULT_LIST:
-            startActivityWithHomeAction( Intents.createOpenListIntentById( this,
-                                                                           settings.getDefaultListId(),
-                                                                           null ),
+            startActivityWithHomeAction( Intents.createOpenListIntentById( settings.getDefaultListId() ),
                                          HomeAction.HOME );
             break;
          

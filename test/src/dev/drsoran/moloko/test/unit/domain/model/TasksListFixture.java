@@ -22,16 +22,24 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
+import static dev.drsoran.moloko.test.TestConstants.EVEN_LATER;
 import static dev.drsoran.moloko.test.TestConstants.LATER;
 import static dev.drsoran.moloko.test.TestConstants.NEVER;
 import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static dev.drsoran.moloko.test.TestConstants.NO_ID;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.junit.Test;
 
@@ -306,5 +314,47 @@ public class TasksListFixture extends MolokoTestCase
    public void testToString()
    {
       new TasksList( NO_ID, NOW, "list", 0, false, false ).toString();
+   }
+   
+   
+   
+   @Test
+   public void testSerializeDeserialize() throws IOException,
+                                         ClassNotFoundException
+   {
+      final ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+      final ObjectOutputStream oos = new ObjectOutputStream( memStream );
+      
+      final TasksList list = new TasksList( 1L, NOW, "List", -1, true, true );
+      list.setModifiedMillisUtc( LATER );
+      list.setDeletedMillisUtc( EVEN_LATER );
+      list.setSmartFilter( new RtmSmartFilter( "name:Test" ) );
+      list.setTasksCount( new ExtendedTaskCount( 1, 2, 3, 4, 5, 6 ) );
+      
+      oos.writeObject( list );
+      oos.close();
+      
+      byte[] serialized = memStream.toByteArray();
+      memStream.close();
+      
+      final ByteArrayInputStream memIStream = new ByteArrayInputStream( serialized );
+      final ObjectInputStream ois = new ObjectInputStream( memIStream );
+      
+      final TasksList deserialized = (TasksList) ois.readObject();
+      
+      ois.close();
+      memIStream.close();
+      
+      assertThat( deserialized, is( notNullValue() ) );
+      assertThat( deserialized.getId(), is( 1L ) );
+      assertThat( deserialized.getCreatedMillisUtc(), is( NOW ) );
+      assertThat( deserialized.getName(), is( "List" ) );
+      assertThat( deserialized.getPosition(), is( -1 ) );
+      assertThat( deserialized.isLocked(), is( true ) );
+      assertThat( deserialized.isArchived(), is( true ) );
+      assertThat( deserialized.getModifiedMillisUtc(), is( LATER ) );
+      assertThat( deserialized.getDeletedMillisUtc(), is( EVEN_LATER ) );
+      assertThat( deserialized.getSmartFilter(), is( notNullValue() ) );
+      assertThat( deserialized.getTasksCount(), is( notNullValue() ) );
    }
 }

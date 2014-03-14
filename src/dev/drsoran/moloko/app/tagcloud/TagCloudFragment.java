@@ -47,7 +47,7 @@ import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 
 
-class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
+public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
 {
    /**
     * Relationship between task count and text size.

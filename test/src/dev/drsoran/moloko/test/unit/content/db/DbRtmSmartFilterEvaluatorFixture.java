@@ -116,6 +116,15 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    
    
    @Test
+   public void testEvalEmptyFilter() throws Exception
+   {
+      assertTrue( evaluator.evalEmptyFilter() );
+      assertQuery( "1" );
+   }
+   
+   
+   
+   @Test
    public void testEvalList() throws Exception
    {
       assertTrue( evaluator.evalList( "listName" ) );
@@ -308,8 +317,8 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalNoteContains() throws Exception
    {
-      final String noteQuery = "(SELECT taskseries_id FROM notes WHERE taskseries_id=taskseries._id "
-         + "AND note_title LIKE ''%{0}%'' OR note_text LIKE ''%{0}%'')";
+      final String noteQuery = "(SELECT taskseries_id FROM notes WHERE taskseries_id=rawtasks.taskseries_id"
+         + " AND note_title LIKE ''%{0}%'' OR note_text LIKE ''%{0}%'')";
       
       assertTrue( evaluator.evalNoteContains( "noteContent" ) );
       assertQueryAndReset( MessageFormat.format( noteQuery, "noteContent" ) );
@@ -327,8 +336,8 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalHasNotes() throws Exception
    {
-      final String hasQuery = "(taskseries._id IN (SELECT taskseries_id FROM notes))";
-      final String hasNotQuery = "(taskseries._id NOT IN (SELECT taskseries_id FROM notes))";
+      final String hasQuery = "(rawtasks.taskseries_id IN (SELECT taskseries_id FROM notes))";
+      final String hasNotQuery = "(rawtasks.taskseries_id NOT IN (SELECT taskseries_id FROM notes))";
       
       assertTrue( evaluator.evalHasNotes( true ) );
       assertQueryAndReset( hasQuery );
@@ -516,8 +525,8 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalIsShared() throws Exception
    {
-      final String isSharedQuery = "(taskseries._id IN (SELECT taskseries_id FROM participants))";
-      final String notSharedQuery = "(taskseries._id NOT IN (SELECT taskseries_id FROM participants))";
+      final String isSharedQuery = "(rawtasks.taskseries_id IN (SELECT taskseries_id FROM participants))";
+      final String notSharedQuery = "(rawtasks.taskseries_id NOT IN (SELECT taskseries_id FROM participants))";
       
       assertTrue( evaluator.evalIsShared( true ) );
       assertQueryAndReset( isSharedQuery );
@@ -538,8 +547,8 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
    @Test
    public void testEvalSharedWith() throws Exception
    {
-      final String sharedWithQuery = "(SELECT taskseries_id FROM participants WHERE taskseries_id=taskseries._id "
-         + "AND fullname LIKE ''%{0}%'' OR username LIKE ''%{0}%'')";
+      final String sharedWithQuery = "(rawtasks.taskseries_id IN (SELECT taskseries_id FROM participants WHERE"
+         + " fullname LIKE ''%{0}%'' OR username LIKE ''%{0}%''))";
       
       assertTrue( evaluator.evalSharedWith( "Tom" ) );
       assertQueryAndReset( MessageFormat.format( sharedWithQuery, "Tom" ) );
@@ -764,7 +773,7 @@ public class DbRtmSmartFilterEvaluatorFixture extends MolokoTestCase
       else
       {
          result = result.replaceAll( "\\s{2,}", " " );
-         assertThat( "( " + query + " )", is( result ) );
+         assertThat( result, is( "( " + query + " )" ) );
       }
    }
    

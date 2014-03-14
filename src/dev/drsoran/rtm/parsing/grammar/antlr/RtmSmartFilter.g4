@@ -3,7 +3,8 @@ grammar RtmSmartFilter;
 /** Rules **/
 
 parseFilter
-    : expression+
+    : expression+                       #FilterExpression
+    | EOF                               #EmptyExpression
     ;
     
 expression

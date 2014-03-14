@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.ui.MolokoLinkifier;
 import dev.drsoran.moloko.ui.adapters.MultiChoiceModalArrayAdapter;
@@ -67,7 +68,7 @@ class NotesListFragmentAdapter extends MultiChoiceModalArrayAdapter< Note >
       }
       else
       {
-         return -1;
+         return Constants.NO_ID;
       }
    }
    

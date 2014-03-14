@@ -37,14 +37,14 @@ import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 
 
-class NoteEditFragment extends AbstractNoteEditFragment
+public class NoteEditFragment extends AbstractNoteEditFragment
 {
    @InstanceState( key = Intents.Extras.KEY_TASK,
                    defaultValue = InstanceState.NO_DEFAULT )
    private Task task;
    
-   @InstanceState( key = Intents.Extras.KEY_NOTE_ID )
-   private long noteId;
+   @InstanceState( key = Intents.Extras.KEY_NOTE )
+   private Note note;
    
    private INoteEditFragmentListener listener;
    
@@ -149,8 +149,6 @@ class NoteEditFragment extends AbstractNoteEditFragment
    
    public Note getNoteAssertNotNull()
    {
-      final Note note = task.getNote( noteId );
-      
       if ( note == null )
       {
          throw new AssertionError( "note must not be null" );

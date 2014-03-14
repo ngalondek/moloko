@@ -33,6 +33,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import dev.drsoran.Strings;
 import dev.drsoran.rtm.model.RtmTasksList;
 
 
@@ -84,6 +85,13 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
       if ( "list".equalsIgnoreCase( qName ) )
       {
          readTasksList();
+      }
+      
+      // Handle the case that we have a smart list with empty <filter> element.
+      // This is still a smart list.
+      else if ( "filter".equalsIgnoreCase( qName ) && smartFilter == null )
+      {
+         smartFilter = Strings.EMPTY_STRING;
       }
    }
    

@@ -59,7 +59,7 @@ public final class RtmStyleTaskDescTextViewFormatter
          // Make underline and bold if overdue
          else
          {
-            if ( MolokoDateUtils.isAfter( dueDateMillis, nowMillisUtc ) )
+            if ( MolokoDateUtils.isBefore( dueDateMillis, nowMillisUtc ) )
             {
                final SpannableString content = new SpannableString( task.getName() );
                

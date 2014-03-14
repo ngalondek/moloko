@@ -44,9 +44,9 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
 {
    private final static String DEFAULT_OPERATOR = " AND ";
    
-   private final StringBuilder result = new StringBuilder();
-   
    private final IRtmDateTimeParsing dateTimeParsing;
+   
+   private final StringBuilder result = new StringBuilder();
    
    // We do not insert the default operator for the first, lexed token.
    // So this starts as true.
@@ -86,8 +86,17 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       result.setLength( 0 );
       
       // We do not insert the default operator for the first, lexed token.
-      // So this starts as true.
+      // So this starts with true.
       lexedOperator = true;
+   }
+   
+   
+   
+   @Override
+   public boolean evalEmptyFilter()
+   {
+      result.append( "1" );
+      return true;
    }
    
    
@@ -299,9 +308,9 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
             .append( " WHERE " )
             .append( RtmNoteColumns.TASKSERIES_ID )
             .append( "=" )
-            .append( RtmTaskSeriesTable.TABLE_NAME )
+            .append( RtmRawTasksTable.TABLE_NAME )
             .append( "." )
-            .append( RtmTaskSeriesColumns._ID )
+            .append( RtmRawTaskColumns.TASKSERIES_ID )
             .append( " AND " )
             .append( RtmNoteColumns.NOTE_TITLE );
       
@@ -324,9 +333,9 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       ensureOperatorAndResetLexedOperatorState();
       
       result.append( "(" )
-            .append( RtmTaskSeriesTable.TABLE_NAME )
+            .append( RtmRawTasksTable.TABLE_NAME )
             .append( "." )
-            .append( RtmTaskSeriesColumns._ID );
+            .append( RtmRawTaskColumns.TASKSERIES_ID );
       
       if ( hasNotes )
       {
@@ -581,9 +590,9 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       ensureOperatorAndResetLexedOperatorState();
       
       result.append( "(" )
-            .append( RtmTaskSeriesTable.TABLE_NAME )
+            .append( RtmRawTasksTable.TABLE_NAME )
             .append( "." )
-            .append( RtmTaskSeriesColumns._ID );
+            .append( RtmRawTaskColumns.TASKSERIES_ID );
       
       if ( isShared )
       {
@@ -610,17 +619,15 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    {
       ensureOperatorAndResetLexedOperatorState();
       
-      result.append( "(SELECT " )
+      result.append( "(" )
+            .append( RtmRawTasksTable.TABLE_NAME )
+            .append( "." )
+            .append( RtmRawTaskColumns.TASKSERIES_ID )
+            .append( " IN (SELECT " )
             .append( RtmParticipantColumns.TASKSERIES_ID )
             .append( " FROM " )
             .append( RtmParticipantsTable.TABLE_NAME )
             .append( " WHERE " )
-            .append( RtmParticipantColumns.TASKSERIES_ID )
-            .append( "=" )
-            .append( RtmTaskSeriesTable.TABLE_NAME )
-            .append( "." )
-            .append( RtmTaskSeriesColumns._ID )
-            .append( " AND " )
             .append( RtmParticipantColumns.FULLNAME );
       
       containsStringParam( sharedWith );
@@ -629,7 +636,7 @@ public class DbRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
       
       containsStringParam( sharedWith );
       
-      result.append( ")" );
+      result.append( "))" );
       
       return true;
    }

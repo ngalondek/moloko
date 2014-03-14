@@ -105,12 +105,12 @@ public class RtmLocationsSyncHandler implements IRtmSyncHandler
             syncPartner.updateLocation( syncPartnerLocation, rtmLocation );
             syncPartnerLocations.remove( posPartnerLocation );
          }
-         
-         // DELETE: The partner list elements are and no longer at RTM side.
-         for ( RtmLocation untouchedLocation : syncPartnerLocations )
-         {
-            syncPartner.deleteLocation( untouchedLocation );
-         }
+      }
+      
+      // DELETE: The partner list elements are and no longer at RTM side.
+      for ( RtmLocation untouchedLocation : syncPartnerLocations )
+      {
+         syncPartner.deleteLocation( untouchedLocation );
       }
       
       return RtmSyncResult.newSucceeded();

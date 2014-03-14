@@ -25,22 +25,22 @@
       android:summaryOff="@string/moloko_prefs_acra_summary_off"
       android:defaultValue="@string/def_acra_enable" />
 
-   <dev.drsoran.moloko.prefs.SendLogPreference
+   <dev.drsoran.moloko.app.prefs.SendLogPreference
       android:title="@string/moloko_prefs_send_log_text"
       moloko:infoIcon="@drawable/ic_prefs_send_log"
       moloko:infoWidgetLayout="@layout/moloko_prefs_widget_send_log" />
 
-   <dev.drsoran.moloko.prefs.SendDbPreference
+   <dev.drsoran.moloko.app.prefs.SendDbPreference
       android:title="@string/moloko_prefs_send_db_text"
       moloko:infoIcon="@drawable/ic_prefs_send_log"
       moloko:infoWidgetLayout="@layout/moloko_prefs_widget_send_log" />
       
-   <dev.drsoran.moloko.prefs.ClearDbPreference
+   <dev.drsoran.moloko.app.prefs.ClearDbPreference
       android:title="@string/moloko_prefs_clear_db_text"
       moloko:infoIcon="@drawable/ic_prefs_delete"
       moloko:infoWidgetLayout="@layout/moloko_prefs_widget_clear_db" />
 
-   <dev.drsoran.moloko.prefs.AboutPreference
+   <dev.drsoran.moloko.app.prefs.AboutPreference
       android:title="@string/moloko_about_text"
       moloko:infoIcon="@drawable/ic_prefs_info"
       moloko:infoWidgetLayout="@layout/moloko_prefs_widget_about" />

@@ -193,7 +193,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
          final Iterable< Task > tasks = getUiContext().asDomainContext()
                                                       .getContentRepository()
                                                       .getTasksFromSmartFilter( new RtmSmartFilter( getFilterExpression( getCalendar() ) ),
-                                                                                TaskContentOptions.Minimal );
+                                                                                TaskContentOptions.None );
          return Iterables.size( tasks );
       }
       catch ( GrammarException e )

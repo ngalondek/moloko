@@ -61,7 +61,6 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    
    
-   // TODO: Handle contentException
    public ContentException getContentException()
    {
       return contentException;
@@ -144,6 +143,8 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       }
       else
       {
+         throwContentExceptionOnError();
+         
          this.result = result;
          
          if ( isStarted() )

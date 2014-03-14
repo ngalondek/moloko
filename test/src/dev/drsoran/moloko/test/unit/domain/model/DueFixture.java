@@ -23,7 +23,14 @@
 package dev.drsoran.moloko.test.unit.domain.model;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.junit.Assume;
 import org.junit.Test;
@@ -95,6 +102,35 @@ public class DueFixture extends EqualsHashCodeTestCase
    {
       Assume.assumeTrue( !( due == NEVER && HAS_TIME ) );
       new Due( due, hasDueTime ).toString();
+   }
+   
+   
+   
+   @Test
+   public void testSerializeDeserialize() throws IOException,
+                                         ClassNotFoundException
+   {
+      final ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+      final ObjectOutputStream oos = new ObjectOutputStream( memStream );
+      
+      final Due due = new Due( NOW, true );
+      oos.writeObject( due );
+      oos.close();
+      
+      byte[] serialized = memStream.toByteArray();
+      memStream.close();
+      
+      final ByteArrayInputStream memIStream = new ByteArrayInputStream( serialized );
+      final ObjectInputStream ois = new ObjectInputStream( memIStream );
+      
+      final Due deserializedDue = (Due) ois.readObject();
+      
+      ois.close();
+      memIStream.close();
+      
+      assertThat( deserializedDue, is( notNullValue() ) );
+      assertThat( deserializedDue.getMillisUtc(), is( NOW ) );
+      assertThat( deserializedDue.hasDueTime(), is( true ) );
    }
    
    

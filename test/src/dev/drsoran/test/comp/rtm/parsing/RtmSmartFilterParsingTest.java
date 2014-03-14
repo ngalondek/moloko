@@ -95,7 +95,7 @@ public class RtmSmartFilterParsingTest extends MolokoTestCase
    
    
    
-   @Test( expected = GrammarException.class )
+   @Test
    public void testEvaluateRtmSmartFilterString_Empty() throws GrammarException
    {
       smartFilterParsing.evaluateRtmSmartFilter( Strings.EMPTY_STRING );
@@ -137,12 +137,13 @@ public class RtmSmartFilterParsingTest extends MolokoTestCase
    
    
    
-   @Test( expected = GrammarException.class )
+   @Test
    public void testEvaluateRtmSmartFilterWithEvaluator_Empty() throws GrammarException
    {
       try
       {
          final IRtmSmartFilterEvaluator eval = EasyMock.createStrictMock( IRtmSmartFilterEvaluator.class );
+         EasyMock.expect( eval.evalEmptyFilter() ).andReturn( Boolean.TRUE );
          EasyMock.replay( eval );
          
          smartFilterParsing.evaluateRtmSmartFilter( Strings.EMPTY_STRING, eval );
@@ -191,7 +192,7 @@ public class RtmSmartFilterParsingTest extends MolokoTestCase
    
    
    
-   @Test( expected = GrammarException.class )
+   @Test
    public void testGetSmartFilterTokens_Empty() throws GrammarException
    {
       smartFilterParsing.getSmartFilterTokens( Strings.EMPTY_STRING );
@@ -213,6 +214,8 @@ public class RtmSmartFilterParsingTest extends MolokoTestCase
       assertThat( smartFilterParsing.isParsableSmartFilter( "list:List" ),
                   is( true ) );
       assertThat( smartFilterParsing.isParsableSmartFilter( Strings.EMPTY_STRING ),
+                  is( true ) );
+      assertThat( smartFilterParsing.isParsableSmartFilter( "abc:def" ),
                   is( false ) );
    }
    

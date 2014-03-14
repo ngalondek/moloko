@@ -43,6 +43,14 @@ public class NullRtmSmartFilterEvaluator implements IRtmSmartFilterEvaluator
    
    
    @Override
+   public boolean evalEmptyFilter()
+   {
+      return true;
+   }
+   
+   
+   
+   @Override
    public boolean evalList( String listName )
    {
       return true;

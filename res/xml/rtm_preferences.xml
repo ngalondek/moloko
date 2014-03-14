@@ -26,14 +26,14 @@
          android:action="dev.drsoran.moloko.prefs.account.MAIN" />
    </PreferenceScreen>
 
-   <dev.drsoran.moloko.prefs.DefaultListPreference
+   <dev.drsoran.moloko.app.prefs.DefaultListPreference
       android:title="@string/moloko_prefs_rtm_defaultlist_title"
       moloko:summaryPattern="%s"
       android:key="@string/key_def_list_local"
       moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm"
       android:defaultValue="@string/def_default_list" />
 
-   <dev.drsoran.moloko.prefs.RtmSyncStatePreference
+   <dev.drsoran.moloko.app.prefs.RtmSyncStatePreference
       android:title="@string/moloko_prefs_rtm_sync_title"
       moloko:summaryPattern="@string/design_text"
       moloko:infoIcon="@drawable/ic_prefs_refresh"

@@ -134,6 +134,27 @@ public final class Strings
    
    
    
+   public static boolean isEmptyOrWhitespace( CharSequence charSequence )
+   {
+      if ( charSequence == null )
+      {
+         return true;
+      }
+      
+      final int cnt = charSequence.length();
+      for ( int i = 0; i < cnt; i++ )
+      {
+         if ( !Character.isWhitespace( charSequence.charAt( i ) ) )
+         {
+            return false;
+         }
+      }
+      
+      return true;
+   }
+   
+   
+   
    public static < T > String join( CharSequence delemiter,
                                     Iterable< T > elements )
    {

@@ -37,7 +37,7 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testContact()
    {
-      new Contact( 1, "user", "full", 0 );
+      new Contact( 1, "user", "full" );
    }
    
    
@@ -45,7 +45,7 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testContactNoId()
    {
-      new Contact( Constants.NO_ID, "user", "full", 0 );
+      new Contact( Constants.NO_ID, "user", "full" );
    }
    
    
@@ -53,7 +53,7 @@ public class ContactFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testContactNullUser()
    {
-      new Contact( 1, null, "full", 0 );
+      new Contact( 1, null, "full" );
    }
    
    
@@ -61,7 +61,7 @@ public class ContactFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testContactEmptyUser()
    {
-      new Contact( 1, "", "full", 0 );
+      new Contact( 1, "", "full" );
    }
    
    
@@ -69,7 +69,7 @@ public class ContactFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testContactNullName()
    {
-      new Contact( 1, "user", null, 0 );
+      new Contact( 1, "user", null );
    }
    
    
@@ -77,15 +77,7 @@ public class ContactFixture extends MolokoTestCase
    @Test( expected = IllegalArgumentException.class )
    public void testContactEmptyName()
    {
-      new Contact( 1, "user", "", 0 );
-   }
-   
-   
-   
-   @Test( expected = IllegalArgumentException.class )
-   public void testContactNegativeParticipantCount()
-   {
-      new Contact( 1, "user", "", -1 );
+      new Contact( 1, "user", "" );
    }
    
    
@@ -93,7 +85,7 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testGetId()
    {
-      assertThat( new Contact( 1L, "user", "full", 0 ).getId(), is( 1L ) );
+      assertThat( new Contact( 1L, "user", "full" ).getId(), is( 1L ) );
    }
    
    
@@ -101,8 +93,7 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testGetUsername()
    {
-      assertThat( new Contact( 1L, "user", "full", 0 ).getUsername(),
-                  is( "user" ) );
+      assertThat( new Contact( 1L, "user", "full" ).getUsername(), is( "user" ) );
    }
    
    
@@ -110,17 +101,7 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testGetFullname()
    {
-      assertThat( new Contact( 1L, "user", "full", 0 ).getFullname(),
-                  is( "full" ) );
-   }
-   
-   
-   
-   @Test
-   public void testGetNumTasksParticipating()
-   {
-      assertThat( new Contact( 1L, "user", "full", 10 ).getNumTasksParticipating(),
-                  is( 10 ) );
+      assertThat( new Contact( 1L, "user", "full" ).getFullname(), is( "full" ) );
    }
    
    
@@ -128,6 +109,6 @@ public class ContactFixture extends MolokoTestCase
    @Test
    public void testToString()
    {
-      new Contact( 1L, "user", "full", 0 ).toString();
+      new Contact( 1L, "user", "full" ).toString();
    }
 }

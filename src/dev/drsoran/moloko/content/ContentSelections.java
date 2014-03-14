@@ -55,4 +55,11 @@ public class ContentSelections
                                                                                                                    .toString();
       SEL_NO_DELETED_NOTES = NoteColumns.NOTE_DELETED_DATE + " IS NULL";
    }
+   
+   
+   
+   private ContentSelections()
+   {
+      throw new AssertionError();
+   }
 }

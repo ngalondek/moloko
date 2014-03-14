@@ -22,11 +22,15 @@
 
 package dev.drsoran.moloko.domain.model;
 
+import java.io.Serializable;
+
 import dev.drsoran.Strings;
 
 
-public class Participant
+public class Participant implements Serializable
 {
+   private static final long serialVersionUID = -2861291697330134734L;
+   
    private final long id;
    
    private final String fullname;

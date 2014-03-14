@@ -25,6 +25,9 @@
  */
 package dev.drsoran.moloko.domain.model;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import dev.drsoran.rtm.parsing.recurrence.RtmRecurrence;
@@ -36,7 +39,7 @@ public class Recurrence implements Serializable
    
    public final static Recurrence EMPTY = new Recurrence( RtmRecurrence.EMPTY );
    
-   private final RtmRecurrence rtmRecurrence;
+   private transient RtmRecurrence rtmRecurrence;
    
    
    
@@ -110,5 +113,28 @@ public class Recurrence implements Serializable
       return String.format( "Recurrence [pattern=%s, isEvery=%s]",
                             getPattern(),
                             isEveryRecurrence() );
+   }
+   
+   
+   
+   private void readObject( ObjectInputStream inputStream ) throws ClassNotFoundException,
+                                                           IOException
+   {
+      inputStream.defaultReadObject();
+      
+      final String pattern = (String) inputStream.readObject();
+      final boolean isEvery = inputStream.readBoolean();
+      
+      rtmRecurrence = new RtmRecurrence( pattern, isEvery );
+   }
+   
+   
+   
+   private void writeObject( ObjectOutputStream outputStream ) throws IOException
+   {
+      outputStream.defaultWriteObject();
+      
+      outputStream.writeObject( getPattern() );
+      outputStream.writeBoolean( isEveryRecurrence() );
    }
 }

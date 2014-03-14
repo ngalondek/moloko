@@ -44,7 +44,7 @@ import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
 
 
-class ContactsListFragment extends MolokoListFragment< LinkedContact >
+public class ContactsListFragment extends MolokoListFragment< LinkedContact >
 {
    private IContactsListFragmentListener listener;
    

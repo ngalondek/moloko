@@ -63,7 +63,7 @@ class RtmSettingsTable extends AbstractTable
       builder.append( RtmSettingsColumns.TIMEFORMAT );
       builder.append( " INTEGER NOT NULL DEFAULT 0, " );
       builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
-      builder.append( " INTEGER, " );
+      builder.append( " INTEGER DEFAULT -1, " );
       builder.append( RtmSettingsColumns.LANGUAGE );
       builder.append( " TEXT, " );
       builder.append( RtmSettingsColumns.RTM_DEFAULTLIST_ID );
@@ -89,6 +89,35 @@ class RtmSettingsTable extends AbstractTable
       builder.append( "INSERT INTO " );
       builder.append( TABLE_NAME );
       builder.append( " DEFAULT VALUES;" );
+      
+      database.execSQL( builder.toString() );
+   }
+   
+   
+   
+   @Override
+   public void clear( SQLiteDatabase database )
+   {
+      final StringBuilder builder = new StringBuilder();
+      
+      builder.append( "UPDATE " );
+      builder.append( TABLE_NAME );
+      builder.append( " SET " );
+      builder.append( RtmSettingsColumns.SYNC_TIMESTAMP );
+      builder.append( " = -1, " );
+      builder.append( RtmSettingsColumns.TIMEZONE );
+      builder.append( " = NULL, " );
+      builder.append( RtmSettingsColumns.DATEFORMAT );
+      builder.append( " = 0, " );
+      builder.append( RtmSettingsColumns.TIMEFORMAT );
+      builder.append( " = 0, " );
+      builder.append( RtmSettingsColumns.DEFAULTLIST_ID );
+      builder.append( " = -1, " );
+      builder.append( RtmSettingsColumns.LANGUAGE );
+      builder.append( " = NULL, " );
+      builder.append( RtmSettingsColumns.RTM_DEFAULTLIST_ID );
+      builder.append( " = NULL" );
+      builder.append( ";" );
       
       database.execSQL( builder.toString() );
    }

@@ -60,9 +60,7 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    @Override
    public void onOpenList( long listId )
    {
-      startActivityWithHomeAction( Intents.createOpenListIntentById( this,
-                                                                     listId,
-                                                                     null ),
+      startActivityWithHomeAction( Intents.createOpenListIntentById( listId ),
                                    getClass() );
    }
    

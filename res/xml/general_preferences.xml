@@ -18,18 +18,18 @@
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko">
 
-   <dev.drsoran.moloko.prefs.StartUpViewPreference
+   <dev.drsoran.moloko.app.prefs.StartUpViewPreference
       android:title="@string/moloko_prefs_startup_view_title"
       moloko:summaryPattern="%s"
       android:key="@string/key_startup_view"
       android:defaultValue="@string/def_startup_view" />
    
-   <dev.drsoran.moloko.prefs.SyncAtStartUpPreference 
+   <dev.drsoran.moloko.app.prefs.SyncAtStartUpPreference 
       android:title="@string/moloko_prefs_sync_at_startup_title"
       android:key="@string/key_sync_at_startup"
       android:defaultValue="@string/def_sync_at_startup" />
 
-   <dev.drsoran.moloko.prefs.TaskSortPreference
+   <dev.drsoran.moloko.app.prefs.TaskSortPreference
       android:title="@string/moloko_prefs_def_sort_title"
       moloko:summaryPattern="@string/moloko_prefs_def_sort_summary"
       android:entries="@array/app_sort_options"

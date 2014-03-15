@@ -81,8 +81,8 @@ abstract class AbstractNoteEditFragment extends MolokoEditFragment
       
       if ( TextUtils.isEmpty( title ) && TextUtils.isEmpty( text ) )
       {
-         return new ValidationResult( getString( R.string.note_edit_toast_title_and_text_empty ),
-                                      this.text );
+         return new ValidationResult( getString( R.string.note_edit_toast_title_and_text_empty ) ).setSourceView( this.text )
+                                                                                                  .setFocusOnErrorView( this.text );
       }
       
       return ValidationResult.OK;

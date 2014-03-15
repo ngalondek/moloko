@@ -25,6 +25,8 @@ package dev.drsoran.moloko.app.baseactivities;
 import android.app.Dialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
@@ -81,14 +83,39 @@ public abstract class MolokoEditFragmentActivity extends MolokoFragmentActivity
    
    public void showValidationError( ValidationResult validationResult )
    {
-      Toast.makeText( this,
-                      validationResult.getValidationErrorMessage(),
-                      Toast.LENGTH_LONG ).show();
+      final View sourceView = validationResult.getSourceView();
       
-      if ( validationResult.getRequestFocusOnValidationError() != null )
+      if ( sourceView instanceof TextView )
       {
-         validationResult.getRequestFocusOnValidationError().requestFocus();
+         showValidationErrorInline( (TextView) sourceView,
+                                    validationResult.getValidationErrorMessage() );
       }
+      else
+      {
+         showValidationErrorAsToast( validationResult.getValidationErrorMessage() );
+      }
+      
+      final View focusView = validationResult.getRequestFocusOnValidationError();
+      
+      if ( focusView != null )
+      {
+         focusView.requestFocus();
+      }
+   }
+   
+   
+   
+   private void showValidationErrorInline( TextView textView,
+                                           String validationMessage )
+   {
+      textView.setError( validationMessage );
+   }
+   
+   
+   
+   private void showValidationErrorAsToast( String validationMessage )
+   {
+      Toast.makeText( this, validationMessage, Toast.LENGTH_LONG ).show();
    }
    
    

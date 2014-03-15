@@ -22,12 +22,29 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import static dev.drsoran.moloko.content.Columns.TaskColumns.DUE_DATE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.ESTIMATE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.PRIORITY;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.RECURRENCE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TAGS;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.URL;
+
+import java.util.ArrayList;
 import java.util.Collections;
 
 import android.os.Bundle;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Estimation;
+import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.rtm.model.Priority;
 
 
 public class TaskEditFragment extends AbstractTaskEditFragment
@@ -57,9 +74,29 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    
    
    @Override
-   public Task getTask()
+   protected void putInitialValues( ValuesContainer valuesContainer )
    {
-      return task;
+      valuesContainer.putValue( TASK_NAME, task.getName(), String.class );
+      valuesContainer.putValue( LIST_ID, task.getListId(), Long.class );
+      valuesContainer.putValue( LIST_NAME, task.getListName(), String.class );
+      valuesContainer.putValue( PRIORITY, task.getPriority(), Priority.class );
+      valuesContainer.putValue( TAGS,
+                                new ArrayList< String >( task.getTags() ),
+                                ArrayList.class );
+      
+      valuesContainer.putValue( DUE_DATE, task.getDue(), Due.class );
+      valuesContainer.putValue( RECURRENCE,
+                                task.getRecurrence(),
+                                Recurrence.class );
+      valuesContainer.putValue( ESTIMATE,
+                                task.getEstimation(),
+                                Estimation.class );
+      
+      valuesContainer.putValue( LOCATION_ID, task.getLocationId(), Long.class );
+      valuesContainer.putValue( LOCATION_NAME,
+                                task.getLocationName(),
+                                String.class );
+      valuesContainer.putValue( URL, task.getUrl(), String.class );
    }
    
    
@@ -67,10 +104,30 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    @Override
    public void onFinishEditing()
    {
+      applyChanges();
+      
       final ITaskEditFragmentListener editFragmentListener = getListener();
       if ( editFragmentListener != null )
       {
          editFragmentListener.onUpdateTasks( Collections.singletonList( task ) );
       }
+   }
+   
+   
+   
+   @SuppressWarnings( "unchecked" )
+   private void applyChanges()
+   {
+      task.setName( getChange( TASK_NAME, String.class ) );
+      task.setList( getChange( LIST_ID, Long.class ),
+                    getChange( LIST_NAME, String.class ) );
+      task.setPriority( getChange( PRIORITY, Priority.class ) );
+      task.setTags( getChange( TAGS, ArrayList.class ) );
+      task.setDue( getChange( DUE_DATE, Due.class ) );
+      task.setRecurrence( getChange( RECURRENCE, Recurrence.class ) );
+      task.setEstimation( getChange( ESTIMATE, Estimation.class ) );
+      task.setLocationStub( getChange( LOCATION_ID, Long.class ),
+                            getChange( LOCATION_NAME, String.class ) );
+      task.setUrl( getChange( URL, String.class ) );
    }
 }

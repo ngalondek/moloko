@@ -22,9 +22,24 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import static dev.drsoran.moloko.content.Columns.TaskColumns.DUE_DATE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.ESTIMATE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.PRIORITY;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.RECURRENCE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TAGS;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.URL;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -39,8 +54,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.TextView;
-import dev.drsoran.Iterables;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
@@ -48,9 +61,9 @@ import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.IParsingService;
-import dev.drsoran.moloko.ui.UiContext;
+import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.AfterTextChangedWatcher;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.ValueChangedListener;
@@ -58,7 +71,6 @@ import dev.drsoran.moloko.ui.fragments.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.ui.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.ui.layouts.WrappingLayout;
-import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.widgets.DueEditText;
 import dev.drsoran.moloko.ui.widgets.EstimateEditText;
 import dev.drsoran.moloko.ui.widgets.RecurrenceEditText;
@@ -68,19 +80,12 @@ import dev.drsoran.rtm.model.Priority;
 abstract class AbstractTaskEditFragment extends
          MolokoLoaderEditFragment< TaskEditData >
 {
-   private final int FULL_DATE_FLAGS = IDateFormatterService.FORMAT_WITH_YEAR;
+   @InstanceState( key = "changes", defaultValue = InstanceState.NEW )
+   private ValuesContainer changes;
    
    private AppContext appContext;
    
    private ITaskEditFragmentListener listener;
-   
-   private TextView addedDate;
-   
-   private TextView completedDate;
-   
-   private TextView source;
-   
-   private TextView postponed;
    
    private EditText nameEditText;
    
@@ -108,6 +113,13 @@ abstract class AbstractTaskEditFragment extends
    
    
    
+   protected AbstractTaskEditFragment()
+   {
+      registerAnnotatedConfiguredInstance( this, AbstractTaskEditFragment.class );
+   }
+   
+   
+   
    @Override
    public void onAttach( Activity activity )
    {
@@ -119,6 +131,18 @@ abstract class AbstractTaskEditFragment extends
          listener = (ITaskEditFragmentListener) activity;
       else
          listener = null;
+   }
+   
+   
+   
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      if ( changes.isEmpty() )
+      {
+         putInitialValues( changes );
+      }
    }
    
    
@@ -148,6 +172,20 @@ abstract class AbstractTaskEditFragment extends
    
    
    
+   public < T > void putChange( String key, T value, Class< T > type )
+   {
+      changes.putValue( key, value, type );
+   }
+   
+   
+   
+   public < T > T getChange( String key, Class< T > type ) throws NoSuchElementException
+   {
+      return changes.getValue( key, type );
+   }
+   
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -158,10 +196,6 @@ abstract class AbstractTaskEditFragment extends
                                                   false );
       
       final View content = fragmentView.findViewById( android.R.id.content );
-      addedDate = (TextView) content.findViewById( R.id.task_edit_added_date );
-      completedDate = (TextView) content.findViewById( R.id.task_edit_completed_date );
-      source = (TextView) content.findViewById( R.id.task_edit_src );
-      postponed = (TextView) content.findViewById( R.id.task_edit_postponed );
       
       // Editables
       nameEditText = (EditText) content.findViewById( R.id.task_edit_desc );
@@ -184,71 +218,26 @@ abstract class AbstractTaskEditFragment extends
    
    
    
+   @SuppressWarnings( "unchecked" )
    @Override
    public void initContentAfterDataLoaded( ViewGroup content )
    {
-      initializeHeadSection();
+      nameEditText.setText( getChange( TASK_NAME, String.class ) );
+      urlEditText.setText( getChange( URL, String.class ) );
       
-      final Task editedTask = getTask();
-      nameEditText.setText( editedTask.getName() );
-      urlEditText.setText( editedTask.getUrl() );
+      initializeTagsSection( getChange( TAGS, ArrayList.class ) );
       
-      initializeTagsSection( editedTask.getTags() );
+      initializePrioritySpinner( getChange( PRIORITY, Priority.class ) );
+      initializeListSpinner( getChange( LIST_ID, Long.class ) );
+      initializeLocationSpinner( getChange( LOCATION_ID, Long.class ) );
       
-      initializePrioritySpinner( editedTask.getPriority().toString() );
-      initializeListSpinner( String.valueOf( editedTask.getListId() ) );
-      initializeLocationSpinner( String.valueOf( editedTask.getLocationId() ) );
-      
-      initDueEditText( editedTask.getDue() );
-      initRecurrenceEditText( editedTask.getRecurrence() );
-      initEstimateEditText( editedTask.getEstimation() );
+      initDueEditText( getChange( DUE_DATE, Due.class ) );
+      initRecurrenceEditText( getChange( RECURRENCE, Recurrence.class ) );
+      initEstimateEditText( getChange( ESTIMATE, Estimation.class ) );
       
       nameEditText.requestFocus();
       
       registerInputListeners();
-   }
-   
-   
-   
-   private void initializeHeadSection()
-   {
-      final UiContext context = getUiContext();
-      final IDateFormatterService dateFormatter = context.getDateFormatter();
-      final Task task = getTask();
-      
-      addedDate.setText( dateFormatter.formatDateTime( task.getAddedMillisUtc(),
-                                                       FULL_DATE_FLAGS ) );
-      
-      if ( task.isComplete() )
-      {
-         completedDate.setText( dateFormatter.formatDateTime( task.getCompletedMillisUtc(),
-                                                              FULL_DATE_FLAGS ) );
-         completedDate.setVisibility( View.VISIBLE );
-      }
-      else
-      {
-         completedDate.setVisibility( View.GONE );
-      }
-      
-      if ( task.isPostponed() )
-      {
-         postponed.setText( getString( R.string.task_postponed,
-                                       task.getPostponedCount() ) );
-         postponed.setVisibility( View.VISIBLE );
-      }
-      else
-      {
-         postponed.setVisibility( View.GONE );
-      }
-      
-      if ( !TextUtils.isEmpty( task.getSource() ) )
-      {
-         source.setText( getString( R.string.task_source, task.getSource() ) );
-      }
-      else
-      {
-         source.setText( "?" );
-      }
    }
    
    
@@ -260,7 +249,7 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > initializeListSpinner( String initialValue )
+   private ArrayAdapter< String > initializeListSpinner( long initialListId )
    {
       final TaskEditData loaderData = getLoaderData();
       
@@ -268,7 +257,7 @@ abstract class AbstractTaskEditFragment extends
       {
          return createListSpinnerAdapterForValues( loaderData.getListIds(),
                                                    loaderData.getListNames(),
-                                                   initialValue );
+                                                   String.valueOf( initialListId ) );
       }
       
       return null;
@@ -276,16 +265,16 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > initializePrioritySpinner( String initialValue )
+   private ArrayAdapter< String > initializePrioritySpinner( Priority initialValue )
    {
       return createPrioritySpinnerAdapterForValues( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ),
                                                     Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ),
-                                                    initialValue );
+                                                    initialValue.toString() );
    }
    
    
    
-   private ArrayAdapter< String > initializeLocationSpinner( String initialValue )
+   private ArrayAdapter< String > initializeLocationSpinner( long initialLocationId )
    {
       final TaskEditData loaderData = getLoaderData();
       
@@ -298,7 +287,7 @@ abstract class AbstractTaskEditFragment extends
          
          return createLocationSpinnerAdapterForValues( locationIds,
                                                        locationNames,
-                                                       initialValue );
+                                                       String.valueOf( initialLocationId ) );
       }
       
       return null;
@@ -344,7 +333,7 @@ abstract class AbstractTaskEditFragment extends
          @Override
          public < T > void onValueChanged( T value, Class< T > type )
          {
-            setEstimationChecked( (Estimation) value );
+            setEstimationChecked( ( (Estimation) value ).getMillis() );
          }
       } );
    }
@@ -372,21 +361,21 @@ abstract class AbstractTaskEditFragment extends
    
    private void registerInputListeners()
    {
-      nameEditText.addTextChangedListener( new UiUtils.AfterTextChangedWatcher()
+      nameEditText.addTextChangedListener( new AfterTextChangedWatcher()
       {
          @Override
          public void afterTextChanged( Editable s )
          {
-            setTaskNameChecked( getTrimmed( s ) );
+            putChange( TASK_NAME, getTrimmed( s ), String.class );
          }
       } );
       
-      urlEditText.addTextChangedListener( new UiUtils.AfterTextChangedWatcher()
+      urlEditText.addTextChangedListener( new AfterTextChangedWatcher()
       {
          @Override
          public void afterTextChanged( Editable s )
          {
-            getTask().setUrl( getTrimmed( s ) );
+            putChange( URL, getTrimmed( s ), String.class );
          }
       } );
       
@@ -399,7 +388,8 @@ abstract class AbstractTaskEditFragment extends
                                      long id )
          {
             final long listId = Long.valueOf( listsSpinner.getValueAtPos( pos ) );
-            getTask().setList( listId, listsSpinner.getSelectedValue() );
+            putChange( LIST_ID, listId, Long.class );
+            putChange( LIST_NAME, listsSpinner.getSelectedValue(), String.class );
          }
          
          
@@ -421,12 +411,15 @@ abstract class AbstractTaskEditFragment extends
             final long locationId = Long.valueOf( listsSpinner.getValueAtPos( pos ) );
             if ( locationId == Constants.NO_ID )
             {
-               getTask().setLocationStub( Constants.NO_ID, null );
+               putChange( LOCATION_ID, Constants.NO_ID, Long.class );
+               putChange( LOCATION_NAME, null, String.class );
             }
             else
             {
-               getTask().setLocationStub( locationId,
-                                          locationSpinner.getSelectedValue() );
+               putChange( LOCATION_ID, locationId, Long.class );
+               putChange( LOCATION_NAME,
+                          locationSpinner.getSelectedValue(),
+                          String.class );
             }
          }
          
@@ -446,7 +439,9 @@ abstract class AbstractTaskEditFragment extends
                                      int arg2,
                                      long arg3 )
          {
-            getTask().setPriority( Priority.fromString( prioritySpinner.getSelectedValue() ) );
+            putChange( PRIORITY,
+                       Priority.fromString( prioritySpinner.getSelectedValue() ),
+                       Serializable.class );
          }
          
          
@@ -469,12 +464,14 @@ abstract class AbstractTaskEditFragment extends
       contentView.findViewById( R.id.task_edit_tags_btn_change )
                  .setOnClickListener( new OnClickListener()
                  {
+                    @SuppressWarnings( "unchecked" )
                     @Override
                     public void onClick( View v )
                     {
                        if ( listener != null )
                        {
-                          listener.onChangeTags( Iterables.asList( getTask().getTags() ) );
+                          listener.onChangeTags( getChange( TAGS,
+                                                            ArrayList.class ) );
                        }
                     }
                  } );
@@ -495,6 +492,7 @@ abstract class AbstractTaskEditFragment extends
                                                                                            Class< T > type )
                                                          {
                                                             setDueChecked( (Due) value );
+                                                            dueEditText.requestFocus();
                                                          }
                                                       } );
                        }
@@ -517,6 +515,7 @@ abstract class AbstractTaskEditFragment extends
                                                                                                   Class< T > type )
                                                                 {
                                                                    setRecurrenceChecked( (Recurrence) value );
+                                                                   recurrEditText.requestFocus();
                                                                 }
                                                              } );
                        }
@@ -538,7 +537,8 @@ abstract class AbstractTaskEditFragment extends
                                                               public < T > void onValueChanged( T value,
                                                                                                 Class< T > type )
                                                               {
-                                                                 setEstimationChecked( (Estimation) value );
+                                                                 setEstimationChecked( ( (Long) value ).longValue() );
+                                                                 estimateEditText.requestFocus();
                                                               }
                                                            } );
                        }
@@ -548,29 +548,21 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private void setTaskNameChecked( String name )
+   public void setTags( ArrayList< String > tags )
    {
-      final ValidationResult result = validateName( name );
-      if ( result.isOk() )
-      {
-         getTask().setName( name );
-      }
-      else
-      {
-         notifyValidationError( result );
-      }
+      putChange( TAGS, tags, ArrayList.class );
+      initializeTagsSection( tags );
    }
    
    
    
    private void setDueChecked( Due due )
    {
+      dueEditText.setDue( due );
+      putChange( DUE_DATE, due, Due.class );
+      
       final ValidationResult result = validateDue();
-      if ( result.isOk() )
-      {
-         getTask().setDue( due );
-      }
-      else
+      if ( !result.isOk() )
       {
          notifyValidationError( result );
       }
@@ -580,12 +572,28 @@ abstract class AbstractTaskEditFragment extends
    
    private void setRecurrenceChecked( Recurrence recurrence )
    {
+      recurrEditText.setRecurrence( recurrence );
+      putChange( RECURRENCE, recurrence, Recurrence.class );
+      
       final ValidationResult result = validateRecurrence();
-      if ( result.isOk() )
+      if ( !result.isOk() )
       {
-         getTask().setRecurrence( recurrence );
+         notifyValidationError( result );
       }
-      else
+   }
+   
+   
+   
+   private void setEstimationChecked( long estimateMillis )
+   {
+      estimateEditText.setEstimate( estimateMillis );
+      
+      final Estimation estimation = new Estimation( estimateEditText.getTextTrimmed(),
+                                                    estimateMillis );
+      putChange( ESTIMATE, estimation, Estimation.class );
+      
+      final ValidationResult result = validateEstimate();
+      if ( !result.isOk() )
       {
          notifyValidationError( result );
       }
@@ -595,23 +603,13 @@ abstract class AbstractTaskEditFragment extends
    
    private void setEstimationChecked( Estimation estimation )
    {
+      putChange( ESTIMATE, estimation, Estimation.class );
+      
       final ValidationResult result = validateEstimate();
-      if ( result.isOk() )
-      {
-         getTask().setEstimation( estimation );
-      }
-      else
+      if ( !result.isOk() )
       {
          notifyValidationError( result );
       }
-   }
-   
-   
-   
-   public void setTags( List< String > tags )
-   {
-      getTask().setTags( tags );
-      initializeTagsSection( tags );
    }
    
    
@@ -661,13 +659,13 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   protected ValidationResult validateName( String string )
+   protected ValidationResult validateName()
    {
-      final boolean ok = !TextUtils.isEmpty( string );
+      final boolean ok = !TextUtils.isEmpty( getChange( TASK_NAME, String.class ) );
       if ( !ok )
       {
-         return new ValidationResult( getString( R.string.task_edit_validate_empty_name ),
-                                      nameEditText );
+         return new ValidationResult( getString( R.string.task_edit_validate_empty_name ) ).setSourceView( nameEditText )
+                                                                                           .setFocusOnErrorView( nameEditText );
       }
       
       return ValidationResult.OK;
@@ -699,10 +697,8 @@ abstract class AbstractTaskEditFragment extends
    @Override
    public ValidationResult validate()
    {
-      final Task task = getTask();
-      
       // Task name
-      ValidationResult validationResult = validateName( task.getName() );
+      ValidationResult validationResult = validateName();
       
       // Due
       validationResult = validationResult.and( validateDue() );
@@ -782,5 +778,5 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   public abstract Task getTask();
+   protected abstract void putInitialValues( ValuesContainer valuesContainer );
 }

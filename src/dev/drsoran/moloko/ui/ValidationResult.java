@@ -30,7 +30,9 @@ public final class ValidationResult
 {
    private final String validationErrorMessage;
    
-   private final View requestFocusOnValidationError;
+   private View sourceView;
+   
+   private View requestFocusOnValidationError;
    
    public final static ValidationResult OK = new ValidationResult( null );
    
@@ -38,15 +40,23 @@ public final class ValidationResult
    
    public ValidationResult( String errorMessage )
    {
-      this( errorMessage, null );
+      this.validationErrorMessage = errorMessage;
    }
    
    
    
-   public ValidationResult( String errorMessage, View focusOnErrorView )
+   public ValidationResult setSourceView( View view )
    {
-      validationErrorMessage = errorMessage;
-      requestFocusOnValidationError = focusOnErrorView;
+      this.sourceView = view;
+      return this;
+   }
+   
+   
+   
+   public ValidationResult setFocusOnErrorView( View focusView )
+   {
+      this.requestFocusOnValidationError = focusView;
+      return this;
    }
    
    
@@ -54,6 +64,13 @@ public final class ValidationResult
    public String getValidationErrorMessage()
    {
       return validationErrorMessage;
+   }
+   
+   
+   
+   public View getSourceView()
+   {
+      return sourceView;
    }
    
    

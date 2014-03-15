@@ -251,8 +251,8 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
       
       if ( TextUtils.isEmpty( text ) )
       {
-         return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_empty_list_name ),
-                                      listNameEdit );
+         return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_empty_list_name ) ).setSourceView( listNameEdit )
+                                                                                                       .setFocusOnErrorView( listNameEdit );
       }
       else
       {
@@ -261,8 +261,8 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
          if ( trimmedText.equalsIgnoreCase( getString( R.string.app_list_name_inbox ) )
             || trimmedText.equalsIgnoreCase( getString( R.string.app_list_name_sent ) ) )
          {
-            return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_list_name ),
-                                         listNameEdit );
+            return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_list_name ) ).setSourceView( listNameEdit )
+                                                                                                            .setFocusOnErrorView( listNameEdit );
          }
       }
       
@@ -281,8 +281,8 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
                            .isParsableSmartFilter( text ) )
       {
          return new ValidationResult( getString( R.string.dlg_add_rename_list_toast_invalid_filter,
-                                                 text ),
-                                      filterEdit );
+                                                 text ) ).setSourceView( filterEdit )
+                                                         .setFocusOnErrorView( filterEdit );
       }
       
       return ValidationResult.OK;

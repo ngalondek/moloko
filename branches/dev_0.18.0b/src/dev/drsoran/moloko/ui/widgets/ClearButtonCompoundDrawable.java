@@ -42,7 +42,7 @@ public final class ClearButtonCompoundDrawable
    
    private Runnable unsetPressed;
    
-   private boolean clearBtnDown = false;
+   private boolean clearBtnDown;
    
    private boolean isShown;
    
@@ -66,13 +66,7 @@ public final class ClearButtonCompoundDrawable
       int defStyle )
    {
       this.textView = textView;
-      
       initClearButtonDrawable( attrs, defStyle );
-      
-      if ( textView.length() > 0 )
-         show();
-      else
-         hide();
    }
    
    
@@ -103,10 +97,11 @@ public final class ClearButtonCompoundDrawable
    
    public final void show()
    {
-      textView.setCompoundDrawablesWithIntrinsicBounds( null,
-                                                        null,
+      final Drawable[] compoundDrawables = textView.getCompoundDrawables();
+      textView.setCompoundDrawablesWithIntrinsicBounds( compoundDrawables[ 0 ],
+                                                        compoundDrawables[ 1 ],
                                                         clearButtonDrawable,
-                                                        null );
+                                                        compoundDrawables[ 3 ] );
       isShown = true;
    }
    
@@ -114,7 +109,11 @@ public final class ClearButtonCompoundDrawable
    
    public final void hide()
    {
-      textView.setCompoundDrawablesWithIntrinsicBounds( null, null, null, null );
+      final Drawable[] compoundDrawables = textView.getCompoundDrawables();
+      textView.setCompoundDrawablesWithIntrinsicBounds( compoundDrawables[ 0 ],
+                                                        compoundDrawables[ 1 ],
+                                                        compoundDrawables[ 2 ],
+                                                        compoundDrawables[ 3 ] );
       isShown = false;
    }
    
@@ -177,9 +176,7 @@ public final class ClearButtonCompoundDrawable
             };
          }
          
-         if ( textView.getHandler() != null )
-            textView.getHandler().post( unsetPressed );
-         
+         textView.post( unsetPressed );
          return UiUtils.CHECKED_STATE_SET;
       }
       

@@ -30,11 +30,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.InflateException;
@@ -67,34 +65,6 @@ public final class UiUtils
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
-   
-   
-   public static abstract class AfterTextChangedWatcher implements TextWatcher
-   {
-      @Override
-      abstract public void afterTextChanged( Editable s );
-      
-      
-      
-      @Override
-      public void beforeTextChanged( CharSequence s,
-                                     int start,
-                                     int count,
-                                     int after )
-      {
-      }
-      
-      
-      
-      @Override
-      public void onTextChanged( CharSequence s,
-                                 int start,
-                                 int before,
-                                 int count )
-      {
-      }
-   }
-   
    
    
    public final static String getTrimmedText( TextView textView )

@@ -28,6 +28,7 @@ import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.ui.IValueChangedListener;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
@@ -166,13 +167,15 @@ public class DueEditText extends ClearableEditText
          }
          else if ( due.hasDueTime() )
          {
-            setText( getUiContext().getDateFormatter()
-                                   .formatDateTime( due.getMillisUtc(), FORMAT ) );
+            setText( UiContext.get( getContext() )
+                              .getDateFormatter()
+                              .formatDateTime( due.getMillisUtc(), FORMAT ) );
          }
          else
          {
-            setText( getUiContext().getDateFormatter()
-                                   .formatDate( due.getMillisUtc(), FORMAT ) );
+            setText( UiContext.get( getContext() )
+                              .getDateFormatter()
+                              .formatDate( due.getMillisUtc(), FORMAT ) );
          }
       }
    }
@@ -189,9 +192,10 @@ public class DueEditText extends ClearableEditText
       {
          try
          {
-            final RtmCalendar cal = getUiContext().getParsingService()
-                                                  .getDateTimeParsing()
-                                                  .parseDateTime( dueStr );
+            final RtmCalendar cal = UiContext.get( getContext() )
+                                             .getParsingService()
+                                             .getDateTimeParsing()
+                                             .parseDateTime( dueStr );
             return new Due( cal.getTimeInMillis(), cal.hasTime() );
          }
          catch ( GrammarException e )
@@ -245,8 +249,8 @@ public class DueEditText extends ClearableEditText
       if ( !valid )
       {
          return new ValidationResult( getContext().getString( R.string.task_edit_validate_due,
-                                                              getTextTrimmed() ),
-                                      this );
+                                                              getTextTrimmed() ) ).setSourceView( this )
+                                                                                  .setFocusOnErrorView( this );
       }
       
       return ValidationResult.OK;

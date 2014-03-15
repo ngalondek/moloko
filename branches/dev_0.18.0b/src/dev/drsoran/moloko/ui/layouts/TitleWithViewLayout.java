@@ -48,7 +48,6 @@ public abstract class TitleWithViewLayout extends LinearLayout
       LayoutInflater.from( context ).inflate( R.layout.title_with_view,
                                               this,
                                               true );
-      
       initImpl( context, attrs );
    }
    
@@ -62,7 +61,6 @@ public abstract class TitleWithViewLayout extends LinearLayout
       LayoutInflater.from( context ).inflate( R.layout.title_with_view,
                                               root,
                                               true );
-      
       initImpl( context, attrs );
    }
    

@@ -29,6 +29,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.ui.IValueChangedListener;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.rtm.parsing.GrammarException;
@@ -61,8 +62,10 @@ public class RecurrenceEditText extends ClearableEditText
    public RecurrenceEditText( Context context, AttributeSet attrs, int defStyle )
    {
       super( context, attrs, defStyle );
-      recurrenceParsing = getUiContext().getParsingService()
-                                        .getRecurrenceParsing();
+      recurrenceParsing = isInEditMode() ? null
+                                        : UiContext.get( context )
+                                                   .getParsingService()
+                                                   .getRecurrenceParsing();
    }
    
    
@@ -246,8 +249,8 @@ public class RecurrenceEditText extends ClearableEditText
       if ( !valid )
       {
          return new ValidationResult( getContext().getString( R.string.task_edit_validate_recurrence,
-                                                              getTextTrimmed() ),
-                                      this );
+                                                              getTextTrimmed() ) ).setSourceView( this )
+                                                                                  .setFocusOnErrorView( this );
       }
       
       return ValidationResult.OK;

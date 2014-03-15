@@ -29,6 +29,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.ui.IValueChangedListener;
+import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.rtm.parsing.GrammarException;
@@ -36,6 +37,7 @@ import dev.drsoran.rtm.parsing.GrammarException;
 
 public class EstimateEditText extends ClearableEditText
 {
+   // Stored as Long to have "invalid" as null state
    private Long estimationMillis;
    
    private IValueChangedListener valueChangedListener;
@@ -171,8 +173,9 @@ public class EstimateEditText extends ClearableEditText
          }
          else
          {
-            setText( getUiContext().getDateFormatter()
-                                   .formatEstimated( estimationMillis.longValue() ) );
+            setText( UiContext.get( getContext() )
+                              .getDateFormatter()
+                              .formatEstimated( estimationMillis.longValue() ) );
          }
       }
    }
@@ -189,9 +192,10 @@ public class EstimateEditText extends ClearableEditText
       {
          try
          {
-            return getUiContext().getParsingService()
-                                 .getDateTimeParsing()
-                                 .parseEstimated( estimateString );
+            return UiContext.get( getContext() )
+                            .getParsingService()
+                            .getDateTimeParsing()
+                            .parseEstimated( estimateString );
          }
          catch ( GrammarException e )
          {
@@ -204,21 +208,22 @@ public class EstimateEditText extends ClearableEditText
    
    private Long handleEmptyInputString()
    {
-      return Long.valueOf( -1 );
+      return Long.valueOf( Constants.NO_TIME );
    }
    
    
    
    private void setEstimateByMillis( long estimateMillis )
    {
-      this.estimationMillis = estimateMillis;
+      this.estimationMillis = Long.valueOf( estimateMillis );
    }
    
    
    
    private void setEstimateByString( String estimateString )
    {
-      estimationMillis = parseEstimate( estimateString );
+      final Long res = parseEstimate( estimateString );
+      estimationMillis = res;
    }
    
    
@@ -236,8 +241,8 @@ public class EstimateEditText extends ClearableEditText
       if ( !valid )
       {
          return new ValidationResult( getContext().getString( R.string.task_edit_validate_estimate,
-                                                              getTextTrimmed() ),
-                                      this );
+                                                              getTextTrimmed() ) ).setSourceView( this )
+                                                                                  .setFocusOnErrorView( this );
       }
       
       return ValidationResult.OK;
@@ -250,7 +255,9 @@ public class EstimateEditText extends ClearableEditText
       if ( valueChangedListener != null )
       {
          valueChangedListener.onValueChanged( new Estimation( getTextTrimmed(),
-                                                              estimationMillis ),
+                                                              estimationMillis == null
+                                                                                      ? Constants.NO_TIME
+                                                                                      : estimationMillis.longValue() ),
                                               Estimation.class );
       }
    }

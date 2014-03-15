@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.ui.widgets;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.AutoCompleteTextView;
@@ -58,8 +60,16 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
       super( context, attrs, defStyle );
       init( attrs );
       
-      IHandlerToken handlerToken = SystemContext.get( context )
-                                                .acquireHandlerToken();
+      final IHandlerToken handlerToken;
+      if ( !isInEditMode() )
+      {
+         handlerToken = SystemContext.get( context ).acquireHandlerToken();
+      }
+      else
+      {
+         handlerToken = null;
+      }
+      
       editTextFocusHandler = new EditTextFocusHandler( this, handlerToken );
    }
    
@@ -85,9 +95,37 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
    public boolean onTouchEvent( MotionEvent event )
    {
       if ( clearButton != null )
+      {
          return clearButton.onTouchEvent( event ) || super.onTouchEvent( event );
-      else
-         return false;
+      }
+      
+      return false;
+   }
+   
+   
+   
+   @Override
+   public void setError( CharSequence error )
+   {
+      super.setError( error );
+      
+      if ( clearButton != null )
+      {
+         controlClearButtonVisible( getTextTrimmed() );
+      }
+   }
+   
+   
+   
+   @Override
+   public void setError( CharSequence error, Drawable icon )
+   {
+      super.setError( error, icon );
+      
+      if ( clearButton != null )
+      {
+         controlClearButtonVisible( getTextTrimmed() );
+      }
    }
    
    
@@ -100,14 +138,14 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
    {
       super.onTextChanged( text, start, lengthBefore, lengthAfter );
       
+      if ( getError() != null )
+      {
+         setError( null );
+      }
+      
       if ( clearButton != null )
       {
-         final boolean clearButtonIsShown = clearButton.isShown();
-         
-         if ( clearButtonIsShown && text.length() == 0 )
-            clearButton.hide();
-         else if ( !clearButtonIsShown && text.length() > 0 )
-            clearButton.show();
+         controlClearButtonVisible( text );
       }
    }
    
@@ -132,6 +170,26 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView
       }
       
       return super.onCreateDrawableState( extraSpace );
+   }
+   
+   
+   
+   private void controlClearButtonVisible( CharSequence text )
+   {
+      final boolean clearButtonIsShown = clearButton.isShown();
+      
+      if ( !TextUtils.isEmpty( getError() ) )
+      {
+         clearButton.hide();
+      }
+      else if ( clearButtonIsShown && text.length() == 0 )
+      {
+         clearButton.hide();
+      }
+      else if ( !clearButtonIsShown && text.length() > 0 )
+      {
+         clearButton.show();
+      }
    }
    
    

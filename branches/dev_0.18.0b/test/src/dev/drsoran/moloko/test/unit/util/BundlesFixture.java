@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.test.unit.util;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.Serializable;
@@ -52,7 +54,7 @@ public class BundlesFixture extends MolokoRoboTestCase
    
    
    @Test
-   public void testPutBundleStringObjectClassOfQ()
+   public void testPutBundleClassOfQ()
    {
       final String key = "key";
       final Bundle bundle = new Bundle();
@@ -163,7 +165,7 @@ public class BundlesFixture extends MolokoRoboTestCase
    
    
    @Test
-   public void testPutBundleStringObject()
+   public void testPutBundleObject()
    {
       final String key = "key";
       final Bundle bundle = new Bundle();
@@ -192,6 +194,14 @@ public class BundlesFixture extends MolokoRoboTestCase
       assertThat( bundle.getParcelableArrayList( Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
                      + key ),
                   is( parcArrayList ) );
+      
+      final Serializable serArrayList = new ArrayList< Serializable >();
+      Bundles.put( bundle,
+                   Bundles.KEY_QUALIFIER_SERIALIZABLE_ARRAY_LIST + key,
+                   serArrayList );
+      assertThat( bundle.getSerializable( Bundles.KEY_QUALIFIER_SERIALIZABLE_ARRAY_LIST
+                     + key ),
+                  is( serArrayList ) );
       
       final SparseArray< Parcelable > parcableSparseArray = new SparseArray< Parcelable >();
       Bundles.put( bundle, key, parcableSparseArray );
@@ -256,5 +266,123 @@ public class BundlesFixture extends MolokoRoboTestCase
    public void testPutBundleStringObject_NullValue()
    {
       Bundles.put( Bundle.EMPTY, "key", null );
+   }
+   
+   
+   
+   @Test
+   public void testGetBundleClassOfQ()
+   {
+      final String key = "key";
+      final Bundle bundle = new Bundle();
+      
+      bundle.putString( key, "string" );
+      assertThat( Bundles.get( bundle, key, String.class ), is( "string" ) );
+      
+      bundle.putInt( key, 1 );
+      assertThat( Bundles.get( bundle, key, Integer.class ), is( 1 ) );
+      assertThat( Bundles.get( bundle, "?", Integer.class ), is( 0 ) );
+      assertThat( Bundles.get( bundle, "?", Integer.class, 2 ), is( 2 ) );
+      
+      bundle.putBoolean( key, true );
+      assertThat( Bundles.get( bundle, key, Boolean.class ), is( true ) );
+      assertThat( Bundles.get( bundle, "?", Boolean.class ), is( false ) );
+      assertThat( Bundles.get( bundle, "?", Boolean.class, false ), is( false ) );
+      
+      bundle.putLong( key, 1L );
+      assertThat( Bundles.get( bundle, key, Long.class ), is( 1L ) );
+      assertThat( Bundles.get( bundle, "?", Long.class ), is( 0L ) );
+      assertThat( Bundles.get( bundle, "?", Long.class, 2L ), is( 2L ) );
+      
+      bundle.putFloat( key, 1.0f );
+      assertThat( Bundles.get( bundle, key, Float.class ), is( 1.0f ) );
+      assertThat( Bundles.get( bundle, "?", Float.class ), is( 0.0f ) );
+      assertThat( Bundles.get( bundle, "?", Float.class, 2.0f ), is( 2.0f ) );
+      
+      bundle.putBundle( key, new Bundle() );
+      assertThat( Bundles.get( bundle, key, Bundle.class ),
+                  is( instanceOf( Bundle.class ) ) );
+      bundle.putBundle( key, null );
+      assertThat( Bundles.get( bundle, key, Bundle.class ), is( nullValue() ) );
+      
+      bundle.putParcelableArrayList( Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST
+         + key, new ArrayList< Parcelable >() );
+      assertThat( Bundles.get( bundle,
+                               Bundles.KEY_QUALIFIER_PARCABLE_ARRAY_LIST + key,
+                               ArrayList.class ),
+                  is( instanceOf( ArrayList.class ) ) );
+      
+      bundle.putSerializable( Bundles.KEY_QUALIFIER_SERIALIZABLE_ARRAY_LIST
+         + key, new ArrayList< Serializable >() );
+      assertThat( Bundles.get( bundle,
+                               Bundles.KEY_QUALIFIER_SERIALIZABLE_ARRAY_LIST
+                                  + key,
+                               ArrayList.class ),
+                  is( instanceOf( ArrayList.class ) ) );
+      
+      bundle.putStringArrayList( key, new ArrayList< String >() );
+      assertThat( Bundles.get( bundle, key, ArrayList.class ),
+                  is( instanceOf( ArrayList.class ) ) );
+      
+      bundle.putSparseParcelableArray( key, new SparseArray< Parcelable >() );
+      assertThat( Bundles.get( bundle, key, SparseArray.class ),
+                  is( instanceOf( SparseArray.class ) ) );
+      
+      bundle.putStringArray( key, new String[] {} );
+      assertThat( Bundles.get( bundle, key, String[].class ),
+                  is( instanceOf( String[].class ) ) );
+      
+      bundle.putBooleanArray( key, new boolean[] {} );
+      assertThat( Bundles.get( bundle, key, boolean[].class ),
+                  is( instanceOf( boolean[].class ) ) );
+      
+      bundle.putSerializable( key, new Long( 1 ) );
+      assertThat( Bundles.get( bundle, key, Serializable.class ),
+                  is( instanceOf( Serializable.class ) ) );
+      
+      bundle.putParcelable( key, EasyMock.createNiceMock( Parcelable.class ) );
+      assertThat( Bundles.get( bundle, key, Parcelable.class ),
+                  is( instanceOf( Parcelable.class ) ) );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testGetBundleStringObject_Unsupported()
+   {
+      final Bundle bundle = new Bundle();
+      Bundles.get( bundle, "key", Object.class );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testGetBundleStringObject_NullBundle()
+   {
+      Bundles.get( null, "key", String.class );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testGetBundleStringObject_NullKey()
+   {
+      Bundles.get( Bundle.EMPTY, null, String.class );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testGetBundleStringObject_EmptyKey()
+   {
+      Bundles.get( Bundle.EMPTY, "", String.class );
+   }
+   
+   
+   
+   @Test( expected = IllegalArgumentException.class )
+   public void testGetBundleStringObject_NullType()
+   {
+      Bundles.get( Bundle.EMPTY, "key", null );
    }
 }

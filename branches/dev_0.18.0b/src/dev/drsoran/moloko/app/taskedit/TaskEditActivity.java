@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,7 +30,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.Due;
@@ -92,7 +92,8 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    {
       if ( recurrence == null || recurrence == Recurrence.EMPTY )
       {
-         recurrence = new Recurrence( "after 1 year", false );
+         recurrence = new Recurrence( getString( R.string.default_recurrence_sentence ),
+                                      false );
       }
       
       final RecurrencePickerDialogFragment frag = RecurrencePickerDialogFragment.show( this,
@@ -108,7 +109,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    {
       if ( estimateMillis == -1 )
       {
-         estimateMillis = DateUtils.DAY_IN_MILLIS;
+         estimateMillis = getResources().getInteger( R.integer.default_estimation_millis );
       }
       
       final EstimatePickerDialogFragment frag = EstimatePickerDialogFragment.show( this,
@@ -150,7 +151,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    
    
    
-   private void onTagsChanged( List< String > tags )
+   private void onTagsChanged( ArrayList< String > tags )
    {
       final AbstractTaskEditFragment taskEditFragment = getTaskEditFragment();
       taskEditFragment.setTags( tags );

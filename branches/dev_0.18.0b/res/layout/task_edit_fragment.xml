@@ -35,61 +35,12 @@
             android:paddingRight="?android:attr/scrollbarSize"
             android:paddingTop="10dip" >
 
-            <TextView
-                android:id="@+id/task_edit_added_date"
-                style="@style/Task_Date_Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="10dip" />
-
-            <TextView
-                android:id="@+id/task_edit_completed_date"
-                style="@style/Task_Date_Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/task_edit_added_date"
-                android:layout_marginTop="3dip"
-                android:drawableLeft="@drawable/ic_small_green_check"
-                android:drawablePadding="2dip" />
-
-            <RelativeLayout
-                android:id="@+id/task_edit_status_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_below="@id/task_edit_completed_date"
-                android:layout_marginTop="3dip" >
-
-                <TextView
-                    android:id="@+id/task_edit_postponed"
-                    style="@style/Task_Source_Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dip"
-                    android:layout_toLeftOf="@+id/task_edit_src"
-                    android:drawableLeft="@drawable/ic_small_black_postponed"
-                    android:drawablePadding="2dip"
-                    android:text="@string/task_postponed" />
-
-                <TextView
-                    android:id="@+id/task_edit_src"
-                    style="@style/Task_Source_Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/task_source" />
-            </RelativeLayout>
-
             <dev.drsoran.moloko.ui.widgets.ClearableEditText
                 android:id="@+id/task_edit_desc"
                 style="@style/Task_Overview_DescriptionText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
-                android:layout_below="@id/task_edit_status_container"
                 android:layout_marginTop="3dip"
                 android:hint="@string/task_edit_desc_hint"
                 android:imeOptions="actionNext"

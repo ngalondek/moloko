@@ -45,8 +45,8 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.loaders.TagsLoader;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.AfterTextChangedWatcher;
 import dev.drsoran.moloko.ui.UiUtils;
-import dev.drsoran.moloko.ui.UiUtils.AfterTextChangedWatcher;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
 
 
@@ -189,7 +189,7 @@ public class ChangeTagsFragment extends MolokoLoaderFragment< List< String > >
          }
       };
       
-      tagsEditTextChangedListener = new UiUtils.AfterTextChangedWatcher()
+      tagsEditTextChangedListener = new AfterTextChangedWatcher()
       {
          @Override
          public void afterTextChanged( Editable s )

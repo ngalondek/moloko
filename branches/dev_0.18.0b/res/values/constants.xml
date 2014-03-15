@@ -7,12 +7,16 @@
    <string name="thirty_min_ms">1800000</string>
    <string name="one_hour_ms">3600000</string>
    <string name="twelve_hours_ms">43200000</string>
-   <string name="twentyfour_hours_ms">86400000</string>
+   <string name="twentyfour_hours_ms">86400000</string>   
    
    <!-- Account preferences -->
    <string name="acc_prefs_sync_interval_off">-1</string>
    
    <!-- Delay values -->
    <integer name="popup_notification_delay_on_ms">1000</integer>
+   
+   <!-- Task edit constants -->
+   <string name="default_recurrence_sentence">after 1 year</string>
+   <integer name="default_estimation_millis">86400000</integer>
       
 </resources>

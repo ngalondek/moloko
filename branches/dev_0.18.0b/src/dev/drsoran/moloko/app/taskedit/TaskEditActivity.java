@@ -120,6 +120,14 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    
    
    @Override
+   public void onAddTask( Task task )
+   {
+      getAppContext().getContentEditService().insertTask( this, task );
+   }
+   
+   
+   
+   @Override
    public void onUpdateTasks( Collection< ? extends Task > tasks )
    {
       getAppContext().getContentEditService().updateTasks( this, tasks );
@@ -168,7 +176,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
       }
       else if ( Intent.ACTION_INSERT.equals( action ) )
       {
-         // TODO: addFragment( TaskAddFragment.class );
+         addFragment( TaskAddFragment.class );
       }
       else
       {

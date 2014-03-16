@@ -34,7 +34,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
@@ -316,13 +315,13 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
          final char symbol = dateFormatOrder[ i ];
          switch ( symbol )
          {
-            case DateFormat.DATE:
+            case 'd':
                dateDayWheel = (WheelView) content.findViewById( genericWheels[ i ] );
                break;
-            case DateFormat.MONTH:
+            case 'M':
                dateMonthWheel = (WheelView) content.findViewById( genericWheels[ i ] );
                break;
-            case DateFormat.YEAR:
+            case 'y':
                dateYearWheel = (WheelView) content.findViewById( genericWheels[ i ] );
                break;
             default :

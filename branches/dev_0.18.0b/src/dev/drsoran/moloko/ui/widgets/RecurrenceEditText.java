@@ -73,7 +73,7 @@ public class RecurrenceEditText extends ClearableEditText
    public void setRecurrence( Recurrence recurrence )
    {
       setRecurrenceImpl( recurrence );
-      updateEditText();
+      setRecurrenceSentenceEditText();
    }
    
    
@@ -138,7 +138,7 @@ public class RecurrenceEditText extends ClearableEditText
          
          if ( inputValid )
          {
-            updateEditText();
+            setRecurrenceSentenceEditText();
          }
          
          notifyChange();
@@ -168,7 +168,7 @@ public class RecurrenceEditText extends ClearableEditText
    
    
    
-   private void updateEditText()
+   private void setRecurrenceSentenceEditText()
    {
       if ( isRecurrencePatternValid() )
       {
@@ -273,7 +273,7 @@ public class RecurrenceEditText extends ClearableEditText
       if ( isEnabled() )
       {
          setRecurrenceBySentence( input );
-         updateEditText();
+         setRecurrenceSentenceEditText();
       }
    }
 }

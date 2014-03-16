@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*.g|**/*.g4|**/*.tokens|dev/drsoran/moloko/app/notification/**|dev/drsoran/moloko/app/taskedit/TaskEditMultipleFragment.java|dev/drsoran/moloko/app/taskedit/TaskAddFragment.java" kind="src" path="src"/>
+	<classpathentry excluding="**/*.g|**/*.g4|**/*.tokens|dev/drsoran/moloko/app/notification/**" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="aidl"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>

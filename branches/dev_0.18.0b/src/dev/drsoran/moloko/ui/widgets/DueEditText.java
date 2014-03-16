@@ -71,7 +71,7 @@ public class DueEditText extends ClearableEditText
    public void setDue( Due due )
    {
       setDueImpl( due );
-      updateEditDueText();
+      setParsedEditDueText();
    }
    
    
@@ -127,7 +127,7 @@ public class DueEditText extends ClearableEditText
          
          if ( inputValid )
          {
-            updateEditDueText();
+            setParsedEditDueText();
          }
          
          notifyChange();
@@ -157,7 +157,7 @@ public class DueEditText extends ClearableEditText
    
    
    
-   private void updateEditDueText()
+   private void setParsedEditDueText()
    {
       if ( isDueValid() )
       {
@@ -273,7 +273,7 @@ public class DueEditText extends ClearableEditText
       if ( isEnabled() )
       {
          setDueByParseString( input );
-         updateEditDueText();
+         setParsedEditDueText();
       }
    }
 }

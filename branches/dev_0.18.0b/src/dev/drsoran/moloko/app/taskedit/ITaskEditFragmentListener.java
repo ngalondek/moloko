@@ -52,6 +52,10 @@ interface ITaskEditFragmentListener
    
    
    
+   void onAddTask( Task task );
+   
+   
+   
    void onUpdateTasks( Collection< ? extends Task > tasks );
    
    

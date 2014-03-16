@@ -46,7 +46,6 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -82,6 +81,9 @@ abstract class AbstractTaskEditFragment extends
 {
    @InstanceState( key = "changes", defaultValue = InstanceState.NEW )
    private ValuesContainer changes;
+   
+   @InstanceState( key = "isFirstInit", defaultValue = "true" )
+   private boolean isFirstInitialization;
    
    private AppContext appContext;
    
@@ -136,18 +138,6 @@ abstract class AbstractTaskEditFragment extends
    
    
    @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      if ( changes.isEmpty() )
-      {
-         putInitialValues( changes );
-      }
-   }
-   
-   
-   
-   @Override
    public void onDetach()
    {
       listener = null;
@@ -186,15 +176,8 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   @Override
-   public View createFragmentView( LayoutInflater inflater,
-                                   ViewGroup container,
-                                   Bundle savedInstanceState )
+   protected void setFragmentView( View fragmentView )
    {
-      final View fragmentView = inflater.inflate( R.layout.task_edit_fragment,
-                                                  container,
-                                                  false );
-      
       final View content = fragmentView.findViewById( android.R.id.content );
       
       // Editables
@@ -212,8 +195,6 @@ abstract class AbstractTaskEditFragment extends
       urlEditText = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
       
       enableParserEnabledFreeTextInput();
-      
-      return fragmentView;
    }
    
    
@@ -222,20 +203,27 @@ abstract class AbstractTaskEditFragment extends
    @Override
    public void initContentAfterDataLoaded( ViewGroup content )
    {
-      nameEditText.setText( getChange( TASK_NAME, String.class ) );
-      urlEditText.setText( getChange( URL, String.class ) );
+      if ( isFirstInitialization )
+      {
+         putInitialValues( changes, getLoaderDataAssertNotNull() );
+         nameEditText.requestFocus();
+         
+         nameEditText.setText( getChange( TASK_NAME, String.class ) );
+         urlEditText.setText( getChange( URL, String.class ) );
+         
+         initDueEditText( getChange( DUE_DATE, Due.class ) );
+         initRecurrenceEditText( getChange( RECURRENCE, Recurrence.class ) );
+         initEstimateEditText( getChange( ESTIMATE, Estimation.class ) );
+         
+         isFirstInitialization = false;
+      }
       
+      // These containers have to be initialized every time for device
+      // orientation changes.
       initializeTagsSection( getChange( TAGS, ArrayList.class ) );
-      
       initializePrioritySpinner( getChange( PRIORITY, Priority.class ) );
       initializeListSpinner( getChange( LIST_ID, Long.class ) );
       initializeLocationSpinner( getChange( LOCATION_ID, Long.class ) );
-      
-      initDueEditText( getChange( DUE_DATE, Due.class ) );
-      initRecurrenceEditText( getChange( RECURRENCE, Recurrence.class ) );
-      initEstimateEditText( getChange( ESTIMATE, Estimation.class ) );
-      
-      nameEditText.requestFocus();
       
       registerInputListeners();
    }
@@ -244,7 +232,10 @@ abstract class AbstractTaskEditFragment extends
    
    private void initializeTagsSection( Iterable< String > tags )
    {
-      UiUtils.inflateTags( getSherlockActivity(), tagsLayout, tags, null );
+      if ( tags != null )
+      {
+         UiUtils.inflateTags( getActivity(), tagsLayout, tags, null );
+      }
    }
    
    
@@ -590,13 +581,7 @@ abstract class AbstractTaskEditFragment extends
       
       final Estimation estimation = new Estimation( estimateEditText.getTextTrimmed(),
                                                     estimateMillis );
-      putChange( ESTIMATE, estimation, Estimation.class );
-      
-      final ValidationResult result = validateEstimate();
-      if ( !result.isOk() )
-      {
-         notifyValidationError( result );
-      }
+      setEstimationChecked( estimation );
    }
    
    
@@ -778,5 +763,6 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   protected abstract void putInitialValues( ValuesContainer valuesContainer );
+   protected abstract void putInitialValues( ValuesContainer valuesContainer,
+                                             TaskEditData taskEditData );
 }

@@ -38,6 +38,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
@@ -74,7 +78,23 @@ public class TaskEditFragment extends AbstractTaskEditFragment
    
    
    @Override
-   protected void putInitialValues( ValuesContainer valuesContainer )
+   public View createFragmentView( LayoutInflater inflater,
+                                   ViewGroup container,
+                                   Bundle savedInstanceState )
+   {
+      final View fragmentView = inflater.inflate( R.layout.task_edit_fragment,
+                                                  container,
+                                                  false );
+      setFragmentView( fragmentView );
+      
+      return fragmentView;
+   }
+   
+   
+   
+   @Override
+   protected void putInitialValues( ValuesContainer valuesContainer,
+                                    TaskEditData taskEditData )
    {
       valuesContainer.putValue( TASK_NAME, task.getName(), String.class );
       valuesContainer.putValue( LIST_ID, task.getListId(), Long.class );

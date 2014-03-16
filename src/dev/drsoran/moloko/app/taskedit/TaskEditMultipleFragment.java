@@ -68,15 +68,12 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    /**
     * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
     * 
-    * e.g. Map< TaskColumns.TASKSERIES_NAME, Map< "Task Name", 2 > >
+    * e.g. Map< TaskColumns.TASK_NAME, Map< "Task Name", 2 > >
     */
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
    
    @InstanceState( key = Intents.Extras.KEY_TASKS )
    private final ArrayList< Task > initialTasks = new ArrayList< Task >();
-   
-   @InstanceState( key = "edited_tasks", defaultValue = InstanceState.NULL )
-   private final ArrayList< Task > editedTasks = new ArrayList< Task >();
    
    
    
@@ -641,23 +638,5 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    private final String getCommonStringAttrib( String key )
    {
       return attributeCount.get( key ).toString();
-   }
-   
-   
-   
-   @Override
-   public void onFinishEditing()
-   {
-      // TODO Auto-generated method stub
-      
-   }
-   
-   
-   
-   @Override
-   public Task getTask()
-   {
-      // TODO Auto-generated method stub
-      return null;
    }
 }

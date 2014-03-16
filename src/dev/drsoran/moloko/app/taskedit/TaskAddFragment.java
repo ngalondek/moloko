@@ -22,38 +22,47 @@
 
 package dev.drsoran.moloko.app.taskedit;
 
+import static dev.drsoran.moloko.content.Columns.TaskColumns.DUE_DATE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.ESTIMATE;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.PRIORITY;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.RECURRENCE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TAGS;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.URL;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
-import dev.drsoran.Strings;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.services.AppContentEditInfo;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Estimation;
+import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.rtm.model.Priority;
-import dev.drsoran.rtm.model.RtmTask;
 
 
 public class TaskAddFragment extends AbstractTaskEditFragment
 {
-   @InstanceState( key = Intents.Extras.KEY_TASK )
-   private Task task;
-   
    @InstanceState( key = "created_date", defaultValue = "-1" )
    private long createdDate;
+   
+   private TextView addedDate;
    
    
    
@@ -79,112 +88,128 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
-      if ( task == null )
-      {
-         checkCreatedDate();
-         createNewTaskFromArguments();
-      }
-   }
-   
-   
-   
-   private void createNewTaskFromArguments()
-   {
-      final Bundle args = getArguments();
-      
-      task = new Task( Constants.NO_ID,
-                       createdDate,
-                       createdDate,
-                       args.getString( TASK_NAME ),
-                       args.getLong( LIST_ID ),
-                       args.getString( LIST_NAME ) );
-      
-      final Bundle initialValues = new Bundle( 14 );
-      initialValues.putString( Args.TASK_NAME, null );
-      
-      final String listId = determineListId( args );
-      initialValues.putString( Args.LIST_ID, listId );
-      
-      final String locationId = determineLocationId( args );
-      initialValues.putString( Args.LOCATION_ID, locationId );
-      
-      initialValues.putString( Args.PRIORITY,
-                               RtmTask.convertPriority( Priority.None ) );
-      initialValues.putString( Args.TAGS, Strings.EMPTY_STRING );
-      initialValues.putLong( Args.DUE_DATE, -1 );
-      initialValues.putBoolean( Args.HAS_DUE_TIME, false );
-      initialValues.putString( Args.RECURRENCE, null );
-      initialValues.putBoolean( Args.RECURRENCE_EVERY, false );
-      initialValues.putString( Args.ESTIMATE, null );
-      initialValues.putLong( Args.ESTIMATE_MILLIS, -1 );
-      initialValues.putString( Args.URL, null );
-      
-      return initialValues;
+      checkCreatedDate();
    }
    
    
    
    @Override
-   protected void determineInitialChanges()
+   public View createFragmentView( LayoutInflater inflater,
+                                   ViewGroup container,
+                                   Bundle savedInstanceState )
    {
-      super.determineInitialChanges();
+      final View fragmentView = inflater.inflate( R.layout.task_add_fragment,
+                                                  container,
+                                                  false );
       
-      // If there are changes made by the user, we do not replace them
-      // by the initial changes given by the arguments.
-      if ( getChanges().isEmpty() )
-      {
-         final Bundle args = getArguments();
-         
-         putChange( Tasks.TASKSERIES_NAME,
-                    args.getString( Args.TASK_NAME ),
-                    String.class );
-         
-         String priority = args.getString( Args.PRIORITY );
-         if ( TextUtils.isEmpty( priority ) )
-         {
-            priority = RtmTask.convertPriority( Priority.None );
-         }
-         
-         putChange( Tasks.PRIORITY, priority, String.class );
-         putChange( Tasks.TAGS,
-                    TextUtils.join( Tasks.TAGS_SEPARATOR, getTagsListFromArgs() ),
-                    String.class );
-         putChange( Tasks.DUE_DATE,
-                    args.getLong( Args.DUE_DATE, -1 ),
-                    Long.class );
-         putChange( Tasks.HAS_DUE_TIME,
-                    args.getBoolean( Args.HAS_DUE_TIME, false ),
-                    Boolean.class );
-         putChange( Tasks.RECURRENCE,
-                    args.getString( Args.RECURRENCE ),
-                    String.class );
-         putChange( Tasks.RECURRENCE_EVERY,
-                    args.getBoolean( Args.RECURRENCE_EVERY, false ),
-                    Boolean.class );
-         putChange( Tasks.ESTIMATE,
-                    args.getString( Args.ESTIMATE ),
-                    String.class );
-         putChange( Tasks.ESTIMATE_MILLIS,
-                    args.getLong( Args.ESTIMATE_MILLIS, -1 ),
-                    Long.class );
-         putChange( Tasks.URL, args.getString( Args.URL ), String.class );
-      }
+      addedDate = (TextView) fragmentView.findViewById( R.id.task_added_date );
+      
+      initializeHeadSection();
+      
+      setFragmentView( fragmentView );
+      
+      return fragmentView;
    }
    
    
    
-   @Override
-   protected void initializeHeadSection()
+   private void initializeHeadSection()
    {
       addedDate.setText( getUiContext().getDateFormatter()
                                        .formatDateTime( createdDate,
-                                                        FULL_DATE_FLAGS ) );
-      completedDate.setVisibility( View.GONE );
-      postponed.setVisibility( View.GONE );
+                                                        IDateFormatterService.FORMAT_WITH_YEAR ) );
+   }
+   
+   
+   
+   @Override
+   public void onFinishEditing()
+   {
+      final ITaskEditFragmentListener editFragmentListener = getListener();
+      if ( editFragmentListener != null )
+      {
+         final Task task = createNewTask();
+         editFragmentListener.onAddTask( task );
+      }
+   }
+   
+   
+   
+   @SuppressWarnings( "unchecked" )
+   private Task createNewTask()
+   {
+      final Task task = new Task( Constants.NO_ID,
+                                  createdDate,
+                                  createdDate,
+                                  getChange( TASK_NAME, String.class ),
+                                  getChange( LIST_ID, Long.class ),
+                                  getChange( LIST_NAME, String.class ) );
       
-      source.setText( getString( R.string.task_source,
-                                 getString( R.string.app_name ) ) );
+      task.setPriority( getChange( PRIORITY, Priority.class ) );
+      task.setLocationStub( getChange( LOCATION_ID, Long.class ),
+                            getChange( LOCATION_NAME, String.class ) );
+      task.setTags( getChange( TAGS, ArrayList.class ) );
+      task.setDue( getChange( DUE_DATE, Due.class ) );
+      task.setRecurrence( getChange( RECURRENCE, Recurrence.class ) );
+      task.setEstimation( getChange( ESTIMATE, Estimation.class ) );
+      task.setUrl( getChange( URL, String.class ) );
+      
+      return task;
+   }
+   
+   
+   
+   @Override
+   protected void putInitialValues( ValuesContainer valuesContainer,
+                                    TaskEditData taskEditData )
+   {
+      final Bundle args = getArguments();
+      
+      valuesContainer.putValue( TASK_NAME,
+                                args.getString( TASK_NAME ),
+                                String.class );
+      
+      final Pair< Long, String > listIdWithName = determineListIdAndListName( args,
+                                                                              taskEditData );
+      valuesContainer.putValue( LIST_ID,
+                                listIdWithName.first.longValue(),
+                                Long.class );
+      valuesContainer.putValue( LIST_NAME, listIdWithName.second, String.class );
+      
+      final Priority priority = args.containsKey( PRIORITY )
+                                                            ? (Priority) args.get( PRIORITY )
+                                                            : Priority.None;
+      valuesContainer.putValue( PRIORITY, priority, Priority.class );
+      valuesContainer.putValue( TAGS,
+                                args.getStringArrayList( TAGS ),
+                                ArrayList.class );
+      
+      valuesContainer.putValue( DUE_DATE, (Due) args.get( DUE_DATE ), Due.class );
+      valuesContainer.putValue( RECURRENCE,
+                                (Recurrence) args.get( RECURRENCE ),
+                                Recurrence.class );
+      valuesContainer.putValue( ESTIMATE,
+                                (Estimation) args.get( ESTIMATE ),
+                                Estimation.class );
+      
+      final Pair< Long, String > locationIdWithName = determineLocationIdAndLocationName( args,
+                                                                                          taskEditData );
+      if ( locationIdWithName != null )
+      {
+         valuesContainer.putValue( LOCATION_ID,
+                                   locationIdWithName.first,
+                                   Long.class );
+         valuesContainer.putValue( LOCATION_NAME,
+                                   locationIdWithName.second,
+                                   String.class );
+      }
+      else
+      {
+         valuesContainer.putValue( LOCATION_ID, Constants.NO_ID, Long.class );
+         valuesContainer.putValue( LOCATION_NAME, null, String.class );
+      }
+      
+      valuesContainer.putValue( URL, args.getString( URL ), String.class );
    }
    
    
@@ -199,178 +224,174 @@ public class TaskAddFragment extends AbstractTaskEditFragment
    
    
    
-   private String determineListId( Bundle args )
+   private Pair< Long, String > determineListIdAndListName( Bundle args,
+                                                            TaskEditData taskEditData )
    {
-      String listId = args.getString( Args.LIST_ID );
+      Pair< Long, String > listIdWithName = getListNameByListId( args,
+                                                                 taskEditData );
       
-      if ( TextUtils.isEmpty( listId ) )
+      if ( listIdWithName == null )
       {
-         final String listName = args.getString( Args.LIST_NAME );
-         
+         final String listName = args.getString( LIST_NAME );
          if ( !TextUtils.isEmpty( listName ) )
          {
-            listId = getIdByName( getLoaderDataAssertNotNull().getListIdsWithListNames(),
-                                  listName );
-         }
-         
-         if ( TextUtils.isEmpty( listId ) )
-         {
-            final List< String > tags = getTagsListFromArgs();
-            // Check if a list name is part of the tags. This can happen
-            // if a list name has been entered w/o taken the suggestion.
-            // So it has been parsed as a tag since the operator (#) is the
-            // same.
-            final String lastRemovedListId = removeListsFromTags( tags );
-            listId = lastRemovedListId;
-         }
-         
-         if ( TextUtils.isEmpty( listId ) )
-         {
-            listId = getIdByName( getLoaderDataAssertNotNull().getListIdsWithListNames(),
-                                  getString( R.string.app_list_name_inbox ) );
+            listIdWithName = getListIdByListName( listName, taskEditData );
          }
       }
       
-      return listId;
-   }
-   
-   
-   
-   private String determineLocationId( Bundle args )
-   {
-      String locationId = args.getString( Args.LOCATION_ID );
-      
-      if ( TextUtils.isEmpty( locationId ) )
+      if ( listIdWithName == null )
       {
-         final String locationName = args.getString( Args.LOCATION_NAME );
-         
-         if ( !TextUtils.isEmpty( locationName ) )
-         {
-            locationId = getIdByName( getLoaderDataAssertNotNull().getLocationIdsWithLocationNames(),
-                                      locationName );
-         }
+         // Check if a list name is part of the tags. This can happen
+         // if a list name has been entered w/o taken the suggestion.
+         // So it has been parsed as a tag since the operator (#) is the
+         // same.
+         listIdWithName = getListIdAndListNameFromTags( args, taskEditData );
       }
       
-      return locationId;
+      if ( listIdWithName == null )
+      {
+         listIdWithName = getListIdByListName( getString( R.string.app_list_name_inbox ),
+                                               taskEditData );
+      }
+      
+      return listIdWithName;
    }
    
    
    
-   private List< String > getTagsListFromArgs()
+   private Pair< Long, String > getListNameByListId( Bundle args,
+                                                     TaskEditData taskEditData )
    {
-      return new ArrayList< String >( Arrays.asList( TextUtils.split( Strings.emptyIfNull( getArguments().getString( Args.TAGS ) ),
-                                                                      Tasks.TAGS_SEPARATOR ) ) );
+      long listId = args.getLong( LIST_ID, Constants.NO_ID );
+      if ( listId != Constants.NO_ID )
+      {
+         final String listName = taskEditData.getListIdsWithListNames()
+                                             .get( Long.valueOf( listId ) );
+         if ( !TextUtils.isEmpty( listName ) )
+         {
+            return Pair.create( Long.valueOf( listId ), listName );
+         }
+      }
+      
+      return null;
+   }
+   
+   
+   
+   private Pair< Long, String > getListIdByListName( String listName,
+                                                     TaskEditData taskEditData )
+   {
+      final Map< Long, String > idsWithListNames = taskEditData.getListIdsWithListNames();
+      for ( Long listId : idsWithListNames.keySet() )
+      {
+         final String name = idsWithListNames.get( listId );
+         if ( name.equalsIgnoreCase( listName ) )
+         {
+            return Pair.create( listId, listName );
+         }
+      }
+      
+      return null;
+   }
+   
+   
+   
+   private Pair< Long, String > getListIdAndListNameFromTags( Bundle args,
+                                                              TaskEditData taskEditData )
+   {
+      final List< String > tags = args.getStringArrayList( TAGS );
+      if ( tags != null )
+      {
+         final Pair< Long, String > lastRemovedListId = removeListsFromTags( tags,
+                                                                             taskEditData );
+         return lastRemovedListId;
+      }
+      
+      return null;
    }
    
    
    
    /**
-    * @return the list ID of the last removed list name
+    * @return the list ID, list name of the last removed list name
     */
-   private String removeListsFromTags( List< String > tags )
+   private Pair< Long, String > removeListsFromTags( List< String > tags,
+                                                     TaskEditData taskEditData )
    {
-      String listId = null;
+      Pair< Long, String > listIdWithName = null;
       
       if ( tags.size() > 0 )
       {
-         final List< Pair< String, String > > listIdsToName = getLoaderDataAssertNotNull().getListIdsWithListNames();
-         
          for ( Iterator< String > i = tags.iterator(); i.hasNext(); )
          {
             final String tag = i.next();
-            // Check if the tag is a list name
-            listId = getIdByName( listIdsToName, tag );
             
-            if ( listId != null )
+            // Check if the tag is a list name
+            listIdWithName = getListIdByListName( tag, taskEditData );
+            if ( listIdWithName != null )
             {
                i.remove();
             }
          }
       }
       
-      return listId;
+      return listIdWithName;
    }
    
    
    
-   private String getIdByName( List< Pair< String, String >> idsToNames,
-                               String name )
+   private Pair< Long, String > determineLocationIdAndLocationName( Bundle args,
+                                                                    TaskEditData taskEditData )
    {
-      String res = null;
+      Pair< Long, String > locationIdWithName = getLocationNameByLocationId( args,
+                                                                             taskEditData );
       
-      for ( Iterator< Pair< String, String >> i = idsToNames.iterator(); res == null
-         && i.hasNext(); )
+      if ( locationIdWithName == null )
       {
-         final Pair< String, String > listIdToListName = i.next();
-         if ( listIdToListName.second.equalsIgnoreCase( name ) )
+         locationIdWithName = getLocationIdByLocationName( args, taskEditData );
+      }
+      
+      return locationIdWithName;
+   }
+   
+   
+   
+   private Pair< Long, String > getLocationNameByLocationId( Bundle args,
+                                                             TaskEditData taskEditData )
+   {
+      long locationId = args.getLong( LOCATION_ID, Constants.NO_ID );
+      if ( locationId != Constants.NO_ID )
+      {
+         final String locationName = taskEditData.getLocationIdsWithLocationNames()
+                                                 .get( Long.valueOf( locationId ) );
+         if ( !TextUtils.isEmpty( locationName ) )
          {
-            res = listIdToListName.first;
+            return Pair.create( Long.valueOf( locationId ), locationName );
          }
       }
       
-      return res;
+      return null;
    }
    
    
    
-   @Override
-   protected AppContentEditInfo getApplyChangesInfo()
+   private Pair< Long, String > getLocationIdByLocationName( Bundle args,
+                                                             TaskEditData taskEditData )
    {
-      saveChanges();
+      String locationName = args.getString( LOCATION_NAME );
+      if ( !TextUtils.isEmpty( locationName ) )
+      {
+         final Map< Long, String > idsWithLocationNames = taskEditData.getListIdsWithListNames();
+         for ( Long locationId : idsWithLocationNames.keySet() )
+         {
+            final String name = idsWithLocationNames.get( locationId );
+            if ( name.equalsIgnoreCase( locationName ) )
+            {
+               return Pair.create( locationId, locationName );
+            }
+         }
+      }
       
-      final Task newTask = newTask();
-      final AppContentEditInfo modifications = TaskEditUtils.insertTask( getSherlockActivity(),
-                                                                         newTask );
-      return modifications;
-   }
-   
-   
-   
-   @Override
-   protected List< Task > getEditedTasks()
-   {
-      // this is not supported since we add a new task
-      throw new UnsupportedOperationException();
-   }
-   
-   
-   
-   private final Task newTask()
-   {
-      final Date createdDate = new Date( createdDate );
-      final long dueDate = getCurrentValue( Tasks.DUE_DATE, Long.class );
-      
-      return new Task( newTaskIds.rawTaskId,
-                       newTaskIds.taskSeriesId,
-                       (String) null,
-                       false,
-                       createdDate,
-                       createdDate,
-                       getCurrentValue( Tasks.TASKSERIES_NAME, String.class ),
-                       TaskSeries.NEW_TASK_SOURCE,
-                       getCurrentValue( Tasks.URL, String.class ),
-                       getCurrentValue( Tasks.RECURRENCE, String.class ),
-                       getCurrentValue( Tasks.RECURRENCE_EVERY, Boolean.class ),
-                       getCurrentValue( Tasks.LOCATION_ID, String.class ),
-                       getCurrentValue( Tasks.LIST_ID, String.class ),
-                       dueDate == -1 ? null : new Date( dueDate ),
-                       getCurrentValue( Tasks.HAS_DUE_TIME, Boolean.class ),
-                       createdDate,
-                       (Date) null,
-                       (Date) null,
-                       RtmTask.convertPriority( getCurrentValue( Tasks.PRIORITY,
-                                                                 String.class ) ),
-                       0,
-                       getCurrentValue( Tasks.ESTIMATE, String.class ),
-                       getCurrentValue( Tasks.ESTIMATE_MILLIS, Long.class ),
-                       (String) null,
-                       0.0f,
-                       0.0f,
-                       (String) null,
-                       false,
-                       0,
-                       getCurrentValue( Tasks.TAGS, String.class ),
-                       (ParticipantList) null,
-                       Strings.EMPTY_STRING );
+      return null;
    }
 }

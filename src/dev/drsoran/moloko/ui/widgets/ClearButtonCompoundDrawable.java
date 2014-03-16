@@ -35,10 +35,11 @@ import dev.drsoran.moloko.ui.UiUtils;
 
 public final class ClearButtonCompoundDrawable
 {
-   
    private final TextView textView;
    
    private Drawable clearButtonDrawable;
+   
+   private Drawable previousDrawable;
    
    private Runnable unsetPressed;
    
@@ -98,6 +99,8 @@ public final class ClearButtonCompoundDrawable
    public final void show()
    {
       final Drawable[] compoundDrawables = textView.getCompoundDrawables();
+      previousDrawable = compoundDrawables[ 2 ];
+      
       textView.setCompoundDrawablesWithIntrinsicBounds( compoundDrawables[ 0 ],
                                                         compoundDrawables[ 1 ],
                                                         clearButtonDrawable,
@@ -112,7 +115,7 @@ public final class ClearButtonCompoundDrawable
       final Drawable[] compoundDrawables = textView.getCompoundDrawables();
       textView.setCompoundDrawablesWithIntrinsicBounds( compoundDrawables[ 0 ],
                                                         compoundDrawables[ 1 ],
-                                                        compoundDrawables[ 2 ],
+                                                        previousDrawable,
                                                         compoundDrawables[ 3 ] );
       isShown = false;
    }

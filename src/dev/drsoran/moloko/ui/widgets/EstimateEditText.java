@@ -69,7 +69,7 @@ public class EstimateEditText extends ClearableEditText
    {
       setEstimateByMillis( estimation != null ? estimation.getMillis()
                                              : Constants.NO_TIME );
-      updateEditText();
+      setFormattedEditText();
    }
    
    
@@ -77,7 +77,7 @@ public class EstimateEditText extends ClearableEditText
    public void setEstimate( long estimateMillis )
    {
       setEstimateByMillis( estimateMillis );
-      updateEditText();
+      setFormattedEditText();
    }
    
    
@@ -133,7 +133,7 @@ public class EstimateEditText extends ClearableEditText
          
          if ( inputValid )
          {
-            updateEditText();
+            setFormattedEditText();
          }
          
          notifyChange();
@@ -163,7 +163,7 @@ public class EstimateEditText extends ClearableEditText
    
    
    
-   private void updateEditText()
+   private void setFormattedEditText()
    {
       if ( isEstimateSet() )
       {
@@ -269,7 +269,7 @@ public class EstimateEditText extends ClearableEditText
       if ( isEnabled() )
       {
          setEstimateByString( input );
-         updateEditText();
+         setFormattedEditText();
       }
    }
 }

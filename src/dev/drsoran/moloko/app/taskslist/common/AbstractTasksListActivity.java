@@ -25,6 +25,7 @@ package dev.drsoran.moloko.app.taskslist.common;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
@@ -308,7 +309,8 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    public long getListIdFromIntentUri()
    {
       final Uri intentUri = getIntent().getData();
-      if ( ContentUris.MATCHER.match( intentUri ) == ContentUris.MATCH_TASKS_LISTS_ID )
+      if ( intentUri != null
+         && ContentUris.MATCHER.match( intentUri ) == ContentUris.MATCH_TASKS_LISTS_ID )
       {
          return ContentUris.getLastPathIdFromUri( intentUri );
       }
@@ -865,7 +867,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       
       public static String format( long id, int position )
       {
-         return String.format( "%d;%d", id, position );
+         return String.format( Locale.ENGLISH, "%d;%d", id, position );
       }
    }
    

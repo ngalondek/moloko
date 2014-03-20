@@ -25,6 +25,7 @@ package dev.drsoran.rtm.parsing.recurrence;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -296,7 +297,8 @@ public class RecurrenceSentenceEvaluator extends
    
    private final String formatDateUntil( String value )
    {
-      final SimpleDateFormat sdf = new SimpleDateFormat( DATE_PATTERN );
+      final SimpleDateFormat sdf = new SimpleDateFormat( DATE_PATTERN,
+                                                         Locale.US );
       sdf.setTimeZone( TimeZone.getDefault() );
       
       try

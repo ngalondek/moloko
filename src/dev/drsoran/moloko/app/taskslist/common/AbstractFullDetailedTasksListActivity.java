@@ -39,7 +39,9 @@ import com.actionbarsherlock.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
+import dev.drsoran.moloko.app.lists.IAddRenameListFragmentListener;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
@@ -52,7 +54,8 @@ import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 public abstract class AbstractFullDetailedTasksListActivity extends
          AbstractTasksListActivity implements ITasksListActionModeListener,
          IShowTasksWithTagsListener, IQuickAddTaskActionModeListener,
-         ILoaderFragmentListener, IMolokoEditDialogFragmentListener
+         ILoaderFragmentListener, IMolokoEditDialogFragmentListener,
+         IAddRenameListFragmentListener
 {
    @InstanceState( key = "ACTIONMODE_QUICK_ADD_TASK" )
    private boolean quickAddTaskActionModeActive;
@@ -331,6 +334,22 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       }
       
       finishActiveActionMode();
+   }
+   
+   
+   
+   @Override
+   public void onInsertNewList( TasksList tasksList )
+   {
+      getAppContext().getContentEditService().insertTasksList( this, tasksList );
+   }
+   
+   
+   
+   @Override
+   public void onRenameList( TasksList tasksList )
+   {
+      getAppContext().getContentEditService().updateTasksList( this, tasksList );
    }
    
    

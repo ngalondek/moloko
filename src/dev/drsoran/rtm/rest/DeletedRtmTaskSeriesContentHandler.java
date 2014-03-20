@@ -45,9 +45,9 @@ public class DeletedRtmTaskSeriesContentHandler extends
    
    private final Collection< RtmTask > tasks = new ArrayList< RtmTask >( 1 );
    
-   private Attributes taskSeriesAttributes;
-   
    private final IRtmCalendarProvider calendarProvider;
+   
+   private Attributes taskSeriesAttributes;
    
    
    
@@ -91,8 +91,7 @@ public class DeletedRtmTaskSeriesContentHandler extends
    {
       if ( "taskseries".equalsIgnoreCase( qName ) )
       {
-         setContentElementAndNotify( tasks );
-         taskSeriesAttributes = null;
+         setContentElementAndNotify( new ArrayList< RtmTask >( tasks ) );
       }
    }
    
@@ -128,5 +127,14 @@ public class DeletedRtmTaskSeriesContentHandler extends
                                         Collections.< RtmNote > emptyList(),
                                         Collections.< RtmContact > emptyList() );
       tasks.add( task );
+   }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      tasks.clear();
+      taskSeriesAttributes = null;
    }
 }

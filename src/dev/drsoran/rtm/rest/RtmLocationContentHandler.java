@@ -73,4 +73,11 @@ public class RtmLocationContentHandler extends RtmContentHandler< RtmLocation >
                                                    XmlAttr.getInt( attributes,
                                                                    ZOOM ) ) );
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+   }
 }

@@ -24,16 +24,12 @@ package dev.drsoran.moloko.app.taskslist.common;
 
 import static dev.drsoran.moloko.content.Columns.TaskColumns.DUE_DATE;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.ESTIMATE;
-import static dev.drsoran.moloko.content.Columns.TaskColumns.ESTIMATE_MILLIS;
-import static dev.drsoran.moloko.content.Columns.TaskColumns.HAS_DUE_TIME;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_ID;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_NAME;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.PRIORITY;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.RECURRENCE;
-import static dev.drsoran.moloko.content.Columns.TaskColumns.RECURRENCE_EVERY;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.TAGS;
-import static dev.drsoran.moloko.content.Columns.TaskColumns.TAGS_SEPARATOR;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.DUE_DATE_TYPE;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.ESTIMATE_TYPE;
@@ -44,6 +40,7 @@ import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.REPEAT_TYPE;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.TASK_NAME_TYPE;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -52,16 +49,17 @@ import java.util.TreeSet;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Selection;
-import android.text.TextUtils;
+import dev.drsoran.moloko.domain.model.Due;
+import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.services.IParsingService;
 import dev.drsoran.moloko.ui.UiContext;
-import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.services.ISmartAddService;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
 import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
 
@@ -130,48 +128,59 @@ class QuickAddTaskActionModeInputHandler
       if ( tokens.size() > 0 )
       {
          final RtmSmartAddAdapter rtmSmartAddAdapter = (RtmSmartAddAdapter) addTaskEdit.getAdapter();
-         Set< String > tags = new TreeSet< String >();
+         final Set< String > tags = new TreeSet< String >();
          
          for ( RtmSmartAddToken token : tokens )
          {
+            final int tokenType = token.getType();
+            final String tokenText = token.getText();
+            
             // Check that the task name is not only a space character sequence
-            if ( token.getType() == TASK_NAME_TYPE
-               && !token.textContainsOnlySpaces() )
+            if ( tokenType == TASK_NAME_TYPE && !token.textContainsOnlySpaces() )
             {
-               config.putString( TASK_NAME, token.getText() );
+               config.putString( TASK_NAME, tokenText );
             }
             else
             {
                // Check if the token value comes from a taken suggestion
-               final Object suggestionValue = rtmSmartAddAdapter.getSuggestionValue( token.getType(),
-                                                                                     token.getText() );
+               final Object suggestionValue = rtmSmartAddAdapter.getSuggestionValue( tokenType,
+                                                                                     tokenText );
                
-               switch ( token.getType() )
+               switch ( tokenType )
                {
                   case DUE_DATE_TYPE:
+                     Due due;
                      if ( suggestionValue != null )
                      {
-                        config.putLong( DUE_DATE, (Long) suggestionValue );
-                        config.putBoolean( HAS_DUE_TIME, Boolean.FALSE );
+                        due = (Due) suggestionValue;
                      }
                      else
                      {
                         try
                         {
                            final RtmCalendar cal = parsingService.getDateTimeParsing()
-                                                                 .parseDateTime( token.getText() );
-                           config.putLong( DUE_DATE, cal.getTimeInMillis() );
-                           config.putBoolean( HAS_DUE_TIME, cal.hasTime() );
+                                                                 .parseDateTime( tokenText );
+                           due = new Due( cal.getTimeInMillis(), cal.hasTime() );
                         }
                         catch ( GrammarException e )
                         {
-                           // Not parsable user input
+                           due = null;
                         }
                      }
+                     
+                     if ( due != null )
+                     {
+                        config.putSerializable( DUE_DATE, due );
+                     }
+                     
                      break;
                   
                   case PRIORITY_TYPE:
-                     config.putString( PRIORITY, token.getText() );
+                     if ( Priority.isValid( tokenText ) )
+                     {
+                        config.putSerializable( PRIORITY,
+                                                Priority.fromString( tokenText ) );
+                     }
                      break;
                   
                   case LIST_TAGS_TYPE:
@@ -181,7 +190,7 @@ class QuickAddTaskActionModeInputHandler
                      }
                      else
                      {
-                        tags.add( token.getText() );
+                        tags.add( tokenText );
                      }
                      break;
                   
@@ -192,7 +201,7 @@ class QuickAddTaskActionModeInputHandler
                      }
                      else
                      {
-                        config.putString( LOCATION_NAME, token.getText() );
+                        config.putString( LOCATION_NAME, tokenText );
                      }
                      break;
                   
@@ -208,7 +217,7 @@ class QuickAddTaskActionModeInputHandler
                         try
                         {
                            recurrence = parsingService.getRecurrenceParsing()
-                                                      .parseRecurrence( token.getText() );
+                                                      .parseRecurrence( tokenText );
                         }
                         catch ( GrammarException e )
                         {
@@ -218,36 +227,40 @@ class QuickAddTaskActionModeInputHandler
                      
                      if ( recurrence != null )
                      {
-                        config.putString( RECURRENCE, recurrence.getPattern() );
-                        config.putBoolean( RECURRENCE_EVERY,
-                                           recurrence.isEveryRecurrence() );
+                        config.putSerializable( RECURRENCE, recurrence );
                      }
                      
                      break;
                   
                   case ESTIMATE_TYPE:
+                     Estimation estimation;
+                     
                      if ( suggestionValue != null )
                      {
-                        config.putString( ESTIMATE, token.getText() );
-                        config.putLong( ESTIMATE_MILLIS, (Long) suggestionValue );
+                        estimation = new Estimation( tokenText,
+                                                     (Long) suggestionValue );
                      }
                      else
                      {
                         try
                         {
                            final long estimated = parsingService.getDateTimeParsing()
-                                                                .parseEstimated( token.getText() );
-                           config.putString( ESTIMATE,
-                                             context.getDateFormatter()
-                                                    .formatEstimated( estimated ) );
-                           config.putLong( ESTIMATE_MILLIS,
-                                           Long.valueOf( estimated ) );
+                                                                .parseEstimated( tokenText );
+                           estimation = new Estimation( context.getDateFormatter()
+                                                               .formatEstimated( estimated ),
+                                                        estimated );
                         }
                         catch ( GrammarException e )
                         {
-                           // Not parsable user input
+                           estimation = null;
                         }
                      }
+                     
+                     if ( estimation != null )
+                     {
+                        config.putSerializable( ESTIMATE, estimation );
+                     }
+                     
                      break;
                   
                   default :
@@ -258,7 +271,7 @@ class QuickAddTaskActionModeInputHandler
          
          if ( !tags.isEmpty() )
          {
-            config.putString( TAGS, TextUtils.join( TAGS_SEPARATOR, tags ) );
+            config.putStringArrayList( TAGS, new ArrayList< String >( tags ) );
          }
       }
       
@@ -348,7 +361,7 @@ class QuickAddTaskActionModeInputHandler
    
    private Collection< RtmSmartAddToken > tokenizeInput()
    {
-      final CharSequence input = UiUtils.getTrimmedSequence( addTaskEdit );
+      final CharSequence input = addTaskEdit.getText().toString().trim();
       
       context.Log().d( getClass(),
                        MessageFormat.format( "Creating tokens for ''{0}''",

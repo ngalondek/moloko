@@ -180,7 +180,6 @@ abstract class AbstractTaskEditFragment extends
    {
       final View content = fragmentView.findViewById( android.R.id.content );
       
-      // Editables
       nameEditText = (EditText) content.findViewById( R.id.task_edit_desc );
       listsSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_list );
       prioritySpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_priority );
@@ -240,32 +239,30 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > initializeListSpinner( long initialListId )
+   private void initializeListSpinner( long initialListId )
    {
       final TaskEditData loaderData = getLoaderData();
       
       if ( loaderData != null )
       {
-         return createListSpinnerAdapterForValues( loaderData.getListIds(),
-                                                   loaderData.getListNames(),
-                                                   String.valueOf( initialListId ) );
+         setListSpinnerAdapterForValues( loaderData.getListIds(),
+                                         loaderData.getListNames(),
+                                         String.valueOf( initialListId ) );
       }
-      
-      return null;
    }
    
    
    
-   private ArrayAdapter< String > initializePrioritySpinner( Priority initialValue )
+   private void initializePrioritySpinner( Priority initialValue )
    {
-      return createPrioritySpinnerAdapterForValues( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ),
-                                                    Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ),
-                                                    initialValue.toString() );
+      setPrioritySpinnerAdapterForValues( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ),
+                                          Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ),
+                                          initialValue.toString() );
    }
    
    
    
-   private ArrayAdapter< String > initializeLocationSpinner( long initialLocationId )
+   private void initializeLocationSpinner( long initialLocationId )
    {
       final TaskEditData loaderData = getLoaderData();
       
@@ -276,12 +273,10 @@ abstract class AbstractTaskEditFragment extends
          
          insertNowhereLocationEntry( locationIds, locationNames );
          
-         return createLocationSpinnerAdapterForValues( locationIds,
-                                                       locationNames,
-                                                       String.valueOf( initialLocationId ) );
+         setLocationSpinnerAdapterForValues( locationIds,
+                                             locationNames,
+                                             String.valueOf( initialLocationId ) );
       }
-      
-      return null;
    }
    
    
@@ -599,26 +594,26 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > createListSpinnerAdapterForValues( List< String > listIds,
-                                                                     List< String > listNames,
-                                                                     String initialValue )
+   private void setListSpinnerAdapterForValues( List< String > listIds,
+                                                List< String > listNames,
+                                                String initialValue )
    {
-      return createSpinnerAdapterForValues( listsSpinner,
-                                            listIds,
-                                            listNames,
-                                            initialValue );
+      setSpinnerAdapterForValues( listsSpinner,
+                                  listIds,
+                                  listNames,
+                                  initialValue );
    }
    
    
    
-   private ArrayAdapter< String > createLocationSpinnerAdapterForValues( List< String > locationIds,
-                                                                         List< String > locationNames,
-                                                                         String initialValue )
+   private void setLocationSpinnerAdapterForValues( List< String > locationIds,
+                                                    List< String > locationNames,
+                                                    String initialValue )
    {
-      return createSpinnerAdapterForValues( locationSpinner,
-                                            locationIds,
-                                            locationNames,
-                                            initialValue );
+      setSpinnerAdapterForValues( locationSpinner,
+                                  locationIds,
+                                  locationNames,
+                                  initialValue );
    }
    
    
@@ -632,14 +627,11 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > createPrioritySpinnerAdapterForValues( List< String > texts,
-                                                                         List< String > values,
-                                                                         String initialValue )
+   private void setPrioritySpinnerAdapterForValues( List< String > texts,
+                                                    List< String > values,
+                                                    String initialValue )
    {
-      return createSpinnerAdapterForValues( prioritySpinner,
-                                            values,
-                                            texts,
-                                            initialValue );
+      setSpinnerAdapterForValues( prioritySpinner, values, texts, initialValue );
    }
    
    
@@ -736,10 +728,10 @@ abstract class AbstractTaskEditFragment extends
    
    
    
-   private ArrayAdapter< String > createSpinnerAdapterForValues( TitleWithSpinnerLayout spinner,
-                                                                 List< String > values,
-                                                                 List< String > displayStrings,
-                                                                 String initialValue )
+   private void setSpinnerAdapterForValues( TitleWithSpinnerLayout spinner,
+                                            List< String > values,
+                                            List< String > displayStrings,
+                                            String initialValue )
    {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
                                                                          android.R.layout.simple_spinner_item,
@@ -750,8 +742,6 @@ abstract class AbstractTaskEditFragment extends
       spinner.setAdapter( adapter );
       spinner.setValues( values );
       spinner.setSelectionByValue( initialValue, 0 );
-      
-      return adapter;
    }
    
    

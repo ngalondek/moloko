@@ -27,6 +27,8 @@ import java.util.Collection;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -38,14 +40,7 @@ import dev.drsoran.moloko.R;
 
 public class TitleWithSpinnerLayout extends TitleWithViewLayout
 {
-   public interface StringConverter
-   {
-      String convertToString( Object object );
-   }
-   
    private Spinner spinner;
-   
-   private StringConverter converter;
    
    private String[] values;
    
@@ -64,6 +59,30 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    {
       super( context, attrs, root );
       initView( context, attrs, getViewContainer() );
+   }
+   
+   
+   
+   @Override
+   protected Parcelable onSaveInstanceState()
+   {
+      final Parcelable superState = super.onSaveInstanceState();
+      final SavedState state = new SavedState( superState );
+      state.spinnerState = spinner.onSaveInstanceState();
+      
+      return state;
+   }
+   
+   
+   
+   @Override
+   protected void onRestoreInstanceState( Parcelable state )
+   {
+      final SavedState ss = (SavedState) state;
+      super.onRestoreInstanceState( ss.getSuperState() );
+      
+      values = ss.values;
+      spinner.onRestoreInstanceState( ss.spinnerState );
    }
    
    
@@ -99,13 +118,6 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    
    
    
-   public void setStringConverter( StringConverter converter )
-   {
-      this.converter = converter;
-   }
-   
-   
-   
    public void setSelectionByEntry( String entry, int notFoundIndex )
    {
       final SpinnerAdapter adapter = spinner.getAdapter();
@@ -121,17 +133,14 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
             {
                final Object item = adapter.getItem( i );
                
-               String spinnerEntry = null;
-               
-               if ( converter != null )
-                  spinnerEntry = converter.convertToString( item );
-               else
-                  spinnerEntry = item.toString();
+               String spinnerEntry = item.toString();
                
                if ( spinnerEntry.equals( entry ) )
                {
                   if ( spinner.getSelectedItemPosition() != i )
+                  {
                      spinner.setSelection( i );
+                  }
                   
                   found = true;
                }
@@ -139,7 +148,9 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
          }
          
          if ( !found && notFoundIndex != -1 && cnt > notFoundIndex )
+         {
             spinner.setSelection( notFoundIndex );
+         }
       }
    }
    
@@ -158,14 +169,18 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
                || ( value != null && values[ i ] != null && value.equals( values[ i ] ) ) )
             {
                if ( spinner.getSelectedItemPosition() != i )
+               {
                   spinner.setSelection( i );
+               }
                
                found = true;
             }
          }
          
          if ( !found && notFoundIndex != -1 && values.length > notFoundIndex )
+         {
             spinner.setSelection( notFoundIndex );
+         }
       }
    }
    
@@ -199,9 +214,11 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    public String getValueAtPos( int pos )
    {
       if ( values != null && values.length > pos )
+      {
          return values[ pos ];
-      else
-         return null;
+         
+      }
+      return null;
    }
    
    
@@ -249,5 +266,59 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       array.recycle();
       
       container.addView( spinner );
+   }
+   
+   
+   private static class SavedState extends BaseSavedState
+   {
+      String[] values;
+      
+      Parcelable spinnerState;
+      
+      
+      
+      public SavedState( Parcelable superState )
+      {
+         super( superState );
+      }
+      
+      
+      
+      @Override
+      public void writeToParcel( Parcel dest, int flags )
+      {
+         super.writeToParcel( dest, flags );
+         
+         dest.writeStringArray( values );
+         dest.writeParcelable( spinnerState, flags );
+      }
+      
+      
+      
+      private SavedState( Parcel in )
+      {
+         super( in );
+         
+         in.readStringArray( values );
+         spinnerState = in.readParcelable( null );
+      }
+      
+      @SuppressWarnings( "unused" )
+      public static final Parcelable.Creator< SavedState > CREATOR = new Parcelable.Creator< SavedState >()
+      {
+         @Override
+         public SavedState createFromParcel( Parcel in )
+         {
+            return new SavedState( in );
+         }
+         
+         
+         
+         @Override
+         public SavedState[] newArray( int size )
+         {
+            return new SavedState[ size ];
+         }
+      };
    }
 }

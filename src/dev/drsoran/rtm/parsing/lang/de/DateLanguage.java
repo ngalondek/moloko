@@ -82,7 +82,7 @@ public class DateLanguage implements ILanguage
    
    private int keyToNumber( String key )
    {
-      final String string = key.toLowerCase();
+      final String string = key.toLowerCase( getLocale() );
       
       switch ( string.charAt( 0 ) )
       {

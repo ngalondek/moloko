@@ -22,6 +22,8 @@
 
 package dev.drsoran.rtm.model;
 
+import java.text.MessageFormat;
+
 import dev.drsoran.Strings;
 
 
@@ -67,8 +69,9 @@ public enum Priority
       
       if ( priority == null )
       {
-         throw new IllegalArgumentException( priorityString + "is no valid "
-            + Priority.class.getName() );
+         throw new IllegalArgumentException( MessageFormat.format( "{0} is no valid {1}",
+                                                                   priorityString,
+                                                                   Priority.class.getName() ) );
       }
       
       return priority;

@@ -110,5 +110,15 @@ public class RtmListContentHandler extends RtmContentHandler< RtmTasksList >
                                                                         ARCHIVED ),
                                                     listAttributes.getValue( NAME ),
                                                     smartFilter ) );
+      smartFilter = null;
+   }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      listAttributes = null;
+      smartFilter = null;
    }
 }

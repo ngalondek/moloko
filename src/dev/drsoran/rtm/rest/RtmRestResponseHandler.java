@@ -165,6 +165,14 @@ public class RtmRestResponseHandler< T > extends RtmContentHandler< T >
    
    
    
+   @Override
+   protected void cleanUpState()
+   {
+      transaction = null;
+   }
+   
+   
+   
    private RtmResponse< T > createResponse()
    {
       return new RtmResponse< T >( transaction,

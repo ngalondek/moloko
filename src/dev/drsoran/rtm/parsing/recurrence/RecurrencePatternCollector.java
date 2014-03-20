@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -143,7 +144,7 @@ public class RecurrencePatternCollector
       
       try
       {
-         final Date date = new SimpleDateFormat( "yyyyMMdd'T'HHmmss" ).parse( dateToken.getText() );
+         final Date date = new SimpleDateFormat( "yyyyMMdd'T'HHmmss", Locale.US ).parse( dateToken.getText() );
          addElement( collectedTokens, OP_UNTIL, date );
       }
       catch ( ParseException e )

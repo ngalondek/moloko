@@ -56,4 +56,12 @@ public class RtmFrobContentHandler extends RtmContentHandler< RtmFrob >
          setContentElementAndNotify( new RtmFrob( frob ) );
       }
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      frob = null;
+   }
 }

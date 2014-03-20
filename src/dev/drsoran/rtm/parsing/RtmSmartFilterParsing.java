@@ -37,12 +37,14 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import dev.drsoran.Strings;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.rtm.parsing.grammar.ANTLRBailOutErrorListener;
 import dev.drsoran.rtm.parsing.grammar.ANTLRNoCaseStringStream;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterParser;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterVisitor;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 import dev.drsoran.rtm.parsing.rtmsmart.IRtmSmartFilterEvaluator;
 import dev.drsoran.rtm.parsing.rtmsmart.NullRtmSmartFilterEvaluator;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterParsingReturn;
@@ -111,6 +113,8 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
    private RtmSmartFilterParsingReturn parseAndEvalRtmSmartFilter( String smartFilter,
                                                                    IRtmSmartFilterEvaluator evaluator ) throws GrammarException
    {
+      smartFilter = transformFilter( smartFilter );
+      
       final RtmSmartFilterParser parser = createRtmSmartFilterParser( smartFilter );
       
       try
@@ -137,6 +141,25 @@ public class RtmSmartFilterParsing implements IRtmSmartFilterParsing
          
          throw new GrammarException( e );
       }
+   }
+   
+   
+   
+   private static String transformFilter( String filter )
+   {
+      if ( Strings.isEmptyOrWhitespace( filter ) )
+      {
+         filter = Strings.EMPTY_STRING;
+      }
+      
+      // Check if there was no operator used. If so it has the
+      // same meaning as operator name:
+      if ( filter.length() > 0 && !filter.contains( ":" ) )
+      {
+         filter = RtmSmartFilterSyntax.OP_NAME + Strings.quotify( filter );
+      }
+      
+      return filter;
    }
    
    

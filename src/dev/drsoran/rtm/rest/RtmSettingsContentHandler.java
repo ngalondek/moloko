@@ -151,6 +151,19 @@ public class RtmSettingsContentHandler extends RtmContentHandler< RtmSettings >
    
    
    
+   @Override
+   protected void cleanUpState()
+   {
+      charactersContext = CharactersContext.None;
+      timezone = null;
+      dateformat = 0;
+      timeformat = 0;
+      defaultListId = null;
+      language = null;
+   }
+   
+   
+   
    private static int toInt( String value ) throws SAXException
    {
       try

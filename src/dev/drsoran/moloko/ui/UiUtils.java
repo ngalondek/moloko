@@ -67,14 +67,8 @@ public final class UiUtils
    }
    
    
+   
    public final static String getTrimmedText( TextView textView )
-   {
-      return textView.getText().toString().trim();
-   }
-   
-   
-   
-   public final static CharSequence getTrimmedSequence( TextView textView )
    {
       return textView.getText().toString().trim();
    }
@@ -126,27 +120,6 @@ public final class UiUtils
                                          InputMethodManager.HIDE_NOT_ALWAYS );
          }
       }
-   }
-   
-   
-   
-   public final static View setDropDownItemIconAndText( View dropDownView,
-                                                        int iconId,
-                                                        String text )
-   {
-      final TextView textView = (TextView) dropDownView.findViewById( android.R.id.text1 );
-      textView.setText( text );
-      
-      if ( iconId != -1 )
-      {
-         textView.setCompoundDrawablesWithIntrinsicBounds( iconId, 0, 0, 0 );
-      }
-      else
-      {
-         textView.setCompoundDrawablesWithIntrinsicBounds( 0, 0, 0, 0 );
-      }
-      
-      return dropDownView;
    }
    
    

@@ -46,11 +46,11 @@ public class RtmTaskSeriesListContentHandler extends
       }
    };
    
+   private final IRtmCalendarProvider calendarProvider;
+   
    private String activeListId;
    
    private boolean expectMultipleLists;
-   
-   private final IRtmCalendarProvider calendarProvider;
    
    
    
@@ -128,6 +128,15 @@ public class RtmTaskSeriesListContentHandler extends
       {
          notifyContentElementSet();
       }
+   }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      activeListId = null;
+      expectMultipleLists = false;
    }
    
    

@@ -193,8 +193,25 @@ public class RtmTaskSeriesContentHandler extends
       }
       else if ( "taskseries".equalsIgnoreCase( qName ) )
       {
-         setContentElementAndNotify( tasks );
+         setContentElementAndNotify( new ArrayList< RtmTask >( tasks ) );
       }
+   }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      tasks.clear();
+      charactersContext = CharactersContext.None;
+      taskSeriesAttributes = null;
+      taskSeries = null;
+      recurrencePattern = null;
+      isEveryRecurrence = false;
+      tags = null;
+      notes = null;
+      participants = null;
+      taskAttributes = null;
    }
    
    

@@ -18,6 +18,6 @@
    android:label="@string/search_label"
    android:hint="@string/search_hint"
    android:inputType="textFilter|textNoSuggestions"   
-   android:searchSuggestAuthority="dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider"
+   android:searchSuggestAuthority="dev.drsoran.moloko.app.search.TasksSearchRecentSuggestionsProvider"
    android:searchSuggestSelection=" ?">
 </searchable>

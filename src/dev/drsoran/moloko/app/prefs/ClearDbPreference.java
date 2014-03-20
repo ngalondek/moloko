@@ -109,7 +109,7 @@ class ClearDbPreference extends InfoTextPreference
                                                                           
                                                                           if ( clearList.size() > 0 )
                                                                           {
-                                                                             clear( rtmDatabase.getWritable(),
+                                                                             clear( rtmDatabase,
                                                                                     clearList );
                                                                           }
                                                                        }
@@ -123,7 +123,7 @@ class ClearDbPreference extends InfoTextPreference
    
    
    
-   private void clear( final SQLiteDatabase database,
+   private void clear( final RtmDatabase database,
                        final List< ITable > tablesToClear )
    {
       final AsyncTask< ITable, Void, Void > task = new AsyncTask< ITable, Void, Void >()
@@ -149,20 +149,22 @@ class ClearDbPreference extends InfoTextPreference
          @Override
          protected Void doInBackground( ITable... params )
          {
+            SQLiteDatabase sqLiteDatabase = database.getWritable();
+            
             try
             {
-               database.beginTransaction();
+               sqLiteDatabase.beginTransaction();
                
-               for ( ITable table : tablesToClear )
+               for ( ITable table : params )
                {
-                  table.clear( database );
+                  database.wipe( table.getTableName() );
                }
                
-               database.setTransactionSuccessful();
+               sqLiteDatabase.setTransactionSuccessful();
             }
             finally
             {
-               database.endTransaction();
+               sqLiteDatabase.endTransaction();
             }
             
             return null;

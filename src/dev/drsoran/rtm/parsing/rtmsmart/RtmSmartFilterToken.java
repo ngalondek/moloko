@@ -22,6 +22,8 @@
 
 package dev.drsoran.rtm.parsing.rtmsmart;
 
+import java.util.Locale;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -133,7 +135,8 @@ public class RtmSmartFilterToken implements Parcelable
    @Override
    public String toString()
    {
-      return String.format( "Op: %d, %s, neg: %b",
+      return String.format( Locale.ENGLISH,
+                            "Op: %d, %s, neg: %b",
                             operatorType,
                             value,
                             isNegated );

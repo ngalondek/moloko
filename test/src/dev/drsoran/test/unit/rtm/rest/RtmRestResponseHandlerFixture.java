@@ -212,6 +212,13 @@ public class RtmRestResponseHandlerFixture extends MolokoTestCase
       {
          setContentElementAndNotify( Integer.parseInt( attributes.getValue( "value" ) ) );
       }
+      
+      
+      
+      @Override
+      protected void cleanUpState()
+      {
+      }
    }
    
    
@@ -230,6 +237,13 @@ public class RtmRestResponseHandlerFixture extends MolokoTestCase
       protected void startElement( String qName, Attributes attributes ) throws SAXException
       {
          throw new SAXException();
+      }
+      
+      
+      
+      @Override
+      protected void cleanUpState()
+      {
       }
    }
 }

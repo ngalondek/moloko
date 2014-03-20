@@ -33,17 +33,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
+import android.widget.TextView;
 import dev.drsoran.Pair;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.ui.UiContext;
-import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddSuggestion;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.services.ISmartAddService;
@@ -51,7 +52,7 @@ import dev.drsoran.moloko.ui.services.ISmartAddService;
 
 class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 {
-   private final UiContext context;
+   private final Context context;
    
    private final ISmartAddService smartAddService;
    
@@ -74,10 +75,10 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    
    
-   public RtmSmartAddAdapter( UiContext context )
+   public RtmSmartAddAdapter( Context context, ISmartAddService smartAddService )
    {
       this.context = context;
-      this.smartAddService = context.getSmartAddService();
+      this.smartAddService = smartAddService;
    }
    
    
@@ -191,10 +192,15 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    private final static View setDropDownItemIconAndText( View dropDownView,
                                                          Pair< Integer, RtmSmartAddSuggestion > iconWithText )
    {
-      return UiUtils.setDropDownItemIconAndText( dropDownView,
-                                                 iconWithText.first.intValue(),
-                                                 iconWithText.second.suggestionText );
       
+      final TextView textView = (TextView) dropDownView.findViewById( android.R.id.text1 );
+      
+      textView.setText( iconWithText.second.suggestionText );
+      textView.setCompoundDrawablesWithIntrinsicBounds( iconWithText.first.intValue(),
+                                                        0,
+                                                        0,
+                                                        0 );
+      return dropDownView;
    }
    
    
@@ -214,7 +220,7 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
             final String suggestionPrefix = TextUtils.substring( constraint,
                                                                  1,
                                                                  constraint.length() )
-                                                     .toLowerCase();
+                                                     .toLowerCase( Locale.getDefault() );
             
             switch ( constraint.charAt( 0 ) )
             {
@@ -342,7 +348,7 @@ class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          
          for ( RtmSmartAddSuggestion suggestion : suggestions )
          {
-            if ( suggestion.suggestionText.toLowerCase()
+            if ( suggestion.suggestionText.toLowerCase( Locale.getDefault() )
                                           .startsWith( suggestionPrefix ) )
             {
                newData.add( Pair.create( iconId, suggestion ) );

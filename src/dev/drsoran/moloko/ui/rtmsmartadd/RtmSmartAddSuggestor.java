@@ -37,6 +37,7 @@ import java.util.Collection;
 import android.content.Context;
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.TasksList;
@@ -116,20 +117,23 @@ public class RtmSmartAddSuggestor
       
       // Today
       suggestions.add( new RtmSmartAddSuggestion( context.getString( R.string.phr_today ),
-                                                  Long.valueOf( cal.getTimeInMillis() ) ) );
+                                                  new Due( cal.getTimeInMillis(),
+                                                           false ) ) );
       
       // Tomorrow
       cal.add( Calendar.DAY_OF_YEAR, 1 );
       suggestions.add( new RtmSmartAddSuggestion( context.getString( R.string.phr_tomorrow ),
-                                                  Long.valueOf( cal.getTimeInMillis() ) ) );
+                                                  new Due( cal.getTimeInMillis(),
+                                                           false ) ) );
       
       // The next 5 days after tomorrow
       for ( int i = 0; i < 5; ++i )
       {
          cal.add( Calendar.DAY_OF_YEAR, 1 );
-         final String weekDay = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ) );
+         final String weekDay = MolokoDateUtils.getDayOfWeekString( cal );
          suggestions.add( new RtmSmartAddSuggestion( weekDay,
-                                                     Long.valueOf( cal.getTimeInMillis() ) ) );
+                                                     new Due( cal.getTimeInMillis(),
+                                                              false ) ) );
       }
       
       return suggestions;

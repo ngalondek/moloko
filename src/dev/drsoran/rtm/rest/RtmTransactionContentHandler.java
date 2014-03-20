@@ -72,4 +72,12 @@ public class RtmTransactionContentHandler extends
          setContentElementAndNotify( transaction );
       }
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      transaction = null;
+   }
 }

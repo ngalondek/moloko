@@ -23,48 +23,54 @@
 package dev.drsoran.moloko.app.taskedit;
 
 import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LIST_NAME;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_ID;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.LOCATION_NAME;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.PRIORITY;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.URL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import dev.drsoran.Iterables;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
-import dev.drsoran.moloko.ui.IValueChangedListener;
-import dev.drsoran.moloko.ui.IndexedValueChangedListener;
+import dev.drsoran.moloko.ui.AfterTextChangedWatcher;
 import dev.drsoran.moloko.ui.ValidationResult;
-import dev.drsoran.moloko.ui.ValueChangedListener;
-import dev.drsoran.moloko.util.Lambda.Func1;
-import dev.drsoran.moloko.util.Lambda.Func2;
+import dev.drsoran.moloko.ui.fragments.MolokoLoaderEditFragment;
+import dev.drsoran.moloko.ui.layouts.TitleWithEditTextLayout;
+import dev.drsoran.moloko.ui.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.rtm.model.Priority;
 
 
-public class TaskEditMultipleFragment extends AbstractTaskEditFragment
+public class TaskEditMultipleFragment extends
+         MolokoLoaderEditFragment< TaskEditData >
 {
-   private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
-   
-   private final static String URL_MULTI_VALUE = null;
-   
-   private final static String TAGS_MULTI_VALUE = "multi_tag";
-   
-   private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
-   
    /**
     * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
     * 
@@ -73,7 +79,25 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
    
    @InstanceState( key = Intents.Extras.KEY_TASKS )
-   private final ArrayList< Task > initialTasks = new ArrayList< Task >();
+   private final ArrayList< Task > tasks = new ArrayList< Task >();
+   
+   @InstanceState( key = "changes", defaultValue = InstanceState.NEW )
+   private ValuesContainer changes;
+   
+   @InstanceState( key = "isFirstInit", defaultValue = "true" )
+   private boolean isFirstInitialization;
+   
+   private EditText nameEditText;
+   
+   private TitleWithSpinnerLayout listsSpinner;
+   
+   private TitleWithSpinnerLayout prioritySpinner;
+   
+   private TitleWithSpinnerLayout locationSpinner;
+   
+   private TitleWithEditTextLayout urlEditText;
+   
+   private ITaskEditFragmentListener listener;
    
    
    
@@ -96,6 +120,19 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof ITaskEditFragmentListener )
+         listener = (ITaskEditFragmentListener) activity;
+      else
+         listener = null;
+   }
+   
+   
+   
+   @Override
    public void onStart()
    {
       super.onStart();
@@ -104,324 +141,42 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   @Override
-   public void initContentAfterDataLoaded( ViewGroup content )
+   private < T > void putChange( String key, T value, Class< T > type )
    {
-      hideUnsupportedControls();
-      
-      initializeNameEdit();
-      initializeUrlEdit();
-      initializePrioritySpinner();
-      initializeListSpinner();
-      initializeLocationSpinner();
+      changes.putValue( key, value, type );
    }
    
    
    
-   @Override
-   protected IValueChangedListener getValueChangedListener( String key )
+   private < T > T getChange( String key, Class< T > type ) throws NoSuchElementException
    {
-      if ( TASK_NAME.equals( key ) )
+      return changes.getValue( key, type );
+   }
+   
+   
+   
+   private < T > T tryGetChange( String key, Class< T > type, T defaultValue )
+   {
+      if ( changes.hasValue( key ) )
       {
-         return new ValueChangedListener()
-         {
-            @Override
-            public < T > void onValueChanged( T value, Class< T > type )
-            {
-               final String newName = Strings.convertFrom( value );
-               if ( Strings.isNullOrEmpty( newName ) )
-               {
-                  revertNames();
-               }
-               else
-               {
-                  setNames( newName );
-               }
-            }
-         };
-      }
-      else if ( URL.equals( key ) )
-      {
-         return new ValueChangedListener()
-         {
-            @Override
-            public < T > void onValueChanged( T value, Class< T > type )
-            {
-               final String newUrl = Strings.convertFrom( value );
-               if ( Strings.isNullOrEmpty( newUrl ) )
-               {
-                  revertUrls();
-               }
-               else
-               {
-                  setUrl( newUrl );
-               }
-            }
-         };
-      }
-      else if ( PRIORITY.equals( key ) )
-      {
-         return new IndexedValueChangedListener()
-         {
-            @Override
-            public < T > void onValueChanged( int index,
-                                              T value,
-                                              Class< T > type )
-            {
-               if ( index == 0 )
-               {
-                  revertPriorites();
-               }
-               else
-               {
-                  final String newPriority = Strings.convertFrom( value );
-                  setPriority( Priority.fromString( newPriority ) );
-               }
-            }
-         };
-      }
-      else if ( LIST_ID.equals( key ) )
-      {
-         return new IndexedValueChangedListener()
-         {
-            @Override
-            public < T > void onValueChanged( int index,
-                                              T value,
-                                              Class< T > type )
-            {
-               if ( index == 0 )
-               {
-                  revertListIds();
-               }
-               else
-               {
-                  final String newListId = Strings.convertFrom( value );
-                  setListId( newListId );
-               }
-            }
-         };
-      }
-      else if ( LOCATION_ID.equals( key ) )
-      {
-         return new IndexedValueChangedListener()
-         {
-            @Override
-            public < T > void onValueChanged( int index,
-                                              T value,
-                                              Class< T > type )
-            {
-               if ( index == 0 )
-               {
-                  revertLocationIds();
-               }
-               else
-               {
-                  final String newLocationId = Strings.convertFrom( value );
-                  setLocationId( newLocationId );
-               }
-            }
-         };
+         return changes.getValue( key, type );
       }
       
-      return null;
+      return defaultValue;
    }
    
    
    
-   private void setLocationId( final String newLocationId )
+   private boolean hasChange( String key )
    {
-      foreachEditTaskDo( new Func1< Task, Void >()
-      {
-         @Override
-         public Void call( Task editedTask )
-         {
-            editedTask.setLocationStub( Long.valueOf( newLocationId ),
-                                        getLocationNameById( newLocationId ) );
-            return null;
-         }
-      } );
+      return changes.hasValue( key );
    }
    
    
    
-   private void revertLocationIds()
+   private void removeChange( String key )
    {
-      foreachTaskPairDo( new Func2< Task, Task, Void >()
-      {
-         @Override
-         public Void call( Task initialTask, Task editedTask )
-         {
-            editedTask.setLocationStub( initialTask.getLocationId(),
-                                        initialTask.getLocationName() );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void setListId( final String newListId )
-   {
-      foreachEditTaskDo( new Func1< Task, Void >()
-      {
-         @Override
-         public Void call( Task editedTask )
-         {
-            editedTask.setList( Long.valueOf( newListId ),
-                                getListNameById( newListId ) );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void revertListIds()
-   {
-      foreachTaskPairDo( new Func2< Task, Task, Void >()
-      {
-         @Override
-         public Void call( Task initialTask, Task editedTask )
-         {
-            editedTask.setList( initialTask.getListId(),
-                                initialTask.getListName() );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void setPriority( final Priority priority )
-   {
-      foreachEditTaskDo( new Func1< Task, Void >()
-      {
-         @Override
-         public Void call( Task editedTask )
-         {
-            editedTask.setPriority( priority );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void revertPriorites()
-   {
-      foreachTaskPairDo( new Func2< Task, Task, Void >()
-      {
-         @Override
-         public Void call( Task initialTask, Task editedTask )
-         {
-            editedTask.setPriority( initialTask.getPriority() );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void setUrl( final String newUrl )
-   {
-      foreachEditTaskDo( new Func1< Task, Void >()
-      {
-         @Override
-         public Void call( Task editedTask )
-         {
-            editedTask.setUrl( Strings.emptyIfNull( newUrl ) );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void revertUrls()
-   {
-      foreachTaskPairDo( new Func2< Task, Task, Void >()
-      {
-         @Override
-         public Void call( Task initialTask, Task editedTask )
-         {
-            editedTask.setUrl( initialTask.getUrl() );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void setNames( final String newName )
-   {
-      foreachEditTaskDo( new Func1< Task, Void >()
-      {
-         @Override
-         public Void call( Task editedTask )
-         {
-            editedTask.setName( newName );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void revertNames()
-   {
-      foreachTaskPairDo( new Func2< Task, Task, Void >()
-      {
-         @Override
-         public Void call( Task initialTask, Task editedTask )
-         {
-            editedTask.setName( initialTask.getName() );
-            return null;
-         }
-      } );
-   }
-   
-   
-   
-   private void foreachEditTaskDo( Func1< Task, Void > action )
-   {
-      final List< Task > editedTasks = getEditedTasksAssertNotNull();
-      
-      for ( int i = 0; i < editedTasks.size(); i++ )
-      {
-         final Task editedTask = editedTasks.get( i );
-         action.call( editedTask );
-      }
-   }
-   
-   
-   
-   private void foreachTaskPairDo( Func2< Task, Task, Void > action )
-   {
-      final List< Task > initialTasks = getInitialTasksAssertNotNull();
-      final List< Task > editedTasks = getEditedTasksAssertNotNull();
-      
-      for ( int i = 0; i < initialTasks.size(); i++ )
-      {
-         final Task initialTask = initialTasks.get( i );
-         final Task editedTask = editedTasks.get( i );
-         action.call( initialTask, editedTask );
-      }
-   }
-   
-   
-   
-   private String getListNameById( String listId )
-   {
-      final TaskEditData taskEditData = getLoaderDataAssertNotNull();
-      return taskEditData.getListIdsWithListNames().get( listId );
-   }
-   
-   
-   
-   private String getLocationNameById( String locationId )
-   {
-      final TaskEditData taskEditData = getLoaderDataAssertNotNull();
-      return taskEditData.getLocationIdsWithLocationNames().get( locationId );
+      changes.removeValue( key );
    }
    
    
@@ -448,6 +203,53 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
+   @Override
+   public View createFragmentView( LayoutInflater inflater,
+                                   ViewGroup container,
+                                   Bundle savedInstanceState )
+   {
+      final View fragmentView = inflater.inflate( R.layout.task_edit_multiple_fragment,
+                                                  container,
+                                                  false );
+      
+      final View content = fragmentView.findViewById( android.R.id.content );
+      
+      nameEditText = (EditText) content.findViewById( R.id.task_edit_desc );
+      listsSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_list );
+      prioritySpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_priority );
+      locationSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_location );
+      urlEditText = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
+      
+      return fragmentView;
+   }
+   
+   
+   
+   @Override
+   public void initContentAfterDataLoaded( ViewGroup content )
+   {
+      if ( isFirstInitialization )
+      {
+         initializeNameEdit();
+         nameEditText.requestFocus();
+         
+         initializeUrlEdit();
+         
+         isFirstInitialization = false;
+      }
+      
+      setNameEditHint();
+      setUrlEditHint();
+      
+      initializePrioritySpinner();
+      initializeListSpinner();
+      initializeLocationSpinner();
+      
+      registerInputListeners();
+   }
+   
+   
+   
    private void initializeNameEdit()
    {
       final List< Task > tasks = getInitialTasksAssertNotNull();
@@ -455,28 +257,44 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
       if ( !isCommonAttrib( TASK_NAME ) )
       {
          nameEditText.setText( Strings.EMPTY_STRING );
-         nameEditText.setHint( R.string.edit_multiple_tasks_different_task_names );
          
          if ( nameEditText instanceof AutoCompleteTextView )
          {
-            final Set< String > names = new HashSet< String >( tasks.size() );
-            
-            for ( Task task : tasks )
-            {
-               names.add( task.getName() );
-            }
-            
-            final List< String > uniqueTaskNames = new ArrayList< String >( names );
-            
-            ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getSherlockActivity(),
-                                                                                            android.R.layout.simple_dropdown_item_1line,
-                                                                                            android.R.id.text1,
-                                                                                            uniqueTaskNames ) );
+            addTaskNameSuggestions( tasks );
          }
       }
-      else if ( tasks.size() > 0 )
+      else if ( !tasks.isEmpty() )
       {
          nameEditText.setText( Iterables.first( tasks ).getName() );
+      }
+   }
+   
+   
+   
+   private void addTaskNameSuggestions( List< Task > tasks )
+   {
+      final Set< String > names = new HashSet< String >( tasks.size() );
+      
+      for ( Task task : tasks )
+      {
+         names.add( task.getName() );
+      }
+      
+      final List< String > uniqueTaskNames = new ArrayList< String >( names );
+      
+      ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getSherlockActivity(),
+                                                                                      android.R.layout.simple_dropdown_item_1line,
+                                                                                      android.R.id.text1,
+                                                                                      uniqueTaskNames ) );
+   }
+   
+   
+   
+   private void setNameEditHint()
+   {
+      if ( !isCommonAttrib( TASK_NAME ) )
+      {
+         nameEditText.setHint( R.string.edit_multiple_tasks_different_task_names );
       }
    }
    
@@ -487,7 +305,6 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
       if ( !isCommonAttrib( URL ) )
       {
          urlEditText.setText( Strings.EMPTY_STRING );
-         urlEditText.setHint( R.string.edit_multiple_tasks_different_urls );
       }
       else if ( getNumberOfTasks() > 0 )
       {
@@ -498,41 +315,11 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   private void initializeListSpinner()
+   private void setUrlEditHint()
    {
-      if ( isCommonAttrib( LIST_ID ) )
+      if ( !isCommonAttrib( URL ) )
       {
-         super.defaultInitializeListSpinner( getCommonStringAttrib( LIST_ID ) );
-      }
-      else
-      {
-         final ArrayAdapter< String > adapter = defaultInitializeListSpinner( null );
-         
-         if ( adapter != null )
-         {
-            adapter.insert( getString( R.string.edit_multiple_tasks_different_lists ),
-                            0 );
-         }
-      }
-   }
-   
-   
-   
-   private void initializeLocationSpinner()
-   {
-      if ( isCommonAttrib( LOCATION_ID ) )
-      {
-         super.defaultInitializeLocationSpinner( getCommonStringAttrib( LOCATION_ID ) );
-      }
-      else
-      {
-         final ArrayAdapter< String > adapter = defaultInitializeLocationSpinner( null );
-         
-         if ( adapter != null )
-         {
-            adapter.insert( getString( R.string.edit_multiple_tasks_different_locations ),
-                            0 );
-         }
+         urlEditText.setHint( R.string.edit_multiple_tasks_different_urls );
       }
    }
    
@@ -540,48 +327,326 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    private void initializePrioritySpinner()
    {
+      List< String > priorities = Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) );
+      List< String > priorityValues = Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) );
+      
+      final String priority;
       if ( isCommonAttrib( PRIORITY ) )
       {
-         super.defaultInitializePrioritySpinner( getCommonStringAttrib( PRIORITY ) );
+         priority = tryGetChange( PRIORITY,
+                                  String.class,
+                                  getCommonStringAttrib( PRIORITY ) );
       }
       else
       {
-         final ArrayAdapter< String > adapter = defaultInitializePrioritySpinner( null );
+         priorities = new ArrayList< String >( priorities );
+         priorities.add( 0,
+                         getString( R.string.edit_multiple_tasks_different_priorities ) );
          
-         if ( adapter != null )
-         {
-            adapter.insert( getString( R.string.edit_multiple_tasks_different_priorities ),
-                            0 );
-         }
+         priorityValues = new ArrayList< String >( priorityValues );
+         priorityValues.add( 0, Strings.EMPTY_STRING );
+         
+         priority = tryGetChange( PRIORITY, String.class, null );
       }
+      
+      setSpinnerAdapterForValues( prioritySpinner,
+                                  priorityValues,
+                                  priorities,
+                                  priority );
    }
    
    
    
-   private void hideUnsupportedControls()
+   private void initializeListSpinner()
    {
-      addedDate.setVisibility( View.GONE );
-      completedDate.setVisibility( View.GONE );
-      postponed.setVisibility( View.GONE );
-      source.setVisibility( View.GONE );
-      tagsContainer.setVisibility( View.GONE );
-      dueContainer.setVisibility( View.GONE );
-      estimateContainer.setVisibility( View.GONE );
-      recurrContainer.setVisibility( View.GONE );
+      final TaskEditData taskEditData = getLoaderDataAssertNotNull();
+      
+      final String listId;
+      if ( isCommonAttrib( LIST_ID ) )
+      {
+         listId = tryGetChange( LIST_ID,
+                                String.class,
+                                getCommonStringAttrib( LIST_ID ) );
+      }
+      else
+      {
+         final List< String > listIds = new ArrayList< String >( taskEditData.getListIds() );
+         listIds.add( 0, Strings.EMPTY_STRING );
+         
+         final List< String > listNames = new ArrayList< String >( taskEditData.getListNames() );
+         listNames.add( 0,
+                        getString( R.string.edit_multiple_tasks_different_lists ) );
+         
+         listId = tryGetChange( LIST_ID, String.class, null );
+      }
+      
+      setSpinnerAdapterForValues( listsSpinner,
+                                  taskEditData.getListIds(),
+                                  taskEditData.getListNames(),
+                                  listId );
+   }
+   
+   
+   
+   private void initializeLocationSpinner()
+   {
+      final TaskEditData taskEditData = getLoaderDataAssertNotNull();
+      
+      final List< String > locationIds = taskEditData.getLocationIds();
+      final List< String > locationNames = taskEditData.getLocationNames();
+      
+      insertNowhereLocationEntry( locationIds, locationNames );
+      
+      final String locationId;
+      if ( isCommonAttrib( LOCATION_ID ) )
+      {
+         locationId = tryGetChange( LOCATION_ID,
+                                    String.class,
+                                    getCommonStringAttrib( LOCATION_ID ) );
+      }
+      else
+      {
+         locationIds.add( 0, Strings.EMPTY_STRING );
+         locationNames.add( 0,
+                            getString( R.string.edit_multiple_tasks_different_locations ) );
+         
+         locationId = tryGetChange( LOCATION_ID, String.class, null );
+      }
+      
+      setSpinnerAdapterForValues( locationSpinner,
+                                  locationIds,
+                                  locationNames,
+                                  locationId );
+   }
+   
+   
+   
+   private void insertNowhereLocationEntry( List< String > locationIds,
+                                            List< String > locationNames )
+   {
+      locationIds.add( 0, Long.toString( Constants.NO_ID ) );
+      locationNames.add( 0, getString( R.string.task_edit_location_no ) );
+   }
+   
+   
+   
+   private void registerInputListeners()
+   {
+      nameEditText.addTextChangedListener( new AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            final String name = getTrimmed( s );
+            if ( Strings.isEmptyOrWhitespace( name ) )
+            {
+               removeChange( TASK_NAME );
+            }
+            else
+            {
+               putChange( TASK_NAME, name, String.class );
+            }
+         }
+      } );
+      
+      urlEditText.addTextChangedListener( new AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            final String url = getTrimmed( s );
+            if ( Strings.isEmptyOrWhitespace( url ) )
+            {
+               removeChange( URL );
+            }
+            else
+            {
+               putChange( URL, url, String.class );
+            }
+         }
+      } );
+      
+      listsSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > adapter,
+                                     View arg1,
+                                     int pos,
+                                     long id )
+         {
+            final String listIdString = listsSpinner.getValueAtPos( pos );
+            if ( TextUtils.isEmpty( listIdString ) )
+            {
+               removeChange( LIST_ID );
+               removeChange( LIST_NAME );
+            }
+            else
+            {
+               putChange( LIST_ID, listIdString, String.class );
+               putChange( LIST_NAME,
+                          listsSpinner.getSelectedValue(),
+                          String.class );
+            }
+         }
+         
+         
+         
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+      
+      locationSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > arg0,
+                                     View arg1,
+                                     int pos,
+                                     long id )
+         {
+            final String locationIdString = locationSpinner.getValueAtPos( pos );
+            if ( TextUtils.isEmpty( locationIdString ) )
+            {
+               removeChange( LOCATION_ID );
+               removeChange( LOCATION_NAME );
+            }
+            else if ( locationIdString.equals( Long.toString( Constants.NO_ID ) ) )
+            {
+               putChange( LOCATION_ID,
+                          String.valueOf( Constants.NO_ID ),
+                          String.class );
+               putChange( LOCATION_NAME, null, String.class );
+            }
+            else
+            {
+               putChange( LOCATION_ID, locationIdString, String.class );
+               putChange( LOCATION_NAME,
+                          locationSpinner.getSelectedValue(),
+                          String.class );
+            }
+         }
+         
+         
+         
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+      
+      prioritySpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > arg0,
+                                     View arg1,
+                                     int pos,
+                                     long arg3 )
+         {
+            final String priorityValue = prioritySpinner.getValueAtPos( pos );
+            if ( TextUtils.isEmpty( priorityValue ) )
+            {
+               removeChange( PRIORITY );
+            }
+            else
+            {
+               putChange( PRIORITY, priorityValue, String.class );
+            }
+         }
+         
+         
+         
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+   }
+   
+   
+   
+   private void setSpinnerAdapterForValues( TitleWithSpinnerLayout spinner,
+                                            List< String > values,
+                                            List< String > displayStrings,
+                                            String initialValue )
+   {
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
+                                                                         android.R.layout.simple_spinner_item,
+                                                                         android.R.id.text1,
+                                                                         displayStrings );
+      
+      adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+      spinner.setAdapter( adapter );
+      spinner.setValues( values );
+      spinner.setSelectionByValue( initialValue, 0 );
    }
    
    
    
    @Override
-   protected ValidationResult validateName()
+   public ValidationResult validate()
    {
       if ( hasChange( TASK_NAME ) )
       {
-         return super.validateName();
+         return validateName();
       }
-      else
+      
+      return ValidationResult.OK;
+   }
+   
+   
+   
+   private ValidationResult validateName()
+   {
+      final boolean ok = !Strings.isEmptyOrWhitespace( getChange( TASK_NAME,
+                                                                  String.class ) );
+      if ( !ok )
       {
-         return ValidationResult.OK;
+         return new ValidationResult( getString( R.string.task_edit_validate_empty_name ) ).setSourceView( nameEditText )
+                                                                                           .setFocusOnErrorView( nameEditText );
+      }
+      
+      return ValidationResult.OK;
+   }
+   
+   
+   
+   @Override
+   public void onFinishEditing()
+   {
+      applyChanges();
+      
+      if ( listener != null )
+      {
+         listener.onUpdateTasks( tasks );
+      }
+   }
+   
+   
+   
+   private void applyChanges()
+   {
+      for ( Task task : tasks )
+      {
+         task.setName( tryGetChange( TASK_NAME, String.class, task.getName() ) );
+         task.setPriority( Priority.fromString( tryGetChange( PRIORITY,
+                                                              String.class,
+                                                              task.getPriority()
+                                                                  .toString() ) ) );
+         task.setUrl( tryGetChange( URL, String.class, task.getUrl() ) );
+         
+         if ( hasChange( LIST_ID ) )
+         {
+            task.setList( Long.valueOf( getChange( LIST_ID, String.class ) ),
+                          getChange( LIST_NAME, String.class ) );
+         }
+         
+         if ( hasChange( LOCATION_ID ) )
+         {
+            task.setLocationStub( Long.valueOf( getChange( LOCATION_ID,
+                                                           String.class ) ),
+                                  getChange( LOCATION_NAME, String.class ) );
+         }
       }
    }
    
@@ -589,12 +654,12 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    private List< Task > getInitialTasksAssertNotNull()
    {
-      if ( initialTasks == null )
+      if ( tasks == null )
       {
          throw new AssertionError( "expected initial tasks to be not null" );
       }
       
-      return initialTasks;
+      return tasks;
    }
    
    
@@ -606,12 +671,29 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    
    
-   private List< Task > getEditedTasksAssertNotNull()
+   @Override
+   public String getLoaderDataName()
    {
-      if ( editedTasks == null )
-         throw new AssertionError( "expected edited tasks to be not null" );
+      return TaskEditData.class.getSimpleName();
+   }
+   
+   
+   
+   @Override
+   public int getLoaderId()
+   {
+      return TaskListsAndLocationsLoader.ID;
+   }
+   
+   
+   
+   @Override
+   public Loader< TaskEditData > newLoaderInstance( int id, Bundle args )
+   {
+      final TaskListsAndLocationsLoader loader = new TaskListsAndLocationsLoader( DomainContext.get( getActivity() ) );
+      loader.setRespectContentChanges( false );
       
-      return editedTasks;
+      return loader;
    }
    
    
@@ -621,9 +703,13 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
       final Integer cnt = map.get( value );
       
       if ( cnt != null )
+      {
          map.put( value, cnt + 1 );
+      }
       else
+      {
          map.put( value, Integer.valueOf( 1 ) );
+      }
    }
    
    
@@ -637,6 +723,13 @@ public class TaskEditMultipleFragment extends AbstractTaskEditFragment
    
    private final String getCommonStringAttrib( String key )
    {
-      return attributeCount.get( key ).toString();
+      return Iterables.first( attributeCount.get( key ).keySet() ).toString();
+   }
+   
+   
+   
+   private static String getTrimmed( Editable editable )
+   {
+      return editable.toString().trim();
    }
 }

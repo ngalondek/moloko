@@ -101,4 +101,11 @@ public class XmlCollectionTagContentHandler< T > extends
    {
       getContentElement().add( collectionElement );
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+   }
 }

@@ -28,6 +28,7 @@ import java.util.Collections;
 
 import android.content.ContentResolver;
 import dev.drsoran.moloko.content.Columns.NoteColumns;
+import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
@@ -58,40 +59,52 @@ public class TaskNoteContentEditHandler extends
    {
       final Collection< Modification > modifications = new ArrayList< Modification >();
       
-      final String entityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
-                                                                         rootId,
-                                                                         existingNote.getId() )
-                                          .toString();
+      final String noteEntityUri = ContentUris.bindAggregatedElementIdToUri( ContentUris.TASK_NOTES_CONTENT_URI_ID,
+                                                                             rootId,
+                                                                             existingNote.getId() )
+                                              .toString();
       
       Modification.addIfDifferentNonPersistent( modifications,
-                                                entityUri,
+                                                noteEntityUri,
                                                 NoteColumns.NOTE_CREATED_DATE,
                                                 existingNote.getCreatedMillisUtc(),
                                                 updateNote.getCreatedMillisUtc() );
       
       Modification.addIfDifferentNonPersistent( modifications,
-                                                entityUri,
+                                                noteEntityUri,
                                                 NoteColumns.NOTE_MODIFIED_DATE,
                                                 existingNote.getModifiedMillisUtc(),
                                                 updateNote.getModifiedMillisUtc() );
       
       Modification.addIfDifferentNonPersistent( modifications,
-                                                entityUri,
+                                                noteEntityUri,
                                                 NoteColumns.NOTE_DELETED_DATE,
                                                 existingNote.getDeletedMillisUtc(),
                                                 updateNote.getDeletedMillisUtc() );
       
-      Modification.addIfDifferent( modifications,
-                                   entityUri,
-                                   NoteColumns.NOTE_TITLE,
-                                   existingNote.getTitle(),
-                                   updateNote.getTitle() );
+      Modification.addIfDifferentNonPersistent( modifications,
+                                                noteEntityUri,
+                                                NoteColumns.NOTE_TITLE,
+                                                existingNote.getTitle(),
+                                                updateNote.getTitle() );
       
-      Modification.addIfDifferent( modifications,
-                                   entityUri,
-                                   NoteColumns.NOTE_TEXT,
-                                   existingNote.getText(),
-                                   updateNote.getText() );
+      Modification.addIfDifferentNonPersistent( modifications,
+                                                noteEntityUri,
+                                                NoteColumns.NOTE_TEXT,
+                                                existingNote.getText(),
+                                                updateNote.getText() );
+      
+      if ( !modifications.isEmpty() )
+      {
+         final String taskEntityUri = ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                                                 rootId )
+                                                 .toString();
+         
+         final Modification taskModifiedModification = Modification.newNonPersistentModification( taskEntityUri,
+                                                                                                  TaskColumns.TASK_MODIFIED_DATE,
+                                                                                                  updateNote.getModifiedMillisUtc() );
+         modifications.add( taskModifiedModification );
+      }
       
       return modifications;
    }

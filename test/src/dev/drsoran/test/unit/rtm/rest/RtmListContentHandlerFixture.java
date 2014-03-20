@@ -26,14 +26,19 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.xml.sax.InputSource;
 
 import dev.drsoran.moloko.test.XmlFileResource;
 import dev.drsoran.rtm.model.RtmTasksList;
 import dev.drsoran.rtm.rest.IRtmContentHandlerListener;
+import dev.drsoran.rtm.rest.RemoveWhiteSpaceXmlFilter;
 import dev.drsoran.rtm.rest.RtmContentHandler;
 import dev.drsoran.rtm.rest.RtmListContentHandler;
+import dev.drsoran.rtm.rest.XmlCollectionTagContentHandler;
 
 
 public class RtmListContentHandlerFixture extends
@@ -50,6 +55,10 @@ public class RtmListContentHandlerFixture extends
    @ClassRule
    public static final XmlFileResource testSmartListEmptyFilter = new XmlFileResource( RtmListContentHandlerFixture.class,
                                                                                        "RtmList_Smart_emptyFilter.xml" );
+   
+   @ClassRule
+   public static final XmlFileResource testMultiple = new XmlFileResource( RtmListContentHandlerFixture.class,
+                                                                           "RtmList_multiple.xml" );
    
    
    
@@ -100,6 +109,50 @@ public class RtmListContentHandlerFixture extends
       assertThat( content.getPosition(), is( 1 ) );
       assertThat( content.isSmartList(), is( true ) );
       assertThat( content.getSmartFilter(), is( "" ) );
+   }
+   
+   
+   
+   @Test
+   public void testReadSmartListsMultiple() throws Exception
+   {
+      final XmlCollectionTagContentHandler< RtmTasksList > handler = new XmlCollectionTagContentHandler< RtmTasksList >( "lists",
+                                                                                                                         createHandler() );
+      
+      final RemoveWhiteSpaceXmlFilter filter = new RemoveWhiteSpaceXmlFilter( testMultiple.getXmlReader() );
+      filter.setContentHandler( handler );
+      filter.parse( new InputSource( testMultiple.getReader() ) );
+      
+      final List< RtmTasksList > elements = handler.getContentElement();
+      
+      assertThat( elements.size(), is( 3 ) );
+      
+      assertThat( elements.get( 0 ).getId(), is( "100653" ) );
+      assertThat( elements.get( 0 ).getName(), is( "Inbox" ) );
+      assertThat( elements.get( 0 ).isDeleted(), is( false ) );
+      assertThat( elements.get( 0 ).isLocked(), is( true ) );
+      assertThat( elements.get( 0 ).isArchived(), is( false ) );
+      assertThat( elements.get( 0 ).getPosition(), is( -1 ) );
+      assertThat( elements.get( 0 ).isSmartList(), is( false ) );
+      assertThat( elements.get( 0 ).getSmartFilter(), is( nullValue() ) );
+      
+      assertThat( elements.get( 1 ).getId(), is( "100654" ) );
+      assertThat( elements.get( 1 ).getName(), is( "List" ) );
+      assertThat( elements.get( 1 ).isDeleted(), is( true ) );
+      assertThat( elements.get( 1 ).isLocked(), is( false ) );
+      assertThat( elements.get( 1 ).isArchived(), is( true ) );
+      assertThat( elements.get( 1 ).getPosition(), is( 0 ) );
+      assertThat( elements.get( 1 ).isSmartList(), is( true ) );
+      assertThat( elements.get( 1 ).getSmartFilter(), is( "(name:Test)" ) );
+      
+      assertThat( elements.get( 2 ).getId(), is( "100655" ) );
+      assertThat( elements.get( 2 ).getName(), is( "Sent" ) );
+      assertThat( elements.get( 2 ).isDeleted(), is( false ) );
+      assertThat( elements.get( 2 ).isLocked(), is( true ) );
+      assertThat( elements.get( 2 ).isArchived(), is( false ) );
+      assertThat( elements.get( 2 ).getPosition(), is( 1 ) );
+      assertThat( elements.get( 2 ).isSmartList(), is( false ) );
+      assertThat( elements.get( 2 ).getSmartFilter(), is( nullValue() ) );
    }
    
    

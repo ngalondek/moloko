@@ -39,7 +39,7 @@ import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.TASK_NAME_TYPE;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import android.text.TextUtils;
+import dev.drsoran.Strings;
 import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 
@@ -52,6 +52,11 @@ public class RtmSmartAddTokenizer
    
    public RtmSmartAddTokenizer( IRtmDateTimeParsing dateTimeParsing )
    {
+      if ( dateTimeParsing == null )
+      {
+         throw new IllegalArgumentException( "dateTimeParsing" );
+      }
+      
       this.dateTimeParsing = dateTimeParsing;
    }
    
@@ -61,68 +66,77 @@ public class RtmSmartAddTokenizer
    {
       final Collection< RtmSmartAddToken > tokens = new ArrayList< RtmSmartAddToken >();
       
-      for ( int i = 0, cnt = input.length(); i < cnt; ++i )
+      for ( int i = 0, cnt = input.length(); i < cnt; )
       {
+         int textStartPos = i + 1;
+         Character ownOp = null;
+         
          final RtmSmartAddToken t;
          
          switch ( input.charAt( i ) )
          {
             case OP_DUE_DATE:
                t = new RtmSmartAddToken( DUE_DATE_TYPE );
-               t.setStart( i );
-               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
-               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_PRIORITY:
                t = new RtmSmartAddToken( PRIORITY_TYPE );
-               t.setStart( i );
-               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
-               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_LIST_TAGS:
                t = new RtmSmartAddToken( LIST_TAGS_TYPE );
-               t.setStart( i );
-               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
-               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_LOCATION:
                t = new RtmSmartAddToken( LOCATION_TYPE );
-               t.setStart( i );
-               t.setEnd( getNextOperatorPos( input, i + 1, OP_LOCATION ) - 1 );
-               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_REPEAT:
                t = new RtmSmartAddToken( REPEAT_TYPE );
-               t.setStart( i );
-               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
-               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             case OP_ESTIMATE:
                t = new RtmSmartAddToken( ESTIMATE_TYPE );
-               t.setStart( i );
-               t.setEnd( getNextOperatorPos( input, i + 1, null ) - 1 );
-               setText( t, input, t.getStart() + 1, t.getEnd() );
                break;
             
             default :
                t = new RtmSmartAddToken( TASK_NAME_TYPE );
-               t.setStart( i );
-               t.setEnd( getNextOperatorPos( input, i, null ) - 1 );
-               setText( t, input, t.getStart(), t.getEnd() );
+               textStartPos = i;
                break;
          }
          
+         initToken( input, i, textStartPos, t, ownOp );
+         
          tokens.add( t );
          
-         i = t.getEnd();
+         i = t.getEnd() + 1;
       }
       
       return tokens;
+   }
+   
+   
+   
+   private void initToken( CharSequence input,
+                           int opPos,
+                           int textPos,
+                           RtmSmartAddToken t,
+                           Character ownOp )
+   {
+      t.setStart( opPos );
+      
+      final int endPos = getNextOperatorPos( input, textPos, ownOp ) - 1;
+      
+      t.setEnd( endPos );
+      
+      if ( endPos >= textPos )
+      {
+         setText( t, input, textPos, endPos );
+      }
+      else
+      {
+         t.setText( Strings.EMPTY_STRING );
+      }
    }
    
    
@@ -131,7 +145,9 @@ public class RtmSmartAddTokenizer
                                    int startIdx,
                                    Character ownOp )
    {
-      for ( int i = startIdx, cnt = chars.length(); i < cnt; ++i )
+      final int cnt = chars.length();
+      
+      for ( int i = startIdx; i < cnt; ++i )
       {
          final char charI = chars.charAt( i );
          if ( isOperator( charI, ownOp ) )
@@ -147,14 +163,15 @@ public class RtmSmartAddTokenizer
                // try to parse as time
                try
                {
-                  dateTimeParsing.parseTime( TextUtils.substring( chars,
-                                                                  i,
-                                                                  nextOpPos ) );
+                  final String dateToParse = chars.subSequence( i, nextOpPos )
+                                                  .toString();
+                  dateTimeParsing.parseTime( dateToParse );
                   i = nextOpPos;
                }
                catch ( GrammarException e )
                {
                   // Empty, it is a try parse
+                  continue;
                }
             }
             
@@ -162,7 +179,7 @@ public class RtmSmartAddTokenizer
          }
       }
       
-      return chars.length();
+      return cnt;
    }
    
    
@@ -197,14 +214,14 @@ public class RtmSmartAddTokenizer
          endTxt = revFindFirstNotSpace( chars, startTxt, endIdx );
       }
       
-      return TextUtils.substring( chars, startTxt, endTxt + 1 );
+      return chars.subSequence( startTxt, endTxt + 1 ).toString();
    }
    
    
    
    private int findFirstNotSpace( CharSequence chars, int startIdx, int endIdx )
    {
-      for ( int i = startIdx; i < endIdx; ++i )
+      for ( int i = startIdx; i < endIdx + 1; ++i )
       {
          if ( chars.charAt( i ) != ' ' )
          {

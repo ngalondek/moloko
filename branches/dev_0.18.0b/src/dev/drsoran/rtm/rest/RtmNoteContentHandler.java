@@ -97,4 +97,13 @@ public class RtmNoteContentHandler extends RtmContentHandler< RtmNote >
                                                Strings.emptyIfNull( noteAttributes.getValue( TITLE ) ),
                                                noteText ) );
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      noteAttributes = null;
+      noteText = Strings.EMPTY_STRING;
+   }
 }

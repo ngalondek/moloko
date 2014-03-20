@@ -25,5 +25,5 @@
       android:layout_gravity="center_vertical"
       android:text="@string/app_tagcloud"
       android:background="@drawable/app_tag_bgnd"
-      android:textSize="16dip" />
+      android:textSize="16sp" />
 </LinearLayout>

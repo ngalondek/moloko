@@ -27,6 +27,7 @@ import static dev.drsoran.moloko.content.Columns.NoteColumns.NOTE_DELETED_DATE;
 import static dev.drsoran.moloko.content.Columns.NoteColumns.NOTE_MODIFIED_DATE;
 import static dev.drsoran.moloko.content.Columns.NoteColumns.NOTE_TEXT;
 import static dev.drsoran.moloko.content.Columns.NoteColumns.NOTE_TITLE;
+import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_MODIFIED_DATE;
 import static dev.drsoran.moloko.content.ContentUris.TASK_NOTES_CONTENT_URI_ID;
 import static dev.drsoran.moloko.test.TestConstants.LATER;
 import static dev.drsoran.moloko.test.TestConstants.NOW;
@@ -66,6 +67,7 @@ public class TaskNoteEditHandlerTestDataSource extends
       addUpdateTitle( testData );
       addUpdateText( testData );
       addUpdateMultiple( testData );
+      addUpdateNothing( testData );
       
       return testData;
    }
@@ -81,7 +83,10 @@ public class TaskNoteEditHandlerTestDataSource extends
                                                                     NOTE_CREATED_DATE,
                                                                     LATER );
       
-      testData.add( new TestData< Note >( existing, update, mod ) );
+      testData.add( new TestData< Note >( existing,
+                                          update,
+                                          Arrays.asList( mod,
+                                                         getTaskModified( update.getModifiedMillisUtc() ) ) ) );
       
       existing = new Note( 1L, NOW );
       existing.setModifiedMillisUtc( NOW );
@@ -93,7 +98,10 @@ public class TaskNoteEditHandlerTestDataSource extends
                                                        NOTE_MODIFIED_DATE,
                                                        LATER );
       
-      testData.add( new TestData< Note >( existing, update, mod ) );
+      testData.add( new TestData< Note >( existing,
+                                          update,
+                                          Arrays.asList( mod,
+                                                         getTaskModified( update.getModifiedMillisUtc() ) ) ) );
       
       existing = new Note( 1L, NOW );
       existing.setDeletedMillisUtc( NOW );
@@ -105,7 +113,10 @@ public class TaskNoteEditHandlerTestDataSource extends
                                                        NOTE_DELETED_DATE,
                                                        LATER );
       
-      testData.add( new TestData< Note >( existing, update, mod ) );
+      testData.add( new TestData< Note >( existing,
+                                          update,
+                                          Arrays.asList( mod,
+                                                         getTaskModified( update.getModifiedMillisUtc() ) ) ) );
    }
    
    
@@ -118,12 +129,14 @@ public class TaskNoteEditHandlerTestDataSource extends
       Note update = new Note( 1L, NOW );
       update.setTitle( "t" );
       
-      Modification mod = Modification.newModification( getEntityUri(),
-                                                       NOTE_TITLE,
-                                                       "t",
-                                                       "title" );
+      Modification mod = Modification.newNonPersistentModification( getEntityUri(),
+                                                                    NOTE_TITLE,
+                                                                    "t" );
       
-      testData.add( new TestData< Note >( existing, update, mod ) );
+      testData.add( new TestData< Note >( existing,
+                                          update,
+                                          Arrays.asList( mod,
+                                                         getTaskModified( update.getModifiedMillisUtc() ) ) ) );
    }
    
    
@@ -136,12 +149,14 @@ public class TaskNoteEditHandlerTestDataSource extends
       Note update = new Note( 1L, NOW );
       update.setText( "t" );
       
-      Modification mod = Modification.newModification( getEntityUri(),
-                                                       NOTE_TEXT,
-                                                       "t",
-                                                       "text" );
+      Modification mod = Modification.newNonPersistentModification( getEntityUri(),
+                                                                    NOTE_TEXT,
+                                                                    "t" );
       
-      testData.add( new TestData< Note >( existing, update, mod ) );
+      testData.add( new TestData< Note >( existing,
+                                          update,
+                                          Arrays.asList( mod,
+                                                         getTaskModified( update.getModifiedMillisUtc() ) ) ) );
    }
    
    
@@ -158,14 +173,28 @@ public class TaskNoteEditHandlerTestDataSource extends
                                                                      NOTE_CREATED_DATE,
                                                                      LATER );
       
-      Modification mod2 = Modification.newModification( getEntityUri(),
-                                                        NOTE_TEXT,
-                                                        "t",
-                                                        "text" );
+      Modification mod2 = Modification.newNonPersistentModification( getEntityUri(),
+                                                                     NOTE_TEXT,
+                                                                     "t" );
       
       testData.add( new TestData< Note >( existing,
                                           update,
-                                          Arrays.asList( mod1, mod2 ) ) );
+                                          Arrays.asList( mod1,
+                                                         mod2,
+                                                         getTaskModified( update.getModifiedMillisUtc() ) ) ) );
+   }
+   
+   
+   
+   private void addUpdateNothing( Collection< TestData< Note >> testData )
+   {
+      Note existing = new Note( 1L, NOW );
+      existing.setText( "text" );
+      
+      Note update = new Note( 1L, NOW );
+      update.setText( "text" );
+      
+      testData.add( new TestData< Note >( existing, update ) );
    }
    
    
@@ -176,5 +205,22 @@ public class TaskNoteEditHandlerTestDataSource extends
                                                        rootId,
                                                        elementId )
                         .toString();
+   }
+   
+   
+   
+   private Modification getTaskModified( long when )
+   {
+      return Modification.newNonPersistentModification( getTaskEntityUri(),
+                                                        TASK_MODIFIED_DATE,
+                                                        when );
+   }
+   
+   
+   
+   private String getTaskEntityUri()
+   {
+      return ContentUris.bindElementId( ContentUris.TASKS_CONTENT_URI_ID,
+                                        rootId ).toString();
    }
 }

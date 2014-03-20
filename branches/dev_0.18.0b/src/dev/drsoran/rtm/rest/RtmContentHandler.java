@@ -145,6 +145,7 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
    public void setContentElement( T content )
    {
       contentElement = content;
+      cleanUpState();
    }
    
    
@@ -211,4 +212,8 @@ public abstract class RtmContentHandler< T > extends DefaultHandler
       
       return contentHandlerStack.peek();
    }
+   
+   
+   
+   protected abstract void cleanUpState();
 }

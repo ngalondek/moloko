@@ -116,4 +116,15 @@ public class RtmAuthContentHandler extends RtmContentHandler< RtmAuth >
                                                                                      Strings.EMPTY_STRING ) ) ) );
       }
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      charactersContext = CharactersContext.None;
+      token = null;
+      perm = RtmServicePermission.nothing;
+      userAttributes = null;
+   }
 }

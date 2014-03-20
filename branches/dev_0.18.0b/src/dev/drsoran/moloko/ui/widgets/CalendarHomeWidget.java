@@ -75,6 +75,13 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    
    
+   public CalendarHomeWidget( Context context, AttributeSet attrs )
+   {
+      this( context, attrs, R.string.phr_nothing, -1 );
+   }
+   
+   
+   
    public CalendarHomeWidget( Context context, AttributeSet attrs, int labelId,
       int type )
    {

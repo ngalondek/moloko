@@ -39,4 +39,11 @@ public class VoidContentHandler extends RtmContentHandler< Void >
    {
       setContentElementAndNotify( null );
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+   }
 }

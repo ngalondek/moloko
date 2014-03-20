@@ -74,6 +74,13 @@ public abstract class AbstractTable implements ITable
    
    public void upgrade( SQLiteDatabase database, int oldVersion, int newVersion ) throws SQLException
    {
+      wipe( database );
+   }
+   
+   
+   
+   public void wipe( SQLiteDatabase database )
+   {
       dropIndices( database );
       drop( database );
       create( database );

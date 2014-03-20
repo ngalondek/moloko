@@ -49,6 +49,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -491,7 +492,8 @@ public class RecurrenceEvaluator extends RecurrenceParserBaseVisitor< Void >
       try
       {
          final RtmCalendar untilDate = dateTimeParsing.parseDateTime( dateTimeString );
-         final SimpleDateFormat sdf = new SimpleDateFormat( DATE_PATTERN );
+         final SimpleDateFormat sdf = new SimpleDateFormat( DATE_PATTERN,
+                                                            Locale.US );
          
          evaluatorState.until = sdf.format( untilDate.getTime() );
       }

@@ -25,6 +25,7 @@ package dev.drsoran.moloko.ui.adapters;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 import android.content.Context;
@@ -68,19 +69,19 @@ public class DueTimeWheelTextAdapter extends AbstractWheelTextAdapter
       switch ( type )
       {
          case TYPE_AM_PM:
-            dateFormat = new SimpleDateFormat( "aa" );
+            dateFormat = new SimpleDateFormat( "aa", Locale.getDefault() );
             break;
          case TYPE_HOUR:
-            dateFormat = new SimpleDateFormat( "KK" );
+            dateFormat = new SimpleDateFormat( "KK", Locale.getDefault() );
             break;
          case TYPE_HOUR_OF_DAY:
-            dateFormat = new SimpleDateFormat( "HH" );
+            dateFormat = new SimpleDateFormat( "HH", Locale.getDefault() );
             break;
          case TYPE_MINUTE:
-            dateFormat = new SimpleDateFormat( "mm" );
+            dateFormat = new SimpleDateFormat( "mm", Locale.getDefault() );
             break;
          default :
-            dateFormat = new SimpleDateFormat();
+            dateFormat = DateFormat.getDateInstance();
             break;
       }
       

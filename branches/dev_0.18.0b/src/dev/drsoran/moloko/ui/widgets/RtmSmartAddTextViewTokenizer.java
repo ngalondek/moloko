@@ -30,7 +30,7 @@ import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.services.ISmartAddService;
 
 
-public class RtmSmartAddTokenizerAdapter implements Tokenizer
+public class RtmSmartAddTextViewTokenizer implements Tokenizer
 {
    private final ISmartAddService smartAddService;
    
@@ -40,19 +40,9 @@ public class RtmSmartAddTokenizerAdapter implements Tokenizer
    
    
    
-   public RtmSmartAddTokenizerAdapter( ISmartAddService smartAddService )
+   public RtmSmartAddTextViewTokenizer( ISmartAddService smartAddService )
    {
       this.smartAddService = smartAddService;
-   }
-   
-   
-   
-   @Override
-   public int findTokenEnd( CharSequence text, int cursor )
-   {
-      tokenize( text );
-      final RtmSmartAddToken tokenUnderCursor = getTokenUnderCursor( cursor );
-      return tokenUnderCursor.getEnd();
    }
    
    
@@ -61,8 +51,30 @@ public class RtmSmartAddTokenizerAdapter implements Tokenizer
    public int findTokenStart( CharSequence text, int cursor )
    {
       tokenize( text );
-      final RtmSmartAddToken tokenUnderCursor = getTokenUnderCursor( cursor );
-      return tokenUnderCursor.getStart();
+      
+      final RtmSmartAddToken tokenUnderCursor = getTokenLeftOfCursor( cursor );
+      if ( tokenUnderCursor != null )
+      {
+         return tokenUnderCursor.getStart();
+      }
+      
+      return 0;
+   }
+   
+   
+   
+   @Override
+   public int findTokenEnd( CharSequence text, int cursor )
+   {
+      tokenize( text );
+      
+      final RtmSmartAddToken tokenUnderCursor = getTokenRightOfCursor( cursor );
+      if ( tokenUnderCursor != null )
+      {
+         return tokenUnderCursor.getEnd();
+      }
+      
+      return text.length();
    }
    
    
@@ -79,18 +91,35 @@ public class RtmSmartAddTokenizerAdapter implements Tokenizer
    {
       if ( !TextUtils.equals( text, lastText ) )
       {
-         lastText = text;
+         lastText = new String( text.toString() );
          lastTokens = smartAddService.tokenize( text );
       }
    }
    
    
    
-   private RtmSmartAddToken getTokenUnderCursor( int cursorPos )
+   private RtmSmartAddToken getTokenLeftOfCursor( int cursorPos )
+   {
+      RtmSmartAddToken lastToken = null;
+      for ( RtmSmartAddToken token : lastTokens )
+      {
+         lastToken = token;
+         if ( token.getStart() > cursorPos )
+         {
+            break;
+         }
+      }
+      
+      return lastToken;
+   }
+   
+   
+   
+   private RtmSmartAddToken getTokenRightOfCursor( int cursorPos )
    {
       for ( RtmSmartAddToken token : lastTokens )
       {
-         if ( token.getStart() <= cursorPos && token.getEnd() >= cursorPos )
+         if ( token.getStart() > cursorPos )
          {
             return token;
          }

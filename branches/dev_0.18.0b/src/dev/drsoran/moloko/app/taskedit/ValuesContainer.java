@@ -94,6 +94,20 @@ public class ValuesContainer implements Parcelable
    
    
    
+   public boolean hasValue( String key )
+   {
+      return container.containsKey( key );
+   }
+   
+   
+   
+   public void removeValue( String key )
+   {
+      container.remove( key );
+   }
+   
+   
+   
    public int size()
    {
       return container.size();

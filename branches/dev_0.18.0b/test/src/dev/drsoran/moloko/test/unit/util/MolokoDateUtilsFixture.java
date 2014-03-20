@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.test.unit.util;
 
-import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static dev.drsoran.moloko.test.TestConstants.DATE_NOW;
+import static dev.drsoran.moloko.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -37,14 +37,12 @@ import org.robolectric.annotation.Config;
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 import dev.drsoran.moloko.test.PrivateCtorCaller;
-import dev.drsoran.moloko.test.shadows.DateUtilsShadow;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.TimeStruct;
 import dev.drsoran.rtm.RtmCalendar;
 
 
-@Config( manifest = Config.NONE, shadows =
-{ DateUtilsShadow.class } )
+@Config( manifest = Config.NONE )
 public class MolokoDateUtilsFixture extends MolokoRoboTestCase
 {
    @Test( expected = AssertionError.class )
@@ -91,10 +89,11 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testIsTodayNegMillis()
    {
-      MolokoDateUtils.isToday( DATE_NOW.getTimeInMillis(), -10 );
+      assertThat( MolokoDateUtils.isToday( DATE_NOW.getTimeInMillis(), -10 ),
+                  is( false ) );
    }
    
    
@@ -121,18 +120,18 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testIsDaysBeforeNegWhen()
    {
-      MolokoDateUtils.isDaysBefore( -1, NOW );
+      assertThat( MolokoDateUtils.isDaysBefore( -1, NOW ), is( true ) );
    }
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testIsDaysBeforeNegReference()
    {
-      MolokoDateUtils.isDaysBefore( NOW, -1 );
+      assertThat( MolokoDateUtils.isDaysBefore( NOW, -1 ), is( false ) );
    }
    
    
@@ -159,18 +158,18 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testIsDaysAfterNegWhen()
    {
-      MolokoDateUtils.isDaysAfter( -1, NOW );
+      assertThat( MolokoDateUtils.isDaysAfter( -1, NOW ), is( false ) );
    }
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testIsDaysAfterNegReference()
    {
-      MolokoDateUtils.isDaysAfter( NOW, -1 );
+      assertThat( MolokoDateUtils.isDaysAfter( NOW, -1 ), is( true ) );
    }
    
    
@@ -204,18 +203,18 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testGetTimespanInDaysNegStart()
    {
-      MolokoDateUtils.getTimespanInDays( -1, NOW );
+      assertThat( MolokoDateUtils.getTimespanInDays( -1, NOW ), is( 16149 ) );
    }
    
    
    
-   @Test( expected = IllegalArgumentException.class )
+   @Test
    public void testGetTimespanInDaysNegEnd()
    {
-      MolokoDateUtils.getTimespanInDays( NOW, -1 );
+      assertThat( MolokoDateUtils.getTimespanInDays( NOW, -1 ), is( -16149 ) );
    }
    
    
@@ -292,41 +291,28 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    @Test
    public void testGetDayOfWeekString()
    {
-      assertThat( MolokoDateUtils.getDayOfWeekString( Calendar.MONDAY ),
-                  is( DateUtilsShadow.MONDAY ) );
-      assertThat( MolokoDateUtils.getDayOfWeekString( Calendar.TUESDAY ),
-                  is( DateUtilsShadow.TUESDAY ) );
-      assertThat( MolokoDateUtils.getDayOfWeekString( Calendar.WEDNESDAY ),
-                  is( DateUtilsShadow.WEDNESDAY ) );
-      assertThat( MolokoDateUtils.getDayOfWeekString( Calendar.THURSDAY ),
-                  is( DateUtilsShadow.THURSDAY ) );
-      assertThat( MolokoDateUtils.getDayOfWeekString( Calendar.FRIDAY ),
-                  is( DateUtilsShadow.FRIDAY ) );
-      assertThat( MolokoDateUtils.getDayOfWeekString( Calendar.SATURDAY ),
-                  is( DateUtilsShadow.SATURDAY ) );
-      assertThat( MolokoDateUtils.getDayOfWeekString( Calendar.SUNDAY ),
-                  is( DateUtilsShadow.SUNDAY ) );
-   }
-   
-   
-   
-   @Test
-   public void testGetAbbreviatedDayOfWeekString()
-   {
-      assertThat( MolokoDateUtils.getAbbreviatedDayOfWeekString( Calendar.MONDAY ),
-                  is( DateUtilsShadow.MON ) );
-      assertThat( MolokoDateUtils.getAbbreviatedDayOfWeekString( Calendar.TUESDAY ),
-                  is( DateUtilsShadow.TUE ) );
-      assertThat( MolokoDateUtils.getAbbreviatedDayOfWeekString( Calendar.WEDNESDAY ),
-                  is( DateUtilsShadow.WED ) );
-      assertThat( MolokoDateUtils.getAbbreviatedDayOfWeekString( Calendar.THURSDAY ),
-                  is( DateUtilsShadow.THU ) );
-      assertThat( MolokoDateUtils.getAbbreviatedDayOfWeekString( Calendar.FRIDAY ),
-                  is( DateUtilsShadow.FRI ) );
-      assertThat( MolokoDateUtils.getAbbreviatedDayOfWeekString( Calendar.SATURDAY ),
-                  is( DateUtilsShadow.SAT ) );
-      assertThat( MolokoDateUtils.getAbbreviatedDayOfWeekString( Calendar.SUNDAY ),
-                  is( DateUtilsShadow.SUN ) );
+      final RtmCalendar cal = RtmCalendar.getInstance();
+      
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY );
+      assertThat( MolokoDateUtils.getDayOfWeekString( cal ), is( "Monday" ) );
+      
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.TUESDAY );
+      assertThat( MolokoDateUtils.getDayOfWeekString( cal ), is( "Tuesday" ) );
+      
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY );
+      assertThat( MolokoDateUtils.getDayOfWeekString( cal ), is( "Wednesday" ) );
+      
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.THURSDAY );
+      assertThat( MolokoDateUtils.getDayOfWeekString( cal ), is( "Thursday" ) );
+      
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.FRIDAY );
+      assertThat( MolokoDateUtils.getDayOfWeekString( cal ), is( "Friday" ) );
+      
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.SATURDAY );
+      assertThat( MolokoDateUtils.getDayOfWeekString( cal ), is( "Saturday" ) );
+      
+      cal.set( Calendar.DAY_OF_WEEK, Calendar.SUNDAY );
+      assertThat( MolokoDateUtils.getDayOfWeekString( cal ), is( "Sunday" ) );
    }
    
    

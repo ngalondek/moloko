@@ -72,4 +72,12 @@ public class RtmErrorContentHandler extends RtmContentHandler< RtmError >
          setContentElementAndNotify( error );
       }
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      error = null;
+   }
 }

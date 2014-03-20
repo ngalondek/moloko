@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import android.text.format.Time;
@@ -34,7 +35,8 @@ import android.text.format.Time;
 
 public class RtmDateFormatter
 {
-   private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
+   private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss",
+                                                                       Locale.US );
    
    static
    {

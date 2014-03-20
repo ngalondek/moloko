@@ -25,7 +25,6 @@ package dev.drsoran.moloko.domain.model;
 import java.io.Serializable;
 
 import dev.drsoran.Strings;
-import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
 public class RtmSmartFilter implements Serializable
@@ -43,7 +42,7 @@ public class RtmSmartFilter implements Serializable
          throw new IllegalArgumentException( "filter" );
       }
       
-      this.filter = transformFilter( filter );
+      this.filter = filter;
    }
    
    
@@ -100,24 +99,5 @@ public class RtmSmartFilter implements Serializable
    public String toString()
    {
       return String.format( "RtmSmartFilter [filter=%s]", filter );
-   }
-   
-   
-   
-   private static String transformFilter( String filter )
-   {
-      if ( Strings.isEmptyOrWhitespace( filter ) )
-      {
-         filter = Strings.EMPTY_STRING;
-      }
-      
-      // Check if there was no operator used. If so it has the
-      // same meaning as operator name:
-      if ( filter.length() > 0 && !filter.contains( ":" ) )
-      {
-         filter = RtmSmartFilterSyntax.OP_NAME + Strings.quotify( filter );
-      }
-      
-      return filter;
    }
 }

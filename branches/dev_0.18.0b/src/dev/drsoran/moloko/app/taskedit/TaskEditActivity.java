@@ -161,7 +161,7 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    
    private void onTagsChanged( ArrayList< String > tags )
    {
-      final AbstractTaskEditFragment taskEditFragment = getTaskEditFragment();
+      final AbstractTaskEditFragment taskEditFragment = (AbstractTaskEditFragment) getTaskEditFragment();
       taskEditFragment.setTags( tags );
    }
    

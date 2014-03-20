@@ -64,4 +64,12 @@ public class RtmTimelineContentHandler extends RtmContentHandler< RtmTimeline >
    {
       timelineId = string;
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      timelineId = null;
+   }
 }

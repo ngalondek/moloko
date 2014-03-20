@@ -70,4 +70,12 @@ public class RtmContactContentHandler extends RtmContentHandler< RtmContact >
          setContentElementAndNotify( getContentElement() );
       }
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      
+   }
 }

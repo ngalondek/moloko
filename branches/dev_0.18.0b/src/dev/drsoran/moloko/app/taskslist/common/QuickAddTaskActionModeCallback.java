@@ -37,7 +37,7 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextView;
-import dev.drsoran.moloko.ui.widgets.RtmSmartAddTokenizerAdapter;
+import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextViewTokenizer;
 
 
 class QuickAddTaskActionModeCallback implements ActionMode.Callback,
@@ -65,22 +65,23 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      final UiContext context = activity.getAppContext().asUiContext();
-      final View quickAddTaskInputView = LayoutInflater.from( context )
+      final View quickAddTaskInputView = LayoutInflater.from( activity )
                                                        .inflate( R.layout.quick_add_task_actionmode,
                                                                  null );
       mode.setCustomView( quickAddTaskInputView );
       
+      final UiContext uiContext = activity.getAppContext().asUiContext();
+      
       quickAddTaskInput = (RtmSmartAddTextView) quickAddTaskInputView.findViewById( R.id.quick_add_task_edit );
-      quickAddTaskInput.setTokenizer( new RtmSmartAddTokenizerAdapter( context.getSmartAddService() ) );
+      quickAddTaskInput.setTokenizer( new RtmSmartAddTextViewTokenizer( uiContext.getSmartAddService() ) );
       quickAddTaskInput.setThreshold( 1 );
-      quickAddTaskInput.setAdapter( new RtmSmartAddAdapter( context ) );
+      quickAddTaskInput.setAdapter( new RtmSmartAddAdapter( activity,
+                                                            uiContext.getSmartAddService() ) );
       
       connectToCommitInput();
       
-      quickAddTaskInputHandler = new QuickAddTaskActionModeInputHandler( context,
+      quickAddTaskInputHandler = new QuickAddTaskActionModeInputHandler( uiContext,
                                                                          quickAddTaskInput );
-      
       quickAddTaskInput.requestFocus();
       
       mode.getMenuInflater().inflate( R.menu.quick_add_task_actionmode, menu );

@@ -55,7 +55,7 @@ public final class ContentMimeTypes
       
       CONTACT_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.moloko.content.contact";
       
-      TAGS_CONTENT_TYPE = "vnd.android.cursor.item/vnd.moloko.content.tag";
+      TAGS_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.moloko.content.tag";
       
       CLOUD_ENTRY_CONTENT_TYPE = "vnd.android.cursor.item/vnd.moloko.content.cloudentry";
       

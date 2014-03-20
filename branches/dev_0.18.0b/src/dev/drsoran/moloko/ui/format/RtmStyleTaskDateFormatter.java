@@ -124,7 +124,7 @@ public final class RtmStyleTaskDateFormatter
                   else
                   {
                      // we only show the week day
-                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ) );
+                     dueText = MolokoDateUtils.getDayOfWeekString( cal );
                   }
                }
                
@@ -147,7 +147,7 @@ public final class RtmStyleTaskDateFormatter
                   if ( isInNext6DaysRange )
                   {
                      // we only show the week day
-                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ) );
+                     dueText = MolokoDateUtils.getDayOfWeekString( cal );
                   }
                   // Not the same week and not in the range [today + 1, today + 6]
                   else

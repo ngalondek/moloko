@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
@@ -67,6 +68,8 @@ import dev.drsoran.rtm.parsing.lang.ILanguage;
 
 public class DefaultDateTimeEvaluator extends DateTimeParserBaseVisitor< Void >
 {
+   private final Locale locale = Locale.US;
+   
    private final RtmCalendar cal;
    
    private final ILanguage dateLanguage;
@@ -442,15 +445,15 @@ public class DefaultDateTimeEvaluator extends DateTimeParserBaseVisitor< Void >
       {
          if ( len < 3 )
          {
-            sdf = new SimpleDateFormat( "HH" );
+            sdf = new SimpleDateFormat( "HH", locale );
          }
          else if ( len > 3 )
          {
-            sdf = new SimpleDateFormat( "HHmm" );
+            sdf = new SimpleDateFormat( "HHmm", locale );
          }
          else
          {
-            sdf = new SimpleDateFormat( "Hmm" );
+            sdf = new SimpleDateFormat( "Hmm", locale );
          }
          
          sdf.setTimeZone( cal.getTimeZone() );
@@ -565,7 +568,8 @@ public class DefaultDateTimeEvaluator extends DateTimeParserBaseVisitor< Void >
          final boolean withYear = pt3 != null;
          final DateFormat df;
          
-         df = new SimpleDateFormat( dateFormatter.getNumericDateFormatPattern( withYear ) );
+         df = new SimpleDateFormat( dateFormatter.getNumericDateFormatPattern( withYear ),
+                                    locale );
          
          final String dateInstance;
          if ( withYear )
@@ -634,7 +638,7 @@ public class DefaultDateTimeEvaluator extends DateTimeParserBaseVisitor< Void >
          
          if ( len < 4 )
          {
-            final SimpleDateFormat sdf = new SimpleDateFormat( "yy" );
+            final SimpleDateFormat sdf = new SimpleDateFormat( "yy", locale );
             
             if ( len == 1 )
             {

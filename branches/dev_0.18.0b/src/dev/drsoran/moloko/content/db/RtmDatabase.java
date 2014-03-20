@@ -79,4 +79,12 @@ public class RtmDatabase extends AbstractDatabase
        new DeleteModificationsTrigger( RtmTasksListsTable.TABLE_NAME,
                                        ContentUris.TASKS_LISTS_URI_PATH ) };
    }
+   
+   
+   
+   public void wipe( String tableName )
+   {
+      final AbstractTable abstractTable = (AbstractTable) getTable( tableName );
+      abstractTable.wipe( getWritable() );
+   }
 }

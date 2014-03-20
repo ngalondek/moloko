@@ -29,6 +29,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.ui.fragments.IEditFragment;
 
 
 abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
@@ -83,9 +84,9 @@ abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
    
    
    
-   public AbstractTaskEditFragment getTaskEditFragment()
+   public IEditFragment getTaskEditFragment()
    {
-      final AbstractTaskEditFragment taskEditFragment = (AbstractTaskEditFragment) findAddedFragmentById( R.id.frag_task_edit );
+      final IEditFragment taskEditFragment = (IEditFragment) findAddedFragmentById( R.id.frag_task_edit );
       return taskEditFragment;
    }
    

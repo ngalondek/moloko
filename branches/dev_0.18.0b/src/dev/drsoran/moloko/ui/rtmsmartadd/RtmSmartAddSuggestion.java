@@ -35,4 +35,12 @@ public class RtmSmartAddSuggestion
       this.suggestionText = suggestion;
       this.payload = payload;
    }
+   
+   
+   
+   @Override
+   public String toString()
+   {
+      return suggestionText;
+   }
 }

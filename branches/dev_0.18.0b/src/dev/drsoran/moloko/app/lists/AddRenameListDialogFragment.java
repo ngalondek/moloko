@@ -31,6 +31,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
@@ -143,10 +144,10 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
                                                                        public void onClick( DialogInterface dialog,
                                                                                             int which )
                                                                        {
-                                                                          if ( listener != null )
-                                                                          {
-                                                                             listener.onFinishEditDialogFragment( AddRenameListDialogFragment.this );
-                                                                          }
+                                                                          // Do nothing here because we override this
+                                                                          // button later to change the close behavior
+                                                                          // to prevent auto close
+                                                                          // on validation error.
                                                                        }
                                                                     } )
                                                 .setNegativeButton( R.string.btn_cancel,
@@ -172,6 +173,32 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    {
       super.onStart();
       listNameEdit.requestFocus();
+      
+      final AlertDialog dialog = (AlertDialog) getDialog();
+      if ( dialog != null )
+      {
+         final Button positiveButton = dialog.getButton( Dialog.BUTTON_POSITIVE );
+         positiveButton.setOnClickListener( new View.OnClickListener()
+         {
+            @Override
+            public void onClick( View v )
+            {
+               if ( listener != null )
+               {
+                  listener.onFinishEditDialogFragment( AddRenameListDialogFragment.this );
+                  
+                  if ( validate().isOk() )
+                  {
+                     dismiss();
+                  }
+               }
+               else
+               {
+                  dismiss();
+               }
+            }
+         } );
+      }
    }
    
    
@@ -199,7 +226,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    
    private void configureAsNewListDialog()
    {
-      filterEdit.setText( filter.getFilterString() );
+      filterEdit.setText( filter != null ? filter.getFilterString() : null );
    }
    
    

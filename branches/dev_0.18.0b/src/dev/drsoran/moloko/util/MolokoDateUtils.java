@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import android.text.format.DateUtils;
@@ -147,18 +149,11 @@ public class MolokoDateUtils
    
    
    
-   public final static String getDayOfWeekString( int calendarDayOfWeek )
+   public final static String getDayOfWeekString( RtmCalendar cal )
    {
-      return DateUtils.getDayOfWeekString( calendarDayOfWeek,
-                                           DateUtils.LENGTH_LONG );
-   }
-   
-   
-   
-   public final static String getAbbreviatedDayOfWeekString( int calendarDayOfWeek )
-   {
-      return DateUtils.getDayOfWeekString( calendarDayOfWeek,
-                                           DateUtils.LENGTH_SHORT );
+      final SimpleDateFormat sdf = new SimpleDateFormat( "EEEE",
+                                                         Locale.getDefault() );
+      return sdf.format( cal.getTime() );
    }
    
    

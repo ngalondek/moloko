@@ -19,7 +19,7 @@
 
    <uses-sdk
       android:minSdkVersion="9"
-      android:targetSdkVersion="15"/>
+      android:targetSdkVersion="19"/>
    
    <uses-permission
       android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -63,7 +63,7 @@
 
       <provider
          android:name=".app.search.TasksSearchRecentSuggestionsProvider"
-         android:authorities="dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider"
+         android:authorities="dev.drsoran.moloko.app.search.TasksSearchRecentSuggestionsProvider"
          android:exported="false" />
       
       <provider
@@ -88,7 +88,7 @@
          android:name=".app.home.HomeActivity">
          <meta-data
             android:name="android.app.default_searchable"
-            android:value=".app.search.TaskSearchResultActivity" />
+            android:value=".app.search." />
       </activity>
 
       <activity
@@ -154,12 +154,12 @@
          </intent-filter>
          <meta-data
             android:name="android.app.default_searchable"
-            android:value=".activities.TaskSearchResultActivity" />
+            android:value=".app.search." />
       </activity>
 
       <activity
          android:label="@string/app_name"
-         android:name=".app.search.TaskSearchResultActivity"
+         android:name=".app.search."
          android:theme="@style/Theme.Moloko.TasksList"
          android:exported="false"
          android:launchMode="singleTop"> <!-- SingleTop due to searchable -->

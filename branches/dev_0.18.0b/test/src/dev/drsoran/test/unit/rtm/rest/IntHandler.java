@@ -66,4 +66,12 @@ class IntHandler extends RtmContentHandler< Integer >
    {
       integer = Integer.valueOf( string );
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      integer = 0;
+   }
 }

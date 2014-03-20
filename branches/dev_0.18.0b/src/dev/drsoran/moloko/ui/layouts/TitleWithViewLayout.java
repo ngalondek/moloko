@@ -152,16 +152,19 @@ public abstract class TitleWithViewLayout extends LinearLayout
    
    private void setImage( Drawable drawable )
    {
-      final ImageView imageView = (ImageView) findViewById( R.id.title_with_view_image );
-      
-      if ( drawable != null )
+      if ( !isInEditMode() )
       {
-         imageView.setVisibility( VISIBLE );
-         imageView.setImageDrawable( drawable );
-      }
-      else
-      {
-         imageView.setVisibility( GONE );
+         final ImageView imageView = (ImageView) findViewById( R.id.title_with_view_image );
+         
+         if ( drawable != null )
+         {
+            imageView.setVisibility( VISIBLE );
+            imageView.setImageDrawable( drawable );
+         }
+         else
+         {
+            imageView.setVisibility( GONE );
+         }
       }
    }
    

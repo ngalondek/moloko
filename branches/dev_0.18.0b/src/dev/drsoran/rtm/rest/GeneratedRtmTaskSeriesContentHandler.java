@@ -127,4 +127,13 @@ public class GeneratedRtmTaskSeriesContentHandler extends
                                         new ArrayList< RtmContact >( referenceTask.getParticipants() ) );
       tasks.add( task );
    }
+   
+   
+   
+   @Override
+   protected void cleanUpState()
+   {
+      tasks.clear();
+      taskSeriesAttributes = null;
+   }
 }

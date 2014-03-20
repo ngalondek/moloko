@@ -26,7 +26,7 @@ import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.ui.fragments.listeners.IMolokoEditDialogFragmentListener;
 
 
-interface IAddRenameListFragmentListener extends
+public interface IAddRenameListFragmentListener extends
          IMolokoEditDialogFragmentListener
 {
    void onInsertNewList( TasksList tasksList );

@@ -94,7 +94,7 @@ public abstract class AbstractDatabase
    {
       for ( ITable table : tables )
       {
-         table.clear( null );
+         table.clear( getWritable() );
       }
    }
    

@@ -52,8 +52,7 @@ public abstract class MolokoDateTimeParserTestCase extends MolokoTestCase
    
    
    
-   public RtmCalendar testParseDate( String dateToParse,
-                                        boolean expectHasTime )
+   public RtmCalendar testParseDate( String dateToParse, boolean expectHasTime )
    {
       try
       {
@@ -109,8 +108,8 @@ public abstract class MolokoDateTimeParserTestCase extends MolokoTestCase
    
    
    public RtmCalendar parseTime( String timeToParse,
-                                    boolean adjustDay,
-                                    boolean expectHasTime )
+                                 boolean adjustDay,
+                                 boolean expectHasTime )
    {
       try
       {
@@ -181,8 +180,8 @@ public abstract class MolokoDateTimeParserTestCase extends MolokoTestCase
    private DefaultDateTimeEvaluator createEvaluator()
    {
       return new DefaultDateTimeEvaluator( getDateLanguage(),
-                                    TestDateFormatter.get(),
-                                    TestCalendarProvider.getJune_10_2010_00_00_00() );
+                                           TestDateFormatter.get(),
+                                           TestCalendarProvider.getJune_10_2010_00_00_00() );
    }
    
    

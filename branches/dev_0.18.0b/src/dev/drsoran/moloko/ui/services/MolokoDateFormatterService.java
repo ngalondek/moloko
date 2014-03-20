@@ -294,18 +294,21 @@ public final class MolokoDateFormatterService implements IDateFormatterService
          
          switch ( dateFormatItem )
          {
-            case DateFormat.DATE:
+            case 'd':
                expanded[ expandedIndex++ ] = resources.getString( R.string.numeric_date_format_day );
                break;
-            case DateFormat.MONTH:
+            
+            case 'M':
                expanded[ expandedIndex++ ] = resources.getString( R.string.numeric_date_format_month );
                break;
-            case DateFormat.YEAR:
+            
+            case 'y':
                if ( withYear )
                {
                   expanded[ expandedIndex++ ] = resources.getString( R.string.numeric_date_format_year );
                }
                break;
+            
             default :
                break;
          }

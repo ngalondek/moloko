@@ -16,15 +16,14 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <include
+    <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        layout="@layout/listview"
         android:drawSelectorOnTop="false">
 
         <!-- Preview: listitem=@layout/noteslist_listitem -->
-    </include>
+    </ListView>
 
     <include android:id="@android:id/empty"
       layout="@layout/app_empty_list_container"

@@ -25,13 +25,12 @@ package dev.drsoran.moloko.ui.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentPagerAdapter;
 import dev.drsoran.Strings;
-import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
 
 
 public class BaseFragmentPagerAdapter extends FragmentPagerAdapter
@@ -142,9 +141,10 @@ public class BaseFragmentPagerAdapter extends FragmentPagerAdapter
    public Fragment getItem( int position )
    {
       final PageInfo info = pageInfos.get( position );
-      info.fragment = DefaultFragmentFactory.create( context,
-                                                     info.clazz,
-                                                     info.args );
+      
+      info.fragment = Fragment.instantiate( context,
+                                            info.clazz.getName(),
+                                            info.args );
       return info.fragment;
    }
    

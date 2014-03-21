@@ -24,18 +24,16 @@ package dev.drsoran.moloko.app.search;
 
 import java.util.ArrayList;
 
+import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
-import android.support.v4.app.Fragment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
@@ -62,7 +60,7 @@ public class TaskSearchResultActivity extends
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      getSupportFragmentManager().addOnBackStackChangedListener( this );
+      getFragmentManager().addOnBackStackChangedListener( this );
    }
    
    
@@ -70,7 +68,7 @@ public class TaskSearchResultActivity extends
    @Override
    protected void onDestroy()
    {
-      getSupportFragmentManager().removeOnBackStackChangedListener( this );
+      getFragmentManager().removeOnBackStackChangedListener( this );
       super.onDestroy();
    }
    
@@ -132,12 +130,12 @@ public class TaskSearchResultActivity extends
    {
       if ( isWritableAccess() )
       {
-         getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity_rwd,
+         getMenuInflater().inflate( R.menu.tasksearchresult_activity_rwd,
                                            menu );
       }
       else
       {
-         getSupportMenuInflater().inflate( R.menu.tasksearchresult_activity,
+         getMenuInflater().inflate( R.menu.tasksearchresult_activity,
                                            menu );
       }
       

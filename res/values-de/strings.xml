@@ -58,12 +58,10 @@
       &lt;br>&lt;br>Version: %1$s&lt;br>&lt;br>
       Besonderen Dank an David Vermeille.&lt;br>&lt;br>
       Moloko ist implementiert mit Hilfe von:&lt;br>
-                - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 3.2
-         &lt;br>- Eine modifizierte Version der &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library
+                - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 4.1
          &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library
          &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
          &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a>
-         &lt;br>- &lt;a href="http://actionbarsherlock.com/>ActionBarSherlock&lt;/a>
    </string>
    
    <!-- Time phrases -->
@@ -120,8 +118,6 @@
    <string name="phr_manuell">Manuell</string>
    <string name="phr_password_set">gesetzt</string>
    <string name="phr_loading">Lädt gerade&#8230;</string>
-   <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
-   <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
    <string name="phr_hint">Hinweis</string>
    <string name="phr_yes">Ja</string>
    <string name="phr_no">Nein</string>   
@@ -131,7 +127,6 @@
    <string name="err_not_connected">Keine Verbindung</string>
    <string name="err_add_account_canceled">Das Hinzufügen eines neuen Kontos wurde abgebrochen</string>
    <string name="err_unexpected">Wenn Sie dies lesen LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
-   <string name="err_db_typed">Datenbank-Zugriffsfehler beim Zugriff auf %1$s.</string>
    <string name="err_entity_not_found">%1$s konnte nicht aus der Datenbank geladen werden.\n\nBitte überprüfen Sie ob das Element existiert.</string>
    <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten.\n\nDaten, die Sie mit Moloko bis jetzt geändert haben, bleiben erhalten. Dennoch werden die Änderungen nicht mit dem RTM Server synchronisiert und ggf. durch eine neuere Serverversion ersetzt.\n\nSie können dies ändern, indem Sie Ihr aktuelles, lokales RTM Konto vom Gerät entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.</string>
    
@@ -145,7 +140,6 @@
    <string name="btn_postpone">Aufschieben</string>
    <string name="btn_delete">Löschen</string>
    <string name="btn_back">Zurück</string>
-   <string name="btn_discard">Verwerfen</string>
    
    <!-- Global menus -->
    <string name="menu_opt_edit">Bearbeiten</string>
@@ -208,11 +202,7 @@
 	
 	<!-- Task activity -->
 	<string name="taskactivity_tab_notes">Notizen</string>
-	
-	<!-- TaskEdit activity -->
-	  <!-- Dialogs -->
-	  <string name="taskedit_activity_dlg_removing_editing">Die Aufgabe in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt.</string>
-	
+		
 	<!-- Task fragment -->
 	<string name="task_source">von %1$s</string>
 	<string name="task_datetime_title_due">Wann</string>
@@ -331,10 +321,6 @@
       <!-- Menus -->
       <string name="contactslist_listitem_show_phonebook_contact">Details von %1$s</string>
    
-   <!-- Note activity -->
-      <!-- Dialogs -->
-      <string name="note_dlg_removing_editing_note">Die Notiz in Bearbeitung wird durch die Hintergrund-Synchronisierung entfernt. Wenn Sie die Bearbeitung fortsetzen, wird eine neue Notiz mit Ihren Änderungen eingefügt.</string>
-      
    <!-- Authenticator fragment -->
    <string name="auth_permission_choose">Berechtigung wählen</string>
    <string name="auth_info_text">Bitte bestätigen Sie Ihre Zugriffsberechtigung. Ihr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>

@@ -23,9 +23,9 @@
 package dev.drsoran.moloko.ui.fragments;
 
 import android.app.Activity;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +60,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    public void onAttach( Activity activity )
    {
       super.onAttach( activity );
-      loaderImpl.onAttach( getSherlockActivity() );
+      loaderImpl.onAttach( getActivity() );
    }
    
    

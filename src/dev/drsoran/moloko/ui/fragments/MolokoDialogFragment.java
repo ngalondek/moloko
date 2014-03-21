@@ -23,20 +23,18 @@
 package dev.drsoran.moloko.ui.fragments;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockDialogFragment;
-
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 
 
-public abstract class MolokoDialogFragment extends SherlockDialogFragment
-         implements IConfigurable
+public abstract class MolokoDialogFragment extends DialogFragment implements
+         IConfigurable
 {
    
    private final DialogInterface.OnClickListener genericListener = new OnClickListener()

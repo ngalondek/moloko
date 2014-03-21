@@ -32,7 +32,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.taskslist.common.IShowTasksWithTagsListener.LogicalOperation;
 import dev.drsoran.moloko.state.InstanceState;
@@ -60,8 +59,7 @@ class ChooseTagsDialogFragment extends MolokoDialogFragment implements
    
    
    
-   public final static void show( FragmentActivity activity,
-                                  Collection< String > tags )
+   public final static void show( Activity activity, Collection< String > tags )
    {
       final Bundle config = new Bundle( 2 );
       
@@ -77,7 +75,7 @@ class ChooseTagsDialogFragment extends MolokoDialogFragment implements
    
    
    
-   public final static void show( FragmentActivity activity, Bundle config )
+   public final static void show( Activity activity, Bundle config )
    {
       final ChooseTagsDialogFragment frag = newInstance( config );
       UiUtils.showDialogFragment( activity,
@@ -142,7 +140,7 @@ class ChooseTagsDialogFragment extends MolokoDialogFragment implements
          }
       };
       
-      final Activity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       
       final Dialog dialog = new AlertDialog.Builder( activity ).setTitle( getResources().getQuantityString( R.plurals.taskslist_open_tags,
                                                                                                             tagStrings.length ) )

@@ -185,7 +185,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
    @Override
    public void onPreBeginAuthentication()
    {
-      getSherlockActivity().setSupportProgressBarIndeterminateVisibility( true );
+      getActivity().setProgressBarIndeterminateVisibility( true );
       messageText.setText( getString( R.string.auth_dlg_get_auth_token,
                                       getPermissionLocalized() ) );
    }
@@ -243,7 +243,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
          webView.setVisibility( View.INVISIBLE );
          button.setText( R.string.btn_cancel );
          
-         getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
+         getActivity().setProgressBarIndeterminateVisibility( false );
          notifyAuthenticationFinished( rtmAuth );
       }
    }
@@ -329,7 +329,7 @@ public class RtmWebLoginFragment extends AuthFragment implements
    private void notifyAuthenticationCanceled()
    {
       shutdownRtmAuthenticator();
-      getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
+      getActivity().setProgressBarIndeterminateVisibility( false );
       
       authenticatorActivity.onAuthenticationCanceled();
    }
@@ -385,9 +385,9 @@ public class RtmWebLoginFragment extends AuthFragment implements
          
          // This may be null if the callback from the WebView comes while
          // detaching the fragment.
-         if ( getSherlockActivity() != null )
+         if ( getActivity() != null )
          {
-            getSherlockActivity().setSupportProgressBarIndeterminateVisibility( true );
+            getActivity().setProgressBarIndeterminateVisibility( true );
          }
       }
       
@@ -400,9 +400,9 @@ public class RtmWebLoginFragment extends AuthFragment implements
          
          // This may be null if the callback from the WebView comes while
          // detaching the fragment.
-         if ( getSherlockActivity() != null )
+         if ( getActivity() != null )
          {
-            getSherlockActivity().setSupportProgressBarIndeterminateVisibility( false );
+            getActivity().setProgressBarIndeterminateVisibility( false );
          }
       }
       

@@ -26,21 +26,18 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 
 import android.app.Activity;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -65,11 +62,9 @@ import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public class TaskFragment extends MolokoLoaderFragment< Task > implements
-         IAbsViewPagerSupport, IOnSettingsChangedListener
+         IOnSettingsChangedListener
 {
    public final int FULL_DATE_FLAGS = IDateFormatterService.FORMAT_WITH_YEAR;
-   
-   private boolean enableAbsViewPagerWorkaround;
    
    private ITaskFragmentListener listener;
    
@@ -131,13 +126,11 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
-      
       preSetLoaderData( task );
       
       super.onCreate( savedInstanceState );
       
-      setHasOptionsMenu( !enableAbsViewPagerWorkaround );
+      setHasOptionsMenu( true );
    }
    
    
@@ -220,20 +213,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
       super.onCreateOptionsMenu( menu, inflater );
-      if ( !enableAbsViewPagerWorkaround )
-      {
-         onCreateOptionsMenuImpl( menu, inflater );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean onCreateOptionsMenuViewPagerSupportWorkaround( Menu menu,
-                                                                 MenuInflater inflater )
-   {
       onCreateOptionsMenuImpl( menu, inflater );
-      return true;
    }
    
    
@@ -252,19 +232,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    public void onPrepareOptionsMenu( Menu menu )
    {
       super.onPrepareOptionsMenu( menu );
-      if ( !enableAbsViewPagerWorkaround )
-      {
-         onPrepareOptionsMenuImpl( menu );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean onPrepareOptionsMenuViewPagerSupportWorkaround( Menu menu )
-   {
       onPrepareOptionsMenuImpl( menu );
-      return true;
    }
    
    
@@ -287,21 +255,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
-   {
-      if ( !enableAbsViewPagerWorkaround )
-      {
-         return onOptionsItemSelectedImpl( item );
-      }
-      else
-      {
-         return super.onOptionsItemSelected( item );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean onOptionsItemSelectedViewPagerSupportWorkaround( MenuItem item )
    {
       return onOptionsItemSelectedImpl( item );
    }
@@ -343,7 +296,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    {
       assertNotNull();
       
-      final SherlockFragmentActivity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       
       UiUtils.setPriorityColor( activity, priorityBar, task );
       
@@ -607,7 +560,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             final Participant participant = participantsIter.next();
             
-            final TextView textView = new TextView( getSherlockActivity() );
+            final TextView textView = new TextView( getActivity() );
             UiUtils.makeLink( textView,
                               participant.getFullname(),
                               new ClickableSpan()

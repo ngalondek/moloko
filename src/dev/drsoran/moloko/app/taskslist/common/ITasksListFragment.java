@@ -22,11 +22,11 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.View;
+import android.widget.ListView;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
 interface ITasksListFragment
@@ -71,7 +71,7 @@ interface ITasksListFragment
    
    
    
-   MolokoListView getMolokoListView();
+   ListView getListView();
    
    
    

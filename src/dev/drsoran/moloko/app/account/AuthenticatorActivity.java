@@ -24,12 +24,12 @@ package dev.drsoran.moloko.app.account;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -40,7 +40,7 @@ import dev.drsoran.rtm.service.RtmAuth;
 import dev.drsoran.rtm.service.RtmServicePermission;
 
 
-public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
+public class AuthenticatorActivity extends AccountAuthenticatorActivity
          implements IStartAuthenticationFragmentListener,
          IRtmWebLoginFragmentListener
 {
@@ -58,7 +58,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
       super.onCreate( icicle );
       
       setContentView( R.layout.authenticator_activity );
-      setSupportProgressBarIndeterminateVisibility( false );
+      setProgressBarIndeterminateVisibility( false );
       
       accountManager = AccountManager.get( this );
       
@@ -86,9 +86,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
    
    
    @Override
-   public Object onRetainCustomNonConfigurationInstance()
+   public Object onRetainNonConfigurationInstance()
    {
-      final AuthFragment authFragment = (AuthFragment) getSupportFragmentManager().findFragmentById( R.id.frag_multi_container );
+      final AuthFragment authFragment = (AuthFragment) findAddedFragmentById( R.id.frag_multi_container );
       if ( authFragment != null )
       {
          return authFragment.onRetainNonConfigurationInstance();
@@ -107,11 +107,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
          final Bundle config = new Bundle( 1 );
          config.putString( AuthConstants.FEAT_PERMISSION, permission.toString() );
          
-         getSupportFragmentManager().beginTransaction()
-                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
-                                    .replace( R.id.frag_multi_container,
-                                              RtmWebLoginFragment.newInstance( config ) )
-                                    .commit();
+         getFragmentManager().beginTransaction()
+                             .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                             .replace( R.id.frag_multi_container,
+                                       RtmWebLoginFragment.newInstance( config ) )
+                             .commit();
       }
       else
       {
@@ -219,7 +219,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
    
    private void createStartFragment()
    {
-      final FragmentManager fragmentManager = getSupportFragmentManager();
+      final FragmentManager fragmentManager = getFragmentManager();
       
       if ( fragmentManager.findFragmentById( R.id.frag_multi_container ) == null )
       {

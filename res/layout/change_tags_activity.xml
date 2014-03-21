@@ -11,9 +11,25 @@
         android:layout_weight="1.0"
         android:orientation="vertical" />
 
-    <include
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/dialog_buttons_ok_cancel" />
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@android:id/button2"
+            style="@style/DialogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@android:id/button1"
+            style="@style/DialogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/ok" />
+    </LinearLayout>
 
 </LinearLayout>

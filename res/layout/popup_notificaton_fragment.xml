@@ -14,7 +14,7 @@
         android:layout_toLeftOf="@android:id/closeButton"
         android:layout_centerVertical="true"
         android:paddingRight="5dip"
-        moloko:title="@string/phr_hint"
+        moloko:titleText="@string/phr_hint"
         moloko:text="Text"
         moloko:imageSrc="@drawable/ic_prefs_info" />
 
@@ -24,6 +24,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/abs__item_background_holo_light"
         android:src="@drawable/ic_button_edittext_pressed_delete" />
 </RelativeLayout>

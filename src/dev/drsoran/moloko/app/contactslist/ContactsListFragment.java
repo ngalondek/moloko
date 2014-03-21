@@ -25,18 +25,16 @@ package dev.drsoran.moloko.app.contactslist;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
-
-import com.actionbarsherlock.view.Menu;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.loaders.ContactsLoader;
 import dev.drsoran.moloko.domain.DomainContext;
@@ -221,5 +219,13 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
       {
          listener.onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
       }
+   }
+   
+   
+   
+   @Override
+   public int getChoiceMode()
+   {
+      return ListView.CHOICE_MODE_NONE;
    }
 }

@@ -29,17 +29,14 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import android.app.Activity;
+import android.content.Loader;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.loaders.CloudEntryLoader;
 import dev.drsoran.moloko.domain.model.CloudEntry;
@@ -160,7 +157,7 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
    
    private void showTagCloudEntries( List< CloudEntry > cloudEntries )
    {
-      final Activity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       
       final int size = cloudEntries.size();
       final List< Button > buttons = new ArrayList< Button >( size );
@@ -216,7 +213,7 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
    
    private void showEmptyView()
    {
-      final SherlockFragmentActivity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       final View noElementsView = activity.getLayoutInflater()
                                           .inflate( R.layout.app_no_elements,
                                                     null );

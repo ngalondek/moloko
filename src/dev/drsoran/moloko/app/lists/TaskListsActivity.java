@@ -23,24 +23,23 @@
 package dev.drsoran.moloko.app.lists;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.view.Menu;
+import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditActivity;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
+import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
-public class TaskListsActivity extends MolokoEditFragmentActivity implements
+public class TaskListsActivity extends MolokoEditActivity implements
          ITaskListsFragmentListener, IAddRenameListFragmentListener
 {
    @InstanceState( key = "list_to_delete", defaultValue = InstanceState.NULL )
@@ -69,11 +68,11 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    {
       if ( isWritableAccess() )
       {
-         getSupportMenuInflater().inflate( R.menu.tasklists_activity_rwd, menu );
+         getMenuInflater().inflate( R.menu.tasklists_activity_rwd, menu );
       }
       else
       {
-         getSupportMenuInflater().inflate( R.menu.tasklists_activity, menu );
+         getMenuInflater().inflate( R.menu.tasklists_activity, menu );
       }
       
       super.onActivityCreateOptionsMenu( menu );
@@ -135,7 +134,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
       final TasksList list = getList( pos );
       setListToDelete( list );
       
-      UiUtils.showDeleteElementDialog( this, list.getName() );
+      showDeleteListDialog( list.getName() );
    }
    
    
@@ -216,7 +215,7 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    
    private TasksList getList( int pos )
    {
-      final TaskListsFragment taskListsFragment = (TaskListsFragment) getSupportFragmentManager().findFragmentById( R.id.frag_tasklists );
+      final TaskListsFragment taskListsFragment = (TaskListsFragment) getFragmentManager().findFragmentById( R.id.frag_tasklists );
       return taskListsFragment.getList( pos );
    }
    
@@ -258,6 +257,18 @@ public class TaskListsActivity extends MolokoEditFragmentActivity implements
    private void setListToDelete( TasksList listToDelete )
    {
       this.listToDelete = listToDelete;
+   }
+   
+   
+   
+   private void showDeleteListDialog( String elementName )
+   {
+      new AlertDialogFragment.Builder( R.id.dlg_delete_element ).setMessage( getString( R.string.phr_delete_with_name,
+                                                                                        elementName )
+         + "?" )
+                                                                .setPositiveButton( R.string.btn_delete )
+                                                                .setNegativeButton( R.string.btn_cancel )
+                                                                .show( this );
    }
    
    

@@ -18,7 +18,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Quick_Add_Task_Button_Bar_Fragment"
     android:layout_width="fill_parent"
-    android:layout_height="?attr/actionBarSize"
+    android:layout_height="?android:attr/actionBarSize"
     android:orientation="horizontal">
 
     <ImageButton
@@ -27,7 +27,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?attr/actionBarItemBackground"
+        android:background="?android:attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_time"
         android:tag="@string/quick_add_task_op_due" />
 
@@ -37,7 +37,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?attr/actionBarItemBackground"
+        android:background="?android:attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_priority"
         android:tag="@string/quick_add_task_op_priority" />
 
@@ -47,7 +47,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?attr/actionBarItemBackground"
+        android:background="?android:attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_smart_add_list_or_tag"
         android:tag="@string/quick_add_task_op_list_tags" />
 
@@ -57,7 +57,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?attr/actionBarItemBackground"
+        android:background="?android:attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_location"
         android:tag="@string/quick_add_task_op_location" />
 
@@ -67,7 +67,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?attr/actionBarItemBackground"
+        android:background="?android:attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_recurrent"
         android:tag="@string/quick_add_task_op_recurrene" />
 
@@ -77,7 +77,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:background="?attr/actionBarItemBackground"
+        android:background="?android:attr/actionBarItemBackground"
         android:src="@drawable/ic_button_task_quick_add_thumb"
         android:tag="@string/quick_add_task_op_estimate" />
 

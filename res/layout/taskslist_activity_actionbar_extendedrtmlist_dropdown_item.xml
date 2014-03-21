@@ -14,7 +14,7 @@
       implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/spinnerDropDownItemStyle"
+    style="?android:attr/spinnerDropDownItemStyle"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:paddingTop="5dip"

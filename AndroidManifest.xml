@@ -18,7 +18,7 @@
    android:installLocation="internalOnly">
 
    <uses-sdk
-      android:minSdkVersion="9"
+      android:minSdkVersion="14"
       android:targetSdkVersion="19"/>
    
    <uses-permission
@@ -52,6 +52,13 @@
    <uses-permission
       android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
    
+   <permission
+      android:name="dev.drsoran.moloko.sync.SYNC_ADAPTER"
+      android:protectionLevel="signature" />
+   
+   <permission
+      android:name="dev.drsoran.moloko.auth.AUTH_SERVICE"
+      android:protectionLevel="signature" />   
 
    <application
       android:name="dev.drsoran.moloko.MolokoApp"
@@ -159,7 +166,7 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".app.search."
+         android:name=".app.search.TaskSearchResultActivity"
          android:theme="@style/Theme.Moloko.TasksList"
          android:exported="false"
          android:launchMode="singleTop"> <!-- SingleTop due to searchable -->
@@ -303,7 +310,7 @@
 
       <activity
          android:label="@string/app_preferences"
-         android:name=".app.prefs.activities.MainPreferencesActivity"
+         android:name=".app.prefs.MainPreferencesActivity"
          android:excludeFromRecents="true"
          android:exported="false">
          <intent-filter>
@@ -315,60 +322,8 @@
       </activity>
       
       <activity
-         android:label="@string/moloko_prefs_rtm_title"
-         android:name=".app.prefs.activities.RtmPreferencesActivity"
-         android:excludeFromRecents="true"
-         android:exported="false">         
-         <intent-filter>
-            <action
-               android:name="dev.drsoran.moloko.prefs.rtm.MAIN" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>         
-      </activity>
-      
-      <activity
-         android:label="@string/moloko_prefs_notification_title"
-         android:name=".app.prefs.activities.NotificationPreferencesActivity"
-         android:excludeFromRecents="true"
-         android:exported="false">         
-         <intent-filter>
-            <action
-               android:name="dev.drsoran.moloko.prefs.notification.MAIN" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>         
-      </activity>
-      
-      <activity
-         android:label="@string/moloko_prefs_general_title"
-         android:name=".app.prefs.activities.GeneralPreferencesActivity"
-         android:excludeFromRecents="true"
-         android:exported="false">         
-         <intent-filter>
-            <action
-               android:name="dev.drsoran.moloko.prefs.general.MAIN" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>         
-      </activity>
-      
-      <activity
-         android:label="@string/moloko_prefs_support_dev_title"
-         android:name=".app.prefs.activities.DevelopmentPreferencesActivity"
-         android:excludeFromRecents="true"
-         android:exported="false">         
-         <intent-filter>
-            <action
-               android:name="dev.drsoran.moloko.prefs.development.MAIN" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-         </intent-filter>         
-      </activity>
-
-      <activity
          android:label="@string/app_account_preferences"
-         android:name=".app.prefs.activities.AccountPreferencesActivity"
+         android:name=".app.prefs.AccountPreferencesActivity"
          android:theme="@style/Theme.Moloko"         
          android:taskAffinity="android.system"
          android:launchMode="singleTask"
@@ -413,7 +368,9 @@
 
       <service
          android:name=".app.account.AuthenticationService"
-         android:label="@string/svc_auth">
+         android:label="@string/svc_auth"
+         android:exported="true"
+         android:permission="dev.drsoran.moloko.auth.AUTH_SERVICE">
          <intent-filter>
             <action
                android:name="android.accounts.AccountAuthenticator" />
@@ -423,9 +380,13 @@
             android:resource="@xml/authenticator" />
       </service>
 
+      
+      
       <service
          android:name="dev.drsoran.moloko.app.sync.AndroidSyncProvider"
-         android:label="@string/svc_sync">
+         android:label="@string/svc_sync"
+         android:exported="true"
+         android:permission="dev.drsoran.moloko.sync.SYNC_ADAPTER">
          <intent-filter>
             <action
                android:name="android.content.SyncAdapter" />
@@ -435,11 +396,13 @@
             android:resource="@xml/syncadapter" />
       </service>
       
+      <!-- 
       <service 
          android:name=".app.notification.MolokoNotificationService"
          android:label="@string/svc_notification"
          android:exported="false">
       </service>
+       -->
 
       <!-- Broadcast receivers -->
 

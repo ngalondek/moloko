@@ -23,10 +23,12 @@
 package dev.drsoran.moloko.ui.fragments.impl;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.ui.UiUtils;
@@ -112,7 +114,12 @@ public class EditFragmentImpl
    {
       if ( windowToken != null )
       {
-         UiUtils.hideSoftInput( context, windowToken );
+         final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
+         if ( imm != null )
+         {
+            imm.hideSoftInputFromWindow( windowToken,
+                                         InputMethodManager.HIDE_NOT_ALWAYS );
+         }
       }
    }
    

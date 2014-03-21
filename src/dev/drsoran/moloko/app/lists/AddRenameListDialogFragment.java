@@ -117,7 +117,7 @@ public class AddRenameListDialogFragment extends MolokoEditDialogFragment
    @Override
    protected Dialog createDialog( View fragmentView )
    {
-      final Activity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       
       final String title;
       

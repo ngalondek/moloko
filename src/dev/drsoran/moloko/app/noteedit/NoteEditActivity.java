@@ -22,23 +22,20 @@
 
 package dev.drsoran.moloko.app.noteedit;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.view.Menu;
+import android.view.MenuItem;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditActivity;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
-import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
 
 
-public class NoteEditActivity extends MolokoEditFragmentActivity implements
+public class NoteEditActivity extends MolokoEditActivity implements
          INoteEditFragmentListener, INoteAddFragmentListener
 {
    @Override
@@ -55,7 +52,7 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
    @Override
    public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      getSupportMenuInflater().inflate( R.menu.edit_activity, menu );
+      getMenuInflater().inflate( R.menu.edit_activity, menu );
       super.onActivityCreateOptionsMenu( menu );
       
       return true;
@@ -171,14 +168,14 @@ public class NoteEditActivity extends MolokoEditFragmentActivity implements
    {
       if ( findAddedFragmentById( R.id.frag_note ) == null )
       {
-         final Fragment fragment = DefaultFragmentFactory.create( this,
-                                                                  clazz,
-                                                                  getIntent().getExtras() );
+         final Fragment fragment = Fragment.instantiate( this,
+                                                         clazz.getName(),
+                                                         getIntent().getExtras() );
          
-         getSupportFragmentManager().beginTransaction()
-                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
-                                    .add( R.id.frag_note, fragment )
-                                    .commit();
+         getFragmentManager().beginTransaction()
+                             .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                             .add( R.id.frag_note, fragment )
+                             .commit();
       }
    }
    

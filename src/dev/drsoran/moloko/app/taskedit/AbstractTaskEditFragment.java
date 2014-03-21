@@ -42,8 +42,8 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import android.app.Activity;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
@@ -733,7 +733,7 @@ abstract class AbstractTaskEditFragment extends
                                             List< String > displayStrings,
                                             String initialValue )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          displayStrings );

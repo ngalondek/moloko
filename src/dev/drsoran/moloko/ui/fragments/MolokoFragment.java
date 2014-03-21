@@ -23,13 +23,11 @@
 package dev.drsoran.moloko.ui.fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.actionbarsherlock.app.SherlockFragment;
-
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
@@ -37,8 +35,7 @@ import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
 
 
-public abstract class MolokoFragment extends SherlockFragment implements
-         IConfigurable
+public abstract class MolokoFragment extends Fragment implements IConfigurable
 {
    private final ConfigurableFragmentImpl impl;
    

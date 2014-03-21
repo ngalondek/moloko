@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -307,7 +307,7 @@ public class ChangeTagsFragment extends MolokoLoaderFragment< List< String > >
       for ( String tag : unusedTags )
          changeTags.add( new ChangeTag( tag, true ) );
       
-      tagsList.setAdapter( new ChangeTagsAdapter( getSherlockActivity(),
+      tagsList.setAdapter( new ChangeTagsAdapter( getActivity(),
                                                   R.layout.change_tags_fragment_listitem,
                                                   changeTags ) );
    }

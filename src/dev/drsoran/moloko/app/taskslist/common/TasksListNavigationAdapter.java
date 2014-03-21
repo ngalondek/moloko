@@ -30,9 +30,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.actionbarsherlock.internal.widget.CapitalizingTextView;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
@@ -271,15 +268,15 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
                                            parent,
                                            R.layout.taskslist_activity_actionbar_listsection_dropdown_item );
             
-            final CapitalizingTextView textView = (CapitalizingTextView) convertView.findViewById( android.R.id.text1 );
-            textView.setTextCompat( getContext().getString( R.string.app_tasklists ) );
+            final TextView textView = (TextView) convertView.findViewById( android.R.id.text1 );
+            textView.setText( getContext().getString( R.string.app_tasklists ) );
          }
          // Normal list
          else
          {
             convertView = inflateIfNeeded( convertView,
                                            parent,
-                                           R.layout.sherlock_spinner_dropdown_item );
+                                           android.R.layout.simple_spinner_dropdown_item );
             
             // Subtract 1 from the position since the list section item is not part of the adapter
             // data.
@@ -307,7 +304,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
          // Normal list
          else
          {
-            return R.layout.sherlock_spinner_dropdown_item;
+            return android.R.layout.simple_spinner_dropdown_item;
          }
       }
       
@@ -342,14 +339,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       
       private void setText( TextView textView, String text )
       {
-         if ( textView instanceof CapitalizingTextView )
-         {
-            ( (CapitalizingTextView) textView ).setTextCompat( text );
-         }
-         else
-         {
-            textView.setText( text );
-         }
+         textView.setText( text );
       }
       
       
@@ -371,7 +361,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public int getSpinnerLayoutResourceId( int position )
       {
-         return R.layout.sherlock_spinner_dropdown_item;
+         return android.R.layout.simple_spinner_dropdown_item;
       }
       
       
@@ -379,7 +369,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public int getDropdownLayoutResourceId( int position )
       {
-         return R.layout.sherlock_spinner_dropdown_item;
+         return android.R.layout.simple_spinner_dropdown_item;
       }
       
       
@@ -399,7 +389,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       {
          if ( position == ITEM_POSITION_DEFAULT_TASKS )
          {
-            return R.layout.sherlock_spinner_dropdown_item;
+            return android.R.layout.simple_spinner_dropdown_item;
          }
          else
          {

@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.ui;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuItem;
 
 
 public final class MenuItemPreparer

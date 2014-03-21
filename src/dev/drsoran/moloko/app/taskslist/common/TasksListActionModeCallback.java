@@ -24,10 +24,9 @@ package dev.drsoran.moloko.app.taskslist.common;
 
 import java.util.ArrayList;
 
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import dev.drsoran.Pair;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Task;
@@ -44,7 +43,7 @@ class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
    
    public TasksListActionModeCallback( AbstractTasksListFragment fragment )
    {
-      super( fragment.getMolokoListView() );
+      super( fragment.getListView() );
       this.fragment = fragment;
    }
    
@@ -75,7 +74,7 @@ class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
       
       prepareRwdActionMenu( menu );
       
-      final int selectedCount = getListView().getCheckedItemCountSupport();
+      final int selectedCount = getListView().getCheckedItemCount();
       
       final boolean showSingleSelectionItems = selectedCount == 1
          && hasLoaderData();
@@ -94,7 +93,7 @@ class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
    
    private void prepareRwdActionMenu( Menu menu )
    {
-      final int selectedCount = getListView().getCheckedItemCountSupport();
+      final int selectedCount = getListView().getCheckedItemCount();
       final boolean show = selectedCount > 0 && hasLoaderData();
       
       Pair< Integer, Integer > selectedCompletedUncompletedCount = null;

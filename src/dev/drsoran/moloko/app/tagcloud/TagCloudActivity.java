@@ -25,16 +25,14 @@ package dev.drsoran.moloko.app.tagcloud;
 import java.util.Collections;
 
 import android.os.Bundle;
-
-import com.actionbarsherlock.view.Menu;
-
+import android.view.Menu;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
-public class TagCloudActivity extends MolokoFragmentActivity implements
+public class TagCloudActivity extends MolokoActivity implements
          ITagCloudFragmentListener
 {
    @Override
@@ -49,7 +47,7 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    @Override
    public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      getSupportMenuInflater().inflate( R.menu.sync_only, menu );
+      getMenuInflater().inflate( R.menu.sync_only, menu );
       super.onActivityCreateOptionsMenu( menu );
       
       return true;

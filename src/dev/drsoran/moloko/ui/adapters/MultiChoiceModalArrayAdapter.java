@@ -22,20 +22,24 @@
 
 package dev.drsoran.moloko.ui.adapters;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import android.content.Context;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Checkable;
+import android.widget.ListView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
 public abstract class MultiChoiceModalArrayAdapter< T > extends
          SwappableArrayAdapter< T >
 {
-   private final MolokoListView listView;
+   private final ListView listView;
    
    private final LayoutInflater inflater;
    
@@ -43,8 +47,7 @@ public abstract class MultiChoiceModalArrayAdapter< T > extends
    
    
    
-   protected MultiChoiceModalArrayAdapter( MolokoListView listView,
-      int resourceId )
+   protected MultiChoiceModalArrayAdapter( ListView listView, int resourceId )
    {
       super( listView.getContext() );
       
@@ -64,14 +67,14 @@ public abstract class MultiChoiceModalArrayAdapter< T > extends
    
    public boolean isMultiChoiceModalMode()
    {
-      return listView.getChoiceMode() == MolokoListView.CHOICE_MODE_MULTIPLE_MODAL;
+      return listView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE;
    }
    
    
    
    public boolean isInMultiChoiceModalActionMode()
    {
-      return listView.isInMultiChoiceModalActionMode();
+      return listView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE_MODAL;
    }
    
    
@@ -94,6 +97,26 @@ public abstract class MultiChoiceModalArrayAdapter< T > extends
       initCheckable( (ViewGroup) convertView, position );
       
       return convertView;
+   }
+   
+   
+   
+   public Collection< T > getSelectedItems()
+   {
+      final SparseBooleanArray checkedItemPositions = listView.getCheckedItemPositions();
+      final Collection< T > items = new ArrayList< T >( checkedItemPositions.size() );
+      
+      for ( int i = 0; i < checkedItemPositions.size(); i++ )
+      {
+         final boolean checked = checkedItemPositions.get( i );
+         if ( checked )
+         {
+            final T item = getItem( i );
+            items.add( item );
+         }
+      }
+      
+      return items;
    }
    
    

@@ -24,9 +24,9 @@ package dev.drsoran.moloko.app.taskedit;
 
 import java.util.ArrayList;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.Task;
@@ -65,7 +65,7 @@ public class TaskEditMultipleActivity extends AbstractTaskEditActivity
       {
          final Fragment fragment = createTaskEditMultipleFragment();
          
-         getSupportFragmentManager().beginTransaction()
+         getFragmentManager().beginTransaction()
                                     .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
                                     .add( R.id.frag_task_edit, fragment )
                                     .commit();

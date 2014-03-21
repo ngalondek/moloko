@@ -31,15 +31,14 @@ import android.os.Bundle;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
-import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.settings.SettingConstants;
-import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
-public class StartUpActivity extends MolokoFragmentActivity
+public class StartUpActivity extends MolokoActivity
 {
    private final static String STATE_INDEX_KEY = "state_index";
    
@@ -144,7 +143,7 @@ public class StartUpActivity extends MolokoFragmentActivity
       
       if ( account == null )
       {
-         UiUtils.showNoAccountDialog( StartUpActivity.this );
+         showNoAccountDialog();
          switchToNextState = false;
       }
       

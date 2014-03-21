@@ -26,23 +26,20 @@ import java.util.Collection;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import com.actionbarsherlock.internal.view.menu.MenuWrapper;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -54,13 +51,11 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
-import dev.drsoran.moloko.ui.fragments.MolokoMultiChoiceModalListFragment;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
+import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
 
 
-abstract class AbstractTasksListFragment extends
-         MolokoMultiChoiceModalListFragment< Task > implements
-         ITasksListFragment, IOnSettingsChangedListener
+abstract class AbstractTasksListFragment extends MolokoListFragment< Task >
+         implements ITasksListFragment, IOnSettingsChangedListener
 {
    private AppContext appContext;
    
@@ -237,13 +232,13 @@ abstract class AbstractTasksListFragment extends
    {
       super.onCreateContextMenu( menu, v, menuInfo );
       
-      getSherlockActivity().getMenuInflater()
-                           .inflate( R.menu.taskslist_listitem_context, menu );
+      getActivity().getMenuInflater()
+                   .inflate( R.menu.taskslist_listitem_context, menu );
       
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
       final Task selectedTask = getTask( info.position );
       
-      prepareSingleTaskActionMenu( new MenuWrapper( menu ), selectedTask );
+      prepareSingleTaskActionMenu( menu, selectedTask );
    }
    
    
@@ -507,13 +502,12 @@ abstract class AbstractTasksListFragment extends
    @Override
    public int getChoiceMode()
    {
-      return hasWritableAccess() ? MolokoListView.CHOICE_MODE_MULTIPLE_MODAL
-                                : MolokoListView.CHOICE_MODE_NONE;
+      return hasWritableAccess() ? ListView.CHOICE_MODE_MULTIPLE_MODAL
+                                : ListView.CHOICE_MODE_NONE;
    }
    
    
    
-   @Override
    public BaseMultiChoiceModeListener< Task > createMultiCoiceModalModeListener()
    {
       final TasksListActionModeCallback callback = new TasksListActionModeCallback( this );

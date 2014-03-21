@@ -33,8 +33,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.AbstractContentUriHandler;
+import dev.drsoran.moloko.content.Columns.TagColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 

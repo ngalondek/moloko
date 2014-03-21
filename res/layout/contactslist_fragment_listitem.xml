@@ -84,7 +84,6 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:layout_gravity="right"
-          android:background="@drawable/abs__item_background_holo_light"
           android:scaleType="center"
           android:src="@drawable/ic_list_contactslist_call" />
 

@@ -26,17 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -46,13 +44,11 @@ import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
-import dev.drsoran.moloko.ui.fragments.MolokoMultiChoiceModalListFragment;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
+import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
 
 
-public class NotesListFragment extends
-         MolokoMultiChoiceModalListFragment< Note > implements
-         IAbsViewPagerSupport, IOnSettingsChangedListener
+public class NotesListFragment extends MolokoListFragment< Note > implements
+         IOnSettingsChangedListener
 {
    public final static NotesListFragment newInstance( Bundle config )
    {
@@ -62,8 +58,6 @@ public class NotesListFragment extends
       
       return fragment;
    }
-   
-   private boolean enableAbsViewPagerWorkaround;
    
    @InstanceState( key = Intents.Extras.KEY_NOTES )
    private ArrayList< Note > notes;
@@ -104,13 +98,11 @@ public class NotesListFragment extends
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
-      
       preSetLoaderData( notes );
       
       super.onCreate( savedInstanceState );
       
-      setHasOptionsMenu( !enableAbsViewPagerWorkaround );
+      setHasOptionsMenu( true );
    }
    
    
@@ -132,10 +124,7 @@ public class NotesListFragment extends
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
       super.onCreateOptionsMenu( menu, inflater );
-      if ( !enableAbsViewPagerWorkaround )
-      {
-         onCreateOptionsMenuImpl( menu, inflater );
-      }
+      onCreateOptionsMenuImpl( menu, inflater );
    }
    
    
@@ -169,16 +158,6 @@ public class NotesListFragment extends
    
    
    
-   @Override
-   public boolean onCreateOptionsMenuViewPagerSupportWorkaround( Menu menu,
-                                                                 MenuInflater inflater )
-   {
-      onCreateOptionsMenuImpl( menu, inflater );
-      return true;
-   }
-   
-   
-   
    private void onCreateOptionsMenuImpl( Menu menu, MenuInflater inflater )
    {
       if ( getListAdapter() != null && hasWritableAccess() )
@@ -190,30 +169,7 @@ public class NotesListFragment extends
    
    
    @Override
-   public boolean onPrepareOptionsMenuViewPagerSupportWorkaround( Menu menu )
-   {
-      return true;
-   }
-   
-   
-   
-   @Override
    public boolean onOptionsItemSelected( MenuItem item )
-   {
-      if ( !enableAbsViewPagerWorkaround )
-      {
-         return onOptionsItemSelectedImpl( item );
-      }
-      else
-      {
-         return super.onOptionsItemSelected( item );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean onOptionsItemSelectedViewPagerSupportWorkaround( MenuItem item )
    {
       return onOptionsItemSelectedImpl( item );
    }
@@ -315,16 +271,15 @@ public class NotesListFragment extends
    @Override
    public int getChoiceMode()
    {
-      return hasWritableAccess() ? MolokoListView.CHOICE_MODE_MULTIPLE_MODAL
-                                : MolokoListView.CHOICE_MODE_NONE;
+      return hasWritableAccess() ? ListView.CHOICE_MODE_MULTIPLE_MODAL
+                                : ListView.CHOICE_MODE_NONE;
    }
    
    
    
-   @Override
    public BaseMultiChoiceModeListener< Note > createMultiCoiceModalModeListener()
    {
-      final NotesListActionModeCallback callback = new NotesListActionModeCallback( getMolokoListView() );
+      final NotesListActionModeCallback callback = new NotesListActionModeCallback( getListView() );
       callback.setNotesListActionModeListener( listener );
       
       return callback;

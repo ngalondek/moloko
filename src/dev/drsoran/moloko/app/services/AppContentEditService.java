@@ -26,9 +26,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
@@ -66,7 +66,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void insertTask( FragmentActivity context, final Task task )
+   public void insertTask( Activity context, final Task task )
    {
       if ( checkWritableAccess( context ) )
       {
@@ -91,7 +91,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void updateTask( FragmentActivity context, Task task )
+   public void updateTask( Activity context, Task task )
    {
       updateTasks( context, Collections.singletonList( task ) );
    }
@@ -99,7 +99,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void updateTasks( FragmentActivity context,
+   public void updateTasks( Activity context,
                             final Collection< ? extends Task > tasks )
    {
       final int tasksCount = tasks.size();
@@ -134,7 +134,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void deleteTask( FragmentActivity context, Task task )
+   public void deleteTask( Activity context, Task task )
    {
       deleteTasks( context, Collections.singletonList( task ) );
    }
@@ -142,7 +142,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void deleteTasks( FragmentActivity context,
+   public void deleteTasks( Activity context,
                             final Collection< ? extends Task > tasks )
    {
       final int tasksCount = tasks.size();
@@ -177,7 +177,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void completeTask( FragmentActivity context, Task task )
+   public void completeTask( Activity context, Task task )
    {
       completeTasks( context, Collections.singletonList( task ) );
    }
@@ -185,7 +185,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void completeTasks( FragmentActivity context,
+   public void completeTasks( Activity context,
                               final Collection< ? extends Task > tasks )
    {
       completeTasksImpl( context, tasks, calendarProvider.getNowMillisUtc() );
@@ -194,7 +194,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void incompleteTask( FragmentActivity context, Task task )
+   public void incompleteTask( Activity context, Task task )
    {
       incompleteTasks( context, Collections.singletonList( task ) );
    }
@@ -202,7 +202,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void incompleteTasks( FragmentActivity context,
+   public void incompleteTasks( Activity context,
                                 final Collection< ? extends Task > tasks )
    {
       completeTasksImpl( context, tasks, Constants.NO_TIME );
@@ -211,7 +211,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void postponeTask( FragmentActivity context, Task task )
+   public void postponeTask( Activity context, Task task )
    {
       postponeTasks( context, Collections.singletonList( task ) );
    }
@@ -219,7 +219,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void postponeTasks( FragmentActivity context,
+   public void postponeTasks( Activity context,
                               final Collection< ? extends Task > tasks )
    {
       final int tasksCount = tasks.size();
@@ -255,8 +255,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void insertTasksList( FragmentActivity context,
-                                final TasksList tasksList )
+   public void insertTasksList( Activity context, final TasksList tasksList )
    {
       if ( checkWritableAccess( context ) )
       {
@@ -280,8 +279,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void updateTasksList( FragmentActivity context,
-                                final TasksList tasksList )
+   public void updateTasksList( Activity context, final TasksList tasksList )
    {
       if ( checkWritableAccess( context ) )
       {
@@ -306,31 +304,42 @@ public class AppContentEditService implements IAppContentEditService
    
    
    @Override
-   public void deleteTasksList( FragmentActivity context,
-                                final TasksList tasksList )
+   public void deleteTasksList( Activity context, final TasksList tasksList )
    {
       if ( checkWritableAccess( context ) )
       {
-         final AppContentEditInfo editInfo = new AppContentEditInfo( context.getString( R.string.toast_delete_list,
-                                                                                        tasksList.getName() ),
-                                                                     context.getString( R.string.toast_delete_list_ok,
-                                                                                        tasksList.getName() ),
-                                                                     context.getString( R.string.toast_delete_list_failed,
-                                                                                        tasksList.getName() ) );
-         performOperation( new Runnable()
+         if ( tasksList.isLocked() )
          {
-            @Override
-            public void run()
+            showEditFailedAsToast( new AppContentEditInfo( context.getString( R.string.toast_delete_list,
+                                                                              tasksList.getName() ),
+                                                           context.getString( R.string.toast_delete_list_ok,
+                                                                              tasksList.getName() ),
+                                                           context.getString( R.string.toast_delete_locked_list,
+                                                                              tasksList.getName() ) ) );
+         }
+         else
+         {
+            final AppContentEditInfo editInfo = new AppContentEditInfo( context.getString( R.string.toast_delete_list,
+                                                                                           tasksList.getName() ),
+                                                                        context.getString( R.string.toast_delete_list_ok,
+                                                                                           tasksList.getName() ),
+                                                                        context.getString( R.string.toast_delete_list_failed,
+                                                                                           tasksList.getName() ) );
+            performOperation( new Runnable()
             {
-               contentEditService.deleteTasksList( tasksList.getId() );
-            }
-         }, editInfo );
+               @Override
+               public void run()
+               {
+                  contentEditService.deleteTasksList( tasksList.getId() );
+               }
+            }, editInfo );
+         }
       }
    }
    
    
    
-   private boolean checkWritableAccess( FragmentActivity context )
+   private boolean checkWritableAccess( Activity context )
    {
       if ( !hasWritableAccess() )
       {
@@ -343,18 +352,22 @@ public class AppContentEditService implements IAppContentEditService
    
    
    
-   public void completeTasksImpl( FragmentActivity context,
+   public void completeTasksImpl( Activity context,
                                   final Collection< ? extends Task > tasks,
                                   final long completedMillisUtc )
    {
       final int tasksCount = tasks.size();
       if ( tasksCount > 0 && checkWritableAccess( context ) )
       {
+         final boolean isComplete = completedMillisUtc != Constants.NO_TIME;
+         
          final Resources res = context.getResources();
          final AppContentEditInfo editInfo = new AppContentEditInfo( res.getQuantityString( R.plurals.toast_save_task,
                                                                                             tasksCount,
                                                                                             tasksCount ),
-                                                                     res.getQuantityString( R.plurals.toast_completed_task,
+                                                                     res.getQuantityString( isComplete
+                                                                                                      ? R.plurals.toast_completed_task
+                                                                                                      : R.plurals.toast_incompleted_task,
                                                                                             tasksCount,
                                                                                             tasksCount,
                                                                                             Iterables.first( tasks )
@@ -422,7 +435,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    
-   private void showOnlyReadableDatabaseAccessDialog( FragmentActivity activity )
+   private void showOnlyReadableDatabaseAccessDialog( Activity activity )
    {
       new AlertDialogFragment.Builder( R.id.dlg_read_only_access ).setMessage( context.getString( R.string.err_modify_access_level_read ) )
                                                                   .setPositiveButton( R.string.btn_account_settings )

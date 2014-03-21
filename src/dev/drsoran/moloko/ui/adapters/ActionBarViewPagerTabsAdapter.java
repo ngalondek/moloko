@@ -22,33 +22,30 @@
 
 package dev.drsoran.moloko.ui.adapters;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-
-import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 
 
 public class ActionBarViewPagerTabsAdapter extends BaseFragmentPagerAdapter
          implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
-   
    private final ActionBar actionBar;
    
    private final ViewPager viewPager;
    
    
    
-   public ActionBarViewPagerTabsAdapter( MolokoFragmentActivity activity,
+   public ActionBarViewPagerTabsAdapter( MolokoActivity activity,
       ViewPager pager )
    {
-      super( activity, activity.getSupportFragmentManager() );
+      super( activity, activity.getFragmentManager() );
       
-      actionBar = activity.getSupportActionBar();
+      actionBar = activity.getActionBar();
       viewPager = pager;
       
       viewPager.setAdapter( this );

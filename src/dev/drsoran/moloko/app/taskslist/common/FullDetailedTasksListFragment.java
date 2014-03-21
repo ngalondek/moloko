@@ -25,8 +25,8 @@ package dev.drsoran.moloko.app.taskslist.common;
 import java.util.Collections;
 import java.util.List;
 
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,7 +112,7 @@ public class FullDetailedTasksListFragment extends AbstractTasksListFragment
    {
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getAppContext(),
-                                                       getMolokoListView(),
+                                                       getListView(),
                                                        getFilterTokens( filter ),
                                                        flags );
    }

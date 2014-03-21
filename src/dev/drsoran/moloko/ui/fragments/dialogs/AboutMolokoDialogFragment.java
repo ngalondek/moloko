@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.ui.fragments.dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -33,9 +34,6 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.fragments.MolokoDialogFragment;
@@ -57,7 +55,7 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      final SherlockFragmentActivity context = getSherlockActivity();
+      final Activity context = getActivity();
       
       final View aboutMolokoView = inflateAboutContent( context );
       

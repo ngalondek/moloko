@@ -18,7 +18,7 @@
 
    <item
       android:maxLevel="0"
-      android:drawable="@drawable/ic_notify_permanent_expanded" />
+      android:drawable="@drawable/ic_notify_launcher" />
    <item
       android:maxLevel="1"
       android:drawable="@drawable/ic_notify_permanent_layer_1" />       

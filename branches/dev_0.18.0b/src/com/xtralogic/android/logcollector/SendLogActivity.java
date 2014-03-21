@@ -52,11 +52,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
-public class SendLogActivity extends MolokoFragmentActivity
+public class SendLogActivity extends MolokoActivity
 {
    public final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
    

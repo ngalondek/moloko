@@ -57,12 +57,10 @@
             &lt;br>&lt;br>Version: %1$s&lt;br>&lt;br>
             Remerciements à  David Vermeille.&lt;br>&lt;br>
             Moloko est implémenté à l\'aide de:&lt;br>
-                                - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 3.2
-                 &lt;br>- A modified version of &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library
+                                - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 4.1
                  &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library
                  &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
-                 &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a>
-                 &lt;br>- &lt;a href="http://actionbarsherlock.com/>ActionBarSherlock&lt;/a></string>
+                 &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a></string>
 
     <!-- Time phrases -->
     <string name="time_interval_15min">Toutes les 15 min.</string>
@@ -117,8 +115,6 @@
     <string name="phr_manuell">Manuel</string>
     <string name="phr_password_set">entré</string>
     <string name="phr_loading">Chargement &#8230;</string>
-    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
-    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
     <string name="phr_hint">Renseignement</string>
     <string name="phr_yes">Oui</string>
     <string name="phr_no">Non</string>
@@ -128,7 +124,6 @@
     <string name="err_not_connected">Aucune connexion</string>
     <string name="err_add_account_canceled">L\'ajout d\'un nouveau compte a été annulé</string>
     <string name="err_unexpected">Si vous voyez ce message, COURREZ AUSSI VITE QUE POSSIBLE!</string>
-    <string name="err_db_typed">Erreur d\'accès à la base de données de %1$s.</string>
     <string name="err_entity_not_found">Le %1$s n\'a pas pu être récupéré dans la base de données.\n\nVeuillez vérifier si l\'élément existe.</string>
     <string name="err_modify_access_level_read">Moloko accède vos données en \'Lecture seule\'.\n\nLes données que vous avez modifiées jusqu\'à présent restent inchangées. Cependant, elles ne seront pas envoyées au serveur RTM et seront remplacées par les modifications plus récentes faites directement sur le serveur.\n\nVous pouvez changer cela en supprimant votre compte RTM local (celui de Moloko) et en le recréant avec les permissions \'Lecture, Ecriture, Suppression\'.</string>
 
@@ -142,7 +137,6 @@
     <string name="btn_postpone">Reporter</string>
     <string name="btn_delete">Supprimer</string>
     <string name="btn_back">Retour</string>
-    <string name="btn_discard">Condamner</string>
 
     <!-- Global menus -->
     <string name="menu_opt_edit">Corroyer</string>
@@ -205,10 +199,6 @@
 
     <!-- Task activity -->
     <string name="taskactivity_tab_notes">Notes</string>
-
-    <!-- TaskEdit activity -->
-    <!-- Dialogs -->
-    <string name="taskedit_activity_dlg_removing_editing">La tâche que vous modifiez est éliminée par le traitement d\'une synchronisation d\'arrière-plan.</string>
 
     <!-- Task fragment -->
     <string name="task_source">source : %1$s</string>
@@ -314,10 +304,6 @@
     <string name="contactslist_no_contacts">Aucun contact</string>
     <!-- Menus -->
     <string name="contactslist_listitem_show_phonebook_contact">Détails de %1$s</string>
-
-    <!-- Note activity -->
-    <!-- Dialogs -->
-    <string name="note_dlg_removing_editing_note">La note que vous modifiez a été supprimée par une mise à jour en tâche de fond. Si vous continuez l\'édition, une nouvelle note sera créée avec vos modifications.</string>
 
     <!-- NoteEdit fragment -->
     <string name="note_edit_title_hint">Titre de la Note</string>

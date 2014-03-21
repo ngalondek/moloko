@@ -22,16 +22,14 @@
 
 package dev.drsoran.moloko.app.taskslist.common;
 
+import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.ui.UiContext;

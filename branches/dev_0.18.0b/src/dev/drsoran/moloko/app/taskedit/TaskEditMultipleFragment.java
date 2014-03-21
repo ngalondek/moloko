@@ -40,8 +40,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import android.app.Activity;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -187,16 +187,21 @@ public class TaskEditMultipleFragment extends
       
       attributeCount.put( TASK_NAME, new HashMap< Object, Integer >() );
       attributeCount.put( LIST_ID, new HashMap< Object, Integer >() );
+      attributeCount.put( LIST_NAME, new HashMap< Object, Integer >() );
       attributeCount.put( PRIORITY, new HashMap< Object, Integer >() );
       attributeCount.put( LOCATION_ID, new HashMap< Object, Integer >() );
+      attributeCount.put( LOCATION_NAME, new HashMap< Object, Integer >() );
       attributeCount.put( URL, new HashMap< Object, Integer >() );
       
       for ( Task task : tasks )
       {
          inc( attributeCount.get( TASK_NAME ), task.getName() );
          inc( attributeCount.get( LIST_ID ), task.getListId() );
+         inc( attributeCount.get( LIST_NAME ), task.getListName() );
          inc( attributeCount.get( PRIORITY ), task.getPriority().toString() );
          inc( attributeCount.get( LOCATION_ID ), task.getLocationId() );
+         inc( attributeCount.get( LOCATION_NAME ),
+              Strings.emptyIfNull( task.getLocationName() ) );
          inc( attributeCount.get( URL ), task.getUrl() );
       }
    }
@@ -282,7 +287,7 @@ public class TaskEditMultipleFragment extends
       
       final List< String > uniqueTaskNames = new ArrayList< String >( names );
       
-      ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getSherlockActivity(),
+      ( (AutoCompleteTextView) nameEditText ).setAdapter( new ArrayAdapter< String >( getActivity(),
                                                                                       android.R.layout.simple_dropdown_item_1line,
                                                                                       android.R.id.text1,
                                                                                       uniqueTaskNames ) );
@@ -339,7 +344,8 @@ public class TaskEditMultipleFragment extends
       }
       else
       {
-         priorities = new ArrayList< String >( priorities );
+         priorities = getEntriesWithCount( PRIORITY, priorities );
+         
          priorities.add( 0,
                          getString( R.string.edit_multiple_tasks_different_priorities ) );
          
@@ -373,7 +379,8 @@ public class TaskEditMultipleFragment extends
          final List< String > listIds = new ArrayList< String >( taskEditData.getListIds() );
          listIds.add( 0, Strings.EMPTY_STRING );
          
-         final List< String > listNames = new ArrayList< String >( taskEditData.getListNames() );
+         final List< String > listNames = getEntriesWithCount( LIST_NAME,
+                                                               taskEditData.getListNames() );
          listNames.add( 0,
                         getString( R.string.edit_multiple_tasks_different_lists ) );
          
@@ -393,7 +400,8 @@ public class TaskEditMultipleFragment extends
       final TaskEditData taskEditData = getLoaderDataAssertNotNull();
       
       final List< String > locationIds = taskEditData.getLocationIds();
-      final List< String > locationNames = taskEditData.getLocationNames();
+      final List< String > locationNames = getEntriesWithCount( LOCATION_NAME,
+                                                                taskEditData.getLocationNames() );
       
       insertNowhereLocationEntry( locationIds, locationNames );
       
@@ -425,7 +433,10 @@ public class TaskEditMultipleFragment extends
                                             List< String > locationNames )
    {
       locationIds.add( 0, Long.toString( Constants.NO_ID ) );
-      locationNames.add( 0, getString( R.string.task_edit_location_no ) );
+      locationNames.add( 0,
+                         getEntryDisplayWithCount( getString( R.string.task_edit_location_no ),
+                                                   attributeCount.get( LOCATION_NAME )
+                                                                 .get( Strings.EMPTY_STRING ) ) );
    }
    
    
@@ -570,7 +581,7 @@ public class TaskEditMultipleFragment extends
                                             List< String > displayStrings,
                                             String initialValue )
    {
-      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getSherlockActivity(),
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          displayStrings );
@@ -579,6 +590,32 @@ public class TaskEditMultipleFragment extends
       spinner.setAdapter( adapter );
       spinner.setValues( values );
       spinner.setSelectionByValue( initialValue, 0 );
+   }
+   
+   
+   
+   private List< String > getEntriesWithCount( String property,
+                                               List< String > entries )
+   {
+      final Map< Object, Integer > enties2Count = attributeCount.get( property );
+      final List< String > entriesWithCount = new ArrayList< String >( entries );
+      
+      for ( String entry : entries )
+      {
+         entriesWithCount.add( getEntryDisplayWithCount( entry,
+                                                         enties2Count.get( entry ) ) );
+      }
+      
+      return entriesWithCount;
+   }
+   
+   
+   
+   private String getEntryDisplayWithCount( String entry, int count )
+   {
+      return getString( R.string.edit_multiple_tasks_entry_with_count,
+                        entry,
+                        count );
    }
    
    

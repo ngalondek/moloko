@@ -23,28 +23,26 @@
 package dev.drsoran.moloko.app.home;
 
 import android.accounts.Account;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
-import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
-import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.ui.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.ui.layouts.SimpleHomeWidgetLayout;
 import dev.drsoran.moloko.ui.widgets.IMolokoHomeWidget;
 
 
-public class HomeActivity extends MolokoFragmentActivity implements
-         OnItemClickListener
+public class HomeActivity extends MolokoActivity implements OnItemClickListener
 {
    private IMolokoHomeWidget addAccountWidget;
    
@@ -79,7 +77,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
          homeAdapter.startWidgets();
          onContentChanged();
          showAddAccountWidget( getAppContext().getAccountService()
-                                                 .getRtmAccount() == null );
+                                              .getRtmAccount() == null );
       }
    }
    
@@ -104,11 +102,11 @@ public class HomeActivity extends MolokoFragmentActivity implements
    {
       if ( isWritableAccess() )
       {
-         getSupportMenuInflater().inflate( R.menu.home_activity_rwd, menu );
+         getMenuInflater().inflate( R.menu.home_activity_rwd, menu );
       }
       else
       {
-         getSupportMenuInflater().inflate( R.menu.home_activity, menu );
+         getMenuInflater().inflate( R.menu.home_activity, menu );
       }
       
       super.onActivityCreateOptionsMenu( menu );
@@ -124,7 +122,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
       switch ( item.getItemId() )
       {
          case android.R.id.home:
-            UiUtils.showAboutMolokoDialog( this );
+            showAboutMolokoDialog();
             return true;
             
          case R.id.menu_quick_add_task:
@@ -167,14 +165,14 @@ public class HomeActivity extends MolokoFragmentActivity implements
    private void setAccountNameAsSubTitle()
    {
       final Account account = getAppContext().getAccountService()
-                                                .getRtmAccount();
+                                             .getRtmAccount();
       if ( account != null )
       {
-         getSupportActionBar().setSubtitle( account.name );
+         getActionBar().setSubtitle( account.name );
       }
       else
       {
-         getSupportActionBar().setSubtitle( null );
+         getActionBar().setSubtitle( null );
       }
    }
    
@@ -237,5 +235,14 @@ public class HomeActivity extends MolokoFragmentActivity implements
             addAccountWidget = null;
          }
       }
+   }
+   
+   
+   
+   private void showAboutMolokoDialog()
+   {
+      final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );
+      dialog.show( getFragmentManager(),
+                   String.valueOf( R.id.frag_about_moloko ) );
    }
 }

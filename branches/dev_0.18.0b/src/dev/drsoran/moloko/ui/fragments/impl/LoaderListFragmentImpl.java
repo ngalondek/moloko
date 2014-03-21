@@ -25,8 +25,8 @@ package dev.drsoran.moloko.ui.fragments.impl;
 import java.util.Collections;
 import java.util.List;
 
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.view.View;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;

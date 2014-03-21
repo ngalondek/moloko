@@ -22,8 +22,7 @@
 
 package dev.drsoran.moloko.ui.actionmodes;
 
-import com.actionbarsherlock.view.ActionMode;
-
+import android.view.ActionMode;
 
 
 public interface IBaseSelectableActionModeListener< T >

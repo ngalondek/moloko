@@ -24,19 +24,19 @@ package dev.drsoran.moloko.app.changetags;
 
 import java.util.ArrayList;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.baseactivities.MolokoFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 
 
-public class ChangeTagsActivity extends MolokoFragmentActivity
+public class ChangeTagsActivity extends MolokoActivity
 {
    @Override
    public void onCreate( Bundle savedInstanceState )
@@ -90,7 +90,7 @@ public class ChangeTagsActivity extends MolokoFragmentActivity
    
    private ChangeTagsFragment getChangeTagsFragment()
    {
-      final Fragment fragment = getSupportFragmentManager().findFragmentById( R.id.frag_change_tags );
+      final Fragment fragment = getFragmentManager().findFragmentById( R.id.frag_change_tags );
       return (ChangeTagsFragment) fragment;
    }
    
@@ -98,7 +98,7 @@ public class ChangeTagsActivity extends MolokoFragmentActivity
    
    private void addChangeTagsFragment()
    {
-      getSupportFragmentManager().beginTransaction()
+      getFragmentManager().beginTransaction()
                                  .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
                                  .add( R.id.frag_change_tags,
                                        ChangeTagsFragment.newInstance( getIntent().getExtras() ) )

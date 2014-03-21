@@ -25,13 +25,11 @@ package dev.drsoran.moloko.app.sync;
 import android.accounts.Account;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-
-import com.actionbarsherlock.view.ActionProvider;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.services.ISyncService;

@@ -23,11 +23,10 @@
 package dev.drsoran.moloko.ui.fragments.impl;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,7 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
       
       
       
-      FragmentActivity getSherlockActivity();
+      Activity getActivity();
    }
    
    private final Fragment fragment;
@@ -250,12 +249,12 @@ public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >
                                       int errorMsgResId,
                                       Object... params )
    {
-      final View view = LayoutInflater.from( support.getSherlockActivity() )
+      final View view = LayoutInflater.from( support.getActivity() )
                                       .inflate( R.layout.error_with_icon,
                                                 container,
                                                 true );
       final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
-      final String msg = support.getSherlockActivity()
+      final String msg = support.getActivity()
                                 .getResources()
                                 .getString( errorMsgResId, params );
       text.setText( msg );

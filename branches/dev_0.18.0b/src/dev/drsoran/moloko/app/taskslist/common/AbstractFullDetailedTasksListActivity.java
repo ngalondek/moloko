@@ -27,15 +27,13 @@ import java.util.Collection;
 import java.util.List;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.view.ActionMode;
+import android.view.MenuItem;
 import android.view.View;
-
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
@@ -396,8 +394,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    public FragmentTransaction addBottomFragment( Fragment fragmentToAdd )
    {
       final Fragment bottomFragment = getBottomFragment();
-      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                                                                         .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+      final FragmentTransaction transaction = getFragmentManager().beginTransaction()
+                                                                  .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
       
       if ( bottomFragment == null )
       {
@@ -442,10 +440,10 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       
       if ( bottomFragment != null )
       {
-         getSupportFragmentManager().beginTransaction()
-                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_CLOSE )
-                                    .remove( bottomFragment )
-                                    .commit();
+         getFragmentManager().beginTransaction()
+                             .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_CLOSE )
+                             .remove( bottomFragment )
+                             .commit();
       }
       
       return bottomFragment;
@@ -573,14 +571,15 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    
    private List< Task > getSelectedTasks()
    {
-      return getTasksListFragment().getMolokoListView().getCheckedItems();
+      return new ArrayList< Task >( ( (AbstractTasksListFragmentAdapter) getTasksListFragment().getListView()
+                                                                                               .getAdapter() ).getSelectedItems() );
    }
    
    
    
    private void clearListChoices()
    {
-      getTasksListFragment().getMolokoListView().clearChoices();
+      getTasksListFragment().getListView().clearChoices();
    }
    
    

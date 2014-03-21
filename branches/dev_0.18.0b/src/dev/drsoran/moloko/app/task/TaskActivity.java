@@ -25,23 +25,18 @@ package dev.drsoran.moloko.app.task;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditActivity;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Location;
@@ -52,7 +47,7 @@ import dev.drsoran.moloko.ui.adapters.ActionBarViewPagerTabsAdapter;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
-public class TaskActivity extends MolokoEditFragmentActivity implements
+public class TaskActivity extends MolokoEditActivity implements
          ITaskFragmentListener, INotesListsFragmentListener
 
 {
@@ -65,8 +60,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    public final static int TASK_TAB_POSITION = 0;
    
    public final static int NOTES_TAB_POSITION = 1;
-   
-   private boolean enableAbsViewPagerWorkaround;
    
    @InstanceState( key = TASK_TO_DELETE, defaultValue = InstanceState.NULL )
    private Task taskToDelete;
@@ -92,8 +85,6 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      enableAbsViewPagerWorkaround = getResources().getBoolean( R.bool.env_enable_abs_viewpager_workaround );
-      
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.task_activity );
@@ -133,56 +124,9 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   @Override
-   public boolean onActivityCreateOptionsMenu( Menu menu )
-   {
-      if ( enableAbsViewPagerWorkaround )
-      {
-         return getSelectedViewPagerSupport().onCreateOptionsMenuViewPagerSupportWorkaround( menu,
-                                                                                             getSupportMenuInflater() );
-      }
-      else
-      {
-         return super.onActivityCreateOptionsMenu( menu );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean onPrepareOptionsMenu( Menu menu )
-   {
-      if ( enableAbsViewPagerWorkaround )
-      {
-         return getSelectedViewPagerSupport().onPrepareOptionsMenuViewPagerSupportWorkaround( menu );
-      }
-      else
-      {
-         return super.onPrepareOptionsMenu( menu );
-      }
-   }
-   
-   
-   
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
-   {
-      if ( enableAbsViewPagerWorkaround )
-      {
-         return getSelectedViewPagerSupport().onOptionsItemSelectedViewPagerSupportWorkaround( item );
-      }
-      else
-      {
-         return super.onOptionsItemSelected( item );
-      }
-   }
-   
-   
-   
    private void createTabs()
    {
       createTabsAdapter();
-      createAbsTabsPagerHandler();
       
       final long taskId = getTaskIdFromIntent();
       
@@ -205,21 +149,11 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    
    
    
-   private void createAbsTabsPagerHandler()
-   {
-      if ( enableAbsViewPagerWorkaround )
-      {
-         new AbsWorkaroundPagerHander( (ViewPager) findViewById( R.id.pager ) );
-      }
-   }
-   
-   
-   
    private void createTab( int captionResId,
                            Class< ? extends Fragment > fragmentClass,
                            Bundle config )
    {
-      final ActionBar actionBar = getSupportActionBar();
+      final ActionBar actionBar = getActionBar();
       final Tab tab = actionBar.newTab();
       tab.setText( captionResId );
       
@@ -231,7 +165,7 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
    private void saveTabsAdapterState( Bundle outState )
    {
       outState.putInt( TABS_ADAPTER_STATE,
-                       getSupportActionBar().getSelectedNavigationIndex() );
+                       getActionBar().getSelectedNavigationIndex() );
    }
    
    
@@ -242,27 +176,12 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       {
          final int savedTabPosition = savedInstanceState.getInt( TABS_ADAPTER_STATE,
                                                                  TASK_TAB_POSITION );
-         final ActionBar actionBar = getSupportActionBar();
+         final ActionBar actionBar = getActionBar();
          
          if ( actionBar.getSelectedNavigationIndex() != savedTabPosition )
          {
             actionBar.setSelectedNavigationItem( savedTabPosition );
          }
-      }
-   }
-   
-   
-   
-   private IAbsViewPagerSupport getSelectedViewPagerSupport()
-   {
-      switch ( getSupportActionBar().getSelectedNavigationIndex() )
-      {
-         case TASK_TAB_POSITION:
-            return taskFragment;
-         case NOTES_TAB_POSITION:
-            return notesListFragment;
-         default :
-            throw new IllegalStateException();
       }
    }
    
@@ -471,46 +390,5 @@ public class TaskActivity extends MolokoEditFragmentActivity implements
       return new int[]
       { taskFragment != null ? taskFragment.getId() : -1,
        notesListFragment != null ? notesListFragment.getId() : -1 };
-   }
-   
-   
-   private class AbsWorkaroundPagerHander implements OnPageChangeListener
-   {
-      public AbsWorkaroundPagerHander( ViewPager pager )
-      {
-         pager.setOnPageChangeListener( this );
-      }
-      
-      
-      
-      @Override
-      public void onPageScrollStateChanged( int state )
-      {
-         tabsAdapter.onPageScrollStateChanged( state );
-      }
-      
-      
-      
-      @Override
-      public void onPageScrolled( int position,
-                                  float positionOffset,
-                                  int positionOffsetPixels )
-      {
-         tabsAdapter.onPageScrolled( position,
-                                     positionOffset,
-                                     positionOffsetPixels );
-      }
-      
-      
-      
-      @Override
-      public void onPageSelected( int position )
-      {
-         // Note: We first need to update the new selected
-         // page and then invalidate the menu because the
-         // menu invalidation runs synchronous.
-         tabsAdapter.onPageSelected( position );
-         supportInvalidateOptionsMenu();
-      }
    }
 }

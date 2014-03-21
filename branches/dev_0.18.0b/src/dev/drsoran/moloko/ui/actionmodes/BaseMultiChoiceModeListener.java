@@ -27,22 +27,20 @@ import java.util.Collection;
 import android.database.DataSetObserver;
 import android.os.Build;
 import android.util.SparseBooleanArray;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListAdapter;
-
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.widget.ListView;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.ui.UiContext;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
-import dev.drsoran.moloko.ui.widgets.MolokoListView.IMolokoMultiChoiceModeListener;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.ui.adapters.MultiChoiceModalArrayAdapter;
 
 
 public class BaseMultiChoiceModeListener< T > implements
-         IMolokoMultiChoiceModeListener
+         IMolokoMultiChoiceModeListener, ActionMode.Callback
 {
    private class ListDatasetObserver extends DataSetObserver
    {
@@ -71,23 +69,26 @@ public class BaseMultiChoiceModeListener< T > implements
    
    private final DataSetObserver dataSetObserver;
    
-   private final MolokoListView listView;
+   private final ListView listView;
    
    private IBaseSelectableActionModeListener< T > listener;
    
    private ActionMode actionMode;
    
+   private final SystemContext context;
    
    
-   public BaseMultiChoiceModeListener( MolokoListView listView )
+   
+   public BaseMultiChoiceModeListener( ListView listView )
    {
       this.listView = listView;
       this.dataSetObserver = new ListDatasetObserver();
+      this.context = SystemContext.get( listView.getContext() );
    }
    
    
    
-   public MolokoListView getListView()
+   public ListView getListView()
    {
       return listView;
    }
@@ -97,13 +98,6 @@ public class BaseMultiChoiceModeListener< T > implements
    public ListAdapter getAdapter()
    {
       return listView.getAdapter();
-   }
-   
-   
-   
-   public UiContext getContext()
-   {
-      return listView.getUiContext();
    }
    
    
@@ -164,9 +158,10 @@ public class BaseMultiChoiceModeListener< T > implements
    
    
    
+   @SuppressWarnings( "unchecked" )
    public Collection< T > getSelectedItems()
    {
-      return listView.getCheckedItems();
+      return ( (MultiChoiceModalArrayAdapter< T >) listView.getAdapter() ).getSelectedItems();
    }
    
    
@@ -256,14 +251,13 @@ public class BaseMultiChoiceModeListener< T > implements
    
    private void updateTitle( ActionMode mode )
    {
-      final int selectedCnt = listView.getCheckedItemCountSupport();
+      final int selectedCnt = listView.getCheckedItemCount();
       final CharSequence title;
       
       if ( selectedCnt > 0 )
       {
-         title = getContext().getResources()
-                             .getString( R.string.app_selected_count,
-                                         selectedCnt );
+         title = context.getResources().getString( R.string.app_selected_count,
+                                                   selectedCnt );
       }
       else
       {
@@ -287,16 +281,14 @@ public class BaseMultiChoiceModeListener< T > implements
       }
       else
       {
-         getContext().asSystemContext()
-                     .getHandler()
-                     .postAtFrontOfQueue( new Runnable()
-                     {
-                        @Override
-                        public void run()
-                        {
-                           getAdapter().unregisterDataSetObserver( dataSetObserver );
-                        }
-                     } );
+         context.getHandler().postAtFrontOfQueue( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               getAdapter().unregisterDataSetObserver( dataSetObserver );
+            }
+         } );
       }
    }
 }

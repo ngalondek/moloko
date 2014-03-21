@@ -27,28 +27,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentManager.BackStackEntry;
+import android.app.FragmentManager.OnBackStackChangedListener;
+import android.app.FragmentTransaction;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.BackStackEntry;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.SparseArray;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditActivity;
 import dev.drsoran.moloko.app.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.content.Constants;
@@ -61,8 +59,8 @@ import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
-abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
-         implements ITasksListFragmentListener, OnNavigationListener,
+abstract class AbstractTasksListActivity extends MolokoEditActivity implements
+         ITasksListFragmentListener, OnNavigationListener,
          OnBackStackChangedListener, LoaderCallbacks< List< TasksList > >
 {
    protected final static long CUSTOM_NAVIGATION_ITEM_ID = 0L;
@@ -130,11 +128,11 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       if ( Intents.HomeAction.BACK.equals( getHomeAction() )
          || Intents.HomeAction.ACTIVITY.equals( getHomeAction() ) )
       {
-         getSupportActionBar().setDisplayHomeAsUpEnabled( true );
+         getActionBar().setDisplayHomeAsUpEnabled( true );
       }
       else
       {
-         getSupportActionBar().setDisplayHomeAsUpEnabled( false );
+         getActionBar().setDisplayHomeAsUpEnabled( false );
       }
    }
    
@@ -207,7 +205,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       }
       else
       {
-         getSupportActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
+         getActionBar().setSelectedNavigationItem( selectedNavigationItem.position );
       }
    }
    
@@ -215,7 +213,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private BackStackEntry getTopOfBackStack()
    {
-      final FragmentManager fragmentManager = getSupportFragmentManager();
+      final FragmentManager fragmentManager = getFragmentManager();
       final int backStackSize = fragmentManager.getBackStackEntryCount();
       
       return backStackSize > 0
@@ -358,14 +356,14 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    protected void setStandardNavigationMode()
    {
-      final ActionBar actionBar = getSupportActionBar();
+      final ActionBar actionBar = getActionBar();
       
       actionBar.setSubtitle( subTitle );
       actionBar.setDisplayShowTitleEnabled( true );
       
       if ( isListNavigationMode() )
       {
-         getSupportFragmentManager().removeOnBackStackChangedListener( this );
+         getFragmentManager().removeOnBackStackChangedListener( this );
          selectedNavigationItem = null;
          backStackNavigationItems = null;
          actionBarNavigationAdapter = null;
@@ -379,7 +377,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    public boolean isStandardNavigationMode()
    {
-      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_STANDARD;
+      return getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_STANDARD;
    }
    
    
@@ -388,7 +386,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    {
       initializeListNavigation();
       
-      final ActionBar actionBar = getSupportActionBar();
+      final ActionBar actionBar = getActionBar();
       
       actionBar.setDisplayShowTitleEnabled( false );
       actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
@@ -399,7 +397,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private void initializeListNavigation()
    {
-      getSupportFragmentManager().addOnBackStackChangedListener( this );
+      getFragmentManager().addOnBackStackChangedListener( this );
       
       final boolean isFirstInitialization = selectedNavigationItem == null;
       if ( isFirstInitialization )
@@ -458,14 +456,14 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    public boolean isListNavigationMode()
    {
-      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
+      return getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
    }
    
    
    
    private List< IItem > createActionBarNavigationItems()
    {
-      final Context context = getSupportActionBar().getThemedContext();
+      final Context context = getActionBar().getThemedContext();
       
       final List< IItem > actionBarNavigationItems = new ArrayList< IItem >( loadedRtmLists.size() );
       for ( Iterator< TasksList > i = loadedRtmLists.iterator(); i.hasNext(); )
@@ -576,7 +574,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    
    private void startLoadingRtmLists()
    {
-      getSupportLoaderManager().initLoader( TasksListsLoader.ID,
+      getLoaderManager().initLoader( TasksListsLoader.ID,
                                             Bundle.EMPTY,
                                             this );
    }
@@ -625,7 +623,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private void setNavigationAdapter()
    {
       createActionBarNavigationAdapter();
-      getSupportActionBar().setListNavigationCallbacks( actionBarNavigationAdapter,
+      getActionBar().setListNavigationCallbacks( actionBarNavigationAdapter,
                                                         this );
    }
    
@@ -634,7 +632,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    private void createActionBarNavigationAdapter()
    {
       final List< IItem > navigationItems = createActionBarNavigationItems();
-      actionBarNavigationAdapter = new TasksListNavigationAdapter( getSupportActionBar().getThemedContext(),
+      actionBarNavigationAdapter = new TasksListNavigationAdapter( getActionBar().getThemedContext(),
                                                                    navigationItems );
    }
    
@@ -701,7 +699,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
       {
          final Fragment fragment = createTasksListFragment( getInitalTasksListFragmentConfig() );
          
-         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         final FragmentTransaction transaction = getFragmentManager().beginTransaction();
          transaction.add( R.id.frag_taskslist, fragment );
          transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
          transaction.commit();
@@ -713,7 +711,7 @@ abstract class AbstractTasksListActivity extends MolokoEditFragmentActivity
    protected void reloadTasksListWithConfiguration( Bundle config )
    {
       final Fragment fragment = createTasksListFragment( config );
-      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      final FragmentTransaction transaction = getFragmentManager().beginTransaction();
       
       transaction.replace( R.id.frag_taskslist, fragment );
       transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );

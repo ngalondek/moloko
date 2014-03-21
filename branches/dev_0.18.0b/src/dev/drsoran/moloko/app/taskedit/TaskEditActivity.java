@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.domain.model.Due;
@@ -37,7 +37,6 @@ import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.IValueChangedListener;
 import dev.drsoran.moloko.ui.ValidationResult;
-import dev.drsoran.moloko.ui.fragments.factories.DefaultFragmentFactory;
 
 
 public class TaskEditActivity extends AbstractTaskEditActivity implements
@@ -191,14 +190,14 @@ public class TaskEditActivity extends AbstractTaskEditActivity implements
    {
       if ( findAddedFragmentById( R.id.frag_task_edit ) == null )
       {
-         final Fragment fragment = DefaultFragmentFactory.create( this,
-                                                                  clazz,
-                                                                  getIntent().getExtras() );
+         final Fragment fragment = Fragment.instantiate( this,
+                                                         clazz.getName(),
+                                                         getIntent().getExtras() );
          
-         getSupportFragmentManager().beginTransaction()
-                                    .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
-                                    .add( R.id.frag_task_edit, fragment )
-                                    .commit();
+         getFragmentManager().beginTransaction()
+                             .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                             .add( R.id.frag_task_edit, fragment )
+                             .commit();
       }
    }
 }

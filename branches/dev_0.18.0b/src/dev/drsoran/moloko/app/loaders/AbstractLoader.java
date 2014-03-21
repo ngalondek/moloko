@@ -24,9 +24,9 @@ package dev.drsoran.moloko.app.loaders;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.content.AsyncTaskLoader;
 import android.database.ContentObserver;
 import android.net.Uri;
-import android.support.v4.content.AsyncTaskLoader;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;

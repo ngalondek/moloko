@@ -22,14 +22,13 @@
 
 package dev.drsoran.moloko.app.task;
 
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ListView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
 
 
 class NotesListActionModeCallback extends BaseMultiChoiceModeListener< Note >
@@ -38,7 +37,7 @@ class NotesListActionModeCallback extends BaseMultiChoiceModeListener< Note >
    
    
    
-   public NotesListActionModeCallback( MolokoListView listView )
+   public NotesListActionModeCallback( ListView listView )
    {
       super( listView );
    }

@@ -27,7 +27,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import dev.drsoran.Strings;
 import dev.drsoran.moloko.state.InstanceState;
@@ -137,7 +136,7 @@ public class AlertDialogFragment extends MolokoDialogFragment
       
       
       
-      public void show( FragmentActivity activity )
+      public void show( Activity activity )
       {
          final AlertDialogFragment frag = create();
          UiUtils.showDialogFragment( activity,
@@ -224,7 +223,7 @@ public class AlertDialogFragment extends MolokoDialogFragment
       if ( savedInstanceState != null )
          configure( savedInstanceState );
       
-      final Context context = getSherlockActivity();
+      final Context context = getActivity();
       
       final AlertDialog.Builder builder = new AlertDialog.Builder( context );
       

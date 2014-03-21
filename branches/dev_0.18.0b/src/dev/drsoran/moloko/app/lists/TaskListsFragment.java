@@ -26,8 +26,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -155,7 +155,7 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
       
       if ( hasWritableAccess() && !list.isLocked() )
       {
-         getSherlockActivity().getMenuInflater()
+         getActivity().getMenuInflater()
                               .inflate( R.menu.tasklists_group_context_rwd,
                                         menu );
          
@@ -168,7 +168,7 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
       }
       else
       {
-         getSherlockActivity().getMenuInflater()
+         getActivity().getMenuInflater()
                               .inflate( R.menu.tasklists_group_context, menu );
       }
       

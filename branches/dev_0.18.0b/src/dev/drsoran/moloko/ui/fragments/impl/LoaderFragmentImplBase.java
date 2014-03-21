@@ -23,11 +23,11 @@
 package dev.drsoran.moloko.ui.fragments.impl;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.AsyncTaskLoader;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.fragments.listeners.ILoaderFragmentListener;

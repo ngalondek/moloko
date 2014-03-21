@@ -41,7 +41,7 @@ import android.text.TextUtils;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.home.HomeActivity;
-import dev.drsoran.moloko.app.prefs.activities.MainPreferencesActivity;
+import dev.drsoran.moloko.app.prefs.MainPreferencesActivity;
 import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.app.sync.SyncConstants;
 import dev.drsoran.moloko.content.ContentAuthority;

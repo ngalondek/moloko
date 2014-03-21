@@ -1,28 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:addStatesFromChildren="true"
-    android:gravity="center"
-    android:focusable="true"
-    android:background="?attr/actionBarItemBackground"
-    style="?attr/actionButtonStyle">
-    
-    <ImageButton android:id="@android:id/button1"
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:layout_gravity="center"
-                 android:scaleType="fitCenter"
-                 android:adjustViewBounds="true"
-                 android:focusable="false"
-                 android:background="@null"
-                 android:src="@drawable/ic_menu_refresh" />
-</LinearLayout> -->
-
-
 <!--
 **
 ** Copyright 2011, The Android Open Source Project
@@ -46,10 +22,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center"
-    android:background="?attr/actionBarItemBackground"
+    android:background="?android:attr/actionBarItemBackground"
     android:focusable="true"
     android:addStatesFromChildren="true"
-    style="?attr/actionButtonStyle">
+    style="?android:attr/actionButtonStyle">
     
     <ImageView
         android:layout_width="wrap_content"

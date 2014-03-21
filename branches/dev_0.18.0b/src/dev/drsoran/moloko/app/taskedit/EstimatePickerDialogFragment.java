@@ -33,7 +33,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +62,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public final static EstimatePickerDialogFragment show( FragmentActivity activity,
+   public final static EstimatePickerDialogFragment show( Activity activity,
                                                           long estimateMillis )
    {
       final Bundle config = new Bundle( 1 );
@@ -74,7 +73,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public final static EstimatePickerDialogFragment show( FragmentActivity activity,
+   public final static EstimatePickerDialogFragment show( Activity activity,
                                                           Bundle config )
    {
       final EstimatePickerDialogFragment frag = newInstance( config );
@@ -165,7 +164,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
       if ( initialValue == 0 )
          initialValue = 1;
       
-      final Activity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.estimate_picker_dialog, null );
       
@@ -221,7 +220,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    private Dialog createDialogImpl( View contentView )
    {
-      final Activity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       
       return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_thumb )
                                                 .setTitle( R.string.dlg_estimate_picker_title )
@@ -299,7 +298,7 @@ public class EstimatePickerDialogFragment extends AbstractPickerDialogFragment
    
    private void setUnits( int pos )
    {
-      final Context context = getSherlockActivity();
+      final Context context = getActivity();
       final Resources res = context.getResources();
       
       unitWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,

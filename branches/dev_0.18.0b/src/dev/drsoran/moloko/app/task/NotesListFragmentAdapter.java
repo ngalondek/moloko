@@ -38,7 +38,7 @@ class NotesListFragmentAdapter extends MultiChoiceModalArrayAdapter< Note >
 {
    public NotesListFragmentAdapter( NotesListFragment fragment )
    {
-      super( fragment.getMolokoListView(), R.layout.noteslist_listitem );
+      super( fragment.getListView(), R.layout.noteslist_listitem );
    }
    
    

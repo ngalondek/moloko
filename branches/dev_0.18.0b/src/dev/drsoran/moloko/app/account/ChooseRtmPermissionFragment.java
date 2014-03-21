@@ -26,17 +26,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
@@ -137,7 +135,7 @@ public class ChooseRtmPermissionFragment extends AuthFragment implements
                                                          .setTitle( getString( R.string.app_account_preferences ) )
                                                          .setMessage( getString( R.string.auth_dlg_permisson_info ) )
                                                          .setNeutralButton( R.string.btn_ok )
-                                                         .show( getSherlockActivity() );
+                                                         .show( getActivity() );
             return true;
             
          default :

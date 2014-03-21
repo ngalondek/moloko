@@ -22,14 +22,10 @@
 
 package dev.drsoran.moloko.ui;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -42,11 +38,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import dev.drsoran.Pair;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.ui.fragments.dialogs.AboutMolokoDialogFragment;
-import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
 
 
@@ -54,6 +47,8 @@ public final class UiUtils
 {
    public static final String REMOVE_TAGS_EQUALS = "remove_tags_equals";
    
+   @Deprecated
+   // TODO is this case still needed?
    public static final String REMOVE_ALL_TAGS = "remove_all_tags";
    
    public static final int[] CHECKED_STATE_SET =
@@ -95,31 +90,6 @@ public final class UiUtils
       return actionId == EditorInfo.IME_ACTION_DONE
          || actionId == EditorInfo.IME_ACTION_NEXT
          || actionId == EditorInfo.IME_NULL;
-   }
-   
-   
-   
-   public final static void hideSoftInput( View view )
-   {
-      if ( view != null )
-      {
-         hideSoftInput( view.getContext(), view.getWindowToken() );
-      }
-   }
-   
-   
-   
-   public final static void hideSoftInput( Context context, IBinder windowToken )
-   {
-      if ( windowToken != null )
-      {
-         final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
-         if ( imm != null )
-         {
-            imm.hideSoftInputFromWindow( windowToken,
-                                         InputMethodManager.HIDE_NOT_ALWAYS );
-         }
-      }
    }
    
    
@@ -184,6 +154,21 @@ public final class UiUtils
       {
          container.setVisibility( View.GONE );
       }
+   }
+   
+   
+   
+   private static int getTaggedViewPos( ViewGroup container, String tag )
+   {
+      int pos = -1;
+      
+      for ( int i = 0, cnt = container.getChildCount(); i < cnt && pos == -1; ++i )
+      {
+         if ( tag.equals( container.getChildAt( i ).getTag() ) )
+            pos = i;
+      }
+      
+      return pos;
    }
    
    
@@ -317,172 +302,21 @@ public final class UiUtils
    
    
    
-   public final static String convertSource( Context context, String source )
-   {
-      if ( source.equalsIgnoreCase( "js" ) )
-         return "web";
-      
-      if ( source.equalsIgnoreCase( "api" ) )
-         return context.getString( R.string.app_name );
-      
-      return source;
-   }
-   
-   
-   
-   public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
-                                                                    String tag )
-   {
-      int tagStart = -1;
-      int tagEnd = -1;
-      
-      final int cnt = container.getChildCount();
-      
-      for ( int i = 0; i < cnt && ( tagStart == -1 || tagEnd == -1 ); ++i )
-      {
-         if ( tagStart == -1 && tag.equals( container.getChildAt( i ).getTag() ) )
-            tagStart = i;
-         else if ( tagStart != -1
-            && !tag.equals( container.getChildAt( i ).getTag() ) )
-            tagEnd = i;
-      }
-      
-      if ( tagStart != -1 )
-         return Pair.create( tagStart, tagEnd != -1 ? tagEnd : cnt );
-      else
-         return Pair.create( 0, 0 );
-   }
-   
-   
-   
-   public final static int getTaggedViewPos( ViewGroup container, String tag )
-   {
-      int pos = -1;
-      
-      for ( int i = 0, cnt = container.getChildCount(); i < cnt && pos == -1; ++i )
-      {
-         if ( tag.equals( container.getChildAt( i ).getTag() ) )
-            pos = i;
-      }
-      
-      return pos;
-   }
-   
-   
-   
-   public final static void removeTaggedViews( ViewGroup container, String tag )
-   {
-      List< View > views = null;
-      
-      for ( int i = 0, cnt = container.getChildCount(); i < cnt; ++i )
-      {
-         final View v = container.getChildAt( i );
-         if ( v != null && tag.equals( v.getTag() ) )
-         {
-            if ( views == null )
-               views = new LinkedList< View >();
-            
-            views.add( v );
-         }
-      }
-      
-      if ( views != null )
-         for ( View view : views )
-            container.removeView( view );
-   }
-   
-   
-   
-   public final static void showApplyChangesDialog( FragmentActivity activity )
-   {
-      showApplyChangesDialog( activity, null );
-   }
-   
-   
-   
-   public final static void showApplyChangesDialog( FragmentActivity activity,
-                                                    String tag )
-   {
-      new AlertDialogFragment.Builder( R.id.dlg_apply_changes ).setTag( tag )
-                                                               .setMessage( activity.getString( R.string.phr_edit_dlg_done ) )
-                                                               .setPositiveButton( android.R.string.yes )
-                                                               .setNegativeButton( android.R.string.no )
-                                                               .show( activity );
-   }
-   
-   
-   
-   public final static void showDeleteElementDialog( FragmentActivity activity,
-                                                     String elementName )
-   {
-      showDeleteElementDialog( activity, elementName, null );
-   }
-   
-   
-   
-   public final static void showDeleteElementDialog( FragmentActivity activity,
-                                                     String elementName,
-                                                     String tag )
-   {
-      new AlertDialogFragment.Builder( R.id.dlg_delete_element ).setTag( tag )
-                                                                .setMessage( activity.getString( R.string.phr_delete_with_name,
-                                                                                                 elementName )
-                                                                   + "?" )
-                                                                .setPositiveButton( R.string.btn_delete )
-                                                                .setNegativeButton( R.string.btn_cancel )
-                                                                .show( activity );
-   }
-   
-   
-   
-   public final static void showAboutMolokoDialog( FragmentActivity fragActivity )
-   {
-      final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );
-      dialog.show( fragActivity.getSupportFragmentManager(),
-                   String.valueOf( R.id.frag_about_moloko ) );
-   }
-   
-   
-   
-   public final static void showNoAccountDialog( FragmentActivity fragmentActivity )
-   {
-      new AlertDialogFragment.Builder( R.id.dlg_no_account ).setTitle( fragmentActivity.getString( R.string.dlg_no_account_title ) )
-                                                            .setIcon( R.drawable.ic_rtm )
-                                                            .setMessage( fragmentActivity.getString( R.string.dlg_no_account_text ) )
-                                                            .setPositiveButton( R.string.btn_new_account )
-                                                            .setNegativeButton( R.string.btn_cancel )
-                                                            .show( fragmentActivity );
-   }
-   
-   
-   
-   public final static void showNotConnectedDialog( FragmentActivity fragmentActivity )
-   {
-      new AlertDialogFragment.Builder( R.id.dlg_not_connected ).setTitle( fragmentActivity.getString( R.string.err_not_connected ) )
-                                                               .setIcon( android.R.drawable.ic_dialog_alert )
-                                                               .setMessage( fragmentActivity.getString( R.string.phr_establish_connection ) )
-                                                               .setPositiveButton( R.string.btn_ok )
-                                                               .setNeutralButton( R.string.phr_settings )
-                                                               .show( fragmentActivity );
-   }
-   
-   
-   
-   public final static void showDialogFragment( FragmentActivity fragmentActivity,
+   public final static void showDialogFragment( Activity activity,
                                                 DialogFragment dialogFragment,
                                                 String fragmentTag )
    {
-      if ( !isDialogFragmentAdded( fragmentActivity, fragmentTag ) )
-         dialogFragment.show( fragmentActivity.getSupportFragmentManager(),
-                              fragmentTag );
+      if ( !isDialogFragmentAdded( activity, fragmentTag ) )
+      {
+         dialogFragment.show( activity.getFragmentManager(), fragmentTag );
+      }
    }
    
    
    
-   public final static boolean isDialogFragmentAdded( FragmentActivity fragmentActivity,
+   public final static boolean isDialogFragmentAdded( Activity activity,
                                                       String fragmentTag )
    {
-      return fragmentActivity.getSupportFragmentManager()
-                             .findFragmentByTag( fragmentTag ) != null;
+      return activity.getFragmentManager().findFragmentByTag( fragmentTag ) != null;
    }
 }

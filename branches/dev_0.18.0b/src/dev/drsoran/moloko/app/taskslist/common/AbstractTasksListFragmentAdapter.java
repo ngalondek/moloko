@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
@@ -39,7 +40,6 @@ import dev.drsoran.moloko.domain.sort.SortTaskPriority;
 import dev.drsoran.moloko.ui.adapters.LayoutSwitchMultiChoiceModalAdapter;
 import dev.drsoran.moloko.ui.format.RtmStyleTaskDateFormatter;
 import dev.drsoran.moloko.ui.format.RtmStyleTaskDescTextViewFormatter;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
 import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 
@@ -73,7 +73,7 @@ abstract class AbstractTasksListFragmentAdapter extends
    
    
    
-   protected AbstractTasksListFragmentAdapter( MolokoListView listView,
+   protected AbstractTasksListFragmentAdapter( ListView listView,
       int unselectedResourceId, int selectedResourceId )
    {
       super( listView, unselectedResourceId, selectedResourceId );

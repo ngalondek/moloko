@@ -140,7 +140,7 @@ public class QuickAddTaskButtonBarFragment extends MolokoFragment implements
          case R.id.quick_add_task_btn_repeat:
          case R.id.quick_add_task_btn_estimate:
          {
-            new ShowButtonTextAsToast( getSherlockActivity() ).show( view,
+            new ShowButtonTextAsToast( getActivity() ).show( view,
                                                                      (CharSequence) view.getTag() );
             return true;
          }

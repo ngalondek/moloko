@@ -33,7 +33,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
@@ -70,8 +69,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public final static DuePickerDialogFragment show( FragmentActivity activity,
-                                                     Due due )
+   public final static DuePickerDialogFragment show( Activity activity, Due due )
    {
       final Bundle config = new Bundle( 2 );
       config.putLong( TaskColumns.DUE_DATE, due.getMillisUtc() );
@@ -82,7 +80,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    
    
-   public final static DuePickerDialogFragment show( FragmentActivity activity,
+   public final static DuePickerDialogFragment show( Activity activity,
                                                      Bundle config )
    {
       final DuePickerDialogFragment frag = newInstance( config );
@@ -155,7 +153,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    private View initWheels()
    {
-      final Activity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
@@ -226,7 +224,7 @@ public class DuePickerDialogFragment extends AbstractPickerDialogFragment
    
    private Dialog createDialogImpl( View content )
    {
-      final Activity activity = getSherlockActivity();
+      final Activity activity = getActivity();
       
       return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_time )
                                                 .setTitle( R.string.dlg_due_picker_title )

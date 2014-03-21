@@ -24,7 +24,7 @@ package dev.drsoran.moloko.ui.adapters;
 
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.ui.widgets.MolokoListView;
+import android.widget.ListView;
 
 
 public abstract class LayoutSwitchMultiChoiceModalAdapter< T > extends
@@ -34,7 +34,7 @@ public abstract class LayoutSwitchMultiChoiceModalAdapter< T > extends
    
    
    
-   protected LayoutSwitchMultiChoiceModalAdapter( MolokoListView listView,
+   protected LayoutSwitchMultiChoiceModalAdapter( ListView listView,
       int uncheckedResourceId, int checkedResourceId )
    {
       super( listView, uncheckedResourceId );

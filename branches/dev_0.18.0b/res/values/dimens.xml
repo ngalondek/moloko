@@ -37,11 +37,11 @@
    <dimen
       name="moloko_prefs_marginBottom">6dip</dimen>
    <dimen
-      name="wheel_text_size">24dip</dimen>
+      name="wheel_text_size">18dip</dimen>
    <dimen
-      name="due_date_picker_weekday_text_size">24dip</dimen>
+      name="due_date_picker_weekday_text_size">16dip</dimen>
    <dimen
-      name="due_date_picker_wheel_height">140dip</dimen>
+      name="due_date_picker_wheel_height">135dip</dimen>
    <dimen
-      name="due_time_picker_wheel_height">140dip</dimen>
+      name="due_time_picker_wheel_height">100dip</dimen>
 </resources>

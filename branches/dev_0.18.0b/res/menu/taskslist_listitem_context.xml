@@ -16,9 +16,12 @@
 
     <item
         android:id="@id/menu_open_tags"
-        android:showAsAction="never"/>
+        android:showAsAction="never"
+        android:title="@plurals/taskslist_open_tags" />
+    
     <item
         android:id="@id/menu_open_tasks_at_loc"
-        android:showAsAction="never"/>
+        android:showAsAction="never"
+        android:title="@string/abstaskslist_listitem_ctx_tasks_at_location" />
 
 </menu>

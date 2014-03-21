@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.ui.fragments.impl;
 
+import android.app.ListFragment;
 import android.os.Bundle;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -29,9 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockListFragment;
-
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
@@ -39,7 +37,7 @@ import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
 
 class LoaderListFragmentViewManager
 {
-   private final SherlockListFragment fragment;
+   private final ListFragment fragment;
    
    private LinearLayout emptyViewContainer;
    
@@ -47,7 +45,7 @@ class LoaderListFragmentViewManager
    
    
    
-   public LoaderListFragmentViewManager( SherlockListFragment fragment )
+   public LoaderListFragmentViewManager( ListFragment fragment )
    {
       this.fragment = fragment;
       this.noElementsResId = R.string.phr_nothing;
@@ -99,7 +97,7 @@ class LoaderListFragmentViewManager
    
    public void showError( int messageResId )
    {
-      showError( fragment.getSherlockActivity().getString( messageResId ) );
+      showError( fragment.getActivity().getString( messageResId ) );
    }
    
    
@@ -198,6 +196,6 @@ class LoaderListFragmentViewManager
    
    private LayoutInflater getLayoutInflater()
    {
-      return fragment.getSherlockActivity().getLayoutInflater();
+      return fragment.getActivity().getLayoutInflater();
    }
 }

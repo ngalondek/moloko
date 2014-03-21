@@ -25,16 +25,14 @@ package dev.drsoran.moloko.ui.fragments;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ListFragment;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.actionbarsherlock.app.SherlockListFragment;
-
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
@@ -44,8 +42,8 @@ import dev.drsoran.moloko.ui.fragments.impl.LoaderListFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
 
 
-public abstract class MolokoListFragment< D > extends SherlockListFragment
-         implements IConfigurable, LoaderCallbacks< List< D > >,
+public abstract class MolokoListFragment< D > extends ListFragment implements
+         IConfigurable, LoaderCallbacks< List< D > >,
          LoaderListFragmentImpl.Support< D >
 {
    private final ConfigurableFragmentImpl baseImpl;
@@ -209,8 +207,8 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    protected void invalidateOptionsMenu()
    {
-      if ( getSherlockActivity() != null )
-         getSherlockActivity().invalidateOptionsMenu();
+      if ( getActivity() != null )
+         getActivity().invalidateOptionsMenu();
    }
    
    
@@ -320,4 +318,8 @@ public abstract class MolokoListFragment< D > extends SherlockListFragment
    
    @Override
    public abstract SwappableArrayAdapter< D > createListAdapter();
+   
+   
+   
+   public abstract int getChoiceMode();
 }

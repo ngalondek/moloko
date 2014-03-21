@@ -24,8 +24,8 @@ package dev.drsoran.moloko.app.taskslist.common;
 
 import java.util.List;
 
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +96,7 @@ public class MinDetailedTasksListFragment extends AbstractTasksListFragment
    @Override
    public SwappableArrayAdapter< Task > createListAdapter( RtmSmartFilter filter )
    {
-      return new MinDetailedTasksListFragmentAdapter( getMolokoListView() );
+      return new MinDetailedTasksListFragmentAdapter( getListView() );
    }
    
    

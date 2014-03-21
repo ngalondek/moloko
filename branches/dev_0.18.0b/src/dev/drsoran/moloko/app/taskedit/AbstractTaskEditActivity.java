@@ -23,21 +23,19 @@
 package dev.drsoran.moloko.app.taskedit;
 
 import android.app.Dialog;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.view.Menu;
+import android.view.MenuItem;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.baseactivities.MolokoEditFragmentActivity;
+import dev.drsoran.moloko.app.baseactivities.MolokoEditActivity;
 import dev.drsoran.moloko.ui.fragments.IEditFragment;
 
 
-abstract class AbstractTaskEditActivity extends MolokoEditFragmentActivity
+abstract class AbstractTaskEditActivity extends MolokoEditActivity
 {
    @Override
    public boolean onActivityCreateOptionsMenu( Menu menu )
    {
-      getSupportMenuInflater().inflate( R.menu.edit_activity, menu );
+      getMenuInflater().inflate( R.menu.edit_activity, menu );
       super.onActivityCreateOptionsMenu( menu );
       
       return true;

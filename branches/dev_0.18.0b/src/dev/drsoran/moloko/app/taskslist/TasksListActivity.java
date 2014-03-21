@@ -24,9 +24,8 @@ package dev.drsoran.moloko.app.taskslist;
 
 import java.util.Collection;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.view.Menu;
+import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.app.taskslist.common.AbstractFullDetailedTasksListActivity;
@@ -43,11 +42,11 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
    {
       if ( isWritableAccess() )
       {
-         getSupportMenuInflater().inflate( R.menu.taskslist_activity_rwd, menu );
+         getMenuInflater().inflate( R.menu.taskslist_activity_rwd, menu );
       }
       else
       {
-         getSupportMenuInflater().inflate( R.menu.taskslist_activity, menu );
+         getMenuInflater().inflate( R.menu.taskslist_activity, menu );
       }
       
       super.onActivityCreateOptionsMenu( menu );
@@ -165,7 +164,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       
       if ( superNavigationItemSelected )
       {
-         supportInvalidateOptionsMenu();
+         invalidateOptionsMenu();
       }
       
       return superNavigationItemSelected;

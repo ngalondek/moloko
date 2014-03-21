@@ -43,10 +43,10 @@ class ContactsListAdapter extends SwappableArrayAdapter< LinkedContact >
    
    public ContactsListAdapter( ContactsListFragment context )
    {
-      super( context.getSherlockActivity() );
+      super( context.getActivity() );
       
       this.context = context;
-      inflater = context.getSherlockActivity().getLayoutInflater();
+      inflater = context.getActivity().getLayoutInflater();
    }
    
    

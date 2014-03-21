@@ -1,7 +1,7 @@
-﻿ldpiFolder   = preProdFolder + "/../../res/drawable-ldpi-v11";
-mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi-v11";
-hdpiFolder	 = preProdFolder + "/../../res/drawable-hdpi-v11";
-xhdpiFolder	 = preProdFolder + "/../../res/drawable-xhdpi-v11";
+﻿ldpiFolder   = preProdFolder + "/../../res/drawable-ldpi";
+mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi";
+hdpiFolder	 = preProdFolder + "/../../res/drawable-hdpi";
+xhdpiFolder	 = preProdFolder + "/../../res/drawable-xhdpi";
 
 if ( selectLayer( activeDocument, "text" ) )
 {

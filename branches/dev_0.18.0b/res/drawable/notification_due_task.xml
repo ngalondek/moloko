@@ -13,7 +13,44 @@
       implementation
    -->
 
-<bitmap
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:src="@drawable/ic_notify_due_task">
-</bitmap>
+<level-list
+   xmlns:android="http://schemas.android.com/apk/res/android">
+
+   <!-- Here we use the permanent expanded icon. This will be shown in
+        case of a stacked due task notification and is the icon for the
+        number of tasks -->
+   <item
+      android:maxLevel="0"
+      android:drawable="@drawable/ic_notify_permanent_expanded" />
+   <item
+      android:maxLevel="1"
+      android:drawable="@drawable/ic_notify_due_task_layer_1" />       
+   <item
+      android:maxLevel="2"
+      android:drawable="@drawable/ic_notify_due_task_layer_2" />         
+   <item
+      android:maxLevel="3"
+      android:drawable="@drawable/ic_notify_due_task_layer_3" />      
+   <item
+      android:maxLevel="4"
+      android:drawable="@drawable/ic_notify_due_task_layer_4" />
+   <item
+      android:maxLevel="5"
+      android:drawable="@drawable/ic_notify_due_task_layer_5" />
+   <item
+      android:maxLevel="6"
+      android:drawable="@drawable/ic_notify_due_task_layer_6" />
+   <item
+      android:maxLevel="7"
+      android:drawable="@drawable/ic_notify_due_task_layer_7" />
+   <item
+      android:maxLevel="8"
+      android:drawable="@drawable/ic_notify_due_task_layer_8" />
+   <item
+      android:maxLevel="9"
+      android:drawable="@drawable/ic_notify_due_task_layer_9" />
+   <item
+      android:minLevel="10"
+      android:maxLevel="2147483647"
+      android:drawable="@drawable/ic_notify_due_task_layer_greater_9" />
+</level-list>

@@ -1,0 +1,19 @@
+<project name="buildJar" basedir="." default="build">
+	<property name="binDir" location="${basedir}/bin" />
+	<property name="outDir" location="${binDir}" />
+	<property name="jarFile" location="${outDir}/LibRtm.jar" />
+
+	<target name="build" depends="clean">
+		<jar basedir="${binDir}" destfile="${jarFile}">
+			<manifest>
+				<attribute name="Built-By" value="${builder}" />
+				<attribute name="Built-On" value="${build-info.current-date}" />
+				<attribute name="Built-At" value="${build-info.current-time}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete failonerror="true" file="${jarFile}" />
+	</target>
+</project>

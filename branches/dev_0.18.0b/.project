@@ -31,6 +31,18 @@
 		<nature>org.eclipse.vjet.core.nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>libs/LibRtm.jar</name>
+			<type>1</type>
+			<locationURI>Moloko/lib/LibRtm/bin/LibRtm.jar</locationURI>
+		</link>
+		<link>
+			<name>libs/antlr-runtime-4.1.jar</name>
+			<type>1</type>
+			<locationURI>Moloko/lib/LibRtm/libs/antlr-runtime-4.1.jar</locationURI>
+		</link>
+	</linkedResources>
 	<variableList>
 		<variable>
 			<name>Moloko</name>

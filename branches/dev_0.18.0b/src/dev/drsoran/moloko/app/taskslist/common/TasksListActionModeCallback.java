@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import dev.drsoran.Pair;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
+import dev.drsoran.rtm.Pair;
 
 
 class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >

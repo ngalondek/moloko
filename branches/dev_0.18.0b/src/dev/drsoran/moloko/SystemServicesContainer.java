@@ -29,6 +29,7 @@ import dev.drsoran.moloko.connection.DefaultReaderFactory;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.event.MolokoSystemEventService;
 import dev.drsoran.rtm.IConnectionFactory;
+import dev.drsoran.rtm.ILog;
 
 
 class SystemServicesContainer implements ISystemServices

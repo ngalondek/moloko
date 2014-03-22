@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.domain.model;
 
 import android.annotation.SuppressLint;
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 
 
 public class Contact

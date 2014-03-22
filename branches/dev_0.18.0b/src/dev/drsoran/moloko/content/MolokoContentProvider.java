@@ -29,9 +29,9 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import dev.drsoran.Strings;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.db.DbContentProvider;
+import dev.drsoran.rtm.ILog;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 

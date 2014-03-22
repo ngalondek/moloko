@@ -29,8 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.rtm.IConnection;
+import dev.drsoran.rtm.ILog;
 
 
 class HttpUrlConnection implements IConnection

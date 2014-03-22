@@ -367,7 +367,7 @@
       <!-- Services -->
 
       <service
-         android:name=".app.account.AuthenticationService"
+         android:name="dev.drsoran.moloko.auth.AuthenticationService"
          android:label="@string/svc_auth"
          android:exported="true"
          android:permission="dev.drsoran.moloko.auth.AUTH_SERVICE">
@@ -383,7 +383,7 @@
       
       
       <service
-         android:name="dev.drsoran.moloko.app.sync.AndroidSyncProvider"
+         android:name="dev.drsoran.moloko.sync.AndroidSyncProvider"
          android:label="@string/svc_sync"
          android:exported="true"
          android:permission="dev.drsoran.moloko.sync.SYNC_ADAPTER">
@@ -407,7 +407,7 @@
       <!-- Broadcast receivers -->
 
       <receiver
-         android:name="dev.drsoran.moloko.app.sync.SyncAlarmReceiver" />
+         android:name="dev.drsoran.moloko.sync.SyncAlarmReceiver" />
 
       <receiver
          android:name="dev.drsoran.moloko.BootReceiver">

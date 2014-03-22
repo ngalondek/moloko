@@ -25,7 +25,6 @@ package dev.drsoran.moloko.ui;
 import android.content.Context;
 import android.content.ContextWrapper;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.domain.DomainContext;
@@ -34,6 +33,7 @@ import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.services.ISmartAddService;
 import dev.drsoran.moloko.ui.services.IUiServices;
+import dev.drsoran.rtm.ILog;
 import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 
 

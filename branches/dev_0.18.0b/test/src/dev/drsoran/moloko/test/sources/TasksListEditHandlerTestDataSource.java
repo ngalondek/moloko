@@ -32,8 +32,8 @@ import static dev.drsoran.moloko.content.Columns.TasksListColumns.LIST_NAME;
 import static dev.drsoran.moloko.content.Columns.TasksListColumns.LOCKED;
 import static dev.drsoran.moloko.content.Columns.TasksListColumns.POSITION;
 import static dev.drsoran.moloko.content.ContentUris.TASKS_LISTS_CONTENT_URI_ID;
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.TestConstants.LATER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -36,11 +36,11 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import dev.drsoran.moloko.IConfigurable;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderExpandableListFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
+import dev.drsoran.rtm.ILog;
 
 
 public abstract class MolokoExpandableListFragment< D > extends ListFragment

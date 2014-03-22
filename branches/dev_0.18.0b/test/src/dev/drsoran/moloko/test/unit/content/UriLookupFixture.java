@@ -55,12 +55,9 @@ public class UriLookupFixture extends MolokoRoboTestCase
    
    
    
-   @Override
    @Before
    public void setUp() throws Exception
    {
-      super.setUp();
-      
       testUri1 = Uri.parse( "www.google.de" );
       testUri2 = Uri.parse( "www.google.de/path" );
       wrongUri = Uri.parse( "www.abc.de" );

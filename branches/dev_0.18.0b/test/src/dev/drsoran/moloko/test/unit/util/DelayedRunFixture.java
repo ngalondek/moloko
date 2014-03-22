@@ -28,12 +28,11 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
-public class DelayedRunFixture extends MolokoTestCase
+public class DelayedRunFixture
 {
    private final static Runnable R = new Runnable()
    {

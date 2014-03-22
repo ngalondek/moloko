@@ -22,9 +22,9 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NEVER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.TestConstants.LATER;
+import static dev.drsoran.rtm.test.TestConstants.NEVER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -38,7 +38,7 @@ import java.io.ObjectOutputStream;
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Estimation;
-import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
+import dev.drsoran.rtm.test.EqualsHashCodeTestCase;
 
 
 public class EstimationFixture extends EqualsHashCodeTestCase

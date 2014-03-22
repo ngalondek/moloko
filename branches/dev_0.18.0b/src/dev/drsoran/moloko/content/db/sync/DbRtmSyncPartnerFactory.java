@@ -22,11 +22,11 @@
 
 package dev.drsoran.moloko.content.db.sync;
 
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.services.IRtmSyncPartnerFactory;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
+import dev.drsoran.rtm.ILog;
 import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;

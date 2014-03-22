@@ -38,8 +38,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.rtm.ILog;
 
 
 @RunWith( SQLiteTestRunner.class )
@@ -54,19 +54,15 @@ public abstract class MolokoDbTestCase extends MolokoRoboTestCase
    
    
    
-   @Override
    @Before
    public void setUp() throws Exception
    {
-      super.setUp();
-      
       context = Robolectric.buildActivity( Activity.class ).get();
       database = createDatabase( context );
    }
    
    
    
-   @Override
    @After
    public void tearDown() throws Exception
    {
@@ -75,8 +71,6 @@ public abstract class MolokoDbTestCase extends MolokoRoboTestCase
          c.close();
          c = null;
       }
-      
-      super.tearDown();
    }
    
    

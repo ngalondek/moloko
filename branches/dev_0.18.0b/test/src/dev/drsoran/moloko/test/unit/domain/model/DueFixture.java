@@ -41,8 +41,8 @@ import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Due;
-import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
-import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.test.EqualsHashCodeTestCase;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 @RunWith( Theories.class )

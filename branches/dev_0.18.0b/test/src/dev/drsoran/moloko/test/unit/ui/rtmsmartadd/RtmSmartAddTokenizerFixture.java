@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.test.unit.ui.rtmsmartadd;
 
-import static dev.drsoran.moloko.test.IterableAsserts.assertEqualSet;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.DUE_DATE_TYPE;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.ESTIMATE_TYPE;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.LIST_TAGS_TYPE;
@@ -30,6 +29,7 @@ import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.LOCATION_TYPE;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.PRIORITY_TYPE;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.REPEAT_TYPE;
 import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.TASK_NAME_TYPE;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEqualSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,10 +41,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import dev.drsoran.moloko.test.TestConstants;
-import dev.drsoran.moloko.test.TestDateTimeParsing;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken;
 import dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddTokenizer;
+import dev.drsoran.rtm.test.TestConstants;
+import dev.drsoran.rtm.test.TestDateTimeParsing;
 
 
 @RunWith( Parameterized.class )

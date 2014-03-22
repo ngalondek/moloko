@@ -34,12 +34,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderListFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
+import dev.drsoran.rtm.ILog;
 
 
 public abstract class MolokoListFragment< D > extends ListFragment implements

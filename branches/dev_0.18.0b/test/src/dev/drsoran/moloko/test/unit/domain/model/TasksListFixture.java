@@ -22,11 +22,11 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static dev.drsoran.moloko.test.TestConstants.EVEN_LATER;
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NEVER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
-import static dev.drsoran.moloko.test.TestConstants.NO_ID;
+import static dev.drsoran.rtm.test.TestConstants.EVEN_LATER;
+import static dev.drsoran.rtm.test.TestConstants.LATER;
+import static dev.drsoran.rtm.test.TestConstants.NEVER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.TestConstants.NO_ID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertFalse;
@@ -46,10 +46,9 @@ import org.junit.Test;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class TasksListFixture extends MolokoTestCase
+public class TasksListFixture
 {
    @Test
    public void testTasksListNoId()

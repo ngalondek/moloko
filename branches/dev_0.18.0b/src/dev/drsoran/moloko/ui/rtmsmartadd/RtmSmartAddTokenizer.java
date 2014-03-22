@@ -39,7 +39,7 @@ import static dev.drsoran.moloko.ui.rtmsmartadd.RtmSmartAddToken.TASK_NAME_TYPE;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.IRtmDateTimeParsing;
 

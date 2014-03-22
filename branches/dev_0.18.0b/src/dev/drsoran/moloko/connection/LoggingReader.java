@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
 
-import dev.drsoran.moloko.ILog;
+import dev.drsoran.rtm.ILog;
 
 
 class LoggingReader extends Reader

@@ -30,12 +30,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.listeners.IPopupNotificationFragmentListener;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
+import dev.drsoran.rtm.Strings;
 
 
 public class PopupNotificationFragment extends MolokoFragment

@@ -52,8 +52,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import dev.drsoran.Iterables;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.content.Constants;
@@ -65,6 +63,8 @@ import dev.drsoran.moloko.ui.ValidationResult;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.ui.layouts.TitleWithSpinnerLayout;
+import dev.drsoran.rtm.Iterables;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.Priority;
 
 

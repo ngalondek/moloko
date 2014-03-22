@@ -30,7 +30,7 @@ import org.junit.Test;
 import dev.drsoran.moloko.content.ContentMimeTypes;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
 public class ContentMimeTypesTest extends MolokoRoboTestCase

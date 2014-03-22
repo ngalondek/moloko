@@ -30,12 +30,11 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.Reflection;
 
 
-public class ListenerListFixture extends MolokoTestCase
+public class ListenerListFixture
 {
    private final static int MASK_A = 0x1;
    
@@ -49,11 +48,9 @@ public class ListenerListFixture extends MolokoTestCase
    
    
    
-   @Override
    @Before
    public void setUp() throws Exception
    {
-      super.setUp();
       listenerListMask = new ListenerList< TestListener >( Reflection.findMethod( TestListener.class,
                                                                                   "onEvent" ) );
       listenerListMaskAndValue = new ListenerList< TestListener >( Reflection.findMethod( TestListener.class,

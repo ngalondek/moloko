@@ -42,16 +42,13 @@ import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_MODIFIED_DATE;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_NAME;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.URL;
 import static dev.drsoran.moloko.content.ContentUris.TASKS_CONTENT_URI_ID;
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
-import static dev.drsoran.moloko.test.TestConstants.*;
+import static dev.drsoran.rtm.test.TestConstants.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.content.Modification;
@@ -59,6 +56,7 @@ import dev.drsoran.moloko.domain.model.Due;
 import dev.drsoran.moloko.domain.model.Estimation;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 

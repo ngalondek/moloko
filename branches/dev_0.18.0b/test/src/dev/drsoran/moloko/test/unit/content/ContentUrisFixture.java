@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.test.unit.content;
 
-import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
-import static dev.drsoran.moloko.test.IterableAsserts.assertEqualSet;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEmpty;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEqualSet;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -37,7 +37,7 @@ import android.net.Uri;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
 @Config( manifest = Config.NONE )

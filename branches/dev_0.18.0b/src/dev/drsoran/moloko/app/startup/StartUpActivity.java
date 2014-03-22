@@ -128,9 +128,13 @@ public class StartUpActivity extends MolokoActivity
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
       if ( requestCode == StartActivityRequestCode.ADD_ACCOUNT )
+      {
          switchToNextState();
+      }
       else
+      {
          super.onActivityResult( requestCode, resultCode, data );
+      }
    }
    
    

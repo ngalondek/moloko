@@ -45,9 +45,9 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.test.MolokoSyncTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
-import dev.drsoran.moloko.test.TestConstants;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmSettings;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 public class RtmSettingsSyncTest extends MolokoSyncTestCase

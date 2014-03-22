@@ -31,12 +31,11 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.domain.model.Settings;
-import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 @RunWith( Theories.class )
-public class SettingsFixture extends MolokoTestCase
+public class SettingsFixture
 {
    @DataPoint
    public final static long ID = 1L;

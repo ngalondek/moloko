@@ -31,8 +31,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.provider.BaseColumns;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.rtm.Strings;
 
 
 public abstract class AbstractTable implements ITable

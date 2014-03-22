@@ -36,7 +36,7 @@ import org.junit.Test;
 
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.Location;
-import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
+import dev.drsoran.rtm.test.EqualsHashCodeTestCase;
 
 
 public class LocationFixture extends EqualsHashCodeTestCase

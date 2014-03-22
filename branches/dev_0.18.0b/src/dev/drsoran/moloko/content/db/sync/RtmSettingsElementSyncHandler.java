@@ -29,7 +29,6 @@ import java.text.MessageFormat;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.SettingsColumns;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
@@ -37,6 +36,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmSettings;
 

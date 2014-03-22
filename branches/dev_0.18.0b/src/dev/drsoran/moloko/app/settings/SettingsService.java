@@ -38,7 +38,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
@@ -49,6 +48,7 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.rtm.RtmConnectionProtocol;
+import dev.drsoran.rtm.Strings;
 
 
 public class SettingsService implements ISettingsService,

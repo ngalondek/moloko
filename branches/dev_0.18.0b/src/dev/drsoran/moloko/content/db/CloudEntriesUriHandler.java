@@ -31,7 +31,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
@@ -40,6 +39,7 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.content.IContentUriHandler;
 import dev.drsoran.moloko.domain.model.CloudEntryType;
+import dev.drsoran.rtm.Strings;
 
 
 public class CloudEntriesUriHandler extends AbstractContentUriHandler

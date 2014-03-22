@@ -24,8 +24,8 @@ package dev.drsoran.moloko.domain.model;
 
 import java.io.Serializable;
 
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.rtm.Strings;
 
 
 public class Estimation implements Serializable

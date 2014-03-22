@@ -24,7 +24,6 @@ package dev.drsoran.moloko.content.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import dev.drsoran.Compare;
 import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.CursorUtils;
@@ -33,6 +32,7 @@ import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;
 import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.services.ContentException;
+import dev.drsoran.rtm.content.Compare;
 
 
 public class DbModificationsApplier implements IModificationsApplier

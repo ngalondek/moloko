@@ -42,8 +42,6 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.prefs.MainPreferencesActivity;
-import dev.drsoran.moloko.app.sync.SyncAlarmReceiver;
-import dev.drsoran.moloko.app.sync.SyncConstants;
 import dev.drsoran.moloko.content.ContentAuthority;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.Location;
@@ -51,6 +49,8 @@ import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.sync.SyncAlarmReceiver;
+import dev.drsoran.moloko.sync.SyncConstants;
 import dev.drsoran.moloko.util.Bundles;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
@@ -228,7 +228,8 @@ public final class Intents
          // if we open a smart list
          else
          {
-            smartFilterBuilder.filter( list.getSmartFilter() );
+            smartFilterBuilder.filterString( list.getSmartFilter()
+                                                 .getFilterString() );
          }
          
          if ( additionalSmartFilter != null )
@@ -240,7 +241,7 @@ public final class Intents
          }
          
          final Bundle extras = createSmartFilterExtras( context,
-                                                        smartFilterBuilder.toSmartFilter(),
+                                                        new RtmSmartFilter( smartFilterBuilder.toString() ),
                                                         context.getString( R.string.taskslist_actionbar,
                                                                            list.getName() ) );
          extras.putString( Intents.Extras.KEY_LIST_NAME, list.getName() );
@@ -265,8 +266,8 @@ public final class Intents
                                                            String locationName )
       {
          return createSmartFilterExtras( context,
-                                         new RtmSmartFilterBuilder().location( locationName )
-                                                                    .toSmartFilter(),
+                                         new RtmSmartFilter( new RtmSmartFilterBuilder().location( locationName )
+                                                                                        .toString() ),
                                          context.getString( R.string.taskslist_actionbar,
                                                             locationName ) );
       }
@@ -279,8 +280,8 @@ public final class Intents
       {
          // Here we take the username cause the fullname can be ambiguous.
          return createSmartFilterExtras( context,
-                                         new RtmSmartFilterBuilder().sharedWith( username )
-                                                                    .toSmartFilter(),
+                                         new RtmSmartFilter( new RtmSmartFilterBuilder().sharedWith( username )
+                                                                                        .toString() ),
                                          context.getString( R.string.taskslist_actionbar,
                                                             fullname ) );
       }
@@ -328,7 +329,7 @@ public final class Intents
          }
          
          return createSmartFilterExtras( context,
-                                         smartFilterBuilder.toSmartFilter(),
+                                         new RtmSmartFilter( smartFilterBuilder.toString() ),
                                          context.getString( R.string.taskslist_actionbar,
                                                             TextUtils.join( ", ",
                                                                             tags ) ) );

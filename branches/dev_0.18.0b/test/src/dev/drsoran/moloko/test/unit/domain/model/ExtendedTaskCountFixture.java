@@ -35,10 +35,9 @@ import java.io.ObjectOutputStream;
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
-import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class ExtendedTaskCountFixture extends MolokoTestCase
+public class ExtendedTaskCountFixture
 {
    @Test
    public void testExtendedTaskCount()

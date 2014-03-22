@@ -29,6 +29,7 @@ import org.junit.Before;
 
 import dev.drsoran.moloko.content.db.DbContentProvider;
 import dev.drsoran.moloko.content.db.RtmDatabase;
+import dev.drsoran.rtm.test.TestCalendarProvider;
 
 
 public abstract class MolokoDbContentTestCase extends MolokoDbTestCase

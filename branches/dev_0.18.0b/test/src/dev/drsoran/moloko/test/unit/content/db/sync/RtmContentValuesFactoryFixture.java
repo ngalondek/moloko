@@ -54,11 +54,9 @@ public class RtmContentValuesFactoryFixture extends MolokoRoboTestCase
    
    
    
-   @Override
    @Before
    public void setUp() throws Exception
    {
-      super.setUp();
       fact = new RtmContentValuesFactory();
    }
    

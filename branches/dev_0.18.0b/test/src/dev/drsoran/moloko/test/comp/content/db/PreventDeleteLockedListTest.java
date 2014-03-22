@@ -30,7 +30,7 @@ import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.test.MolokoDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
-import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 public class PreventDeleteLockedListTest extends MolokoDbContentTestCase

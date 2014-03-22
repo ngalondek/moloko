@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import android.database.Cursor;
-import dev.drsoran.Pair;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.content.Modification;
 import dev.drsoran.moloko.domain.content.MolokoModelElementFactory;
@@ -48,13 +47,13 @@ import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.sources.MolokoModelElementFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.MolokoModelElementFactoryTestDataSource.TestData;
+import dev.drsoran.rtm.Pair;
 import dev.drsoran.rtm.sync.SyncTime;
 
 
-public class MolokoModelElementFactoryFixture extends MolokoTestCase
+public class MolokoModelElementFactoryFixture
 {
    private final static MolokoModelElementFactoryTestDataSource testDataSource = new MolokoModelElementFactoryTestDataSource();
    
@@ -62,11 +61,9 @@ public class MolokoModelElementFactoryFixture extends MolokoTestCase
    
    
    
-   @Override
    @Before
    public void setUp() throws Exception
    {
-      super.setUp();
       fact = new MolokoModelElementFactory();
    }
    

@@ -22,10 +22,10 @@
 
 package dev.drsoran.moloko.test.unit.domain.content;
 
-import static dev.drsoran.moloko.test.IterableAsserts.assertCount;
-import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
-import static dev.drsoran.moloko.test.TestConstants.NEVER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.IterableAsserts.assertCount;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEmpty;
+import static dev.drsoran.rtm.test.TestConstants.NEVER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
@@ -39,10 +39,10 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.content.Modification;
-import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
+import dev.drsoran.rtm.Strings;
+import dev.drsoran.rtm.test.EqualsHashCodeTestCase;
 
 
 public class ModificationFixture extends EqualsHashCodeTestCase

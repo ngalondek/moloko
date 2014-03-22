@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.Priority;
 
 

@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.ContentValues;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.db.TableColumns.RtmContactColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
@@ -36,6 +35,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmSettingsColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;

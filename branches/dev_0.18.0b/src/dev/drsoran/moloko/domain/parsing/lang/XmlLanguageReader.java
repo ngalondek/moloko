@@ -30,7 +30,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.res.XmlResourceParser;
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.parsing.lang.DictionaryLanguage;
 
 

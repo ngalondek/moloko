@@ -52,7 +52,7 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
-import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 public class TaskNotesContentTest extends MolokoReadWriteDbContentTestCase

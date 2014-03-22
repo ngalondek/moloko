@@ -38,7 +38,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 import dev.drsoran.moloko.content.db.TableNames;
 import dev.drsoran.moloko.test.MolokoDbContentTestCase;
 import dev.drsoran.moloko.test.SQLiteScript;
-import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 public class MoveTasksOfDeletedListTest extends MolokoDbContentTestCase

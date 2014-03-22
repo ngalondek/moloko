@@ -35,7 +35,7 @@ import java.io.ObjectOutputStream;
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
-import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
+import dev.drsoran.rtm.test.EqualsHashCodeTestCase;
 
 
 public class RtmSmartFilterFixture extends EqualsHashCodeTestCase
@@ -69,7 +69,7 @@ public class RtmSmartFilterFixture extends EqualsHashCodeTestCase
    public void testGetFilterStringNoOperator()
    {
       assertThat( new RtmSmartFilter( "filter" ).getFilterString(),
-                  is( "name:\"filter\"" ) );
+                  is( "filter" ) );
    }
    
    

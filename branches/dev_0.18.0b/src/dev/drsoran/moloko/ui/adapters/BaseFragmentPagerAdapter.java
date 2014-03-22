@@ -30,7 +30,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 
 
 public class BaseFragmentPagerAdapter extends FragmentPagerAdapter

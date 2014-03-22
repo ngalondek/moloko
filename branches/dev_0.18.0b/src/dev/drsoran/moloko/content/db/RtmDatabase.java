@@ -23,9 +23,6 @@
 package dev.drsoran.moloko.content.db;
 
 import android.content.Context;
-import dev.drsoran.db.AbstractDatabase;
-import dev.drsoran.db.AbstractTable;
-import dev.drsoran.db.AbstractTrigger;
 import dev.drsoran.moloko.content.ContentUris;
 
 

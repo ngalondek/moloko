@@ -32,9 +32,9 @@ import org.junit.Test;
 import org.robolectric.annotation.Config;
 
 import android.database.Cursor;
-import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
+import dev.drsoran.moloko.content.db.ITable;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.content.db.TableNames;

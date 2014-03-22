@@ -20,46 +20,16 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.db;
+package dev.drsoran.moloko.connection;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
+import dev.drsoran.rtm.IConnectionFactory;
 
 
-public interface ITable
+public interface IConnectionService
 {
-   String getTableName();
+   boolean hasInternetConnection();
    
    
    
-   String getDefaultSortOrder();
-   
-   
-   
-   String[] getProjection();
-   
-   
-   
-   Cursor query( String[] projection,
-                 String selection,
-                 String[] selectionArgs,
-                 String sortOrder );
-   
-   
-   
-   long insert( ContentValues initialValues ) throws SQLException;
-   
-   
-   
-   int update( long id, ContentValues values, String where, String[] whereArgs );
-   
-   
-   
-   int delete( long id, String where, String[] whereArgs );
-   
-   
-   
-   void clear(SQLiteDatabase database);
+   IConnectionFactory getConnectionFactory();
 }

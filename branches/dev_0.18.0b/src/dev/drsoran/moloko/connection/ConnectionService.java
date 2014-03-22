@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.connection;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

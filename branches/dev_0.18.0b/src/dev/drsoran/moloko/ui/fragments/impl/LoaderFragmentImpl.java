@@ -33,9 +33,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.app.MolokoApp;
 
 
 public class LoaderFragmentImpl< D > extends LoaderFragmentImplBase< D >

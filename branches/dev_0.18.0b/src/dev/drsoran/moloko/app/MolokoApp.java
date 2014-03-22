@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.app;
 
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -36,8 +36,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.XmlResourceParser;
 import android.os.Build;
-import dev.drsoran.moloko.app.AppContext;
-import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.SystemContext;
+import dev.drsoran.moloko.SystemServicesContainer;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
 import dev.drsoran.moloko.app.services.AppServicesContainer;
 import dev.drsoran.moloko.app.services.ISettingsService;
@@ -51,7 +52,6 @@ import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.ui.services.MolokoDateFormatterService;
 import dev.drsoran.moloko.ui.services.UiServicesContainer;
-import dev.drsoran.rtm.ILog;
 import dev.drsoran.rtm.parsing.DefaultRtmCalenderProvider;
 import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.parsing.lang.IRecurrenceSentenceLanguage;
@@ -85,8 +85,6 @@ public class MolokoApp extends Application implements
    private UiContext uiContext;
    
    private AppContext appContext;
-   
-   private static ILog Log;
    
    private static boolean isDebug;
    
@@ -126,9 +124,6 @@ public class MolokoApp extends Application implements
       createAppServices( settingsService );
       createAppContext();
       
-      // TODO: Remove
-      Log = appContext.Log();
-      
       registerNotificationSettingsListener();
       startNotificationServiceIfNotificationsAreActive();
    }
@@ -155,14 +150,6 @@ public class MolokoApp extends Application implements
    {
       super.onConfigurationChanged( newConfig );
       updateParserLanguages();
-   }
-   
-   
-   
-   @Deprecated
-   public static ILog Log()
-   {
-      return Log;
    }
    
    

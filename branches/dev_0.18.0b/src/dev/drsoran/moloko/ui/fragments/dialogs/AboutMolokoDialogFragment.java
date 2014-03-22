@@ -34,8 +34,8 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.ui.fragments.MolokoDialogFragment;
 
 

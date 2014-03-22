@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko;
 
+import dev.drsoran.moloko.app.MolokoApp;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

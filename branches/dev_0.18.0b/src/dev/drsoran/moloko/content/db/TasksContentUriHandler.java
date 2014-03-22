@@ -34,7 +34,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;

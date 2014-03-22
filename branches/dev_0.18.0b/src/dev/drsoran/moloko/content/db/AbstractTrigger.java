@@ -20,16 +20,44 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.content.db;
 
-import dev.drsoran.rtm.IConnectionFactory;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 
 
-public interface IConnectionService
+public abstract class AbstractTrigger
 {
-   boolean hasInternetConnection();
+   private final String triggerName;
    
    
    
-   IConnectionFactory getConnectionFactory();
+   protected AbstractTrigger( String triggerName )
+   {
+      this.triggerName = triggerName;
+   }
+   
+   
+   
+   public String getTriggerName()
+   {
+      return triggerName;
+   }
+   
+   
+   
+   public void upgrade( SQLiteDatabase database, int oldVersion, int newVersion ) throws SQLException
+   {
+   }
+   
+   
+   
+   public void drop( SQLiteDatabase database )
+   {
+      database.execSQL( "DROP TRIGGER " + triggerName );
+   }
+   
+   
+   
+   public abstract void create( SQLiteDatabase database ) throws SQLException;
 }

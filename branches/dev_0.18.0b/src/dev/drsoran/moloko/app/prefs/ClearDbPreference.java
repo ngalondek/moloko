@@ -39,10 +39,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
-import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentAuthority;
 import dev.drsoran.moloko.content.db.DbContentProvider;
+import dev.drsoran.moloko.content.db.ITable;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 
 

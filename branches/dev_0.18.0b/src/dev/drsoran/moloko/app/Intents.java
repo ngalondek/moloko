@@ -38,7 +38,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.prefs.MainPreferencesActivity;

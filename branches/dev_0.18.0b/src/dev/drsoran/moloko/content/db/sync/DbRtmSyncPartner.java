@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.database.Cursor;
-import dev.drsoran.db.ITable;
+import dev.drsoran.moloko.content.db.ITable;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.RtmNoteColumns;
 import dev.drsoran.moloko.content.db.TableNames;

@@ -28,7 +28,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
 
 

@@ -24,7 +24,6 @@ package dev.drsoran.moloko.content.db;
 
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.db.AbstractTable;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
 
 

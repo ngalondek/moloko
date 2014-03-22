@@ -24,7 +24,6 @@ package dev.drsoran.moloko.event;
 
 public interface ISystemEventService
 {
-   
    void registerOnTimeChangedListener( int which,
                                        IOnTimeChangedListener listener );
    
@@ -39,5 +38,4 @@ public interface ISystemEventService
    
    
    void unregisterOnNetworkStatusChangedListener( IOnNetworkStatusChangedListener listener );
-   
 }

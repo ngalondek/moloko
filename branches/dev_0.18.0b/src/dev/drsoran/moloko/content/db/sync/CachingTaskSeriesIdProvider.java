@@ -28,7 +28,7 @@ import java.util.Map;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import dev.drsoran.db.ITable;
+import dev.drsoran.moloko.content.db.ITable;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableNames;

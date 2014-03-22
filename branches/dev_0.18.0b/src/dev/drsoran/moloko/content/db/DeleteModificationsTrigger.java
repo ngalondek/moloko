@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content.db;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
-import dev.drsoran.db.AbstractTrigger;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 

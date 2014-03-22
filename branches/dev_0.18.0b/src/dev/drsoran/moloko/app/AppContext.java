@@ -24,10 +24,8 @@ package dev.drsoran.moloko.app;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import dev.drsoran.moloko.IConnectionService;
 import dev.drsoran.moloko.IExecutorService;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.app.services.IAppContentEditService;
@@ -35,6 +33,7 @@ import dev.drsoran.moloko.app.services.IAppEventService;
 import dev.drsoran.moloko.app.services.IAppServices;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.services.ISyncService;
+import dev.drsoran.moloko.connection.IConnectionService;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.IParsingService;

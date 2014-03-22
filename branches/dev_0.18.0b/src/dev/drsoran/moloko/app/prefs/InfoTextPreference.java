@@ -29,9 +29,9 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.rtm.ILog;
 

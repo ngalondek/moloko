@@ -51,14 +51,8 @@ public class HomeActivity extends MolokoActivity implements OnItemClickListener
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      super.onCreate( savedInstanceState );
-      
-      setContentView( R.layout.home_activity );
-      
-      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
-      gridview.setOnItemClickListener( this );
-      
-      fillGrid();
+      super.onCreate( savedInstanceState );      
+      setContentView( R.layout.home_activity );      
    }
    
    
@@ -67,32 +61,7 @@ public class HomeActivity extends MolokoActivity implements OnItemClickListener
    protected void onResume()
    {
       super.onResume();
-      
       setAccountNameAsSubTitle();
-      
-      final HomeAdapter homeAdapter = getHomeAdapter();
-      
-      if ( homeAdapter != null )
-      {
-         homeAdapter.startWidgets();
-         onContentChanged();
-         showAddAccountWidget( getAppContext().getAccountService()
-                                              .getRtmAccount() == null );
-      }
-   }
-   
-   
-   
-   @Override
-   protected void onStop()
-   {
-      final HomeAdapter homeAdapter = getHomeAdapter();
-      if ( homeAdapter != null )
-      {
-         homeAdapter.stopWidgets();
-      }
-      
-      super.onStop();
    }
    
    
@@ -154,10 +123,7 @@ public class HomeActivity extends MolokoActivity implements OnItemClickListener
    
    private HomeAdapter getHomeAdapter()
    {
-      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
-      final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
-      
-      return homeAdapter;
+      return null;
    }
    
    
@@ -174,16 +140,6 @@ public class HomeActivity extends MolokoActivity implements OnItemClickListener
       {
          getActionBar().setSubtitle( null );
       }
-   }
-   
-   
-   
-   private void fillGrid()
-   {
-      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
-      final HomeAdapter adapter = new HomeAdapter( this );
-      
-      gridview.setAdapter( adapter );
    }
    
    

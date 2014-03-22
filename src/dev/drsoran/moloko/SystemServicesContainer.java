@@ -24,15 +24,17 @@ package dev.drsoran.moloko;
 
 import android.content.Context;
 import android.os.Handler;
+import dev.drsoran.moloko.connection.ConnectionService;
 import dev.drsoran.moloko.connection.DefaultConnectionFactory;
 import dev.drsoran.moloko.connection.DefaultReaderFactory;
+import dev.drsoran.moloko.connection.IConnectionService;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.moloko.event.MolokoSystemEventService;
 import dev.drsoran.rtm.IConnectionFactory;
 import dev.drsoran.rtm.ILog;
 
 
-class SystemServicesContainer implements ISystemServices
+public class SystemServicesContainer implements ISystemServices
 {
    private final static TokenBasedHandler Handler = new TokenBasedHandler();
    

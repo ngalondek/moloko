@@ -24,7 +24,6 @@ package dev.drsoran.moloko.content.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;

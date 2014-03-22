@@ -20,46 +20,46 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.content.db;
 
-public interface ILog
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+
+
+public interface ITable
 {
-   
-   void v( Class< ? > clazz, String msg );
-   
-   
-   
-   void v( Class< ? > clazz, String msg, Throwable tr );
+   String getTableName();
    
    
    
-   void d( Class< ? > clazz, String msg );
+   String getDefaultSortOrder();
    
    
    
-   void d( Class< ? > clazz, String msg, Throwable tr );
+   String[] getProjection();
    
    
    
-   void i( Class< ? > clazz, String msg );
+   Cursor query( String[] projection,
+                 String selection,
+                 String[] selectionArgs,
+                 String sortOrder );
    
    
    
-   void i( Class< ? > clazz, String msg, Throwable tr );
+   long insert( ContentValues initialValues ) throws SQLException;
    
    
    
-   void w( Class< ? > clazz, String msg );
+   int update( long id, ContentValues values, String where, String[] whereArgs );
    
    
    
-   void w( Class< ? > clazz, String msg, Throwable tr );
+   int delete( long id, String where, String[] whereArgs );
    
    
    
-   void e( Class< ? > clazz, String msg );
-   
-   
-   
-   void e( Class< ? > clazz, String msg, Throwable tr );
+   void clear(SQLiteDatabase database);
 }

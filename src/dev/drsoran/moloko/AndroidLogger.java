@@ -24,6 +24,7 @@ package dev.drsoran.moloko;
 
 import java.text.MessageFormat;
 
+import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.rtm.ILog;
 
 import android.content.Context;

@@ -31,9 +31,9 @@ import org.robolectric.annotation.Config;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.db.DbModificationsApplier;
+import dev.drsoran.moloko.content.db.ITable;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModificationsApplier;

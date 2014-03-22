@@ -25,7 +25,7 @@ package dev.drsoran.moloko.test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 
-import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.app.MolokoApp;
 
 
 @RunWith( MolokoTestAppRunner_en.class )

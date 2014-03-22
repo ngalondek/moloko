@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.db;
+package dev.drsoran.moloko.content.db;
 
 import java.text.MessageFormat;
 

@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.test.unit.db;
+package dev.drsoran.moloko.test.unit.content.db;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 
 import android.database.sqlite.SQLiteDatabase;
-import dev.drsoran.db.DbUtils;
+import dev.drsoran.moloko.content.db.DbUtils;
 import dev.drsoran.moloko.test.MolokoDbContentTestCase;
 import dev.drsoran.moloko.test.shadows.SQLiteDatabaseTransactionShadow;
 import dev.drsoran.rtm.test.PrivateCtorCaller;

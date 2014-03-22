@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content.db;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.IContentUriHandler;
 import dev.drsoran.moloko.content.MolokoContentProvider;

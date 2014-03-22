@@ -30,10 +30,10 @@ import java.util.Map;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Columns.TasksListColumns;
 import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.db.ITable;
 import dev.drsoran.moloko.content.db.RtmDatabase;
 import dev.drsoran.moloko.content.db.TableColumns.ModificationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;

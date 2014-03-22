@@ -23,6 +23,7 @@
 package dev.drsoran.moloko;
 
 import android.os.Handler;
+import dev.drsoran.moloko.connection.IConnectionService;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.rtm.ILog;
 

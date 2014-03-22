@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.test.unit.db;
+package dev.drsoran.moloko.test.unit.content.db;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.bytecode.ShadowMap;

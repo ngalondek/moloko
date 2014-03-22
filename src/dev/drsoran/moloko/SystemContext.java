@@ -25,6 +25,8 @@ package dev.drsoran.moloko;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Handler;
+import dev.drsoran.moloko.app.MolokoApp;
+import dev.drsoran.moloko.connection.IConnectionService;
 import dev.drsoran.moloko.event.ISystemEventService;
 import dev.drsoran.rtm.ILog;
 

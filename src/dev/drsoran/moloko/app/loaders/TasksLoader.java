@@ -25,7 +25,6 @@ package dev.drsoran.moloko.app.loaders;
 import java.util.List;
 
 import android.net.Uri;
-import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
@@ -35,6 +34,7 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
+import dev.drsoran.rtm.Iterables;
 import dev.drsoran.rtm.parsing.GrammarException;
 
 

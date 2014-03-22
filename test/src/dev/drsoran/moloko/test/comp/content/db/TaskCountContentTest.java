@@ -32,9 +32,9 @@ import static dev.drsoran.moloko.content.Columns.TaskCountColumns.SUM_ESTIMATED_
 import static dev.drsoran.moloko.test.SQLiteScriptVariables.VAR_TODAY;
 import static dev.drsoran.moloko.test.SQLiteScriptVariables.VAR_TOMORROW;
 import static dev.drsoran.moloko.test.SQLiteScriptVariables.VAR_YESTERDAY;
-import static dev.drsoran.moloko.test.TestConstants.TODAY;
-import static dev.drsoran.moloko.test.TestConstants.TOMORROW;
-import static dev.drsoran.moloko.test.TestConstants.YESTERDAY;
+import static dev.drsoran.rtm.test.TestConstants.TODAY;
+import static dev.drsoran.rtm.test.TestConstants.TOMORROW;
+import static dev.drsoran.rtm.test.TestConstants.YESTERDAY;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;

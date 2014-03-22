@@ -25,9 +25,9 @@ package dev.drsoran.moloko.domain.content;
 import java.util.Collection;
 import java.util.Date;
 
-import dev.drsoran.Compare;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Constants;
+import dev.drsoran.rtm.Strings;
+import dev.drsoran.rtm.content.Compare;
 
 
 public class Modification

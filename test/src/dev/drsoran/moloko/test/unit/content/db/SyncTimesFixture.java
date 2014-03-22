@@ -33,13 +33,12 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import dev.drsoran.moloko.content.Constants;
-import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.TestConstants;
 import dev.drsoran.rtm.sync.SyncTime;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 @RunWith( Theories.class )
-public class SyncTimesFixture extends MolokoTestCase
+public class SyncTimesFixture
 {
    @DataPoint
    public final static long NO_TIME = TestConstants.NEVER;

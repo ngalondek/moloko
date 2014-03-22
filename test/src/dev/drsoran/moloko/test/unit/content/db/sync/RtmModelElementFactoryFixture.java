@@ -35,12 +35,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import android.database.Cursor;
-import dev.drsoran.Pair;
 import dev.drsoran.moloko.content.db.sync.RtmModelElementFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
-import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.test.sources.RtmModelElementFactoryTestDataSource;
 import dev.drsoran.moloko.test.sources.RtmModelElementFactoryTestDataSource.TestData;
+import dev.drsoran.rtm.Pair;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmLocation;
 import dev.drsoran.rtm.model.RtmNote;
@@ -50,7 +49,7 @@ import dev.drsoran.rtm.model.RtmTaskSeries;
 import dev.drsoran.rtm.model.RtmTasksList;
 
 
-public class RtmModelElementFactoryFixture extends MolokoTestCase
+public class RtmModelElementFactoryFixture
 {
    private final static RtmModelElementFactoryTestDataSource testDataSource = new RtmModelElementFactoryTestDataSource();
    
@@ -58,11 +57,9 @@ public class RtmModelElementFactoryFixture extends MolokoTestCase
    
    
    
-   @Override
    @Before
    public void setUp() throws Exception
    {
-      super.setUp();
       fact = new RtmModelElementFactory();
    }
    

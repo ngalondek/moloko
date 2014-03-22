@@ -24,7 +24,7 @@ package dev.drsoran.moloko.ui.rtmsmartadd;
 
 import java.text.MessageFormat;
 
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 
 

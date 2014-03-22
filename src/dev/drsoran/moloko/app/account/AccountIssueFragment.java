@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.auth.AuthConstants;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.service.RtmServicePermission;
 

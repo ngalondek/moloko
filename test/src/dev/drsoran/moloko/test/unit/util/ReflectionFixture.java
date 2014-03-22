@@ -29,12 +29,11 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.util.Reflection;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
-public class ReflectionFixture extends MolokoTestCase
+public class ReflectionFixture
 {
    @Test( expected = AssertionError.class )
    public void testPrivateCtor() throws Throwable

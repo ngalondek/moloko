@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.Cursor;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns;
 import dev.drsoran.moloko.content.Columns.CloudEntryColumns;
 import dev.drsoran.moloko.content.Columns.ContactColumns;
@@ -58,6 +57,7 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.sync.SyncTime;
 

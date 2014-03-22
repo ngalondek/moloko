@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.test.unit.domain.content;
 
-import static dev.drsoran.moloko.test.IterableAsserts.assertEqualSet;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEqualSet;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;

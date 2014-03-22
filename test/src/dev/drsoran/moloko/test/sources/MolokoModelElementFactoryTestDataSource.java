@@ -22,10 +22,10 @@
 
 package dev.drsoran.moloko.test.sources;
 
-import static dev.drsoran.moloko.test.TestConstants.EVEN_LATER;
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NEVER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.TestConstants.EVEN_LATER;
+import static dev.drsoran.rtm.test.TestConstants.LATER;
+import static dev.drsoran.rtm.test.TestConstants.NEVER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,8 +33,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import dev.drsoran.Pair;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.content.Modification;
@@ -50,6 +48,8 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.rtm.Pair;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.Priority;
 import dev.drsoran.rtm.sync.SyncTime;
 

@@ -41,7 +41,7 @@ import dev.drsoran.moloko.domain.content.ContentQueryHandler;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
-import dev.drsoran.moloko.util.Lambda.Func1;
+import dev.drsoran.rtm.Lambda.Func1;
 
 
 @Config( manifest = Config.NONE )

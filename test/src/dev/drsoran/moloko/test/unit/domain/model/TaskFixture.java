@@ -22,14 +22,14 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static dev.drsoran.moloko.test.IterableAsserts.assertEmpty;
-import static dev.drsoran.moloko.test.IterableAsserts.assertEqualSet;
-import static dev.drsoran.moloko.test.TestConstants.EVEN_LATER;
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NEVER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
-import static dev.drsoran.moloko.test.TestConstants.NO_ID;
-import static dev.drsoran.moloko.test.TestConstants.YESTERDAY;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEmpty;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEqualSet;
+import static dev.drsoran.rtm.test.TestConstants.EVEN_LATER;
+import static dev.drsoran.rtm.test.TestConstants.LATER;
+import static dev.drsoran.rtm.test.TestConstants.NEVER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.TestConstants.NO_ID;
+import static dev.drsoran.rtm.test.TestConstants.YESTERDAY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -59,11 +59,10 @@ import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.rtm.model.Priority;
 
 
-public class TaskFixture extends MolokoTestCase
+public class TaskFixture
 {
    @Test
    public void testTask()

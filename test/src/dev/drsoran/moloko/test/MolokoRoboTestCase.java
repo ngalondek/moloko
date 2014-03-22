@@ -29,7 +29,7 @@ import dev.drsoran.moloko.MolokoApp;
 
 
 @RunWith( MolokoTestAppRunner_en.class )
-public abstract class MolokoRoboTestCase extends MolokoTestCase
+public abstract class MolokoRoboTestCase
 {
    public MolokoApp getMolokoApp()
    {

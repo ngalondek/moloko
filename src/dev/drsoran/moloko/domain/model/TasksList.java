@@ -24,7 +24,7 @@ package dev.drsoran.moloko.domain.model;
 
 import java.io.Serializable;
 
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 
 
 public class TasksList extends LifeTimeManaged implements Serializable

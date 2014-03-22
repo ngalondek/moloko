@@ -32,11 +32,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SystemContext;
 import dev.drsoran.moloko.ui.adapters.MultiChoiceModalArrayAdapter;
+import dev.drsoran.rtm.Strings;
 
 
 public class BaseMultiChoiceModeListener< T > implements

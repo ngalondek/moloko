@@ -29,16 +29,17 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.app.loaders.ContactsLoader;
 import dev.drsoran.moloko.content.ContentProviderUtils;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.Contact;
+import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
+import dev.drsoran.rtm.Iterables;
 import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
@@ -112,8 +113,8 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
                                          Contact contact ) throws ContentException,
                                                           GrammarException
    {
-      return Iterables.size( contentRepository.getTasksFromSmartFilter( new RtmSmartFilterBuilder().sharedWith( contact.getUsername() )
-                                                                                                   .toSmartFilter(),
+      return Iterables.size( contentRepository.getTasksFromSmartFilter( new RtmSmartFilter( new RtmSmartFilterBuilder().sharedWith( contact.getUsername() )
+                                                                                                                       .toString() ),
                                                                         TaskContentOptions.None ) );
    }
    

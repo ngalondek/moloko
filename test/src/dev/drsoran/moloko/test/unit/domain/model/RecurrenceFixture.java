@@ -36,8 +36,8 @@ import java.io.ObjectOutputStream;
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Recurrence;
-import dev.drsoran.moloko.test.EqualsHashCodeTestCase;
 import dev.drsoran.rtm.parsing.recurrence.RtmRecurrence;
+import dev.drsoran.rtm.test.EqualsHashCodeTestCase;
 
 
 public class RecurrenceFixture extends EqualsHashCodeTestCase

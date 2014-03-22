@@ -29,8 +29,8 @@ import static dev.drsoran.moloko.content.Columns.NoteColumns.NOTE_TEXT;
 import static dev.drsoran.moloko.content.Columns.NoteColumns.NOTE_TITLE;
 import static dev.drsoran.moloko.content.Columns.TaskColumns.TASK_MODIFIED_DATE;
 import static dev.drsoran.moloko.content.ContentUris.TASK_NOTES_CONTENT_URI_ID;
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.TestConstants.LATER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
 
 import java.util.ArrayList;
 import java.util.Arrays;

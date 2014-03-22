@@ -30,11 +30,11 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.IConnectionService;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
-import dev.drsoran.moloko.app.sync.SyncConstants;
 import dev.drsoran.moloko.content.ContentAuthority;
+import dev.drsoran.moloko.sync.SyncConstants;
+import dev.drsoran.rtm.ILog;
 import dev.drsoran.rtm.sync.IRtmSyncPartner;
 
 

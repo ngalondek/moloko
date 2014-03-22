@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 
 
 public final class Bundles

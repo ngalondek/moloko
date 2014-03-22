@@ -32,12 +32,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.res.XmlResourceParser;
 import dev.drsoran.moloko.domain.parsing.lang.XmlLanguageReader;
-import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.rtm.parsing.lang.DictionaryLanguage;
 
 
 @SuppressWarnings( "unchecked" )
-public class XmlLanguageReaderFixture extends MolokoTestCase
+public class XmlLanguageReaderFixture
 {
    @Test
    public void testXmlLanguageReader()

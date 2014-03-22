@@ -22,9 +22,9 @@
 
 package dev.drsoran.moloko.connection;
 
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.rtm.IConnection;
 import dev.drsoran.rtm.IConnectionFactory;
+import dev.drsoran.rtm.ILog;
 
 
 public class DefaultConnectionFactory implements IConnectionFactory

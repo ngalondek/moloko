@@ -56,11 +56,9 @@ public class MolokoContentValuesFactoryFixture extends MolokoRoboTestCase
    
    
    
-   @Override
    @Before
    public void setUp() throws Exception
    {
-      super.setUp();
       fact = new MolokoContentValuesFactory();
    }
    

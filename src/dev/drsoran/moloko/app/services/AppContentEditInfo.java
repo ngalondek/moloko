@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.app.services;
 
-import dev.drsoran.Strings;
+import dev.drsoran.rtm.Strings;
 
 
 public final class AppContentEditInfo

@@ -25,7 +25,7 @@ package dev.drsoran.moloko.test;
 import java.util.Comparator;
 
 import dev.drsoran.moloko.domain.content.Modification;
-import dev.drsoran.moloko.util.Lambda.Func2;
+import dev.drsoran.rtm.Lambda.Func2;
 
 
 public class ModificationComparator implements Comparator< Modification >

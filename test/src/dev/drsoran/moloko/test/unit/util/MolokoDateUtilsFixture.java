@@ -22,9 +22,11 @@
 
 package dev.drsoran.moloko.test.unit.util;
 
-import static dev.drsoran.moloko.test.TestConstants.DATE_NOW;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.TestConstants.DATE_NOW;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -36,10 +38,10 @@ import org.robolectric.annotation.Config;
 
 import android.text.format.DateUtils;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.TimeStruct;
 import dev.drsoran.rtm.RtmCalendar;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
 @Config( manifest = Config.NONE )
@@ -206,7 +208,8 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    @Test
    public void testGetTimespanInDaysNegStart()
    {
-      assertThat( MolokoDateUtils.getTimespanInDays( -1, NOW ), is( 16149 ) );
+      assertThat( MolokoDateUtils.getTimespanInDays( -1, NOW ),
+                  is( greaterThan( 0 ) ) );
    }
    
    
@@ -214,7 +217,8 @@ public class MolokoDateUtilsFixture extends MolokoRoboTestCase
    @Test
    public void testGetTimespanInDaysNegEnd()
    {
-      assertThat( MolokoDateUtils.getTimespanInDays( NOW, -1 ), is( -16149 ) );
+      assertThat( MolokoDateUtils.getTimespanInDays( NOW, -1 ),
+                  is( lessThan( 0 ) ) );
    }
    
    

@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import dev.drsoran.Iterables;
 import dev.drsoran.moloko.IHandlerToken;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
@@ -41,6 +40,7 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.rtm.Iterables;
 import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
@@ -188,11 +188,11 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    
    private final RtmSmartFilter getSmartFilter()
    {
-      return new RtmSmartFilterBuilder().dueBefore()
-                                        .today()
-                                        .or()
-                                        .dueBefore()
-                                        .now()
-                                        .toSmartFilter();
+      return new RtmSmartFilter( new RtmSmartFilterBuilder().dueBefore()
+                                                            .today()
+                                                            .or()
+                                                            .dueBefore()
+                                                            .now()
+                                                            .toString() );
    }
 }

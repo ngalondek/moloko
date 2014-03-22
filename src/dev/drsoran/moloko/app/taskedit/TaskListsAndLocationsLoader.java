@@ -25,7 +25,6 @@ package dev.drsoran.moloko.app.taskedit;
 import java.util.List;
 
 import android.net.Uri;
-import dev.drsoran.Iterables;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.loaders.AbstractLoader;
 import dev.drsoran.moloko.domain.DomainContext;
@@ -33,6 +32,7 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.rtm.Iterables;
 
 
 class TaskListsAndLocationsLoader extends AbstractLoader< TaskEditData >

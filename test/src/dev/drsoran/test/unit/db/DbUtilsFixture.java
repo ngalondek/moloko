@@ -33,8 +33,8 @@ import org.robolectric.Robolectric;
 import android.database.sqlite.SQLiteDatabase;
 import dev.drsoran.db.DbUtils;
 import dev.drsoran.moloko.test.MolokoDbContentTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
 import dev.drsoran.moloko.test.shadows.SQLiteDatabaseTransactionShadow;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
 @RunWith( DbUtilsFixtureRunner.class )

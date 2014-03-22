@@ -36,6 +36,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.auth.AuthConstants;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.rtm.service.RtmServicePermission;

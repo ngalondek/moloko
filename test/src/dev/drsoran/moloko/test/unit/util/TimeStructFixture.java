@@ -27,11 +27,10 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import dev.drsoran.moloko.test.MolokoTestCase;
 import dev.drsoran.moloko.util.TimeStruct;
 
 
-public class TimeStructFixture extends MolokoTestCase
+public class TimeStructFixture
 {
    
    @Test

@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.test.unit.domain.model;
 
-import static dev.drsoran.moloko.test.TestConstants.NO_ID;
+import static dev.drsoran.rtm.test.TestConstants.NO_ID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -36,10 +36,9 @@ import java.io.ObjectOutputStream;
 import org.junit.Test;
 
 import dev.drsoran.moloko.domain.model.Participant;
-import dev.drsoran.moloko.test.MolokoTestCase;
 
 
-public class ParticipantFixture extends MolokoTestCase
+public class ParticipantFixture
 {
    
    @Test

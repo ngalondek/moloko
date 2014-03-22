@@ -22,9 +22,9 @@
 
 package dev.drsoran.moloko.test.unit.domain.content;
 
-import static dev.drsoran.moloko.test.IterableAsserts.assertEqualSet;
-import static dev.drsoran.moloko.test.TestConstants.LATER;
-import static dev.drsoran.moloko.test.TestConstants.NOW;
+import static dev.drsoran.rtm.test.IterableAsserts.assertEqualSet;
+import static dev.drsoran.rtm.test.TestConstants.LATER;
+import static dev.drsoran.rtm.test.TestConstants.NOW;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -51,9 +51,9 @@ import dev.drsoran.moloko.domain.model.Note;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.test.ModificationComparator;
 import dev.drsoran.moloko.test.MolokoRoboTestCase;
-import dev.drsoran.moloko.test.TestCalendarProvider;
 import dev.drsoran.moloko.test.sources.TaskNoteEditHandlerTestDataSource;
-import dev.drsoran.moloko.util.Lambda.Func2;
+import dev.drsoran.rtm.Lambda.Func2;
+import dev.drsoran.rtm.test.TestCalendarProvider;
 
 
 @Config( manifest = Config.NONE )

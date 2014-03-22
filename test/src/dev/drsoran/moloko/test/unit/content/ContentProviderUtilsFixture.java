@@ -28,11 +28,10 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import dev.drsoran.moloko.content.ContentProviderUtils;
-import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
-public class ContentProviderUtilsFixture extends MolokoTestCase
+public class ContentProviderUtilsFixture
 {
    @Test( expected = AssertionError.class )
    public void testPrivateCtor() throws Throwable

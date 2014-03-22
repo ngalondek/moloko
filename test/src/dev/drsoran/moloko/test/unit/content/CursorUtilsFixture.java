@@ -30,11 +30,10 @@ import org.junit.Test;
 
 import android.database.Cursor;
 import dev.drsoran.moloko.content.CursorUtils;
-import dev.drsoran.moloko.test.MolokoTestCase;
-import dev.drsoran.moloko.test.PrivateCtorCaller;
+import dev.drsoran.rtm.test.PrivateCtorCaller;
 
 
-public class CursorUtilsFixture extends MolokoTestCase
+public class CursorUtilsFixture
 {
    private final static int INDEX = 0;
    

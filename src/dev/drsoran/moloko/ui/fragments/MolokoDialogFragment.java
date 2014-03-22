@@ -28,9 +28,9 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import dev.drsoran.moloko.IConfigurable;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
+import dev.drsoran.rtm.ILog;
 
 
 public abstract class MolokoDialogFragment extends DialogFragment implements

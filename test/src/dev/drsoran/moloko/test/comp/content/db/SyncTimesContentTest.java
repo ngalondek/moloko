@@ -45,7 +45,7 @@ import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.content.CursorUtils;
 import dev.drsoran.moloko.test.MolokoReadWriteDbContentTestCase;
-import dev.drsoran.moloko.test.TestConstants;
+import dev.drsoran.rtm.test.TestConstants;
 
 
 public class SyncTimesContentTest extends MolokoReadWriteDbContentTestCase

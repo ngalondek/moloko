@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import dev.drsoran.rtm.test.FileResource;
+
 
 public class SQLiteScript extends FileResource
 {

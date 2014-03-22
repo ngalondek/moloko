@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Handler;
 import dev.drsoran.moloko.event.ISystemEventService;
+import dev.drsoran.rtm.ILog;
 
 
 public final class SystemContext extends ContextWrapper

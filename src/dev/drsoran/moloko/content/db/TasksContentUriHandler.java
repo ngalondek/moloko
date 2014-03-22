@@ -34,7 +34,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import dev.drsoran.Strings;
 import dev.drsoran.db.ITable;
 import dev.drsoran.moloko.content.AbstractContentUriHandler;
 import dev.drsoran.moloko.content.Columns.TaskColumns;
@@ -43,6 +42,7 @@ import dev.drsoran.moloko.content.db.TableColumns.RtmLocationColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmRawTaskColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTaskSeriesColumns;
 import dev.drsoran.moloko.content.db.TableColumns.RtmTasksListColumns;
+import dev.drsoran.rtm.Strings;
 
 
 class TasksContentUriHandler extends AbstractContentUriHandler implements

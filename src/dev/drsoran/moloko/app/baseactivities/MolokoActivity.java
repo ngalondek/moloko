@@ -36,7 +36,6 @@ import android.view.MenuItem;
 import android.view.Window;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IHandlerToken;
-import dev.drsoran.moloko.ILog;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
@@ -45,12 +44,13 @@ import dev.drsoran.moloko.app.event.IAccountUpdatedListener;
 import dev.drsoran.moloko.app.event.ISyncStatusListener;
 import dev.drsoran.moloko.app.services.IAccountService;
 import dev.drsoran.moloko.app.services.SyncStartResult;
-import dev.drsoran.moloko.app.sync.ISyncActionProviderHost;
-import dev.drsoran.moloko.app.sync.SyncConstants;
 import dev.drsoran.moloko.state.AnnotatedConfigurationSupport;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.sync.ISyncActionProviderHost;
+import dev.drsoran.moloko.sync.SyncConstants;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.ui.fragments.listeners.IAlertDialogFragmentListener;
+import dev.drsoran.rtm.ILog;
 import dev.drsoran.rtm.service.RtmServicePermission;
 
 

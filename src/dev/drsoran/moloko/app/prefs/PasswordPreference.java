@@ -28,8 +28,8 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
+import dev.drsoran.rtm.Strings;
 
 
 class PasswordPreference extends AutoSummaryEditTextPreference

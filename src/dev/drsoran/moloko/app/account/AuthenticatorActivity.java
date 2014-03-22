@@ -30,12 +30,13 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.auth.AuthConstants;
 import dev.drsoran.moloko.content.ContentAuthority;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.service.RtmAuth;
 import dev.drsoran.rtm.service.RtmServicePermission;
 

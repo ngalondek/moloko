@@ -30,11 +30,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import dev.drsoran.Strings;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.fragments.MolokoFragment;
 import dev.drsoran.moloko.ui.layouts.TitleWithTextLayout;
+import dev.drsoran.rtm.Strings;
 
 
 public class TaskSearchResultFailedFragment extends MolokoFragment

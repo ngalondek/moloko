@@ -27,66 +27,73 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.contactslist.ContactsListActivity;
-import dev.drsoran.moloko.app.tagcloud.TagCloudActivity;
-import dev.drsoran.moloko.ui.layouts.SimpleHomeWidgetLayout;
-import dev.drsoran.moloko.ui.widgets.CalendarHomeWidget;
-import dev.drsoran.moloko.ui.widgets.IMolokoHomeWidget;
-import dev.drsoran.moloko.ui.widgets.OverDueTasksHomeWidget;
 
 
 class HomeAdapter extends BaseAdapter
 {
-   private final List< IMolokoHomeWidget > widgets = new ArrayList< IMolokoHomeWidget >( 7 );
+   private final List< IMolokoHomeWidget > widgets = new ArrayList< IMolokoHomeWidget >();
    
    
    
    public HomeAdapter( Context context )
    {
       widgets.add( new CalendarHomeWidget( context,
-                                           null,
-                                           R.string.home_label_today,
-                                           CalendarHomeWidget.TODAY ) );
+                                           CalendarHomeWidget.TODAY,
+                                           R.string.home_label_today ) );
       
-      widgets.add( new CalendarHomeWidget( context,
-                                           null,
-                                           R.string.home_label_tomorrow,
-                                           CalendarHomeWidget.TOMORROW ) );
+      // widgets.add( new CalendarHomeWidget( context,
+      // null,
+      // R.string.home_label_today,
+      // CalendarHomeWidget.TODAY ) );
+      //
+      // widgets.add( new CalendarHomeWidget( context,
+      // null,
+      // R.string.home_label_tomorrow,
+      // CalendarHomeWidget.TOMORROW ) );
+      //
+      // widgets.add( new OverDueTasksHomeWidget( context,
+      // null,
+      // R.string.home_label_overdue ) );
+      //
+      // widgets.add( new SimpleHomeWidgetLayout( context,
+      // null,
+      // R.string.app_tasklists,
+      // R.drawable.ic_home_list_detailed,
+      // Intents.createOpenListOverviewsIntent() ) );
+      //
+      // widgets.add( new SimpleHomeWidgetLayout( context,
+      // null,
+      // R.string.app_tagcloud,
+      // R.drawable.ic_home_tag,
+      // new Intent( context,
+      // TagCloudActivity.class ) ) );
+      //
+      // widgets.add( new SimpleHomeWidgetLayout( context,
+      // null,
+      // R.string.app_contacts,
+      // R.drawable.ic_home_user,
+      // new Intent( context,
+      // ContactsListActivity.class ) ) );
+      //
+      // widgets.add( new SimpleHomeWidgetLayout( context,
+      // null,
+      // R.string.app_preferences,
+      // R.drawable.ic_home_settings,
+      // Intents.createOpenPreferencesIntent( context ) ) );
       
-      widgets.add( new OverDueTasksHomeWidget( context,
-                                               null,
-                                               R.string.home_label_overdue ) );
-      
-      widgets.add( new SimpleHomeWidgetLayout( context,
-                                               null,
-                                               R.string.app_tasklists,
-                                               R.drawable.ic_home_list_detailed,
-                                               Intents.createOpenListOverviewsIntent() ) );
-      
-      widgets.add( new SimpleHomeWidgetLayout( context,
-                                               null,
-                                               R.string.app_tagcloud,
-                                               R.drawable.ic_home_tag,
-                                               new Intent( context,
-                                                           TagCloudActivity.class ) ) );
-      
-      widgets.add( new SimpleHomeWidgetLayout( context,
-                                               null,
-                                               R.string.app_contacts,
-                                               R.drawable.ic_home_user,
-                                               new Intent( context,
-                                                           ContactsListActivity.class ) ) );
-      
-      widgets.add( new SimpleHomeWidgetLayout( context,
-                                               null,
-                                               R.string.app_preferences,
-                                               R.drawable.ic_home_settings,
-                                               Intents.createOpenPreferencesIntent( context ) ) );
+      registerDataSetObserver( new DataSetObserver()
+      {
+         @Override
+         public void onChanged()
+         {
+            updateWidgets();
+         }
+      } );
    }
    
    
@@ -102,7 +109,14 @@ class HomeAdapter extends BaseAdapter
    @Override
    public Object getItem( int position )
    {
-      return null;
+      return widgets.get( position );
+   }
+   
+   
+   
+   public IMolokoHomeWidget getWidget( int position )
+   {
+      return (IMolokoHomeWidget) getItem( position );
    }
    
    
@@ -118,25 +132,24 @@ class HomeAdapter extends BaseAdapter
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      return (View) widgets.get( position );
+      return getWidget( position ).getView( convertView );
    }
    
    
    
    public Intent getIntentForWidget( int position )
    {
-      if ( position < widgets.size() )
-         return ( widgets.get( position ) ).getIntent();
-      else
-         return null;
+      return getWidget( position ).getIntent();
    }
    
    
    
-   public void startWidgets()
+   public void updateWidgets()
    {
       for ( IMolokoHomeWidget widget : widgets )
-         widget.start();
+      {
+         widget.setDirty();
+      }
    }
    
    
@@ -144,8 +157,6 @@ class HomeAdapter extends BaseAdapter
    public void addWidget( IMolokoHomeWidget widget )
    {
       widgets.add( widget );
-      widget.start();
-      
       notifyDataSetChanged();
    }
    
@@ -164,6 +175,8 @@ class HomeAdapter extends BaseAdapter
    public void stopWidgets()
    {
       for ( IMolokoHomeWidget widget : widgets )
+      {
          widget.stop();
+      }
    }
 }

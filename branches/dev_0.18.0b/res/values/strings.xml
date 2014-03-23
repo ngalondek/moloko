@@ -113,6 +113,7 @@
    <!-- Global phrases -->
    <string name="phr_now">Now</string>
    <string name="phr_today">Today</string>
+   <string name="phr_never">never</string>
    <string name="phr_today_with_date">Today %1$s</string>
    <string name="phr_tomorrow">Tomorrow</string>
    <string name="phr_tomorrow_with_date">Tomorrow the %1$s</string>
@@ -123,8 +124,7 @@
    <string name="phr_settings">Settings</string>
    <string name="phr_all_f">All</string>
    <string name="phr_none_f">None</string>
-   <string name="phr_nothing">Nothing</string>
-   <string name="phr_do_sync">Synchronize</string>   
+   <string name="phr_nothing">Nothing</string>     
    <string name="phr_on">On</string>
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manual</string>
@@ -133,6 +133,7 @@
    <string name="phr_hint">Hint</string>
    <string name="phr_yes">Yes</string>
    <string name="phr_no">No</string>
+   <string name="phr_unknown">unknown</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -213,10 +214,16 @@
    <string name="search_label">@string/app_name</string>
    <string name="search_hint">Search for tasks</string>
 
-   <!-- Home fragment -->
+   <!-- Home activity -->
+   <string name="home_no_account">No device account</string>
+   <string name="home_last_sync" formatted="true">Last sync: %s</string>
    <string name="home_label_today">@string/phr_today</string>
    <string name="home_label_tomorrow">@string/phr_tomorrow</string>
    <string name="home_label_overdue">Overdue</string>
+      <!-- Menus -->
+      <string name="menu_home_add_account">@string/btn_new_account</string>
+      <string name="menu_home_search">@string/search_hint</string>      
+      <string name="menu_home_sync">Synchronize</string>
    
    <!-- Task activity -->
    <string name="taskactivity_tab_task">@string/app_task</string>

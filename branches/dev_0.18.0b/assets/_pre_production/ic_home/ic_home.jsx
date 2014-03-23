@@ -1,8 +1,10 @@
-if ( selectLayer( activeDocument, "shape" ) )
+﻿if ( selectLayer( activeDocument, "shape" ) )
 {
-	resizeImagePx( 80 );
-	setForegroundColor( 71.0, 71.0, 71.0 );
-	fillLayerWithForegroundColor();
+	resizeImagePx( 24 );
+    applyStyle("ActionBarIcon_Holo_Dark_enabled");
+    
+    setForegroundColor(255, 255, 255);
+    fillLayerWithForegroundColor();
 }
 else
 {

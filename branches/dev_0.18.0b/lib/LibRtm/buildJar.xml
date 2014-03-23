@@ -1,7 +1,7 @@
 <project name="buildJar" basedir="." default="build">
 	<property name="binDir" location="${basedir}/bin" />
-	<property name="outDir" location="${binDir}" />
-	<property name="jarFile" location="${outDir}/LibRtm.jar" />
+	<property name="outDir" location="${basedir}/jar" />
+	<property name="jarFile" location="${outDir}/libRtm.jar" />
 
 	<target name="build" depends="clean">
 		<jar basedir="${binDir}" destfile="${jarFile}">
@@ -14,6 +14,6 @@
 	</target>
 
 	<target name="clean">
-		<delete failonerror="true" file="${jarFile}" />
+		<delete failonerror="false" file="${jarFile}" />
 	</target>
 </project>

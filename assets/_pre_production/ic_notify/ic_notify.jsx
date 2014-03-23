@@ -1,9 +1,4 @@
-﻿ldpiFolder   = preProdFolder + "/../../res/drawable-ldpi";
-mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi";
-hdpiFolder	 = preProdFolder + "/../../res/drawable-hdpi";
-xhdpiFolder	 = preProdFolder + "/../../res/drawable-xhdpi";
-
-if ( selectLayer( activeDocument, "text" ) )
+﻿if ( selectLayer( activeDocument, "text" ) )
 {
    for ( var j = 1; j < 10; ++j )
    {
@@ -11,12 +6,13 @@ if ( selectLayer( activeDocument, "text" ) )
       suffix = "_" + j;
       
       doExport(filename,
-			   drawableFolder,
-			   ldpiFolder,
-			   mdpiFolder,
-			   hdpiFolder,
-			   xhdpiFolder,
-			   prefix, suffix, false);
+	       drawableFolder,
+	       ldpiFolder,
+	       mdpiFolder,
+               hdpiFolder,
+	       xhdpiFolder,
+               xxhdpiFolder,
+	       prefix, suffix, false);
    }
 
    alreadyExported = true;

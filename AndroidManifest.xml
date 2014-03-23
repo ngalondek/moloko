@@ -92,7 +92,8 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".app.home.HomeActivity">
+         android:name=".app.home.HomeActivity"
+         android:theme="@style/Theme.Moloko.HomeAsUp">
          <meta-data
             android:name="android.app.default_searchable"
             android:value=".app.search." />

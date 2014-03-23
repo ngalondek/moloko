@@ -51,8 +51,8 @@
     </style>
 
     <style name="ActionBarSubtitleTextStyle" parent="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">@color/app_actionbar_subtitle_color</item>
-    </style>
+       <item name="android:textColor">@color/app_actionbar_subtitle_color</item>
+    </style>      
 
     <style name="Tag">
         <item name="android:textColor">@color/app_tag_text</item>
@@ -149,7 +149,7 @@
 
     <style name="TakePrefsFromRtmCheckboxStyle" parent="@android:style/TextAppearance.Small" />
 
-    <!-- Own Preferneces layout -->
+    <!-- Own Preferences layout -->
 
     <style name="MolokoPrefsLayoutStyle">
         <item name="android:layout_marginLeft">15dip</item>
@@ -201,19 +201,16 @@
         <item name="android:ellipsize">end</item>
     </style>
 
-    <style name="TasksListSpinnerItem" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
-    </style>
+    <style name="TasksListSpinnerItem" parent="android:TextAppearance.Widget.TextView.SpinnerItem" />
 
     <style name="TasksListSpinnerItem.Active">
         <item name="android:textColor">@color/holo_blue_light</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.TasksListSpinnerDropdownItem" parent="@android:style/TextAppearance.DeviceDefault.Widget.DropDownItem">
-    </style>
+    <style name="TextAppearance.TasksListSpinnerDropdownItem" parent="@android:style/TextAppearance.DeviceDefault.Widget.DropDownItem" />
 
-    <style name="TextAppearance.TasksListSpinnerDropdownItem.SecondLine" parent="ActionBarSubtitleTextStyle">
-    </style>
+    <style name="TextAppearance.TasksListSpinnerDropdownItem.SecondLine" parent="ActionBarSubtitleTextStyle" />
 
     <style name="TasksListSpinnerDropdownItem" parent="@android:style/Widget.DeviceDefault.Light.DropDownItem.Spinner">
         <item name="android:textAppearance">@style/TextAppearance.TasksListSpinnerDropdownItem</item>
@@ -221,7 +218,7 @@
     </style>
 
     <!-- ********* -->
-    <!-- TaskList -->
+    <!-- TaskLists -->
 
     <style name="TaskLists_Group_ListName" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/tasklists_group_listname</item>
@@ -289,12 +286,23 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    
+    <style name="Home_UserName_TextStyle" parent="@android:style/TextAppearance.DeviceDefault.Widget.DropDownHint" />
+    
+    <style name="Home_LastSync_TextStyle" parent="Home_UserName_TextStyle">
+        <item name="android:textSize">10sp</item>
+    </style>
 
     <style name="Home_Widget_Calendar_Date">
         <item name="android:textSize">21sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/app_icon_black_fill</item>
     </style>
+    
+    <style name="Home_DrawerStyle" parent="@android:style/Widget.DeviceDefault.ListView">
+       <item name="android:choiceMode">singleChoice</item>
+       <item name="android:background">@android:color/background_dark</item>
+    </style>        
 
     <!-- ********* -->
     <!-- Task -->

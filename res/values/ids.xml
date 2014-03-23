@@ -121,6 +121,9 @@
    <!-- MenuItem IDs -->
    <item
       type="id"
+      name="menu_add_account" />
+   <item
+      type="id"
       name="menu_sort" />
    <item
       type="id"
@@ -285,5 +288,8 @@
    <item
       type="id"
       name="loader_hole_day_notifier_tasks" />
+    <item
+      type="id"
+      name="loader_sync_time" />
 
 </resources>

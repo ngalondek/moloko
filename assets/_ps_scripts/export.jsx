@@ -5,17 +5,17 @@ var startFolder = getStartFolder();
 
 if ( preProdFolder != null && startFolder != null )
 {
-	prefix = ( startFolder.name != preProdFolder.name ) ? "" : null;
-	
-	// If we have a start folder != preproduction folder, then we walk up the
-	// path tree and append all folder names that do not start with '#' until we reach
-    // the preproduction folder.
-	if ( prefix != null )
-	{
-		var currentFolder = startFolder;
+    prefix = ( startFolder.name != preProdFolder.name ) ? "" : null;
 
-		while( currentFolder.name != preProdFolder.name )
-		{
+    // If we have a start folder != preproduction folder, then we walk up the
+    // path tree and append all folder names that do not start with '#' until we reach
+    // the preproduction folder.
+    if ( prefix != null )
+    {
+        var currentFolder = startFolder;
+
+        while( currentFolder.name != preProdFolder.name )
+        {
              if ( isPrefixRelevantFolder( currentFolder.name ) )
              {
                  if ( prefix == "" )
@@ -23,79 +23,86 @@ if ( preProdFolder != null && startFolder != null )
                  else
                     prefix = currentFolder.name + "_" + prefix;
              }
-			currentFolder = currentFolder.parent;
-		}
-	}
-	
+            currentFolder = currentFolder.parent;
+        }
+    }
+
     loadMolokoStyles();
-    
-	exportFolder( startFolder, prefix );
-	
-	alert( "Finished!" );
+
+    exportFolder( startFolder, prefix );
+
+    alert( "Finished!" );
 }
 
 
 function getPreproductionFolder()
 {
-    var preProdFolder = "/d/Programmierung/Projects/java/.workspaces/Moloko_dev/Moloko/assets/_pre_production";    
+    var preProdFolder = "/d/Programmierung/Projects/java/.workspaces/Moloko_dev/Moloko/assets/_pre_production";
     //var lastPreprodFolderTemp = new File(Folder.current + "/lastPreProdFolder.tmp");
-    
+
     /*if (lastPreprodFolderTemp.exists)
     {
         lastPreprodFolderTemp.open("r", null, null);
         preProdFolder = lastPreprodFolderTemp.readln();
         lastPreprodFolderTemp.close();
     }*/
-    
+
     preProdFolder = Folder.selectDialog( "Select _pre_production folder", preProdFolder);
-    
+
     /*lastPreprodFolderTemp.open("w", null, null);
     lastPreprodFolderTemp.writeln(preProdFolder);
     lastPreprodFolderTemp.close();*/
-    
+
     return preProdFolder;
 }
 
 
 function getStartFolder()
 {
-    var startFolder = preProdFolder; 
+    var startFolder = preProdFolder;
     //var lastStartFolderTemp = new File(Folder.current + "/lastStartFolder.tmp");
-    
+
     /*if (lastStartFolderTemp.exists)
     {
         lastStartFolderTemp.open("r", null, null);
         startFolder = lastStartFolderTemp.readln();
         lastStartFolderTemp.close();
     }*/
-    
+
     startFolder = Folder.selectDialog( "Select start folder", startFolder);
-    
+
     /*lastStartFolderTemp.open("w", null, null);
     lastStartFolderTemp.writeln(startFolder);
     lastStartFolderTemp.close();*/
-    
+
     return startFolder;
 }
 
 
 function exportFolder( folder, prefix )
 {
-     var files = folder.getFiles();
-       
-	for ( var i = 0; i < files.length; i++ )
-	{      
-		file = files[ i ];
-	  
-		if ( file instanceof Folder )
-		{
-             var folderName = file.name;
-             
-			// Skip folder starting with ".", e.g. ".svn"
-			if ( !folderName.match(/^\./) )
+    var resFolder = preProdFolder + "/../../res/";
+
+    var files = folder.getFiles();
+        
+    for ( var i = 0; i < files.length; i++ )
+    {
+        file = files[ i ];
+
+        if ( file instanceof Folder )
+        {
+            var folderName = file.name;
+
+            if (folderName.match("raw"))
+            {
+                exportRawFolder(resFolder, file);
+            }
+
+            // Skip folder starting with ".", e.g. ".svn"
+            else if ( !folderName.match(/^\./) )
              {
                  var recursionPrefix = prefix;
-                 
+
                  if (isPrefixRelevantFolder(folderName))
                  {
                     if (recursionPrefix != null)
@@ -103,95 +110,128 @@ function exportFolder( folder, prefix )
                     else
                         recursionPrefix = folderName;
                  }
-             
-				exportFolder(file, recursionPrefix);
-              }
-		}
-		
-		else
-		{
-			var scripts = loadScriptsFromFolder( folder );
-			
-			for ( var scriptIdx = 0; scriptIdx < scripts.length; scriptIdx++ )
-			{
-				var script = scripts[ scriptIdx ];
-				
-				// Check if we have a script in this folder
-				if ( script != null )
-				{
-					// skip scripts
-					if ( file.name.match( /jsx$/ ) )
-					{
-						continue;
-					}
-					
-					// resolve links
-					else if ( file.alias )
-					{
-                           file = resolveLink( file );
-					}
-                
-					// Export the file
-					open( file );
-				
-                      var drawableFolder = null;
-                      var ldpiFolder         = preProdFolder + "/../../res/drawable-ldpi";
-                      var mdpiFolder 	 = preProdFolder + "/../../res/drawable-mdpi";
-                      var hdpiFolder	   = preProdFolder + "/../../res/drawable-hdpi";
-                      var xhdpiFolder	 = preProdFolder + "/../../res/drawable-xhdpi";
 
-					var ok = true;
-					var alreadyExported = false;
-					var exportAsIs = false;
-                       var filename = file.name;
-	
-                      eval( script );
-                    
+                exportFolder(file, recursionPrefix);
+              }
+        }
+
+        else
+        {
+            var scripts = loadScriptsFromFolder( folder );
+
+            for ( var scriptIdx = 0; scriptIdx < scripts.length; scriptIdx++ )
+            {
+                var script = scripts[ scriptIdx ];
+
+                // Check if we have a script in this folder
+                if ( script != null )
+                {
+                    // skip scripts
+                    if ( file.name.match( /jsx$/ ) )
+                    {
+                        continue;
+                    }
+
+                    // resolve links
+                    else if ( file.alias )
+                    {
+                        file = resolveLink( file );
+                    }
+
+                    // Export the file
+                    open( file );
+
+                    var drawableFolder = null;
+                    var ldpiFolder     = null /* no longer supported */;
+                    var mdpiFolder     = resFolder + "drawable-mdpi";
+                    var hdpiFolder     = resFolder + "drawable-hdpi";
+                    var xhdpiFolder    = resFolder + "drawable-xhdpi";
+                    var xxhdpiFolder   = resFolder + "drawable-xxhdpi";
+
+                    var ok = true;
+                    var alreadyExported = false;
+                    var exportAsIs = false;
+                    var filename = file.name;
+
+                    eval( script );
+
                       if ( ok && !alreadyExported )
                       {
                         doExport(filename,
-                                      drawableFolder,
-                                      ldpiFolder,
-                                      mdpiFolder,
-                                      hdpiFolder,
-                                      xhdpiFolder,
-                                      prefix, "", exportAsIs);
+                                 drawableFolder,
+                                 ldpiFolder,
+                                 mdpiFolder,
+                                 hdpiFolder,
+                                 xhdpiFolder,
+                                 xxhdpiFolder,
+                                 prefix, "", exportAsIs);
                       }
-                      
-                      activeDocument.close( SaveOptions.DONOTSAVECHANGES );                      
-     			}
-			}
-		}
-	}
+
+                      activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+                }
+            }
+        }
+    }
+}
+
+function exportRawFolder( resFolder, rawFolder )
+{
+    var files = rawFolder.getFiles();
+    for ( var i = 0; i < files.length; i++ )
+    {
+        file = files[ i ];
+        if (file instanceof Folder)
+        {
+            var exportFolder = new Folder( resFolder + "/" + file.name );
+            rawFolder = file;
+
+            if ( !exportFolder.exists )
+            {
+                exportFolder.create();
+            }
+
+            if ( exportFolder != null )
+            {
+                exportRawFolder(exportFolder, rawFolder);
+            }
+        }
+        else
+        {
+            if (!file.copy(new File(resFolder + "/" + file.name)))
+            { 
+                alert ("Failed to copy file " + file.fsName + " to " + resFolder.fsName, "Error");
+            }
+        }
+    }
 }
 
 function loadScriptsFromFolder( folder )
 {
-	var script = null;	
-	var scriptFiles = folder.getFiles("*.jsx");
-	
-	var scriptFilesAsString = new Array();
-	if ( scriptFiles != null && scriptFiles.length > 0 )
-	{
-		for ( var scriptIdx = 0; scriptIdx < scriptFiles.length; scriptIdx++ )
-		{
-			scriptFile = scriptFiles[ scriptIdx ];
-			
-			if ( scriptFile.open( "r" ) )
-			{
-				script = "";
-				
-				while ( !scriptFile.eof )
-				{
-					script += scriptFile.readln();
-				}
-				
-				scriptFilesAsString[scriptIdx] = script;
-			}
-		}
-	}
-		
-	return scriptFilesAsString;
+    var script = null;
+    var scriptFiles = folder.getFiles("*.jsx");
+
+    var scriptFilesAsString = new Array();
+    if ( scriptFiles != null && scriptFiles.length > 0 )
+    {
+        for ( var scriptIdx = 0; scriptIdx < scriptFiles.length; scriptIdx++ )
+        {
+            scriptFile = scriptFiles[ scriptIdx ];
+
+            if ( scriptFile.open( "r" ) )
+            {
+                script = "";
+
+                while ( !scriptFile.eof )
+                {
+                    script += scriptFile.readln();
+                }
+
+                scriptFilesAsString[scriptIdx] = script;
+            }
+        }
+    }
+
+    return scriptFilesAsString;
 }
 
 function isPrefixRelevantFolder(folderName)
@@ -202,155 +242,184 @@ function isPrefixRelevantFolder(folderName)
 function trimPrefixLayers( prefix , count )
 {
     var trimmedPrefix = prefix;
-    
+
     for ( var i = count; i > 0; --i )
     {
         trimmedPrefix = trimmedPrefix.substring( 0, trimmedPrefix.lastIndexOf("_") );
     }
-    
+
     return trimmedPrefix;
 }
 
-function doExport(filename, drawable, ldpi, mdpi, hdpi, xhdpi, prefix, suffix, exportAsIs)
-{    
+function doExport(filename, drawable, ldpi, mdpi, hdpi, xhdpi, xxhdpi, prefix, suffix, exportAsIs)
+{
        if ( drawable != null )
           exportDrawable( filename, drawable, prefix, suffix );
-          
+
        if ( ldpi != null )
           exportLDPI( filename, ldpi, prefix, suffix, exportAsIs );
-       
+
        if ( mdpi != null )
           exportMDPI( filename, mdpi, prefix, suffix );
-       
+
        if ( hdpi != null )
           exportHDPI( filename, hdpi, prefix, suffix, exportAsIs );
-       
+
        if ( xhdpi != null )
           exportXHDPI( filename, xhdpi, prefix, suffix, exportAsIs );
+
+       if ( xxhdpi != null )
+          exportXXHDPI( filename, xxhdpi, prefix, suffix, exportAsIs );
 }
 
 function exportDrawable( filename, folder, prefix, suffix )
-{	
-	var drawableFolder = new Folder( folder );
+{
+    var drawableFolder = new Folder( folder );
 
-	if ( !drawableFolder.exists )
-	{
-		drawableFolder.create();
-	}
-		
-	if ( drawableFolder != null )
-	{
-		saveForWebPNG24( drawableFolder, filename, prefix, suffix );
-	}
+    if ( !drawableFolder.exists )
+    {
+        drawableFolder.create();
+    }
+
+    if ( drawableFolder != null )
+    {
+        saveForWebPNG24( drawableFolder, filename, prefix, suffix );
+    }
 }
 
 function exportLDPI( filename, folder, prefix, suffix, exportAsIs )
-{	
-	var ldpiFolder = new Folder( folder );
-		
-	if ( !ldpiFolder.exists )
-	{
+{
+    var ldpiFolder = new Folder( folder );
+
+    if ( !ldpiFolder.exists )
+    {
          ldpiFolder.create();
-	}
-		
-	if ( ldpiFolder != null )
-	{
-		var temp = activeDocument;
-		activeDocument = activeDocument.duplicate( "temp" );
+    }
+
+    if ( ldpiFolder != null )
+    {
+        var temp = activeDocument;
+        activeDocument = activeDocument.duplicate( "temp" );
 
          if ( !exportAsIs )
          {
              resizeImage( 75 );
          }
 
-		saveForWebPNG24( ldpiFolder, filename, prefix, suffix );
-		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+        saveForWebPNG24( ldpiFolder, filename, prefix, suffix );
+        activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 
-		activeDocument = temp;
-	}
+        activeDocument = temp;
+    }
 }
 
 function exportMDPI( filename, folder, prefix, suffix )
-{	
-	var mdpiFolder = new Folder( folder );
-	
-	if ( !mdpiFolder.exists )
-	{
-		mdpiFolder.create();
-	}
-	
-	if ( mdpiFolder != null )
-	{
-		saveForWebPNG24( mdpiFolder, filename, prefix, suffix );
-	}
+{
+    var mdpiFolder = new Folder( folder );
+
+    if ( !mdpiFolder.exists )
+    {
+        mdpiFolder.create();
+    }
+
+    if ( mdpiFolder != null )
+    {
+        saveForWebPNG24( mdpiFolder, filename, prefix, suffix );
+    }
 }
 
 function exportHDPI( filename, folder, prefix, suffix, exportAsIs )
-{	
-	var hdpiFolder = new Folder( folder );
-		
-	if ( !hdpiFolder.exists )
-	{
-		hdpiFolder.create();
-	}
-	
-	if ( hdpiFolder != null )
-	{
-		var temp = activeDocument;
-		activeDocument = activeDocument.duplicate( "temp" );
-   	
+{
+    var hdpiFolder = new Folder( folder );
+
+    if ( !hdpiFolder.exists )
+    {
+        hdpiFolder.create();
+    }
+
+    if ( hdpiFolder != null )
+    {
+        var temp = activeDocument;
+        activeDocument = activeDocument.duplicate( "temp" );
+
          if ( !exportAsIs)
          {
-		   resizeImage( 150 );
+           resizeImage( 150 );
          }
 
-		saveForWebPNG24( hdpiFolder, filename, prefix, suffix );
-		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-		
-		activeDocument = temp;
-	}
+        saveForWebPNG24( hdpiFolder, filename, prefix, suffix );
+        activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+
+        activeDocument = temp;
+    }
 }
 
 function exportXHDPI( filename, folder, prefix, suffix, exportAsIs )
-{	
-	var xhdpiFolder = new Folder( folder );
-		
-	if ( !xhdpiFolder.exists )
-	{
-		xhdpiFolder.create();
-	}
-	
-	if ( xhdpiFolder != null )
-	{
-		var temp = activeDocument;
-		activeDocument = activeDocument.duplicate( "temp" );
-   	
+{
+    var xhdpiFolder = new Folder( folder );
+
+    if ( !xhdpiFolder.exists )
+    {
+        xhdpiFolder.create();
+    }
+
+    if ( xhdpiFolder != null )
+    {
+        var temp = activeDocument;
+        activeDocument = activeDocument.duplicate( "temp" );
+
          if ( !exportAsIs )
          {
-		   resizeImage( 200 );
+           resizeImage( 200 );
          }
-           
-		saveForWebPNG24( xhdpiFolder,filename, prefix, suffix );
-		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-		
-		activeDocument = temp;
-	}
+
+        saveForWebPNG24( xhdpiFolder,filename, prefix, suffix );
+        activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+
+        activeDocument = temp;
+    }
+}
+
+function exportXXHDPI( filename, folder, prefix, suffix, exportAsIs )
+{
+    var xxhdpiFolder = new Folder( folder );
+
+    if ( !xxhdpiFolder.exists )
+    {
+        xxhdpiFolder.create();
+    }
+
+    if ( xxhdpiFolder != null )
+    {
+        var temp = activeDocument;
+        activeDocument = activeDocument.duplicate( "temp" );
+
+         if ( !exportAsIs )
+         {
+           resizeImage( 300 );
+         }
+
+        saveForWebPNG24( xxhdpiFolder,filename, prefix, suffix );
+        activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+
+        activeDocument = temp;
+    }
 }
 
 function resizeImage( percentage )
 {
-	activeDocument.resizeImage( UnitValue( percentage, "%" ),
-					      			      UnitValue( percentage, "%" ),
-										   null,
+    activeDocument.resizeImage( UnitValue( percentage, "%" ),
+                                          UnitValue( percentage, "%" ),
+                                           null,
                                                 ResampleMethod.BICUBIC );
 }
 
 function resizeImagePx( pixel )
 {
-	activeDocument.resizeImage( UnitValue( pixel, "px" ),
-					      			      UnitValue( pixel, "px" ),
-										   null,
-										   ResampleMethod.BICUBIC );
+    activeDocument.resizeImage( UnitValue( pixel, "px" ),
+                                          UnitValue( pixel, "px" ),
+                                           null,
+                                           ResampleMethod.BICUBIC );
 }
 
 function resizeImagePx2( width, height )
@@ -372,9 +441,9 @@ function resizeImagePx2( width, height )
 
 function saveForWebPNG24( folder, filename, prefix, suffix )
 {
-	var filename = folder + "/" + prefix + "_" + filename.replace( /\.psd$/, "" ) + suffix + ".png";
-	
-	var idExpr = charIDToTypeID( "Expr" );
+    var filename = folder + "/" + prefix + "_" + filename.replace( /\.psd$/, "" ) + suffix + ".png";
+
+    var idExpr = charIDToTypeID( "Expr" );
     var desc36 = new ActionDescriptor();
     var idUsng = charIDToTypeID( "Usng" );
         var desc37 = new ActionDescriptor();
@@ -599,13 +668,13 @@ function saveForWebPNG24( folder, filename, prefix, suffix )
         desc37.putString( idovSN, "images" );
     var idSaveForWeb = stringIDToTypeID( "SaveForWeb" );
     desc36.putObject( idUsng, idSaveForWeb, desc37 );
-    
-	executeAction( idExpr, desc36, DialogModes.NO );
+
+    executeAction( idExpr, desc36, DialogModes.NO );
 }
 
 function setForegroundColor( r, g, b )
 {
-	var idsetd = charIDToTypeID( "setd" );
+    var idsetd = charIDToTypeID( "setd" );
    var actionDescSetC = new ActionDescriptor();
    var idnull = charIDToTypeID( "null" );
    var actionRefSetC = new ActionReference();
@@ -613,19 +682,19 @@ function setForegroundColor( r, g, b )
    var idFrgC = charIDToTypeID( "FrgC" );
    actionRefSetC.putProperty( idClr, idFrgC );
    actionDescSetC.putReference( idnull, actionRefSetC );
-   
+
    var idT = charIDToTypeID( "T   " );
    var actionDescRgb = new ActionDescriptor();
    var idRd = charIDToTypeID( "Rd  " );
-   actionDescRgb.putDouble( idRd, r );   
+   actionDescRgb.putDouble( idRd, r );
    var idGrn = charIDToTypeID( "Grn " );
-   actionDescRgb.putDouble( idGrn, g );   
+   actionDescRgb.putDouble( idGrn, g );
    var idBl = charIDToTypeID( "Bl  " );
-   actionDescRgb.putDouble( idBl, b );   
+   actionDescRgb.putDouble( idBl, b );
    var idRGBC = charIDToTypeID( "RGBC" );
    actionDescSetC.putObject( idT, idRGBC, actionDescRgb );
-   
-	executeAction( idsetd, actionDescSetC, DialogModes.NO );
+
+    executeAction( idsetd, actionDescSetC, DialogModes.NO );
 }
 
 function fillLayerWithForegroundColor()
@@ -637,31 +706,31 @@ function fillLayerWithForegroundColor()
    var idHrzn = charIDToTypeID( "Hrzn" );
    var idPxl = charIDToTypeID( "#Pxl" );
    desc14.putUnitDouble( idHrzn, idPxl, 1.0 );
-   
+
    var idVrtc = charIDToTypeID( "Vrtc" );
    var idPxl = charIDToTypeID( "#Pxl" );
    desc14.putUnitDouble( idVrtc, idPxl, 1.0 );
-   
+
    var idPnt = charIDToTypeID( "Pnt " );
    desc13.putObject( idFrom, idPnt, desc14 );
-   
+
    var idTlrn = charIDToTypeID( "Tlrn" );
    desc13.putInteger( idTlrn, 32 );
-   
+
    var idAntA = charIDToTypeID( "AntA" );
    desc13.putBoolean( idAntA, true );
-   
+
    var idUsng = charIDToTypeID( "Usng" );
    var idFlCn = charIDToTypeID( "FlCn" );
    var idFrgC = charIDToTypeID( "FrgC" );
    desc13.putEnumerated( idUsng, idFlCn, idFrgC );
-   
+
    executeAction( idFl, desc13, DialogModes.NO );
 }
 
 function fillLayerGradientWhite()
 {
-	var idGrdn = charIDToTypeID( "Grdn" );
+    var idGrdn = charIDToTypeID( "Grdn" );
     var desc41 = new ActionDescriptor();
     var idFrom = charIDToTypeID( "From" );
         var desc42 = new ActionDescriptor();
@@ -792,13 +861,13 @@ function fillLayerGradientWhite()
         desc44.putList( idTrns, list6 );
     var idGrdn = charIDToTypeID( "Grdn" );
     desc41.putObject( idGrad, idGrdn, desc44 );
-    
-	executeAction( idGrdn, desc41, DialogModes.NO );
+
+    executeAction( idGrdn, desc41, DialogModes.NO );
 }
 
 function fillLayerGradientDark()
 {
-	var idGrdn = charIDToTypeID( "Grdn" );
+    var idGrdn = charIDToTypeID( "Grdn" );
     var desc41 = new ActionDescriptor();
     var idFrom = charIDToTypeID( "From" );
         var desc42 = new ActionDescriptor();
@@ -929,53 +998,53 @@ function fillLayerGradientDark()
         desc44.putList( idTrns, list6 );
     var idGrdn = charIDToTypeID( "Grdn" );
     desc41.putObject( idGrad, idGrdn, desc44 );
-    
-	executeAction( idGrdn, desc41, DialogModes.NO );
+
+    executeAction( idGrdn, desc41, DialogModes.NO );
 }
 
 function selectLayer( ref, name )
 {
-	// declare local variables
-	var layers = ref.layers;
-	var len = layers.length;
-	var match = false;
+    // declare local variables
+    var layers = ref.layers;
+    var len = layers.length;
+    var match = false;
 
-	// iterate through layers to find a match
-	for ( var i = 0; i < len; i++ )
-	{
-		// test for matching layer
-		var layer = layers[ i ];
-		if ( layer.name.toLowerCase() == name.toLowerCase() )
-		{
-			// select matching layer
-			activeDocument.activeLayer = layer;
-			match = true;
-			break;
-		}
-		// handle groups (layer sets)
-		else if ( layer.typename == 'LayerSet' )
-		{
-			match = findLayer( layer, name );
-			if ( match )
-			{
-				break;
-			}
-		}
-	}
-	
-	return match;
+    // iterate through layers to find a match
+    for ( var i = 0; i < len; i++ )
+    {
+        // test for matching layer
+        var layer = layers[ i ];
+        if ( layer.name.toLowerCase() == name.toLowerCase() )
+        {
+            // select matching layer
+            activeDocument.activeLayer = layer;
+            match = true;
+            break;
+        }
+        // handle groups (layer sets)
+        else if ( layer.typename == 'LayerSet' )
+        {
+            match = findLayer( layer, name );
+            if ( match )
+            {
+                break;
+            }
+        }
+    }
+
+    return match;
 }
 
 function undo()
 {
-	activeDocument.activeHistoryState = activeDocument.historyStates[ app.activeDocument.historyStates.length - 1 ];
+    activeDocument.activeHistoryState = activeDocument.historyStates[ app.activeDocument.historyStates.length - 1 ];
 }
 
 function resolveLink( file )
 {
     var fileResolved = resolveLinkFolder(preProdFolder, file);
 
-	if ( fileResolved == null )
+    if ( fileResolved == null )
     {
        var parent = file.parent;
        while( fileResolved == null && parent != preProdFolder)
@@ -991,17 +1060,18 @@ function resolveLink( file )
 function resolveLinkFolder( folder, file )
 {
     var fileResolved = null;
-    
+
     if ( file instanceof File )
     {
         fileResolved = new File( folder + "/" + file.name + ".psd" );
     }
 
      if ( fileResolved != null && fileResolved.exists )
-		return fileResolved;
+        return fileResolved;
      else
         return null;
 }
+
 
 function loadMolokoStyles()
 {
@@ -1024,14 +1094,14 @@ function loadMolokoStyles()
     executeAction( idsetd, desc1, DialogModes.NO );
 }
 
-function applyMenuIconStyle()
+function applyStyle( style )
 {
    var idASty = charIDToTypeID( "ASty" );
     var desc3 = new ActionDescriptor();
     var idnull = charIDToTypeID( "null" );
         var ref2 = new ActionReference();
         var idStyl = charIDToTypeID( "Styl" );
-        ref2.putName( idStyl, "AndroidMenuIcon" );
+        ref2.putName( idStyl, style );
     desc3.putReference( idnull, ref2 );
     var idT = charIDToTypeID( "T   " );
         var ref3 = new ActionReference();

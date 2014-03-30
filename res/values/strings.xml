@@ -519,5 +519,6 @@ User: %s\n
    
    <!-- Design -->
    <string name="design_text">Text</string>
+   <string name="design_number">10</string>
 
 </resources>

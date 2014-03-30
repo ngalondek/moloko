@@ -32,6 +32,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.app.contactslist.ContactsListActivity;
+import dev.drsoran.moloko.app.tagcloud.TagCloudActivity;
 
 
 class HomeAdapter extends BaseAdapter
@@ -42,49 +45,34 @@ class HomeAdapter extends BaseAdapter
    
    public HomeAdapter( Context context )
    {
-      widgets.add( new CalendarHomeWidget( context,
-                                           CalendarHomeWidget.TODAY,
-                                           R.string.home_label_today ) );
+      widgets.add( new LastSyncWidget( context ) );
       
-      // widgets.add( new CalendarHomeWidget( context,
-      // null,
-      // R.string.home_label_today,
-      // CalendarHomeWidget.TODAY ) );
-      //
-      // widgets.add( new CalendarHomeWidget( context,
-      // null,
-      // R.string.home_label_tomorrow,
-      // CalendarHomeWidget.TOMORROW ) );
-      //
-      // widgets.add( new OverDueTasksHomeWidget( context,
-      // null,
-      // R.string.home_label_overdue ) );
-      //
-      // widgets.add( new SimpleHomeWidgetLayout( context,
-      // null,
-      // R.string.app_tasklists,
-      // R.drawable.ic_home_list_detailed,
-      // Intents.createOpenListOverviewsIntent() ) );
-      //
-      // widgets.add( new SimpleHomeWidgetLayout( context,
-      // null,
-      // R.string.app_tagcloud,
-      // R.drawable.ic_home_tag,
-      // new Intent( context,
-      // TagCloudActivity.class ) ) );
-      //
-      // widgets.add( new SimpleHomeWidgetLayout( context,
-      // null,
-      // R.string.app_contacts,
-      // R.drawable.ic_home_user,
-      // new Intent( context,
-      // ContactsListActivity.class ) ) );
-      //
-      // widgets.add( new SimpleHomeWidgetLayout( context,
-      // null,
-      // R.string.app_preferences,
-      // R.drawable.ic_home_settings,
-      // Intents.createOpenPreferencesIntent( context ) ) );
+      widgets.add( new CalendarWidget( context,
+                                       CalendarWidget.TODAY,
+                                       R.string.home_label_today ) );
+      
+      widgets.add( new CalendarWidget( context,
+                                       CalendarWidget.TOMORROW,
+                                       R.string.home_label_tomorrow ) );
+      
+      widgets.add( new OverdueWidget( context ) );
+      
+      widgets.add( new WidgetWithIcon( context,
+                                       R.drawable.ic_home_tag,
+                                       R.string.app_tagcloud,
+                                       new Intent( context,
+                                                   TagCloudActivity.class ) ) );
+      
+      widgets.add( new WidgetWithIcon( context,
+                                       R.drawable.ic_home_user,
+                                       R.string.app_contacts,
+                                       new Intent( context,
+                                                   ContactsListActivity.class ) ) );
+      
+      widgets.add( new WidgetWithIcon( context,
+                                       R.drawable.ic_home_settings,
+                                       R.string.app_preferences,
+                                       Intents.createOpenPreferencesIntent( context ) ) );
       
       registerDataSetObserver( new DataSetObserver()
       {

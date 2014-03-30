@@ -13,20 +13,21 @@
       implementation
    -->
 
-<FrameLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   android:paddingTop="15dip"
-   android:background="@drawable/ic_home_calendar_empty">
+<merge
+   xmlns:android="http://schemas.android.com/apk/res/android">
 
-   <ImageView
+   <ImageView 
+      android:layout_width="24dip"
+      android:layout_height="24dip"
+      android:layout_gravity="center"
+      android:src="@drawable/ic_home_calendar_empty"/>
+     
+   <TextView
+      android:id="@+id/home_calendar_date"
+      style="@style/Home_Widget_Calendar_Date"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:src="@drawable/ic_black_time" />
-
-   <include
-      layout="@layout/counter_bubble" />
-
-</FrameLayout>
+      android:layout_gravity="center"    
+      android:layout_marginTop="2dip"      
+      android:text="@string/design_number" />
+</merge>

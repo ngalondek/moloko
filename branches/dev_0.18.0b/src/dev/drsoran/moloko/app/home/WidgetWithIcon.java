@@ -32,7 +32,7 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 
 
-public class WidgetWithIcon implements IMolokoHomeWidget
+public class WidgetWithIcon implements INavWidget
 {
    private final Context context;
    
@@ -86,12 +86,9 @@ public class WidgetWithIcon implements IMolokoHomeWidget
    @Override
    public View getView( View convertView )
    {
-      if ( convertView == null )
-      {
-         convertView = LayoutInflater.from( context )
-                                     .inflate( R.layout.home_activity_drawer_item_with_widget,
-                                               null );
-      }
+      convertView = LayoutInflater.from( context )
+                                  .inflate( R.layout.home_activity_drawer_item_with_widget,
+                                            null );
       
       setText( convertView );
       setIcon( convertView );

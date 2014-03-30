@@ -93,7 +93,7 @@ public class TasksLoader extends AbstractLoader< List< Task > >
    
    
    @Override
-   protected List< Task > queryResultInBackground( IContentRepository contentRepository )
+   public List< Task > queryResultInBackground( IContentRepository contentRepository )
    {
       final Iterable< Task > tasks;
       

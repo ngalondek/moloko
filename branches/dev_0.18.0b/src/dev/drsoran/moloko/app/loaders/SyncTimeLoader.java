@@ -48,7 +48,7 @@ public class SyncTimeLoader extends AbstractLoader< SyncTime >
    
    
    @Override
-   protected SyncTime queryResultInBackground( IContentRepository repository ) throws ContentException
+   public SyncTime queryResultInBackground( IContentRepository repository ) throws ContentException
    {
       return repository.getSyncTimes();
    }

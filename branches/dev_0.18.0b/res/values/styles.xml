@@ -292,7 +292,13 @@
     <style name="Home_LastSync_TextStyle" parent="Home_UserName_TextStyle">
         <item name="android:textSize">10sp</item>
     </style>
-
+    
+    <style name="Home_Section_TextStyle" parent="@android:style/TextAppearance.DeviceDefault.Widget.DropDownHint">
+      <item name="android:textAllCaps">true</item>
+      <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
+      <item name="android:background">?android:attr/activatedBackgroundIndicator</item>      
+    </style>
+      
     <style name="Home_Widget_Calendar_Date">
         <item name="android:textSize">10sp</item>
         <item name="android:textStyle">bold</item>
@@ -301,12 +307,13 @@
     
     <style name="Home_DrawerStyle" parent="@android:style/Widget.DeviceDefault.ListView">
        <item name="android:choiceMode">singleChoice</item>
-       <item name="android:background">@android:color/background_dark</item>
+       <item name="android:background">@color/nav_drawer_list_bgnd</item>
+       <item name="android:divider">@android:drawable/divider_horizontal_dark</item>
     </style>
     
-     <style name="Home_DrawerItemStyle">
+     <style name="Home_DrawerItemStyle" >
        <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
-       <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
+       <item name="android:background">?android:attr/activatedBackgroundIndicator</item>       
     </style>
 
     <!-- ********* -->

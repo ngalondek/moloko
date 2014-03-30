@@ -57,7 +57,7 @@ class TaskListsAndLocationsLoader extends AbstractLoader< TaskEditData >
    
    
    @Override
-   protected TaskEditData queryResultInBackground( IContentRepository respository ) throws ContentException
+   public TaskEditData queryResultInBackground( IContentRepository respository ) throws ContentException
    {
       final List< TasksList > lists = Iterables.asList( respository.getPhysicalTasksLists() );
       final List< Location > locations = Iterables.asList( respository.getAllLocations() );

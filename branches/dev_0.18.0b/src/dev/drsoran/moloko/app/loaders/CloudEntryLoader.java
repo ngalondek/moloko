@@ -55,7 +55,7 @@ public class CloudEntryLoader extends AbstractLoader< List< CloudEntry > >
    
    
    @Override
-   protected List< CloudEntry > queryResultInBackground( IContentRepository contentRepository )
+   public List< CloudEntry > queryResultInBackground( IContentRepository contentRepository )
    {
       return Iterables.asList( contentRepository.getCloudEntries() );
    }

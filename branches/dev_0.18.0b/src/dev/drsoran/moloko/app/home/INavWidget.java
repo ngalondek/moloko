@@ -26,7 +26,7 @@ import android.content.Intent;
 import android.view.View;
 
 
-public interface IMolokoHomeWidget
+public interface INavWidget
 {
    public void setDirty();
    

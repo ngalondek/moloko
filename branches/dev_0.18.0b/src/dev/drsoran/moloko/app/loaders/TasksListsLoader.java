@@ -66,7 +66,7 @@ public class TasksListsLoader extends AbstractLoader< List< TasksList > >
    
    
    @Override
-   protected List< TasksList > queryResultInBackground( IContentRepository contentRepository ) throws ContentException
+   public List< TasksList > queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
       final ArrayList< TasksList > list = new ArrayList< TasksList >();
       
